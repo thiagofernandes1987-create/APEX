@@ -1623,6 +1623,68 @@ domain_map:
         path: integrations/knowledge-work/data/
         anchors: [data, sql, bigquery, snowflake, databricks, visualization]
 
+  LEGAL_MCP_SERVERS:
+    path: integrations/legal-mcp/
+    anchors: [legal, case_law, patents, sec_edgar, compliance, regulation, govinfo, courtlistener, uspto, congress]
+    status: ADOPTED
+    skills:
+      - skill_id: integrations.legal.mcp_catalog
+        path: integrations/legal-mcp/CATALOG.md
+    mcp_servers:
+      govinfo: https://api.govinfo.gov/mcp
+      courtlistener: github.com/DefendTheDisabled/courtlistener-mcp
+      uspto_patents: github.com/riemannzeta/patent_mcp_server
+      sec_edgar: github.com/stefanoamorelli/sec-edgar-mcp
+      us_gov_mega: github.com/lzinga/us-gov-open-data-mcp
+
+  SCIENCE_PHYSICS_MCP_SERVERS:
+    path: integrations/science-physics-mcp/
+    anchors: [quantum_computing, quantum_physics, statistical_physics, materials_science, arxiv, wolfram, simulation, dft, qiskit]
+    status: ADOPTED
+    skills:
+      - skill_id: integrations.science.physics_mcp_catalog
+        path: integrations/science-physics-mcp/CATALOG.md
+    mcp_servers:
+      qiskit_ibm: github.com/Qiskit/mcp-servers
+      psianimator: github.com/manasp21/PsiAnimator-MCP
+      arxiv: github.com/blazickjp/arxiv-mcp-server
+      paper_search_20_sources: github.com/openags/paper-search-mcp
+      wolfram_language: github.com/rhennigan/MCPServer
+      mcp_science_suite: github.com/pathintegral-institute/mcp.science
+      openmm_dft: github.com/PhelanShao/openmm-mcp-server
+      nasa: github.com/ProgramComputer/NASA-MCP-server
+
+  MARKETING_MCP_SERVERS:
+    path: integrations/marketing-mcp/
+    anchors: [marketing, seo, google_ads, meta_ads, tiktok_ads, semrush, hubspot, analytics, content_marketing]
+    status: ADOPTED
+    skills:
+      - skill_id: integrations.marketing.mcp_catalog
+        path: integrations/marketing-mcp/CATALOG.md
+    mcp_servers:
+      semrush: https://mcp.semrush.com/v1/mcp
+      google_ads: github.com/googleads/google-ads-mcp
+      meta_ads: github.com/pipeboard-co/meta-ads-mcp
+      tiktok_ads: github.com/AdsMCP/tiktok-ads-mcp-server
+      linkedin_ads: github.com/radiateb2b/mcp-linkedin-ads
+      hubspot: https://mcp.hubspot.com/anthropic
+      amplitude: https://mcp.amplitude.com/mcp
+      ahrefs: https://api.ahrefs.com/mcp/mcp
+
+  ENGINEERING_MCP_SERVERS:
+    path: integrations/engineering-mcp/
+    anchors: [engineering, nasa, cfd, cad, simulation, devops, github, pagerduty, datadog]
+    status: ADOPTED
+    skills:
+      - skill_id: integrations.engineering.mcp_catalog
+        path: integrations/engineering-mcp/CATALOG.md
+    mcp_servers:
+      nasa: github.com/ProgramComputer/NASA-MCP-server
+      openfoam_cfd: github.com/webworn/openfoam-mcp-server
+      openscad_cad: github.com/fboldo/openscad-mcp-server
+      pagerduty: https://mcp.pagerduty.com/mcp
+      datadog: https://mcp.datadoghq.com/mcp
+
   DEVOPS_REFERENCE:
     path: reference-docs/
     anchors: [gitops, kubernetes, terraform, iac, devops, infrastructure]
@@ -1662,4 +1724,4 @@ Ver detalhes: `diffs/v00_33_0/`
 - **Repo criado**: 2026-04-08
 - **APEX version**: v00.33.0
 - **DIFFs aplicados**: 104 (86 herdados + 12 OPP-92/103 + 6 OPP-104/109)
-- **Skills registradas**: 2094 (v00.33.0 — 4 new plugin packs ingested)
+- **Skills registradas**: 2094 (v00.33.0 — legal/physics/marketing/engineering MCP cataloged)
