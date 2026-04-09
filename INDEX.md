@@ -1238,6 +1238,22 @@ domain_map:
         path: skills/apex_internals/cognitive-modes/
         anchors: [EXPRESS, FAST, DEEP, RESEARCH, SCIENTIFIC, FOGGY, CLARIFY, BDS_simplex]
 
+  GITHUB_MCP_SERVER:
+    path: integrations/github-mcp-server/
+    anchors: [github, mcp_server, pull_request, issues, code_search]
+    skills:
+      - skill_id: integrations.github_mcp_server
+        path: integrations/github-mcp-server/SKILL.md
+        status: ADOPTED
+
+  CLAUDES_C_COMPILER:
+    path: algorithms/claudes-c-compiler/
+    anchors: [c_compiler, rust, codegen, x86_64, arm64, compiler]
+    skills:
+      - skill_id: algorithms.claudes_c_compiler
+        path: algorithms/claudes-c-compiler/SKILL.md
+        status: CANDIDATE
+
   # ===== COMMUNITY AND ENGINEERING SKILLS (antigravity + ingested) =====
 
   ENGINEERING_COMMUNITY:
@@ -1584,4 +1600,4 @@ Ver detalhes: `diffs/v00_33_0/`
 - **Repo criado**: 2026-04-08
 - **APEX version**: v00.33.0
 - **DIFFs aplicados**: 104 (86 herdados + 12 OPP-92/103 + 6 OPP-104/109)
-- **Skills registradas**: 1656 (v00.33.0)
+- **Skills registradas**: 1905 (v00.33.0 — ingestion completa)

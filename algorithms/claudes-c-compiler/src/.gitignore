@@ -1,0 +1,8 @@
+/target/
+Cargo.lock
+*.o
+*.s
+*.core
+a.out
+dump.rdb
+core
