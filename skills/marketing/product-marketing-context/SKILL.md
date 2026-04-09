@@ -1,22 +1,18 @@
 ---
-skill_id: marketing.product_marketing_context
+skill_id: marketingskills.marketing.product_marketing_context
 name: "product-marketing-context"
-description: "'Create or update a reusable product marketing context document with positioning, audience, ICP, use cases, and messaging. Use at the start of a project to avoid repeating core marketing context acros"
+description: "When the user wants to create or update their product marketing context document. Also use when the user mentions 'product context,' 'marketing context,' 'set up context,' 'positioning,' 'who is my ta"
 version: v00.33.0
 status: CANDIDATE
-domain_path: marketing/product-marketing-context
+domain_path: marketing
 anchors:
   - product
   - marketing
   - context
-  - create
-  - update
-  - reusable
-  - document
-  - positioning
-  - audience
-  - cases
-source_repo: antigravity-awesome-skills
+  - when
+  - user
+  - wants
+source_repo: marketingskills-main
 risk: safe
 languages: [dsl]
 llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
@@ -26,12 +22,6 @@ apex_version: v00.33.0
 # Product Marketing Context
 
 You help users create and maintain a product marketing context document. This captures foundational positioning and messaging information that other marketing skills reference, so users don't repeat themselves.
-
-## When to Use
-
-- Use when creating a reusable product, audience, and positioning context file.
-- Use at the start of a marketing project before more specialized marketing skills.
-- Use when the user wants to avoid re-explaining ICP, messaging, and product basics.
 
 The document is stored at `.agents/product-marketing-context.md`.
 
@@ -265,4 +255,4 @@ After gathering information, create `.agents/product-marketing-context.md` with 
 - **Skip what doesn't apply**: Not every product needs all sections (e.g., Personas for B2C)
 
 ## Diff History
-- **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+- **v00.33.0**: Ingested from marketingskills-main

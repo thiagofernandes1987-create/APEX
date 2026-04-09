@@ -1,0 +1,20 @@
+{
+  "serverAddress": "${hostname} บน พอร์ต ${port}",
+  "newProject": {
+    "title": "สร้างโปรเจคใหม่",
+    "prompt": "กรอกชื่อและเลือกรูปแบบของโปรเจค",
+    "namePlaceholder": "ชื่อโปรเจค",
+    "descriptionPlaceholder": "คำอธิบายโปรเจค (ตัวเลือก)",
+    "emptyProject": {
+      "title": "โปรเจคเปล่า",
+      "description": "สร้างโปรเจคเปล่าๆขึ้นมา โดยไม่ใช้เทมเพลตใดๆ"
+    },
+    "autoOpen": "เปิดโปรเจคหลังจากสร้าง"
+  },
+  "editDetails": {
+    "title": "แก้ไขข้อมูล",
+    "prompt": "แก้ไขข้อมูลของโปรเจค"
+  },
+  "openProject": "เปิดโปรเจค",
+  "language": "ภาษา"
+}

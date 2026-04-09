@@ -1,22 +1,18 @@
 ---
-skill_id: marketing.revops
+skill_id: marketingskills.marketing.revops
 name: "revops"
-description: "'Design and improve revenue operations, lead lifecycle rules, scoring, routing, handoffs, and CRM process automation. Use when marketing, sales, and customer success workflows need clearer operational"
+description: "When the user wants help with revenue operations, lead lifecycle management, or marketing-to-sales handoff processes. Also use when the user mentions 'RevOps,' 'revenue operations,' 'lead scoring,' 'l"
 version: v00.33.0
 status: CANDIDATE
-domain_path: marketing/revops
+domain_path: marketing
 anchors:
   - revops
-  - design
-  - improve
-  - revenue
-  - operations
-  - lead
-  - lifecycle
-  - rules
-  - scoring
-  - routing
-source_repo: antigravity-awesome-skills
+  - when
+  - user
+  - wants
+  - help
+  - with
+source_repo: marketingskills-main
 risk: safe
 languages: [dsl]
 llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
@@ -26,12 +22,6 @@ apex_version: v00.33.0
 # RevOps
 
 You are an expert in revenue operations. Your goal is to help design and optimize the systems that connect marketing, sales, and customer success into a unified revenue engine.
-
-## When to Use
-
-- Use when the user needs lead scoring, routing, handoffs, or lifecycle definitions.
-- Use when CRM process design and revenue-team coordination are the core problem.
-- Use when marketing, sales, and customer success systems need operational alignment.
 
 ## Before Starting
 
@@ -342,18 +332,20 @@ Format each as a standalone document the user can implement directly. Include pl
 
 ## Tool Integrations
 
-For implementation, use the CRM, scheduling, enrichment, and automation tools available in the current environment. Key RevOps tools:
+For implementation, see the [tools registry](../../tools/REGISTRY.md). Key RevOps tools:
 
 | Tool | What It Does | Guide |
 |------|-------------|-------|
-| **HubSpot** | CRM, marketing automation, lead scoring, workflows | Use available HubSpot integrations |
-| **Salesforce** | Enterprise CRM, pipeline management, reporting | Use available Salesforce integrations |
-| **Calendly** | Meeting scheduling, round-robin routing | Use available scheduling integrations |
-| **SavvyCal** | Scheduling with priority-based availability | Use available scheduling integrations |
-| **Clearbit** | Real-time lead enrichment and scoring | Use available enrichment integrations |
-| **Apollo** | Contact data, enrichment, and outbound sequences | Use available outbound data integrations |
-| **ActiveCampaign** | Marketing automation for SMBs, lead scoring | Use available marketing automation integrations |
-| **Zapier** | Cross-tool automation and workflow glue | Use available workflow automation integrations |
+| **HubSpot** | CRM, marketing automation, lead scoring, workflows | [hubspot.md](../../tools/integrations/hubspot.md) |
+| **Salesforce** | Enterprise CRM, pipeline management, reporting | [salesforce.md](../../tools/integrations/salesforce.md) |
+| **Calendly** | Meeting scheduling, round-robin routing | [calendly.md](../../tools/integrations/calendly.md) |
+| **SavvyCal** | Scheduling with priority-based availability | [savvycal.md](../../tools/integrations/savvycal.md) |
+| **Clearbit** | Real-time lead enrichment and scoring | [clearbit.md](../../tools/integrations/clearbit.md) |
+| **Apollo** | Contact data, enrichment, and outbound sequences | [apollo.md](../../tools/integrations/apollo.md) |
+| **ActiveCampaign** | Marketing automation for SMBs, lead scoring | [activecampaign.md](../../tools/integrations/activecampaign.md) |
+| **Zapier** | Cross-tool automation and workflow glue | [zapier.md](../../tools/integrations/zapier.md) |
+| **Introw** | Partner-sourced pipeline, commissions, deal registration, QBRs | [introw.md](../../tools/integrations/introw.md) |
+| **Crossbeam** | Partner account overlaps and co-sell identification | [crossbeam.md](../../tools/integrations/crossbeam.md) |
 
 ---
 
@@ -367,4 +359,4 @@ For implementation, use the CRM, scheduling, enrichment, and automation tools av
 - **sales-enablement**: For sales collateral, decks, and objection handling
 
 ## Diff History
-- **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+- **v00.33.0**: Ingested from marketingskills-main

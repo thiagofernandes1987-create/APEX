@@ -1,0 +1,25 @@
+{
+  "version": "0.1.0",
+  "configurations": [
+    {
+      "name": "Server",
+      "request": "launch",
+      "type": "node",
+      "program": "${workspaceRoot}/server/index.js",
+      "stopOnEntry": false,
+      "args": ["start"],
+      "runtimeExecutable": null,
+      "runtimeArgs": ["--nolazy"],
+      "env": {},
+      "sourceMaps": true
+    },
+    {
+      "name": "Attach",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 8000,
+      "sourceMaps": true
+    }
+  ]
+}

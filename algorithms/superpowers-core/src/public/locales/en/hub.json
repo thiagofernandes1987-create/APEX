@@ -1,0 +1,25 @@
+{
+  "title": "Hub",
+  "serverAddress": "${hostname} on port ${port}",
+  "newProject": {
+    "noSystemError": {
+      "header": "Can't create a project",
+      "message": "This server doesn't have any systems installed yet. Please install one from the Server Settings tab first."
+    },
+    "title": "New project",
+    "prompt": "Enter a name and select a type for the new project.",
+    "namePlaceholder": "Project name",
+    "descriptionPlaceholder": "Description (optional)",
+    "emptyProject": {
+      "title": "Empty project",
+      "description": "An empty project to start from scratch."
+    },
+    "autoOpen": "Open after creation"
+  },
+  "editDetails": {
+    "title": "Edit details",
+    "prompt": "Edit the project's details."
+  },
+  "openProject": "Open project",
+  "language": "Language"
+}

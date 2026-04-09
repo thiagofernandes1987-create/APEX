@@ -1,0 +1,53 @@
+{
+  "rules": {
+    "indent": [
+      true,
+      "spaces"
+    ],
+    "eofline": true,
+    "semicolon": true,
+    "max-line-length": [
+      true,
+      200
+    ],
+    "class-name": true,
+    "variable-name": true,
+    "comment-format": [
+      true,
+      "check-space"
+    ],
+    "no-trailing-whitespace": true,
+    "no-unused-expression": [
+      true,
+      "allow-new"
+    ],
+    "no-var-requires": true,
+    "quotemark": [
+      true,
+      "double"
+    ],
+    "radix": true,
+    "triple-equals": [
+      true,
+      "allow-null-check"
+    ],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-separator",
+      "check-type",
+      "check-module"
+    ],
+    "no-construct": true,
+    "no-empty": true,
+    "no-switch-case-fall-through": true,
+    "no-var-keyword": true,
+    "no-duplicate-variable": true,
+    "no-eval": true,
+    "no-internal-module": true,
+    "no-require-imports": true,
+    "member-access": false
+  }
+}

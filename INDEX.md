@@ -1685,6 +1685,54 @@ domain_map:
       pagerduty: https://mcp.pagerduty.com/mcp
       datadog: https://mcp.datadoghq.com/mcp
 
+  COMMUNITY_CLAUDE_SKILLS:
+    path: skills/community/
+    anchors: [claude_skills, artifacts, canvas, brand, changelog, design, community]
+    status: CANDIDATE
+    source_repos: [awesome-claude-skills, claude-skills-main, cherry-studio]
+    note: "864 + 522 + 13 community skills from awesome-claude-skills, claude-skills-main, cherry-studio"
+
+  ENGINEERING_PATTERNS:
+    path: skills/engineering/
+    anchors: [api_design, accessibility, aws, ci_cd, database, auth, testing, devops, cli]
+    status: CANDIDATE
+    source_repos: [awesome-claude-code-toolkit, skills-main, x-cmd]
+    sub_domains:
+      patterns:
+        path: skills/engineering/patterns/
+        anchors: [api_design, accessibility_wcag, auth, aws_cloud, ci_cd, database]
+      cloud_azure:
+        path: skills/engineering/cloud/azure/
+        anchors: [azure, dotnet, bicep, ai_agents]
+      cli:
+        path: skills/engineering/cli/
+        anchors: [shell, bash, cli, terminal, x_cmd]
+
+  MARKETING_SKILLS_CATALOG:
+    path: skills/marketing/
+    anchors: [marketing, seo, campaign, brand, content, ads, social]
+    status: CANDIDATE
+    source_repos: [marketingskills-main]
+
+  AGENT_FRAMEWORKS:
+    path: algorithms/voltagent/
+    anchors: [typescript, agent_framework, multi_agent, tool_use, memory, mcp_integration]
+    skills:
+      - skill_id: algorithms.voltagent
+        path: algorithms/voltagent/SKILL.md
+        status: CANDIDATE
+
+  COMMUNITY_AGENT_PATTERNS:
+    path: agents/community-awesome/
+    anchors: [subagent, code_archaeologist, agent_pattern, workflow, community]
+    source_repos: [awesome-claude-agents, awesome-claude-code-subagents]
+    note: "Agent pattern docs and subagent collections from community repos"
+
+  DESIGN_SYSTEMS_INDEX:
+    path: skills/design/design-systems-index/
+    anchors: [design_system, airbnb, airtable, figma, ux, brand_guidelines]
+    source_repos: [awesome-design-md]
+
   DEVOPS_REFERENCE:
     path: reference-docs/
     anchors: [gitops, kubernetes, terraform, iac, devops, infrastructure]
@@ -1724,4 +1772,4 @@ Ver detalhes: `diffs/v00_33_0/`
 - **Repo criado**: 2026-04-08
 - **APEX version**: v00.33.0
 - **DIFFs aplicados**: 104 (86 herdados + 12 OPP-92/103 + 6 OPP-104/109)
-- **Skills registradas**: 2094 (v00.33.0 — legal/physics/marketing/engineering MCP cataloged)
+- **Skills registradas**: 2752 (v00.33.0 — batch2: 17 repos ingested)

@@ -1,0 +1,57 @@
+{
+  "activeLanguage": "English",
+
+  "namePatternDescription": "The following characters cannot be used: \\, /, :, *, ?, \", <, >, |, [ and ].",
+  "none": "(None)",
+
+  "findAsset": {
+    "placeholder": "Search for assets",
+    "moreResults": "and ${results} more results...",
+    "noResults": "No results found."
+  },
+
+  "actions": {
+    "applyChanges": "Apply changes",
+    "applyChangesWithErrors": "Apply changes with errors",
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "close": "Close",
+    "create": "Create",
+    "delete": "Delete",
+    "download": "Download",
+    "duplicate": "Duplicate",
+    "export": "Export",
+    "filter": "Filter",
+    "import": "Import",
+    "new": "New",
+    "open": "Open",
+    "rename": "Rename",
+    "restore": "Restore",
+    "save": "Save",
+    "search": "Search",
+    "select": "Select",
+    "skip": "Skip",
+    "update": "Update",
+    "upload": "Upload",
+
+    "cut": "Cut",
+    "copy": "Copy",
+    "paste": "Paste"
+  },
+
+  "states": { 
+    "disabled": "Disabled",
+    "enabled": "Enabled",
+    "loading": "Loading...",
+    "connecting": "Connecting...",
+    "saving": "Saving..."
+  },
+  
+  "hotkeys": {
+    "control": "Ctrl",
+    "command": "Cmd",
+    "shift": "Shift",
+    "delete": "Del",
+    "return": "Return"
+  }
+}

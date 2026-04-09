@@ -1,0 +1,37 @@
+{
+  "header": {
+    "goToHub": "กลับไปที่ฮับ",
+    "publish": "แพ็คโปรเจค",
+    "publishDisabled": "แพ็คโปรเจค (ใช้งานได้เฉพาะบนโปรแกรม Superpowers เท่านั้นเนื่องจากเหตุผลทางเทคนิค)",
+    "stop": "หยุดการทำงานของโปรเจค",
+    "debug": "ดีบัคโปรเจค (F6)",
+    "run": "สั่งโปรเจคทำงาน (F5)",
+    "notifications": {
+      "enable": "คลิกเพื่อเปิดการแจ้งเตือน",
+      "disable": "คลิกเพื่อปิดการแจ้งเตือน",
+      "new": "มีข้อความใหม่ในโปรเจค \"${projectName}\""
+    }
+  },
+  "treeView": {
+    "openInNewWindow": "เปิดในหน้าต่างใหม่",
+    "newAsset": {
+      "title": "สร้างทรัพยากรใหม่",
+      "prompt": "เลือกประเภทและกรอกชื่อสำหรับทรัพยากร",
+      "placeholder": "ชื่อทรัพยากร (ตัวเลือก)",
+      "openAfterCreation": "เปิดหลังจากสร้าง"
+    },
+    "newFolder": {
+      "title": "สร้างแฟ้มใหม่",
+      "prompt": "กรอกชื่อสำหรับแฟ้มใหม่",
+      "placeholder": "กรอกชื่อ",
+      "initialValue": "แฟ้ม"
+    },
+    "renamePrompt": "กรอกชื่อสำหรับทรัพยากร",
+    "duplicatePrompt": "กรอกชื่อสำหรับทรัพยากรใหม่",
+    "trash": {
+      "title": "ทิ้งลงถังขยะ",
+      "prompt": "คุณแน่ใจหรือที่จะทิ้งสิ่งนี้ลงถังขยะ?",
+      "warnBrokenDependency": "${entryName} ถูกใช้ใน ${dependentEntryNames}."
+    }
+  }
+}

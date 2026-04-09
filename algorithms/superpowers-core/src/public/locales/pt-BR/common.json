@@ -1,0 +1,55 @@
+{
+  "activeLanguage": "Português do Brasil",
+
+  "namePatternDescription": "Os seguintes caracteres não podem ser utilizados: \\, /, :, *, ?, \", <, >, |, [ e ].",
+  "none": "(Nenhum)",
+
+  "findAsset": {
+    "placeholder": "Buscar por assets"
+  },
+
+  "actions": {
+    "applyChanges": "Aplicar alterações",
+    "applyChangesWithErrors": "Aplicar alterações com erros",
+    "cancel": "Cancelar",
+    "clear": "Limpar",
+    "close": "Fechar",
+    "create": "Criar",
+    "delete": "Excluir",
+    "download": "Baixar",
+    "duplicate": "Duplicar",
+    "export": "Exportar",
+    "filter": "Filtrar",
+    "import": "Importar",
+    "new": "Novo",
+    "open": "Abrir",
+    "rename": "Renomear",
+    "restore": "Restaurar",
+    "save": "Salvar",
+    "search": "Pesquisar",
+    "select": "Selecionar",
+    "skip": "Pular",
+    "update": "Atualizar",
+    "upload": "Enviar",
+
+    "cut": "Cortar",
+    "copy": "Copiar",
+    "paste": "Colar"
+  },
+
+  "states": { 
+    "disabled": "Desabilitado",
+    "enabled": "Habilitado",
+    "loading": "Carregando...",
+    "connecting": "Conectando...",
+    "saving": "Salvando..."
+  },
+  
+  "hotkeys": {
+    "control": "Ctrl",
+    "command": "Cmd",
+    "shift": "Shift",
+    "delete": "Del",
+    "return": "Enter"
+  }
+}
