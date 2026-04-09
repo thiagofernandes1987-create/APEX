@@ -1,0 +1,52 @@
+---
+skill_id: community.general.competitive_landscape
+name: "competitive-landscape"
+description: "'Comprehensive frameworks for analyzing competition, identifying differentiation opportunities, and developing winning market positioning strategies.'"
+version: v00.33.0
+status: CANDIDATE
+domain_path: community/general/competitive-landscape
+anchors:
+  - competitive
+  - landscape
+  - comprehensive
+  - frameworks
+  - analyzing
+  - competition
+  - identifying
+  - differentiation
+  - opportunities
+  - developing
+source_repo: antigravity-awesome-skills
+risk: safe
+languages: [dsl]
+llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
+apex_version: v00.33.0
+---
+
+# Competitive Landscape Analysis
+
+Comprehensive frameworks for analyzing competition, identifying differentiation opportunities, and developing winning market positioning strategies.
+
+## Use this skill when
+
+- Working on competitive landscape analysis tasks or workflows
+- Needing guidance, best practices, or checklists for competitive landscape analysis
+
+## Do not use this skill when
+
+- The task is unrelated to competitive landscape analysis
+- You need a different domain or tool outside this scope
+
+## Instructions
+
+- Clarify goals, constraints, and required inputs.
+- Apply relevant best practices and validate outcomes.
+- Provide actionable steps and verification.
+- If detailed examples are required, open `resources/implementation-playbook.md`.
+
+## Resources
+
+- `resources/implementation-playbook.md` for detailed patterns and examples.
+
+## Diff History
+- **v00.33.0**: Ingested from antigravity-awesome-skills community repo

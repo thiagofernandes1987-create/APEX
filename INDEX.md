@@ -1237,6 +1237,329 @@ domain_map:
       cognitive_modes:
         path: skills/apex_internals/cognitive-modes/
         anchors: [EXPRESS, FAST, DEEP, RESEARCH, SCIENTIFIC, FOGGY, CLARIFY, BDS_simplex]
+
+  # ===== COMMUNITY AND ENGINEERING SKILLS (antigravity + ingested) =====
+
+  ENGINEERING_COMMUNITY:
+    path: skills/engineering/
+    anchors: [experience, expert, acceptance, orchestrator, creative, create]
+    total_skills: 451
+    sub_domains:
+      frontend_react:
+        path: skills/engineering/frontend/react/
+        anchors: [experience, expert, angular, modern]
+        skill_count: 27
+      devops_deployment:
+        path: skills/engineering/devops/deployment/
+        anchors: [acceptance, orchestrator, airflow, patterns]
+        skill_count: 18
+      testing:
+        path: skills/engineering/testing/
+        anchors: [creative, create, android, verification]
+        skill_count: 29
+      cloud_azure:
+        path: skills/engineering/cloud/azure/
+        anchors: [agents, build, azure, anomalydetector]
+        skill_count: 43
+      programming_rust:
+        path: skills/engineering/programming/rust/
+        anchors: [trust, metadata, azure, cosmos]
+        skill_count: 18
+  AI_ML:
+    path: skills/ai-ml/
+    anchors: [activecampaign, automation, advanced, evaluation, aegisops, autonomous]
+    total_skills: 284
+    sub_domains:
+      llm:
+        path: skills/ai-ml/llm/
+        anchors: [activecampaign, automation, advanced, evaluation]
+        skill_count: 82
+      agents:
+        path: skills/ai-ml/agents/
+        anchors: [agent, evaluation, framework, manager]
+        skill_count: 45
+      mcp:
+        path: skills/ai-ml/mcp/
+        anchors: [airtable, automation, amplitude, asana]
+        skill_count: 87
+      embeddings:
+        path: skills/ai-ml/embeddings/
+        anchors: [fuzzing, bounty, azure, search]
+        skill_count: 10
+      rag:
+        path: skills/ai-ml/rag/
+        anchors: [appdeploy, deploy, azure, data]
+        skill_count: 41
+  SECURITY:
+    path: skills/security/
+    anchors: [security, audit, active, directory, alpha, vantage]
+    total_skills: 60
+    sub_domains:
+      general:
+        path: skills/security/general/
+        anchors: [security, audit, anti, reversing]
+        skill_count: 52
+      pentesting:
+        path: skills/security/pentesting/
+        anchors: [active, directory, ffuf, fuzzing]
+        skill_count: 4
+      cryptography:
+        path: skills/security/cryptography/
+        anchors: [alpha, vantage, constant, time]
+        skill_count: 3
+      reverse_engineering:
+        path: skills/security/reverse-engineering/
+        anchors: [reverse, engineer]
+        skill_count: 1
+  COMMUNITY_GENERAL:
+    path: skills/community/
+    anchors: [andruia, consultant, skill, test, setup, address]
+    total_skills: 414
+    sub_domains:
+      general:
+        path: skills/community/general/
+        anchors: [andruia, consultant, skill, test]
+        skill_count: 414
+  WEB3_BLOCKCHAIN:
+    path: skills/web3/
+    anchors: [andruia, niche, blockchain, developer, component, expert]
+    total_skills: 14
+    sub_domains:
+      defi:
+        path: skills/web3/defi/
+        anchors: [andruia, niche, component, expert]
+        skill_count: 10
+      blockchain:
+        path: skills/web3/blockchain/
+        anchors: [blockchain, developer, spec, code]
+        skill_count: 2
+      nft:
+        path: skills/web3/nft/
+        anchors: [standards, master]
+        skill_count: 1
+      general:
+        path: skills/web3/general/
+        anchors: [web3, testing]
+        skill_count: 1
+  DESIGN_COMMUNITY:
+    path: skills/design/
+    anchors: [components, content, dialogs, layout, search, status]
+    total_skills: 13
+    sub_domains:
+      ios_hig:
+        path: skills/design/ios-hig/
+        anchors: [components, content, dialogs, layout]
+        skill_count: 10
+      ux:
+        path: skills/design/ux/
+        anchors: [designer, create, comprehensive, design]
+        skill_count: 3
+  DATA_COMMUNITY:
+    path: skills/data/
+    anchors: [claimable, postgres, database, development, migrations, debug]
+    total_skills: 34
+    sub_domains:
+      databases_sql:
+        path: skills/data/databases/sql/
+        anchors: [claimable, postgres, database, development]
+        skill_count: 14
+      databases_cache:
+        path: skills/data/databases/cache/
+        anchors: [debug, buttercup]
+        skill_count: 1
+      erp:
+        path: skills/data/erp/
+        anchors: [odoo, accounting, automated, connector]
+        skill_count: 19
+  MARKETING_COMMUNITY:
+    path: skills/marketing/
+    anchors: [content, creator, marketer, copy, editing, copywriting]
+    total_skills: 47
+    sub_domains:
+      seo:
+        path: skills/marketing/seo/
+        anchors: [content, creator, fixing, metadata]
+        skill_count: 36
+      general:
+        path: skills/marketing/general/
+        anchors: [content, marketer, copy, editing]
+        skill_count: 11
+  HEALTHCARE_COMMUNITY:
+    path: skills/healthcare/
+    anchors: [family, health, medtech, compliance, trend, mental]
+    total_skills: 14
+    sub_domains:
+      general:
+        path: skills/healthcare/general/
+        anchors: [family, health, medtech, compliance]
+        skill_count: 12
+      wellness:
+        path: skills/healthcare/wellness/
+        anchors: [sleep, analyzer, weightloss]
+        skill_count: 2
+  LEGAL_COMMUNITY:
+    path: skills/legal/
+    anchors: [accessibility, compliance, advogado, criminal, especialista, native]
+    total_skills: 12
+    sub_domains:
+      compliance:
+        path: skills/legal/compliance/
+        anchors: [accessibility, compliance, food, safety]
+        skill_count: 5
+      brazil:
+        path: skills/legal/brazil/
+        anchors: [advogado, criminal, especialista]
+        skill_count: 2
+      contracts:
+        path: skills/legal/contracts/
+        anchors: [native, design, data, quality]
+        skill_count: 3
+      general:
+        path: skills/legal/general/
+        anchors: [legal, advisor, centralized, truth]
+        skill_count: 2
+  PRODUCTIVITY_COMMUNITY:
+    path: skills/productivity/
+    anchors: [avoid, writing, beautiful, prose, blog, citation]
+    total_skills: 15
+    sub_domains:
+      writing:
+        path: skills/productivity/writing/
+        anchors: [avoid, writing, beautiful, prose]
+        skill_count: 13
+      general:
+        path: skills/productivity/general/
+        anchors: [concise, planning, office, productivity]
+        skill_count: 2
+  SALES_COMMUNITY:
+    path: skills/sales/
+    anchors: [hubspot, integration, linkedin, automating, sales, automator]
+    total_skills: 5
+    sub_domains:
+      crm:
+        path: skills/sales/crm/
+        anchors: [hubspot, integration]
+        skill_count: 1
+      general:
+        path: skills/sales/general/
+        anchors: [linkedin, automating, sales, automator]
+        skill_count: 4
+  BUSINESS:
+    path: skills/business/
+    anchors: [business, analyst, market, sizing, startup, financial]
+    total_skills: 9
+    sub_domains:
+      analysis:
+        path: skills/business/analysis/
+        anchors: [business, analyst, startup]
+        skill_count: 4
+      startup:
+        path: skills/business/startup/
+        anchors: [market, sizing, startup, analyst]
+        skill_count: 5
+  INTEGRATIONS_COMMUNITY:
+    path: skills/integrations/
+    anchors: [node, configuration, validation, expert, workflow, patterns]
+    total_skills: 6
+    sub_domains:
+      n8n:
+        path: skills/integrations/n8n/
+        anchors: [node, configuration, validation, expert]
+        skill_count: 3
+      tavily:
+        path: skills/integrations/tavily/
+        anchors: [tavily, search]
+        skill_count: 1
+      slack:
+        path: skills/integrations/slack/
+        anchors: [layer, governance, slack, creator]
+        skill_count: 2
+  APEX_INTERNALS_COMMUNITY:
+    path: skills/apex_internals/
+    anchors: [bdistill, behavioral, knowledge, context, guardian]
+    total_skills: 3
+    sub_domains:
+      knowledge:
+        path: skills/apex_internals/knowledge/
+        anchors: [bdistill, behavioral, knowledge]
+        skill_count: 2
+      cognitive:
+        path: skills/apex_internals/cognitive/
+        anchors: [context, guardian]
+        skill_count: 1
+  KNOWLEDGE_MGMT_COMMUNITY:
+    path: skills/knowledge-management/
+    anchors: [wiki, changelog, onboarding, researcher, vitepress]
+    total_skills: 4
+    sub_domains:
+      wiki:
+        path: skills/knowledge-management/wiki/
+        anchors: [wiki, changelog, onboarding, researcher]
+        skill_count: 4
+  PRODUCT_MGMT_COMMUNITY:
+    path: skills/product-management/
+    anchors: [product, manager]
+    total_skills: 2
+    sub_domains:
+      general:
+        path: skills/product-management/general/
+        anchors: [product, manager]
+        skill_count: 2
+  FINANCE_COMMUNITY:
+    path: skills/finance/
+    anchors: [churn, prevention, leiloeiro, risco, pakistan, payments]
+    total_skills: 4
+    sub_domains:
+      payments:
+        path: skills/finance/payments/
+        anchors: [churn, prevention, pakistan, payments]
+        skill_count: 3
+      general:
+        path: skills/finance/general/
+        anchors: [leiloeiro, risco]
+        skill_count: 1
+
+  INTEGRATIONS_CATALOG:
+    path: integrations/
+    anchors: [mcp, plugin, connector, integration, external_service]
+    sub_domains:
+      mcp_servers:
+        path: integrations/mcp-servers/
+        anchors: [mcp_server, memory, filesystem, github, sequential_thinking]
+        total: 166
+      plugins:
+        path: integrations/plugins/
+        anchors: [plugin, marketplace, connector, third_party]
+        total: 135
+      external_plugins:
+        path: integrations/external-plugins/
+        anchors: [asana, slack, github, notion, salesforce, stripe, zoom]
+        total: 37
+      claude_commands:
+        path: integrations/claude-commands/
+        anchors: [slash_command, workflow_trigger, automation]
+        total: 21
+
+  ALGORITHMS_AND_SDK:
+    path: algorithms/
+    anchors: [sdk, api, notebook, tutorial, cli, algorithm]
+    sub_domains:
+      claude_agent_sdk:
+        path: algorithms/claude-agent-sdk/
+        anchors: [agent_sdk, multi_agent, tool_use, agent_loop]
+      claude_code_cli:
+        path: algorithms/claude-code-cli/
+        anchors: [claude_code, cli, hooks, mcp_integration, agent_mode]
+      notebooks:
+        path: algorithms/notebooks/
+        anchors: [jupyter, notebook, example, api_usage, rag, evals]
+        total: 80
+      claude_constitution:
+        path: algorithms/claude-constitution/
+        anchors: [constitution, model_spec, guidelines, values]
+      attribution_graphs:
+        path: algorithms/attribution-graphs/
+        anchors: [interpretability, attribution, mechanistic, visualization]
 ```
 
 ---
@@ -1261,4 +1584,4 @@ Ver detalhes: `diffs/v00_33_0/`
 - **Repo criado**: 2026-04-08
 - **APEX version**: v00.33.0
 - **DIFFs aplicados**: 104 (86 herdados + 12 OPP-92/103 + 6 OPP-104/109)
-- **Skills registradas**: 206 (v00.33.0 + ingested from 5 repos)
+- **Skills registradas**: 1656 (v00.33.0)

@@ -1,0 +1,80 @@
+---
+skill_id: community.general.address_github_comments
+name: "address-github-comments"
+description: "'Use when you need to address review or issue comments on an open GitHub Pull Request using the gh CLI.'"
+version: v00.33.0
+status: CANDIDATE
+domain_path: community/general/address-github-comments
+anchors:
+  - address
+  - github
+  - comments
+  - need
+  - review
+  - issue
+  - open
+  - pull
+  - request
+source_repo: antigravity-awesome-skills
+risk: safe
+languages: [dsl]
+llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
+apex_version: v00.33.0
+---
+
+# Address GitHub Comments
+
+## Overview
+
+Efficiently address PR review comments or issue feedback using the GitHub CLI (`gh`). This skill ensures all feedback is addressed systematically.
+
+## Prerequisites
+
+Ensure `gh` is authenticated.
+
+```bash
+gh auth status
+```
+
+If not logged in, run `gh auth login`.
+
+## Workflow
+
+### 1. Inspect Comments
+
+Fetch the comments for the current branch's PR.
+
+```bash
+gh pr view --comments
+```
+
+Or use a custom script if available to list threads.
+
+### 2. Categorize and Plan
+
+- List the comments and review threads.
+- Propose a fix for each.
+- **Wait for user confirmation** on which comments to address first if there are many.
+
+### 3. Apply Fixes
+
+Apply the code changes for the selected comments.
+
+### 4. Respond to Comments
+
+Once fixed, respond to the threads as resolved.
+
+```bash
+gh pr comment <PR_NUMBER> --body "Addressed in latest commit."
+```
+
+## Common Mistakes
+
+- **Applying fixes without understanding context**: Always read the surrounding code of a comment.
+- **Not verifying auth**: Check `gh auth status` before starting.
+
+## When to Use
+This skill is applicable to execute the workflow or actions described in the overview.
+
+## Diff History
+- **v00.33.0**: Ingested from antigravity-awesome-skills community repo
