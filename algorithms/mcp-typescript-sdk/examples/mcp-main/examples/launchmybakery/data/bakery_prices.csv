@@ -1,0 +1,51 @@
+store_name,product_type,price,region,is_organic
+Erewhon Market,Sourdough Loaf,18.5,Los Angeles Metro,True
+Tartine Sycamore,Sourdough Loaf,12.12,Los Angeles Metro,False
+Lodge Bread Co,Sourdough Loaf,12.77,Los Angeles Metro,False
+Bread Lounge,Sourdough Loaf,10.13,Los Angeles Metro,True
+Clark Street Bread,Sourdough Loaf,10.29,Los Angeles Metro,True
+Gjusta,Sourdough Loaf,11.83,Los Angeles Metro,False
+Superba Food + Bread,Sourdough Loaf,9.55,Los Angeles Metro,False
+Republique,Sourdough Loaf,9.67,Los Angeles Metro,True
+Bub and Grandma's,Sourdough Loaf,8.66,Los Angeles Metro,True
+Seed Bakery,Sourdough Loaf,13.06,Los Angeles Metro,False
+Frogtown's Gourmet,Sourdough Loaf,10.17,Los Angeles Metro,False
+Milo & Olive,Sourdough Loaf,9.73,Los Angeles Metro,True
+Roan Mills,Sourdough Loaf,9.71,Los Angeles Metro,False
+Flour Power,Baguette,8.09,SF Bay Area,False
+Whisk & Paddle,Croissant,6.92,SF Bay Area,False
+Presidio Pastries,Baguette,4.44,SF Bay Area,False
+Superba Food + Bread,Baguette,3.69,Los Angeles Metro,False
+Haight Ashbury Ovens,Baguette,6.16,SF Bay Area,False
+Tartine Sycamore,Croissant,5.23,Los Angeles Metro,False
+Rise & Shine Bakery,Baguette,7.25,Los Angeles Metro,True
+The Rolling Pin,Sourdough Loaf,12.09,San Diego,True
+Flour Power,Baguette,8.42,San Diego,True
+Oven Fresh Goods,Multigrain Loaf,10.8,San Diego,True
+Frogtown's Gourmet,Croissant,3.87,Los Angeles Metro,True
+Presidio Pastries,Baguette,3.53,SF Bay Area,False
+Balboa Park Bakery,Baguette,7.48,San Diego,False
+La Jolla Loaves,Croissant,3.09,San Diego,True
+Coronado Crumb Co.,Croissant,3.23,San Diego,False
+The Daily Crumb,Sourdough Loaf,12.3,San Diego,True
+Milo & Olive,Baguette,6.56,Los Angeles Metro,True
+Yeast of Eden,Multigrain Loaf,12.22,San Diego,True
+Butter & Salt,Multigrain Loaf,7.62,SF Bay Area,True
+The Daily Crumb,Multigrain Loaf,10.21,San Diego,False
+Silicon Valley Sourdough,Croissant,5.71,SF Bay Area,True
+Frogtown's Gourmet,Croissant,3.29,Los Angeles Metro,True
+Butter & Salt,Sourdough Loaf,11.86,SF Bay Area,False
+Gaslamp Quarter Crust,Baguette,4.04,San Diego,False
+Balboa Park Bakery,Croissant,4.6,San Diego,False
+Yeast of Eden,Multigrain Loaf,10.24,San Diego,False
+Oven Fresh Goods,Croissant,3.3,SF Bay Area,False
+Oven Fresh Goods,Baguette,8.23,San Diego,False
+The Daily Crumb,Multigrain Loaf,10.41,SF Bay Area,False
+Butter & Salt,Baguette,3.86,SF Bay Area,True
+Whisk & Paddle,Sourdough Loaf,11.71,SF Bay Area,True
+Flour Power,Multigrain Loaf,10.0,SF Bay Area,False
+Rise & Shine Bakery,Croissant,6.99,SF Bay Area,True
+Lodge Bread Co,Croissant,3.32,Los Angeles Metro,False
+The Daily Crumb,Multigrain Loaf,8.31,SF Bay Area,False
+Coronado Crumb Co.,Sourdough Loaf,8.36,San Diego,True
+Presidio Pastries,Croissant,6.53,SF Bay Area,False

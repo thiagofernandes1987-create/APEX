@@ -1,0 +1,72 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Azure.Mcp.Core.Services.Azure;
+using Azure.Mcp.Tools.Storage.Models;
+using Microsoft.Mcp.Core.Options;
+
+namespace Azure.Mcp.Tools.Storage.Services;
+
+public interface IStorageService
+{
+    Task<ResourceQueryResults<StorageAccountInfo>> GetAccountDetails(
+        string? account,
+        string subscription,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default);
+
+    Task<StorageAccountResult> CreateStorageAccount(
+        string account,
+        string resourceGroup,
+        string location,
+        string subscription,
+        string? sku = null,
+        string? accessTier = null,
+        bool? enableHierarchicalNamespace = null,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default);
+
+    Task<List<BlobInfo>> GetBlobDetails(
+        string account,
+        string container,
+        string? blob,
+        string subscription,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default);
+
+    Task<List<ContainerInfo>> GetContainerDetails(
+        string account,
+        string? container,
+        string subscription,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default);
+
+    Task<ContainerInfo> CreateContainer(
+        string account,
+        string container,
+        string subscription,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default);
+
+    Task<BlobUploadResult> UploadBlob(
+        string account,
+        string container,
+        string blob,
+        string localFilePath,
+        string subscription,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default);
+
+    Task<List<string>> ListTables(
+        string account,
+        string subscription,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default);
+}

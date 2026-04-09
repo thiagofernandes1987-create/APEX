@@ -1,0 +1,937 @@
+week_start_date,store_location,product_type,quantity_sold,total_revenue
+2023-11-27,Playa Vista,Sourdough Loaf,621,6986.25
+2023-11-27,Playa Vista,Croissant,1241,5584.5
+2023-11-27,Playa Vista,Baguette,413,2065.0
+2023-11-27,Silver Lake,Sourdough Loaf,151,1698.75
+2023-11-27,Silver Lake,Croissant,508,2286.0
+2023-11-27,Silver Lake,Baguette,174,870.0
+2023-11-27,Downtown LA,Sourdough Loaf,324,3645.0
+2023-11-27,Downtown LA,Croissant,593,2668.5
+2023-11-27,Downtown LA,Baguette,201,1005.0
+2023-12-04,Playa Vista,Sourdough Loaf,565,6356.25
+2023-12-04,Playa Vista,Croissant,1117,5026.5
+2023-12-04,Playa Vista,Baguette,515,2575.0
+2023-12-04,Silver Lake,Sourdough Loaf,241,2711.25
+2023-12-04,Silver Lake,Croissant,457,2056.5
+2023-12-04,Silver Lake,Baguette,147,735.0
+2023-12-04,Downtown LA,Sourdough Loaf,308,3465.0
+2023-12-04,Downtown LA,Croissant,613,2758.5
+2023-12-04,Downtown LA,Baguette,168,840.0
+2023-12-11,Playa Vista,Sourdough Loaf,559,6288.75
+2023-12-11,Playa Vista,Croissant,1206,5427.0
+2023-12-11,Playa Vista,Baguette,405,2025.0
+2023-12-11,Silver Lake,Sourdough Loaf,214,2407.5
+2023-12-11,Silver Lake,Croissant,464,2088.0
+2023-12-11,Silver Lake,Baguette,175,875.0
+2023-12-11,Downtown LA,Sourdough Loaf,260,2925.0
+2023-12-11,Downtown LA,Croissant,607,2731.5
+2023-12-11,Downtown LA,Baguette,221,1105.0
+2023-12-18,Playa Vista,Sourdough Loaf,504,5670.0
+2023-12-18,Playa Vista,Croissant,1112,5004.0
+2023-12-18,Playa Vista,Baguette,446,2230.0
+2023-12-18,Silver Lake,Sourdough Loaf,217,2441.25
+2023-12-18,Silver Lake,Croissant,492,2214.0
+2023-12-18,Silver Lake,Baguette,138,690.0
+2023-12-18,Downtown LA,Sourdough Loaf,240,2700.0
+2023-12-18,Downtown LA,Croissant,509,2290.5
+2023-12-18,Downtown LA,Baguette,185,925.0
+2023-12-25,Playa Vista,Sourdough Loaf,515,5793.75
+2023-12-25,Playa Vista,Croissant,964,4338.0
+2023-12-25,Playa Vista,Baguette,474,2370.0
+2023-12-25,Silver Lake,Sourdough Loaf,280,3150.0
+2023-12-25,Silver Lake,Croissant,389,1750.5
+2023-12-25,Silver Lake,Baguette,180,900.0
+2023-12-25,Downtown LA,Sourdough Loaf,252,2835.0
+2023-12-25,Downtown LA,Croissant,512,2304.0
+2023-12-25,Downtown LA,Baguette,199,995.0
+2024-01-01,Playa Vista,Sourdough Loaf,399,4488.75
+2024-01-01,Playa Vista,Croissant,899,4045.5
+2024-01-01,Playa Vista,Baguette,358,1790.0
+2024-01-01,Silver Lake,Sourdough Loaf,167,1878.75
+2024-01-01,Silver Lake,Croissant,297,1336.5
+2024-01-01,Silver Lake,Baguette,141,705.0
+2024-01-01,Downtown LA,Sourdough Loaf,219,2463.75
+2024-01-01,Downtown LA,Croissant,430,1935.0
+2024-01-01,Downtown LA,Baguette,139,695.0
+2024-01-08,Playa Vista,Sourdough Loaf,439,4938.75
+2024-01-08,Playa Vista,Croissant,949,4270.5
+2024-01-08,Playa Vista,Baguette,332,1660.0
+2024-01-08,Silver Lake,Sourdough Loaf,194,2182.5
+2024-01-08,Silver Lake,Croissant,341,1534.5
+2024-01-08,Silver Lake,Baguette,152,760.0
+2024-01-08,Downtown LA,Sourdough Loaf,194,2182.5
+2024-01-08,Downtown LA,Croissant,366,1647.0
+2024-01-08,Downtown LA,Baguette,174,870.0
+2024-01-15,Playa Vista,Sourdough Loaf,396,4455.0
+2024-01-15,Playa Vista,Croissant,852,3834.0
+2024-01-15,Playa Vista,Baguette,348,1740.0
+2024-01-15,Silver Lake,Sourdough Loaf,210,2362.5
+2024-01-15,Silver Lake,Croissant,411,1849.5
+2024-01-15,Silver Lake,Baguette,131,655.0
+2024-01-15,Downtown LA,Sourdough Loaf,189,2126.25
+2024-01-15,Downtown LA,Croissant,405,1822.5
+2024-01-15,Downtown LA,Baguette,169,845.0
+2024-01-22,Playa Vista,Sourdough Loaf,421,4736.25
+2024-01-22,Playa Vista,Croissant,719,3235.5
+2024-01-22,Playa Vista,Baguette,355,1775.0
+2024-01-22,Silver Lake,Sourdough Loaf,182,2047.5
+2024-01-22,Silver Lake,Croissant,437,1966.5
+2024-01-22,Silver Lake,Baguette,155,775.0
+2024-01-22,Downtown LA,Sourdough Loaf,222,2497.5
+2024-01-22,Downtown LA,Croissant,360,1620.0
+2024-01-22,Downtown LA,Baguette,163,815.0
+2024-01-29,Playa Vista,Sourdough Loaf,397,4466.25
+2024-01-29,Playa Vista,Croissant,880,3960.0
+2024-01-29,Playa Vista,Baguette,275,1375.0
+2024-01-29,Silver Lake,Sourdough Loaf,189,2126.25
+2024-01-29,Silver Lake,Croissant,385,1732.5
+2024-01-29,Silver Lake,Baguette,213,1065.0
+2024-01-29,Downtown LA,Sourdough Loaf,213,2396.25
+2024-01-29,Downtown LA,Croissant,355,1597.5
+2024-01-29,Downtown LA,Baguette,171,855.0
+2024-02-05,Playa Vista,Sourdough Loaf,418,4702.5
+2024-02-05,Playa Vista,Croissant,738,3321.0
+2024-02-05,Playa Vista,Baguette,337,1685.0
+2024-02-05,Silver Lake,Sourdough Loaf,231,2598.75
+2024-02-05,Silver Lake,Croissant,397,1786.5
+2024-02-05,Silver Lake,Baguette,134,670.0
+2024-02-05,Downtown LA,Sourdough Loaf,211,2373.75
+2024-02-05,Downtown LA,Croissant,329,1480.5
+2024-02-05,Downtown LA,Baguette,181,905.0
+2024-02-12,Playa Vista,Sourdough Loaf,313,3521.25
+2024-02-12,Playa Vista,Croissant,763,3433.5
+2024-02-12,Playa Vista,Baguette,302,1510.0
+2024-02-12,Silver Lake,Sourdough Loaf,242,2722.5
+2024-02-12,Silver Lake,Croissant,335,1507.5
+2024-02-12,Silver Lake,Baguette,164,820.0
+2024-02-12,Downtown LA,Sourdough Loaf,157,1766.25
+2024-02-12,Downtown LA,Croissant,331,1489.5
+2024-02-12,Downtown LA,Baguette,132,660.0
+2024-02-19,Playa Vista,Sourdough Loaf,375,4218.75
+2024-02-19,Playa Vista,Croissant,859,3865.5
+2024-02-19,Playa Vista,Baguette,323,1615.0
+2024-02-19,Silver Lake,Sourdough Loaf,217,2441.25
+2024-02-19,Silver Lake,Croissant,364,1638.0
+2024-02-19,Silver Lake,Baguette,172,860.0
+2024-02-19,Downtown LA,Sourdough Loaf,210,2362.5
+2024-02-19,Downtown LA,Croissant,374,1683.0
+2024-02-19,Downtown LA,Baguette,148,740.0
+2024-02-26,Playa Vista,Sourdough Loaf,481,5411.25
+2024-02-26,Playa Vista,Croissant,788,3546.0
+2024-02-26,Playa Vista,Baguette,333,1665.0
+2024-02-26,Silver Lake,Sourdough Loaf,206,2317.5
+2024-02-26,Silver Lake,Croissant,359,1615.5
+2024-02-26,Silver Lake,Baguette,124,620.0
+2024-02-26,Downtown LA,Sourdough Loaf,194,2182.5
+2024-02-26,Downtown LA,Croissant,421,1894.5
+2024-02-26,Downtown LA,Baguette,177,885.0
+2024-03-04,Playa Vista,Sourdough Loaf,511,5748.75
+2024-03-04,Playa Vista,Croissant,773,3478.5
+2024-03-04,Playa Vista,Baguette,323,1615.0
+2024-03-04,Silver Lake,Sourdough Loaf,233,2621.25
+2024-03-04,Silver Lake,Croissant,398,1791.0
+2024-03-04,Silver Lake,Baguette,196,980.0
+2024-03-04,Downtown LA,Sourdough Loaf,240,2700.0
+2024-03-04,Downtown LA,Croissant,480,2160.0
+2024-03-04,Downtown LA,Baguette,157,785.0
+2024-03-11,Playa Vista,Sourdough Loaf,345,3881.25
+2024-03-11,Playa Vista,Croissant,744,3348.0
+2024-03-11,Playa Vista,Baguette,314,1570.0
+2024-03-11,Silver Lake,Sourdough Loaf,203,2283.75
+2024-03-11,Silver Lake,Croissant,375,1687.5
+2024-03-11,Silver Lake,Baguette,177,885.0
+2024-03-11,Downtown LA,Sourdough Loaf,174,1957.5
+2024-03-11,Downtown LA,Croissant,444,1998.0
+2024-03-11,Downtown LA,Baguette,145,725.0
+2024-03-18,Playa Vista,Sourdough Loaf,334,3757.5
+2024-03-18,Playa Vista,Croissant,776,3492.0
+2024-03-18,Playa Vista,Baguette,325,1625.0
+2024-03-18,Silver Lake,Sourdough Loaf,192,2160.0
+2024-03-18,Silver Lake,Croissant,426,1917.0
+2024-03-18,Silver Lake,Baguette,174,870.0
+2024-03-18,Downtown LA,Sourdough Loaf,194,2182.5
+2024-03-18,Downtown LA,Croissant,395,1777.5
+2024-03-18,Downtown LA,Baguette,167,835.0
+2024-03-25,Playa Vista,Sourdough Loaf,461,5186.25
+2024-03-25,Playa Vista,Croissant,873,3928.5
+2024-03-25,Playa Vista,Baguette,348,1740.0
+2024-03-25,Silver Lake,Sourdough Loaf,258,2902.5
+2024-03-25,Silver Lake,Croissant,502,2259.0
+2024-03-25,Silver Lake,Baguette,156,780.0
+2024-03-25,Downtown LA,Sourdough Loaf,162,1822.5
+2024-03-25,Downtown LA,Croissant,440,1980.0
+2024-03-25,Downtown LA,Baguette,179,895.0
+2024-04-01,Playa Vista,Sourdough Loaf,440,4950.0
+2024-04-01,Playa Vista,Croissant,816,3672.0
+2024-04-01,Playa Vista,Baguette,376,1880.0
+2024-04-01,Silver Lake,Sourdough Loaf,202,2272.5
+2024-04-01,Silver Lake,Croissant,468,2106.0
+2024-04-01,Silver Lake,Baguette,109,545.0
+2024-04-01,Downtown LA,Sourdough Loaf,216,2430.0
+2024-04-01,Downtown LA,Croissant,396,1782.0
+2024-04-01,Downtown LA,Baguette,158,790.0
+2024-04-08,Playa Vista,Sourdough Loaf,412,4635.0
+2024-04-08,Playa Vista,Croissant,864,3888.0
+2024-04-08,Playa Vista,Baguette,302,1510.0
+2024-04-08,Silver Lake,Sourdough Loaf,269,3026.25
+2024-04-08,Silver Lake,Croissant,484,2178.0
+2024-04-08,Silver Lake,Baguette,138,690.0
+2024-04-08,Downtown LA,Sourdough Loaf,219,2463.75
+2024-04-08,Downtown LA,Croissant,390,1755.0
+2024-04-08,Downtown LA,Baguette,151,755.0
+2024-04-15,Playa Vista,Sourdough Loaf,402,4522.5
+2024-04-15,Playa Vista,Croissant,786,3537.0
+2024-04-15,Playa Vista,Baguette,320,1600.0
+2024-04-15,Silver Lake,Sourdough Loaf,253,2846.25
+2024-04-15,Silver Lake,Croissant,494,2223.0
+2024-04-15,Silver Lake,Baguette,170,850.0
+2024-04-15,Downtown LA,Sourdough Loaf,222,2497.5
+2024-04-15,Downtown LA,Croissant,409,1840.5
+2024-04-15,Downtown LA,Baguette,140,700.0
+2024-04-22,Playa Vista,Sourdough Loaf,305,3431.25
+2024-04-22,Playa Vista,Croissant,851,3829.5
+2024-04-22,Playa Vista,Baguette,349,1745.0
+2024-04-22,Silver Lake,Sourdough Loaf,193,2171.25
+2024-04-22,Silver Lake,Croissant,524,2358.0
+2024-04-22,Silver Lake,Baguette,187,935.0
+2024-04-22,Downtown LA,Sourdough Loaf,212,2385.0
+2024-04-22,Downtown LA,Croissant,401,1804.5
+2024-04-22,Downtown LA,Baguette,150,750.0
+2024-04-29,Playa Vista,Sourdough Loaf,408,4590.0
+2024-04-29,Playa Vista,Croissant,849,3820.5
+2024-04-29,Playa Vista,Baguette,301,1505.0
+2024-04-29,Silver Lake,Sourdough Loaf,235,2643.75
+2024-04-29,Silver Lake,Croissant,432,1944.0
+2024-04-29,Silver Lake,Baguette,178,890.0
+2024-04-29,Downtown LA,Sourdough Loaf,213,2396.25
+2024-04-29,Downtown LA,Croissant,359,1615.5
+2024-04-29,Downtown LA,Baguette,138,690.0
+2024-05-06,Playa Vista,Sourdough Loaf,472,5310.0
+2024-05-06,Playa Vista,Croissant,848,3816.0
+2024-05-06,Playa Vista,Baguette,314,1570.0
+2024-05-06,Silver Lake,Sourdough Loaf,267,3003.75
+2024-05-06,Silver Lake,Croissant,551,2479.5
+2024-05-06,Silver Lake,Baguette,226,1130.0
+2024-05-06,Downtown LA,Sourdough Loaf,217,2441.25
+2024-05-06,Downtown LA,Croissant,409,1840.5
+2024-05-06,Downtown LA,Baguette,133,665.0
+2024-05-13,Playa Vista,Sourdough Loaf,337,3791.25
+2024-05-13,Playa Vista,Croissant,931,4189.5
+2024-05-13,Playa Vista,Baguette,348,1740.0
+2024-05-13,Silver Lake,Sourdough Loaf,227,2553.75
+2024-05-13,Silver Lake,Croissant,617,2776.5
+2024-05-13,Silver Lake,Baguette,215,1075.0
+2024-05-13,Downtown LA,Sourdough Loaf,173,1946.25
+2024-05-13,Downtown LA,Croissant,408,1836.0
+2024-05-13,Downtown LA,Baguette,143,715.0
+2024-05-20,Playa Vista,Sourdough Loaf,397,4466.25
+2024-05-20,Playa Vista,Croissant,854,3843.0
+2024-05-20,Playa Vista,Baguette,334,1670.0
+2024-05-20,Silver Lake,Sourdough Loaf,226,2542.5
+2024-05-20,Silver Lake,Croissant,443,1993.5
+2024-05-20,Silver Lake,Baguette,208,1040.0
+2024-05-20,Downtown LA,Sourdough Loaf,198,2227.5
+2024-05-20,Downtown LA,Croissant,352,1584.0
+2024-05-20,Downtown LA,Baguette,172,860.0
+2024-05-27,Playa Vista,Sourdough Loaf,452,5085.0
+2024-05-27,Playa Vista,Croissant,872,3924.0
+2024-05-27,Playa Vista,Baguette,309,1545.0
+2024-05-27,Silver Lake,Sourdough Loaf,191,2148.75
+2024-05-27,Silver Lake,Croissant,492,2214.0
+2024-05-27,Silver Lake,Baguette,157,785.0
+2024-05-27,Downtown LA,Sourdough Loaf,192,2160.0
+2024-05-27,Downtown LA,Croissant,416,1872.0
+2024-05-27,Downtown LA,Baguette,160,800.0
+2024-06-03,Playa Vista,Sourdough Loaf,436,4905.0
+2024-06-03,Playa Vista,Croissant,909,4090.5
+2024-06-03,Playa Vista,Baguette,346,1730.0
+2024-06-03,Silver Lake,Sourdough Loaf,293,3296.25
+2024-06-03,Silver Lake,Croissant,572,2574.0
+2024-06-03,Silver Lake,Baguette,232,1160.0
+2024-06-03,Downtown LA,Sourdough Loaf,202,2272.5
+2024-06-03,Downtown LA,Croissant,351,1579.5
+2024-06-03,Downtown LA,Baguette,146,730.0
+2024-06-10,Playa Vista,Sourdough Loaf,378,4252.5
+2024-06-10,Playa Vista,Croissant,838,3771.0
+2024-06-10,Playa Vista,Baguette,349,1745.0
+2024-06-10,Silver Lake,Sourdough Loaf,205,2306.25
+2024-06-10,Silver Lake,Croissant,633,2848.5
+2024-06-10,Silver Lake,Baguette,228,1140.0
+2024-06-10,Downtown LA,Sourdough Loaf,169,1901.25
+2024-06-10,Downtown LA,Croissant,411,1849.5
+2024-06-10,Downtown LA,Baguette,148,740.0
+2024-06-17,Playa Vista,Sourdough Loaf,392,4410.0
+2024-06-17,Playa Vista,Croissant,865,3892.5
+2024-06-17,Playa Vista,Baguette,287,1435.0
+2024-06-17,Silver Lake,Sourdough Loaf,257,2891.25
+2024-06-17,Silver Lake,Croissant,539,2425.5
+2024-06-17,Silver Lake,Baguette,205,1025.0
+2024-06-17,Downtown LA,Sourdough Loaf,195,2193.75
+2024-06-17,Downtown LA,Croissant,319,1435.5
+2024-06-17,Downtown LA,Baguette,139,695.0
+2024-06-24,Playa Vista,Sourdough Loaf,445,5006.25
+2024-06-24,Playa Vista,Croissant,757,3406.5
+2024-06-24,Playa Vista,Baguette,335,1675.0
+2024-06-24,Silver Lake,Sourdough Loaf,249,2801.25
+2024-06-24,Silver Lake,Croissant,639,2875.5
+2024-06-24,Silver Lake,Baguette,199,995.0
+2024-06-24,Downtown LA,Sourdough Loaf,198,2227.5
+2024-06-24,Downtown LA,Croissant,343,1543.5
+2024-06-24,Downtown LA,Baguette,151,755.0
+2024-07-01,Playa Vista,Sourdough Loaf,410,4612.5
+2024-07-01,Playa Vista,Croissant,681,3064.5
+2024-07-01,Playa Vista,Baguette,361,1805.0
+2024-07-01,Silver Lake,Sourdough Loaf,335,3768.75
+2024-07-01,Silver Lake,Croissant,394,1773.0
+2024-07-01,Silver Lake,Baguette,216,1080.0
+2024-07-01,Downtown LA,Sourdough Loaf,201,2261.25
+2024-07-01,Downtown LA,Croissant,476,2142.0
+2024-07-01,Downtown LA,Baguette,140,700.0
+2024-07-08,Playa Vista,Sourdough Loaf,416,4680.0
+2024-07-08,Playa Vista,Croissant,864,3888.0
+2024-07-08,Playa Vista,Baguette,397,1985.0
+2024-07-08,Silver Lake,Sourdough Loaf,274,3082.5
+2024-07-08,Silver Lake,Croissant,564,2538.0
+2024-07-08,Silver Lake,Baguette,277,1385.0
+2024-07-08,Downtown LA,Sourdough Loaf,203,2283.75
+2024-07-08,Downtown LA,Croissant,411,1849.5
+2024-07-08,Downtown LA,Baguette,163,815.0
+2024-07-15,Playa Vista,Sourdough Loaf,505,5681.25
+2024-07-15,Playa Vista,Croissant,752,3384.0
+2024-07-15,Playa Vista,Baguette,348,1740.0
+2024-07-15,Silver Lake,Sourdough Loaf,247,2778.75
+2024-07-15,Silver Lake,Croissant,475,2137.5
+2024-07-15,Silver Lake,Baguette,240,1200.0
+2024-07-15,Downtown LA,Sourdough Loaf,204,2295.0
+2024-07-15,Downtown LA,Croissant,374,1683.0
+2024-07-15,Downtown LA,Baguette,139,695.0
+2024-07-22,Playa Vista,Sourdough Loaf,412,4635.0
+2024-07-22,Playa Vista,Croissant,760,3420.0
+2024-07-22,Playa Vista,Baguette,316,1580.0
+2024-07-22,Silver Lake,Sourdough Loaf,265,2981.25
+2024-07-22,Silver Lake,Croissant,547,2461.5
+2024-07-22,Silver Lake,Baguette,243,1215.0
+2024-07-22,Downtown LA,Sourdough Loaf,201,2261.25
+2024-07-22,Downtown LA,Croissant,475,2137.5
+2024-07-22,Downtown LA,Baguette,142,710.0
+2024-07-29,Playa Vista,Sourdough Loaf,363,4083.75
+2024-07-29,Playa Vista,Croissant,803,3613.5
+2024-07-29,Playa Vista,Baguette,328,1640.0
+2024-07-29,Silver Lake,Sourdough Loaf,292,3285.0
+2024-07-29,Silver Lake,Croissant,562,2529.0
+2024-07-29,Silver Lake,Baguette,248,1240.0
+2024-07-29,Downtown LA,Sourdough Loaf,178,2002.5
+2024-07-29,Downtown LA,Croissant,420,1890.0
+2024-07-29,Downtown LA,Baguette,163,815.0
+2024-08-05,Playa Vista,Sourdough Loaf,365,4106.25
+2024-08-05,Playa Vista,Croissant,806,3627.0
+2024-08-05,Playa Vista,Baguette,263,1315.0
+2024-08-05,Silver Lake,Sourdough Loaf,204,2295.0
+2024-08-05,Silver Lake,Croissant,470,2115.0
+2024-08-05,Silver Lake,Baguette,171,855.0
+2024-08-05,Downtown LA,Sourdough Loaf,154,1732.5
+2024-08-05,Downtown LA,Croissant,344,1548.0
+2024-08-05,Downtown LA,Baguette,105,525.0
+2024-08-12,Playa Vista,Sourdough Loaf,354,3982.5
+2024-08-12,Playa Vista,Croissant,740,3330.0
+2024-08-12,Playa Vista,Baguette,257,1285.0
+2024-08-12,Silver Lake,Sourdough Loaf,256,2880.0
+2024-08-12,Silver Lake,Croissant,469,2110.5
+2024-08-12,Silver Lake,Baguette,169,845.0
+2024-08-12,Downtown LA,Sourdough Loaf,149,1676.25
+2024-08-12,Downtown LA,Croissant,305,1372.5
+2024-08-12,Downtown LA,Baguette,149,745.0
+2024-08-19,Playa Vista,Sourdough Loaf,362,4072.5
+2024-08-19,Playa Vista,Croissant,661,2974.5
+2024-08-19,Playa Vista,Baguette,270,1350.0
+2024-08-19,Silver Lake,Sourdough Loaf,293,3296.25
+2024-08-19,Silver Lake,Croissant,613,2758.5
+2024-08-19,Silver Lake,Baguette,195,975.0
+2024-08-19,Downtown LA,Sourdough Loaf,155,1743.75
+2024-08-19,Downtown LA,Croissant,322,1449.0
+2024-08-19,Downtown LA,Baguette,117,585.0
+2024-08-26,Playa Vista,Sourdough Loaf,318,3577.5
+2024-08-26,Playa Vista,Croissant,719,3235.5
+2024-08-26,Playa Vista,Baguette,326,1630.0
+2024-08-26,Silver Lake,Sourdough Loaf,272,3060.0
+2024-08-26,Silver Lake,Croissant,616,2772.0
+2024-08-26,Silver Lake,Baguette,209,1045.0
+2024-08-26,Downtown LA,Sourdough Loaf,178,2002.5
+2024-08-26,Downtown LA,Croissant,362,1629.0
+2024-08-26,Downtown LA,Baguette,123,615.0
+2024-09-02,Playa Vista,Sourdough Loaf,316,3555.0
+2024-09-02,Playa Vista,Croissant,811,3649.5
+2024-09-02,Playa Vista,Baguette,346,1730.0
+2024-09-02,Silver Lake,Sourdough Loaf,259,2913.75
+2024-09-02,Silver Lake,Croissant,566,2547.0
+2024-09-02,Silver Lake,Baguette,254,1270.0
+2024-09-02,Downtown LA,Sourdough Loaf,204,2295.0
+2024-09-02,Downtown LA,Croissant,364,1638.0
+2024-09-02,Downtown LA,Baguette,152,760.0
+2024-09-09,Playa Vista,Sourdough Loaf,409,4601.25
+2024-09-09,Playa Vista,Croissant,802,3609.0
+2024-09-09,Playa Vista,Baguette,331,1655.0
+2024-09-09,Silver Lake,Sourdough Loaf,323,3633.75
+2024-09-09,Silver Lake,Croissant,592,2664.0
+2024-09-09,Silver Lake,Baguette,257,1285.0
+2024-09-09,Downtown LA,Sourdough Loaf,180,2025.0
+2024-09-09,Downtown LA,Croissant,360,1620.0
+2024-09-09,Downtown LA,Baguette,173,865.0
+2024-09-16,Playa Vista,Sourdough Loaf,402,4522.5
+2024-09-16,Playa Vista,Croissant,880,3960.0
+2024-09-16,Playa Vista,Baguette,280,1400.0
+2024-09-16,Silver Lake,Sourdough Loaf,302,3397.5
+2024-09-16,Silver Lake,Croissant,493,2218.5
+2024-09-16,Silver Lake,Baguette,278,1390.0
+2024-09-16,Downtown LA,Sourdough Loaf,178,2002.5
+2024-09-16,Downtown LA,Croissant,352,1584.0
+2024-09-16,Downtown LA,Baguette,173,865.0
+2024-09-23,Playa Vista,Sourdough Loaf,484,5445.0
+2024-09-23,Playa Vista,Croissant,924,4158.0
+2024-09-23,Playa Vista,Baguette,355,1775.0
+2024-09-23,Silver Lake,Sourdough Loaf,272,3060.0
+2024-09-23,Silver Lake,Croissant,607,2731.5
+2024-09-23,Silver Lake,Baguette,284,1420.0
+2024-09-23,Downtown LA,Sourdough Loaf,231,2598.75
+2024-09-23,Downtown LA,Croissant,391,1759.5
+2024-09-23,Downtown LA,Baguette,175,875.0
+2024-09-30,Playa Vista,Sourdough Loaf,438,4927.5
+2024-09-30,Playa Vista,Croissant,886,3987.0
+2024-09-30,Playa Vista,Baguette,403,2015.0
+2024-09-30,Silver Lake,Sourdough Loaf,329,3701.25
+2024-09-30,Silver Lake,Croissant,520,2340.0
+2024-09-30,Silver Lake,Baguette,201,1005.0
+2024-09-30,Downtown LA,Sourdough Loaf,148,1665.0
+2024-09-30,Downtown LA,Croissant,308,1386.0
+2024-09-30,Downtown LA,Baguette,165,825.0
+2024-10-07,Playa Vista,Sourdough Loaf,450,5062.5
+2024-10-07,Playa Vista,Croissant,901,4054.5
+2024-10-07,Playa Vista,Baguette,294,1470.0
+2024-10-07,Silver Lake,Sourdough Loaf,348,3915.0
+2024-10-07,Silver Lake,Croissant,639,2875.5
+2024-10-07,Silver Lake,Baguette,253,1265.0
+2024-10-07,Downtown LA,Sourdough Loaf,196,2205.0
+2024-10-07,Downtown LA,Croissant,405,1822.5
+2024-10-07,Downtown LA,Baguette,145,725.0
+2024-10-14,Playa Vista,Sourdough Loaf,427,4803.75
+2024-10-14,Playa Vista,Croissant,810,3645.0
+2024-10-14,Playa Vista,Baguette,335,1675.0
+2024-10-14,Silver Lake,Sourdough Loaf,322,3622.5
+2024-10-14,Silver Lake,Croissant,618,2781.0
+2024-10-14,Silver Lake,Baguette,238,1190.0
+2024-10-14,Downtown LA,Sourdough Loaf,193,2171.25
+2024-10-14,Downtown LA,Croissant,387,1741.5
+2024-10-14,Downtown LA,Baguette,170,850.0
+2024-10-21,Playa Vista,Sourdough Loaf,428,4815.0
+2024-10-21,Playa Vista,Croissant,830,3735.0
+2024-10-21,Playa Vista,Baguette,342,1710.0
+2024-10-21,Silver Lake,Sourdough Loaf,293,3296.25
+2024-10-21,Silver Lake,Croissant,754,3393.0
+2024-10-21,Silver Lake,Baguette,280,1400.0
+2024-10-21,Downtown LA,Sourdough Loaf,187,2103.75
+2024-10-21,Downtown LA,Croissant,349,1570.5
+2024-10-21,Downtown LA,Baguette,164,820.0
+2024-10-28,Playa Vista,Sourdough Loaf,420,4725.0
+2024-10-28,Playa Vista,Croissant,811,3649.5
+2024-10-28,Playa Vista,Baguette,318,1590.0
+2024-10-28,Silver Lake,Sourdough Loaf,247,2778.75
+2024-10-28,Silver Lake,Croissant,737,3316.5
+2024-10-28,Silver Lake,Baguette,237,1185.0
+2024-10-28,Downtown LA,Sourdough Loaf,162,1822.5
+2024-10-28,Downtown LA,Croissant,405,1822.5
+2024-10-28,Downtown LA,Baguette,170,850.0
+2024-11-04,Playa Vista,Sourdough Loaf,591,6648.75
+2024-11-04,Playa Vista,Croissant,1323,5953.5
+2024-11-04,Playa Vista,Baguette,474,2370.0
+2024-11-04,Silver Lake,Sourdough Loaf,533,5996.25
+2024-11-04,Silver Lake,Croissant,1090,4905.0
+2024-11-04,Silver Lake,Baguette,329,1645.0
+2024-11-04,Downtown LA,Sourdough Loaf,258,2902.5
+2024-11-04,Downtown LA,Croissant,485,2182.5
+2024-11-04,Downtown LA,Baguette,200,1000.0
+2024-11-11,Playa Vista,Sourdough Loaf,653,7346.25
+2024-11-11,Playa Vista,Croissant,1181,5314.5
+2024-11-11,Playa Vista,Baguette,473,2365.0
+2024-11-11,Silver Lake,Sourdough Loaf,505,5681.25
+2024-11-11,Silver Lake,Croissant,703,3163.5
+2024-11-11,Silver Lake,Baguette,314,1570.0
+2024-11-11,Downtown LA,Sourdough Loaf,259,2913.75
+2024-11-11,Downtown LA,Croissant,468,2106.0
+2024-11-11,Downtown LA,Baguette,202,1010.0
+2024-11-18,Playa Vista,Sourdough Loaf,606,6817.5
+2024-11-18,Playa Vista,Croissant,1255,5647.5
+2024-11-18,Playa Vista,Baguette,430,2150.0
+2024-11-18,Silver Lake,Sourdough Loaf,553,6221.25
+2024-11-18,Silver Lake,Croissant,951,4279.5
+2024-11-18,Silver Lake,Baguette,270,1350.0
+2024-11-18,Downtown LA,Sourdough Loaf,237,2666.25
+2024-11-18,Downtown LA,Croissant,637,2866.5
+2024-11-18,Downtown LA,Baguette,171,855.0
+2024-11-25,Playa Vista,Sourdough Loaf,482,5422.5
+2024-11-25,Playa Vista,Croissant,1179,5305.5
+2024-11-25,Playa Vista,Baguette,468,2340.0
+2024-11-25,Silver Lake,Sourdough Loaf,468,5265.0
+2024-11-25,Silver Lake,Croissant,988,4446.0
+2024-11-25,Silver Lake,Baguette,411,2055.0
+2024-11-25,Downtown LA,Sourdough Loaf,264,2970.0
+2024-11-25,Downtown LA,Croissant,501,2254.5
+2024-11-25,Downtown LA,Baguette,202,1010.0
+2024-12-02,Playa Vista,Sourdough Loaf,701,7886.25
+2024-12-02,Playa Vista,Croissant,931,4189.5
+2024-12-02,Playa Vista,Baguette,489,2445.0
+2024-12-02,Silver Lake,Sourdough Loaf,541,6086.25
+2024-12-02,Silver Lake,Croissant,1125,5062.5
+2024-12-02,Silver Lake,Baguette,308,1540.0
+2024-12-02,Downtown LA,Sourdough Loaf,258,2902.5
+2024-12-02,Downtown LA,Croissant,551,2479.5
+2024-12-02,Downtown LA,Baguette,196,980.0
+2024-12-09,Playa Vista,Sourdough Loaf,503,5658.75
+2024-12-09,Playa Vista,Croissant,1482,6669.0
+2024-12-09,Playa Vista,Baguette,526,2630.0
+2024-12-09,Silver Lake,Sourdough Loaf,278,3127.5
+2024-12-09,Silver Lake,Croissant,1063,4783.5
+2024-12-09,Silver Lake,Baguette,427,2135.0
+2024-12-09,Downtown LA,Sourdough Loaf,260,2925.0
+2024-12-09,Downtown LA,Croissant,557,2506.5
+2024-12-09,Downtown LA,Baguette,214,1070.0
+2024-12-16,Playa Vista,Sourdough Loaf,633,7121.25
+2024-12-16,Playa Vista,Croissant,1131,5089.5
+2024-12-16,Playa Vista,Baguette,494,2470.0
+2024-12-16,Silver Lake,Sourdough Loaf,388,4365.0
+2024-12-16,Silver Lake,Croissant,787,3541.5
+2024-12-16,Silver Lake,Baguette,440,2200.0
+2024-12-16,Downtown LA,Sourdough Loaf,272,3060.0
+2024-12-16,Downtown LA,Croissant,617,2776.5
+2024-12-16,Downtown LA,Baguette,191,955.0
+2024-12-23,Playa Vista,Sourdough Loaf,638,7177.5
+2024-12-23,Playa Vista,Croissant,1179,5305.5
+2024-12-23,Playa Vista,Baguette,468,2340.0
+2024-12-23,Silver Lake,Sourdough Loaf,526,5917.5
+2024-12-23,Silver Lake,Croissant,869,3910.5
+2024-12-23,Silver Lake,Baguette,385,1925.0
+2024-12-23,Downtown LA,Sourdough Loaf,277,3116.25
+2024-12-23,Downtown LA,Croissant,492,2214.0
+2024-12-23,Downtown LA,Baguette,230,1150.0
+2024-12-30,Playa Vista,Sourdough Loaf,605,6806.25
+2024-12-30,Playa Vista,Croissant,1185,5332.5
+2024-12-30,Playa Vista,Baguette,460,2300.0
+2024-12-30,Silver Lake,Sourdough Loaf,406,4567.5
+2024-12-30,Silver Lake,Croissant,953,4288.5
+2024-12-30,Silver Lake,Baguette,302,1510.0
+2024-12-30,Downtown LA,Sourdough Loaf,249,2801.25
+2024-12-30,Downtown LA,Croissant,457,2056.5
+2024-12-30,Downtown LA,Baguette,222,1110.0
+2025-01-06,Playa Vista,Sourdough Loaf,412,4635.0
+2025-01-06,Playa Vista,Croissant,911,4099.5
+2025-01-06,Playa Vista,Baguette,379,1895.0
+2025-01-06,Silver Lake,Sourdough Loaf,317,3566.25
+2025-01-06,Silver Lake,Croissant,655,2947.5
+2025-01-06,Silver Lake,Baguette,338,1690.0
+2025-01-06,Downtown LA,Sourdough Loaf,195,2193.75
+2025-01-06,Downtown LA,Croissant,441,1984.5
+2025-01-06,Downtown LA,Baguette,145,725.0
+2025-01-13,Playa Vista,Sourdough Loaf,354,3982.5
+2025-01-13,Playa Vista,Croissant,750,3375.0
+2025-01-13,Playa Vista,Baguette,353,1765.0
+2025-01-13,Silver Lake,Sourdough Loaf,414,4657.5
+2025-01-13,Silver Lake,Croissant,604,2718.0
+2025-01-13,Silver Lake,Baguette,214,1070.0
+2025-01-13,Downtown LA,Sourdough Loaf,203,2283.75
+2025-01-13,Downtown LA,Croissant,405,1822.5
+2025-01-13,Downtown LA,Baguette,165,825.0
+2025-01-20,Playa Vista,Sourdough Loaf,497,5591.25
+2025-01-20,Playa Vista,Croissant,759,3415.5
+2025-01-20,Playa Vista,Baguette,378,1890.0
+2025-01-20,Silver Lake,Sourdough Loaf,261,2936.25
+2025-01-20,Silver Lake,Croissant,755,3397.5
+2025-01-20,Silver Lake,Baguette,350,1750.0
+2025-01-20,Downtown LA,Sourdough Loaf,152,1710.0
+2025-01-20,Downtown LA,Croissant,378,1701.0
+2025-01-20,Downtown LA,Baguette,127,635.0
+2025-01-27,Playa Vista,Sourdough Loaf,391,4398.75
+2025-01-27,Playa Vista,Croissant,964,4338.0
+2025-01-27,Playa Vista,Baguette,389,1945.0
+2025-01-27,Silver Lake,Sourdough Loaf,331,3723.75
+2025-01-27,Silver Lake,Croissant,814,3663.0
+2025-01-27,Silver Lake,Baguette,208,1040.0
+2025-01-27,Downtown LA,Sourdough Loaf,178,2002.5
+2025-01-27,Downtown LA,Croissant,437,1966.5
+2025-01-27,Downtown LA,Baguette,163,815.0
+2025-02-03,Playa Vista,Sourdough Loaf,408,4590.0
+2025-02-03,Playa Vista,Croissant,607,2731.5
+2025-02-03,Playa Vista,Baguette,355,1775.0
+2025-02-03,Silver Lake,Sourdough Loaf,365,4106.25
+2025-02-03,Silver Lake,Croissant,785,3532.5
+2025-02-03,Silver Lake,Baguette,273,1365.0
+2025-02-03,Downtown LA,Sourdough Loaf,174,1957.5
+2025-02-03,Downtown LA,Croissant,374,1683.0
+2025-02-03,Downtown LA,Baguette,171,855.0
+2025-02-10,Playa Vista,Sourdough Loaf,447,5028.75
+2025-02-10,Playa Vista,Croissant,825,3712.5
+2025-02-10,Playa Vista,Baguette,373,1865.0
+2025-02-10,Silver Lake,Sourdough Loaf,290,3262.5
+2025-02-10,Silver Lake,Croissant,807,3631.5
+2025-02-10,Silver Lake,Baguette,295,1475.0
+2025-02-10,Downtown LA,Sourdough Loaf,163,1833.75
+2025-02-10,Downtown LA,Croissant,313,1408.5
+2025-02-10,Downtown LA,Baguette,126,630.0
+2025-02-17,Playa Vista,Sourdough Loaf,469,5276.25
+2025-02-17,Playa Vista,Croissant,819,3685.5
+2025-02-17,Playa Vista,Baguette,366,1830.0
+2025-02-17,Silver Lake,Sourdough Loaf,277,3116.25
+2025-02-17,Silver Lake,Croissant,637,2866.5
+2025-02-17,Silver Lake,Baguette,326,1630.0
+2025-02-17,Downtown LA,Sourdough Loaf,197,2216.25
+2025-02-17,Downtown LA,Croissant,322,1449.0
+2025-02-17,Downtown LA,Baguette,150,750.0
+2025-02-24,Playa Vista,Sourdough Loaf,453,5096.25
+2025-02-24,Playa Vista,Croissant,891,4009.5
+2025-02-24,Playa Vista,Baguette,333,1665.0
+2025-02-24,Silver Lake,Sourdough Loaf,447,5028.75
+2025-02-24,Silver Lake,Croissant,642,2889.0
+2025-02-24,Silver Lake,Baguette,227,1135.0
+2025-02-24,Downtown LA,Sourdough Loaf,208,2340.0
+2025-02-24,Downtown LA,Croissant,324,1458.0
+2025-02-24,Downtown LA,Baguette,145,725.0
+2025-03-03,Playa Vista,Sourdough Loaf,411,4623.75
+2025-03-03,Playa Vista,Croissant,838,3771.0
+2025-03-03,Playa Vista,Baguette,362,1810.0
+2025-03-03,Silver Lake,Sourdough Loaf,400,4500.0
+2025-03-03,Silver Lake,Croissant,581,2614.5
+2025-03-03,Silver Lake,Baguette,276,1380.0
+2025-03-03,Downtown LA,Sourdough Loaf,166,1867.5
+2025-03-03,Downtown LA,Croissant,424,1908.0
+2025-03-03,Downtown LA,Baguette,140,700.0
+2025-03-10,Playa Vista,Sourdough Loaf,430,4837.5
+2025-03-10,Playa Vista,Croissant,924,4158.0
+2025-03-10,Playa Vista,Baguette,361,1805.0
+2025-03-10,Silver Lake,Sourdough Loaf,461,5186.25
+2025-03-10,Silver Lake,Croissant,662,2979.0
+2025-03-10,Silver Lake,Baguette,349,1745.0
+2025-03-10,Downtown LA,Sourdough Loaf,170,1912.5
+2025-03-10,Downtown LA,Croissant,401,1804.5
+2025-03-10,Downtown LA,Baguette,157,785.0
+2025-03-17,Playa Vista,Sourdough Loaf,363,4083.75
+2025-03-17,Playa Vista,Croissant,804,3618.0
+2025-03-17,Playa Vista,Baguette,393,1965.0
+2025-03-17,Silver Lake,Sourdough Loaf,330,3712.5
+2025-03-17,Silver Lake,Croissant,691,3109.5
+2025-03-17,Silver Lake,Baguette,249,1245.0
+2025-03-17,Downtown LA,Sourdough Loaf,197,2216.25
+2025-03-17,Downtown LA,Croissant,427,1921.5
+2025-03-17,Downtown LA,Baguette,167,835.0
+2025-03-24,Playa Vista,Sourdough Loaf,428,4815.0
+2025-03-24,Playa Vista,Croissant,921,4144.5
+2025-03-24,Playa Vista,Baguette,284,1420.0
+2025-03-24,Silver Lake,Sourdough Loaf,377,4241.25
+2025-03-24,Silver Lake,Croissant,866,3897.0
+2025-03-24,Silver Lake,Baguette,258,1290.0
+2025-03-24,Downtown LA,Sourdough Loaf,189,2126.25
+2025-03-24,Downtown LA,Croissant,342,1539.0
+2025-03-24,Downtown LA,Baguette,157,785.0
+2025-03-31,Playa Vista,Sourdough Loaf,501,5636.25
+2025-03-31,Playa Vista,Croissant,873,3928.5
+2025-03-31,Playa Vista,Baguette,381,1905.0
+2025-03-31,Silver Lake,Sourdough Loaf,374,4207.5
+2025-03-31,Silver Lake,Croissant,616,2772.0
+2025-03-31,Silver Lake,Baguette,332,1660.0
+2025-03-31,Downtown LA,Sourdough Loaf,181,2036.25
+2025-03-31,Downtown LA,Croissant,346,1557.0
+2025-03-31,Downtown LA,Baguette,130,650.0
+2025-04-07,Playa Vista,Sourdough Loaf,425,4781.25
+2025-04-07,Playa Vista,Croissant,853,3838.5
+2025-04-07,Playa Vista,Baguette,333,1665.0
+2025-04-07,Silver Lake,Sourdough Loaf,338,3802.5
+2025-04-07,Silver Lake,Croissant,924,4158.0
+2025-04-07,Silver Lake,Baguette,378,1890.0
+2025-04-07,Downtown LA,Sourdough Loaf,177,1991.25
+2025-04-07,Downtown LA,Croissant,441,1984.5
+2025-04-07,Downtown LA,Baguette,157,785.0
+2025-04-14,Playa Vista,Sourdough Loaf,425,4781.25
+2025-04-14,Playa Vista,Croissant,878,3951.0
+2025-04-14,Playa Vista,Baguette,371,1855.0
+2025-04-14,Silver Lake,Sourdough Loaf,301,3386.25
+2025-04-14,Silver Lake,Croissant,636,2862.0
+2025-04-14,Silver Lake,Baguette,331,1655.0
+2025-04-14,Downtown LA,Sourdough Loaf,217,2441.25
+2025-04-14,Downtown LA,Croissant,374,1683.0
+2025-04-14,Downtown LA,Baguette,146,730.0
+2025-04-21,Playa Vista,Sourdough Loaf,550,6187.5
+2025-04-21,Playa Vista,Croissant,809,3640.5
+2025-04-21,Playa Vista,Baguette,360,1800.0
+2025-04-21,Silver Lake,Sourdough Loaf,332,3735.0
+2025-04-21,Silver Lake,Croissant,711,3199.5
+2025-04-21,Silver Lake,Baguette,278,1390.0
+2025-04-21,Downtown LA,Sourdough Loaf,189,2126.25
+2025-04-21,Downtown LA,Croissant,434,1953.0
+2025-04-21,Downtown LA,Baguette,167,835.0
+2025-04-28,Playa Vista,Sourdough Loaf,390,4387.5
+2025-04-28,Playa Vista,Croissant,892,4014.0
+2025-04-28,Playa Vista,Baguette,348,1740.0
+2025-04-28,Silver Lake,Sourdough Loaf,434,4882.5
+2025-04-28,Silver Lake,Croissant,943,4243.5
+2025-04-28,Silver Lake,Baguette,338,1690.0
+2025-04-28,Downtown LA,Sourdough Loaf,195,2193.75
+2025-04-28,Downtown LA,Croissant,394,1773.0
+2025-04-28,Downtown LA,Baguette,146,730.0
+2025-05-05,Playa Vista,Sourdough Loaf,444,4995.0
+2025-05-05,Playa Vista,Croissant,937,4216.5
+2025-05-05,Playa Vista,Baguette,297,1485.0
+2025-05-05,Silver Lake,Sourdough Loaf,350,3937.5
+2025-05-05,Silver Lake,Croissant,1030,4635.0
+2025-05-05,Silver Lake,Baguette,368,1840.0
+2025-05-05,Downtown LA,Sourdough Loaf,171,1923.75
+2025-05-05,Downtown LA,Croissant,388,1746.0
+2025-05-05,Downtown LA,Baguette,150,750.0
+2025-05-12,Playa Vista,Sourdough Loaf,400,4500.0
+2025-05-12,Playa Vista,Croissant,868,3906.0
+2025-05-12,Playa Vista,Baguette,329,1645.0
+2025-05-12,Silver Lake,Sourdough Loaf,389,4376.25
+2025-05-12,Silver Lake,Croissant,888,3996.0
+2025-05-12,Silver Lake,Baguette,391,1955.0
+2025-05-12,Downtown LA,Sourdough Loaf,165,1856.25
+2025-05-12,Downtown LA,Croissant,383,1723.5
+2025-05-12,Downtown LA,Baguette,159,795.0
+2025-05-19,Playa Vista,Sourdough Loaf,409,4601.25
+2025-05-19,Playa Vista,Croissant,813,3658.5
+2025-05-19,Playa Vista,Baguette,372,1860.0
+2025-05-19,Silver Lake,Sourdough Loaf,408,4590.0
+2025-05-19,Silver Lake,Croissant,933,4198.5
+2025-05-19,Silver Lake,Baguette,365,1825.0
+2025-05-19,Downtown LA,Sourdough Loaf,219,2463.75
+2025-05-19,Downtown LA,Croissant,342,1539.0
+2025-05-19,Downtown LA,Baguette,148,740.0
+2025-05-26,Playa Vista,Sourdough Loaf,458,5152.5
+2025-05-26,Playa Vista,Croissant,1064,4788.0
+2025-05-26,Playa Vista,Baguette,392,1960.0
+2025-05-26,Silver Lake,Sourdough Loaf,344,3870.0
+2025-05-26,Silver Lake,Croissant,836,3762.0
+2025-05-26,Silver Lake,Baguette,349,1745.0
+2025-05-26,Downtown LA,Sourdough Loaf,199,2238.75
+2025-05-26,Downtown LA,Croissant,302,1359.0
+2025-05-26,Downtown LA,Baguette,140,700.0
+2025-06-02,Playa Vista,Sourdough Loaf,420,4725.0
+2025-06-02,Playa Vista,Croissant,909,4090.5
+2025-06-02,Playa Vista,Baguette,342,1710.0
+2025-06-02,Silver Lake,Sourdough Loaf,302,3397.5
+2025-06-02,Silver Lake,Croissant,889,4000.5
+2025-06-02,Silver Lake,Baguette,344,1720.0
+2025-06-02,Downtown LA,Sourdough Loaf,165,1856.25
+2025-06-02,Downtown LA,Croissant,295,1327.5
+2025-06-02,Downtown LA,Baguette,166,830.0
+2025-06-09,Playa Vista,Sourdough Loaf,468,5265.0
+2025-06-09,Playa Vista,Croissant,782,3519.0
+2025-06-09,Playa Vista,Baguette,398,1990.0
+2025-06-09,Silver Lake,Sourdough Loaf,657,7391.25
+2025-06-09,Silver Lake,Croissant,785,3532.5
+2025-06-09,Silver Lake,Baguette,309,1545.0
+2025-06-09,Downtown LA,Sourdough Loaf,178,2002.5
+2025-06-09,Downtown LA,Croissant,318,1431.0
+2025-06-09,Downtown LA,Baguette,143,715.0
+2025-06-16,Playa Vista,Sourdough Loaf,430,4837.5
+2025-06-16,Playa Vista,Croissant,962,4329.0
+2025-06-16,Playa Vista,Baguette,377,1885.0
+2025-06-16,Silver Lake,Sourdough Loaf,408,4590.0
+2025-06-16,Silver Lake,Croissant,790,3555.0
+2025-06-16,Silver Lake,Baguette,287,1435.0
+2025-06-16,Downtown LA,Sourdough Loaf,200,2250.0
+2025-06-16,Downtown LA,Croissant,368,1656.0
+2025-06-16,Downtown LA,Baguette,160,800.0
+2025-06-23,Playa Vista,Sourdough Loaf,483,5433.75
+2025-06-23,Playa Vista,Croissant,948,4266.0
+2025-06-23,Playa Vista,Baguette,338,1690.0
+2025-06-23,Silver Lake,Sourdough Loaf,428,4815.0
+2025-06-23,Silver Lake,Croissant,1080,4860.0
+2025-06-23,Silver Lake,Baguette,501,2505.0
+2025-06-23,Downtown LA,Sourdough Loaf,183,2058.75
+2025-06-23,Downtown LA,Croissant,309,1390.5
+2025-06-23,Downtown LA,Baguette,142,710.0
+2025-06-30,Playa Vista,Sourdough Loaf,460,5175.0
+2025-06-30,Playa Vista,Croissant,912,4104.0
+2025-06-30,Playa Vista,Baguette,294,1470.0
+2025-06-30,Silver Lake,Sourdough Loaf,442,4972.5
+2025-06-30,Silver Lake,Croissant,838,3771.0
+2025-06-30,Silver Lake,Baguette,324,1620.0
+2025-06-30,Downtown LA,Sourdough Loaf,213,2396.25
+2025-06-30,Downtown LA,Croissant,342,1539.0
+2025-06-30,Downtown LA,Baguette,152,760.0
+2025-07-07,Playa Vista,Sourdough Loaf,408,4590.0
+2025-07-07,Playa Vista,Croissant,1027,4621.5
+2025-07-07,Playa Vista,Baguette,339,1695.0
+2025-07-07,Silver Lake,Sourdough Loaf,403,4533.75
+2025-07-07,Silver Lake,Croissant,911,4099.5
+2025-07-07,Silver Lake,Baguette,340,1700.0
+2025-07-07,Downtown LA,Sourdough Loaf,154,1732.5
+2025-07-07,Downtown LA,Croissant,361,1624.5
+2025-07-07,Downtown LA,Baguette,147,735.0
+2025-07-14,Playa Vista,Sourdough Loaf,473,5321.25
+2025-07-14,Playa Vista,Croissant,754,3393.0
+2025-07-14,Playa Vista,Baguette,287,1435.0
+2025-07-14,Silver Lake,Sourdough Loaf,405,4556.25
+2025-07-14,Silver Lake,Croissant,872,3924.0
+2025-07-14,Silver Lake,Baguette,409,2045.0
+2025-07-14,Downtown LA,Sourdough Loaf,149,1676.25
+2025-07-14,Downtown LA,Croissant,398,1791.0
+2025-07-14,Downtown LA,Baguette,141,705.0
+2025-07-21,Playa Vista,Sourdough Loaf,478,5377.5
+2025-07-21,Playa Vista,Croissant,954,4293.0
+2025-07-21,Playa Vista,Baguette,323,1615.0
+2025-07-21,Silver Lake,Sourdough Loaf,521,5861.25
+2025-07-21,Silver Lake,Croissant,757,3406.5
+2025-07-21,Silver Lake,Baguette,325,1625.0
+2025-07-21,Downtown LA,Sourdough Loaf,201,2261.25
+2025-07-21,Downtown LA,Croissant,418,1881.0
+2025-07-21,Downtown LA,Baguette,152,760.0
+2025-07-28,Playa Vista,Sourdough Loaf,470,5287.5
+2025-07-28,Playa Vista,Croissant,787,3541.5
+2025-07-28,Playa Vista,Baguette,401,2005.0
+2025-07-28,Silver Lake,Sourdough Loaf,500,5625.0
+2025-07-28,Silver Lake,Croissant,1057,4756.5
+2025-07-28,Silver Lake,Baguette,430,2150.0
+2025-07-28,Downtown LA,Sourdough Loaf,190,2137.5
+2025-07-28,Downtown LA,Croissant,325,1462.5
+2025-07-28,Downtown LA,Baguette,149,745.0
+2025-08-04,Playa Vista,Sourdough Loaf,406,4567.5
+2025-08-04,Playa Vista,Croissant,852,3834.0
+2025-08-04,Playa Vista,Baguette,353,1765.0
+2025-08-04,Silver Lake,Sourdough Loaf,395,4443.75
+2025-08-04,Silver Lake,Croissant,634,2853.0
+2025-08-04,Silver Lake,Baguette,279,1395.0
+2025-08-04,Downtown LA,Sourdough Loaf,147,1653.75
+2025-08-04,Downtown LA,Croissant,302,1359.0
+2025-08-04,Downtown LA,Baguette,117,585.0
+2025-08-11,Playa Vista,Sourdough Loaf,425,4781.25
+2025-08-11,Playa Vista,Croissant,769,3460.5
+2025-08-11,Playa Vista,Baguette,294,1470.0
+2025-08-11,Silver Lake,Sourdough Loaf,305,3431.25
+2025-08-11,Silver Lake,Croissant,957,4306.5
+2025-08-11,Silver Lake,Baguette,353,1765.0
+2025-08-11,Downtown LA,Sourdough Loaf,164,1845.0
+2025-08-11,Downtown LA,Croissant,292,1314.0
+2025-08-11,Downtown LA,Baguette,128,640.0
+2025-08-18,Playa Vista,Sourdough Loaf,347,3903.75
+2025-08-18,Playa Vista,Croissant,785,3532.5
+2025-08-18,Playa Vista,Baguette,275,1375.0
+2025-08-18,Silver Lake,Sourdough Loaf,410,4612.5
+2025-08-18,Silver Lake,Croissant,651,2929.5
+2025-08-18,Silver Lake,Baguette,348,1740.0
+2025-08-18,Downtown LA,Sourdough Loaf,159,1788.75
+2025-08-18,Downtown LA,Croissant,325,1462.5
+2025-08-18,Downtown LA,Baguette,108,540.0
+2025-08-25,Playa Vista,Sourdough Loaf,400,4500.0
+2025-08-25,Playa Vista,Croissant,792,3564.0
+2025-08-25,Playa Vista,Baguette,363,1815.0
+2025-08-25,Silver Lake,Sourdough Loaf,466,5242.5
+2025-08-25,Silver Lake,Croissant,838,3771.0
+2025-08-25,Silver Lake,Baguette,315,1575.0
+2025-08-25,Downtown LA,Sourdough Loaf,155,1743.75
+2025-08-25,Downtown LA,Croissant,252,1134.0
+2025-08-25,Downtown LA,Baguette,152,760.0
+2025-09-01,Playa Vista,Sourdough Loaf,502,5647.5
+2025-09-01,Playa Vista,Croissant,849,3820.5
+2025-09-01,Playa Vista,Baguette,370,1850.0
+2025-09-01,Silver Lake,Sourdough Loaf,417,4691.25
+2025-09-01,Silver Lake,Croissant,947,4261.5
+2025-09-01,Silver Lake,Baguette,419,2095.0
+2025-09-01,Downtown LA,Sourdough Loaf,222,2497.5
+2025-09-01,Downtown LA,Croissant,316,1422.0
+2025-09-01,Downtown LA,Baguette,161,805.0
+2025-09-08,Playa Vista,Sourdough Loaf,425,4781.25
+2025-09-08,Playa Vista,Croissant,935,4207.5
+2025-09-08,Playa Vista,Baguette,366,1830.0
+2025-09-08,Silver Lake,Sourdough Loaf,446,5017.5
+2025-09-08,Silver Lake,Croissant,798,3591.0
+2025-09-08,Silver Lake,Baguette,432,2160.0
+2025-09-08,Downtown LA,Sourdough Loaf,182,2047.5
+2025-09-08,Downtown LA,Croissant,392,1764.0
+2025-09-08,Downtown LA,Baguette,113,565.0
+2025-09-15,Playa Vista,Sourdough Loaf,493,5546.25
+2025-09-15,Playa Vista,Croissant,918,4131.0
+2025-09-15,Playa Vista,Baguette,344,1720.0
+2025-09-15,Silver Lake,Sourdough Loaf,475,5343.75
+2025-09-15,Silver Lake,Croissant,923,4153.5
+2025-09-15,Silver Lake,Baguette,348,1740.0
+2025-09-15,Downtown LA,Sourdough Loaf,160,1800.0
+2025-09-15,Downtown LA,Croissant,291,1309.5
+2025-09-15,Downtown LA,Baguette,138,690.0
+2025-09-22,Playa Vista,Sourdough Loaf,450,5062.5
+2025-09-22,Playa Vista,Croissant,921,4144.5
+2025-09-22,Playa Vista,Baguette,341,1705.0
+2025-09-22,Silver Lake,Sourdough Loaf,618,6952.5
+2025-09-22,Silver Lake,Croissant,795,3577.5
+2025-09-22,Silver Lake,Baguette,463,2315.0
+2025-09-22,Downtown LA,Sourdough Loaf,191,2148.75
+2025-09-22,Downtown LA,Croissant,362,1629.0
+2025-09-22,Downtown LA,Baguette,152,760.0
+2025-09-29,Playa Vista,Sourdough Loaf,401,4511.25
+2025-09-29,Playa Vista,Croissant,742,3339.0
+2025-09-29,Playa Vista,Baguette,417,2085.0
+2025-09-29,Silver Lake,Sourdough Loaf,528,5940.0
+2025-09-29,Silver Lake,Croissant,915,4117.5
+2025-09-29,Silver Lake,Baguette,389,1945.0
+2025-09-29,Downtown LA,Sourdough Loaf,193,2171.25
+2025-09-29,Downtown LA,Croissant,424,1908.0
+2025-09-29,Downtown LA,Baguette,141,705.0
+2025-10-06,Playa Vista,Sourdough Loaf,383,4308.75
+2025-10-06,Playa Vista,Croissant,1011,4549.5
+2025-10-06,Playa Vista,Baguette,355,1775.0
+2025-10-06,Silver Lake,Sourdough Loaf,405,4556.25
+2025-10-06,Silver Lake,Croissant,916,4122.0
+2025-10-06,Silver Lake,Baguette,400,2000.0
+2025-10-06,Downtown LA,Sourdough Loaf,211,2373.75
+2025-10-06,Downtown LA,Croissant,381,1714.5
+2025-10-06,Downtown LA,Baguette,125,625.0
+2025-10-13,Playa Vista,Sourdough Loaf,480,5400.0
+2025-10-13,Playa Vista,Croissant,848,3816.0
+2025-10-13,Playa Vista,Baguette,359,1795.0
+2025-10-13,Silver Lake,Sourdough Loaf,479,5388.75
+2025-10-13,Silver Lake,Croissant,1331,5989.5
+2025-10-13,Silver Lake,Baguette,425,2125.0
+2025-10-13,Downtown LA,Sourdough Loaf,192,2160.0
+2025-10-13,Downtown LA,Croissant,323,1453.5
+2025-10-13,Downtown LA,Baguette,156,780.0
+2025-10-20,Playa Vista,Sourdough Loaf,457,5141.25
+2025-10-20,Playa Vista,Croissant,874,3933.0
+2025-10-20,Playa Vista,Baguette,402,2010.0
+2025-10-20,Silver Lake,Sourdough Loaf,442,4972.5
+2025-10-20,Silver Lake,Croissant,956,4302.0
+2025-10-20,Silver Lake,Baguette,345,1725.0
+2025-10-20,Downtown LA,Sourdough Loaf,188,2115.0
+2025-10-20,Downtown LA,Croissant,329,1480.5
+2025-10-20,Downtown LA,Baguette,150,750.0
+2025-10-27,Playa Vista,Sourdough Loaf,517,5816.25
+2025-10-27,Playa Vista,Croissant,952,4284.0
+2025-10-27,Playa Vista,Baguette,326,1630.0
+2025-10-27,Silver Lake,Sourdough Loaf,489,5501.25
+2025-10-27,Silver Lake,Croissant,1105,4972.5
+2025-10-27,Silver Lake,Baguette,407,2035.0
+2025-10-27,Downtown LA,Sourdough Loaf,144,1620.0
+2025-10-27,Downtown LA,Croissant,277,1246.5
+2025-10-27,Downtown LA,Baguette,128,640.0
+2025-11-03,Playa Vista,Sourdough Loaf,533,5996.25
+2025-11-03,Playa Vista,Croissant,1188,5346.0
+2025-11-03,Playa Vista,Baguette,539,2695.0
+2025-11-03,Silver Lake,Sourdough Loaf,909,10226.25
+2025-11-03,Silver Lake,Croissant,1853,8338.5
+2025-11-03,Silver Lake,Baguette,656,3280.0
+2025-11-03,Downtown LA,Sourdough Loaf,259,2913.75
+2025-11-03,Downtown LA,Croissant,436,1962.0
+2025-11-03,Downtown LA,Baguette,213,1065.0
+2025-11-10,Playa Vista,Sourdough Loaf,562,6322.5
+2025-11-10,Playa Vista,Croissant,1134,5103.0
+2025-11-10,Playa Vista,Baguette,666,3330.0
+2025-11-10,Silver Lake,Sourdough Loaf,754,8482.5
+2025-11-10,Silver Lake,Croissant,1562,7029.0
+2025-11-10,Silver Lake,Baguette,503,2515.0
+2025-11-10,Downtown LA,Sourdough Loaf,263,2958.75
+2025-11-10,Downtown LA,Croissant,425,1912.5
+2025-11-10,Downtown LA,Baguette,171,855.0
+2025-11-17,Playa Vista,Sourdough Loaf,668,7515.0
+2025-11-17,Playa Vista,Croissant,1340,6030.0
+2025-11-17,Playa Vista,Baguette,446,2230.0
+2025-11-17,Silver Lake,Sourdough Loaf,616,6930.0
+2025-11-17,Silver Lake,Croissant,1302,5859.0
+2025-11-17,Silver Lake,Baguette,505,2525.0
+2025-11-17,Downtown LA,Sourdough Loaf,278,3127.5
+2025-11-17,Downtown LA,Croissant,418,1881.0
+2025-11-17,Downtown LA,Baguette,195,975.0

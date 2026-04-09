@@ -1,0 +1,33 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Azure.Mcp.Tools.CloudArchitect.Commands.Design;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Mcp.Core.Areas;
+using Microsoft.Mcp.Core.Commands;
+
+namespace Azure.Mcp.Tools.CloudArchitect;
+
+public class CloudArchitectSetup : IAreaSetup
+{
+    public string Name => "cloudarchitect";
+
+    public string Title => "Azure Cloud Architecture";
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSingleton<DesignCommand>();
+    }
+
+    public CommandGroup RegisterCommands(IServiceProvider serviceProvider)
+    {
+        // Create CloudArchitect command group
+        var cloudArchitect = new CommandGroup(Name, "Cloud Architecture operations - Commands for generating Azure architecture designs and recommendations based on requirements.", Title);
+
+        // Register CloudArchitect commands
+        var design = serviceProvider.GetRequiredService<DesignCommand>();
+        cloudArchitect.AddCommand(design.Name, design);
+
+        return cloudArchitect;
+    }
+}

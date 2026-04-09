@@ -1,0 +1,88 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Azure.Mcp.Tools.Acr.Options;
+using Azure.Mcp.Tools.Acr.Options.Registry;
+using Azure.Mcp.Tools.Acr.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Mcp.Core.Commands;
+using Microsoft.Mcp.Core.Extensions;
+using Microsoft.Mcp.Core.Models.Command;
+
+namespace Azure.Mcp.Tools.Acr.Commands.Registry;
+
+public sealed class RegistryRepositoryListCommand(ILogger<RegistryRepositoryListCommand> logger, IAcrService acrService)
+    : BaseAcrCommand<RegistryRepositoryListOptions>
+{
+    private const string CommandTitle = "List Container Registry Repositories";
+    private readonly ILogger<RegistryRepositoryListCommand> _logger = logger;
+    private readonly IAcrService _acrService = acrService;
+    public override string Id => "adc6eb20-ad98-4624-954d-61581f6fbca9";
+
+    public override string Name => "list";
+
+    public override string Description =>
+        """
+        List repositories in Azure Container Registries. By default, lists repositories for all registries in the subscription.
+        You can narrow the scope using --resource-group and/or --registry to list repositories for a specific registry only.
+        """;
+
+    public override string Title => CommandTitle;
+
+    public override ToolMetadata Metadata => new()
+    {
+        Destructive = false,
+        Idempotent = true,
+        OpenWorld = false,
+        ReadOnly = true,
+        LocalRequired = false,
+        Secret = false
+    };
+
+    protected override void RegisterOptions(Command command)
+    {
+        base.RegisterOptions(command);
+        command.Options.Add(AcrOptionDefinitions.Registry);
+    }
+
+    protected override RegistryRepositoryListOptions BindOptions(ParseResult parseResult)
+    {
+        var options = base.BindOptions(parseResult);
+        options.Registry ??= parseResult.GetValueOrDefault<string>(AcrOptionDefinitions.Registry.Name);
+        return options;
+    }
+
+    public override async Task<CommandResponse> ExecuteAsync(CommandContext context, ParseResult parseResult, CancellationToken cancellationToken)
+    {
+        if (!Validate(parseResult.CommandResult, context.Response).IsValid)
+        {
+            return context.Response;
+        }
+
+        var options = BindOptions(parseResult);
+
+        try
+        {
+            var map = await _acrService.ListRegistryRepositories(
+                options.Subscription!,
+                options.ResourceGroup,
+                options.Registry,
+                options.Tenant,
+                options.RetryPolicy,
+                cancellationToken);
+
+            context.Response.Results = ResponseResult.Create(new(map ?? []), AcrJsonContext.Default.RegistryRepositoryListCommandResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Error listing ACR repositories. Subscription: {Subscription}, ResourceGroup: {ResourceGroup}, Registry: {Registry}",
+                options.Subscription, options.ResourceGroup, options.Registry);
+            HandleException(context, ex);
+        }
+
+        return context.Response;
+    }
+
+    internal record RegistryRepositoryListCommandResult(Dictionary<string, List<string>> RepositoriesByRegistry);
+}

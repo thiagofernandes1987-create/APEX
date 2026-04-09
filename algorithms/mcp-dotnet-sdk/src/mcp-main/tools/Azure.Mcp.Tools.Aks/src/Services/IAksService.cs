@@ -1,0 +1,27 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Azure.Mcp.Tools.Aks.Models;
+using Microsoft.Mcp.Core.Options;
+
+namespace Azure.Mcp.Tools.Aks.Services;
+
+public interface IAksService
+{
+    Task<List<Cluster>> GetClusters(
+        string subscription,
+        string? clusterName,
+        string? resourceGroup,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default);
+
+    Task<List<NodePool>> GetNodePools(
+        string subscription,
+        string resourceGroup,
+        string clusterName,
+        string? nodePoolName,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default);
+}

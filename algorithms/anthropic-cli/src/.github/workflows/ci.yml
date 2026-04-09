@@ -1,0 +1,164 @@
+name: CI
+on:
+  push:
+    branches:
+      - '**'
+      - '!integrated/**'
+      - '!stl-preview-head/**'
+      - '!stl-preview-base/**'
+      - '!generated'
+      - '!codegen/**'
+      - 'codegen/stl/**'
+  pull_request:
+    branches-ignore:
+      - 'stl-preview-head/**'
+      - 'stl-preview-base/**'
+
+env:
+  GOPRIVATE: github.com/anthropics/anthropic-sdk-go,github.com/stainless-sdks/anthropic-go
+
+jobs:
+  lint:
+    timeout-minutes: 10
+    name: lint
+    runs-on: ${{ github.repository == 'stainless-sdks/anthropic-cli' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    if: (github.event_name == 'push' || github.event.pull_request.head.repo.fork)
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-go
+        with:
+          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+
+      - name: Link staging branch
+        if: github.repository == 'stainless-sdks/anthropic-cli'
+        run: |
+          ./scripts/link 'github.com/stainless-sdks/anthropic-go@${{ github.ref_name }}' || go mod edit -dropreplace='github.com/stainless-sdks/anthropic-go'
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run lints
+        run: ./scripts/lint
+
+  build:
+    timeout-minutes: 10
+    name: build
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ${{ github.repository == 'stainless-sdks/anthropic-cli' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    if: (github.event_name == 'push' || github.event.pull_request.head.repo.fork)
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-go
+        with:
+          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+
+      - name: Link staging branch
+        if: github.repository == 'stainless-sdks/anthropic-cli'
+        run: |
+          ./scripts/link 'github.com/stainless-sdks/anthropic-go@${{ github.ref_name }}' || go mod edit -dropreplace='github.com/stainless-sdks/anthropic-go'
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run goreleaser
+        uses: goreleaser/goreleaser-action@v6.1.0
+        with:
+          version: latest
+          args: release --snapshot --clean --skip=publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get GitHub OIDC Token
+        if: |-
+          github.repository == 'stainless-sdks/anthropic-cli' &&
+          !startsWith(github.ref, 'refs/heads/stl/')
+        id: github-oidc
+        uses: actions/github-script@v8
+        with:
+          script: core.setOutput('github_token', await core.getIDToken());
+
+      - name: Upload tarball
+        if: |-
+          github.repository == 'stainless-sdks/anthropic-cli' &&
+          !startsWith(github.ref, 'refs/heads/stl/')
+        env:
+          URL: https://pkg.stainless.com/s
+          AUTH: ${{ steps.github-oidc.outputs.github_token }}
+          SHA: ${{ github.sha }}
+        run: ./scripts/utils/upload-artifact.sh
+
+      - name: Upload cdp-darwin-arm64
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdp-darwin-arm64
+          path: dist/macos_darwin_arm64*/cdp
+          retention-days: 90
+          if-no-files-found: ignore
+
+      - name: Upload cdp-darwin-amd64
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdp-darwin-amd64
+          path: dist/macos_darwin_amd64*/cdp
+          retention-days: 90
+          if-no-files-found: ignore
+
+      - name: Upload cdp-linux-amd64
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdp-linux-amd64
+          path: dist/linux_linux_amd64*/cdp
+          retention-days: 90
+          if-no-files-found: ignore
+
+      - name: Upload cdp-linux-arm64
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdp-linux-arm64
+          path: dist/linux_linux_arm64*/cdp
+          retention-days: 90
+          if-no-files-found: ignore
+
+      - name: Upload cdp-windows-amd64
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdp-windows-amd64
+          path: dist/windows_windows_amd64*/cdp.exe
+          retention-days: 90
+          if-no-files-found: ignore
+
+      - name: Upload cdp-windows-arm64
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdp-windows-arm64
+          path: dist/windows_windows_arm64*/cdp.exe
+          retention-days: 90
+          if-no-files-found: ignore
+
+  test:
+    timeout-minutes: 20
+    name: test
+    runs-on: ${{ github.repository == 'stainless-sdks/anthropic-cli' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-go
+        with:
+          stainless-api-key: ${{ secrets.STAINLESS_API_KEY }}
+
+      - name: Link staging branch
+        if: github.repository == 'stainless-sdks/anthropic-cli'
+        run: |
+          ./scripts/link 'github.com/stainless-sdks/anthropic-go@${{ github.ref_name }}' || go mod edit -dropreplace='github.com/stainless-sdks/anthropic-go'
+
+      - name: Bootstrap
+        run: ./scripts/bootstrap
+
+      - name: Run tests
+        run: ./scripts/test

@@ -1,0 +1,46 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Azure.Mcp.Tools.ApplicationInsights.Commands.Recommendation;
+using Azure.Mcp.Tools.ApplicationInsights.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Mcp.Core.Areas;
+using Microsoft.Mcp.Core.Commands;
+
+namespace Azure.Mcp.Tools.ApplicationInsights;
+
+public class ApplicationInsightsSetup : IAreaSetup
+{
+    public string Name => "applicationinsights";
+
+    public string Title => "Azure Application Insights";
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+
+        // Service for accessing Profiler dataplane.
+        services.AddSingleton<IProfilerDataService, ProfilerDataService>();
+
+        services.AddSingleton<IApplicationInsightsService, ApplicationInsightsService>();
+
+        services.AddSingleton<RecommendationListCommand>();
+    }
+
+    public CommandGroup RegisterCommands(IServiceProvider serviceProvider)
+    {
+        var group = new CommandGroup(Name,
+        """
+        Application Insights operations - Commands for listing and managing Application Insights components. 
+        These commands do not support querying metrics or logs. Use Azure Monitor querying tools for that purpose.
+        """,
+         Title);
+
+        var recommendation = new CommandGroup("recommendation", "Application Insights recommendation operations - list recommendation targets (components).");
+        group.AddSubGroup(recommendation);
+
+        var recommendationList = serviceProvider.GetRequiredService<RecommendationListCommand>();
+        recommendation.AddCommand(recommendationList.Name, recommendationList);
+
+        return group;
+    }
+}

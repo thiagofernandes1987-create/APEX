@@ -1,0 +1,453 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Text.RegularExpressions;
+using Azure.Core;
+using Azure.Mcp.Core.Services.Azure;
+using Azure.Mcp.Core.Services.Azure.ResourceGroup;
+using Azure.Mcp.Core.Services.Azure.Tenant;
+using Azure.Mcp.Tools.MySql.Commands;
+using Azure.ResourceManager.MySql.FlexibleServers;
+using Microsoft.Extensions.Logging;
+using Microsoft.Mcp.Core.Helpers;
+using Microsoft.Mcp.Core.Services.Azure.Authentication;
+using MySqlConnector;
+
+namespace Azure.Mcp.Tools.MySql.Services;
+
+public class MySqlService(IResourceGroupService resourceGroupService, ITenantService tenantService, ILogger<MySqlService> logger) : BaseAzureService(tenantService), IMySqlService
+{
+    private readonly ITenantService _tenantService = tenantService ?? throw new ArgumentNullException(nameof(tenantService));
+    private readonly IResourceGroupService _resourceGroupService = resourceGroupService ?? throw new ArgumentNullException(nameof(resourceGroupService));
+    private readonly ILogger<MySqlService> _logger = logger;
+
+    // Maximum number of items to return to prevent DoS attacks and performance issues
+    private const int MaxResultLimit = 10000;
+
+    // Static arrays for security validation - initialized once per class
+    private static readonly string[] DangerousKeywords =
+    [
+        // Data manipulation that could be harmful
+        "DROP", "DELETE", "TRUNCATE", "ALTER", "CREATE", "INSERT", "UPDATE",
+        // Set operations that can be used for data exfiltration
+        "UNION", "INTERSECT", "EXCEPT",
+        // Administrative operations
+        "GRANT", "REVOKE", "SET", "RESET", "KILL", "SHUTDOWN", "RESTART",
+        // Information disclosure
+        "SHOW MASTER", "SHOW SLAVE", "SHOW BINARY", "SHOW BINLOG",
+        // System operations
+        "LOAD DATA", "OUTFILE", "DUMPFILE", "LOAD_FILE", "INTO OUTFILE",
+        // User/privilege management
+        "CREATE USER", "DROP USER", "ALTER USER", "RENAME USER",
+        // Database structure changes
+        "CREATE DATABASE", "DROP DATABASE", "CREATE SCHEMA", "DROP SCHEMA",
+        // Stored procedures and functions
+        "CREATE PROCEDURE", "DROP PROCEDURE", "CREATE FUNCTION", "DROP FUNCTION",
+        // Triggers and events
+        "CREATE TRIGGER", "DROP TRIGGER", "CREATE EVENT", "DROP EVENT",
+        // Views that could modify data
+        "CREATE VIEW", "DROP VIEW",
+        // Index operations
+        "CREATE INDEX", "DROP INDEX",
+        // Table operations
+        "CREATE TABLE", "DROP TABLE", "RENAME TABLE",
+        // Lock operations
+        "LOCK TABLES", "UNLOCK TABLES",
+        // Transaction control in unsafe contexts
+        "START TRANSACTION", "BEGIN", "COMMIT", "ROLLBACK",
+        // System variables
+        "SET GLOBAL", "SET SESSION", "SET SQL_MODE"
+    ];
+
+    private static readonly string[] ObfuscationFunctions =
+    [
+        "CHAR", "CHR", "ASCII", "ORD", "HEX", "UNHEX", "CONV",
+        "CONVERT", "CAST", "BINARY", "CONCAT_WS", "MAKE_SET",
+        "ELT", "FIELD", "FIND_IN_SET", "EXPORT_SET", "LOAD_FILE",
+        "FROM_BASE64", "TO_BASE64", "COMPRESS", "UNCOMPRESS",
+        "AES_ENCRYPT", "AES_DECRYPT", "DES_ENCRYPT", "DES_DECRYPT",
+        "ENCODE", "DECODE", "PASSWORD", "OLD_PASSWORD"
+    ];
+
+    // Pre-compiled regex patterns for word-boundary keyword matching
+    private static readonly Regex DangerousKeywordsPattern = RegexHelper.CreateRegex(
+        @"\b(" + string.Join("|", DangerousKeywords.Select(Regex.Escape)) + @")\b",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static readonly Regex ObfuscationFunctionsPattern = RegexHelper.CreateRegex(
+        @"\b(" + string.Join("|", ObfuscationFunctions.Select(Regex.Escape)) + @")\s*\(",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private async Task<string> GetEntraIdAccessTokenAsync(CancellationToken cancellationToken)
+    {
+
+        var tokenRequestContext = new TokenRequestContext([GetOpenSourceRDBMSScope()]);
+        var tokenCredential = await GetCredential(cancellationToken);
+        var accessToken = await tokenCredential.GetTokenAsync(tokenRequestContext, cancellationToken);
+        return accessToken.Token;
+    }
+
+    private string GetOpenSourceRDBMSScope()
+    {
+        return _tenantService.CloudConfiguration.CloudType switch
+        {
+            AzureCloudConfiguration.AzureCloud.AzurePublicCloud =>
+                "https://ossrdbms-aad.database.windows.net/.default",
+            AzureCloudConfiguration.AzureCloud.AzureUSGovernmentCloud =>
+                "https://ossrdbms-aad.database.usgovcloudapi.net/.default",
+            AzureCloudConfiguration.AzureCloud.AzureChinaCloud =>
+                "https://ossrdbms-aad.database.chinacloudapi.cn/.default",
+            _ =>
+                "https://ossrdbms-aad.database.windows.net/.default"
+        };
+    }
+
+    private static readonly string[] AllowedMySqlSuffixes =
+    [
+        ".mysql.database.azure.com",
+        ".mysql.database.usgovcloudapi.net",
+        ".mysql.database.chinacloudapi.cn",
+    ];
+
+    private string NormalizeServerName(string server)
+    {
+        if (!server.Contains('.'))
+        {
+            return _tenantService.CloudConfiguration.CloudType switch
+            {
+                AzureCloudConfiguration.AzureCloud.AzurePublicCloud =>
+                    server + ".mysql.database.azure.com",
+                AzureCloudConfiguration.AzureCloud.AzureUSGovernmentCloud =>
+                    server + ".mysql.database.usgovcloudapi.net",
+                AzureCloudConfiguration.AzureCloud.AzureChinaCloud =>
+                    server + ".mysql.database.chinacloudapi.cn",
+                _ =>
+                    server + ".mysql.database.azure.com"
+            };
+        }
+
+        if (!Array.Exists(AllowedMySqlSuffixes, suffix => server.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new ArgumentException(
+                $"The server name '{server}' is not a valid Azure Database for MySQL hostname. " +
+                $"Fully qualified server names must end with one of: {string.Join(", ", AllowedMySqlSuffixes)}.");
+        }
+
+        return server;
+    }
+
+    private async Task<string> BuildConnectionStringAsync(string server, string user, string database, CancellationToken cancellationToken)
+    {
+        var host = NormalizeServerName(server);
+        var entraIdAccessToken = await GetEntraIdAccessTokenAsync(cancellationToken);
+        return BuildConnectionString(host, database, user, entraIdAccessToken);
+    }
+
+    internal static string BuildConnectionString(string host, string database, string user, string password)
+    {
+        var builder = new MySqlConnectionStringBuilder
+        {
+            Server = host,
+            Database = database,
+            UserID = user,
+            Password = password,
+            SslMode = MySqlSslMode.Required
+        };
+        return builder.ConnectionString;
+    }
+
+    internal static void ValidateQuerySafety(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            throw new ArgumentException("Query cannot be null or empty.", nameof(query));
+        }
+
+        // Prevent DoS attacks by limiting query length
+        if (query.Length > MaxResultLimit)
+        {
+            throw new InvalidOperationException($"Query length exceeds the maximum allowed limit of {MaxResultLimit:N0} characters to prevent potential DoS attacks.");
+        }
+
+        // Strip string literals before checking for comment markers to avoid
+        // false positives (e.g., 'C#Developer' or 'foo--bar' are not comments).
+        // The pattern handles both SQL-standard doubled quotes ('') and
+        // MySQL's default backslash escaping (\') inside string literals.
+        var queryWithoutStrings = Regex.Replace(query, "'([^'\\\\]|\\\\.|'')*'", "'str'", RegexOptions.None, RegexHelper.DefaultRegexTimeout);
+
+        // Reject queries containing SQL comments to prevent bypass attacks
+        // (e.g., MySQL version-specific comments /*!50000 ... */ that are executed as code)
+        if (queryWithoutStrings.Contains("--", StringComparison.Ordinal) || queryWithoutStrings.Contains("/*", StringComparison.Ordinal) || queryWithoutStrings.Contains("#", StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException("SQL comments are not allowed for security reasons.");
+        }
+
+        // Normalize whitespace and trim for validation
+        var cleanedQuery = Regex.Replace(query, @"\s+", " ", RegexOptions.Multiline).Trim();
+
+        // Ensure the cleaned query is not empty
+        if (string.IsNullOrWhiteSpace(cleanedQuery))
+        {
+            throw new ArgumentException("Query cannot be empty after removing comments and whitespace.", nameof(query));
+        }
+
+        // Regex pattern to detect multiple SQL statements (semicolon not at end)
+        var multipleStatementsPattern = RegexHelper.CreateRegex(
+            @";\s*\w",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled
+        );
+
+        if (multipleStatementsPattern.IsMatch(cleanedQuery))
+        {
+            throw new InvalidOperationException("Multiple SQL statements are not allowed. Use only a single SELECT statement.");
+        }
+
+        // List of dangerous SQL keywords that should be blocked (word-boundary matching)
+        var keywordMatch = DangerousKeywordsPattern.Match(cleanedQuery);
+        if (keywordMatch.Success)
+        {
+            throw new InvalidOperationException($"Query contains dangerous keyword '{keywordMatch.Value.ToUpperInvariant()}' which is not allowed for security reasons.");
+        }
+
+        // Check for character conversion functions that may be used for obfuscation
+        var funcMatch = ObfuscationFunctionsPattern.Match(cleanedQuery);
+        if (funcMatch.Success)
+        {
+            throw new InvalidOperationException($"Character conversion and obfuscation functions like '{funcMatch.Groups[1].Value.ToUpperInvariant()}' are not allowed for security reasons.");
+        }
+
+        // Additional validation: Only allow SELECT statements
+        var trimmedQuery = cleanedQuery.Trim();
+        var allowedStartPatterns = new[]
+        {
+            "SELECT"
+        };
+
+        bool isAllowed = allowedStartPatterns.Any(pattern => trimmedQuery.StartsWith(pattern, StringComparison.OrdinalIgnoreCase));
+
+        if (!isAllowed)
+        {
+            throw new InvalidOperationException("Only SELECT statements are allowed for security reasons.");
+        }
+    }
+
+    internal static (string Query, List<(string Name, string Value)> Parameters) ParameterizeStringLiterals(string query) =>
+        SqlQueryParameterizer.Parameterize(query, SqlQueryParameterizer.SqlDialect.MySql);
+
+    public async Task<List<string>> ListDatabasesAsync(string subscriptionId, string resourceGroup, string user, string server, CancellationToken cancellationToken)
+    {
+        var connectionString = await BuildConnectionStringAsync(server, user, "mysql", cancellationToken);
+
+        await using var resource = await MySqlResource.CreateAsync(connectionString, cancellationToken);
+        var query = "SHOW DATABASES;";
+        await using var command = new MySqlCommand(query, resource.Connection);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        var dbs = new List<string>();
+        var dbCount = 0;
+        while (await reader.ReadAsync(cancellationToken) && dbCount < MaxResultLimit)
+        {
+            var dbName = reader.GetString(0);
+            // Filter out system databases
+            if (dbName != "information_schema" && dbName != "mysql" && dbName != "performance_schema" && dbName != "sys")
+            {
+                dbs.Add(dbName);
+                dbCount++;
+            }
+        }
+
+        if (dbCount >= MaxResultLimit)
+        {
+            dbs.Add($"... (output limited to {MaxResultLimit:N0} databases for security and performance reasons)");
+        }
+
+        return dbs;
+    }
+
+    public async Task<List<string>> ExecuteQueryAsync(string subscriptionId, string resourceGroup, string user, string server, string database, string query, CancellationToken cancellationToken)
+    {
+        ValidateQuerySafety(query);
+
+        var (parameterizedQuery, queryParameters) = ParameterizeStringLiterals(query);
+
+        var connectionString = await BuildConnectionStringAsync(server, user, database, cancellationToken);
+
+        await using var resource = await MySqlResource.CreateAsync(connectionString, cancellationToken);
+        await using var command = new MySqlCommand(parameterizedQuery, resource.Connection);
+
+        foreach (var (name, value) in queryParameters)
+        {
+            command.Parameters.AddWithValue(name, value);
+        }
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+        var rows = new List<string>();
+
+        var columnNames = Enumerable.Range(0, reader.FieldCount)
+                                .Select(reader.GetName)
+                                .ToArray();
+        rows.Add(string.Join(", ", columnNames));
+
+        var rowCount = 0;
+
+        while (await reader.ReadAsync(cancellationToken) && rowCount < MaxResultLimit)
+        {
+            var row = new List<string>();
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+                row.Add(reader[i]?.ToString() ?? "NULL");
+            }
+            rows.Add(string.Join(", ", row));
+            rowCount++;
+        }
+
+        if (rowCount >= MaxResultLimit)
+        {
+            rows.Add($"... (output limited to {MaxResultLimit:N0} rows for security and performance reasons)");
+        }
+
+        return rows;
+    }
+
+    public async Task<List<string>> GetTableSchemaAsync(string subscriptionId, string resourceGroup, string user, string server, string database, string table, CancellationToken cancellationToken)
+    {
+        var connectionString = await BuildConnectionStringAsync(server, user, database, cancellationToken);
+
+        await using var resource = await MySqlResource.CreateAsync(connectionString, cancellationToken);
+        var query = "SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = @table;";
+        await using var command = new MySqlCommand(query, resource.Connection);
+        command.Parameters.AddWithValue("@table", table);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        var schema = new List<string>();
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            schema.Add($"{reader.GetString(0)}: {reader.GetString(1)}");
+        }
+        return schema;
+    }
+
+    public async Task<List<string>> ListServersAsync(string subscriptionId, string resourceGroup, string user, CancellationToken cancellationToken)
+    {
+        var rg = await _resourceGroupService.GetResourceGroupResource(subscriptionId, resourceGroup, null, null, cancellationToken)
+            ?? throw new Exception($"Resource group '{resourceGroup}' not found.");
+
+        var serverList = new List<string>();
+        await foreach (MySqlFlexibleServerResource server in rg.GetMySqlFlexibleServers().GetAllAsync(cancellationToken: cancellationToken))
+        {
+            serverList.Add(server.Data.Name);
+        }
+        return serverList;
+    }
+
+    public async Task<List<string>> GetTablesAsync(string subscriptionId, string resourceGroup, string user, string server, string database, CancellationToken cancellationToken)
+    {
+        var connectionString = await BuildConnectionStringAsync(server, user, database, cancellationToken);
+
+        await using var resource = await MySqlResource.CreateAsync(connectionString, cancellationToken);
+        var query = "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE();";
+        await using var command = new MySqlCommand(query, resource.Connection);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        var tables = new List<string>();
+        var tableCount = 0;
+        while (await reader.ReadAsync(cancellationToken) && tableCount < MaxResultLimit)
+        {
+            tables.Add(reader.GetString(0));
+            tableCount++;
+        }
+
+        if (tableCount >= MaxResultLimit)
+        {
+            tables.Add($"... (output limited to {MaxResultLimit:N0} tables for security and performance reasons)");
+        }
+
+        return tables;
+    }
+
+    public async Task<string> GetServerConfigAsync(string subscriptionId, string resourceGroup, string user, string server, CancellationToken cancellationToken)
+    {
+        var rg = await _resourceGroupService.GetResourceGroupResource(subscriptionId, resourceGroup, null, null, cancellationToken)
+            ?? throw new Exception($"Resource group '{resourceGroup}' not found.");
+
+        var mysqlServer = await rg.GetMySqlFlexibleServerAsync(server, cancellationToken);
+        var mysqlServerData = mysqlServer.Value.Data;
+        var config = new ServerConfigGetResult
+        {
+            ServerName = mysqlServerData.Name,
+            Location = mysqlServerData.Location.ToString(),
+            Version = mysqlServerData.Version?.ToString(),
+            SKU = mysqlServerData.Sku?.Name,
+            StorageSizeGB = mysqlServerData.Storage?.StorageSizeInGB,
+            BackupRetentionDays = mysqlServerData.Backup?.BackupRetentionDays,
+            GeoRedundantBackup = mysqlServerData.Backup?.GeoRedundantBackup?.ToString()
+        };
+        return System.Text.Json.JsonSerializer.Serialize(config, MySqlJsonContext.Default.ServerConfigGetResult);
+    }
+
+    public async Task<string> GetServerParameterAsync(string subscriptionId, string resourceGroup, string user, string server, string param, CancellationToken cancellationToken)
+    {
+        var rg = await _resourceGroupService.GetResourceGroupResource(subscriptionId, resourceGroup, null, null, cancellationToken)
+            ?? throw new Exception($"Resource group '{resourceGroup}' not found.");
+
+        var mysqlServer = await rg.GetMySqlFlexibleServerAsync(server, cancellationToken);
+
+        var configResponse = await mysqlServer.Value.GetMySqlFlexibleServerConfigurationAsync(param, cancellationToken);
+        if (configResponse?.Value?.Data == null)
+        {
+            throw new Exception($"Parameter '{param}' not found.");
+        }
+        return configResponse.Value.Data.Value;
+    }
+
+    public async Task<string> SetServerParameterAsync(string subscriptionId, string resourceGroup, string user, string server, string param, string value, CancellationToken cancellationToken)
+    {
+        var rg = await _resourceGroupService.GetResourceGroupResource(subscriptionId, resourceGroup, null, null, cancellationToken)
+            ?? throw new Exception($"Resource group '{resourceGroup}' not found.");
+
+        var mysqlServer = await rg.GetMySqlFlexibleServerAsync(server, cancellationToken);
+
+        var configuration = await mysqlServer.Value.GetMySqlFlexibleServerConfigurationAsync(param, cancellationToken);
+        if (configuration?.Value?.Data == null)
+        {
+            throw new Exception($"Parameter '{param}' not found.");
+        }
+
+        var configData = configuration.Value.Data;
+        configData.Value = value;
+
+        var updateOperation = await mysqlServer.Value.GetMySqlFlexibleServerConfigurations().CreateOrUpdateAsync(WaitUntil.Completed, param, configData, cancellationToken);
+        return updateOperation.Value.Data.Value;
+    }
+
+    private sealed class MySqlResource : IAsyncDisposable
+    {
+        public MySqlConnection Connection { get; }
+
+        public static async Task<MySqlResource> CreateAsync(string connectionString, CancellationToken cancellationToken)
+        {
+            var connection = new MySqlConnection(connectionString);
+            await connection.OpenAsync(cancellationToken);
+            return new MySqlResource(connection);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await Connection.DisposeAsync();
+        }
+
+        private MySqlResource(MySqlConnection connection)
+        {
+            Connection = connection;
+        }
+    }
+
+    public class ServerConfigGetResult
+    {
+        public string? ServerName { get; set; }
+        public string? Location { get; set; }
+        public string? Version { get; set; }
+        public string? SKU { get; set; }
+        public int? StorageSizeGB { get; set; }
+        public int? BackupRetentionDays { get; set; }
+        public string? GeoRedundantBackup { get; set; }
+    }
+}

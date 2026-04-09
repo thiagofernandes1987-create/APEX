@@ -1,0 +1,52 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Azure.Mcp.Tools.ResourceHealth.Commands.AvailabilityStatus;
+using Azure.Mcp.Tools.ResourceHealth.Commands.ServiceHealthEvents;
+using Azure.Mcp.Tools.ResourceHealth.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Mcp.Core.Areas;
+using Microsoft.Mcp.Core.Commands;
+
+namespace Azure.Mcp.Tools.ResourceHealth;
+
+public class ResourceHealthSetup : IAreaSetup
+{
+    public string Name => "resourcehealth";
+
+    public string Title => "Azure Resource Health";
+
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddSingleton<IResourceHealthService, ResourceHealthService>();
+
+        services.AddSingleton<AvailabilityStatusGetCommand>();
+
+        services.AddSingleton<ServiceHealthEventsListCommand>();
+    }
+
+    public CommandGroup RegisterCommands(IServiceProvider serviceProvider)
+    {
+        var resourceHealth = new CommandGroup(Name,
+            "Resource Health operations – Commands to monitor and diagnose Azure resource health, including availability status and service health events for troubleshooting and monitoring purposes.", Title);
+
+        // Create availability-status subgroup
+        var availabilityStatus = new CommandGroup("availability-status",
+            "Resource availability status operations - Commands for retrieving current and historical availability status of Azure resources.");
+        resourceHealth.AddSubGroup(availabilityStatus);
+
+        // Create health-events subgroup
+        var serviceHealthEvents = new CommandGroup("health-events",
+            "Service health events operations - Commands for retrieving Azure service health events affecting Azure services and subscriptions.");
+        resourceHealth.AddSubGroup(serviceHealthEvents);
+
+        // Register commands
+        var availabilityStatusCmd = serviceProvider.GetRequiredService<AvailabilityStatusGetCommand>();
+        availabilityStatus.AddCommand(availabilityStatusCmd.Name, availabilityStatusCmd);
+
+        var serviceHealthEventsList = serviceProvider.GetRequiredService<ServiceHealthEventsListCommand>();
+        serviceHealthEvents.AddCommand(serviceHealthEventsList.Name, serviceHealthEventsList);
+
+        return resourceHealth;
+    }
+}

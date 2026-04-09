@@ -1,0 +1,81 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.CommandLine;
+using System.Text.Json.Nodes;
+using Azure.Mcp.Core.Commands.Subscription;
+using Azure.Mcp.Tools.ApplicationInsights.Options;
+using Azure.Mcp.Tools.ApplicationInsights.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Mcp.Core.Commands;
+using Microsoft.Mcp.Core.Extensions;
+using Microsoft.Mcp.Core.Models.Command;
+using Microsoft.Mcp.Core.Models.Option;
+
+namespace Azure.Mcp.Tools.ApplicationInsights.Commands.Recommendation;
+
+public sealed class RecommendationListCommand(ILogger<RecommendationListCommand> logger, IApplicationInsightsService applicationInsightsService) : SubscriptionCommand<RecommendationListOptions>()
+{
+    private const string CommandTitle = "List Application Insights Recommendations";
+    private readonly ILogger<RecommendationListCommand> _logger = logger;
+    private readonly IApplicationInsightsService _applicationInsightsService = applicationInsightsService;
+
+    public override string Id => "8d259f21-43b3-4962-bec8-de616b8b5f0d";
+
+    public override string Name => "list";
+
+    public override string Description =>
+        """
+        List Application Insights Code Optimization Recommendations in a subscription. Optionally filter by resource group when --resource-group is provided.
+        Returns the code optimization recommendations based on the profiler data.
+        """;
+
+    public override string Title => CommandTitle;
+
+    public override ToolMetadata Metadata => new() { Destructive = false, Idempotent = true, LocalRequired = false, OpenWorld = false, Secret = false, ReadOnly = true };
+
+    protected override void RegisterOptions(Command command)
+    {
+        base.RegisterOptions(command);
+        // New explicit option registration pattern: add resource group as optional per-command
+        command.Options.Add(OptionDefinitions.Common.ResourceGroup.AsOptional());
+    }
+
+    protected override RecommendationListOptions BindOptions(ParseResult parseResult)
+    {
+        var options = base.BindOptions(parseResult);
+        options.ResourceGroup ??= parseResult.GetValueOrDefault<string>(OptionDefinitions.Common.ResourceGroup.Name);
+        return options;
+    }
+
+    public override async Task<CommandResponse> ExecuteAsync(CommandContext context, ParseResult parseResult, CancellationToken cancellationToken)
+    {
+        if (!Validate(parseResult.CommandResult, context.Response).IsValid)
+        {
+            return context.Response;
+        }
+
+        var options = BindOptions(parseResult);
+        try
+        {
+            var insights = await _applicationInsightsService.GetProfilerInsightsAsync(
+                options.Subscription!,
+                options.ResourceGroup,
+                options.Tenant,
+                options.RetryPolicy,
+                cancellationToken);
+
+            context.Response.Results = insights?.Count() > 0 ?
+                ResponseResult.Create(new(insights), ApplicationInsightsJsonContext.Default.RecommendationListCommandResult) :
+                null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error listing Application Insights components for recommendations.");
+            HandleException(context, ex);
+        }
+        return context.Response;
+    }
+
+    internal record RecommendationListCommandResult(IEnumerable<JsonNode> Recommendations);
+}

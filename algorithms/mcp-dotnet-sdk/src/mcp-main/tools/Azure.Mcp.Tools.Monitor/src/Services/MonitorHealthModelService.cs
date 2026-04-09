@@ -1,0 +1,139 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Text.Json.Nodes;
+using Azure.Core;
+using Azure.Mcp.Core.Services.Azure;
+using Azure.Mcp.Core.Services.Azure.Tenant;
+using Microsoft.Mcp.Core.Models;
+using Microsoft.Mcp.Core.Options;
+using Microsoft.Mcp.Core.Services.Azure.Authentication;
+
+namespace Azure.Mcp.Tools.Monitor.Services;
+
+public class MonitorHealthModelService(ITenantService tenantService, IHttpClientFactory httpClientFactory)
+    : BaseAzureService(tenantService), IMonitorHealthModelService
+{
+    private const string ApiVersion = "2023-10-01-preview";
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+    private readonly ITenantService _tenantService = tenantService ?? throw new ArgumentNullException(nameof(tenantService));
+
+    /// <summary>
+    /// Retrieves the health information for a specific entity in a health model.
+    /// </summary>
+    /// <param name="entity">The identifier of the entity whose health is being queried.</param>
+    /// <param name="healthModelName">The name of the health model to query.</param>
+    /// <param name="resourceGroupName">The name of the resource group containing the health model.</param>
+    /// <param name="subscription">The Azure subscription ID containing the resource group.</param>
+    /// <param name="authMethod">Optional. The authentication method to use for the request.</param>
+    /// <param name="tenantId">Optional. The Azure tenant ID for authentication.</param>
+    /// <param name="retryPolicy">Optional. Policy parameters for retrying failed requests.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>A JSON node containing the entity's health information.</returns>
+    /// <exception cref="ArgumentException">Thrown when required parameters are missing or invalid.</exception>
+    /// <exception cref="Exception">Thrown when parsing the health response fails.</exception>
+    public async Task<JsonNode> GetEntityHealth(
+        string entity,
+        string healthModelName,
+        string resourceGroupName,
+        string subscription,
+        AuthMethod? authMethod = null,
+        string? tenantId = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default)
+    {
+        ValidateRequiredParameters((nameof(entity), entity), (nameof(healthModelName), healthModelName), (nameof(resourceGroupName), resourceGroupName), (nameof(subscription), subscription));
+
+        string dataplaneEndpoint = await GetDataplaneEndpointAsync(subscription, resourceGroupName, healthModelName, cancellationToken);
+        string entityHealthUrl = $"{dataplaneEndpoint}api/entities/{entity}/history";
+
+        string healthResponseString = await GetDataplaneResponseAsync(entityHealthUrl, cancellationToken);
+        return JsonNode.Parse(healthResponseString) ?? throw new Exception("Failed to parse health response to JSON.");
+    }
+
+    private async Task<string> GetDataplaneResponseAsync(string url, CancellationToken cancellationToken)
+    {
+        string dataplaneToken = await GetDataplaneTokenAsync(cancellationToken);
+        using var request = new HttpRequestMessage(HttpMethod.Get, url);
+        request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", dataplaneToken);
+
+        var client = _httpClientFactory.CreateClient();
+        HttpResponseMessage healthResponse = await client.SendAsync(request, cancellationToken);
+        healthResponse.EnsureSuccessStatusCode();
+
+        string healthResponseString = await healthResponse.Content.ReadAsStringAsync(cancellationToken);
+        return healthResponseString;
+    }
+
+    private async Task<string> GetDataplaneEndpointAsync(string subscriptionId, string resourceGroupName, string healthModelName, CancellationToken cancellationToken)
+    {
+        string token = await GetControlPlaneTokenAsync(cancellationToken);
+        string healthModelUrl = $"{GetManagementEndpoint()}/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}?api-version={ApiVersion}";
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, healthModelUrl);
+        request.Headers.Authorization = new("Bearer", token);
+
+        var client = _httpClientFactory.CreateClient();
+        HttpResponseMessage response = await client.SendAsync(request, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        string responseString = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        string dataplaneEndpoint = GetDataplaneEndpoint(responseString);
+        return dataplaneEndpoint;
+    }
+
+    private static string GetDataplaneEndpoint(string jsonResponse)
+    {
+        try
+        {
+            JsonNode? json = JsonNode.Parse(jsonResponse);
+            string? dataplaneEndpoint = json?["properties"]?["dataplaneEndpoint"]?.GetValue<string>();
+            if (string.IsNullOrEmpty(dataplaneEndpoint))
+            {
+                throw new Exception("Dataplane endpoint is null or empty in the response.");
+            }
+
+            return dataplaneEndpoint!;
+        }
+        catch (Exception ex)
+        {
+            string errorMessage = $"Error parsing dataplane endpoint: {ex.Message}";
+            throw new Exception(errorMessage, ex);
+        }
+    }
+
+    private async Task<string> GetControlPlaneTokenAsync(CancellationToken cancellationToken)
+    {
+        return (await GetArmAccessTokenAsync(null, cancellationToken)).Token;
+    }
+
+    private async Task<string> GetDataplaneTokenAsync(CancellationToken cancellationToken)
+    {
+        TokenCredential credential = await GetCredential(cancellationToken);
+        AccessToken accessToken = await credential.GetTokenAsync(
+            new([GetHealthModelsDataApiScope()]),
+            cancellationToken);
+
+        return accessToken.Token;
+    }
+
+    private string GetManagementEndpoint()
+    {
+        return _tenantService.CloudConfiguration.ArmEnvironment.Endpoint.ToString().TrimEnd('/');
+    }
+
+    private string GetHealthModelsDataApiScope()
+    {
+        return _tenantService.CloudConfiguration.CloudType switch
+        {
+            AzureCloudConfiguration.AzureCloud.AzurePublicCloud =>
+                "https://data.healthmodels.azure.com/.default",
+            AzureCloudConfiguration.AzureCloud.AzureChinaCloud =>
+                "https://data.healthmodels.azure.cn/.default",
+            AzureCloudConfiguration.AzureCloud.AzureUSGovernmentCloud =>
+                "https://data.healthmodels.azure.us/.default",
+            _ =>
+                "https://data.healthmodels.azure.com/.default"
+        };
+    }
+}

@@ -1,0 +1,13 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Text.Json.Serialization;
+using Microsoft.Mcp.Core.Options;
+
+namespace Azure.Mcp.Tools.Workbooks.Options.Workbook;
+
+public class DeleteWorkbookOptions : GlobalOptions
+{
+    [JsonPropertyName(WorkbooksOptionDefinitions.WorkbookIdsText)]
+    public string[]? WorkbookIds { get; set; }
+}

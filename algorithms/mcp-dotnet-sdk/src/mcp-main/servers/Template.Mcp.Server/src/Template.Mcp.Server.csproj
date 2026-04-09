@@ -1,0 +1,90 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>0.0.12</Version>
+    <CliName>mcptmp</CliName>
+    <AssemblyTitle>Template MCP Server</AssemblyTitle>
+    <Description>Template MCP Server - Basic Model Context Protocol implementation</Description>
+    <ReadmeUrl>https://github.com/Microsoft/mcp/blob/main/servers/Template.Mcp.Server#readme</ReadmeUrl>
+    <ReadmePath>$(RepoRoot)/servers/Template.Mcp.Server/README.md</ReadmePath>
+    <!-- <PackageIcon></PackageIcon> Defaults to the microsoft logo if not specified. -->
+
+    <!-- Official MCP repository settings -->
+    <McpRepositoryName>com.microsoft/template-server-name</McpRepositoryName>
+    <ServerJsonPath>$(MSBuildThisFileDirectory)../server.json</ServerJsonPath>
+
+    <!-- npm settings -->
+    <NpmPackageName>@azure/mcp-template</NpmPackageName>
+    <NpmPackageKeywords>azure,mcp,model-context-protocol</NpmPackageKeywords>
+
+    <!-- docker settings -->
+    <DockerImageName>azure-sdk/template-mcp</DockerImageName>
+
+    <!-- dnx/nuget settings -->
+    <DnxPackageId>Microsoft.Template.Mcp</DnxPackageId>
+    <DnxToolCommandName>$(CliName)</DnxToolCommandName>
+    <DnxPackageTags>template,mcp</DnxPackageTags>
+
+    <!-- pypi settings -->
+    <PypiPackageName>msmcp-template</PypiPackageName>
+    <PypiPackageKeywords>template,mcp,model-context-protocol,ai,llm</PypiPackageKeywords>
+
+    <!-- mcpb settings -->
+    <McpbPlatforms>win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx-arm64</McpbPlatforms>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>$(CliName)</AssemblyName>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Publishing settings -->
+    <IsAotCompatible>true</IsAotCompatible>
+    <PublishSingleFile>false</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+    <PublishReadyToRun>false</PublishReadyToRun>
+    <PublishTrimmed>false</PublishTrimmed>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+
+  <!-- Enable Trim and AOT Analyzers -->
+  <PropertyGroup>
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
+    <!-- Suppress IL3000 warning in Microsoft.Identity.Client.NativeInterop -->
+    <NoWarn>$(NoWarn);IL3000</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(BuildNative)' == 'true'">
+    <!-- AOT native build flags -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <SelfContained>true</SelfContained>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)\core\Template.Mcp.Core\src\Template.Mcp.Core.csproj" />
+    <ProjectReference Include="$(RepoRoot)\areas\*\src\**\Template.*.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ModelContextProtocol" />
+    <PackageReference Include="System.CommandLine" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <Content Include="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

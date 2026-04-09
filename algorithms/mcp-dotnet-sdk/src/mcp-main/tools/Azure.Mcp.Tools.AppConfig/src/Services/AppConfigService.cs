@@ -1,0 +1,279 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Text.Json;
+using Azure.Core.Pipeline;
+using Azure.Data.AppConfiguration;
+using Azure.Mcp.Core.Services.Azure;
+using Azure.Mcp.Core.Services.Azure.Subscription;
+using Azure.Mcp.Core.Services.Azure.Tenant;
+using Azure.Mcp.Tools.AppConfig.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Mcp.Core.Helpers;
+using Microsoft.Mcp.Core.Models.Identity;
+using Microsoft.Mcp.Core.Options;
+using Microsoft.Mcp.Core.Services.Azure.Authentication;
+
+namespace Azure.Mcp.Tools.AppConfig.Services;
+
+using ETag = Microsoft.Mcp.Core.Models.ETag;
+
+public sealed class AppConfigService(ISubscriptionService subscriptionService, ITenantService tenantService, ILogger<AppConfigService> logger, IHttpClientFactory httpClientFactory)
+    : BaseAzureResourceService(subscriptionService, tenantService), IAppConfigService
+{
+    private readonly ILogger<AppConfigService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+
+    public async Task<ResourceQueryResults<AppConfigurationAccount>> GetAppConfigAccounts(
+        string subscription,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default)
+    {
+        ValidateRequiredParameters((nameof(subscription), subscription));
+
+        return await ExecuteResourceQueryAsync(
+            "Microsoft.AppConfiguration/configurationStores",
+            resourceGroup: null, // all resource groups
+            subscription,
+            retryPolicy,
+            ConvertToAppConfigurationAccountModel,
+            tenant: tenant,
+            cancellationToken: cancellationToken);
+    }
+
+    public async Task<List<KeyValueSetting>> GetKeyValues(
+        string accountName,
+        string subscription,
+        string? key = null,
+        string? label = null,
+        string? keyFilter = null,
+        string? labelFilter = null,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        CancellationToken cancellationToken = default)
+    {
+        ValidateRequiredParameters((nameof(accountName), accountName), (nameof(subscription), subscription));
+
+        var client = await GetConfigurationClient(accountName, subscription, tenant, retryPolicy, cancellationToken);
+        var settings = new List<KeyValueSetting>();
+        if (!string.IsNullOrEmpty(key))
+        {
+            var response = await client.GetConfigurationSettingAsync(key, label, cancellationToken: cancellationToken);
+            AddSetting(response.Value, settings);
+        }
+        else
+        {
+            var selector = new SettingSelector
+            {
+                KeyFilter = string.IsNullOrEmpty(keyFilter) ? null : keyFilter,
+                LabelFilter = string.IsNullOrEmpty(labelFilter) ? null : labelFilter
+            };
+
+            await foreach (var setting in client.GetConfigurationSettingsAsync(selector, cancellationToken))
+            {
+                AddSetting(setting, settings);
+            }
+        }
+
+        return settings;
+    }
+
+    private static void AddSetting(ConfigurationSetting setting, List<KeyValueSetting> settings)
+    {
+        settings.Add(new()
+        {
+            Key = setting.Key,
+            Value = setting.Value,
+            Label = setting.Label ?? string.Empty,
+            ContentType = setting.ContentType ?? string.Empty,
+            ETag = new() { Value = setting.ETag.ToString() },
+            LastModified = setting.LastModified,
+            Locked = setting.IsReadOnly
+        });
+    }
+
+    public async Task SetKeyValueLockState(
+        string accountName,
+        string key,
+        bool locked,
+        string subscription,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        string? label = null,
+        CancellationToken cancellationToken = default)
+    {
+        ValidateRequiredParameters((nameof(accountName), accountName), (nameof(key), key), (nameof(subscription), subscription));
+        var client = await GetConfigurationClient(accountName, subscription, tenant, retryPolicy, cancellationToken);
+        await client.SetReadOnlyAsync(key, label, locked, cancellationToken: cancellationToken);
+    }
+
+    public async Task SetKeyValue(
+        string accountName,
+        string key,
+        string value,
+        string subscription,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        string? label = null,
+        string? contentType = null,
+        string[]? tags = null,
+        CancellationToken cancellationToken = default)
+    {
+        ValidateRequiredParameters((nameof(accountName), accountName), (nameof(key), key), (nameof(value), value), (nameof(subscription), subscription));
+        var client = await GetConfigurationClient(accountName, subscription, tenant, retryPolicy, cancellationToken);
+
+        // Create a ConfigurationSetting object to include contentType if provided
+        var setting = new ConfigurationSetting(key, value, label)
+        {
+            ContentType = contentType
+        };
+
+        // Parse and add tags if provided
+        if (tags != null && tags.Length > 0)
+        {
+            foreach (var tagPair in tags)
+            {
+                var parts = tagPair.Split('=', 2);
+                if (parts.Length == 2)
+                {
+                    var tagKey = parts[0].Trim();
+                    if (!string.IsNullOrEmpty(tagKey))
+                    {
+                        setting.Tags[tagKey] = parts[1];
+                    }
+                }
+                else if (parts.Length == 1 && !string.IsNullOrEmpty(parts[0]))
+                {
+                    // Handle tags that don't follow key=value format
+                    setting.Tags[parts[0]] = string.Empty;
+                }
+            }
+        }
+
+        await client.SetConfigurationSettingAsync(setting, cancellationToken: cancellationToken);
+    }
+    public async Task DeleteKeyValue(
+        string accountName,
+        string key,
+        string subscription,
+        string? tenant = null,
+        RetryPolicyOptions? retryPolicy = null,
+        string? label = null,
+        CancellationToken cancellationToken = default)
+    {
+        ValidateRequiredParameters((nameof(accountName), accountName), (nameof(key), key), (nameof(subscription), subscription));
+        var client = await GetConfigurationClient(accountName, subscription, tenant, retryPolicy, cancellationToken);
+        await client.DeleteConfigurationSettingAsync(key, label, cancellationToken: cancellationToken);
+    }
+
+    private async Task<ConfigurationClient> GetConfigurationClient(string accountName, string subscription, string? tenant, RetryPolicyOptions? retryPolicy, CancellationToken cancellationToken)
+    {
+        var configStore = await FindAppConfigStore(subscription, tenant, accountName, subscription, retryPolicy, cancellationToken);
+        var endpoint = configStore.Endpoint;
+        if (string.IsNullOrEmpty(endpoint))
+        {
+            throw new InvalidOperationException($"The App Configuration store '{accountName}' does not have a valid endpoint.");
+        }
+
+        EndpointValidator.ValidateAzureServiceEndpoint(endpoint, "appconfig", TenantService.CloudConfiguration.ArmEnvironment);
+
+        var credential = await GetCredential(tenant, cancellationToken);
+        var options = new ConfigurationClientOptions();
+        options.Audience = GetAppConfigurationAudience();
+        AddDefaultPolicies(options);
+
+        var endpointUri = new Uri(endpoint);
+        var httpClient = _httpClientFactory.CreateClient();
+        httpClient.BaseAddress = endpointUri;
+        options.Transport = new HttpClientTransport(httpClient);
+
+        return new ConfigurationClient(endpointUri, credential, options);
+    }
+
+    private async Task<AppConfigurationAccount> FindAppConfigStore(
+        string subscription,
+        string? tenant,
+        string accountName,
+        string subscriptionIdentifier,
+        RetryPolicyOptions? retryPolicy,
+        CancellationToken cancellationToken)
+    {
+        return await ExecuteSingleResourceQueryAsync(
+            "Microsoft.AppConfiguration/configurationStores",
+            resourceGroup: null, // all resource groups
+            subscription: subscription,
+            retryPolicy: retryPolicy,
+            converter: ConvertToAppConfigurationAccountModel,
+            additionalFilter: $"name =~ '{EscapeKqlString(accountName)}'",
+            tenant: tenant,
+            cancellationToken: cancellationToken)
+            ?? throw new KeyNotFoundException($"App Configuration store '{accountName}' not found for subscription '{subscriptionIdentifier}'.");
+    }
+
+    /// <summary>
+    /// Converts a JsonElement from Azure Resource Graph query to an App Configuration account model.
+    /// </summary>
+    /// <param name="item">The JsonElement containing App Configuration account data</param>
+    /// <returns>The App Configuration account model</returns>
+    private static AppConfigurationAccount ConvertToAppConfigurationAccountModel(JsonElement item)
+    {
+        Models.AppConfigurationStoreData? appConfigAccount = Models.AppConfigurationStoreData.FromJson(item)
+            ?? throw new InvalidOperationException("Failed to parse App Configuration account data");
+
+        bool publicNetworkAccess = false;
+        if (appConfigAccount.Properties?.PublicNetworkAccess != null)
+        {
+            publicNetworkAccess = appConfigAccount.Properties.PublicNetworkAccess.Equals("Enabled", StringComparison.OrdinalIgnoreCase);
+        }
+
+        return new()
+        {
+            Name = appConfigAccount.ResourceName ?? "Unknown",
+            Location = appConfigAccount.Location,
+            Endpoint = appConfigAccount.Properties?.Endpoint,
+            CreationDate = appConfigAccount.Properties?.CreatedOn,
+            PublicNetworkAccess = publicNetworkAccess,
+            Sku = appConfigAccount.Sku?.Name,
+            Tags = appConfigAccount.Tags ?? new Dictionary<string, string>(),
+            DisableLocalAuth = appConfigAccount.Properties?.DisableLocalAuth,
+            SoftDeleteRetentionInDays = appConfigAccount.Properties?.SoftDeleteRetentionInDays,
+            EnablePurgeProtection = appConfigAccount.Properties?.EnablePurgeProtection,
+            CreateMode = appConfigAccount.Properties?.CreateMode,
+            // Map the new managed identity structure
+            ManagedIdentity = appConfigAccount.Identity == null ? null : new()
+            {
+                SystemAssignedIdentity = new()
+                {
+                    Enabled = appConfigAccount.Identity != null,
+                    TenantId = appConfigAccount.Identity?.TenantId?.ToString(),
+                    PrincipalId = appConfigAccount.Identity?.PrincipalId?.ToString()
+                },
+                UserAssignedIdentities = appConfigAccount.Identity?.UserAssignedIdentities?
+                    .Select(id => new UserAssignedIdentityInfo
+                    {
+                        ClientId = id.Value.ClientId?.ToString(),
+                        PrincipalId = id.Value.PrincipalId?.ToString()
+                    })
+                    .ToArray()
+            },
+            // Full encryption properties from KeyVaultProperties
+            Encryption = appConfigAccount.Properties?.Encryption?.KeyVaultProperties == null ? null : new()
+            {
+                KeyIdentifier = appConfigAccount.Properties?.Encryption?.KeyVaultProperties?.KeyIdentifier,
+                IdentityClientId = appConfigAccount.Properties?.Encryption?.KeyVaultProperties?.IdentityClientId,
+            }
+        };
+    }
+
+    private AppConfigurationAudience GetAppConfigurationAudience()
+    {
+        return TenantService.CloudConfiguration.CloudType switch
+        {
+            AzureCloudConfiguration.AzureCloud.AzurePublicCloud => AppConfigurationAudience.AzurePublicCloud,
+            AzureCloudConfiguration.AzureCloud.AzureChinaCloud => AppConfigurationAudience.AzureChina,
+            AzureCloudConfiguration.AzureCloud.AzureUSGovernmentCloud => AppConfigurationAudience.AzureGovernment,
+            _ => AppConfigurationAudience.AzurePublicCloud
+        };
+    }
+}

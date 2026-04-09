@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\**\*.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\core\Azure.Mcp.Core\src\Azure.Mcp.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <PackageReference Include="Azure.Core" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="ModelContextProtocol" />
+    <PackageReference Include="System.CommandLine" />
+    <PackageReference Include="Azure.ResourceManager" />
+    <PackageReference Include="Azure.ResourceManager.AppService" />
+    <PackageReference Include="Azure.ResourceManager.AppContainers" />
+    <PackageReference Include="Azure.ResourceManager.Resources" />
+    <PackageReference Include="Azure.ResourceManager.Compute"/>
+    <PackageReference Include="Azure.ResourceManager.MachineLearning" />
+    <PackageReference Include="Azure.ResourceManager.Network" />
+    <PackageReference Include="Azure.ResourceManager.ContainerInstance" />
+    <PackageReference Include="Azure.ResourceManager.HDInsight" />
+    <PackageReference Include="Azure.ResourceManager.CognitiveServices" />
+    <PackageReference Include="Azure.ResourceManager.Search" />
+    <PackageReference Include="Azure.ResourceManager.Storage" />
+    <PackageReference Include="Azure.ResourceManager.MySql" />
+    <PackageReference Include="Azure.ResourceManager.PostgreSql" />
+    <PackageReference Include="Azure.ResourceManager.Sql" />
+    <PackageReference Include="Azure.ResourceManager.CosmosDB" />
+    <PackageReference Include="YamlDotNet" />
+  </ItemGroup>
+</Project>

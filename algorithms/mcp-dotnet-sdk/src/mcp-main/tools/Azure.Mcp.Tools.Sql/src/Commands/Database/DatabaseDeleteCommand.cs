@@ -1,0 +1,85 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Net;
+using Azure.Mcp.Tools.Sql.Options.Database;
+using Azure.Mcp.Tools.Sql.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Mcp.Core.Commands;
+using Microsoft.Mcp.Core.Models.Command;
+
+namespace Azure.Mcp.Tools.Sql.Commands.Database;
+
+public sealed class DatabaseDeleteCommand(ILogger<DatabaseDeleteCommand> logger)
+    : BaseDatabaseCommand<DatabaseDeleteOptions>(logger)
+{
+    private const string CommandTitle = "Delete SQL Database";
+
+    public override string Id => "c4ef0375-0df9-445c-b8ae-2542e9612425";
+
+    public override string Name => "delete";
+
+    public override string Description =>
+        """
+		Deletes a database from an Azure SQL Server.This idempotent operation removes the specified database from the server, returning Deleted = false if the database doesn't exist or Deleted = true if successfully removed.
+		""";
+
+    public override string Title => CommandTitle;
+
+    public override ToolMetadata Metadata => new()
+    {
+        Destructive = true,
+        Idempotent = true,
+        OpenWorld = false,
+        ReadOnly = false,
+        LocalRequired = false,
+        Secret = false
+    };
+
+    public override async Task<CommandResponse> ExecuteAsync(CommandContext context, ParseResult parseResult, CancellationToken cancellationToken)
+    {
+        if (!Validate(parseResult.CommandResult, context.Response).IsValid)
+        {
+            return context.Response;
+        }
+
+        var options = BindOptions(parseResult);
+
+        try
+        {
+            var sqlService = context.GetService<ISqlService>();
+
+            var deleted = await sqlService.DeleteDatabaseAsync(
+                options.Server!,
+                options.Database!,
+                options.ResourceGroup!,
+                options.Subscription!,
+                options.RetryPolicy,
+                cancellationToken);
+
+            context.Response.Results = ResponseResult.Create(new(deleted, options.Database!), SqlJsonContext.Default.DatabaseDeleteResult);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex,
+                "Error deleting SQL database. Server: {Server}, Database: {Database}, ResourceGroup: {ResourceGroup}.",
+                options.Server, options.Database, options.ResourceGroup);
+            HandleException(context, ex);
+        }
+
+        return context.Response;
+    }
+
+    protected override string GetErrorMessage(Exception ex) => ex switch
+    {
+        RequestFailedException reqEx when reqEx.Status == (int)HttpStatusCode.NotFound =>
+            "SQL server or database not found. Verify the server name, database name, resource group, and that you have access.",
+        RequestFailedException reqEx when reqEx.Status == (int)HttpStatusCode.Forbidden =>
+            $"Authorization failed deleting the SQL database. Verify you have appropriate permissions. Details: {reqEx.Message}",
+        RequestFailedException reqEx => reqEx.Message,
+        _ => base.GetErrorMessage(ex)
+    };
+
+    internal record DatabaseDeleteResult(bool Deleted, string DatabaseName);
+}
+

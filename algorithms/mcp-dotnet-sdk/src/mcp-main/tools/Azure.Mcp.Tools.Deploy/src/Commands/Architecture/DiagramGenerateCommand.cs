@@ -1,0 +1,129 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Net;
+using Azure.Mcp.Tools.Deploy.Commands.Infrastructure;
+using Azure.Mcp.Tools.Deploy.Models;
+using Azure.Mcp.Tools.Deploy.Options;
+using Azure.Mcp.Tools.Deploy.Options.Architecture;
+using Azure.Mcp.Tools.Deploy.Services.Templates;
+using Microsoft.Extensions.Logging;
+using Microsoft.Mcp.Core.Commands;
+using Microsoft.Mcp.Core.Extensions;
+using Microsoft.Mcp.Core.Models.Command;
+
+namespace Azure.Mcp.Tools.Deploy.Commands.Architecture;
+
+public sealed class DiagramGenerateCommand(ILogger<DiagramGenerateCommand> logger) : BaseCommand<DiagramGenerateOptions>
+{
+    private const string CommandTitle = "Generate Architecture Diagram";
+    private readonly ILogger<DiagramGenerateCommand> _logger = logger;
+    public override string Id => "34d7ec6a-e229-4775-8af3-85f81ae3e6d3";
+
+    public override string Name => "generate";
+
+    public override string Description =>
+        """
+        Generates an Azure service architecture diagram showing the recommended Azure services and their connections for an application. Use this tool when the user asks to generate, create, or visualize an Azure architecture diagram for their application, or wants to see which Azure services to use. Renders the diagram from an application topology (AppTopology) provided as input; scan the workspace first to build this topology by detecting services, frameworks, and environment variables for connection strings, and for .NET Aspire applications, check aspireManifest.json. Do not use this tool when the user needs a detailed network topology or security design.
+        """;
+
+    public override string Title => CommandTitle;
+    public override ToolMetadata Metadata => new()
+    {
+        Destructive = false,
+        Idempotent = true,
+        OpenWorld = false,
+        ReadOnly = true,
+        LocalRequired = false,
+        Secret = false
+    };
+
+    protected override void RegisterOptions(Command command)
+    {
+        base.RegisterOptions(command);
+        command.Options.Add(DeployOptionDefinitions.RawMcpToolInput.RawMcpToolInputOption);
+        command.Validators.Add(result =>
+        {
+            var rawMcpToolInput = result.GetValueOrDefault<string>(DeployOptionDefinitions.RawMcpToolInput.RawMcpToolInputOption.Name);
+            if (string.IsNullOrWhiteSpace(rawMcpToolInput))
+            {
+                result.AddError("App topology cannot be null or empty.");
+            }
+        });
+    }
+
+    protected override DiagramGenerateOptions BindOptions(ParseResult parseResult)
+    {
+        return new()
+        {
+            RawMcpToolInput = parseResult.GetValueOrDefault<string>(DeployOptionDefinitions.RawMcpToolInput.RawMcpToolInputOption.Name)
+        };
+    }
+
+    public override Task<CommandResponse> ExecuteAsync(CommandContext context, ParseResult parseResult, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var options = BindOptions(parseResult);
+            var rawMcpToolInput = options.RawMcpToolInput;
+
+            AppTopology appTopology = JsonSerializer.Deserialize(rawMcpToolInput!, DeployJsonContext.Default.AppTopology)
+                ?? throw new ArgumentException("Failed to deserialize app topology.", nameof(rawMcpToolInput));
+
+            context.Activity?
+                .AddTag(DeployTelemetryTags.ServiceCount, appTopology.Services.Length)
+                .AddTag(DeployTelemetryTags.ComputeHostResources, string.Join(", ", appTopology.Services.Select(s => s.AzureComputeHost)))
+                .AddTag(DeployTelemetryTags.BackingServiceResources, string.Join(", ", appTopology.Services.SelectMany(s => s.Dependencies).Select(d => d.ServiceType)));
+
+            _logger.LogInformation("Successfully parsed app topology with {ServiceCount} services", appTopology.Services.Length);
+
+            if (appTopology.Services.Length == 0)
+            {
+                _logger.LogWarning("No services detected in the app topology.");
+                context.Response.Status = HttpStatusCode.OK;
+                context.Response.Message = "No service detected.";
+                return Task.FromResult(context.Response);
+            }
+
+            var chart = GenerateMermaidChart.GenerateChart(appTopology.WorkspaceFolder ?? "", appTopology);
+            if (string.IsNullOrWhiteSpace(chart))
+            {
+                throw new InvalidOperationException("Failed to generate architecture diagram. The chart content is empty.");
+            }
+
+            var usedServiceTypes = appTopology.Services
+                .SelectMany(service => service.Dependencies)
+                .Select(dep => dep.ServiceType)
+                .Where(serviceType => !string.IsNullOrWhiteSpace(serviceType))
+                .Where(serviceType => Enum.GetNames<AzureServiceConstants.AzureServiceType>().Contains(serviceType, StringComparer.OrdinalIgnoreCase))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(x => x)
+                .ToArray();
+
+            var usedServiceTypesString = usedServiceTypes.Length > 0
+                ? string.Join(", ", usedServiceTypes)
+                : null;
+
+            var response = TemplateService.LoadTemplate("Architecture/architecture-diagram");
+            context.Response.Message = response.Replace("{{chart}}", chart)
+                .Replace("{{hostings}}", string.Join(", ", Enum.GetNames<AzureServiceConstants.AzureComputeServiceType>()));
+            if (!string.IsNullOrWhiteSpace(usedServiceTypesString))
+            {
+                context.Response.Message += $"Here is the full list of supported component service types for the topology: {usedServiceTypesString}.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to generate architecture diagram.");
+            HandleException(context, ex);
+        }
+
+        return Task.FromResult(context.Response);
+    }
+
+    protected override HttpStatusCode GetStatusCode(Exception ex) => ex switch
+    {
+        JsonException => HttpStatusCode.BadRequest,
+        _ => base.GetStatusCode(ex)
+    };
+}

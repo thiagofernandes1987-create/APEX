@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create skill zip files
+        run: |
+          # Find all skill directories and create zip files
+          for skill_dir in *-skill/; do
+            if [ -d "$skill_dir" ]; then
+              skill_name="${skill_dir%/}"
+              echo "Packaging $skill_name..."
+              cd "$skill_name"
+              zip -r "../${skill_name}-${GITHUB_REF_NAME}.zip" .
+              cd ..
+            fi
+          done
+
+          # List created zip files
+          echo "Created packages:"
+          ls -la *-skill-*.zip
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            *-skill-*.zip
+          generate_release_notes: true
+          draft: true
+          prerelease: false

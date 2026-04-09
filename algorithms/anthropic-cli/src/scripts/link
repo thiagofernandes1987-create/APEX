@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+# Mark the necessary Go modules as private to avoid Go's proxy
+export GOPRIVATE="${GOPRIVATE:+$GOPRIVATE,}github.com/anthropics/anthropic-sdk-go,github.com/stainless-sdks/anthropic-go"
+
+REPLACEMENT="${1:-"../anthropic-go"}"
+echo "==> Replacing Go SDK with $REPLACEMENT"
+go mod edit -replace github.com/anthropics/anthropic-sdk-go="$REPLACEMENT"
+go mod tidy -e
