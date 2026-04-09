@@ -1576,6 +1576,21 @@ domain_map:
       attribution_graphs:
         path: algorithms/attribution-graphs/
         anchors: [interpretability, attribution, mechanistic, visualization]
+  DEVOPS_REFERENCE:
+    path: reference-docs/
+    anchors: [gitops, kubernetes, terraform, iac, devops, infrastructure]
+    status: REFERENCE
+    note: "DevOps/IaC repos from v00.33.0 ingestion. Not extracted as skills — pure infrastructure."
+    sub_domains:
+      argo_cd:
+        path: reference-docs/argo-cd/
+        anchors: [gitops, kubernetes, continuous_delivery, argocd]
+        source_files: 6758
+      terragrunt:
+        path: reference-docs/terragrunt/
+        anchors: [terraform, iac, opentofu, hcl]
+        source_files: 6262
+
 ```
 
 ---
@@ -1600,4 +1615,4 @@ Ver detalhes: `diffs/v00_33_0/`
 - **Repo criado**: 2026-04-08
 - **APEX version**: v00.33.0
 - **DIFFs aplicados**: 104 (86 herdados + 12 OPP-92/103 + 6 OPP-104/109)
-- **Skills registradas**: 1905 (v00.33.0 — ingestion completa)
+- **Skills registradas**: 1905 (v00.33.0 — ingestion 39/39 repos)
