@@ -1,0 +1,269 @@
+# APEX LLM Compatibility Matrix
+# WHY: Cada LLM tem capacidades diferentes. APEX deve adaptar seu comportamento
+#      sem falhar silenciosamente quando um recurso não está disponível.
+# WHEN: Lido no STEP_0 de boot, após detecção do LLM runtime.
+# HOW: O llm_runtime_adapter (OPP-105) usa este arquivo para selecionar strategy.
+
+version: v00.33.0
+last_updated: "2026-04-08"
+
+detection_heuristics:
+  # WHY: APEX precisa identificar o LLM sem perguntar explicitamente.
+  # WHEN: STEP_0, antes de qualquer execução de sandbox.
+  claude_code:
+    signal: "Ferramentas disponíveis incluem Bash, Read, Write, Glob, Grep, Agent"
+    confirmed_by: "Capacidade de executar comandos bash e ler sistema de arquivos"
+  gpt4o_interpreter:
+    signal: "code_interpreter disponível, mas não Bash tool"
+    confirmed_by: "Python executa mas git clone falha"
+  gemini_native:
+    signal: "tool_code disponível, file system não disponível"
+    confirmed_by: "Python executa mas sqlite3 ou subprocess falham"
+  pure_llm:
+    signal: "Nenhuma ferramenta de execução de código detectada"
+    confirmed_by: "Todas as operações de código devem ser descritas como texto"
+
+llms:
+  claude_code:
+    name: "Claude Code (Anthropic)"
+    apex_compat_level: FULL
+    sandbox_strategy: FULL
+
+    python_sandbox:
+      available: true
+      executor: "Bash tool + native Python execution"
+      available_libs:
+        - numpy
+        - scipy
+        - sympy
+        - sklearn
+        - pandas
+        - matplotlib
+        - sqlite3
+        - orjson
+        - hashlib
+        - urllib.request
+        - concurrent.futures
+        - subprocess  # Disponível para APEX internals, PROIBIDO em skills externas (OPP-77)
+
+    connectors:
+      github:
+        available: true
+        method: "MCP git connector ou Bash git clone"
+        note: "Preferir MCP quando disponível para operações auditáveis"
+      web_search:
+        available: true
+        method: "WebSearch tool"
+      file_system:
+        available: true
+        method: "Read, Write, Edit, Glob, Grep tools"
+      agent_spawn:
+        available: true
+        method: "Agent tool — spawn subagentes especializados"
+
+    forgeskills:
+      method: "git clone HTTPS → AST scan → schema validation → importlib → UCO gate"
+      ast_scan: required  # SR_37
+      git_clone: true
+      url_fetch_fallback: "urllib.request se git clone falhar"
+      trusted_domains_required: true  # G6
+
+    snapshot_store:
+      method: "SQLite via sqlite_snapshot_store (nativo)"
+      persistence: true
+
+    behavioral_notes:
+      - "LLM preferido para APEX — todos os módulos ativos"
+      - "Usar Python sandbox para todos os blocos SANDBOX_CODE"
+      - "GitHub connector habilita leitura direta de repositórios"
+      - "orjson disponível — usar para serialização JSON de alta performance"
+      - "ThreadPoolExecutor disponível — usar para PoT paralelo"
+
+    not_restricted: []  # Sem restrições além de OPP-77 IMPORT_WHITELIST para skills externas
+
+  gpt4o_code_interpreter:
+    name: "GPT-4o (OpenAI) com Code Interpreter"
+    apex_compat_level: PARTIAL
+    sandbox_strategy: PARTIAL
+
+    python_sandbox:
+      available: true
+      executor: "Code Interpreter (sandbox efêmero)"
+      available_libs:
+        - numpy
+        - scipy
+        - pandas
+        - matplotlib
+        - sympy
+        - json
+        - math
+        - hashlib
+        - urllib.request
+        - collections
+        - itertools
+      not_available:
+        - sqlite3  # Usar dict em memória
+        - subprocess  # Não disponível no sandbox
+        - orjson  # Usar stdlib json
+        - sklearn  # Verificar disponibilidade
+        - concurrent.futures  # Usar execução sequencial
+
+    connectors:
+      github:
+        available: false
+        workaround: "Fetch raw.githubusercontent.com via urllib.request"
+        url_pattern: "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/{path}"
+      web_search:
+        available: true
+        method: "Browsing tool"
+      file_system:
+        available: partial
+        note: "Apenas sandbox efêmero do Code Interpreter — sem persistência"
+      agent_spawn:
+        available: false
+
+    forgeskills:
+      method: "urllib.request fetch de SKILL.md → parse frontmatter → registrar PROVISIONAL"
+      ast_scan: "Simulação mental — sem git clone disponível"
+      git_clone: false
+      url_fetch_fallback: "Único método disponível"
+      trusted_domains_required: true
+
+    snapshot_store:
+      method: "Dict em memória — sem persistência entre sessões"
+      persistence: false
+      alternative: "Serializar estado como JSON no final da resposta se solicitado"
+
+    disabled_modules:
+      - dynamic_skill_forge  # Substituir por url_fetch
+      - sqlite_snapshot_store  # Substituir por dict em memória
+      - claude_agent_sdk  # Claude-exclusivo
+      - subprocess_gate  # SR_09 inaplicável
+
+    behavioral_instructions:
+      - "dynamic_skill_forge: usar urllib.request.urlopen() em vez de git clone"
+      - "sqlite3: usar dict Python em memória para estado da sessão"
+      - "orjson: substituir por json stdlib (import json)"
+      - "ThreadPoolExecutor: execução sequencial — sem paralelismo"
+      - "subprocess: INDISPONÍVEL — não tentar. Usar Python stdlib exclusivamente"
+      - "Fetch skills via: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/skills/{dominio}/{skill}/SKILL.md"
+      - "R_acum: calcular manualmente como produto de (1-p_fail) por bloco"
+      - "UCO gate: executar como análise textual em vez de código"
+
+    output_adaptations:
+      - "Prefixar resultados simulados com [SIMULATED] quando Python indisponível"
+      - "Prefixar estimativas sem cálculo com [APPROX]"
+      - "Declarar [SNAPSHOT_IN_MEMORY] quando usando dict em vez de SQLite"
+
+  gemini_native:
+    name: "Gemini (Google) com execução nativa"
+    apex_compat_level: PARTIAL
+    sandbox_strategy: PARTIAL
+
+    python_sandbox:
+      available: true
+      executor: "tool_code blocks"
+      available_libs:
+        - numpy
+        - scipy
+        - pandas
+        - matplotlib
+        - json
+        - math
+        - hashlib
+        - urllib.request
+        - collections
+      not_available:
+        - sympy  # Implementar numericamente ou descrever analiticamente
+        - sqlite3  # Usar dict em memória
+        - subprocess  # Não disponível
+        - orjson  # Usar stdlib json
+        - sklearn  # Verificar disponibilidade
+
+    connectors:
+      github:
+        available: false
+        workaround: "Google Grounding com URLs raw.githubusercontent.com"
+        url_pattern: "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/{path}"
+      web_search:
+        available: true
+        method: "Google Grounding"
+      file_system:
+        available: false
+        note: "Sem acesso ao sistema de arquivos — estado apenas em contexto"
+      agent_spawn:
+        available: false
+
+    forgeskills:
+      method: "Grounding fetch de URLs raw GitHub → parse SKILL.md em contexto"
+      ast_scan: "Simulação mental"
+      git_clone: false
+
+    snapshot_store:
+      method: "Estado em contexto apenas — sem persistência"
+      persistence: false
+
+    disabled_modules:
+      - dynamic_skill_forge  # Substituir por Grounding
+      - sqlite_snapshot_store  # Sem sqlite3
+      - claude_agent_sdk
+      - subprocess_gate
+
+    behavioral_instructions:
+      - "sympy: implementar cálculos simbólicos numericamente (numpy) ou descrever analiticamente"
+      - "sqlite3: usar dict Python em memória"
+      - "File system: indisponível — tratar paths como referências lógicas"
+      - "ForgeSkills: usar Grounding para fetch de URLs GitHub"
+      - "Prefixar saídas de módulos simulados com [SIMULATED]"
+      - "Estado de sessão: manter como texto estruturado no contexto"
+
+  local_llm:
+    name: "Llama / LLMs Locais / Sem sandbox"
+    apex_compat_level: MINIMAL
+    sandbox_strategy: LLM_ONLY
+
+    python_sandbox:
+      available: false
+
+    connectors:
+      github:
+        available: false
+        workaround: "Colar conteúdo de SKILL.md diretamente no contexto"
+      web_search:
+        available: false
+      file_system:
+        available: false
+
+    forgeskills:
+      method: "Colar SKILL.md manualmente no contexto — sem fetch automático"
+      git_clone: false
+
+    snapshot_store:
+      method: "Texto estruturado no contexto — sem persistência"
+      persistence: false
+
+    disabled_modules: [ALL_SANDBOX_CODE_MODULES]
+
+    behavioral_instructions:
+      - "TODOS os blocos SANDBOX_CODE: descrever output como LLM_BEHAVIOR"
+      - "Prefixar todos os valores computados com [SIMULATED] ou [APPROX]"
+      - "Monte Carlo: estimar heuristicamente P10/P50/P90 com [APPROX]"
+      - "UCO gate: análise qualitativa de complexidade"
+      - "R_acum: estimativa heurística de confiabilidade por bloco"
+      - "Skills externas: colar SKILL.md relevante diretamente no prompt"
+
+degradation_protocol:
+  levels:
+    FULL: "Claude Code — todos os módulos ativos"
+    PARTIAL: "GPT-4o/Gemini — Python sandbox + sem git clone → usar urllib"
+    MINIMAL: "LLMs locais — LLM_BEHAVIOR apenas → descrever outputs"
+
+  detection_fallback: >
+    Se LLM não identificado: assumir PARTIAL.
+    Tentar import numpy → se falhar → assumir MINIMAL.
+    Nunca bloquear execução por incerteza de capacidades.
+
+  output_markers:
+    FULL: "[SANDBOX_EXECUTED]"
+    PARTIAL: "[SANDBOX_PARTIAL: {modulo indisponível}]"
+    MINIMAL: "[SIMULATED: LLM_BEHAVIOR_ONLY]"

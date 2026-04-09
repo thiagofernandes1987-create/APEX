@@ -1,0 +1,185 @@
+# APEX Global Anchor Registry
+# WHY: Taxonomia centralizada de âncoras — usado pelo skill_matcher para busca O(1)
+#      e pelo attraction_engine para calcular overlap entre skills.
+# WHEN: Lido no STEP_0 via ForgeSkills boot (OPP-106). Consultado em cada busca de skill.
+# HOW: Índice flat anchor→domain_paths para lookup rápido. Grupos temáticos para navegação.
+# WHAT_IF_FAILS: Se indisponível, attraction_engine usa apenas anchors locais das skills.
+
+version: v00.33.0
+last_updated: "2026-04-08"
+total_anchors: 142  # Expandido via skills do apex_superrepo
+
+# ─────────────────────────────────────────────────────────────────
+# Grupos de Âncoras por Domínio
+# ─────────────────────────────────────────────────────────────────
+anchor_groups:
+
+  mathematical_primitives:
+    description: "Conceitos matemáticos fundamentais — compartilhados entre múltiplos subdomínios"
+    anchors:
+      equation: {weight: 1.0, connects_to: [algebra, calculus, statistics]}
+      variable: {weight: 0.9, connects_to: [algebra, linear_algebra]}
+      coefficient: {weight: 0.8, connects_to: [algebra, polynomial]}
+      polynomial: {weight: 0.9, connects_to: [algebra.polynomials, calculus]}
+      root: {weight: 0.9, connects_to: [algebra.equations]}
+      solution: {weight: 0.8, connects_to: [algebra, calculus, optimization]}
+      proof: {weight: 0.9, connects_to: [theorist_agent, mathematics]}
+      derivative: {weight: 1.0, connects_to: [calculus.differential, optimization]}
+      integral: {weight: 1.0, connects_to: [calculus.integral]}
+      matrix: {weight: 1.0, connects_to: [linear_algebra, algebra.matrices]}
+
+  financial_primitives:
+    description: "Conceitos financeiros — em PT e EN para bilinguismo"
+    anchors:
+      taxa: {weight: 1.0, pt: true, connects_to: [financial_math, legal.contracts]}
+      juros: {weight: 1.0, pt: true, connects_to: [financial_math.compound_interest, legal]}
+      capital: {weight: 0.9, pt: true, connects_to: [financial_math, finance]}
+      prazo: {weight: 0.9, pt: true, connects_to: [financial_math, legal.contracts]}
+      montante: {weight: 1.0, pt: true, connects_to: [financial_math.compound_interest]}
+      VP: {weight: 1.0, connects_to: [financial_math.compound_interest, finance.DCF]}
+      VF: {weight: 1.0, connects_to: [financial_math.compound_interest, finance.DCF]}
+      IGPM: {weight: 1.0, connects_to: [financial_math.inflation_adjustment, legal.contracts]}
+      IPCA: {weight: 1.0, connects_to: [financial_math.inflation_adjustment, legal.contracts]}
+      SELIC: {weight: 1.0, connects_to: [financial_math.compound_interest, legal.art_406_cc]}
+      compound_interest: {weight: 1.0, en: true, connects_to: [mathematics.financial_math.compound_interest]}
+      present_value: {weight: 1.0, en: true, connects_to: [mathematics.financial_math.compound_interest]}
+      future_value: {weight: 1.0, en: true, connects_to: [mathematics.financial_math.compound_interest]}
+      correcao_monetaria: {weight: 1.0, pt: true, connects_to: [financial_math.inflation_adjustment, legal]}
+      capitalizacao: {weight: 0.9, pt: true, connects_to: [financial_math.compound_interest]}
+
+  legal_primitives:
+    description: "Conceitos jurídicos brasileiros — direito civil, consumidor, trabalhista"
+    anchors:
+      artigo: {weight: 0.9, pt: true, connects_to: [legal]}
+      codigo: {weight: 0.9, pt: true, connects_to: [legal]}
+      contrato: {weight: 1.0, pt: true, connects_to: [legal.civil_law.contracts]}
+      obrigacao: {weight: 1.0, pt: true, connects_to: [legal.civil_law.obligations]}
+      inadimplemento: {weight: 1.0, pt: true, connects_to: [legal.civil_law.obligations, financial]}
+      mora: {weight: 1.0, pt: true, connects_to: [legal.civil_law.obligations]}
+      art_406_cc: {weight: 1.0, connects_to: [legal.civil_law.obligations, financial_math.compound_interest]}
+      art_394_cc: {weight: 1.0, connects_to: [legal.civil_law.obligations]}
+      CDC: {weight: 1.0, connects_to: [legal.consumer_law]}
+      CLT: {weight: 1.0, connects_to: [legal.labor_law]}
+      CPC: {weight: 1.0, connects_to: [legal.procedural_law]}
+      FGTS: {weight: 0.9, connects_to: [legal.labor_law]}
+      rescisao: {weight: 0.9, pt: true, connects_to: [legal.labor_law, legal.contracts]}
+      responsabilidade_civil: {weight: 1.0, pt: true, connects_to: [legal.civil_law.liability]}
+      dano_moral: {weight: 0.9, pt: true, connects_to: [legal.civil_law.liability, legal.consumer_law]}
+
+  computational_primitives:
+    description: "Conceitos computacionais — algoritmos, estruturas de dados, complexidade"
+    anchors:
+      algorithm: {weight: 1.0, connects_to: [engineering.software.algorithms]}
+      complexity: {weight: 0.9, connects_to: [engineering.software.algorithms]}
+      data_structure: {weight: 0.9, connects_to: [engineering.software.algorithms]}
+      recursion: {weight: 0.8, connects_to: [engineering.software.algorithms, mathematics]}
+      dynamic_programming: {weight: 0.9, connects_to: [engineering.software.algorithms, mathematics]}
+      gradient: {weight: 1.0, connects_to: [mathematics.calculus.optimization, engineering.ml]}
+      loss_function: {weight: 0.9, connects_to: [engineering.ml, mathematics.calculus.optimization]}
+      overfitting: {weight: 0.8, connects_to: [engineering.ml, mathematics.statistics]}
+      architecture: {weight: 1.0, connects_to: [engineering.software.architecture]}
+      microservices: {weight: 0.9, connects_to: [engineering.software.architecture]}
+
+  apex_operational:
+    description: "Âncoras internas do APEX — para skills de gerenciamento do sistema"
+    anchors:
+      ForgeSkills: {weight: 1.0, connects_to: [apex_internals.forgeskills]}
+      dynamic_skill_forge: {weight: 1.0, connects_to: [apex_internals.forgeskills]}
+      attraction_engine: {weight: 1.0, connects_to: [apex_internals.cognitive_modes]}
+      skill_registry: {weight: 1.0, connects_to: [apex_internals]}
+      R_acum: {weight: 1.0, connects_to: [apex_internals.cognitive_modes]}
+      BDS_simplex: {weight: 1.0, connects_to: [apex_internals.cognitive_modes]}
+      trusted_domains: {weight: 1.0, connects_to: [apex_internals.forgeskills]}
+      AST_scan: {weight: 1.0, connects_to: [apex_internals.forgeskills]}
+      pmi_pm: {weight: 1.0, connects_to: [agents.pmi_pm]}
+      DIFF_governance: {weight: 1.0, connects_to: [agents.diff_governance]}
+
+# ─────────────────────────────────────────────────────────────────
+# Índice Plano: anchor → domain_paths (para skill_matcher O(1))
+# ─────────────────────────────────────────────────────────────────
+anchor_lookup:
+  # Formato: anchor_string: [domain_path_1, domain_path_2, ...]
+  # WHY: O(1) lookup vs O(n) scan da taxonomia completa
+  # WHEN: skill_matcher.find_matches() consulta este índice primeiro
+
+  compound_interest: [mathematics/financial-math/compound-interest]
+  juros_compostos:   [mathematics/financial-math/compound-interest]
+  VF: [mathematics/financial-math/compound-interest, finance/valuation]
+  VP: [mathematics/financial-math/compound-interest, finance/valuation]
+  SELIC: [mathematics/financial-math/compound-interest, legal/civil-law/contracts/financial-clauses]
+  IGPM: [mathematics/financial-math/inflation-adjustment, legal/civil-law/contracts/financial-clauses]
+  IPCA: [mathematics/financial-math/inflation-adjustment, legal/civil-law/contracts/financial-clauses]
+  INPC: [mathematics/financial-math/inflation-adjustment]
+  correcao_monetaria: [mathematics/financial-math/inflation-adjustment, legal/civil-law/contracts/financial-clauses]
+  art_406_cc: [legal/civil-law/contracts/financial-clauses, legal/civil-law/obligations]
+  inadimplemento: [legal/civil-law/obligations, legal/civil-law/contracts/financial-clauses]
+  mora: [legal/civil-law/obligations]
+  contrato: [legal/civil-law/contracts/financial-clauses, legal/civil-law/contracts]
+  obrigacao: [legal/civil-law/obligations]
+  ForgeSkills: [skills/apex_internals/forgeskills]
+  dynamic_skill_forge: [skills/apex_internals/forgeskills]
+  attraction_engine: [skills/apex_internals/cognitive-modes]
+  gradient: [algorithms/optimization/gradient-descent, skills/mathematics/calculus/optimization]
+  algorithm: [skills/engineering/software/algorithms]
+  architecture: [skills/engineering/software/architecture, agents/architect]
+  bayesian: [skills/mathematics/statistics/bayesian, agents/bayesian_curator]
+  pmi: [agents/pmi_pm, skills/business/project-management]
+
+# ─────────────────────────────────────────────────────────────────
+# Cross-Domain Bridges (Pré-definidos)
+# ─────────────────────────────────────────────────────────────────
+cross_domain_bridges:
+  # WHY: Bridges pré-definidos garantem que domains que DEVEM atrair-se o façam
+  #      mesmo antes das skills serem carregadas como SKILL.md do superrepo.
+  # Aplicados pelo attraction_engine (OPP-107).
+
+  - id: BD-001
+    source_domain: legal.civil_law.obligations
+    target_domain: mathematics.financial_math.compound_interest
+    strength: 0.85
+    trigger_anchors: [inadimplemento, mora, art_406_cc, juros_legais]
+    reason: "Art. 406 CC define juros legais = SELIC (capitalização composta mensal)"
+    formula_reference: "VF = VP × (1 + i_SELIC/12)^n_meses"
+
+  - id: BD-002
+    source_domain: legal.civil_law.contracts.financial_clauses
+    target_domain: mathematics.financial_math.inflation_adjustment
+    strength: 0.95
+    trigger_anchors: [IGPM, IPCA, reajuste, correcao_monetaria]
+    reason: "Cláusula de reajuste monetário = cálculo de variação de índice inflacionário"
+    formula_reference: "fator = indice_final / indice_base"
+
+  - id: BD-003
+    source_domain: legal.civil_law.contracts.financial_clauses
+    target_domain: mathematics.financial_math.compound_interest
+    strength: 0.90
+    trigger_anchors: [art_406_cc, juros_legais, taxa_contratual, mora_contratual]
+    reason: "Juros legais em contratos civis = SELIC em capitalização composta"
+
+  - id: BD-004
+    source_domain: business.project_management.risk
+    target_domain: mathematics.statistics.bayesian
+    strength: 0.75
+    trigger_anchors: [FMEA, risco, probabilidade, impacto, mitigacao]
+    reason: "FMEA usa probabilidade de falha e impacto — modelo bayesiano de risco"
+
+  - id: BD-005
+    source_domain: engineering.software.algorithms
+    target_domain: mathematics.calculus.optimization
+    strength: 0.65
+    trigger_anchors: [gradient_descent, backpropagation, loss_function, convergencia]
+    reason: "Otimização de algoritmos ML usa gradiente descendente e derivadas"
+
+  - id: BD-006
+    source_domain: finance.valuation.DCF
+    target_domain: mathematics.financial_math.compound_interest
+    strength: 0.85
+    trigger_anchors: [DCF, WACC, desconto, fluxo_caixa, valor_presente]
+    reason: "DCF usa taxa de desconto composta — VPL = Σ FC_t / (1+WACC)^t"
+
+  - id: BD-007
+    source_domain: legal.consumer_law.damages
+    target_domain: mathematics.statistics.inference
+    strength: 0.70
+    trigger_anchors: [dano_moral, indenizacao, probabilidade, precedentes]
+    reason: "Cálculo de dano moral considera probabilidade de dano e precedentes jurisprudenciais"

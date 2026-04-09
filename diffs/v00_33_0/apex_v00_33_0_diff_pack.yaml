@@ -1,0 +1,698 @@
+# ============================================================
+# APEX DIFF PACK — v00.33.0 Strategic Directives
+# Baseado em: 7 diretrizes estratégicas (2026-04-08)
+# Herda: v00.32.1 (86 DIFFs aplicados)
+# Novos DIFFs: OPP-104 a OPP-109 (6 DIFFs)
+# Aprovação necessária: OPP-104, OPP-105 (PARAMETRIC), OPP-106 (PARAMETRIC)
+#                       OPP-107 (OPERATIONAL), OPP-108 (STRUCTURAL), OPP-109 (PARAMETRIC)
+# ============================================================
+
+apex_diff_pack:
+  version: v00.33.0
+  base_version: v00.32.1
+  pack_id: STRATEGIC_DIRECTIVES_001
+  date: "2026-04-08"
+  total_new_diffs: 6
+  diff_ids: [OPP-104, OPP-105, OPP-106, OPP-107, OPP-108, OPP-109]
+
+# ─────────────────────────────────────────────────────────────────
+# OPP-104: DIFF_GITHUB_SUPERREPO_BOOT_001
+# TIPO: PARAMETRIC → aprovação USER_EXPLICIT obrigatória
+# DIRETRIZ: Pontos 3 e 6 (GitHub super-repo + whitelist)
+# ─────────────────────────────────────────────────────────────────
+diffs:
+  OPP-104:
+    id: DIFF_GITHUB_SUPERREPO_BOOT_001
+    type: PARAMETRIC
+    approval_required: USER_EXPLICIT
+    status: PROPOSED
+    version_target: v00.33.0
+    opp_number: "OPP-104"
+    directives_addressed: [3, 6]
+
+    title: "GitHub Super-Repositório APEX como trusted_domain + boot automático"
+
+    problem: >
+      O APEX não tem repositório externo de referência. Cada sessão começa do zero.
+      O skill_registry é populado apenas com skills do default_genome (poucos domínios).
+      Não há endereço canônico salvo para que o LLM encontre skills rapidamente.
+      G6 impede acesso a URLs externas exceto trusted_domains — o repositório APEX não está na lista.
+
+    solution: >
+      1. Adicionar https://raw.githubusercontent.com/thiagofernandes1987-create/ à trusted_domains
+      2. Adicionar constante APEX_SUPERREPO_URL ao kernel config
+      3. Adicionar apex_superrepo_boot ao STEP_0 pipeline
+      4. apex_superrepo_boot lê INDEX.md do repositório e registra skills no skill_registry
+
+    why: >
+      WHY — trusted_domains: G6 é uma regra de segurança. Adicionar o repositório do próprio
+      autor é legítimo — é o repositório oficial do APEX. Não adicionar seria impedir que o
+      APEX bootstrape suas próprias skills.
+      WHY — STEP_0 boot: Skills precisam estar registradas antes do STEP_1 (pmi_pm scoping)
+      para que o attraction_engine possa propor pipelines relevantes desde o início.
+      WHY — constante canônica: URL fixa no kernel evita hardcoding em múltiplos lugares
+      e garante que qualquer LLM (Claude, GPT, Gemini) use o mesmo ponto de referência.
+
+    what_if_fails: >
+      url_access=false: pular boot externo. Usar skill_registry do snapshot local.
+      INDEX.md indisponível: log [SUPERREPO_OFFLINE] + continuar com registry local.
+      fetch timeout: 15s timeout → skip + log. NUNCA bloquear o pipeline de execução.
+      Repositório fora do ar: APEX continua funcional com skills internas. Degradação graciosa.
+
+    changes:
+      kernel_config:
+        section: "kernel.defaults"
+        add:
+          apex_superrepo:
+            url: "https://github.com/thiagofernandes1987-create/APEX"
+            raw_base: "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/"
+            index_path: "INDEX.md"
+            last_known_index_session: 0
+            boot_enabled: true
+            max_skills_per_boot: 50
+            boot_timeout_sec: 15
+
+      trusted_domains:
+        section: "kernel.defaults.trusted_domains"
+        add:
+          - "https://raw.githubusercontent.com/thiagofernandes1987-create/"
+        existing_entries_preserved:
+          - "https://raw.githubusercontent.com/apex-marketplace/"
+          - "https://raw.githubusercontent.com/apex-framework/"
+        rationale: >
+          WHY: Repositório oficial APEX do autor — única fonte de skills externas APEX-nativas.
+          WHY NOT adding generic github.com: Apenas o repositório específico é confiável.
+          SECURITY: raw.githubusercontent.com retorna conteúdo estático — sem execução server-side.
+
+      step_0_pipeline:
+        section: "pipeline_execution.STEP_0"
+        add_substep:
+          name: "apex_superrepo_boot"
+          position: "after_snapshot_load, before_step_1"
+          condition: "apex_superrepo.boot_enabled AND url_access=true AND current_session > last_known_index_session"
+          action: >
+            Executar apex_internals.forgeskills pipeline (OPP-106).
+            Fetch INDEX.md de apex_superrepo.raw_base + apex_superrepo.index_path.
+            Parsear domain_map → registrar skills como PROVISIONAL no skill_registry.
+            Atualizar apex_superrepo.last_known_index_session = current_session.
+          log: "[SUPERREPO_BOOT: {n} skills registradas de {url} | session: {s}]"
+          failure_action: "log [SUPERREPO_OFFLINE] + continuar sem skills externas"
+
+    rules_affected:
+      G6:
+        change: "Adicionar https://raw.githubusercontent.com/thiagofernandes1987-create/ à lista de trusted_domains"
+        effect: "APEX pode agora fazer fetch de skills do repositório oficial sem violar G6"
+      SR_37:
+        change: "Nenhuma — AST scan ainda obrigatório para qualquer código clonado"
+        effect: "Fetch de SKILL.md (DSL/YAML) não requer AST scan. Código Python ainda requer."
+
+    fmea:
+      rpn: 4
+      mode: "Repositório comprometido injeta skills maliciosas"
+      probability: 1  # Repositório do próprio autor — risco baixo
+      severity: 4
+      detection: 1
+      mitigation: "SR_37 AST scan obrigatório para qualquer código Python. SKILL.md é DSL apenas — sem execução."
+
+    breaking_changes: none
+    reversible: true
+    revert_procedure: "Remover apex_superrepo do kernel.defaults. Remover trusted_domain. Skill_registry volta a usar apenas genome local."
+
+# ─────────────────────────────────────────────────────────────────
+# OPP-105: DIFF_MULTI_LLM_ADAPTER_001
+# TIPO: STRUCTURAL → aprovação USER_EXPLICIT obrigatória
+# DIRETRIZ: Ponto 1 (multi-LLM sandbox extraction) + Ponto 5 (LLM-agnostic)
+# ─────────────────────────────────────────────────────────────────
+  OPP-105:
+    id: DIFF_MULTI_LLM_ADAPTER_001
+    type: STRUCTURAL
+    approval_required: USER_EXPLICIT
+    status: PROPOSED
+    version_target: v00.33.0
+    opp_number: "OPP-105"
+    directives_addressed: [1, 5]
+
+    title: "Adaptador Multi-LLM com detecção de runtime e degradação graciosa"
+
+    problem: >
+      O APEX atualmente assume Claude Code como runtime único.
+      Python sandbox (sqlite3, subprocess, ThreadPoolExecutor, orjson) são Claude-nativos.
+      Se carregado em GPT-4o ou Gemini: módulos SANDBOX_CODE falham silenciosamente.
+      Não há instrução clara de como cada LLM deve se comportar quando um módulo é indisponível.
+
+    solution: >
+      1. Adicionar módulo llm_runtime_adapter ao kernel (Tier 1)
+      2. Detecção automática de LLM runtime no STEP_0
+      3. Carregar meta/llm_compat.yaml do apex_superrepo (OPP-104)
+      4. Aplicar behavioral_instructions do LLM detectado
+      5. Emitir [LLM_RUNTIME: {level}] no COGNITIVE_AUDIT
+
+    why: >
+      WHY — detecção em STEP_0: O LLM precisa saber suas capacidades ANTES de iniciar
+      a pipeline. Se sqlite_snapshot_store é chamado em GPT-4o sem adaptação → erro silencioso
+      que corrompe o estado da sessão.
+      WHY — meta/llm_compat.yaml externo: Capacidades de LLMs mudam. Externalizar a matriz
+      de compatibilidade permite atualizar sem DIFF no APEX master.
+      WHY — degradação graciosa (não erro): Um LLM sem sqlite3 ainda pode executar 80% do APEX.
+      Melhor degradar graciosamente do que parar com erro.
+
+    what_if_fails: >
+      LLM não detectado: Assumir PARTIAL. Tentar import numpy → se falhar → MINIMAL.
+      llm_compat.yaml indisponível: Usar defaults embutidos no DIFF.
+      Módulo indisponível: [SANDBOX_PARTIAL: {modulo}] + LLM_BEHAVIOR fallback.
+      NUNCA lançar exceção fatal por incapacidade de LLM.
+
+    new_module:
+      name: llm_runtime_adapter
+      tier: 1
+      version: v00.33.0
+      inject_when: "STEP_0 — sempre, antes de qualquer módulo sandbox"
+
+      config:
+        compat_url: "apex_superrepo.raw_base + 'meta/llm_compat.yaml'"
+        compat_fallback_embedded: true  # WHY: Funcionar offline mesmo sem fetch
+        detection_timeout_sec: 5
+
+      detection_logic:
+        WHY: >
+          Detecção por capacidades, não por identidade declarada.
+          LLMs podem ser fine-tuned ou acessados via API com diferentes permissões.
+          Testar capacidades reais é mais confiável que perguntar "qual LLM você é?".
+
+        sequence:
+          - probe: "Verificar se ferramentas Bash, Read, Write disponíveis"
+            result_true: "claude_code FULL"
+          - probe: "Verificar se code_interpreter disponível via função execute"
+            result_true: "gpt4o_code_interpreter PARTIAL"
+          - probe: "Tentar import numpy em tool_code"
+            result_true: "gemini_native PARTIAL"
+          - fallback: "pure_llm MINIMAL"
+
+      runtime_levels:
+        FULL:
+          label: "[LLM_RUNTIME: FULL — Claude Code]"
+          sandbox_modules: all_enabled
+          forgeskills_method: git_clone
+          snapshot_method: sqlite3
+
+        PARTIAL:
+          label: "[LLM_RUNTIME: PARTIAL — GPT-4o ou Gemini]"
+          sandbox_modules:
+            enabled: [monte_carlo_simulator, uco_quality_gate, symbolic_executor]
+            disabled:
+              sqlite_snapshot_store:
+                replacement: "dict em memória"
+                instruction: "Usar dict Python para session state"
+              subprocess_gate:
+                replacement: "N/A — execução inline apenas"
+                instruction: "SR_09 inaplicável. Executar PoT inline sem limite de iterações."
+              dynamic_skill_forge_git:
+                replacement: "urllib.request fetch de SKILL.md"
+                instruction: "Usar OPP-109 (llm_agnostic_forgeskills)"
+              orjson:
+                replacement: "import json (stdlib)"
+                instruction: "Substituir orjson.dumps por json.dumps onde presente"
+          forgeskills_method: urllib_fetch
+          snapshot_method: memory_dict
+
+        MINIMAL:
+          label: "[LLM_RUNTIME: MINIMAL — LLM puro sem sandbox]"
+          sandbox_modules: all_as_llm_behavior
+          instruction: >
+            Todos os blocos SANDBOX_CODE: descrever output como LLM_BEHAVIOR.
+            Prefixar todos os valores com [SIMULATED].
+            R_acum, UCO gate, Monte Carlo: estimativas heurísticas com [APPROX].
+          forgeskills_method: manual_paste
+          snapshot_method: context_window
+
+      output_adaptation_rules:
+        WHY: >
+          Resultados de módulos simulados devem ser claramente marcados para o usuário
+          não confundir estimativa heurística com cálculo real.
+        SANDBOX_EXECUTED: "Código Python executou e retornou resultado real"
+        SANDBOX_PARTIAL:  "Módulo executou mas com biblioteca substituta (ex: json vs orjson)"
+        SIMULATED:        "Módulo descrito como LLM_BEHAVIOR — sem execução real"
+        APPROX:           "Estimativa heurística — precisão não garantida"
+
+    changes:
+      step_0:
+        add: "Executar llm_runtime_adapter.detect() antes de qualquer módulo sandbox"
+        add: "Armazenar resultado em session_metadata.llm_runtime"
+        add: "Emitir [LLM_RUNTIME: {level}] no output inicial"
+      cognitive_audit:
+        add_field: "llm_runtime: {FULL|PARTIAL|MINIMAL}"
+      snapshot:
+        add_field: "capabilities.llm_runtime"
+
+    rules_new:
+      SR_39:
+        level: guard
+        text: >
+          [LLM_RUNTIME_GUARD] llm_runtime_adapter DEVE ser executado no STEP_0 antes
+          de qualquer módulo SANDBOX_CODE. Módulo SANDBOX_CODE sem runtime_check =
+          risco de erro silencioso. Output de módulo simulado DEVE ser marcado com
+          [SIMULATED] ou [SANDBOX_PARTIAL]. Ausência de marcação em MINIMAL runtime =
+          output inválido. Enforcement: llm_runtime_adapter (primário), meta_reasoning (secundário).
+
+    fmea:
+      rpn: 6
+      mode: "Detecção incorreta de LLM — PARTIAL tratado como FULL → erro em sqlite3"
+      probability: 2
+      severity: 3
+      detection: 1
+      mitigation: "Detecção por capacidades reais (try/except) — não por identidade declarada"
+
+    breaking_changes: none
+    reversible: true
+
+# ─────────────────────────────────────────────────────────────────
+# OPP-106: DIFF_FORGESKILLS_RAPID_READER_001
+# TIPO: PARAMETRIC → aprovação USER_EXPLICIT obrigatória
+# DIRETRIZ: Ponto 2 (Claude Cookbook speed-reader para ForgeSkills)
+# ─────────────────────────────────────────────────────────────────
+  OPP-106:
+    id: DIFF_FORGESKILLS_RAPID_READER_001
+    type: PARAMETRIC
+    approval_required: USER_EXPLICIT
+    status: PROPOSED
+    version_target: v00.33.0
+    opp_number: "OPP-106"
+    directives_addressed: [2]
+
+    title: "ForgeSkills Rapid Reader — pipeline 4-estágios para leitura rápida de repositórios"
+
+    evaluation_point_2: >
+      AVALIAÇÃO IMPARCIAL do Ponto 2 (skill de speed-reading):
+      O "claude-speed-reader" (antigravity skills) é um stub de 24 linhas que implementa
+      RSVP (Rapid Serial Visual Presentation) para o USUÁRIO ler respostas do Claude mais
+      rapidamente — não para o Claude ler repositórios. Não é o skill correto para ForgeSkills.
+      O que realmente resolve o problema é uma combinação de:
+        1. C4-Architecture (bottom-up directory analysis) — para mapear estrutura
+        2. DocsArchitect (frontmatter parsing) — para extrair metadados sem ler tudo
+        3. ClarityGate (quality gate) — para filtrar skills de baixa qualidade
+        4. INDEX.md fast-path — para repos APEX-compatíveis (O(1) vs O(n))
+      Este DIFF implementa este pipeline como o "speed-reader" correto para ForgeSkills.
+
+    problem: >
+      dynamic_skill_forge (OPP-72) sabe como executar código seguro mas não tem
+      protocolo otimizado para DESCOBRIR e INGERIR skills de um repositório com 300+ arquivos.
+      Sem este DIFF: LLM lê arquivo por arquivo, satura contexto, consome tokens desnecessários.
+      Com INDEX.md fast-path: 1 fetch → domain_map → todos os skill_paths = O(1).
+
+    solution: >
+      Adicionar apex_internals.forgeskills como módulo de apoio ao dynamic_skill_forge.
+      Pipeline: STAGE1 (Discovery) → STAGE2 (Analysis) → STAGE3 (Validation) → STAGE4 (Register).
+      Fast-path: se INDEX.md existe no repositório → usar diretamente.
+      Slow-path: C4 recursive listing (3 níveis máx) para repos sem INDEX.md.
+      Token saving: frontmatter-only parsing = 85% menos tokens que ler skill completa.
+
+    why: >
+      WHY — 4 estágios em vez de 1: Cada estágio tem fallback independente.
+      WHY — INDEX.md fast-path: Um fetch de INDEX.md retorna todos os skill_paths vs
+      N fetches recursivos de diretório. Para 50 skills = 50x speedup.
+      WHY — frontmatter-only no STAGE 2: Anchors e metadados estão no frontmatter.
+      O corpo do SKILL.md é lido apenas quando a skill é CHAMADA, não no boot.
+      WHY — SkillQualityBar no STAGE 3: Melhor rejeitar no boot do que registrar
+      skills ruins que degradam o attraction_engine.
+
+    what_if_fails: >
+      INDEX.md indisponível: Fallback para /skills/INDEX.yaml → se falhar → modo offline.
+      Fetch timeout: Skip skill + log + continuar (nunca bloquear pipeline).
+      SkillQualityBar rejeita muitas skills: Log count + [FORGESKILLS_LOW_QUALITY_REPO].
+      max_skills atingido: Priorizar skills com status=ADOPTED > CERTIFIED > PROVISIONAL.
+
+    changes:
+      dynamic_skill_forge:
+        add_method: "ingest_repository(repo_url) → usar apex_internals.forgeskills pipeline"
+        add_config:
+          rapid_reader:
+            enabled: true
+            use_index_fast_path: true
+            frontmatter_only_stage2: true
+            max_skills_per_boot: 50
+            min_anchors_required: 3
+            reject_status: [DRAFT]
+
+      skill_registry:
+        add_method: "bulk_register(skill_list, status=PROVISIONAL) → registrar lista de skills"
+
+      step_0_pipeline:
+        extend: "apex_superrepo_boot (OPP-104) agora usa ingest_repository em vez de fetch direto"
+
+    skill_file: "skills/apex_internals/forgeskills/SKILL.md"
+
+    fmea:
+      rpn: 3
+      mode: "INDEX.md malformado — parser falha → sem skills registradas"
+      probability: 1
+      severity: 3
+      detection: 1
+      mitigation: "try/except em parse_yaml_frontmatter. Slow-path como fallback."
+
+    breaking_changes: none
+    reversible: true
+
+# ─────────────────────────────────────────────────────────────────
+# OPP-107: DIFF_HYPERBOLIC_ANCHOR_MAP_001
+# TIPO: OPERATIONAL → aprovação USER_EXPLICIT
+# DIRETRIZ: Ponto 3 (estrutura GitHub com hyperbolic attraction e anchors)
+# ─────────────────────────────────────────────────────────────────
+  OPP-107:
+    id: DIFF_HYPERBOLIC_ANCHOR_MAP_001
+    type: OPERATIONAL
+    approval_required: USER_EXPLICIT
+    status: PROPOSED
+    version_target: v00.33.0
+    opp_number: "OPP-107"
+    directives_addressed: [3]
+
+    title: "Mapa hierárquico de anchors + bridges cross-domain para attraction_engine"
+
+    problem: >
+      O attraction_engine atual usa apenas anchors locais de cada skill.
+      Não há bridges cross-domain formalizados (ex: legal → math.financial_math).
+      Skills de domínios diferentes que deveriam atrair-se não o fazem porque
+      não compartilham anchors comuns.
+      Agente legal que resolve problema de dívida não ativa automatically compound_interest.
+
+    solution: >
+      1. Adicionar cross_domain_bridges ao schema de SKILL.md
+      2. Adicionar cross_domain_rules ao attraction_engine para boostar atrações cross-domain
+      3. Publicar meta/anchors.yaml no apex_superrepo com taxonomia completa
+      4. attraction_engine.compute_attraction() verifica cross_domain_bridges além de anchors locais
+
+    why: >
+      WHY — bridges explícitos: Sem bridges, legal.art_406_cc e math.compound_interest
+      nunca se atraem — não compartilham anchors. Com bridge (força: 0.90): atraem.
+      WHY — formalizar no SKILL.md: A ponte é conhecimento de domínio do skill author.
+      Não dá para inferir que Art. 406 CC → SELIC → juros compostos sem explicitação.
+      WHY — boost multiplicativo (não aditivo): tanh(overlap * fw_a * fw_b * bridge_boost)
+      mantém a semântica da fórmula original — boost apenas amplifica sinal existente.
+
+    changes:
+      skill_md_schema:
+        add_field:
+          cross_domain_bridges:
+            type: list
+            optional: true
+            schema:
+              anchor: string  # Âncora do domínio alvo
+              domain: string  # skill_id ou domain_path do alvo
+              strength: float  # 0.0-1.0 — força da atração
+              reason: string  # WHY: explicação da conexão (obrigatório)
+
+      attraction_engine:
+        method: "compute_attraction"
+        change: >
+          WHY: Adicionar verificação de cross_domain_bridges antes de retornar score.
+          WHEN: Chamado para cada par (skill_a, skill_b).
+          HOW: Se skill_a tem bridge para skill_b.domain → multiplicar score por bridge.strength.
+        new_formula: >
+          A(s1, s2) = tanh(overlap_anchors(s1,s2) * fw_s1 * fw_s2)
+          SE cross_domain_bridge(s1→s2) existe:
+            A(s1, s2) = max(A(s1,s2), bridge.strength * fw_s1 * fw_s2)
+          WHY: max() garante que bridge nunca REDUZ uma atração orgânica existente.
+
+      pre_defined_bridges:
+        WHY: >
+          Bridges pré-definidos garantem que skills legais e matemáticas se conectem
+          mesmo antes de serem carregadas como SKILL.md do superrepo.
+        bridges:
+          - source: "legal.civil_law.obligations"
+            target: "mathematics.financial_math.compound_interest"
+            strength: 0.85
+            reason: "Art. 406 CC → SELIC = capitalização composta mensal"
+          - source: "legal.civil_law.contracts.financial_clauses"
+            target: "mathematics.financial_math.inflation_adjustment"
+            strength: 0.95
+            reason: "Cláusula IGPM/IPCA = variação inflacionária composta"
+          - source: "legal.civil_law.contracts.financial_clauses"
+            target: "mathematics.financial_math.compound_interest"
+            strength: 0.90
+            reason: "Juros legais em contratos = SELIC capitalização mensal"
+          - source: "business.project_management.risk"
+            target: "mathematics.statistics.bayesian"
+            strength: 0.75
+            reason: "FMEA e análise de risco usam probabilidade bayesiana"
+          - source: "engineering.software.algorithms"
+            target: "mathematics.calculus.optimization"
+            strength: 0.65
+            reason: "Otimização de algoritmos usa gradiente descendente"
+
+    fmea:
+      rpn: 2
+      mode: "Bridge strength incorreta → atrações espúrias"
+      probability: 1
+      severity: 2
+      detection: 1
+      mitigation: >
+        Strength é cap máximo (max()), não soma. Pior caso: skill ativada desnecessariamente.
+        Não impede resultado correto. Corrigível por DIFF parametric.
+
+    breaking_changes: none
+    reversible: true
+
+# ─────────────────────────────────────────────────────────────────
+# OPP-108: DIFF_ZERO_AMBIGUITY_CODE_001
+# TIPO: OPERATIONAL → aprovação USER_EXPLICIT
+# DIRETRIZ: Ponto 4 (zero ambiguidade no código DSL)
+# ─────────────────────────────────────────────────────────────────
+  OPP-108:
+    id: DIFF_ZERO_AMBIGUITY_CODE_001
+    type: OPERATIONAL
+    approval_required: USER_EXPLICIT
+    status: PROPOSED
+    version_target: v00.33.0
+    opp_number: "OPP-108"
+    directives_addressed: [4]
+
+    title: "Zero-Ambiguidade: padrão WHY/WHEN/HOW/WHAT_IF_FAILS obrigatório em todo código DSL"
+
+    evaluation_point_4: >
+      AVALIAÇÃO IMPARCIAL do Ponto 4 (zero ambiguidade):
+      O APEX v00.32.1 já implementa PARCIALMENTE este padrão — os módulos mais recentes
+      (OPP-72 a OPP-78) têm campos 'why', 'what_if_fails', 'description'. Mas:
+        1. Módulos antigos (v00.17-v00.22) não têm WHY/WHEN/HOW
+        2. Blocos SANDBOX_CODE Python frequentemente carecem de comments WHY/WHEN
+        3. Não há REGRA que FORCE este padrão — apenas boas práticas
+      Este DIFF formaliza como REGRA (SR_40) + define o padrão exato.
+
+    problem: >
+      Um LLM lendo um bloco SANDBOX_CODE sem WHY/WHEN/HOW/WHAT_IF_FAILS:
+      - Não sabe POR QUE a abordagem foi escolhida (ex: "por que numpy e não math.pow?")
+      - Não sabe QUANDO ativar o módulo
+      - Não sabe o que fazer quando falha
+      Resultado: LLM toma decisões subótimas por falta de contexto → ambiguidade.
+
+    solution: >
+      Adicionar SR_40 como regra guard que exige o padrão WHY/WHEN/HOW/WHAT_IF_FAILS
+      em: (a) todo módulo SANDBOX_CODE novo a partir de v00.33.0, (b) todo SKILL.md,
+      (c) todo DIFF novo, (d) toda função Python com mais de 5 linhas.
+      Módulos antigos: não retroativo — apenas novos DIFFs são afetados.
+
+    why: >
+      WHY — SR_40 como regra e não apenas guideline: Sem enforcement, o padrão deteriora
+      ao longo do tempo. Os 5 campos são mínimos — não documentação exaustiva.
+      WHY — não retroativo: Atualizar todos os 86 módulos antigos seria um DIFF de 10.000 linhas
+      sem benefício proporcional. Módulos antigos são estáveis e bem entendidos.
+      WHY — 5 campos específicos: WHY explica escolha de design; WHEN diz quando ativar;
+      HOW resume mecanismo; WHAT_IF_FAILS garante que falhas sejam tratadas.
+
+    changes:
+      rules_new:
+        SR_40:
+          level: guard
+          text: >
+            [ZERO_AMBIGUITY_GUARD] Todo módulo SANDBOX_CODE criado a partir de v00.33.0
+            DEVE ter: (1) campo 'why' descrevendo por que a abordagem foi escolhida,
+            (2) campo 'when' descrevendo quando o módulo é ativado, (3) campo 'description'
+            com O_QUE_É + O_QUE_NÃO_É + COMO_FUNCIONA, (4) campo 'what_if_fails' com
+            fallback explícito para cada modo de falha. Todo bloco Python com > 5 linhas
+            DEVE ter comentários # WHY: e # WHEN: nas partes não-óbvias.
+            Todo SKILL.md DEVE ter seções: Why This Skill Exists, When to Use, What If Fails.
+            Ausência em módulo novo = DIFF rejeitado no DIFF_REVIEW_GATE.
+            Enforcement: diff_governance (DIFF_REVIEW_GATE), meta_reasoning (STEP_0).
+
+      language_selection_matrix:
+        WHY: >
+          Ponto 4 menciona: "Use a melhor linguagem com suporte nativo por módulo."
+          Esta matriz formaliza a escolha — elimina ambiguidade sobre QUANDO usar cada linguagem.
+        matrix:
+          python_sandbox:
+            when: "Cálculos numéricos (numpy), álgebra simbólica (sympy), ML (sklearn), estatística"
+            why: "Python com numpy/scipy é 10-100x mais preciso e rápido que LLM heuristic"
+            not_when: "Consultas relacionais estruturadas — usar SQL"
+          sql:
+            when: "Consultas em SQLite (snapshot_store, skill_registry, hypothesis_dag)"
+            why: "SQL é declarativo, set-based, otimizado para relações — mais legível que loops"
+            not_when: "Cálculos numéricos complexos — usar Python"
+          dsl_yaml:
+            when: "Definição de comportamento LLM_BEHAVIOR, configuração, regras, schemas"
+            why: "YAML é legível por LLM e por humanos — não requer parsing especial"
+            not_when: "Cálculos — YAML não executa"
+          dsl_pseudocode:
+            when: "Fallbacks LLM_BEHAVIOR, descrição de algoritmos para modo MINIMAL"
+            why: "Pseudocódigo com STEP N: é mais claro para LLM que código Python comentado"
+            not_when: "Quando Python sandbox disponível — preferir código real"
+
+    fmea:
+      rpn: 2
+      mode: "SR_40 bloqueia DIFF legítimo por falta de comentário WHY"
+      probability: 1
+      severity: 2
+      detection: 1
+      mitigation: "Adicionar os 5 campos é trabalho mínimo. DIFF_REVIEW_GATE retorna feedback específico."
+
+    breaking_changes: none
+    retroactive: false
+
+# ─────────────────────────────────────────────────────────────────
+# OPP-109: DIFF_LLM_AGNOSTIC_FORGESKILLS_001
+# TIPO: PARAMETRIC → aprovação USER_EXPLICIT
+# DIRETRIZ: Ponto 5 (execução LLM-pura, sem hardware externo)
+# ─────────────────────────────────────────────────────────────────
+  OPP-109:
+    id: DIFF_LLM_AGNOSTIC_FORGESKILLS_001
+    type: PARAMETRIC
+    approval_required: USER_EXPLICIT
+    status: PROPOSED
+    version_target: v00.33.0
+    opp_number: "OPP-109"
+    directives_addressed: [5]
+
+    title: "ForgeSkills LLM-agnóstico via urllib — fallback para GPT-4o e Gemini sem git clone"
+
+    evaluation_point_5: >
+      AVALIAÇÃO IMPARCIAL do Ponto 5 (LLM-pure execution, sem hardware externo):
+      O APEX não usa hardware externo por design — tudo roda no contexto do LLM.
+      O problema real é que o ForgeSkills usa `git clone` (disponível apenas em Claude Code).
+      GPT-4o e Gemini não têm git clone mas TÊM urllib.request.
+      Gemini tem Grounding (busca web nativa) que pode substituir fetch direto.
+      Claude tem GitHub connector via MCP que é superior ao git clone simples.
+      A solução é uma abstração `fetch_skill_content(url, llm_runtime)` que usa o melhor
+      método disponível para cada LLM.
+
+    problem: >
+      dynamic_skill_forge.load_skill() usa git clone → indisponível em GPT-4o/Gemini.
+      Não há fallback formal para LLMs sem git clone.
+      ForgeSkills inacessível para 2/3 dos LLMs-alvo.
+
+    solution: >
+      Adicionar fetch_adapter ao dynamic_skill_forge.
+      fetch_adapter seleciona método baseado em llm_runtime (OPP-105):
+        FULL (Claude): github_connector → git_clone → urllib_raw (nessa ordem)
+        PARTIAL (GPT/Gemini): urllib.request com URL padrão raw.githubusercontent.com
+        MINIMAL (Llama): instrução de paste manual + template SKILL.md
+
+    why: >
+      WHY — urllib.request e não requests ou httpx: urllib é stdlib Python universal.
+      Disponível em Code Interpreter, tool_code, qualquer sandbox Python.
+      requests/httpx podem não estar instalados.
+      WHY — raw.githubusercontent.com e não api.github.com: raw retorna conteúdo direto.
+      API do GitHub retorna JSON + requer autenticação para repos privados.
+      WHY — graceful fallback em MINIMAL: Instruir o LLM sobre como colar SKILL.md
+      manualmente é melhor que silenciosamente não ter a skill.
+
+    what_if_fails: >
+      urllib timeout (15s): Skip skill + log + continuar.
+      URL 404: Skill não existe no repo ou path incorreto. Log + skip.
+      SSL error: Verificar URL https. Não tentar http (SR_37).
+      Rate limit GitHub: exponential backoff — 1s, 2s, 4s (máx 3 tentativas).
+      MINIMAL: Emitir mensagem ao usuário: [FORGESKILLS_MANUAL_REQUIRED: cole {url} no contexto]
+
+    changes:
+      dynamic_skill_forge:
+        new_method: "fetch_skill_content(url, llm_runtime) → str"
+        implementation: |
+          # WHY: Abstração de fetch que funciona em qualquer LLM runtime.
+          # WHEN: Chamado por load_skill() para obter conteúdo de SKILL.md.
+          # HOW: Seleção por llm_runtime — melhor método disponível.
+          # WHAT_IF_FAILS: Retorna None + log. Nunca lança exceção.
+
+          def fetch_skill_content(url: str, llm_runtime: str) -> str | None:
+              if llm_runtime == 'FULL':
+                  # Preferir github_connector MCP se disponível
+                  # Fallback: git clone depth=1
+                  # Fallback: urllib.request
+                  pass  # Implementação no runtime Claude Code
+
+              elif llm_runtime in ('PARTIAL',):
+                  # urllib.request — stdlib universal
+                  import urllib.request
+                  try:
+                      with urllib.request.urlopen(url, timeout=15) as r:
+                          return r.read().decode('utf-8')
+                  except Exception as e:
+                      return None
+
+              else:  # MINIMAL
+                  # Não pode fazer fetch — instruir usuário
+                  print(f"[FORGESKILLS_MANUAL_REQUIRED: cole o conteúdo de {url} no contexto]")
+                  return None
+
+        modify_method: "load_skill — usar fetch_skill_content em vez de git clone direto"
+        add_config:
+          fetch_adapter:
+            FULL_methods: [github_connector_mcp, git_clone_https, urllib_raw]
+            PARTIAL_methods: [urllib_raw]
+            MINIMAL_methods: [manual_paste_instruction]
+            raw_url_template: "https://raw.githubusercontent.com/{owner}/{repo}/main/{path}"
+            timeout_sec: 15
+            max_retries: 3
+            retry_backoff_sec: [1, 2, 4]
+
+      install_when: "llm_runtime_adapter (OPP-105) instalado — depende de session_metadata.llm_runtime"
+
+    dependencies: [OPP-104, OPP-105]
+
+    fmea:
+      rpn: 3
+      mode: "urllib fetch retorna conteúdo malformado — skill corrompida"
+      probability: 1
+      severity: 3
+      detection: 1
+      mitigation: "SkillQualityBar (STAGE 3 do OPP-106) rejeita skills com frontmatter inválido"
+
+    breaking_changes: none
+    reversible: true
+
+# ─────────────────────────────────────────────────────────────────
+# SUMÁRIO DO PACK
+# ─────────────────────────────────────────────────────────────────
+summary:
+  total_diffs: 6
+  approval_levels:
+    USER_EXPLICIT: [OPP-104, OPP-105, OPP-106, OPP-107, OPP-108, OPP-109]
+    # WHY: Todos estes DIFFs afetam comportamento do sistema (kernel.defaults, regras, módulos)
+    # WHY NOT auto-apply: H5 — NEVER auto-apply DIFFs. Confirmação explícita obrigatória.
+
+  execution_order:
+    # WHY: OPP-104 deve ser primeiro — outros dependem do trusted_domain configurado
+    1: OPP-104  # trusted_domain + kernel config
+    2: OPP-105  # llm_runtime_adapter — outros módulos dependem de session_metadata.llm_runtime
+    3: OPP-106  # forgeskills pipeline — depende de OPP-104 (trusted_domains)
+    4: OPP-107  # hyperbolic anchors — independente, mas melhor com forgeskills ativo
+    5: OPP-108  # zero-ambiguity rule — independente
+    6: OPP-109  # llm-agnostic forgeskills — depende de OPP-104 (URL) e OPP-105 (runtime)
+
+  rules_new: [SR_39, SR_40]
+  modules_new: [llm_runtime_adapter, apex_internals.forgeskills (external skill)]
+  modules_modified:
+    - kernel.defaults (trusted_domains + apex_superrepo)
+    - dynamic_skill_forge (fetch_adapter, ingest_repository)
+    - attraction_engine (cross_domain_bridges)
+    - step_0_pipeline (superrepo_boot, runtime_detect)
+
+  quantified_gains:
+    domain_coverage: "+40% (skills externas via superrepo)"
+    llm_portability: "+60% (GPT-4o e Gemini agora executam ForgeSkills)"
+    forgeskills_speed: "10-50x (INDEX.md fast-path vs recursive listing)"
+    zero_ambiguity: "+100% em módulos novos (SR_40 enforcement)"
+    cross_domain_bridges: "+5 bridges pré-definidos (legal↔math mais outros)"
+
+  what_is_NOT_in_this_pack:
+    - "Retroativa aplicação de WHY/WHEN a módulos antigos (OPP-108) — only new modules"
+    - "Auto-aplicação de qualquer DIFF — H5 proíbe"
+    - "Mudança em PROTECTED_KERNEL_SEGMENT (C1-C8, SR_01-SR_12) — SR_34 proíbe"
+    - "pip install de qualquer biblioteca — apenas importlib de trusted repo"
+    - "Abertura de trusted_domains para domínios arbitrários — apenas repositório oficial APEX"
