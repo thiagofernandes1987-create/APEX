@@ -1,0 +1,48 @@
+{
+  "name": "financial-services-plugins",
+  "owner": {
+    "name": "Anthropic"
+  },
+  "plugins": [
+    {
+      "name": "financial-analysis",
+      "source": "./financial-analysis",
+      "description": "Core financial modeling and analysis tools: DCF, comps, LBO, 3-statement models, competitive analysis, and deck QC"
+    },
+    {
+      "name": "investment-banking",
+      "source": "./investment-banking",
+      "description": "Investment banking productivity tools - client and market insights, deck creation, financial analysis, and transaction management"
+    },
+    {
+      "name": "equity-research",
+      "source": "./equity-research",
+      "description": "Equity research tools: earnings analysis, initiating coverage reports, and research workflows"
+    },
+    {
+      "name": "private-equity",
+      "source": "./private-equity",
+      "description": "Private equity deal sourcing and workflow tools: company discovery, CRM integration, and founder outreach"
+    },
+    {
+      "name": "wealth-management",
+      "source": "./wealth-management",
+      "description": "Wealth management and financial advisory tools: client reviews, financial planning, portfolio analysis, and client reporting"
+    },
+    {
+      "name": "lseg",
+      "source": "./partner-built/lseg",
+      "description": "Price bonds, analyze yield curves, evaluate FX carry trades, value options, and build macro dashboards using LSEG financial data and analytics."
+    },
+    {
+      "name": "sp-global",
+      "source": "./partner-built/spglobal",
+      "description": "S&P Global - Financial data and analytics skills including company tearsheets, earnings previews, and transaction summaries"
+    },
+    {
+      "name": "claude-in-office",
+      "source": "./claude-in-office",
+      "description": "Provision direct cloud access (Vertex AI, Bedrock, or LLM gateway) for the Claude Office add-in. Generates the customized manifest, walks through Azure admin consent, and writes per-user config via Graph extension attributes."
+    }
+  ]
+}

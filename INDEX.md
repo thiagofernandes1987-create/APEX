@@ -1576,6 +1576,53 @@ domain_map:
       attribution_graphs:
         path: algorithms/attribution-graphs/
         anchors: [interpretability, attribution, mechanistic, visualization]
+  HEALTHCARE_INTEGRATIONS:
+    path: integrations/healthcare-plugins/
+    anchors: [healthcare, cms_coverage, npi_registry, pubmed, icd10, medicare]
+    skills:
+      - skill_id: integrations.healthcare.plugin_catalog
+        path: integrations/healthcare-plugins/CATALOG.md
+        status: ADOPTED
+    mcp_servers: [cms-coverage, npi-registry, pubmed, icd10-codes]
+
+  LIFE_SCIENCES_INTEGRATIONS:
+    path: integrations/life-sciences-plugins/
+    anchors: [life_sciences, genomics, drug_discovery, clinical_trials, chembl, pubmed]
+    skills:
+      - skill_id: integrations.life_sciences.plugin_catalog
+        path: integrations/life-sciences-plugins/CATALOG.md
+        status: ADOPTED
+    mcp_servers: [pubmed, biorender, biorxiv, clinical-trials, chembl, synapse, owkin, open-targets, wiley-scholar]
+
+  FINANCIAL_SERVICES_INTEGRATIONS:
+    path: integrations/financial-services/
+    anchors: [finance, equity_research, investment_banking, morningstar, sp_global, factset, moodys, lseg, pitchbook]
+    skills:
+      - skill_id: integrations.financial_services.plugin_catalog
+        path: integrations/financial-services/CATALOG.md
+        status: ADOPTED
+    mcp_servers: [morningstar, sp-global, factset, moodys, lseg, pitchbook, daloopa, aiera, chronograph]
+
+  KNOWLEDGE_WORK_INTEGRATIONS:
+    path: integrations/knowledge-work/
+    anchors: [legal, marketing, engineering, hr, sales, customer_support, data, design, product_management]
+    domains:
+      legal:
+        path: integrations/knowledge-work/legal/
+        anchors: [legal, contract_review, nda, compliance, regulation]
+      marketing:
+        path: integrations/knowledge-work/marketing/
+        anchors: [marketing, campaign, content, seo, analytics, hubspot, amplitude]
+      engineering:
+        path: integrations/knowledge-work/engineering/
+        anchors: [engineering, code_review, architecture, pagerduty, datadog, github]
+      sales:
+        path: integrations/knowledge-work/sales/
+        anchors: [sales, crm, outreach, apollo, close, gong, hubspot]
+      data:
+        path: integrations/knowledge-work/data/
+        anchors: [data, sql, bigquery, snowflake, databricks, visualization]
+
   DEVOPS_REFERENCE:
     path: reference-docs/
     anchors: [gitops, kubernetes, terraform, iac, devops, infrastructure]
@@ -1615,4 +1662,4 @@ Ver detalhes: `diffs/v00_33_0/`
 - **Repo criado**: 2026-04-08
 - **APEX version**: v00.33.0
 - **DIFFs aplicados**: 104 (86 herdados + 12 OPP-92/103 + 6 OPP-104/109)
-- **Skills registradas**: 1905 (v00.33.0 — ingestion 39/39 repos)
+- **Skills registradas**: 2094 (v00.33.0 — 4 new plugin packs ingested)
