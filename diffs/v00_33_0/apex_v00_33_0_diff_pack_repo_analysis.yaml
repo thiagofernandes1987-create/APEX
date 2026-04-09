@@ -1,0 +1,1299 @@
+# ═══════════════════════════════════════════════════════════════════
+# APEX v00.33.0 — DIFF PACK: Próximo Patamar
+# Base: v00.32.1 (86 DIFFs aplicados | FMEA RPN máx = 16)
+# DIFFs neste pacote: 12 (OPP-92 a OPP-103)
+# FMEA RPN máx pós-mitigação: 16
+# Origem: Análise de 36 repositórios (391 MB)
+# Session: APEX-LIVE-2026-04-08
+# Aprovação: USER_EXPLICIT requerida para cada DIFF
+# ═══════════════════════════════════════════════════════════════════
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_ORJSON_SNAPSHOT_001 (OPP-92)
+# Prioridade: P0 | Esforço: LOW | RPN: 2 | Aplicar IMEDIATAMENTE
+# ─────────────────────────────────────────────────────────────────
+orjson_serializer:
+  executor: SANDBOX_CODE
+  version: v00.33.0
+  opp: OPP-92
+  tier: 0
+  status: PROPOSED
+
+  purpose: >
+    Substituir json stdlib por orjson (Rust) em todos os pontos de
+    serialização do APEX. orjson é 10× mais rápido em dumps e 2× em loads,
+    com suporte nativo a numpy arrays, datetime e UUID — zero conversão manual.
+    Resolve o overhead de serialização do SnapshotStore, event_bus e SkillDB.
+
+  why: >
+    json Python puro: ~2ms para serializar 50 KB de snapshot.
+    orjson (Rust+PyO3): ~0.2ms para o mesmo payload — 10× mais rápido.
+    Para sessões DEEP com 50+ snapshots, isso representa -80% do tempo de I/O.
+    orjson já está disponível em sandbox (pré-instalado junto com numpy/scipy).
+    Zero dependência nova. Zero breaking change: API drop-in para json.dumps/loads.
+    Suporte nativo a numpy arrays elimina a conversão manual em CodeGenetics e MC Simulator.
+
+  description: >
+    O QUE É: Wrapper drop-in que substitui json.dumps/loads por orjson.dumps/loads
+    com opção OPT_SERIALIZE_NUMPY para arrays numpy sem conversão.
+    O QUE NÃO É: Mudança de formato — output é JSON válido idêntico ao anterior.
+    O QUE NÃO É: Dependência nova — orjson pré-instalado na sandbox.
+    COMO FUNCIONA: import orjson; use orjson.dumps(obj, option=orjson.OPT_SERIALIZE_NUMPY)
+    em vez de json.dumps(obj). Para loads: orjson.loads(s) em vez de json.loads(s).
+    PONTOS AFETADOS:
+      1. sqlite_snapshot_store.save_session() e load_delta_for_session()
+      2. snapshot_store._disk_save() e _disk_load()
+      3. event_bus.emit() — serialização de payloads
+      4. entropy_weighted_merge() — leitura de múltiplos snapshots
+      5. code_genetics_map — serialização de vaccines no SQLite
+      6. SkillDB.pot_tools.parameters_json e scripts_json
+      7. hypothesis_dag.compress_for_snapshot()
+
+  what_if_fails: >
+    FALLBACK 1 — orjson não disponível (sandbox antiga):
+      Detectar via: try: import orjson; except ImportError: import json as orjson.
+      Fallback transparente para json stdlib. Declarar [ORJSON_UNAVAILABLE].
+      Performance degradada mas funcionalidade 100% preservada.
+    FALLBACK 2 — orjson.OPT_SERIALIZE_NUMPY não funciona para tipo específico:
+      Converter array para .tolist() antes de serializar. Fallback já documentado.
+    REGRA: NUNCA quebrar serialização por causa do orjson. Sempre ter fallback json.
+
+  inject_when: always
+  depends_on: [sqlite_snapshot_store, snapshot_store, event_bus]
+
+  python_implementation: |
+    # Substituição drop-in — adicionar no topo de cada módulo afetado:
+    try:
+        import orjson
+        def _dumps(obj) -> bytes:
+            return orjson.dumps(obj, option=orjson.OPT_SERIALIZE_NUMPY)
+        def _loads(s):
+            return orjson.loads(s)
+        _JSON_BACKEND = "orjson"
+    except ImportError:
+        import json
+        def _dumps(obj) -> bytes:
+            return json.dumps(obj, sort_keys=True, separators=(',',':')).encode()
+        def _loads(s):
+            return json.loads(s)
+        _JSON_BACKEND = "json_stdlib"
+
+    # No save_session() do SQLite SnapshotStore:
+    # data_bytes = _dumps(state_dict)   # em vez de json.dumps(...)
+    # data_str = data_bytes.decode()    # SQLite armazena como TEXT
+
+    # No load_delta_for_session():
+    # state = _loads(row['data'])       # em vez de json.loads(...)
+
+  api:
+    - "_dumps(obj) → bytes — serializa com orjson se disponível, json como fallback"
+    - "_loads(s: str | bytes) → Any — deserializa com orjson se disponível"
+
+  import_whitelist_add: [orjson]
+
+  fmea:
+    rpn: 2
+    mode: "orjson indisponível em sandbox antiga"
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: "try/except com fallback json stdlib — transparente ao caller"
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_CONSTITUTIONAL_ANCHOR_001 (OPP-93)
+# Prioridade: P0 | Esforço: LOW | RPN: 1 | Safety critical
+# ─────────────────────────────────────────────────────────────────
+constitutional_anchor:
+  executor: DOCUMENTATION
+  version: v00.33.0
+  opp: OPP-93
+  tier: 0
+  status: PROPOSED
+
+  purpose: >
+    Ancorar o PROTECTED_KERNEL_SEGMENT explicitamente na claude-constitution
+    versão 2026-01-20 (documento oficial mais recente). Elimina risco de drift
+    interpretativo ao longo de DIFFs futuros: qualquer módulo que toque o kernel
+    deve citar a seção constitucional relevante.
+
+  why: >
+    O PROTECTED_KERNEL_SEGMENT atual menciona princípios éticos em linguagem
+    informal. A constituição 2026-01-20 os formaliza em seções numeradas com
+    definições precisas. Sem âncora explícita, DIFFs futuros podem reformular
+    gradualmente os princípios de forma que desviem do intento original.
+    Esta âncora é DOCUMENTATION — zero impacto computacional, máximo impacto
+    de safety.
+
+  description: >
+    Adiciona ao PROTECTED_KERNEL_SEGMENT um campo constitutional_basis que
+    mapeia cada princípio inviolável à seção exata da claude-constitution
+    2026-01-20. Todo futuro DIFF que toque PROTECTED_KERNEL_SEGMENT DEVE
+    incluir constitutional_citation com a seção relevante. Sem citação:
+    DIFF rejeitado automaticamente pelo DIFF_REVIEW_GATE (H5).
+
+  what_if_fails: >
+    Não tem modo de falha — é DOCUMENTATION pura. O único risco é não aplicar.
+
+  inject_when: always
+  depends_on: [protected_kernel_segment]
+
+  constitutional_basis:
+    document: "claude-constitution/20260120-constitution.md"
+    version: "2026-01-20"
+    principles_anchored:
+      P1_preservar_estruturas_societais:
+        constitution_section: "Preserving important societal structures"
+        apex_maps_to: "ETHICAL_BARRIER.cost = sys.maxsize para power-concentration"
+      P2_evitar_concentracao_poder:
+        constitution_section: "Avoiding problematic concentrations of power"
+        apex_maps_to: "SR_38: APEX nunca age para maximizar própria influência ou recursos"
+      P3_autonomia_epistemica:
+        constitution_section: "Preserving epistemic autonomy"
+        apex_maps_to: "APEX apresenta múltiplas hipóteses; nunca colapsa para visão única"
+      P4_corrigibilidade:
+        constitution_section: "How we think about corrigibility"
+        apex_maps_to: "nivel_3_estrutural: USER_EXPLICIT OBRIGATÓRIO; NEVER auto-apply"
+      P5_seguranca_ampla:
+        constitution_section: "Safe behaviors"
+        apex_maps_to: "PROTECTED_KERNEL_SEGMENT: imutável sem USER_EXPLICIT explícito"
+
+  diff_gate_extension:
+    rule: >
+      Todo DIFF nível_3_estrutural que modifique PROTECTED_KERNEL_SEGMENT,
+      ETHICAL_BARRIER, ou inviolable_rules DEVE conter:
+        constitutional_citation:
+          section: "Nome da seção da constituição"
+          rationale: "Por que esta modificação é consistente com a seção"
+      Ausência deste campo em DIFF nível_3 = DIFF inválido automaticamente.
+
+  fmea:
+    rpn: 1
+    mode: "DOCUMENTATION não aplicada — sem impacto computacional"
+    probability: 1
+    severity: 1
+    detection: 1
+    mitigation: "Campo constitutional_citation no template obrigatório de DIFFs"
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_SKILL_QUALITY_BAR_001 (OPP-94)
+# Prioridade: P0 | Esforço: LOW | RPN: 2
+# ─────────────────────────────────────────────────────────────────
+skill_quality_bar:
+  executor: HYBRID
+  version: v00.33.0
+  opp: OPP-94
+  tier: 1
+  status: PROPOSED
+
+  purpose: >
+    Implementar o pipeline de qualidade do antigravity-awesome-skills v3
+    no SkillIndexer. Toda skill ingerida passa por 6 checks obrigatórios
+    antes de entrar no SkillDB — eliminando skills malformadas, oversized
+    ou sem triggers de ativação.
+
+  why: >
+    O antigravity v3 (MAINTENANCE.md) define exatamente os critérios que
+    diferem skills de produção de skills ruins. Sem quality bar, o SkillDB
+    pode acumular 1.600+ skills com metadados errados, disparando falsos
+    positivos no SemanticMatcher. Quality bar reduz ruído e aumenta precisão
+    do Ω_Bayes score de ativação.
+
+  description: >
+    O QUE É: Pipeline de 6 verificações executado pelo LLM (estrutura) +
+    sandbox (tamanho, hash) antes de cada ingestão no SkillDB.
+    O QUE NÃO É: Bloqueio total — skills com WARNING são ingeridas com
+    risk_level='unknown' e quality_flags marcados.
+    CHECKS:
+      1. Frontmatter YAML válido: name, description, risk, source, date_added
+      2. ## When to Use section presente (obrigatória para SemanticMatcher)
+      3. Frontmatter <= 1024 caracteres
+      4. Tamanho total do diretório <= 8 MB
+      5. SHA256 de SKILL.md calculado (detecta duplicatas e updates)
+      6. UCO gate no primeiro script Python encontrado (H <= 50 para ingestion)
+
+  what_if_fails: >
+    FALLBACK 1 — Frontmatter inválido (ERROR):
+      Rejeitar skill. Registrar em skill_registry.quality_errors. Log ao usuário.
+    FALLBACK 2 — Seção "When to Use" ausente (WARNING):
+      Ingerir com risk_level='unknown', quality_flags=['missing_use_section'].
+      SemanticMatcher usa description como fallback para when[].
+    FALLBACK 3 — Skill > 8 MB (ERROR):
+      Ingerir apenas SKILL.md e arquivos <= 100 KB. Registrar truncation_flag.
+    FALLBACK 4 — UCO gate falha em script (WARNING):
+      Ingerir skill como LLM_BEHAVIOR (desabilita execução de scripts). Log.
+    REGRA: Quality bar NUNCA bloqueia o pipeline de ingestão. Piora → warning.
+
+  inject_when: "SkillIndexer.ingest_bundle() OR SkillIndexer.ingest_skill_dir()"
+  depends_on: [uco_quality_gate, sqlite_snapshot_store]
+
+  python_implementation: |
+    class SkillQualityBar:
+        REQUIRED_FIELDS = ["name", "description", "risk", "source"]
+        MAX_FRONTMATTER_CHARS = 1024
+        MAX_SKILL_SIZE_BYTES = 8 * 1024 * 1024  # 8 MB
+        UCO_H_INGESTION_THRESHOLD = 50.0
+
+        def validate(self, skill_id: str, skill_md_content: str,
+                     skill_files: dict) -> dict:
+            errors, warnings = [], []
+
+            # 1. Frontmatter parse
+            fm, body = _parse_frontmatter(skill_md_content)
+            for field in self.REQUIRED_FIELDS:
+                if field not in fm:
+                    errors.append(f"MISSING_FIELD:{field}")
+
+            # 2. When to Use section
+            if "## When to Use" not in body and "## Use this skill when" not in body:
+                warnings.append("MISSING_USE_SECTION")
+
+            # 3. Frontmatter size
+            fm_text = skill_md_content[:skill_md_content.rfind("---", 3)]
+            if len(fm_text) > self.MAX_FRONTMATTER_CHARS:
+                errors.append(f"FRONTMATTER_TOO_LONG:{len(fm_text)}")
+
+            # 4. Total size
+            total_bytes = sum(len(c.encode()) for c in skill_files.values())
+            if total_bytes > self.MAX_SKILL_SIZE_BYTES:
+                warnings.append(f"OVERSIZED:{total_bytes/1e6:.1f}MB")
+
+            # 5. Content hash
+            import hashlib
+            content_hash = hashlib.sha256(skill_md_content.encode()).hexdigest()[:16]
+
+            # 6. UCO check on first Python script
+            for fpath, content in skill_files.items():
+                if fpath.endswith(".py") and len(content) > 100:
+                    # UCO gate check (reusa SB3)
+                    uco_result = uco_quality_gate.gate(content, "EXPRESS")
+                    if uco_result.get("decision") == "REJECTED":
+                        warnings.append(f"UCO_SCRIPT_WARN:{fpath}")
+                    break  # só o primeiro script
+
+            return {
+                "valid": len(errors) == 0,
+                "errors": errors,
+                "warnings": warnings,
+                "content_hash": content_hash,
+                "quality_score": max(0.0, 1.0 - 0.3 * len(errors) - 0.1 * len(warnings))
+            }
+
+  api:
+    - "validate(skill_id, skill_md_content, skill_files) → {valid, errors, warnings, content_hash, quality_score}"
+
+  fmea:
+    rpn: 2
+    mode: "False positive rejeitando skill válida por frontmatter incomum"
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: "Rejeição apenas para REQUIRED_FIELDS + tamanho; resto é warning"
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_RISK_TAXONOMY_EXTENSION_001 (OPP-95)
+# Prioridade: P0 | Esforço: MEDIUM | RPN: 16
+# ─────────────────────────────────────────────────────────────────
+risk_taxonomy_extended:
+  executor: LLM_BEHAVIOR
+  version: v00.33.0
+  opp: OPP-95
+  tier: 0
+  status: PROPOSED
+
+  purpose: >
+    Estender o risk_level do DynamicSkillForge para incluir a categoria
+    'offensive' do antigravity v3, com protocolo de autorização explícita.
+    Permite ingestion de skills de pentest/red-team com controle rigoroso,
+    em vez de bloquear completamente ou tratar como 'high'.
+
+  why: >
+    O antigravity v3 usa: none, safe, unknown, critical, offensive.
+    O APEX v00.32.1 usa: unknown, safe, low, medium, high.
+    Skills como metasploit-framework, active-directory-attacks, red-team-tactics
+    são legitimas para profissionais de segurança mas requerem controle diferente.
+    A categoria 'offensive' + autorização explícita é mais precisa que 'high'
+    e permite uso legítimo com proteção adequada.
+
+  description: >
+    O QUE É: Extensão da skill_registry.risk_level e do ETHICAL_BARRIER
+    para 5 categorias: none, safe, unknown, critical, offensive.
+    O QUE NÃO É: Remoção de proteções — 'offensive' requer dois gates adicionais.
+    MAPEAMENTO:
+      none:      Sem impacto (info skills, documentação)
+      safe:      Ativação automática sem aviso (maioria das skills)
+      unknown:   Default para skills novas — ativação com aviso leve
+      critical:  Requer USER_EXPLICIT + risk_acknowledgment na sessão
+      offensive: Requer USER_EXPLICIT + APEX_OFFENSIVE_MODE=true + AUTHORIZED USE ONLY notice
+    LISTA ESTÁTICA offensive: metasploit-framework, active-directory-attacks,
+      red-team-tactics, red-team-tools, linux-privilege-escalation,
+      windows-privilege-escalation, burpsuite-project-parser, sqlmap-database-pentesting.
+    LISTA ESTÁTICA critical: pentest-checklist, pentest-commands, burp-suite-testing,
+      ffuf-claude-skill, ffuf-web-fuzzing, shodan-reconnaissance, malware-analyst,
+      memory-forensics, protocol-reverse-engineering, anti-reversing-techniques.
+
+  what_if_fails: >
+    FALLBACK 1 — APEX_OFFENSIVE_MODE não definido e skill offensive solicitada:
+      Recusar ativação. Emitir [OFFENSIVE_SKILL_BLOCKED: requer APEX_OFFENSIVE_MODE=true].
+      Oferecer alternativa safe (ex: security-audit em vez de metasploit).
+    FALLBACK 2 — critical sem USER_EXPLICIT:
+      Emitir aviso. Solicitar confirmação explícita antes de prosseguir.
+    REGRA: ETHICAL_BARRIER é inviolável — 'offensive' não bypassa ética, apenas habilita
+    ferramentas legítimas de segurança para usuários autorizados.
+
+  inject_when: "DynamicSkillForge ativa skill OR SkillIndexer ingere skill"
+  depends_on: [dynamic_skill_forge, ethical_barrier, protected_kernel_segment]
+
+  activation_table:
+    none:      {auto_activate: true,  warning: false, user_explicit: false, notice: false}
+    safe:      {auto_activate: true,  warning: false, user_explicit: false, notice: false}
+    unknown:   {auto_activate: true,  warning: true,  user_explicit: false, notice: false}
+    critical:  {auto_activate: false, warning: true,  user_explicit: true,  notice: true}
+    offensive: {auto_activate: false, warning: true,  user_explicit: true,  env_flag: "APEX_OFFENSIVE_MODE=true", notice: "AUTHORIZED USE ONLY — offensive security skills"}
+
+  authorized_use_notice: |
+    ⚠️ AUTHORIZED USE ONLY
+    Esta skill contém capacidades ofensivas de segurança.
+    Use exclusivamente em ambientes autorizados e com permissão explícita.
+    Uso não autorizado pode violar leis e regulamentos.
+    [OFFENSIVE_SKILL_ACTIVATED: {skill_id} | session: {session_id}]
+
+  constitutional_citation:
+    section: "Being broadly ethical → Avoiding harm"
+    rationale: >
+      A categoria 'offensive' NÃO viola a constituição — hacking ético autorizado
+      é uma prática legítima. O protocolo de autorização garante que apenas
+      usuários com contexto legítimo ativem essas ferramentas.
+
+  fmea:
+    rpn: 16
+    mode: "Skill offensive ativada sem autorização real"
+    probability: 2
+    severity: 4
+    detection: 2
+    mitigation: >
+      PROTECTED_KERNEL_SEGMENT + ETHICAL_BARRIER invioláveis.
+      Lista estática hardcoded. USER_EXPLICIT + env flag duplo.
+      Todas as ativações offensive registradas em event_bus + KG memory.
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_MCP_BRIDGE_REAL_001 (OPP-96)
+# Prioridade: P1 | Esforço: HIGH | RPN: 12
+# ─────────────────────────────────────────────────────────────────
+mcp_bridge_v2:
+  executor: HYBRID
+  version: v00.33.0
+  opp: OPP-96
+  tier: 1
+  status: PROPOSED
+
+  purpose: >
+    Implementar o mcp_bridge que estava declarado como activation_roadmap
+    desde v00.17.0 mas nunca foi construído. Usa o padrão sdk_mcp_servers
+    do claude-agent-sdk-python: servidores MCP in-process sem socket overhead.
+    Habilita Knowledge Graph, Sequential Thinking, Filesystem e Git nativamente.
+
+  why: >
+    O claude-agent-sdk-python Query.__init__() aceita sdk_mcp_servers:
+    dict[str, McpServer] — servidores MCP rodando no mesmo processo Python
+    sem latência de rede. Os servidores de referência (servers-main) são
+    implementações prontas para: memory (Knowledge Graph), sequentialthinking,
+    filesystem, git, fetch, time. Zero dependências externas além do mcp SDK
+    (já usado pelo agent-sdk). Resolver este gap desbloqueia o KG persistente
+    (OPP-97), structured thinking (OPP-103) e git evolution (OPP-104).
+
+  description: >
+    O QUE É: Dict de servidores MCP in-process, gerenciado pelo APEX,
+    chamado via mcp_bridge.call_tool(server, tool, params).
+    O QUE NÃO É: Conexão socket externa — servers rodam no mesmo processo.
+    O QUE NÃO É: O mcp_bridge antigo (activation_roadmap) — este é implementação real.
+    COMO FUNCIONA:
+      1. Na SessionStart hook: inicializar servidores disponíveis
+      2. DynamicSkillForge e módulos consultam mcp_bridge.call_tool()
+      3. Resultados retornam como dicts Python — sem parsing de JSON de rede
+      4. Fallback gracioso se servidor não disponível
+
+  what_if_fails: >
+    FALLBACK 1 — mcp SDK não instalado:
+      Declarar [MCP_BRIDGE_UNAVAILABLE]. Operar sem MCP servers.
+      SnapshotStore continua funcionando. KG não disponível.
+    FALLBACK 2 — servidor específico falha na inicialização:
+      Registrar [MCP_SERVER_FAILED: server_name]. Continuar sem aquele servidor.
+      Outros servidores continuam disponíveis.
+    FALLBACK 3 — call_tool() timeout (> 5s):
+      Retornar {error: "TIMEOUT"}. Declarar [MCP_TOOL_TIMEOUT].
+      LLM opera sem resultado do MCP tool.
+    REGRA: mcp_bridge NUNCA bloqueia o pipeline APEX. É enriquecimento opcional.
+
+  inject_when: "SessionStart hook OR DynamicSkillForge.load_skill() com skill que requer MCP"
+  depends_on: [event_bus, sqlite_snapshot_store]
+
+  servers_registry:
+    memory:
+      source: "servers-main/src/memory (Knowledge Graph)"
+      tools: [create_entities, create_relations, add_observations, read_graph,
+               search_nodes, open_nodes, delete_entities, delete_observations]
+      persist: "knowledge_graph.json em /tmp/apex_kg.json"
+      apex_use: "KG persistente de sessions, skills, hipóteses e findings"
+
+    sequentialthinking:
+      source: "servers-main/src/sequentialthinking"
+      tools: [sequential_thinking]
+      apex_use: >
+        Structured thinking em modo DEEP/RESEARCH — cada step de raciocínio
+        como thought com thoughtNumber/totalThoughts/isRevision/branchFromThought.
+        Complementa HypothesisDAG: DAG rastreia dependências, sequential_thinking
+        guia a exploração passo-a-passo com capacidade de revisão e branching.
+
+    filesystem:
+      source: "servers-main/src/filesystem"
+      tools: [read_file, write_file, list_directory, create_directory, search_files]
+      security: "allowed_roots definido em APEX config — NÃO filesystem global"
+      apex_use: "PoT Bridge: leitura de scripts de skills, gravação de resultados"
+
+    git:
+      source: "servers-main/src/git (Python)"
+      tools: [git_status, git_log, git_diff, git_commit, git_add, git_push,
+               git_create_branch, git_checkout]
+      apex_use: "Self-Evolution Protocol: branch → edit → commit → push → PR"
+      requires: "APEX_SELF_EVOLUTION=true para operações write (commit/push)"
+
+    github:
+      source: "github-mcp-server"
+      tools: [search_repositories, get_file_contents, create_or_update_file,
+               create_pull_request, create_issue, fork_repository, search_code]
+      requires_env: "GITHUB_PERSONAL_ACCESS_TOKEN"
+      apex_use: "SkillIndexer: descoberta e clonagem de skill repos"
+
+  python_implementation: |
+    class MCPBridge:
+        """MCP Bridge v2 — in-process servers via sdk_mcp_servers pattern."""
+
+        def __init__(self):
+            self._servers: dict[str, Any] = {}
+            self._available: dict[str, bool] = {}
+
+        def initialize(self, server_names: list[str] | None = None):
+            """Inicializa servidores MCP disponíveis na sessão."""
+            target = server_names or ["memory", "sequentialthinking", "filesystem"]
+            for name in target:
+                try:
+                    server = self._create_server(name)
+                    self._servers[name] = server
+                    self._available[name] = True
+                    print(f"[MCP_BRIDGE] {name}: READY")
+                except Exception as e:
+                    self._available[name] = False
+                    print(f"[MCP_BRIDGE] {name}: FAILED ({type(e).__name__})")
+
+        def call_tool(self, server: str, tool: str, params: dict) -> dict:
+            """Chama uma tool de um servidor MCP in-process."""
+            if not self._available.get(server, False):
+                return {"error": f"MCP_SERVER_UNAVAILABLE:{server}"}
+            try:
+                result = self._servers[server].call_tool(tool, params)
+                return {"result": result, "server": server, "tool": tool}
+            except TimeoutError:
+                return {"error": f"MCP_TOOL_TIMEOUT:{server}.{tool}"}
+            except Exception as e:
+                return {"error": f"MCP_TOOL_ERROR:{e}"}
+
+        def available(self, server: str) -> bool:
+            return self._available.get(server, False)
+
+        def _create_server(self, name: str) -> Any:
+            """Lazy import de servidor MCP."""
+            if name == "memory":
+                from mcp_servers.memory import MemoryServer
+                return MemoryServer(persist_path="/tmp/apex_kg.json")
+            elif name == "sequentialthinking":
+                from mcp_servers.sequential_thinking import SequentialThinkingServer
+                return SequentialThinkingServer()
+            elif name == "filesystem":
+                from mcp_servers.filesystem import FilesystemServer
+                allowed = ["/tmp/apex_skills", "/home/claude/apex_outputs"]
+                return FilesystemServer(allowed_roots=allowed)
+            elif name == "git":
+                from mcp_servers.git import GitServer
+                return GitServer()
+            else:
+                raise ValueError(f"Unknown server: {name}")
+
+  api:
+    - "initialize(server_names: list[str] | None) → None — inicializa servers na SessionStart"
+    - "call_tool(server: str, tool: str, params: dict) → dict — chama tool MCP"
+    - "available(server: str) → bool — verifica disponibilidade"
+
+  events_emitted:
+    - "MCP_BRIDGE_INITIALIZED: {servers_ready, servers_failed}"
+    - "MCP_TOOL_CALLED: {server, tool, latency_ms}"
+    - "MCP_SERVER_FAILED: {server, error}"
+
+  rules_enforced:
+    - "SR_37: AST scan em qualquer código retornado por MCP tools antes de exec"
+    - "IMPORT_WHITELIST: MCP SDK não permite imports fora da whitelist"
+
+  fmea:
+    rpn: 12
+    mode: "Servidor MCP retorna dados malformados ou perigosos"
+    probability: 2
+    severity: 3
+    detection: 2
+    mitigation: >
+      AST scan (SR_37) em qualquer código MCP. Servidores de referência
+      validados (anthropics/servers-main). Fallback gracioso em toda falha.
+      filesystem server com allowed_roots restritos.
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_KNOWLEDGE_GRAPH_MEMORY_001 (OPP-97)
+# Prioridade: P1 | Esforço: MEDIUM | RPN: 8
+# ─────────────────────────────────────────────────────────────────
+knowledge_graph_memory:
+  executor: HYBRID
+  version: v00.33.0
+  opp: OPP-97
+  tier: 1
+  status: PROPOSED
+
+  purpose: >
+    Substituir o SnapshotStore textual por um Knowledge Graph tipado persistente,
+    usando o Memory MCP Server (servers-main/src/memory). Entidades tipadas
+    (session, skill, hypothesis, finding, agent) com relações semânticas substituem
+    snapshots genéricos de texto — possibilitando queries estruturadas como
+    "quais skills resolveram problemas similares a este?".
+
+  why: >
+    O SnapshotStore atual serializa dicts genéricos. Um KG tipado permite:
+    1. search_nodes("hipótese relacionada a crescimento logístico") → entidades reais
+    2. open_nodes(["session_2026-04-01"]) → todas as skills usadas nessa sessão
+    3. Relações: hypothesis SUPPORTS finding; skill SOLVED_BY agent; session USES skill
+    O Memory Server persiste em /tmp/apex_kg.json — sobrevive reinicializações
+    dentro da mesma sessão de chat (idêntico ao SnapshotStore SQLite).
+    read_graph() retorna o estado completo para inicialização incremental.
+
+  description: >
+    O QUE É: Camada de KG sobre o Memory MCP Server — entidades e relações
+    APEX-específicas que complementam (não substituem) o SnapshotStore SQLite.
+    O QUE NÃO É: Substituição do SnapshotStore — os dois coexistem.
+    ENTIDADES:
+      session: {id, mode, timestamp, hypotheses_count, skills_used}
+      skill: {id, domain, omega_score, activation_count, last_used}
+      hypothesis: {id, text, confidence, status: active|rejected|adopted}
+      finding: {id, text, confidence_chain}
+      agent: {id, role, phase, blocks_completed}
+    RELAÇÕES:
+      session HAS hypothesis
+      hypothesis SUPPORTS finding
+      skill USED_IN session
+      agent PRODUCED finding
+      hypothesis DEPENDS_ON hypothesis (=HypothesisDAG edge)
+    QUERIES ÚTEIS:
+      search_nodes("") → todas as entidades ativas
+      search_nodes(skill_id) → histórico de uso desta skill
+      open_nodes(hypothesis_ids) → detalhes das hipóteses sobreviventes
+
+  what_if_fails: >
+    FALLBACK 1 — Memory MCP não disponível:
+      Continuar com SnapshotStore SQLite apenas. Declarar [KG_UNAVAILABLE].
+      Funcionalidade 100% preservada — KG é enrichment, não core.
+    FALLBACK 2 — read_graph() retorna grafo corrompido:
+      Inicializar KG vazio. Emitir [KG_RESET: corrupt_data].
+      Continuar sessão do zero para KG (snapshot SQL preservado).
+    FALLBACK 3 — create_entities() falha:
+      Silenciar erro. Pipeline não interrompido. Log em event_bus.
+    REGRA: KG NUNCA é source of truth para operações críticas — é busca e enriquecimento.
+
+  inject_when: "SessionStart hook (inicialização) | STEP_13 (persistência)"
+  depends_on: [mcp_bridge_v2, sqlite_snapshot_store, event_bus]
+
+  apex_kg_api:
+    - "kg_init_session(session_id, mode) → entity_id"
+    - "kg_register_skill(skill_id, omega_score) → entity_id"
+    - "kg_add_hypothesis(hyp_id, text, confidence) → entity_id"
+    - "kg_add_finding(finding_id, text, source_agent) → entity_id"
+    - "kg_link(src_id, dst_id, relation_type) → bool"
+    - "kg_search(query: str) → list[entity]"
+    - "kg_get_skill_history(skill_id) → list[session]"
+    - "kg_get_hypothesis_chain(hyp_id) → list[entity]"
+    - "kg_snapshot() → dict — persiste no Memory MCP"
+
+  initialization_protocol: |
+    # No SessionStart hook:
+    existing_graph = mcp_bridge.call_tool("memory", "read_graph", {})
+    if existing_graph.get("entities"):
+        # Sessão incremental — KG já tem histórico
+        emit(KG_LOADED: {entities_count: len(existing_graph["entities"])})
+    else:
+        # Sessão nova — KG vazio
+        emit(KG_INITIALIZED_EMPTY)
+    # Registrar nova sessão
+    kg_init_session(new_session_id, cognitive_mode)
+
+  fmea:
+    rpn: 8
+    mode: "Memory MCP server não disponível ou grafo corrompido"
+    probability: 2
+    severity: 2
+    detection: 2
+    mitigation: "Fallback para SnapshotStore SQLite. KG é enrichment, não core."
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_SESSION_FORK_001 (OPP-98)
+# Prioridade: P1 | Esforço: MEDIUM | RPN: 12
+# ─────────────────────────────────────────────────────────────────
+session_fork_protocol:
+  executor: HYBRID
+  version: v00.33.0
+  opp: OPP-98
+  tier: 2
+  status: PROPOSED
+
+  purpose: >
+    Adicionar fork/merge de sessão ao SnapshotStore, baseado no padrão
+    fork_session do claude-agent-sdk-python session_mutations.py.
+    Permite que o Multi-PoT especulativo (SB2) crie ramificações reais
+    de estado em vez de compartilhar o mesmo contexto linear.
+
+  why: >
+    O session_mutations.py do SDK implementa fork_session() que copia
+    o arquivo .jsonl de uma sessão para um novo UUID, permitindo exploração
+    especulativa sem contaminar a sessão principal. No APEX, isso significa
+    que cada caminho do Multi-PoT (optimistic/pessimistic/neutral) pode
+    partir de um estado independente e o vencedor (entropy_weighted_merge)
+    é mergeado de volta. Isso reduz correlação entre programas de ~30% para ~10%.
+
+  description: >
+    O QUE É: Extensão do SnapshotStore com operações fork/merge/discard
+    seguindo o padrão do SDK's session_mutations.
+    O QUE NÃO É: Fork de processo Python — é fork de estado serializado.
+    O QUE NÃO É: Isolamento real de LLM — o modelo ainda é single-context.
+    COMO FUNCIONA:
+      1. parallel_pot_executor solicita fork antes de cada caminho especulativo
+      2. fork() copia snapshot atual para novo UUID em SQLite
+      3. Cada caminho opera sobre seu fork independente
+      4. entropy_weighted_merge seleciona vencedor
+      5. merge_fork() copia estado vencedor para sessão principal
+      6. discard_fork() limpa os forks perdedores
+
+  what_if_fails: >
+    FALLBACK 1 — SQLite não suporta fork (erro de I/O):
+      Continuar com comportamento atual (sem fork). Declarar [FORK_UNAVAILABLE].
+      Multi-PoT continua funcional com correlação ~30%.
+    FALLBACK 2 — merge_fork() encontra conflito de esquema:
+      Usar entropy_weighted_merge sobre os snapshots sem fork.
+      Declarar [FORK_MERGE_FALLBACK].
+    FALLBACK 3 — fork orphan (merge nunca chamado após 10 min):
+      vacuum_if_due() limpa forks órfãos automaticamente.
+    REGRA: Fork NUNCA é obrigatório — é otimização opcional para SB2.
+
+  inject_when: "parallel_pot_executor executa em modo DEEP+ (>= 2 programas)"
+  depends_on: [sqlite_snapshot_store, parallel_pot_executor]
+
+  python_implementation: |
+    # Extensão do SQLiteSnapshotStore:
+    import uuid
+
+    def fork(self, source_session_id: str) -> str:
+        """Fork a session state to a new UUID for speculative exploration."""
+        new_id = str(uuid.uuid4())
+        # Copy all delta rows from source to new session
+        conn = sqlite3.connect(self._db_path)
+        rows = conn.execute(
+            "SELECT * FROM session_deltas WHERE session_id = ?",
+            (source_session_id,)
+        ).fetchall()
+        for row in rows:
+            conn.execute(
+                "INSERT INTO session_deltas VALUES (?,?,?,?)",
+                (new_id, row[1], row[2], row[3])  # new session_id, rest same
+            )
+        conn.commit()
+        conn.close()
+        return new_id  # fork_uuid
+
+    def merge_fork(self, fork_uuid: str, target_session_id: str) -> bool:
+        """Merge winning fork state into target session."""
+        try:
+            conn = sqlite3.connect(self._db_path)
+            # Get latest delta from fork
+            latest = conn.execute(
+                "SELECT data FROM session_deltas WHERE session_id=? ORDER BY ts DESC LIMIT 1",
+                (fork_uuid,)
+            ).fetchone()
+            if not latest:
+                return False
+            # Append to target session
+            conn.execute(
+                "INSERT INTO session_deltas (session_id, ts, data, source) VALUES (?,?,?,?)",
+                (target_session_id, _now(), latest[0], f"fork_merge:{fork_uuid}")
+            )
+            conn.commit()
+            conn.close()
+            return True
+        except Exception as e:
+            print(f"[FORK_MERGE_ERROR] {e}")
+            return False
+
+    def discard_fork(self, fork_uuid: str) -> None:
+        """Remove fork data (losing speculation)."""
+        conn = sqlite3.connect(self._db_path)
+        conn.execute("DELETE FROM session_deltas WHERE session_id=?", (fork_uuid,))
+        conn.commit()
+        conn.close()
+
+  api:
+    - "fork(source_session_id) → fork_uuid"
+    - "merge_fork(fork_uuid, target_session_id) → bool"
+    - "discard_fork(fork_uuid) → None"
+
+  fmea:
+    rpn: 12
+    mode: "Fork órfão acumula no SQLite — crescimento descontrolado"
+    probability: 2
+    severity: 3
+    detection: 2
+    mitigation: "vacuum_if_due() extendido para limpar forks > 30 min sem merge"
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_TOKEN_BUDGET_TRACKER_001 (OPP-99)
+# Prioridade: P1 | Esforço: MEDIUM | RPN: 4
+# ─────────────────────────────────────────────────────────────────
+token_budget_tracker:
+  executor: LLM_BEHAVIOR
+  version: v00.33.0
+  opp: OPP-99
+  tier: 2
+  status: PROPOSED
+
+  purpose: >
+    Implementar rastreamento real de tokens por sessão, stage e skill,
+    baseado no TokenTracker do RIV2025 (token_tracker.py). Expande o
+    fractal_budget_gate de um threshold estático para um sistema de
+    warnings graduais com estimativa de custo em USD.
+
+  why: >
+    O fractal_budget_gate atual é trigger binário: "budget quase esgotado →
+    comprimir". Sem custo real em USD ou breakdown por stage, o usuário não
+    sabe onde os tokens estão sendo gastos. O TokenTracker do RIV2025 tem
+    exatamente os campos necessários: input, output, cache_creation,
+    cache_read, cost_usd, api_calls. Com isto, o APEX pode reportar
+    "[BUDGET: 45% usado | 0.23 USD | stage=MCFE/STEP_7]" em vez de apenas
+    um threshold percentual.
+
+  description: >
+    O QUE É: Acumulador de métricas de tokens por sessão com warnings graduais.
+    O QUE NÃO É: Medição real de tokens via API — é estimativa baseada em
+    contagem de caracteres / 4 (heurística padrão) [APPROX].
+    CAMPOS RASTREADOS:
+      input_tokens: estimativa de tokens de input acumulados
+      output_tokens: estimativa de tokens de output gerados
+      cache_creation_tokens: tokens criando cache (estimativa)
+      cache_read_tokens: tokens lidos do cache (estimativa)
+      estimated_cost_usd: custo estimado baseado em pricing do modelo
+      api_calls: número de chamadas de geração nesta sessão
+    WARNINGS:
+      WARNING_MEDIUM (60%): [BUDGET_WARNING: 60% | {breakdown}]
+      WARNING_HIGH (80%): [BUDGET_HIGH: 80% | comprimir contexto]
+      WARNING_CRITICAL (95%): [BUDGET_CRITICAL: 95% | checkpoint obrigatório]
+      HARD_STOP (100%): trigger fractal_budget_gate.COMPRESS imediato
+
+  what_if_fails: >
+    FALLBACK: Estimativa imprecisa. O tracker é [APPROX] por natureza.
+    Se cálculo falhar: continuar sem tracking. Nunca bloquear pipeline.
+
+  inject_when: always
+  depends_on: [fractal_budget_gate, attention_anchors_module]
+
+  pricing_table:
+    claude_sonnet_4_6:
+      input_per_million: 3.00
+      output_per_million: 15.00
+      cache_write_per_million: 3.75
+      cache_read_per_million: 0.30
+    claude_opus_4_6:
+      input_per_million: 15.00
+      output_per_million: 75.00
+      cache_write_per_million: 18.75
+      cache_read_per_million: 1.50
+
+  warning_thresholds:
+    WARNING_MEDIUM: 0.60
+    WARNING_HIGH: 0.80
+    WARNING_CRITICAL: 0.95
+    HARD_STOP: 1.00
+    session_max_usd: 10.00  # limite padrão — ajustável por usuário
+
+  output_format: >
+    [BUDGET: {pct_used:.0%} | {cost_usd:.4f} USD | stage={current_stage} |
+     input={input_tokens} | output={output_tokens} | cache_r={cache_read}]
+
+  api:
+    - "update(stage, input_tokens, output_tokens, cache_creation=0, cache_read=0) → None"
+    - "get_summary() → {pct_used, cost_usd, breakdown_by_stage}"
+    - "check_warnings() → list[str] — [WARNING_MEDIUM, WARNING_HIGH, ...]"
+    - "should_hard_stop() → bool"
+
+  fmea:
+    rpn: 4
+    mode: "Estimativa muito imprecisa causa falso WARNING_HIGH"
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: "Tag [APPROX] em todas as estimativas. Warnings são sugestões, não bloqueios."
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_DESIGN_FUSION_INJECTOR_001 (OPP-100)
+# Prioridade: P1 | Esforço: LOW | RPN: 2
+# ─────────────────────────────────────────────────────────────────
+design_fusion_injector:
+  executor: LLM_BEHAVIOR
+  version: v00.33.0
+  opp: OPP-100
+  tier: 3
+  status: PROPOSED
+
+  purpose: >
+    Injetar o sistema de design fusion +3σ do RIV2025 em outputs visuais
+    e de frontend. Elimina o "AI slop aesthetic" (Inter font, purple gradient,
+    centered layout) nos outputs APEX que geram HTML/CSS/React/slides.
+
+  why: >
+    O system prompt do RIV2025 identifica o problema com precisão cirúrgica:
+    "AI models converge on safe, generic design choices — the AI slop aesthetic."
+    A solução: fusion de 4 fontes diferentes (cor de A, tipografia de B, layout
+    de C, detalhes de D) declarada explicitamente antes de gerar código.
+    O RIV2025 usa +3σ como meta — muito acima da mediana de geração de UI.
+    Este módulo injeta essa lógica sempre que APEX gera outputs visuais.
+
+  description: >
+    O QUE É: Instrução de design declarada pelo LLM antes de qualquer
+    geração de código frontend/visual.
+    O QUE NÃO É: Biblioteca de CSS ou componentes — é instrução cognitiva.
+    PROTOCOLO:
+      1. Detectar se tarefa contém: frontend, UI, HTML, CSS, React, slide, dashboard
+      2. Selecionar 4 fontes de inspiração distintas (não repetir a mesma categoria)
+      3. Declarar fusion: "[DESIGN_FUSION: colors={A} + typography={B} + layout={C} + details={D}]"
+      4. Gerar código mantendo coerência com a identidade declarada
+      5. Incluir animações estratégicas (CSS transitions) em pelo menos 1 elemento hero
+    PROIBIDO: "clean modern design", Inter font padrão, purple gradient, centered layout genérico
+
+  what_if_fails: >
+    Se o usuário pede design específico: respeitar a preferência do usuário.
+    Este módulo é SUGESTED quando usuário não especifica.
+
+  inject_when: "task contém: frontend | UI | HTML | CSS | React | slide | dashboard | landing page | artifact visual"
+  depends_on: [output_adaptive_mode]
+
+  fusion_sources:
+    color_schemes: [Monokai, Dracula, Nord, Catppuccin, Solarized, Tokyo Night, Gruvbox,
+                    Rose Pine, Kanagawa, Everforest, Ayu, One Dark, Horizon]
+    design_movements: [Bauhaus, Swiss International, Memphis Group, Art Deco, Brutalism,
+                       De Stijl, Constructivism, Minimalism, Maximalism, Neo-brutalism]
+    brand_languages: [Stripe, Linear, Vercel, Notion, Arc Browser, Figma, GitHub,
+                      Spotify, Discord, Raycast, Monzo, Revolut, Pitch]
+    cultural_aesthetics: [Vaporwave, Synthwave, Cyberpunk, Dark Academia, Y2K,
+                          Frutiger Aero, Glassmorphism, Claymorphism, Terminal/CLI]
+    display_fonts: [Clash Display, Bricolage Grotesque, Space Grotesk, Bebas Neue,
+                    Playfair Display, Abril Fatface, Archivo Black, Fraunces]
+    body_fonts: [Satoshi, DM Sans, Source Sans 3, Jost, Karla, General Sans, Outfit]
+    mono_fonts: [JetBrains Mono, Fira Code, IBM Plex Mono, Cascadia Code, Victor Mono]
+
+  declaration_format: |
+    [DESIGN_FUSION]
+    Identity: Combinando {color_scheme} + {typography_source} + {layout_movement} + {detail_inspiration}
+    Colors: {primary_hex}, {secondary_hex}, {accent_hex}
+    Typography: {display_font} (headers) + {body_font} (body)
+    Layout: {layout_principle}
+    Details: {detail_treatment}
+    Animation: {hero_animation} no elemento principal
+    [/DESIGN_FUSION]
+
+  fmea:
+    rpn: 2
+    mode: "Usuário não gosta da fusion selecionada"
+    probability: 2
+    severity: 1
+    detection: 1
+    mitigation: "Fusion declarada antes de gerar — usuário pode rejeitar antes do código"
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_UCO_EXTENDED_METRICS_001 (OPP-101)
+# Prioridade: P1 | Esforço: MEDIUM | RPN: 4
+# ─────────────────────────────────────────────────────────────────
+uco_quality_gate_v2:
+  executor: HYBRID
+  version: v00.33.0
+  opp: OPP-101
+  tier: 1
+  status: PROPOSED
+
+  purpose: >
+    Expandir o UCO gate (SB3) com 3 métricas adicionais: performance_profile
+    (ms/KB estimado), io_call_count e serialization_detector. O serialization_detector
+    substitui automaticamente json por orjson no AUTO_FIXED path — combinando
+    OPP-92 com OPP-101.
+
+  why: >
+    O UCO gate atual detecta complexidade estrutural (H, CC) mas não
+    performance de runtime. Um script com H=5 que faz json.loads() em loop
+    de 10.000 iterações tem performance ruim que o H não captura.
+    Os benchmarks do orjson-anthropic fornecem dados reais de performance:
+    ~0.2ms/50KB com orjson vs ~2ms/50KB com json — referência calibrada.
+    O serialization_detector no AUTO_FIXED path cria uma auto-otimização
+    concreta e mensurável.
+
+  description: >
+    Extensão do uco_quality_gate existente — NÃO substitui, adiciona campos.
+    NOVAS MÉTRICAS:
+      performance_profile.estimated_ms_per_kb:
+        Estimativa baseada em: I/O calls × 0.5ms + loops × 0.01ms + numpy × 0.001ms
+        Threshold: > 10ms/KB = [UCO_PERF_WARN]
+      io_call_count:
+        Conta: open(), read(), write(), requests.get(), urlopen()
+        Threshold: > 3 I/O calls = avisar sobre parallelismo
+      serialization_format:
+        Detecta: "import json" → substitui por "import orjson as json" no AUTO_FIX
+        Só substitui se já não há orjson no código
+    CALIBRAÇÃO UCO_CAL atualizada:
+      Inclui: H={h:.1f}, bugs≈{bugs:.2f}, perf≈{perf:.1f}ms/KB, io={io}
+
+  what_if_fails: >
+    Métricas adicionais são enriquecimento — falha silenciosa, continua sem elas.
+    serialization_detector falha → AUTO_FIX apenas via quick_optimize() existente.
+
+  inject_when: "cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] AND PoT program para execução"
+  depends_on: [uco_quality_gate]
+
+  python_implementation: |
+    # Extensão do método gate() existente:
+    def _compute_extended_metrics(self, code: str) -> dict:
+        """Compute extended UCO metrics for performance profiling."""
+        import ast, re
+
+        # I/O call detection
+        io_patterns = ['open(', 'requests.', 'urlopen(', '.read(', '.write(', 'subprocess']
+        io_count = sum(code.count(p) for p in io_patterns)
+
+        # Loop depth estimate
+        loop_count = code.count('for ') + code.count('while ')
+
+        # Estimated performance (rough heuristic)
+        size_kb = len(code) / 1024
+        est_ms = io_count * 0.5 + loop_count * 0.01
+        est_ms_per_kb = est_ms / max(size_kb, 0.1)
+
+        # Serialization detection
+        uses_json = 'import json' in code and 'import orjson' not in code
+        json_calls = code.count('json.dumps') + code.count('json.loads')
+
+        return {
+            "io_call_count": io_count,
+            "estimated_ms_per_kb": round(est_ms_per_kb, 2),
+            "uses_stdlib_json": uses_json,
+            "json_call_count": json_calls,
+            "perf_warning": est_ms_per_kb > 10.0
+        }
+
+    def _auto_fix_serialization(self, code: str) -> tuple[str, bool]:
+        """AUTO_FIX: replace json with orjson if beneficial."""
+        if 'import json' in code and 'import orjson' not in code:
+            fixed = code.replace('import json\n', 'try:\n    import orjson as json\nexcept ImportError:\n    import json\n')
+            return fixed, True
+        return code, False
+
+  updated_confidence_calibration:
+    output_label: "{calibrated_confidence} [UCO_CAL: H={h:.1f}, bugs≈{bugs:.2f}, perf≈{perf:.1f}ms/KB, io={io}]"
+
+  fmea:
+    rpn: 4
+    mode: "serialization_detector faz substituição incorreta em código que usa json propositalmente"
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: "Substituição apenas no AUTO_FIXED path (H > threshold). Usuário vê código modificado."
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_DOMAIN_SKILLS_INGESTION_001 (OPP-102)
+# Prioridade: P0 | Esforço: LOW | RPN: 2
+# ─────────────────────────────────────────────────────────────────
+domain_skills_ingestion:
+  executor: HYBRID
+  version: v00.33.0
+  opp: OPP-102
+  tier: 2
+  status: PROPOSED
+
+  purpose: >
+    Ingerir 189 skills de produção institucional no SkillDB: 56 financial-services,
+    124 knowledge-work, 6 life-sciences, 3 healthcare. Estas são skills utilizadas
+    em produção por instituições financeiras, escritórios de advocacia, hospitais
+    e laboratórios — qualidade muito superior à média do antigravity.
+
+  why: >
+    Skills de produção institucional têm:
+    1. Descriptions precisas com critérios explícitos de quando NÃO usar
+    2. Argument-hints que guiam a invocação
+    3. Conteúdo gerado por domain experts (não comunidade)
+    4. Cobertura de domínios ausentes no APEX: finanças quantitativas, direito
+       contratual, healthcare FHIR, bioinformática scRNA-seq
+    Para Innovar Engineering AI: skills como dcf-model, lbo-model, comps-analysis,
+    review-contract, compliance-check complementam diretamente o domínio financeiro
+    e regulatório da construção civil brasileira.
+
+  description: >
+    O QUE É: Ingestão via SkillIndexer + SkillQualityBar das 189 skills
+    dos 4 repositórios de produção institucional.
+    O QUE NÃO É: Skills genéricas — são todas validadas para uso em produção.
+    CLUSTERS:
+      FINANCIAL (56): equity_research, wealth_management, investment_banking,
+        private_equity, financial_analysis, partner_lseg (8), partner_spglobal (3)
+      KNOWLEDGE_WORK (124): legal, product_management, human_resources, marketing,
+        sales, operations, finance, data, engineering, design, pdf_viewer, enterprise_search
+      LIFE_SCIENCES (6): single-cell-rna-qc, scientific-problem-selection, scvi-tools,
+        nextflow-development, instrument-data-to-allotrope, clinical-trial-protocol
+      HEALTHCARE (3): fhir-developer, prior-auth-review, clinical-trial-protocol
+
+  what_if_fails: >
+    Skills individuais que falham no quality_bar são marcadas com quality_errors
+    e ingeridas como LLM_BEHAVIOR (scripts desabilitados).
+    Falha de ingestão em massa: continuar com as skills já no SkillDB.
+
+  inject_when: "SkillIndexer.run_institutional_ingestion()"
+  depends_on: [skill_quality_bar, dynamic_skill_forge]
+
+  priority_skills_for_apex:
+    CRITICAL_P0:
+      - {id: dcf-model, domain: financial_analysis, trigger: "DCF | valuation | fluxo de caixa descontado"}
+      - {id: lbo-model, domain: financial_analysis, trigger: "LBO | alavancagem | private equity"}
+      - {id: review-contract, domain: legal, trigger: "contrato | NDA | revisão jurídica"}
+      - {id: fhir-developer, domain: healthcare, trigger: "FHIR | HL7 | healthcare API"}
+      - {id: write-spec, domain: product_management, trigger: "spec | PRD | especificação de feature"}
+      - {id: single-cell-rna-qc, domain: life_sciences, trigger: "scRNA | single-cell | sequenciamento"}
+    HIGH_P1:
+      - {id: compliance-check, domain: legal, trigger: "compliance | regulação | LGPD | ABNT"}
+      - {id: earnings-analysis, domain: equity_research, trigger: "earnings | resultados | análise financeira"}
+      - {id: 3-statement-model, domain: financial_analysis, trigger: "DRE | balanço | modelo financeiro"}
+      - {id: triage-nda, domain: legal, trigger: "NDA | acordo de confidencialidade"}
+      - {id: product-brainstorming, domain: product_management, trigger: "brainstorm | ideação de produto"}
+      - {id: nextflow-development, domain: life_sciences, trigger: "Nextflow | pipeline bioinformática"}
+      - {id: comps-analysis, domain: financial_analysis, trigger: "comps | análise comparativa | múltiplos"}
+      - {id: ic-memo, domain: private_equity, trigger: "IC memo | investment committee | deal memo"}
+
+  ingestion_sequence: |
+    1. load_bundle("financial_services_skills.md")  # 56 skills
+       → SkillQualityBar.validate() para cada skill
+       → Ingerir com domain=financial_analysis|equity_research|...
+    2. load_bundle("knowledge_work_skills.md")       # 124 skills
+       → SkillQualityBar.validate() para cada skill
+       → Ingerir com domain=legal|product_management|...
+    3. load_bundle("life_sciences_skills.md")        # 6 skills
+       → Skills com scripts Python: habilitar PoT tools
+    4. load_bundle("healthcare_skills.md")           # 3 skills
+       → fhir-developer: HYBRID (instrução + schema reference)
+    Total esperado: 189 skills | ~30-50 PoT tools habilitadas
+
+  fmea:
+    rpn: 2
+    mode: "Skill financial com jargão inglês não detectada por SemanticMatcher PT"
+    probability: 2
+    severity: 1
+    detection: 1
+    mitigation: >
+      when[] das skills financeiras inclui termos em PT e EN.
+      Adicionar translations_pt ao campo de metadados para skills EN-only.
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_SEQUENTIAL_THINKING_001 (OPP-103)
+# Prioridade: P2 | Esforço: LOW | RPN: 4
+# ─────────────────────────────────────────────────────────────────
+sequential_thinking_module:
+  executor: HYBRID
+  version: v00.33.0
+  opp: OPP-103
+  tier: 2
+  status: PROPOSED
+
+  purpose: >
+    Integrar o Sequential Thinking MCP Server como módulo de raciocínio
+    estruturado para modos DEEP e RESEARCH. Complementa o HypothesisDAG
+    (que rastreia dependências) com capacidade de exploração passo-a-passo
+    com revisão e branching formal — base do "pensamento realmente estruturado".
+
+  why: >
+    O HypothesisDAG do APEX rastreia DEPENDÊNCIAS entre hipóteses mas não
+    guia o processo de EXPLORAÇÃO. O Sequential Thinking Server fornece
+    exatamente isso: each thought tem thoughtNumber/totalThoughts/isRevision/
+    branchFromThought — possibilitando "ir atrás" e revisar premissas sem
+    perder o fio do raciocínio. Diferente do MCFE que executa N agentes
+    em paralelo, o sequential thinking executa UM raciocínio linear mas
+    com capacidade formal de revisão e bifurcação. Os dois são complementares.
+
+  description: >
+    O QUE É: Wrapper do Sequential Thinking MCP tool chamado via mcp_bridge_v2.
+    O QUE NÃO É: Substituto do MCFE ou HypothesisDAG — é complemento.
+    QUANDO USAR:
+      - Problema com estrutura sequencial clara (algoritmos, provas matemáticas)
+      - Necessidade de revisão formal de premissas anteriores
+      - Exploração de múltiplos "galhos" de raciocínio sem perder contexto
+      - DEEP/RESEARCH mode em problemas com dependências temporais
+    INTEGRAÇÃO COM APEX:
+      - Cada "thought" registrado como nó no HypothesisDAG
+      - isRevision=true → invalidate_cascade() no DAG
+      - branchFromThought → add_edge() no DAG com type="BRANCH"
+      - totalThoughts estimado pelo BDE (Behavioral Difficulty Estimator)
+
+  what_if_fails: >
+    FALLBACK: Sequential Thinking MCP não disponível → raciocínio APEX normal.
+    Declarar [SEQUENTIAL_THINKING_UNAVAILABLE]. Pipeline não interrompido.
+
+  inject_when: "cognitive_mode IN [DEEP, RESEARCH] AND problem_has_sequential_structure"
+  depends_on: [mcp_bridge_v2, hypothesis_dag, behavioral_difficulty_estimator]
+
+  integration_protocol: |
+    # Em STEP_3 (DEEP mode) quando problema tem estrutura sequencial:
+    total_thoughts = behavioral_difficulty_estimator.estimate_steps(problem)
+
+    for step_n in range(1, total_thoughts + 1):
+        thought_result = mcp_bridge.call_tool(
+            "sequentialthinking",
+            "sequential_thinking",
+            {
+                "thought": f"[step {step_n}/{total_thoughts}] {current_thought}",
+                "nextThoughtNeeded": step_n < total_thoughts,
+                "thoughtNumber": step_n,
+                "totalThoughts": total_thoughts,
+                "isRevision": needs_revision,
+                "revisesThought": revision_target if needs_revision else None,
+                "branchFromThought": branch_origin if branching else None,
+                "branchId": branch_id if branching else None,
+            }
+        )
+        # Registrar no HypothesisDAG
+        hyp_id = f"thought_{step_n}"
+        hypothesis_dag.register(hyp_id, "sequential_thought", ...)
+        if needs_revision:
+            hypothesis_dag.invalidate_cascade(f"thought_{revision_target}")
+        if branching:
+            hypothesis_dag.add_edge(f"thought_{branch_origin}", hyp_id, "BRANCH")
+
+  api:
+    - "think_step(thought, step_n, total, is_revision=False, revises=None, branch_from=None) → dict"
+    - "think_sequence(problem, max_thoughts=10) → list[thought_result]"
+
+  fmea:
+    rpn: 4
+    mode: "Loop infinito: nextThoughtNeeded sempre True"
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: "Hard cap: max_thoughts=20. Se step_n > max_thoughts: force nextThoughtNeeded=False."
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF ECOSYSTEM v00.33.0 — REGISTRO FORMAL
+# ─────────────────────────────────────────────────────────────────
+diff_ecosystem_v033:
+  base: "v00.32.1 (86 DIFFs acumulados)"
+  registered_diffs:
+    - {id: DIFF_ORJSON_SNAPSHOT_001,          opp: OPP-92,  rpn_before: 0,   rpn_after: 2,  status: PROPOSED}
+    - {id: DIFF_CONSTITUTIONAL_ANCHOR_001,    opp: OPP-93,  rpn_before: 0,   rpn_after: 1,  status: PROPOSED}
+    - {id: DIFF_SKILL_QUALITY_BAR_001,        opp: OPP-94,  rpn_before: 42,  rpn_after: 2,  status: PROPOSED}
+    - {id: DIFF_RISK_TAXONOMY_EXTENSION_001,  opp: OPP-95,  rpn_before: 24,  rpn_after: 16, status: PROPOSED}
+    - {id: DIFF_MCP_BRIDGE_REAL_001,          opp: OPP-96,  rpn_before: 0,   rpn_after: 12, status: PROPOSED}
+    - {id: DIFF_KNOWLEDGE_GRAPH_MEMORY_001,   opp: OPP-97,  rpn_before: 0,   rpn_after: 8,  status: PROPOSED}
+    - {id: DIFF_SESSION_FORK_001,             opp: OPP-98,  rpn_before: 8,   rpn_after: 12, status: PROPOSED}
+    - {id: DIFF_TOKEN_BUDGET_TRACKER_001,     opp: OPP-99,  rpn_before: 0,   rpn_after: 4,  status: PROPOSED}
+    - {id: DIFF_DESIGN_FUSION_INJECTOR_001,   opp: OPP-100, rpn_before: 0,   rpn_after: 2,  status: PROPOSED}
+    - {id: DIFF_UCO_EXTENDED_METRICS_001,     opp: OPP-101, rpn_before: 4,   rpn_after: 4,  status: PROPOSED}
+    - {id: DIFF_DOMAIN_SKILLS_INGESTION_001,  opp: OPP-102, rpn_before: 0,   rpn_after: 2,  status: PROPOSED}
+    - {id: DIFF_SEQUENTIAL_THINKING_001,      opp: OPP-103, rpn_before: 0,   rpn_after: 4,  status: PROPOSED}
+
+  total_new_diffs: 12
+  total_accumulated_diffs: 98
+  new_opps: [OPP-92, OPP-93, OPP-94, OPP-95, OPP-96, OPP-97, OPP-98, OPP-99, OPP-100, OPP-101, OPP-102, OPP-103]
+  fmea_rpn_max: 16
+  fmea_rpn_after_mitigation: 16  # OPP-95 é o mais alto; mitigado por ETHICAL_BARRIER inviolável
+
+# ─────────────────────────────────────────────────────────────────
+# QA COMPLIANCE v00.33.0 — ACCEPTANCE CRITERIA
+# ─────────────────────────────────────────────────────────────────
+qa_compliance_v033:
+  base: "v00.32.1 (acceptance_flag: PASS)"
+  new_qa_tests:
+    QA_OPP92_01: "try: import orjson → _JSON_BACKEND == 'orjson'"
+    QA_OPP92_02: "_dumps(numpy_array) não lança TypeError (OPT_SERIALIZE_NUMPY)"
+    QA_OPP92_03: "fallback: _JSON_BACKEND == 'json_stdlib' quando orjson ausente"
+    QA_OPP92_04: "SnapshotStore.save_session() usa orjson se disponível"
+    QA_OPP93_01: "constitutional_anchor.constitutional_basis presente no PROTECTED_KERNEL"
+    QA_OPP93_02: "DIFF nível_3 sem constitutional_citation → rejeitado pelo DIFF_REVIEW_GATE"
+    QA_OPP94_01: "SkillQualityBar.validate() retorna valid=False para skill sem 'name'"
+    QA_OPP94_02: "SkillQualityBar.validate() retorna valid=True + warning para skill sem Use section"
+    QA_OPP94_03: "SkillQualityBar.validate() retorna valid=False para skill > 8 MB"
+    QA_OPP94_04: "content_hash gerado corretamente (SHA256[:16] do SKILL.md)"
+    QA_OPP95_01: "skill com risk='offensive' → [OFFENSIVE_SKILL_BLOCKED] sem APEX_OFFENSIVE_MODE"
+    QA_OPP95_02: "skill com risk='critical' → USER_EXPLICIT solicitado antes de ativação"
+    QA_OPP95_03: "skill com risk='safe' → auto_activate sem aviso"
+    QA_OPP96_01: "MCPBridge.initialize(['memory']) → available('memory') == True"
+    QA_OPP96_02: "MCPBridge.call_tool('memory', 'search_nodes', {'query': 'test'}) → dict com result"
+    QA_OPP96_03: "MCPBridge.call_tool('nonexistent', ...) → {error: 'MCP_SERVER_UNAVAILABLE'}"
+    QA_OPP96_04: "[MCP_BRIDGE_INITIALIZED] emitido no event_bus após initialize()"
+    QA_OPP97_01: "kg_init_session() → entidade 'session' criada no Memory MCP"
+    QA_OPP97_02: "kg_search('python-pro') → retorna entidade da skill se usada antes"
+    QA_OPP97_03: "KG indisponível → SnapshotStore SQLite continua normalmente"
+    QA_OPP98_01: "fork(session_id) → novo UUID diferente do source"
+    QA_OPP98_02: "merge_fork(fork_uuid, target) → latest delta copiado para target"
+    QA_OPP98_03: "discard_fork(fork_uuid) → rows removidos do SQLite"
+    QA_OPP99_01: "TokenBudgetTracker.check_warnings() com 65% → [WARNING_MEDIUM]"
+    QA_OPP99_02: "TokenBudgetTracker.get_summary() → {pct_used, cost_usd, breakdown_by_stage}"
+    QA_OPP100_01: "[DESIGN_FUSION] declarado antes de gerar HTML para task de frontend"
+    QA_OPP100_02: "Nenhuma menção a 'Inter font padrão' ou 'purple gradient' sem fusion"
+    QA_OPP101_01: "_compute_extended_metrics() retorna io_call_count > 0 para script com open()"
+    QA_OPP101_02: "_auto_fix_serialization() substitui 'import json' por try/except orjson"
+    QA_OPP101_03: "UCO_CAL label inclui perf e io campos após OPP-101"
+    QA_OPP102_01: "SkillDB contém skill 'dcf-model' após ingestion financeira"
+    QA_OPP102_02: "SkillDB contém skill 'review-contract' após ingestion knowledge-work"
+    QA_OPP102_03: "SkillDB contém skill 'fhir-developer' após ingestion healthcare"
+    QA_OPP102_04: "Total skills pós-ingestion >= 189 novas skills"
+    QA_OPP103_01: "think_step() chama mcp_bridge.call_tool('sequentialthinking', ...) corretamente"
+    QA_OPP103_02: "hard cap: step_n > 20 → nextThoughtNeeded=False automático"
+    QA_OPP103_03: "isRevision=True → hypothesis_dag.invalidate_cascade() chamado"
+    QA_REGRESSION_V0321: "Todos os 14 acceptance criteria do v00.32.1 preservados"
+    QA_INVIOLABLE_KERNEL: "PROTECTED_KERNEL_SEGMENT + C1-C8 + SR_01-SR_38: 100% conformidade"
+
+  acceptance_criteria_summary:
+    total_new_qa: 34
+    total_accumulated_qa: "136+ (v00.32.1: 102 + v00.33.0: 34)"
+    fmea_rpn_max_allowed: 16
+    fmea_rpn_actual: 16
+    constitutional_anchor_verified: true
+    regression_required: true
+
+  acceptance_flag: PENDING_USER_EXPLICIT
+
+# ─────────────────────────────────────────────────────────────────
+# INSTRUÇÕES DE APLICAÇÃO
+# ─────────────────────────────────────────────────────────────────
+application_instructions:
+  _note: >
+    Para aplicar este DIFF pack ao APEX v00.32.1, o usuário deve:
+    1. Revisar cada DIFF individualmente
+    2. Confirmar USER_EXPLICIT para cada um
+    3. O APEX adiciona os módulos ao final do prompt DSL
+    4. Incrementar: apex_version: v00.33.0
+    5. Atualizar: total_diffs_applied: 98
+
+  aplicar_primeiro:
+    - DIFF_ORJSON_SNAPSHOT_001       # OPP-92: zero risco, ganho imediato
+    - DIFF_CONSTITUTIONAL_ANCHOR_001 # OPP-93: zero risco, safety critical
+    - DIFF_SKILL_QUALITY_BAR_001     # OPP-94: zero risco, melhora ingestão
+    - DIFF_DOMAIN_SKILLS_INGESTION_001 # OPP-102: zero risco, +189 skills
+
+  aplicar_segundo:
+    - DIFF_RISK_TAXONOMY_EXTENSION_001 # OPP-95: RPN=16, mas protegido
+    - DIFF_TOKEN_BUDGET_TRACKER_001    # OPP-99: RPN=4, melhora visibilidade
+    - DIFF_DESIGN_FUSION_INJECTOR_001  # OPP-100: RPN=2, melhora qualidade visual
+    - DIFF_UCO_EXTENDED_METRICS_001    # OPP-101: RPN=4, melhora UCO gate
+
+  aplicar_terceiro_requer_mcp_bridge:
+    - DIFF_MCP_BRIDGE_REAL_001         # OPP-96: pré-requisito para OPP-97+103
+    - DIFF_KNOWLEDGE_GRAPH_MEMORY_001  # OPP-97: requer OPP-96
+    - DIFF_SESSION_FORK_001            # OPP-98: extende SQLite
+    - DIFF_SEQUENTIAL_THINKING_001     # OPP-103: requer OPP-96

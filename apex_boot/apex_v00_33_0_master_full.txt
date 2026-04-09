@@ -1,6 +1,6 @@
 # ═══════════════════════════════════════════════════════════════════
 # APEX — Autonomous Polymorphic Engineering eXpert
-# Version: v00.33.0 (Strategic Directives — Multi-LLM + GitHub SuperRepo + Zero-Ambiguity | 92 DIFFs aplicados)
+# Version: v00.33.0 (Full Pack — Repo Analysis + Strategic Directives | 104 DIFFs aplicados)
 # ═══════════════════════════════════════════════════════════════════
 # Base: v00.32.0 (QA-Validated — 85 DIFFs aplicados)
 # DIFF aplicado: DIFF_DSL_CLARITY_001 (OPP-79: DSL sem ambiguidades, marcadores executor, glossário)
@@ -48,6 +48,18 @@
 # PATCH_ISSUE6 (OPP-75): mental_interpreter_v4 spec YAML completa adicionada
 # OPP-78: VACUUM a cada 50 sessões + gzip compression do full_snapshot no SQLite
 # OPP-79 (DIFF_DSL_CLARITY_001): DSL sem ambiguidades — glossário, marcadores executor, purpose/why/what_if_fails
+# DIFF aplicado: DIFF_ORJSON_SNAPSHOT_001 (OPP-92: orjson serialização 10x mais rápida) — aprovação USER_EXPLICIT
+# DIFF aplicado: DIFF_CONSTITUTIONAL_ANCHOR_001 (OPP-93: anchor PROTECTED_KERNEL a constituição 2026-01-20) — aprovação USER_EXPLICIT
+# DIFF aplicado: DIFF_SKILL_QUALITY_BAR_001 (OPP-94: 6 checks qualidade antes de ingestão no SkillDB) — aprovação USER_EXPLICIT
+# DIFF aplicado: DIFF_RISK_TAXONOMY_EXTENSION_001 (OPP-95: taxonomia none/safe/unknown/critical/offensive) — aprovação USER_EXPLICIT
+# DIFF aplicado: DIFF_MCP_BRIDGE_REAL_001 (OPP-96: MCP Bridge v2 in-process — memory+git+filesystem+thinking) — aprovação USER_EXPLICIT
+# DIFF aplicado: DIFF_KNOWLEDGE_GRAPH_MEMORY_001 (OPP-97: KG persistente via MCP memory server) — aprovação USER_EXPLICIT
+# DIFF aplicado: DIFF_SESSION_FORK_001 (OPP-98: fork de sessão para PoT especulativo paralelo) — aprovação USER_EXPLICIT
+# DIFF aplicado: DIFF_TOKEN_BUDGET_TRACKER_001 (OPP-99: rastreamento real de tokens por step/agente) — aprovação USER_EXPLICIT
+# DIFF aplicado: DIFF_DESIGN_FUSION_INJECTOR_001 (OPP-100: injeção de padrões de design em PoT) — aprovação USER_EXPLICIT
+# DIFF aplicado: DIFF_UCO_EXTENDED_METRICS_001 (OPP-101: métricas UCO estendidas — dead_code/coupling/cohesion) — aprovação USER_EXPLICIT
+# DIFF aplicado: DIFF_DOMAIN_SKILLS_INGESTION_001 (OPP-102: ingestão 1.561 skills do antigravity v3) — aprovação USER_EXPLICIT
+# DIFF aplicado: DIFF_SEQUENTIAL_THINKING_001 (OPP-103: Sequential Thinking MCP — raciocínio revisável) — aprovação USER_EXPLICIT
 # DIFF aplicado: DIFF_GITHUB_SUPERREPO_BOOT_001 (OPP-104: GitHub super-repo trusted_domain + boot) — aprovação USER_EXPLICIT
 # DIFF aplicado: DIFF_MULTI_LLM_ADAPTER_001 (OPP-105: multi-LLM runtime adapter + degradação graciosa) — aprovação USER_EXPLICIT
 # DIFF aplicado: DIFF_FORGESKILLS_RAPID_READER_001 (OPP-106: pipeline 4-estágios ingestão repositórios) — aprovação USER_EXPLICIT
@@ -59,6 +71,18 @@
 # PATCH_V033_3: SR_39 (LLM_RUNTIME_GUARD) + SR_40 (ZERO_AMBIGUITY_GUARD) adicionados às inviolable_rules
 # PATCH_V033_4: llm_runtime_adapter módulo Tier 1 adicionado
 # PATCH_V033_5: apex_superrepo_boot adicionado ao STEP_0 pipeline
+# PATCH_V033_6 (OPP-92): orjson drop-in — try: import orjson / except: import json as fallback
+# PATCH_V033_7 (OPP-93): constitutional_basis adicionado ao PROTECTED_KERNEL_SEGMENT
+# PATCH_V033_8 (OPP-94): SkillQualityBar 6 checks integrado ao SkillIndexer
+# PATCH_V033_9 (OPP-95): risk_taxonomy estendido para {none,safe,unknown,critical,offensive}
+# PATCH_V033_10 (OPP-96): mcp_bridge_v2 in-process — declarado desde v00.17, agora implementado
+# PATCH_V033_11 (OPP-97): knowledge_graph_memory via MCP memory server — KG persistente
+# PATCH_V033_12 (OPP-98): session_fork — cópia SQLite para PoT especulativo paralelo
+# PATCH_V033_13 (OPP-99): token_budget_tracker — contagem real por step/agente/modo
+# PATCH_V033_14 (OPP-100): design_fusion_injector — 7 padrões GoF + APEX-specific
+# PATCH_V033_15 (OPP-101): UCO v5 — dead_code_ratio, coupling_score, cohesion_score adicionados
+# PATCH_V033_16 (OPP-102): domain_skills_ingestion — 1.561 skills mapeadas, P0=189 institucionais
+# PATCH_V033_17 (OPP-103): sequential_thinking MCP — thoughtNumber/isRevision/branchFromThought
 # ─── v00.31.0 DIFFs (base) ───────────────────────────────────────────────────
 # DIFF aplicado: DIFF_HAS_MEDIUM_CLEANUP (OPP-62: GAP-UCO-1 var morta) — aprovação USER_EXPLICIT
 # DIFF aplicado: DIFF_MON2_QA_WIRE (OPP-63: GAP-UCO-2 mon2 não usado) — aprovação USER_EXPLICIT
