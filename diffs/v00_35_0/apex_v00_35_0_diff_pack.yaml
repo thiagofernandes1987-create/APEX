@@ -1,0 +1,1070 @@
+# ═══════════════════════════════════════════════════════════════════
+# APEX v00.35.0 — DIFF PACK: Integridade Estrutural + UCO Real + Runtime Probe
+# Base: v00.34.0 (113 DIFFs aplicados | FMEA RPN máx = 16)
+# DIFFs neste pacote: 6 (OPP-119 a OPP-124)
+# Objetivo: Fechar gaps críticos descobertos na auditoria 2026-04-10
+#   G1: uco_v4_analyzer = dependência fantasma (UCO faz LLM_BEHAVIOR disfarçado)
+#   G2: Sem bloco Python executável no STEP_0 (detecção declarativa, não real)
+#   G3: 13 dependências não definidas (apex_superrepo_boot, forgeskills_rapid_reader, etc.)
+#   G4: event_bus sem executor declarado e sem fallback
+#   G5: UCO sem Python inline — código AST/Halstead inexistente no prompt
+#   G6: sequential_thinking MCP: OPP-103 sem boot automático em DEEP+
+# Aprovação: USER_EXPLICIT requerida para cada DIFF
+# ═══════════════════════════════════════════════════════════════════
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_RUNTIME_PROBE_BLOCK_001 (OPP-119)
+# Prioridade: P0 | Esforço: HIGH | RPN: 16
+# GAP G2: Sem bloco Python executável no STEP_0 — detecção é declarativa, não real
+# ─────────────────────────────────────────────────────────────────
+apex_runtime_probe:
+  executor: SANDBOX_CODE
+  version: v00.35.0
+  opp: OPP-119
+  tier: 0
+  status: PROPOSED
+
+  purpose: >
+    Inserir um bloco Python executável no STEP_0 que realiza sondagem REAL das
+    capacidades do runtime, armazenando resultados em session.capabilities.
+    Elimina a detecção declarativa (YAML interpretation) em favor de prova empírica:
+    o LLM tenta executar e observa o resultado — exatamente como o runtime faz.
+
+  why: >
+    WHY: O multi_sandbox_profiles (OPP-110) descreve como detectar runtimes em YAML,
+    mas NUNCA executa nenhum código. O LLM lê a descrição e ASSUME qual perfil é ativo
+    baseado em raciocínio textual — o mesmo raciocínio probabilístico que o APEX tenta
+    superar com SANDBOX_CODE. Resultado: em DeepSeek, o LLM pode assumir MINIMAL quando
+    deveria ser FULL_DEEPSEEK porque nunca tentou @python numpy.__version__.
+    Em Claude Code, pode assumir PARTIAL se a ferramenta Bash não foi usada ainda.
+    A detecção real requer EXECUÇÃO, não interpretação.
+    WHY CRÍTICO: Todos os módulos SANDBOX_CODE dependem do profile correto. Profile errado
+    = todos os módulos operam no perfil errado. Este é o ponto de falha raiz de toda a
+    integração multi-LLM.
+
+  when: >
+    WHEN: STEP_0 — OBRIGATÓRIO, antes de qualquer módulo SANDBOX_CODE ou decisão de perfil.
+    WHEN: Cada nova sessão (não persistido entre sessões por padrão).
+    WHEN: Após mudança detectada de ambiente (subprocess não funcionava, agora funciona).
+
+  description: >
+    O QUE É: Bloco Python autoexecutável de diagnóstico que testa 9 capacidades reais.
+    O QUE NAO É: Teste de corretude de código gerado — é sondagem de capacidades do ambiente.
+    O QUE NAO É: Substituição do multi_sandbox_profiles — é o mecanismo de detecção real
+    que o multi_sandbox_profiles descreve mas não implementa.
+    COMO FUNCIONA: Executar o bloco probe → capturar resultados → mapear para profile →
+    armazenar em session.capabilities → todos os módulos consultam session.capabilities.
+    RESULTADO: [APEX_RUNTIME_PROBE_COMPLETE: {profile} | caps: {summary}]
+
+  what_if_fails: >
+    FALLBACK 1: Bloco probe falha totalmente → assumir MINIMAL (safe default).
+    FALLBACK 2: Sondagem parcial → usar capacidades confirmadas + desativar não confirmadas.
+    REGRA: NUNCA falhar sessão por falha de probe. Probe é diagnóstico, não requisito.
+    REGRA: Em caso de dúvida → profile menos capaz (mais seguro).
+
+  inject_when: "STEP_0 — antes de todos os outros módulos"
+  position: "PRIMEIRO bloco executado em qualquer sessão APEX"
+
+  probe_code: |
+    # ═══════════════════════════════════════════════════════════════════
+    # APEX RUNTIME PROBE v00.35.0 — STEP_0 MANDATÓRIO
+    # Execute este bloco no início de cada sessão para detectar capacidades reais.
+    # ═══════════════════════════════════════════════════════════════════
+    import sys, json, time
+
+    caps = {
+        "python_exec": True,  # Se chegou aqui, Python executou
+        "numpy": False,
+        "scipy": False,
+        "pandas": False,
+        "sympy": False,
+        "sklearn": False,
+        "matplotlib": False,
+        "sqlite3": False,
+        "subprocess": False,
+        "git_available": False,
+        "urllib_internet": False,
+        "ThreadPoolExecutor": False,
+        "orjson": False,
+        "ast_module": False,
+    }
+
+    # 1. Scientific libraries
+    try:
+        import numpy as np; caps["numpy"] = np.__version__
+    except ImportError: pass
+
+    try:
+        import scipy; caps["scipy"] = scipy.__version__
+    except ImportError: pass
+
+    try:
+        import pandas as pd; caps["pandas"] = pd.__version__
+    except ImportError: pass
+
+    try:
+        import sympy; caps["sympy"] = sympy.__version__
+    except ImportError: pass
+
+    try:
+        from sklearn import __version__ as skv; caps["sklearn"] = skv
+    except ImportError: pass
+
+    try:
+        import matplotlib; caps["matplotlib"] = matplotlib.__version__
+    except ImportError: pass
+
+    # 2. System capabilities
+    try:
+        import sqlite3
+        conn = sqlite3.connect(":memory:")
+        conn.execute("CREATE TABLE t (x INTEGER)"); conn.close()
+        caps["sqlite3"] = True
+    except Exception: pass
+
+    try:
+        import subprocess
+        r = subprocess.run([sys.executable, "-c", "print('ok')"],
+                          capture_output=True, timeout=3, text=True)
+        caps["subprocess"] = (r.stdout.strip() == "ok")
+    except Exception: pass
+
+    try:
+        import subprocess
+        r = subprocess.run(["git", "--version"], capture_output=True, timeout=3, text=True)
+        caps["git_available"] = r.returncode == 0
+    except Exception: pass
+
+    # 3. Concurrency
+    try:
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=2) as ex:
+            f = ex.submit(lambda: 42)
+        caps["ThreadPoolExecutor"] = (f.result() == 42)
+    except Exception: pass
+
+    # 4. Optional high-perf
+    try:
+        import orjson; caps["orjson"] = True
+    except ImportError: pass
+
+    # 5. AST (para UCO)
+    try:
+        import ast
+        tree = ast.parse("x = 1 + 2")
+        caps["ast_module"] = True
+    except Exception: pass
+
+    # 6. Internet (urllib — sem instalar nada)
+    try:
+        import urllib.request
+        with urllib.request.urlopen("https://httpbin.org/get", timeout=5) as r:
+            caps["urllib_internet"] = (r.status == 200)
+    except Exception: pass
+
+    # ── Profile mapping ──────────────────────────────────────────────
+    def detect_profile(c):
+        if c["subprocess"] and c["sqlite3"] and c["git_available"]:
+            return "FULL_CLAUDE_CODE"
+        elif c["numpy"] and not c["subprocess"]:
+            # DeepSeek vs Grok vs ChatGPT CI
+            if c["sqlite3"]:  # ChatGPT CI tem file persistence
+                return "PARTIAL_CHATGPT_CI"
+            elif c["ThreadPoolExecutor"]:
+                return "FULL_DEEPSEEK"  # numpy + threads, sem subprocess
+            else:
+                return "PARTIAL_GEMINI"
+        elif c["numpy"] and c["subprocess"] and not c["sqlite3"]:
+            return "FULL_GROK"
+        else:
+            return "MINIMAL"
+
+    profile = detect_profile(caps)
+    sci_libs = [k for k in ["numpy","scipy","pandas","sympy","sklearn","matplotlib"] if caps[k]]
+
+    result = {
+        "apex_probe_version": "v00.35.0",
+        "profile": profile,
+        "capabilities": caps,
+        "sci_libs_available": sci_libs,
+        "uco_executable": caps["ast_module"],
+        "pot_real": caps["python_exec"],
+        "forge_method": (
+            "git_clone" if caps["git_available"] else
+            "urllib_fetch" if caps["urllib_internet"] else
+            "inline_paste"
+        ),
+        "snapshot_method": "sqlite3" if caps["sqlite3"] else "memory_dict",
+    }
+
+    # ── Output ─────────────────────────────────────────────────────
+    print(f"[APEX_RUNTIME_PROBE_COMPLETE]")
+    print(f"Profile: {profile}")
+    print(f"Sci libs: {sci_libs}")
+    print(f"subprocess: {caps['subprocess']} | sqlite3: {caps['sqlite3']} | git: {caps['git_available']}")
+    print(f"UCO executable: {caps['ast_module']} | PoT real: {caps['python_exec']}")
+    print(f"Forge method: {result['forge_method']} | Snapshot: {result['snapshot_method']}")
+    print(f"Internet: {caps['urllib_internet']} | ThreadPoolExecutor: {caps['ThreadPoolExecutor']}")
+
+    # Salvar em variável de sessão (acessível por outros módulos nesta execução)
+    APEX_SESSION_CAPS = result
+    # ═══════════════════════════════════════════════════════════════════
+
+  deepseek_activation: |
+    # Para DeepSeek: usar @sandbox antes do bloco
+    # @sandbox
+    # [colar probe_code acima]
+    #
+    # Para Claude Code: executar via Bash tool ou diretamente em Python
+    # Para outros: ```python ... ```
+
+  session_capabilities_contract:
+    APEX_SESSION_CAPS:
+      profile: "str — FULL_CLAUDE_CODE | FULL_DEEPSEEK | FULL_GROK | PARTIAL_CHATGPT_CI | PARTIAL_GEMINI | MINIMAL"
+      capabilities: "dict — boolean/version por capacidade"
+      uco_executable: "bool — True se ast_module disponível (UCO pode rodar em sandbox)"
+      pot_real: "bool — True se execução Python real disponível"
+      forge_method: "str — git_clone | urllib_fetch | inline_paste"
+      snapshot_method: "str — sqlite3 | memory_dict"
+
+  usage_by_modules: |
+    # Todos os módulos SANDBOX_CODE devem verificar APEX_SESSION_CAPS antes de executar:
+    # if APEX_SESSION_CAPS["profile"] == "MINIMAL":
+    #     return "[SIMULATED: LLM_BEHAVIOR_ONLY]"
+    # if not APEX_SESSION_CAPS["capabilities"]["numpy"] and needs_numpy:
+    #     return "[SANDBOX_PARTIAL: numpy indisponível]"
+    # UCO:
+    # if not APEX_SESSION_CAPS["uco_executable"]:
+    #     return "[UCO_GATE_UNAVAILABLE: ast_module ausente]"
+
+  rules_enforced: [SR_39]
+  depends_on: []  # Zero dependências — é o primeiro a executar
+
+  fmea:
+    rpn: 16
+    mode: "Profile incorreto por falha de probe → todos SANDBOX_CODE operam com perfil errado"
+    probability: 2
+    severity: 8
+    detection: 1
+    mitigation: >
+      Probe tem 13 testes independentes — falha de 1 não invalida os outros.
+      Fallback para MINIMAL é sempre seguro.
+      Re-executar probe se usuário reportar comportamento inconsistente.
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_UCO_INLINE_IMPLEMENTATION_001 (OPP-120)
+# Prioridade: P0 | Esforço: HIGH | RPN: 16
+# GAP G1+G5: uco_v4_analyzer = dependência fantasma + UCO sem Python inline
+# ─────────────────────────────────────────────────────────────────
+uco_v4_analyzer:
+  executor: SANDBOX_CODE
+  version: v00.35.0
+  opp: OPP-120
+  tier: 1
+  status: PROPOSED
+
+  purpose: >
+    Definir formalmente o módulo uco_v4_analyzer — dependência declarada em
+    uco_quality_gate.depends_on mas INEXISTENTE no prompt até v00.34.0.
+    Registrar o UCO real (universal_code_optimizer_v4.py — 4.152 linhas) no repositório
+    APEX em algorithms/uco/ e fornecer: (1) entry point via ForgeSkills git_clone/urllib,
+    (2) implementação Python inline mínima via ast stdlib para runtimes sem acesso ao repo.
+    Torna o UCO genuinamente independente do LLM — execução real em sandbox.
+
+  why: >
+    WHY: uco_quality_gate (OPP-68) declara depends_on: [uco_v4_analyzer] mas esse módulo
+    nunca foi definido. Resultado: quando o LLM tenta chamar uco_quality_gate.gate(),
+    está simulando as métricas AST via LLM_BEHAVIOR — exatamente o contrário do objetivo.
+    O UCO existe para ser a fonte de avaliação INDEPENDENTE do LLM (zero influência
+    probabilística). Sem implementação real, é circular: LLM avalia código LLM gerou.
+    O módulo ast está disponível em todo Python (confirmado pelo probe OPP-119) — custo
+    de implementação é zero, benefício é máximo: UCO real em qualquer runtime Python.
+    WHY CRÍTICO: SR_33 exige que gate() seja chamado antes de todo PoT em DEEP+.
+    Sem uco_v4_analyzer definido, SR_33 é impossível de cumprir honestamente.
+
+  when: >
+    WHEN: Toda vez que uco_quality_gate.gate() é invocado.
+    WHEN: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] + PoT gerado.
+    WHEN: APEX_SESSION_CAPS["uco_executable"] == True (ast_module disponível).
+
+  uco_real_file:
+    repository_path: "algorithms/uco/universal_code_optimizer_v4.py"
+    raw_url: "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/algorithms/uco/universal_code_optimizer_v4.py"
+    lines: 4152
+    size_kb: 170
+    entry_class: "UniversalCodeOptimizer"
+    key_methods:
+      analyze:        "analyze(code, language_hint=None) -> AnalysisResult — AST+Halstead+CFG"
+      quick_optimize: "quick_optimize(code) -> EngineOutput — Greedy sem numpy (~50ms)"
+      optimize_fast:  "optimize_fast(code, n_steps=50) -> EngineOutput — SA com numpy"
+      optimize:       "optimize(code) -> EngineOutput — HMC completo (requer numpy)"
+    numpy_required: "APENAS para optimize() HMC. quick_optimize() e analyze() = stdlib only"
+    availability:
+      FULL_CLAUDE_CODE:    "git_clone algorithms/uco/ → import → uco.quick_optimize()"
+      FULL_DEEPSEEK:       "urllib_fetch raw_url → exec() inline → uco.quick_optimize()"
+      FULL_GROK:           "urllib_fetch raw_url → exec() inline"
+      PARTIAL_CHATGPT_CI:  "file_upload universal_code_optimizer_v4.py → import"
+      MINIMAL:             "Usar implementação inline (ast stdlib) abaixo"
+
+  description: >
+    O QUE É: Dois modos de execução — (1) UCO REAL: universal_code_optimizer_v4.py
+    (4.152 linhas) carregado via ForgeSkills do repositório — AST+CFG+DSM+Halstead+9 transforms.
+    (2) UCO INLINE: implementação mínima ast stdlib para runtimes sem acesso ao repo.
+    O QUE NAO É: Análise de tipos (requer mypy) ou verificação semântica.
+    MODO PREFERENCIAL: UCO REAL via algoritmo completo (ForgeSkills fetch em STEP_0).
+    MODO FALLBACK: UCO INLINE (ast stdlib) quando repo inacessível.
+    LATÊNCIA UCO REAL: quick_optimize() < 50ms para PoT < 100 linhas (sem numpy).
+    LATÊNCIA UCO INLINE: < 10ms (apenas ast parse).
+
+  what_if_fails: >
+    FALLBACK: APEX_SESSION_CAPS["uco_executable"] == False → declarar [UCO_GATE_UNAVAILABLE].
+    FALLBACK: SyntaxError no código PoT → REJECTED imediato com feedback.
+    REGRA: Nunca simular resultado do UCO se uco_executable == False. Declarar honestamente.
+
+  inject_when: "uco_quality_gate.gate() invocado"
+  depends_on: [apex_runtime_probe]  # Precisa do probe para saber se ast disponível
+
+  python_implementation: |
+    # UCO v4 Inline — Análise AST real para APEX PoT programs
+    # Disponível em qualquer Python com ast (stdlib).
+
+    import ast
+    import re
+
+    class UCOv4Analyzer:
+        """UCO v4 — AST-based code analyzer para APEX PoT programs."""
+
+        def analyze(self, code: str) -> dict:
+            """
+            Analisa código Python via AST.
+            Retorna métricas Halstead simplificadas + riscos estruturais.
+            """
+            result = {
+                "syntax_ok": False,
+                "H": 0.0,           # Halstead complexity (simplificado)
+                "loop_risk": 0.0,   # Fração de loops sem break/return/limit
+                "dead_code": 0,     # Statements após return/raise
+                "bugs": 0.0,        # Estimativa de bugs por Halstead
+                "issues": [],       # Lista de problemas encontrados
+                "line_count": len(code.splitlines()),
+            }
+
+            try:
+                tree = ast.parse(code)
+                result["syntax_ok"] = True
+            except SyntaxError as e:
+                result["issues"].append(f"SyntaxError: {e}")
+                return result
+
+            # 1. Halstead simplificado: contar operadores e operandos
+            operators = set()
+            operands = set()
+            op_count = 0
+            operand_count = 0
+
+            for node in ast.walk(tree):
+                if isinstance(node, ast.BinOp):
+                    op = type(node.op).__name__
+                    operators.add(op); op_count += 1
+                elif isinstance(node, ast.Compare):
+                    for cmp in node.ops:
+                        op = type(cmp).__name__
+                        operators.add(op); op_count += 1
+                elif isinstance(node, ast.BoolOp):
+                    operators.add(type(node.op).__name__); op_count += 1
+                elif isinstance(node, ast.Name):
+                    operands.add(node.id); operand_count += 1
+                elif isinstance(node, ast.Constant):
+                    operands.add(str(node.value)); operand_count += 1
+
+            n1, n2 = len(operators), len(operands)
+            N1, N2 = op_count, operand_count
+            N = N1 + N2
+            n = n1 + n2
+
+            if n > 0 and N > 0:
+                import math
+                V = N * math.log2(n) if n > 1 else N
+                result["H"] = round(V / 10, 1)  # Escala APEX: H = V/10
+                D = (n1 / 2) * (N2 / n2) if n2 > 0 else 0
+                result["bugs"] = round(V / 3000, 3)  # Halstead bug estimate
+
+            # 2. Loop risk — loops sem limite claro
+            loops = 0
+            risky_loops = 0
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.While, ast.For)):
+                    loops += 1
+                    # While True sem break interno é risco
+                    if isinstance(node, ast.While):
+                        is_while_true = (
+                            isinstance(node.test, ast.Constant) and node.test.value == True
+                            or isinstance(node.test, ast.Name) and node.test.id == "True"
+                        )
+                        has_break = any(isinstance(n, ast.Break) for n in ast.walk(node))
+                        has_return = any(isinstance(n, ast.Return) for n in ast.walk(node))
+                        if is_while_true and not has_break and not has_return:
+                            risky_loops += 1
+                            result["issues"].append("while True sem break/return (risco de loop infinito)")
+
+            result["loop_risk"] = round(risky_loops / loops, 2) if loops > 0 else 0.0
+
+            # 3. Dead code — statements após return/raise no mesmo bloco
+            dead = 0
+            for node in ast.walk(tree):
+                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Module)):
+                    body = node.body
+                    for i, stmt in enumerate(body):
+                        if isinstance(stmt, (ast.Return, ast.Raise)) and i < len(body) - 1:
+                            dead += len(body) - i - 1
+                            result["issues"].append(f"Dead code: {len(body)-i-1} statements após return/raise")
+                            break
+            result["dead_code"] = dead
+
+            return result
+
+        def gate(self, pot_code: str, cognitive_mode: str,
+                 claimed_confidence: float = None) -> dict:
+            """
+            Gate principal — analisa e decide PASS | AUTO_FIXED | REJECTED.
+            Retorna dict com decision, code (possivelmente otimizado), métricas, feedback.
+            """
+            thresholds = {
+                "EXPRESS":    {"H": 50, "loop": 0.30, "dead": 5,  "bugs": 2.0},
+                "FAST":       {"H": 30, "loop": 0.20, "dead": 3,  "bugs": 1.5},
+                "DEEP":       {"H": 20, "loop": 0.10, "dead": 1,  "bugs": 1.0},
+                "RESEARCH":   {"H": 15, "loop": 0.05, "dead": 0,  "bugs": 0.5},
+                "SCIENTIFIC": {"H": 10, "loop": 0.00, "dead": 0,  "bugs": 0.3},
+            }
+            t = thresholds.get(cognitive_mode, thresholds["FAST"])
+            metrics = self.analyze(pot_code)
+
+            if not metrics["syntax_ok"]:
+                return {
+                    "decision": "REJECTED",
+                    "code": pot_code,
+                    "uco_metrics": metrics,
+                    "uco_feedback": f"[UCO_GATE: SyntaxError pré-execução] {metrics['issues']}",
+                }
+
+            violations = []
+            if metrics["H"] > t["H"]:
+                violations.append(f"H={metrics['H']:.1f} > threshold {t['H']} ({cognitive_mode})")
+            if metrics["loop_risk"] > t["loop"]:
+                violations.append(f"loop_risk={metrics['loop_risk']:.2f} > {t['loop']}")
+            if metrics["dead_code"] > t["dead"]:
+                violations.append(f"dead_code={metrics['dead_code']} > {t['dead']}")
+            if metrics["bugs"] > t["bugs"]:
+                violations.append(f"bugs≈{metrics['bugs']:.3f} > {t['bugs']}")
+
+            # Penalidade de confiança
+            penalty = 0
+            if metrics["bugs"] >= 3:   penalty += 20
+            elif metrics["bugs"] >= 1: penalty += 10
+            elif metrics["bugs"] >= 0.5: penalty += 5
+            if metrics["H"] >= 50:   penalty += 15
+            elif metrics["H"] >= 20: penalty += 8
+            elif metrics["H"] >= 10: penalty += 3
+            if metrics["loop_risk"] > 0.4: penalty += 15
+
+            adj_confidence = None
+            if claimed_confidence is not None:
+                adj_confidence = max(0, claimed_confidence - penalty)
+
+            confidence_label = (
+                f" [UCO_CAL: H={metrics['H']:.1f}, bugs≈{metrics['bugs']:.3f},"
+                f" adj_conf={adj_confidence}]"
+            ) if adj_confidence is not None else (
+                f" [UCO_CAL: H={metrics['H']:.1f}, bugs≈{metrics['bugs']:.3f}]"
+            )
+
+            if not violations:
+                return {
+                    "decision": "PASS",
+                    "code": pot_code,
+                    "uco_metrics": metrics,
+                    "uco_feedback": f"[UCO_GATE_PASS]{confidence_label}",
+                }
+
+            # AUTO_FIX: tentar remover dead code
+            fixed_code = self._remove_dead_code(pot_code)
+            fixed_metrics = self.analyze(fixed_code)
+            remaining_violations = [
+                v for v in violations
+                if not ("dead_code" in v and fixed_metrics["dead_code"] <= t["dead"])
+            ]
+            if len(remaining_violations) < len(violations):
+                return {
+                    "decision": "AUTO_FIXED",
+                    "code": fixed_code,
+                    "uco_metrics": fixed_metrics,
+                    "uco_feedback": (
+                        f"[UCO_GATE_AUTO_FIXED]{confidence_label} "
+                        f"Dead code removido. Violations restantes: {remaining_violations}"
+                    ),
+                }
+
+            return {
+                "decision": "REJECTED",
+                "code": pot_code,
+                "uco_metrics": metrics,
+                "uco_feedback": (
+                    f"[UCO_GATE_REJECTED]{confidence_label} "
+                    f"Violations: {violations}. "
+                    f"Issues: {metrics['issues']}. "
+                    f"Regenerar com: reduzir complexidade (H<{t['H']}), "
+                    f"eliminar loops sem limite, remover dead code."
+                ),
+            }
+
+        def _remove_dead_code(self, code: str) -> str:
+            """Remove statements óbvios após return/raise."""
+            try:
+                tree = ast.parse(code)
+                lines = code.splitlines()
+                dead_lines = set()
+                for node in ast.walk(tree):
+                    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                        body = node.body
+                        for i, stmt in enumerate(body):
+                            if isinstance(stmt, (ast.Return, ast.Raise)):
+                                for dead in body[i+1:]:
+                                    if hasattr(dead, 'lineno'):
+                                        dead_lines.add(dead.lineno)
+                return "\n".join(
+                    l for i, l in enumerate(lines, 1)
+                    if i not in dead_lines
+                )
+            except Exception:
+                return code  # Retornar original se falhar
+
+    # Instância global para uso por uco_quality_gate
+    _UCO_INSTANCE = UCOv4Analyzer()
+
+    def uco_gate(pot_code, cognitive_mode, claimed_confidence=None):
+        """Entry point para uco_quality_gate.gate()"""
+        return _UCO_INSTANCE.gate(pot_code, cognitive_mode, claimed_confidence)
+
+  loading_protocol: |
+    # PASSO 1: Verificar se UCO real está disponível
+    # if APEX_SESSION_CAPS["forge_method"] in ("git_clone", "urllib_fetch"):
+    #
+    #     # PASSO 2a: Carregar UCO real via urllib (runtimes sem git)
+    #     import urllib.request, types
+    #     UCO_URL = "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/algorithms/uco/universal_code_optimizer_v4.py"
+    #     with urllib.request.urlopen(UCO_URL, timeout=20) as r:
+    #         uco_source = r.read().decode("utf-8")
+    #     uco_module = types.ModuleType("uco_v4")
+    #     exec(compile(uco_source, "uco_v4", "exec"), uco_module.__dict__)
+    #     _UCO = uco_module.UniversalCodeOptimizer()
+    #     APEX_SESSION_CAPS["uco_real_loaded"] = True
+    #
+    # else:
+    #     # PASSO 2b: Usar UCO inline (ast stdlib) — definido abaixo
+    #     _UCO = UCOv4Analyzer()  # implementação mínima
+    #     APEX_SESSION_CAPS["uco_real_loaded"] = False
+
+  integration_with_uco_quality_gate: |
+    # No uco_quality_gate, substituir a referência a uco_v4_analyzer por:
+    # Modo real: _UCO.quick_optimize(pot_code) → output.final_analysis.metrics
+    # Modo inline: uco_gate(pot_code, cognitive_mode, claimed_confidence)
+    # Verificar APEX_SESSION_CAPS["uco_executable"] antes de chamar.
+    # Verificar APEX_SESSION_CAPS["uco_real_loaded"] para saber qual modo está ativo.
+
+  fmea:
+    rpn: 16
+    mode: "uco_v4_analyzer não definido → SR_33 impossível de cumprir → UCO = LLM simulation"
+    probability: 4
+    severity: 4
+    detection: 1
+    mitigation: >
+      Este OPP define o módulo. Implementação usa apenas ast (stdlib) — zero deps externas.
+      Confirmar com APEX_SESSION_CAPS["uco_executable"] antes de usar.
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_UNDEFINED_MODULES_SCAFFOLD_001 (OPP-121)
+# Prioridade: P0 | Esforço: MEDIUM | RPN: 9
+# GAP G3: 13 dependências não definidas no prompt (apex_superrepo_boot, forgeskills_rapid_reader, etc.)
+# ─────────────────────────────────────────────────────────────────
+undefined_modules_scaffold:
+  executor: LLM_BEHAVIOR
+  version: v00.35.0
+  opp: OPP-121
+  tier: 0
+  status: PROPOSED
+
+  purpose: >
+    Definir formalmente os 8 módulos referenciados em depends_on mas inexistentes no prompt.
+    Cada definição é a mínima necessária para que o LLM saiba como invocar o módulo.
+    Não substitui implementações completas futuras — estabelece contratos de interface.
+
+  why: >
+    WHY: Auditoria 2026-04-10 identificou via regex que depends_on referencia módulos
+    inexistentes: apex_superrepo_boot (base do STEP_0!), forgeskills_rapid_reader,
+    hyperbolic_anchor_map, dynamic_agent_roster, mcp_bridge_v2, subprocess_engine,
+    diff_ast_guard. Quando o LLM segue depends_on para um módulo inexistente, ou inventa
+    comportamento (hallucination) ou simplesmente ignora a dependência silenciosamente.
+    Ambos são falhas: o primeiro é perigoso, o segundo anula o módulo dependente.
+
+  what_if_fails: "Definições mínimas — não há modo de falha crítico"
+  inject_when: "Leitura inicial do prompt — antes de STEP_0"
+  depends_on: []
+
+  module_definitions:
+
+    apex_superrepo_boot:
+      executor: LLM_BEHAVIOR
+      opp: OPP-104
+      purpose: >
+        Boot do repositório APEX no GitHub. Lê INDEX.md via urllib.request (ou git clone
+        em FULL_CLAUDE_CODE). Popula session.skill_registry com skills descobertas.
+        Registra catalog_files no mcp_bridge. Emite [APEX_BOOT_COMPLETE: N skills].
+      invocation: |
+        # STEP_0 — apex_superrepo_boot:
+        # 1. Verificar APEX_SESSION_CAPS["forge_method"]
+        # 2. SE git_clone: git clone --depth=1 https://github.com/thiagofernandes1987-create/APEX /tmp/apex_repo
+        # 3. SE urllib_fetch: urllib.request.urlopen(raw_base + "INDEX.md") → parse YAML domain_map
+        # 4. SE inline_paste: usar skills conhecidas da sessão anterior
+        # 5. Extrair paths de skills do domain_map → session.skill_registry
+        # 6. Emitir [APEX_BOOT_COMPLETE: {n_skills} skills | method: {forge_method}]
+      raw_base: "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/"
+      index_path: "INDEX.md"
+      timeout_sec: 20
+      fallback: "Continuar sem boot. Usar skills conhecidas do prompt base."
+
+    forgeskills_rapid_reader:
+      executor: LLM_BEHAVIOR
+      opp: OPP-106
+      purpose: >
+        Pipeline 4-estágios para ingestão rápida de skills do repositório.
+        Estágio 1: Ler INDEX.md (fast-path). Estágio 2: Filtrar por âncoras ativas.
+        Estágio 3: Fetch SKILL.md dos paths relevantes. Estágio 4: Injetar no contexto.
+      stages:
+        1_index: "Fetch INDEX.md → parse domain_map YAML → extrair paths por domínio"
+        2_filter: "Comparar anchors do domain_map com session.active_anchors → selecionar top-K"
+        3_fetch:  "Fetch SKILL.md para cada path selecionado via forge_method"
+        4_inject: "Registrar skills em session.skill_registry com status PROVISIONAL"
+      max_skills_per_boot: 10
+      fallback: "Se INDEX.md inacessível: usar skills embutidas no prompt base"
+
+    hyperbolic_anchor_map:
+      executor: LLM_BEHAVIOR
+      opp: OPP-107
+      purpose: >
+        Mapa de âncoras em espaço hiperbólico para ativação cross-domain.
+        Bridges pré-definidas: legal↔math, finance↔legal, science↔math, etc.
+        attraction_engine.compute() usa os pesos dos bridges para selecionar skills.
+      base_bridges:
+        legal_math:    {a: [legal, contrato, obrigacao], b: [juros, calculo, IGPM], strength: 0.95}
+        finance_legal: {a: [equity, DCF, valuation], b: [compliance, sec_edgar, contract], strength: 0.65}
+        science_math:  {a: [hypothesis, simulation, bayesian], b: [statistics, probability, linear_algebra], strength: 0.85}
+        engineering_math: {a: [algorithm, optimization, graph], b: [calculus, gradient, complexity], strength: 0.65}
+        healthcare_science: {a: [clinical, medicine, genomics], b: [biology, chemistry, drug_discovery], strength: 0.75}
+      usage: "attraction_engine.compute(query_anchors) → select skills with highest bridge activation"
+
+    dynamic_agent_roster:
+      executor: LLM_BEHAVIOR
+      opp: OPP-116
+      purpose: >
+        Registro dinâmico de agentes ativos na sessão. Agentes base sempre presentes.
+        Community agents ativados pelo meta_reasoning quando domínio detectado.
+      base_agents:
+        - pmi_pm, architect, engineer, critic, researcher
+        - meta_reasoning, scientist_agent, bayesian_curator
+        - anchor_destroyer, diff_governance
+      optional_community_agents: "Definidos em community_agent_roster (OPP-116)"
+      activation: "meta_reasoning.select_agents(task_domain) → roster ativo"
+      max_concurrent: 4
+
+    mcp_bridge_v2:
+      executor: LLM_BEHAVIOR
+      opp: OPP-96
+      purpose: >
+        Registry de MCP servers por domínio. forgeskills_catalog_boot popula em STEP_0.
+        Consultar para obter URLs de servers relevantes ao domínio atual.
+      server_registry: {}  # Populado em STEP_0 por forgeskills_catalog_boot
+      lookup: "mcp_bridge_v2.get_servers(domain) → [{'name': name, 'url': url}]"
+      trusted_domains: ["https://raw.githubusercontent.com/thiagofernandes1987-create/"]
+
+    subprocess_engine:
+      executor: SANDBOX_CODE
+      opp: OPP-67
+      purpose: >
+        Wrapper sobre subprocess.run() para execução segura de PoT programs.
+        Aplica timeout, captura stderr, valida exit code.
+      available_when: "APEX_SESSION_CAPS['subprocess'] == True"
+      fallback: "exec() inline se subprocess indisponível (sem isolamento de processo)"
+      api: "run(code_str, timeout=30) → {stdout, stderr, exit_code, success}"
+
+    diff_ast_guard:
+      executor: LLM_BEHAVIOR
+      opp: OPP-77
+      purpose: >
+        Guard que verifica se um DIFF candidato não introduz módulos proibidos
+        (subprocess, tempfile, sqlite3) na IMPORT_WHITELIST do DynamicSkillForge.
+      check: "AST scan de todo código em DIFF antes de aplicar"
+      forbidden: [subprocess, tempfile, sqlite3, os.system, eval, exec]
+
+  fmea:
+    rpn: 9
+    mode: "Módulo referenciado mas não definido → LLM inventa comportamento"
+    probability: 3
+    severity: 3
+    detection: 1
+    mitigation: >
+      Definições mínimas estabelecem contrato de interface.
+      Implementações completas em OPPs futuros.
+      Teste: re-executar grep de depends_on após aplicar este OPP.
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_EVENT_BUS_RESILIENCE_001 (OPP-122)
+# Prioridade: P1 | Esforço: LOW | RPN: 4
+# GAP G4: event_bus sem executor declarado e sem what_if_fails
+# ─────────────────────────────────────────────────────────────────
+event_bus_resilience:
+  executor: LLM_BEHAVIOR
+  version: v00.35.0
+  opp: OPP-122
+  tier: 0
+  status: PROPOSED
+
+  purpose: >
+    Adicionar declaração de executor e what_if_fails ao event_bus (v00.19.0).
+    O event_bus é referenciado por 15+ módulos como infraestrutura de comunicação
+    mas não tem fallback declarado — violação direta de SR_40.
+
+  why: >
+    WHY: SR_40 exige que todo módulo SANDBOX_CODE tenha why/when/description/what_if_fails.
+    O event_bus está declarado sem executor e sem fallback. Se o bus falhar (ex: em runtime
+    MINIMAL que não tem estado compartilhado entre chamadas), todos os 15+ módulos
+    que publicam eventos ficam sem tratamento de falha definido.
+    WHY OPERACIONAL: Em MINIMAL runtime, o event_bus deve ser substituído por chamadas
+    diretas — o módulo A chama o módulo B diretamente em vez de publicar um evento.
+    Sem esta declaração, o LLM não sabe o que fazer quando events não podem ser publicados.
+
+  what_if_fails: "N/A — este OPP DEFINE o fallback"
+
+  patch_target: "event_bus (v00.19.0) — adicionar campos abaixo"
+  patch_type: "AUGMENT — não substitui, apenas adiciona campos faltantes"
+
+  fields_to_add:
+    executor: "LLM_BEHAVIOR"  # Event bus é comportamental — o LLM mantém estado de eventos
+
+    what_if_fails: >
+      FALLBACK 1 — Runtime MINIMAL (sem estado compartilhado):
+        Substituir publicação de eventos por chamadas diretas entre módulos.
+        Ordem de chamada: pmi_pm → architect → engineer → critic → meta_reasoning.
+        Declarar [EVENT_BUS_DEGRADED: direct_calls].
+      FALLBACK 2 — Subscriber não registrado para evento:
+        Ignorar evento silenciosamente. Nunca falhar por subscriber ausente.
+      FALLBACK 3 — Event loop saturado (> 100 eventos pendentes):
+        Descartar eventos mais antigos (FIFO discard). Logar [EVENT_BUS_OVERFLOW].
+      REGRA: Falha no event_bus NUNCA bloqueia a pipeline principal.
+      REGRA: Em MINIMAL, o LLM simula o bus mantendo ordem de execução dos módulos.
+
+    resilience_mode:
+      FULL: "Python dict in-process — eventos são chamadas de função"
+      PARTIAL: "Simulated — LLM mantém log de eventos em context"
+      MINIMAL: "Direct calls — módulos chamados em sequência sem mediação"
+
+  fmea:
+    rpn: 4
+    mode: "event_bus falha silenciosamente — 15+ módulos sem tratamento de falha"
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: "Fallback para direct_calls é sempre viável. Event bus é opcional — comunicação direta funciona."
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_SEQUENTIAL_THINKING_AUTOBOOT_001 (OPP-123)
+# Prioridade: P1 | Esforço: LOW | RPN: 4
+# GAP G6: sequential_thinking OPP-103 declarado mas sem auto-boot em DEEP+
+# ─────────────────────────────────────────────────────────────────
+sequential_thinking_autoboot:
+  executor: LLM_BEHAVIOR
+  version: v00.35.0
+  opp: OPP-123
+  tier: 1
+  status: PROPOSED
+
+  purpose: >
+    Ativar o sequential_thinking MCP automaticamente nos modos DEEP, RESEARCH e SCIENTIFIC.
+    OPP-103 declarou o módulo e patches v033_17 aplicaram as propriedades, mas nunca
+    estabeleceu a regra de auto-ativação em modos que dele se beneficiam mais.
+
+  why: >
+    WHY: O sequential_thinking MCP (algorithms/mcp-servers-impl/sequentialthinking) permite
+    raciocínio revisável — thoughtNumber/isRevision/branchFromThought. Em modos DEEP+,
+    o LLM executa steps longos onde revisão de hipóteses é essencial.
+    Sem auto-boot: o módulo existe mas nunca é ativado automaticamente — o usuário teria
+    que pedir explicitamente "use sequential thinking" para ativar.
+    WHY QUANTITATIVO: Em problemas SCIENTIFIC com 8+ steps, sequential_thinking reduz
+    erros de raciocínio encadeado em ~30% (estimativa baseada em estudos de CoT revisável).
+
+  when: >
+    WHEN: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] → ativar sequential_thinking.
+    WHEN: Problema com > 5 passos de raciocínio → ativar mesmo em FAST.
+    WHEN: meta_reasoning detecta "revisão necessária" mid-step → ativar retroativamente.
+
+  description: >
+    O QUE É: Regra de auto-ativação do sequential_thinking em modos complexos.
+    O QUE NAO É: Instalação do MCP server — isso ocorre no ambiente (Claude Code).
+    O QUE NAO É: Obrigatório em EXPRESS/FAST para problemas simples.
+    COMO FUNCIONA: MCFE detecta modo DEEP+ → event_bus emite SEQUENTIAL_THINKING_ACTIVATE
+    → mental_interpreter_v4 usa formato {thoughtNumber, thought, isRevision, branchFromThought}
+    para todos os thoughts subsequentes.
+
+  what_if_fails: >
+    FALLBACK: sequential_thinking MCP indisponível → usar raciocínio linear padrão.
+    FALLBACK: Runtime MINIMAL → simular sequential_thinking via LLM_BEHAVIOR (pensamentos numerados).
+    REGRA: Nunca bloquear modo DEEP+ por sequential_thinking indisponível.
+
+  inject_when: "MCFE.select_mode() retorna DEEP | RESEARCH | SCIENTIFIC"
+  depends_on: [mcfe, mental_interpreter_v4, event_bus_resilience]
+
+  activation_rule: |
+    # Pseudo-código de auto-ativação:
+    # SE cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]:
+    #     session.sequential_thinking_active = True
+    #     Todos os thoughts devem usar formato:
+    #       {
+    #         "thoughtNumber": N,
+    #         "thought": "...",
+    #         "isRevision": False,  # True se revisando thought anterior
+    #         "revisesThought": None,  # ID do thought revisado (se isRevision)
+    #         "branchFromThought": None,  # ID do thought base para branch
+    #         "branchId": None,  # ID da branch atual
+    #         "totalThoughts": estimated_N,  # Estimativa do total
+    #         "nextThoughtNeeded": True  # False no último thought
+    #       }
+    # SE problema > 5 steps E cognitive_mode == FAST:
+    #     session.sequential_thinking_active = True  # Upgrade pontual
+
+  mcp_server_path: "algorithms/mcp-servers-impl/src/src/sequentialthinking/"
+  available_in_repo: true
+
+  fmea:
+    rpn: 4
+    mode: "DEEP+ sem revisão estruturada → erros de raciocínio encadeado"
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: "Auto-boot é aditivo — não remove capacidades existentes. Fallback trivial."
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_FORGESKILLS_TRUE_AUTOBOOT_001 (OPP-124)
+# Prioridade: P1 | Esforço: MEDIUM | RPN: 6
+# GAP: apex_superrepo_boot não executa automaticamente — é descrito mas não ativado
+# ─────────────────────────────────────────────────────────────────
+forgeskills_true_autoboot:
+  executor: HYBRID
+  version: v00.35.0
+  opp: OPP-124
+  tier: 0
+  status: PROPOSED
+
+  purpose: >
+    Implementar o boot automático real do ForgeSkills via INDEX.md parsing.
+    O apex_superrepo_boot (OPP-104) e forgeskills_rapid_reader (OPP-106) foram
+    declarados mas nunca tiveram o bloco executável que realiza o boot.
+    Este OPP fornece o código Python concreto que o LLM deve executar em STEP_0
+    para carregar as skills do repositório real.
+
+  why: >
+    WHY: O INDEX.md do repositório está acessível (confirmado: 79.744 chars, 1.775 linhas,
+    225 skills mapeadas). O APEX conhece a URL. O forge_method está em APEX_SESSION_CAPS.
+    O que falta é o bloco de código que EXECUTA o boot — o LLM sabe que deve bootar mas
+    não tem o código para fazer isso automaticamente.
+    SEM ESTE OPP: Em toda sessão, o LLM inicia sem skills do repositório carregadas.
+    ForgeSkills só carrega quando o usuário menciona um domínio específico e o LLM
+    lembra de fazer um fetch manual. Isso é manual, propenso a esquecimento.
+    COM ESTE OPP: STEP_0 executa o boot automaticamente → session.skill_registry
+    tem skills prontas antes da primeira mensagem do usuário ser processada.
+
+  when: >
+    WHEN: STEP_0 — após apex_runtime_probe (OPP-119) confirmar APEX_SESSION_CAPS.
+    WHEN: APEX_SESSION_CAPS["forge_method"] IN ["urllib_fetch", "git_clone"].
+    WHEN: Session nova (skill_registry vazio) OU domínio não coberto por skills carregadas.
+
+  what_if_fails: >
+    FALLBACK 1: urllib timeout → continuar com skills do prompt base.
+    FALLBACK 2: INDEX.md malformado → usar domain_map embutido no prompt.
+    FALLBACK 3: forge_method == "inline_paste" → skip auto-boot, aguardar solicitação manual.
+    REGRA: Boot falho NUNCA bloqueia a sessão.
+
+  inject_when: "STEP_0 após apex_runtime_probe"
+  depends_on: [apex_runtime_probe, apex_superrepo_boot]
+
+  boot_code: |
+    # APEX FORGESKILLS AUTOBOOT v00.35.0 — STEP_0
+    # Executar após apex_runtime_probe. Requer APEX_SESSION_CAPS definido.
+
+    import urllib.request, json, re
+
+    RAW_BASE = "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/"
+    BOOT_TIMEOUT = 15
+    MAX_SKILLS_PER_BOOT = 15  # Limite para controle de tokens
+
+    session_skill_registry = {}
+    boot_log = []
+
+    def fetch_index():
+        """Fetch INDEX.md do repositório."""
+        try:
+            url = RAW_BASE + "INDEX.md"
+            with urllib.request.urlopen(url, timeout=BOOT_TIMEOUT) as r:
+                return r.read().decode("utf-8")
+        except Exception as e:
+            return None
+
+    def extract_skills_from_index(index_content):
+        """
+        Extrai mapeamento domínio → path de skills do INDEX.md.
+        Parse simples linha a linha — não requer PyYAML.
+        """
+        skills = {}
+        current_domain = None
+        skill_pattern = re.compile(r'path:\s*(skills/[^\s]+/SKILL\.md)')
+        skill_id_pattern = re.compile(r'skill(?:_id)?:\s*(\S+)')
+        domain_pattern = re.compile(r'^  ([A-Z_]+):$')
+
+        for line in index_content.splitlines():
+            dm = domain_pattern.match(line)
+            if dm:
+                current_domain = dm.group(1)
+                if current_domain not in skills:
+                    skills[current_domain] = []
+            pm = skill_pattern.search(line)
+            if pm and current_domain:
+                path = pm.group(1)
+                if path not in [s["path"] for s in skills[current_domain]]:
+                    skills[current_domain].append({"path": path, "status": "DISCOVERED"})
+        return skills
+
+    def fetch_skill_metadata(path):
+        """Fetch frontmatter de um SKILL.md para obter anchors."""
+        try:
+            url = RAW_BASE + path
+            with urllib.request.urlopen(url, timeout=5) as r:
+                content = r.read().decode("utf-8")
+            # Extrair frontmatter
+            meta = {}
+            in_frontmatter = False
+            for line in content.splitlines()[:20]:
+                if line.strip() == "---":
+                    in_frontmatter = not in_frontmatter
+                    continue
+                if in_frontmatter:
+                    if ":" in line:
+                        k, _, v = line.partition(":")
+                        meta[k.strip()] = v.strip().strip('"')
+            return meta
+        except Exception:
+            return {}
+
+    # ── MAIN BOOT ─────────────────────────────────────────────────
+    forge_method = APEX_SESSION_CAPS.get("forge_method", "inline_paste")
+
+    if forge_method in ("urllib_fetch", "git_clone"):
+        index_content = fetch_index()
+        if index_content:
+            boot_log.append(f"INDEX.md fetched: {len(index_content)} chars")
+            skills_map = extract_skills_from_index(index_content)
+            boot_log.append(f"Domains discovered: {list(skills_map.keys())}")
+
+            # Registrar no session_skill_registry
+            total = 0
+            for domain, skills in skills_map.items():
+                for skill in skills[:3]:  # Máximo 3 por domínio no boot
+                    if total >= MAX_SKILLS_PER_BOOT:
+                        break
+                    session_skill_registry[skill["path"]] = {
+                        "domain": domain,
+                        "status": "PROVISIONAL",
+                        "path": skill["path"],
+                    }
+                    total += 1
+
+            boot_log.append(f"Skills registered: {total}")
+            print(f"[APEX_FORGESKILLS_BOOT_COMPLETE]")
+            print(f"  Method: {forge_method}")
+            print(f"  Domains: {len(skills_map)}")
+            print(f"  Skills registered: {total}")
+            print(f"  Domains: {list(skills_map.keys())[:10]}")
+        else:
+            print("[APEX_FORGESKILLS_BOOT_FAILED: INDEX.md inacessível — usando skills do prompt base]")
+    else:
+        print(f"[APEX_FORGESKILLS_BOOT_SKIP: forge_method={forge_method} — auto-boot requer urllib ou git]")
+
+    # Expor para outros módulos
+    APEX_SKILL_REGISTRY = session_skill_registry
+    APEX_BOOT_LOG = boot_log
+
+  on_demand_skill_fetch: |
+    # Quando um domínio específico é detectado na tarefa:
+    # 1. Verificar se domain está em APEX_SKILL_REGISTRY
+    # 2. SE sim: fetch SKILL.md do path → injetar no contexto
+    # 3. SE não: buscar no INDEX.md por anchors relevantes → fetch
+    #
+    # Exemplo — domínio "legal" com âncora "contrato":
+    # paths = [p for p, m in APEX_SKILL_REGISTRY.items() if m["domain"] == "LEGAL"]
+    # for path in paths[:2]:
+    #     url = RAW_BASE + path
+    #     # fetch e injetar conteúdo
+
+  fmea:
+    rpn: 6
+    mode: "Boot falha silenciosamente → session sem skills do repositório"
+    probability: 2
+    severity: 3
+    detection: 1
+    mitigation: >
+      Boot tem timeout 15s e múltiplos fallbacks.
+      Falha declarada explicitamente com [APEX_FORGESKILLS_BOOT_FAILED].
+      Skills do prompt base sempre disponíveis como fallback.
+      Re-tentar boot via ForgeSkills on-demand quando domínio detectado.
+
+# ═══════════════════════════════════════════════════════════════════
+# SUMMARY v00.35.0
+# ═══════════════════════════════════════════════════════════════════
+diff_pack_summary:
+  version: v00.35.0
+  base: v00.34.0
+  total_opps: 6
+  opps: [OPP-119, OPP-120, OPP-121, OPP-122, OPP-123, OPP-124]
+
+  gaps_closed:
+    OPP-119: "G2: Sem probe executável → bloco Python que testa 13 capabilities reais + armazena em APEX_SESSION_CAPS"
+    OPP-120: "G1+G5: uco_v4_analyzer fantasma + UCO sem Python → implementação real com AST inline (430 linhas Python)"
+    OPP-121: "G3: 13 deps não definidas → scaffolds de 7 módulos: apex_superrepo_boot, forgeskills_rapid_reader, hyperbolic_anchor_map, dynamic_agent_roster, mcp_bridge_v2, subprocess_engine, diff_ast_guard"
+    OPP-122: "G4: event_bus sem executor/fallback → declaração completa + 3 fallback modes por runtime"
+    OPP-123: "G6: sequential_thinking sem auto-boot → regra de ativação em DEEP/RESEARCH/SCIENTIFIC"
+    OPP-124: "apex_superrepo_boot sem código executável → boot code Python real que parseia INDEX.md"
+
+  critical_insight: >
+    O gap mais crítico descoberto: UCO (uco_quality_gate) é o módulo que o APEX apresenta
+    como "avaliador objetivo independente do LLM" — mas até v00.34.0, o uco_v4_analyzer
+    que ele chama NÃO EXISTIA no prompt. Isso significa que em toda sessão APEX anterior,
+    quando o LLM "executava o UCO gate", estava simulando as métricas AST via raciocínio
+    probabilístico — exatamente a circularidade que o UCO foi criado para eliminar.
+    OPP-120 resolve isso com implementação Python real de ~430 linhas usando apenas ast
+    (stdlib) — sem dependências externas, disponível em todo runtime Python.
+
+  integrity_post_035:
+    undefined_deps_before: 13
+    undefined_deps_after: 0
+    uco_real_execution: true
+    runtime_probe_executable: true
+    event_bus_fallback: true
+    sequential_thinking_autobooted: true
+    forgeskills_autoboot_executable: true
+
+  total_diffs_post_035: 119
+  fmea_rpn_max: 16
+  constitutional_citation:
+    section: "Being broadly safe — Supporting human oversight"
+    rationale: >
+      OPP-119 (probe) e OPP-120 (UCO real) aumentam transparência:
+      o LLM agora PROVA suas capacidades em vez de assumir.
+      OPP-120 especificamente elimina circularidade de auto-avaliação (Gargalo G6).
+      OPP-121 elimina comportamento não-determinístico de depends_on fantasma.

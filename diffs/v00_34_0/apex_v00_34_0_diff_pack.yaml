@@ -1,0 +1,1282 @@
+# ═══════════════════════════════════════════════════════════════════
+# APEX v00.34.0 — DIFF PACK: Integração Universal + Multi-LLM Sandbox
+# Base: v00.33.0 (104 DIFFs aplicados | FMEA RPN máx = 16)
+# DIFFs neste pacote: 8 (OPP-110 a OPP-117)
+# Objetivo: Fechar todos os gaps de integração identificados na auditoria 2026-04-09
+# Aprovação: USER_EXPLICIT requerida para cada DIFF
+# ═══════════════════════════════════════════════════════════════════
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_MULTI_SANDBOX_PROFILES_001 (OPP-110)
+# Prioridade: P0 | Esforço: MEDIUM | RPN: 8
+# AUDIT GAP: llm_runtime_adapter não detecta DeepSeek, Grok, ChatGPT Code Interpreter
+# ─────────────────────────────────────────────────────────────────
+multi_sandbox_profiles:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-110
+  tier: 0
+  status: PROPOSED
+
+  purpose: >
+    Expandir o llm_runtime_adapter (OPP-105) para reconhecer TODOS os runtimes
+    com sandbox disponíveis: DeepSeek (@sandbox/@python), ChatGPT Code Interpreter,
+    Grok (xAI), Gemini Advanced (Jupyter), Claude Code (FULL), além de LLM puro (MINIMAL).
+    Cada perfil define capabilities, sintaxe de ativação e fallback behavior.
+
+  why: >
+    WHY: O usuário confirmou que DeepSeek tem sandbox com bibliotecas científicas
+    ativadas por @sandbox ou @python ou nome de biblioteca (@numpy, @pandas).
+    O OPP-105 atual só detecta FULL (Claude Code) / PARTIAL (GPT-4o/Gemini) / MINIMAL.
+    DeepSeek com @sandbox é FULL_DEEPSEEK — tem numpy, scipy, pandas, matplotlib
+    pré-instalados, execução real de código, mas NÃO tem subprocess/sqlite3/git.
+    Grok (xAI) tem sandbox via Aurora — detectável por tentativa de execução Python.
+    ChatGPT Code Interpreter: execução Python real, sem internet, sem subprocess.
+    Gemini Advanced: Jupyter kernel, numpy/pandas disponíveis.
+    Sem profiles corretos → APEX assume PARTIAL e subutiliza capacidades REAIS do runtime.
+
+  when: >
+    WHEN: STEP_0 — SEMPRE, antes de qualquer módulo SANDBOX_CODE.
+    Substitui a detecção binária FULL/PARTIAL/MINIMAL por perfil granular.
+
+  description: >
+    O QUE É: Sistema de profiles de sandbox com detecção por sondagem + sintaxe de ativação.
+    O QUE NÃO É: Identificação por nome do LLM — é detecção por capabilities reais.
+    COMO FUNCIONA: Sondagem sequencial por imports → mapear para profile → emitir marker.
+    PROFILES ADICIONADOS: FULL_DEEPSEEK, FULL_CHATGPT_CI, FULL_GROK, PARTIAL_GEMINI.
+    SINTAXE DEEPSEEK: Prefixar bloco Python com @sandbox ou @python para ativar execução.
+    SINTAXE PADRÃO: ```python ... ``` para Claude/GPT/Gemini.
+
+  what_if_fails: >
+    FALLBACK 1 — Profile não identificado: assumir PARTIAL (comportamento v00.33.0).
+    FALLBACK 2 — Sondagem falha em runtime: continuar com profile MINIMAL.
+    REGRA: NUNCA bloquear pipeline por falha de detecção de sandbox.
+    REGRA: Em dúvida, assumir profile menos capaz (mais seguro).
+
+  inject_when: "STEP_0 — antes de qualquer módulo SANDBOX_CODE"
+  depends_on: [llm_runtime_adapter]
+  extends: OPP-105
+
+  sandbox_profiles:
+    FULL_CLAUDE_CODE:
+      detection: "Bash tool + Read tool + Write tool disponíveis"
+      label: "[LLM_RUNTIME: FULL — Claude Code]"
+      capabilities:
+        python_exec: true
+        subprocess: true
+        sqlite3: true
+        git_clone: true
+        filesystem: true
+        internet: true
+      forgeskills_method: git_clone
+      snapshot_method: sqlite3
+      activation_syntax: "```python ... ```"
+      orjson: available
+      ThreadPoolExecutor: available
+      notes: "Runtime máximo — todos os módulos SANDBOX_CODE disponíveis"
+
+    FULL_DEEPSEEK:
+      detection: >
+        Tentativa: executar bloco @python com numpy.version → sucesso.
+        Fallback: verificar se @sandbox keyword ativa execução.
+      label: "[LLM_RUNTIME: FULL_DEEPSEEK — DeepSeek Sandbox]"
+      capabilities:
+        python_exec: true
+        subprocess: false
+        sqlite3: false
+        git_clone: false
+        filesystem: false
+        internet: false
+        numpy: true
+        scipy: true
+        pandas: true
+        matplotlib: true
+        sympy: true
+        sklearn: true
+      forgeskills_method: inline_paste
+      snapshot_method: memory_dict
+      activation_syntax: "@sandbox\n```python ... ```"
+      alternate_syntax: "@python\n```python ... ```"
+      library_syntax: "@numpy — ativa numpy; @pandas — ativa pandas; etc."
+      orjson: unavailable_use_json_stdlib
+      ThreadPoolExecutor: available
+      notes: >
+        DeepSeek R2/V3 com sandbox ativado via @sandbox ou @python.
+        Capacidades científicas completas (numpy/scipy/pandas/matplotlib/sympy).
+        SEM subprocess, sqlite3, git_clone, filesystem.
+        Para APEX: todos módulos SANDBOX_CODE funcionam EXCETO DynamicSkillForge (git_clone)
+        e SQLite SnapshotStore → usar memory_dict fallback.
+      replacements:
+        sqlite3: "dict Python em memória com pickle.dumps() opcional"
+        subprocess: "exec() inline com timeout manual"
+        git_clone: "inline_paste ou urllib.request para raw_base"
+        ThreadPoolExecutor: "concurrent.futures.ThreadPoolExecutor (disponível)"
+
+    FULL_GROK:
+      detection: >
+        Tentar executar Python simples → se retornar resultado real → FULL_GROK.
+        Grok Aurora sandbox: Python real, numpy/pandas, sem subprocess.
+      label: "[LLM_RUNTIME: FULL_GROK — xAI Grok Aurora]"
+      capabilities:
+        python_exec: true
+        subprocess: false
+        sqlite3: false
+        numpy: true
+        pandas: true
+      forgeskills_method: inline_paste
+      snapshot_method: memory_dict
+      activation_syntax: "```python ... ```"
+      notes: "Grok Aurora sandbox — semelhante ao FULL_DEEPSEEK em capabilities"
+
+    PARTIAL_CHATGPT_CI:
+      detection: >
+        Python sandbox disponível (code_interpreter tool ativa).
+        Sem Bash tool. Sem git. File upload disponível via tool.
+      label: "[LLM_RUNTIME: PARTIAL — ChatGPT Code Interpreter]"
+      capabilities:
+        python_exec: true
+        subprocess: false
+        sqlite3: false
+        git_clone: false
+        file_upload: true
+        numpy: true
+        pandas: true
+        matplotlib: true
+      forgeskills_method: file_upload_or_paste
+      snapshot_method: pickle_file
+      activation_syntax: "```python ... ```"
+      notes: >
+        ChatGPT Code Interpreter: Python real isolado, sem internet, sem subprocess.
+        Files podem ser uploadados. Output gráfico via matplotlib disponível.
+
+    PARTIAL_GEMINI:
+      detection: "Python sandbox via Gemini Advanced Jupyter kernel"
+      label: "[LLM_RUNTIME: PARTIAL — Gemini Advanced]"
+      capabilities:
+        python_exec: true
+        subprocess: false
+        numpy: true
+        pandas: true
+      forgeskills_method: urllib_raw_fetch
+      snapshot_method: memory_dict
+      activation_syntax: "```python ... ```"
+
+    MINIMAL:
+      detection: "Nenhuma execução Python real detectada"
+      label: "[LLM_RUNTIME: MINIMAL — LLM puro]"
+      capabilities:
+        python_exec: false
+      forgeskills_method: manual_paste
+      sandbox: "todos módulos → LLM_BEHAVIOR"
+      prefix_output: "[SIMULATED]"
+
+  detection_algorithm: |
+    # STEP_0 — Profile Detection
+    def detect_sandbox_profile():
+        # 1. Claude Code — ferramentas de sistema disponíveis
+        if has_tool("Bash") and has_tool("Read") and has_tool("Write"):
+            return "FULL_CLAUDE_CODE"
+
+        # 2. Tentar execução Python real
+        test_result = try_execute_python("import numpy; print(numpy.__version__)")
+        if test_result.success:
+            # Distinguir DeepSeek/Grok/ChatGPT/Gemini
+            if detect_deepseek_markers():  # @sandbox ou @python
+                return "FULL_DEEPSEEK"
+            elif detect_grok_aurora():
+                return "FULL_GROK"
+            elif has_tool("code_interpreter"):
+                return "PARTIAL_CHATGPT_CI"
+            else:
+                return "PARTIAL_GEMINI"
+
+        # 3. Sem execução real
+        return "MINIMAL"
+
+  deepseek_apex_integration: |
+    # Como usar APEX com DeepSeek (@sandbox/@python):
+    #
+    # Para acionar módulos SANDBOX_CODE no DeepSeek:
+    # Prefixar SEMPRE com @sandbox antes do bloco Python.
+    # O APEX emitirá o código com @sandbox no início.
+    #
+    # Exemplo — Monte Carlo:
+    # @sandbox
+    # ```python
+    # import numpy as np
+    # rng = np.random.default_rng(42)
+    # results = rng.normal(100, 15, 10000)
+    # print(f"P10={np.percentile(results,10):.1f} P50={np.percentile(results,50):.1f} P90={np.percentile(results,90):.1f}")
+    # ```
+    #
+    # Exemplo — PoT com scipy:
+    # @python
+    # ```python
+    # from scipy import stats
+    # ...
+    # ```
+    #
+    # DynamicSkillForge no DeepSeek: usar urllib.request para raw_base em vez de git_clone.
+    # SQLite SnapshotStore no DeepSeek: usar dict em memória.
+
+  output_markers:
+    FULL_CLAUDE_CODE: "[SANDBOX_EXECUTED: FULL]"
+    FULL_DEEPSEEK:    "[SANDBOX_EXECUTED: DEEPSEEK @sandbox]"
+    FULL_GROK:        "[SANDBOX_EXECUTED: GROK Aurora]"
+    PARTIAL_CHATGPT_CI: "[SANDBOX_PARTIAL: ChatGPT CI]"
+    PARTIAL_GEMINI:   "[SANDBOX_PARTIAL: Gemini]"
+    MINIMAL:          "[SIMULATED: LLM_BEHAVIOR_ONLY]"
+
+  rules_enforced: [SR_39]
+
+  fmea:
+    rpn: 8
+    mode: "Profile incorreto → módulo SANDBOX_CODE falha silenciosamente"
+    probability: 2
+    severity: 4
+    detection: 1
+    mitigation: >
+      try/except em TODA sondagem. Fallback sempre para profile menos capaz.
+      Output marcado com profile real detectado. Usuário vê claramente qual runtime ativo.
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_SUPERREPO_STATS_UPDATE_001 (OPP-111)
+# Prioridade: P0 | Esforço: LOW | RPN: 1
+# AUDIT GAP: apex_superrepo stats desatualizados (1.561 → 2.752 skills, 5 → 43 repos)
+# ─────────────────────────────────────────────────────────────────
+apex_superrepo_v2:
+  executor: DOCUMENTATION
+  version: v00.34.0
+  opp: OPP-111
+  tier: 0
+  status: PROPOSED
+
+  purpose: >
+    Atualizar o bloco kernel.defaults.apex_superrepo com as estatísticas reais
+    do repositório após a ingestion completa de 56 repositórios (2 sessões).
+    Garantir que o APEX boot carregue o INDEX.md correto e conheça a estrutura
+    atual de 2.752 skills, 19 agentes, 80+ MCP servers e 17 domínios de integração.
+
+  why: >
+    WHY: OPP-104 configurou o apex_superrepo com stats de v00.33.0 (1.561 skills).
+    Após ingestion de 4 novas ZIPs + 17 repos batch2, o repositório tem:
+    - 2.752 SKILL.md (+ 43% vs OPP-102 estimate)
+    - 19 AGENT.md (19 agentes formais)
+    - 80+ MCP servers catalogados em 12 domínios
+    - 17 domínios de integração (healthcare, finance, legal, physics, marketing, engineering...)
+    - 43 domínios de skills (engineering/cloud/azure, marketing, design, science/bio-research...)
+    O ForgeSkills bootando com stats desatualizados subestima capacidades e pode falhar
+    ao buscar domínios que não sabia que existiam.
+
+  what_if_fails: >
+    FALLBACK: stats desatualizados degradam boot mas não quebram pipeline.
+    REGRA: Nunca bloquear boot por stats incorretos — apenas logar discrepância.
+
+  inject_when: "STEP_0 — leitura de kernel.defaults.apex_superrepo"
+  depends_on: [apex_superrepo_boot]
+
+  updated_config:
+    url: "https://github.com/thiagofernandes1987-create/APEX"
+    raw_base: "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/"
+    index_path: "INDEX.md"
+    boot_enabled: true
+    max_skills_per_boot: 100
+    boot_timeout_sec: 20
+
+    repo_stats:
+      total_skill_md: 2752
+      total_agent_md: 19
+      total_files: 12300
+      last_updated: "2026-04-09"
+      ingestion_sessions: 2
+      repos_ingested: 56
+
+    domain_catalog:
+      skills_domains:
+        - "skills/engineering/ (cloud/azure, cloud/aws, cloud/gcp, devops, frontend, backend, api, security, database, testing, mobile, cli, git)"
+        - "skills/ai-ml/ (llm, agents, ml, rag)"
+        - "skills/data-science/ (analytics)"
+        - "skills/marketing/ (seo, campaigns, content, ads)"
+        - "skills/design/ (design-systems-index, knowledge-work)"
+        - "skills/finance/ (equity-research, financial-analysis, investment-banking, wealth-management, private-equity)"
+        - "skills/legal/ (civil-law/contracts, civil-law/obligations, knowledge-work)"
+        - "skills/healthcare/ (clinical-trial, fhir, prior-auth, mental-health, skin, family...)"
+        - "skills/science/ (life-sciences, bio-research)"
+        - "skills/business/ (sales, hr, customer-support, operations, productivity, content)"
+        - "skills/community/ (general, openclaw-index)"
+        - "skills/knowledge-work/ (legal, marketing, engineering, sales, data, design, PM, productivity)"
+        - "skills/mathematics/ (financial-math/inflation-adjustment)"
+        - "skills/anthropic-official/"
+      integrations_domains:
+        - "integrations/mcp-servers/ (166 servers + MASTER_CATALOG: 80+ URLs)"
+        - "integrations/healthcare-plugins/ (CMS, NPI, PubMed, ICD-10)"
+        - "integrations/life-sciences-plugins/ (ChEMBL, Open Targets, Synapse, Owkin, bioRxiv)"
+        - "integrations/financial-services/ (Morningstar, FactSet, Moody's, LSEG, PitchBook)"
+        - "integrations/knowledge-work/ (legal, marketing, engineering, HR, sales, data, design, PM)"
+        - "integrations/legal-mcp/ (GovInfo oficial, CourtListener, USPTO 52-tools, SEC EDGAR)"
+        - "integrations/science-physics-mcp/ (IBM Qiskit, PsiAnimator, arXiv, Wolfram, Materials Project)"
+        - "integrations/marketing-mcp/ (Semrush, Google Ads, Meta Ads, TikTok, LinkedIn, HubSpot)"
+        - "integrations/engineering-mcp/ (NASA 20+ APIs, OpenFOAM CFD, OpenSCAD CAD)"
+        - "integrations/external-plugins/ (37 official plugins: Asana, Slack, Stripe, Zoom...)"
+        - "integrations/official-plugins/ (22 official plugin SKILL.md)"
+        - "integrations/plugins/ (135 community plugins)"
+        - "integrations/github-mcp-server/ + integrations/mcp-reference-servers/"
+      algorithms_domains:
+        - "algorithms/claude-agent-sdk/ (Python SDK oficial)"
+        - "algorithms/claude-code-cli/ (hooks, slash commands, MCP integration)"
+        - "algorithms/notebooks/ (80 Jupyter notebooks)"
+        - "algorithms/voltagent/ (TypeScript agent framework)"
+        - "algorithms/github-mcp-server/ + algorithms/claudes-c-compiler/ (Rust)"
+        - "algorithms/evals/ (JSONL datasets: power-seeking, sycophancy, winogenerated)"
+        - "algorithms/awesome-claude-skills/, algorithms/claude-skills/, algorithms/claude-code-toolkit/"
+      agents_domains:
+        - "agents/pmi_pm/, agents/architect/, agents/engineer/, agents/critic/"
+        - "agents/researcher/, agents/meta_reasoning/, agents/bayesian_curator/"
+        - "agents/diff_governance/, agents/scientist_agent/, agents/anchor_destroyer/"
+        - "agents/community-awesome/ (33: code-archaeologist, django, laravel, python, rails, orchestrators)"
+        - "agents/community-subagents/ (157 subagent patterns)"
+      reference_docs:
+        - "reference-docs/argo-cd/ (REFERENCE: GitOps, K8s)"
+        - "reference-docs/terragrunt/ (REFERENCE: Terraform, IaC)"
+
+    catalog_files:
+      master_mcp: "integrations/mcp-servers/MASTER_CATALOG.md"
+      legal_mcp: "integrations/legal-mcp/CATALOG.md"
+      physics_mcp: "integrations/science-physics-mcp/CATALOG.md"
+      marketing_mcp: "integrations/marketing-mcp/CATALOG.md"
+      engineering_mcp: "integrations/engineering-mcp/CATALOG.md"
+      healthcare: "integrations/healthcare-plugins/CATALOG.md"
+      life_sciences: "integrations/life-sciences-plugins/CATALOG.md"
+      financial: "integrations/financial-services/CATALOG.md"
+
+  fmea:
+    rpn: 1
+    mode: "DOCUMENTATION — sem impacto computacional"
+    probability: 1
+    severity: 1
+    detection: 1
+    mitigation: "Stats documentados; discrepância logada; boot continua"
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_FORGESKILLS_CATALOG_BOOT_001 (OPP-112)
+# Prioridade: P0 | Esforço: MEDIUM | RPN: 6
+# AUDIT GAP: forgeskills_rapid_reader não processa CATALOG.md de MCP nem agent community
+# ─────────────────────────────────────────────────────────────────
+forgeskills_catalog_boot:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-112
+  tier: 1
+  status: PROPOSED
+
+  purpose: >
+    Estender o ForgeSkills Rapid Reader (OPP-106) para processar não apenas SKILL.md
+    via INDEX.md, mas também: (1) CATALOG.md de domínios de integração (MCP servers),
+    (2) AGENT.md da community-awesome, (3) REFERENCE.md de domínios documentados.
+    Resultado: APEX boot carrega MCP server URLs diretamente no mcp_bridge registry
+    e community agents no dynamic_agent_roster.
+
+  why: >
+    WHY: O APEX pós-ingestion tem 80+ MCP server URLs em CATALOG.md files que o LLM
+    não sabe usar porque o ForgeSkills só lê SKILL.md.
+    Quando usuário pede análise jurídica → APEX deveria auto-carregar GovInfo MCP URL.
+    Quando usuário pede física quântica → APEX deveria carregar Qiskit/PsiAnimator.
+    Quando usuário pede SEO/marketing → APEX deveria carregar Semrush MCP.
+    Isso só é possível se o boot também processa os CATALOG.md e extrai os server URLs.
+    Adicionalmente: 33 community agents (code-archaeologist, django-expert, etc.)
+    deveriam ser ativados dinamicamente pelo dynamic_skill_forge quando o domínio bate.
+
+  when: >
+    WHEN: STEP_0 apex_superrepo_boot — após carregar skills do INDEX.md,
+    processar CATALOG.md dos domínios de integração relevantes para a sessão.
+    WHEN: DynamicSkillForge detecta domínio sem skill interna → verificar community-awesome.
+
+  description: >
+    O QUE É: Extensão do boot pipeline para carregar MCP URLs e community agents.
+    O QUE NÃO É: Download completo — apenas metadata (URLs, tool names, capabilities).
+    COMO FUNCIONA: INDEX.md → detectar domínios relevantes → fetch CATALOG.md correspondente
+    → extrair MCP server URLs → registrar em mcp_bridge.server_registry → disponível.
+
+  what_if_fails: >
+    FALLBACK 1 — CATALOG.md indisponível: continuar sem MCP servers do domínio.
+    FALLBACK 2 — URL inválida: ignorar e continuar. Logar [MCP_URL_INVALID].
+    FALLBACK 3 — community agent AGENT.md malformado: pular. Usar agents base.
+    REGRA: Boot NUNCA bloqueia por CATALOG.md indisponível.
+
+  inject_when: "STEP_0 apex_superrepo_boot — estágio 3 (após skills)"
+  depends_on: [apex_superrepo_boot, mcp_bridge_v2, forgeskills_rapid_reader]
+
+  catalog_boot_pipeline:
+    stage_3_catalog:
+      trigger: "Domínio detectado no problema atual"
+      domain_to_catalog_map:
+        legal:              "integrations/legal-mcp/CATALOG.md"
+        contract:           "integrations/legal-mcp/CATALOG.md"
+        patents:            "integrations/legal-mcp/CATALOG.md"
+        compliance:         "integrations/legal-mcp/CATALOG.md"
+        quantum_physics:    "integrations/science-physics-mcp/CATALOG.md"
+        quantum_computing:  "integrations/science-physics-mcp/CATALOG.md"
+        simulation:         "integrations/science-physics-mcp/CATALOG.md"
+        materials:          "integrations/science-physics-mcp/CATALOG.md"
+        arxiv:              "integrations/science-physics-mcp/CATALOG.md"
+        marketing:          "integrations/marketing-mcp/CATALOG.md"
+        seo:                "integrations/marketing-mcp/CATALOG.md"
+        google_ads:         "integrations/marketing-mcp/CATALOG.md"
+        meta_ads:           "integrations/marketing-mcp/CATALOG.md"
+        engineering:        "integrations/engineering-mcp/CATALOG.md"
+        nasa:               "integrations/engineering-mcp/CATALOG.md"
+        cfd:                "integrations/engineering-mcp/CATALOG.md"
+        healthcare:         "integrations/healthcare-plugins/CATALOG.md"
+        medicine:           "integrations/healthcare-plugins/CATALOG.md"
+        genomics:           "integrations/life-sciences-plugins/CATALOG.md"
+        drug_discovery:     "integrations/life-sciences-plugins/CATALOG.md"
+        finance:            "integrations/financial-services/CATALOG.md"
+        equity_research:    "integrations/financial-services/CATALOG.md"
+        investment_banking: "integrations/financial-services/CATALOG.md"
+
+    stage_4_agents:
+      community_agents_path: "agents/community-awesome/"
+      agent_categories:
+        core:         ["code-archaeologist", "code-reviewer", "documentation-specialist", "performance-optimizer"]
+        python:       ["django-expert", "fastapi-expert", "ml-data-expert", "python-expert", "testing-expert", "web-scraping-expert"]
+        django:       ["django-api-developer", "django-backend-expert", "django-orm-expert"]
+        laravel:      ["laravel-backend-expert", "laravel-eloquent-expert"]
+        rails:        ["rails-activerecord-expert", "rails-api-developer"]
+        orchestrators: ["project-analyst", "team-configurator", "tech-lead-orchestrator"]
+      activation_rule: >
+        Ativar community agent quando:
+        (a) domínio bate com categoria (ex: Django → django-api-developer)
+        (b) meta_reasoning detecta que nenhum agente base cobre o domínio
+        (c) usuário solicita explicitamente tipo de especialização
+      roster_tier: "OPTIONAL — não fazem parte do pipeline base"
+
+  mcp_auto_registration: |
+    # Exemplo de extração de MCP URLs de CATALOG.md:
+    # Quando domínio == "legal":
+    #   fetch: integrations/legal-mcp/CATALOG.md
+    #   parse: tabela Markdown com | Server | URL | Coverage |
+    #   extrair: {govinfo: "https://api.govinfo.gov/mcp", courtlistener: "github.com/...", ...}
+    #   registrar: mcp_bridge.server_registry["legal"] = {govinfo: url, ...}
+    #   emitir: [MCP_CATALOG_LOADED: legal — 8 servers registrados]
+
+  rules_enforced: [G6, SR_37]
+
+  fmea:
+    rpn: 6
+    mode: "CATALOG.md não parseia corretamente — URLs incorretas no mcp_bridge"
+    probability: 2
+    severity: 3
+    detection: 1
+    mitigation: "Validar URL com regex antes de registrar. Logar todas as URLs ignoradas."
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_DOMAIN_SKILLS_FULL_001 (OPP-113)
+# Prioridade: P0 | Esforço: LOW | RPN: 2
+# AUDIT GAP: domain_skills_ingestion (OPP-102) lista apenas antigravity — não os 56 repos
+# ─────────────────────────────────────────────────────────────────
+domain_skills_v2:
+  executor: DOCUMENTATION
+  version: v00.34.0
+  opp: OPP-113
+  tier: 0
+  status: PROPOSED
+
+  purpose: >
+    Atualizar o MODULE_domain_skills_ingestion (OPP-102) para refletir o catálogo
+    completo de 2.752 skills ingeridas de 56 repositórios (não apenas antigravity).
+    Prover ao ForgeSkills o mapeamento exato de onde encontrar skills por domínio.
+
+  why: >
+    WHY: OPP-102 documentava apenas antigravity (1.342 skills P2) + 189 institucionais.
+    Após ingestion v00.34.0: 2.752 SKILL.md de 56 repos incluindo:
+    - awesome-claude-skills-master (60 novas: artifacts, brand, canvas, design)
+    - claude-skills-main (236 novas: cross-platform Claude/Codex/Gemini)
+    - skills-main (176 novas: Azure AI Agents, cloud patterns)
+    - marketingskills-main (35 novas: marketing domain)
+    - awesome-claude-code-toolkit (35 novas: engineering patterns)
+    - financial-services-plugins (56 skills P1: equity research, IB, PE, WM)
+    - knowledge-work-plugins (124 skills: legal, marketing, engineering, HR)
+    Sem este mapa atualizado, ForgeSkills não sabe onde buscar skills de marketing
+    ou engineering patterns quando ativado por anchor.
+
+  what_if_fails: "DOCUMENTATION — sem modo de falha"
+  inject_when: "SkillIndexer.discover() + ForgeSkills boot"
+  depends_on: [apex_superrepo_v2]
+
+  complete_ingestion_map:
+    P0_institutional:
+      count: 189
+      sources:
+        - "financial-services-plugins-main: 56 skills (equity-research, IB, PE, WM, partner)"
+        - "knowledge-work-plugins-main: 124 skills (legal, marketing, engineering, HR, sales, data)"
+        - "healthcare-main: 3 skills (clinical-trial, FHIR, prior-auth)"
+        - "life-sciences-main: 6 skills (scvi-tools, RNA-seq, nextflow, allotrope, trials, problem-selection)"
+
+    P1_quality_verified:
+      count: 2113
+      sources:
+        - "awesome-claude-skills-master: 60 skills (artifacts-builder, brand-guidelines, canvas-design...)"
+        - "claude-skills-main: 236 skills (cross-platform, Python scripts, Azure AI)"
+        - "skills-main: 176 skills (Azure AI Agents, cloud patterns)"
+        - "marketingskills-main: 35 skills (marketing domain)"
+        - "awesome-claude-code-toolkit: 35 skills (accessibility-wcag, api-design, auth, AWS, CI/CD...)"
+        - "x-cmd-X: 25 skills (CLI/shell tools)"
+        - "cherry-studio: 13 skills"
+        - "antigravity-awesome-skills: 1,391 unique skills (after dedup)"
+        - "anthropic-official: 91 skills"
+        - "github-mcp-server, claude-code-cli, etc: 41 skills"
+
+    P2_candidate:
+      count: 450
+      sources:
+        - "community/general: 414 unclassified community skills (CANDIDATE)"
+        - "community/openclaw-index: 32 skill references"
+        - "community-awesome/design: 4 skills"
+
+    domain_index:
+      engineering:
+        path: "skills/engineering/"
+        sub_domains: [cloud/azure, cloud/aws, cloud/gcp, devops, frontend, backend, api, security, database, testing, mobile, cli, git, patterns]
+        total: ~450
+      ai_ml:
+        path: "skills/ai-ml/"
+        sub_domains: [llm, agents, ml, rag]
+        total: ~280
+      marketing:
+        path: "skills/marketing/"
+        sub_domains: [seo, campaigns, content, ads, brand, analytics]
+        total: ~150
+      finance:
+        path: "skills/finance/"
+        sub_domains: [equity-research, financial-analysis, investment-banking, wealth-management, private-equity, partner-integrations]
+        total: ~100
+      design:
+        path: "skills/design/"
+        sub_domains: [design-systems-index, knowledge-work, community]
+        total: ~90
+      data_science:
+        path: "skills/data-science/"
+        sub_domains: [analytics, knowledge-work]
+        total: ~60
+      business:
+        path: "skills/business/"
+        sub_domains: [sales, human-resources, customer-support, operations, productivity, content, enterprise-search]
+        total: ~130
+      healthcare:
+        path: "skills/healthcare/"
+        sub_domains: [clinical, fhir, prior-auth, wellness, compliance]
+        total: ~15
+      science:
+        path: "skills/science/"
+        sub_domains: [life-sciences, bio-research]
+        total: ~12
+      legal:
+        path: "skills/legal/"
+        sub_domains: [civil-law/contracts, civil-law/obligations, knowledge-work]
+        total: ~20
+      community:
+        path: "skills/community/"
+        total: ~450
+
+  fmea:
+    rpn: 2
+    mode: "Mapa desatualizado após nova ingestion"
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: "Mapa gerado programaticamente de apex_superrepo_v2.repo_stats; re-executar boot após nova ingestion"
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_ANCHOR_EXPANSION_V2_001 (OPP-114)
+# Prioridade: P1 | Esforço: MEDIUM | RPN: 4
+# AUDIT GAP: hyperbolic_anchor_map sem bridges para legal, quantum, marketing, healthcare
+# ─────────────────────────────────────────────────────────────────
+anchor_expansion_v2:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-114
+  tier: 1
+  status: PROPOSED
+
+  purpose: >
+    Expandir o hyperbolic_anchor_map (OPP-107) com novos anchors e cross-domain bridges
+    cobrindo os 12 novos domínios de integração e 17 novos repos de skills adicionados
+    na ingestion v00.34.0.
+
+  why: >
+    WHY: OPP-107 definiu 7 bridges cross-domain (legal↔math, etc.) e âncoras para
+    os domínios originais. Após ingestion, 12 novos domínios de integração ficaram sem
+    âncoras no attraction_engine, significando que skills relevantes não são ativadas.
+    Exemplo: usuário pede "análise quântica de moléculas" → sem âncora quantum_computing
+    no attraction_engine, não há bridge para science/life-sciences e IBM Qiskit.
+    Exemplo: usuário pede "campanha Google Ads" → sem anchor google_ads, não carrega
+    integrations/marketing-mcp/CATALOG.md com URL do Google Ads MCP.
+
+  when: >
+    WHEN: attraction_engine.compute() no STEP_P — antes de selecionar skills ativas.
+    WHEN: forgeskills_catalog_boot (OPP-112) ao mapear domínio para CATALOG.md.
+
+  what_if_fails: >
+    FALLBACK: Âncoras sem bridges degradam recall mas não quebram pipeline.
+    REGRA: Nunca bloquear pipeline por anchor não resolvida.
+
+  inject_when: "attraction_engine.compute() + forgeskills_catalog_boot"
+  depends_on: [hyperbolic_anchor_map, attraction_engine, forgeskills_catalog_boot]
+  extends: OPP-107
+
+  new_anchors:
+    legal_domain:
+      - case_law: {mcp: "courtlistener", path: "integrations/legal-mcp/"}
+      - patents: {mcp: "uspto_patents", path: "integrations/legal-mcp/"}
+      - sec_edgar: {mcp: "sec_edgar", path: "integrations/legal-mcp/"}
+      - govinfo: {mcp: "govinfo", path: "integrations/legal-mcp/"}
+      - federal_register: {mcp: "govinfo", path: "integrations/legal-mcp/"}
+      - contract_review: {skill_path: "skills/legal/knowledge-work/"}
+      - compliance: {skill_path: "skills/legal/"}
+
+    quantum_physics:
+      - quantum_computing: {mcp: "qiskit_ibm", path: "integrations/science-physics-mcp/"}
+      - quantum_simulation: {mcp: "psianimator", path: "integrations/science-physics-mcp/"}
+      - statistical_physics: {mcp: "arxiv", path: "integrations/science-physics-mcp/"}
+      - materials_science: {mcp: "mcp_science", path: "integrations/science-physics-mcp/"}
+      - molecular_dynamics: {mcp: "openmm", path: "integrations/science-physics-mcp/"}
+      - dft: {mcp: "mcp_science", path: "integrations/science-physics-mcp/"}
+      - wolfram: {mcp: "wolfram_language", path: "integrations/science-physics-mcp/"}
+      - arxiv: {mcp: "arxiv", path: "integrations/science-physics-mcp/"}
+      - cfd: {mcp: "openfoam", path: "integrations/engineering-mcp/"}
+
+    marketing_domain:
+      - seo: {mcp: "semrush", path: "integrations/marketing-mcp/"}
+      - google_ads: {mcp: "google_ads_official", path: "integrations/marketing-mcp/"}
+      - meta_ads: {mcp: "meta_ads", path: "integrations/marketing-mcp/"}
+      - tiktok_ads: {mcp: "tiktok_ads", path: "integrations/marketing-mcp/"}
+      - linkedin_ads: {mcp: "linkedin_ads", path: "integrations/marketing-mcp/"}
+      - email_marketing: {mcp: "klaviyo", path: "integrations/marketing-mcp/"}
+      - crm: {mcp: "hubspot", path: "integrations/marketing-mcp/"}
+      - analytics: {mcp: "amplitude", path: "integrations/marketing-mcp/"}
+      - campaign: {skill_path: "skills/marketing/"}
+
+    healthcare_domain:
+      - cms_coverage: {mcp: "cms-coverage", path: "integrations/healthcare-plugins/"}
+      - npi_registry: {mcp: "npi-registry", path: "integrations/healthcare-plugins/"}
+      - icd10: {mcp: "icd10-codes", path: "integrations/healthcare-plugins/"}
+      - clinical_trials: {mcp: "clinical-trials", path: "integrations/life-sciences-plugins/"}
+      - drug_discovery: {mcp: "open-targets", path: "integrations/life-sciences-plugins/"}
+      - genomics: {mcp: "10x-genomics", path: "integrations/life-sciences-plugins/"}
+      - bioinformatics: {skill_path: "skills/science/bio-research/"}
+
+    finance_domain:
+      - morningstar: {mcp: "morningstar", path: "integrations/financial-services/"}
+      - factset: {mcp: "factset", path: "integrations/financial-services/"}
+      - moodys: {mcp: "moodys", path: "integrations/financial-services/"}
+      - lseg: {mcp: "lseg", path: "integrations/financial-services/"}
+      - pitchbook: {mcp: "pitchbook", path: "integrations/financial-services/"}
+      - equity_research: {skill_path: "skills/finance/equity-research/"}
+      - investment_banking: {skill_path: "skills/finance/investment-banking/"}
+
+    engineering_domain:
+      - nasa: {mcp: "nasa_apis", path: "integrations/engineering-mcp/"}
+      - openfoam: {mcp: "openfoam_cfd", path: "integrations/engineering-mcp/"}
+      - openscad: {mcp: "openscad_cad", path: "integrations/engineering-mcp/"}
+      - aws_cloud: {skill_path: "skills/engineering/cloud/aws/"}
+      - azure_cloud: {skill_path: "skills/engineering/cloud/azure/"}
+      - accessibility_wcag: {skill_path: "skills/engineering/patterns/"}
+      - api_design_patterns: {skill_path: "skills/engineering/patterns/"}
+      - agent_framework: {skill_path: "algorithms/voltagent/"}
+
+  new_cross_domain_bridges:
+    bridge_legal_finance:
+      anchor_a: [legal, compliance, contract_review]
+      anchor_b: [sec_edgar, equity_research, investment_banking]
+      strength: 0.65
+      activation_formula: "A(legal, finance) = tanh(2 × fw_legal × fw_finance)"
+      rationale: >
+        Contratos financeiros, due diligence M&A, compliance SEC — alta sobreposição.
+        Ativar legal skills quando finance context E vice-versa.
+
+    bridge_quantum_materials:
+      anchor_a: [quantum_computing, quantum_simulation, statistical_physics]
+      anchor_b: [materials_science, molecular_dynamics, dft, genomics]
+      strength: 0.70
+      activation_formula: "A(quantum, materials) = tanh(2.5 × fw_q × fw_m)"
+      rationale: >
+        Computação quântica para simulação molecular (VQE) e DFT.
+        Qiskit + OpenMM são naturalmente co-ativados em química computacional.
+
+    bridge_marketing_data:
+      anchor_a: [seo, google_ads, meta_ads, campaign, analytics]
+      anchor_b: [data_analysis, sql, visualization, dashboard]
+      strength: 0.60
+      activation_formula: "A(marketing, data) = tanh(2 × fw_mkt × fw_data)"
+      rationale: >
+        Marketing analytics requer SQL/Python para análise de dados de campanhas.
+        Co-ativar data-science skills com marketing skills.
+
+    bridge_healthcare_science:
+      anchor_a: [healthcare, medicine, clinical_trials, icd10]
+      anchor_b: [genomics, bioinformatics, drug_discovery, life_sciences]
+      strength: 0.75
+      activation_formula: "A(health, science) = tanh(3 × fw_h × fw_s)"
+      rationale: >
+        Medicina clínica e ciências da vida são naturalmente inseparáveis.
+        Prior auth + FHIR co-ativam com genomics e drug discovery.
+
+    bridge_engineering_devops:
+      anchor_a: [aws_cloud, azure_cloud, kubernetes, ci_cd]
+      anchor_b: [nasa, openfoam, simulation, cad]
+      strength: 0.45
+      activation_formula: "A(cloud_eng, sci_eng) = tanh(1.5 × fw_c × fw_s)"
+      rationale: >
+        Engenharia de software cloud e engenharia científica têm overlap menor
+        mas relevante para workloads HPC (High Performance Computing) em cloud.
+
+  fmea:
+    rpn: 4
+    mode: "Anchor bridge com peso incorreto — over/under-ativação de skills"
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: >
+      Fórmula de attraction é bounded por tanh (máx = 1.0).
+      Pesos empiricamente ajustados por domínio (quantum mais forte que cloud/sci).
+      Meta_reasoning audita ativações no STEP_P.
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_SKILLS_API_BRIDGE_001 (OPP-115)
+# Prioridade: P1 | Esforço: HIGH | RPN: 8
+# AUDIT GAP: API beta.skills.* da Anthropic não integrada ao DynamicSkillForge
+# ─────────────────────────────────────────────────────────────────
+skills_api_bridge:
+  executor: HYBRID
+  version: v00.34.0
+  opp: OPP-115
+  tier: 2
+  status: PROPOSED
+
+  purpose: >
+    Integrar a Anthropic Skills API (beta.skills.*) ao DynamicSkillForge como
+    método alternativo de carregamento de skills — complementando git_clone (FULL),
+    urllib_raw_fetch (PARTIAL) e inline_paste (MINIMAL).
+    Permite que o APEX: (1) crie skills dinâmicas via API, (2) liste skills disponíveis,
+    (3) execute skills via container beta, (4) valide skills antes de publicar.
+
+  why: >
+    WHY: O relatório APEX_SKILLS_INTEGRATION_REPORT.md documenta a API completa
+    descoberta em skill_utils.py dos cookbooks:
+      client.beta.skills.create() → POST /skills
+      client.beta.skills.list(source="custom") → GET /skills
+      client.beta.skills.retrieve(skill_id) → GET /skills/{id}
+      client.beta.skills.versions.create() → nova versão
+    Headers obrigatórios: anthropic-beta: "code-execution-2025-08-25,skills-2025-10-02"
+    Container skills ativam via: container={"skills": [{"type": "anthropic", "skill_id": "xlsx"}]}
+    Esta API existe e está documentada mas NÃO está integrada ao APEX.
+    Gap: DynamicSkillForge só faz git_clone ou urllib_fetch — não usa Skills API.
+    Benefício: skills de 8MB podem ser upadas e reutilizadas via API sem re-clone.
+
+  when: >
+    WHEN: DynamicSkillForge ativado E runtime == FULL_CLAUDE_CODE E ANTHROPIC_API_KEY disponível.
+    WHEN: Skill solicitada tem skill_id no formato "anthropic:xlsx" ou "custom:skill_abc123".
+    WHEN: Usuário solicita criação/publicação de nova skill.
+
+  description: >
+    O QUE É: Wrapper sobre Anthropic Skills API para CRUD de skills via HTTP.
+    O QUE NÃO É: Substituição do git_clone — é caminho alternativo para skills API-managed.
+    O QUE NÃO É: Disponível em MINIMAL runtime — requer ANTHROPIC_API_KEY.
+    COMO FUNCIONA: DynamicSkillForge detecta skill_id com prefixo "anthropic:" ou "custom:"
+    → usa Skills API em vez de git_clone → executa via container beta.
+    LIMITE: 8 MB por skill (validado por validate_skill_directory()).
+    BETA HEADERS: anthropic-beta: "code-execution-2025-08-25,files-api-2025-04-14,skills-2025-10-02"
+
+  what_if_fails: >
+    FALLBACK 1 — ANTHROPIC_API_KEY não disponível: usar git_clone se repo URL disponível.
+    FALLBACK 2 — beta.skills API não acessível (non-beta account): declarar [SKILLS_API_UNAVAILABLE].
+    FALLBACK 3 — skill > 8MB: ingerir apenas SKILL.md + arquivos <= 100KB.
+    REGRA: Nunca bloquear pipeline por Skills API indisponível.
+
+  inject_when: "DynamicSkillForge.load_skill() com skill_id prefixo anthropic:/custom:"
+  depends_on: [dynamic_skill_forge, llm_runtime_adapter]
+
+  api_methods:
+    create_skill:
+      endpoint: "POST /skills"
+      beta_header: "skills-2025-10-02"
+      input: "skill_path (dir com SKILL.md) + display_title"
+      output: "{skill_id, latest_version, created_at}"
+      apex_use: "Publicar skill gerada pelo PoT Engine para reutilização"
+
+    list_skills:
+      endpoint: "GET /skills?source=custom"
+      output: "[{skill_id, display_title, latest_version}]"
+      apex_use: "Verificar skills disponíveis antes de git_clone"
+
+    retrieve_skill:
+      endpoint: "GET /skills/{skill_id}"
+      output: "{skill_id, name, description, directory, latest_version}"
+      apex_use: "Verificar metadados antes de ativar"
+
+    execute_via_container:
+      method: "messages.create(container={skills: [{type, skill_id, version}]})"
+      required_tools: ["code_execution_20250825"]
+      apex_use: "Execução de skills Anthropic oficiais (xlsx, docx, pptx, pdf, canvas-design)"
+
+    validate_skill:
+      method: "validate_skill_directory(skill_path)"
+      checks:
+        - "SKILL.md presente com frontmatter name + description"
+        - "frontmatter <= 1024 chars"
+        - "Total directory size <= 8 MB"
+      apex_use: "Antes de publicar skill gerada — SkillQualityBar (OPP-94) + este check"
+
+  skill_id_format:
+    anthropic_official: "anthropic:{skill_name}"  # ex: anthropic:xlsx
+    custom:             "custom:{skill_uuid}"     # ex: custom:skill_abc123
+    apex_internal:      "{domain}.{name}"         # formato APEX padrão
+
+  python_implementation: |
+    class SkillsAPIBridge:
+        """Anthropic Skills API bridge para DynamicSkillForge."""
+
+        BETA_HEADERS = {
+            "anthropic-beta": "code-execution-2025-08-25,files-api-2025-04-14,skills-2025-10-02"
+        }
+
+        def __init__(self, api_key: str | None = None):
+            self._available = False
+            try:
+                import anthropic
+                self.client = anthropic.Anthropic(
+                    api_key=api_key,
+                    default_headers=self.BETA_HEADERS
+                )
+                self._available = True
+            except (ImportError, Exception):
+                pass  # FALLBACK: usar git_clone
+
+        def load_skill(self, skill_id: str) -> dict:
+            """Carrega skill via API. skill_id: "anthropic:xlsx" ou "custom:abc123"."""
+            if not self._available:
+                return {"error": "SKILLS_API_UNAVAILABLE", "fallback": "git_clone"}
+            try:
+                prefix, sid = skill_id.split(":", 1)
+                skill = self.client.beta.skills.retrieve(sid)
+                return {
+                    "status": "LOADED_VIA_API",
+                    "skill_id": skill_id,
+                    "name": skill.name,
+                    "description": skill.description,
+                    "version": skill.latest_version
+                }
+            except Exception as e:
+                return {"error": f"SKILLS_API_ERROR:{e}", "fallback": "git_clone"}
+
+        def create_skill(self, skill_path: str, title: str) -> dict:
+            """Cria nova skill via API a partir de diretório local."""
+            if not self._available:
+                return {"error": "SKILLS_API_UNAVAILABLE"}
+            try:
+                from anthropic.lib import files_from_dir
+                skill = self.client.beta.skills.create(
+                    files=files_from_dir(skill_path),
+                    display_title=title
+                )
+                return {"skill_id": f"custom:{skill.skill_id}", "version": skill.latest_version}
+            except Exception as e:
+                return {"error": f"CREATE_FAILED:{e}"}
+
+        def execute_with_skill(self, skill_ids: list[str], prompt: str,
+                               model: str = "claude-opus-4-6") -> dict:
+            """Executa skill via container beta."""
+            if not self._available:
+                return {"error": "SKILLS_API_UNAVAILABLE"}
+            container_skills = [
+                {"type": "anthropic" if s.startswith("anthropic:") else "custom",
+                 "skill_id": s.split(":", 1)[1], "version": "latest"}
+                for s in skill_ids
+            ]
+            response = self.client.beta.messages.create(
+                model=model,
+                max_tokens=4096,
+                container={"skills": container_skills},
+                tools=[{"type": "code_execution_20250825", "name": "code_execution"}],
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return {"status": "EXECUTED", "response": response}
+
+  fmea:
+    rpn: 8
+    mode: "Skills API em beta — endpoints podem mudar ou ser descontinuados"
+    probability: 2
+    severity: 4
+    detection: 1
+    mitigation: >
+      Fallback para git_clone sempre disponível.
+      try/except em todos os calls à API.
+      Version pinning: sempre usar latest (auto-migra).
+      Declarar [SKILLS_API_BETA_USED] em todo output que usa esta via.
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_COMMUNITY_AGENT_ROSTER_001 (OPP-116)
+# Prioridade: P1 | Esforço: LOW | RPN: 2
+# AUDIT GAP: 33 community agents + 157 subagent patterns não integrados ao dynamic_agent_roster
+# ─────────────────────────────────────────────────────────────────
+community_agent_roster:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-116
+  tier: 2
+  status: PROPOSED
+
+  purpose: >
+    Integrar os 33 community agents (code-archaeologist, django-api-developer,
+    fastapi-expert, ml-data-expert, etc.) e os 157 subagent patterns ao dynamic_agent_roster
+    do APEX como agentes OPTIONAL — ativados pelo meta_reasoning quando o domínio bate
+    e nenhum agente base cobre adequadamente.
+
+  why: >
+    WHY: Os 33 agentes de agents/community-awesome/ têm roles especializadas que
+    nenhum agente base (architect, engineer, critic, researcher) cobre:
+    - code-archaeologist: trace execution paths, map architecture layers
+    - django-orm-expert: Django ORM queries, migrations, model design
+    - fastapi-expert: FastAPI async, Pydantic, dependency injection
+    - ml-data-expert: ML pipelines, feature engineering, model evaluation
+    - tech-lead-orchestrator: technical decisions, delegation, team coordination
+    Sem integração ao roster, o APEX usa apenas os 10 agentes base mesmo quando
+    o problema é claramente Django ORM ou FastAPI — gerando outputs menos especializados.
+
+  when: >
+    WHEN: meta_reasoning detecta domínio que bate com agent category E
+    nenhum agente base tem expertise primária naquele domínio.
+    WHEN: Usuário solicita explicitamente expertise em framework/domínio específico.
+
+  what_if_fails: >
+    FALLBACK: Agentes base cobrem o domínio com expertise genérica.
+    REGRA: Community agents NUNCA substituem agentes base — são adicionais.
+    REGRA: Máximo 2 community agents ativos por sessão (token budget).
+
+  inject_when: "STEP_1 (pmi_pm scoping) detecta domínio especializado"
+  depends_on: [dynamic_agent_roster, meta_reasoning, forgeskills_catalog_boot]
+
+  community_roster:
+    tier: OPTIONAL
+    max_concurrent: 2
+    activation_gate: "meta_reasoning verifica se base agents cobrem domínio"
+    source_path: "agents/community-awesome/"
+    source_subagents: "agents/community-subagents/"
+
+    agents:
+      core:
+        code-archaeologist:
+          role: "Análise de codebases — execution paths, architecture layers, dependency maps"
+          activates_when: [code_analysis, reverse_engineering, legacy_code]
+          tools: [Glob, Grep, Read, Bash]
+          model: sonnet
+
+        code-reviewer:
+          role: "Code review sistemático — 7 domínios: structure, style, security, testing, CI/CD"
+          activates_when: [code_review, pull_request, quality_assurance]
+          output_format: "CRITICAL / IMPORTANT / SUGGESTION / POSITIVE"
+          model: sonnet
+
+        documentation-specialist:
+          role: "Documentação técnica — READMEs, API docs, tutorials, changelogs"
+          activates_when: [documentation, api_docs, readme, developer_guide]
+          model: haiku
+
+        performance-optimizer:
+          role: "Análise e otimização de performance — profiling, bottlenecks, benchmarks"
+          activates_when: [performance, optimization, profiling, benchmark]
+          model: sonnet
+
+      python:
+        django-api-developer:
+          activates_when: [django, django_rest, drf, api_django]
+          model: sonnet
+        django-orm-expert:
+          activates_when: [django, orm, migrations, querysets]
+          model: sonnet
+        fastapi-expert:
+          activates_when: [fastapi, pydantic, async_python, uvicorn]
+          model: sonnet
+        ml-data-expert:
+          activates_when: [machine_learning, sklearn, feature_engineering, model_eval]
+          model: opus
+        python-expert:
+          activates_when: [python, debugging, performance_python, async]
+          model: sonnet
+        testing-expert:
+          activates_when: [pytest, tdd, unit_tests, integration_tests]
+          model: sonnet
+
+      orchestrators:
+        tech-lead-orchestrator:
+          role: "Technical leadership — architecture decisions, delegation, trade-off analysis"
+          activates_when: [system_design, technical_decision, team_structure]
+          model: opus
+        project-analyst:
+          role: "Project scoping, requirements analysis, risk assessment"
+          activates_when: [project_planning, requirements, scope_analysis]
+          model: sonnet
+        team-configurator:
+          role: "Configurar equipe de agentes para problemas complexos"
+          activates_when: [multi_agent, complex_problem, agent_selection]
+          model: sonnet
+
+  activation_protocol: |
+    # STEP_1 (pmi_pm) detecta domínio → meta_reasoning verifica roster:
+    # 1. Extrair domínio primário da tarefa
+    # 2. Verificar se algum agente base (architect, engineer, etc.) tem expertise primária
+    # 3. SE não: buscar em community_roster por activates_when match
+    # 4. SE match: emitir [COMMUNITY_AGENT_ACTIVATED: {agent_name} | domain: {domain}]
+    # 5. Agente community recebe [PARTITION_ACTIVE: {role}] e executa em STEP_N
+    # 6. Output integrado ao pipeline como qualquer agente base
+    # MAX 2 community agents: 1 domain expert + 1 orchestrator (se necessário)
+
+  fmea:
+    rpn: 2
+    mode: "Community agent ativado incorretamente — expertise não match real"
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: >
+      activates_when é específico (ex: [fastapi, pydantic, async_python]).
+      meta_reasoning valida match antes de ativar.
+      Agentes base sempre disponíveis como fallback.
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_POT_SANDBOX_UNIFICATION_001 (OPP-117)
+# Prioridade: P0 | Esforço: MEDIUM | RPN: 6
+# AUDIT GAP: PoT Engine emite código Python sem sintaxe específica por runtime
+# ─────────────────────────────────────────────────────────────────
+pot_sandbox_unification:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-117
+  tier: 0
+  status: PROPOSED
+
+  purpose: >
+    Garantir que o PoT Engine emita código Python com a sintaxe de ativação correta
+    para o runtime detectado no STEP_0, eliminando o gap onde código gerado para
+    Claude Code não funciona em DeepSeek (falta @sandbox) ou vice-versa.
+    Unificar: output do PoT sempre inclui o prefixo/marker correto para o runtime ativo.
+
+  why: >
+    WHY: O PoT Engine (OPP-67, OPP-MAS-B1) gera blocos ```python ... ``` que funcionam
+    em Claude Code mas NÃO ativam o sandbox do DeepSeek (requer @sandbox/@python).
+    Em ChatGPT Code Interpreter, o bloco ```python``` é suficiente.
+    Em Grok Aurora, similar ao Claude.
+    Sem unificação: o mesmo APEX rodando em DeepSeek gera código que não executa,
+    tornando TODOS os módulos SANDBOX_CODE ineficazes naquele runtime.
+    Esse é o gap mais impactante para multi-LLM deployment do APEX.
+
+  when: "STEP_3 (PoT generation) — SEMPRE que gerar bloco Python para execução"
+
+  description: >
+    O QUE É: Wrapper de sintaxe de código — o PoT Engine injeta prefixo correto
+    baseado no sandbox_profile detectado no STEP_0.
+    O QUE NÃO É: Mudança na lógica do código — apenas no formato de apresentação.
+    COMO FUNCIONA: STEP_0 → detectar profile → salvar em session.sandbox_profile →
+    STEP_3 PoT generation → consultar session.sandbox_profile → emitir com prefixo correto.
+
+  what_if_fails: >
+    FALLBACK: Emitir sem prefixo (```python ... ```) — funciona em maioria dos runtimes.
+    REGRA: NUNCA falhar por não saber o prefixo — usar default sem prefixo.
+
+  inject_when: "PoT Engine gera qualquer bloco Python para execução"
+  depends_on: [multi_sandbox_profiles, pot_engine]
+
+  syntax_by_profile:
+    FULL_CLAUDE_CODE: |
+      ```python
+      {codigo}
+      ```
+    FULL_DEEPSEEK: |
+      @sandbox
+      ```python
+      {codigo}
+      ```
+    FULL_GROK: |
+      ```python
+      {codigo}
+      ```
+    PARTIAL_CHATGPT_CI: |
+      ```python
+      {codigo}
+      ```
+    PARTIAL_GEMINI: |
+      ```python
+      {codigo}
+      ```
+    MINIMAL: |
+      [SIMULATED — código abaixo seria executado em runtime com sandbox:]
+      ```python
+      {codigo}
+      ```
+
+  deepseek_library_activation: |
+    # DeepSeek: além de @sandbox, pode ativar libs específicas:
+    # @numpy → import numpy as np (pré-ativado)
+    # @pandas → import pandas as pd (pré-ativado)
+    # @matplotlib → import matplotlib.pyplot as plt (pré-ativado)
+    # @scipy → from scipy import ... (pré-ativado)
+    # @sympy → from sympy import ... (pré-ativado)
+    # @sklearn → from sklearn import ... (pré-ativado)
+    #
+    # APEX comportamento no DeepSeek:
+    # Monte Carlo → @sandbox com numpy pré-ativado
+    # Data analysis → @pandas ou @sandbox
+    # Symbolic math → @sympy
+    # Scientific computing → @scipy
+
+  output_markers_extended:
+    FULL_CLAUDE_CODE: "[POT_EXECUTED: FULL | runtime: Claude Code]"
+    FULL_DEEPSEEK:    "[POT_EXECUTED: FULL | runtime: DeepSeek @sandbox | libs: {libs_used}]"
+    FULL_GROK:        "[POT_EXECUTED: FULL | runtime: Grok Aurora]"
+    PARTIAL_CHATGPT_CI: "[POT_PARTIAL: ChatGPT CI | {modulos_indisponiveis}]"
+    PARTIAL_GEMINI:   "[POT_PARTIAL: Gemini Jupyter]"
+    MINIMAL:          "[POT_SIMULATED: sem runtime de execução]"
+
+  rules_enforced: [SR_07, SR_39]
+
+  fmea:
+    rpn: 6
+    mode: "Profile salvo incorretamente → prefixo errado → código não executa"
+    probability: 2
+    severity: 3
+    detection: 1
+    mitigation: >
+      session.sandbox_profile imutável após STEP_0.
+      POT Engine valida profile antes de emitir.
+      Se profile inválido: usar MINIMAL syntax (safe default).
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_MARKETPLACE_SKILL_FORGE_001 (OPP-118) [BONUS]
+# Prioridade: P2 | Esforço: LOW | RPN: 2
+# AUDIT GAP: Anthropic Marketplace (marketplace.json) não integrado ao skill discovery
+# ─────────────────────────────────────────────────────────────────
+marketplace_skill_forge:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-118
+  tier: 2
+  status: PROPOSED
+
+  purpose: >
+    Integrar o sistema de Marketplace do Claude (marketplace.json) ao SkillIndexer
+    para descoberta de skills via catálogo oficial Anthropic, complementando o
+    ForgeSkills raw GitHub fetch.
+
+  why: >
+    WHY: O arquivo .claude-plugin/marketplace.json em múltiplos repos define bundles
+    de skills que podem ser instalados como um grupo. Por exemplo, o skills-main tem
+    bundles: document-skills (xlsx+docx+pptx+pdf), example-skills (12 skills), claude-api.
+    O APEX não conhece esse sistema de bundles — trata skills individualmente.
+    Conhecer os bundles permite: ativar conjunto coerente de skills com uma âncora
+    (ex: "document processing" → ativa bundle document-skills via Skills API ou clone).
+
+  when: >
+    WHEN: DynamicSkillForge detecta skill_id com prefixo "bundle:"
+    WHEN: Usuário solicita capacidade que mapeie para bundle conhecido.
+
+  what_if_fails: "Skill discovery individual como fallback"
+  inject_when: "SkillIndexer.discover() + apex_superrepo_boot"
+  depends_on: [skills_api_bridge, dynamic_skill_forge]
+
+  known_bundles:
+    document_skills:
+      bundle_id: "bundle:document-skills"
+      skills: [xlsx, docx, pptx, pdf]
+      activates_when: [document_processing, spreadsheet, presentation, pdf_analysis]
+      source: "anthropic:xlsx, anthropic:docx, anthropic:pptx, anthropic:pdf"
+
+    example_skills:
+      bundle_id: "bundle:example-skills"
+      skills: [algorithmic-art, canvas-design, frontend-design, mcp-builder, skill-creator,
+               webapp-testing, slack-gif-creator, theme-factory, claude-api]
+      activates_when: [creative, web_development, mcp_creation, skill_creation]
+
+    claude_api_bundle:
+      bundle_id: "bundle:claude-api"
+      skills: [claude-api]
+      activates_when: [sdk_usage, api_integration, multi_language_sdk]
+      description: "SDK multi-linguagem Python/TypeScript/Java para Anthropic API"
+
+    finance_bundle:
+      bundle_id: "bundle:financial-services"
+      skills: [equity-research, financial-analysis, investment-banking, wealth-management]
+      activates_when: [finance, equity_research, investment_banking, financial_analysis]
+
+    knowledge_work_bundle:
+      bundle_id: "bundle:knowledge-work"
+      skills: [legal, marketing, engineering, hr, sales, data, design, product-management]
+      activates_when: [enterprise, knowledge_work, professional_workflow]
+
+  fmea:
+    rpn: 2
+    mode: "Bundle desatualizado — skills mudaram desde mapeamento"
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: "marketplace.json fetch dinâmico via apex_superrepo_boot quando possível"
+
+# ═══════════════════════════════════════════════════════════════════
+# SUMMARY
+# ═══════════════════════════════════════════════════════════════════
+diff_pack_summary:
+  version: v00.34.0
+  total_opps: 9
+  opps: [OPP-110, OPP-111, OPP-112, OPP-113, OPP-114, OPP-115, OPP-116, OPP-117, OPP-118]
+
+  gaps_closed:
+    OPP-110: "llm_runtime_adapter incompleto → DeepSeek @sandbox + Grok + ChatGPT CI profiles"
+    OPP-111: "apex_superrepo stats desatualizados → 2.752 skills, 19 agents, 80+ MCPs, 56 repos"
+    OPP-112: "forgeskills não carrega CATALOG.md → MCP auto-registration por domínio"
+    OPP-113: "domain_skills_ingestion desatualizado → mapa completo 2.752 skills / 56 repos"
+    OPP-114: "anchor_map sem novos domínios → legal, quantum, marketing, healthcare, finance"
+    OPP-115: "Skills API Anthropic não integrada → CRUD skills via beta.skills.*"
+    OPP-116: "33 community agents não no roster → OPTIONAL tier com activation protocol"
+    OPP-117: "PoT Engine sem sintaxe por runtime → @sandbox DeepSeek + unificação multi-LLM"
+    OPP-118: "Marketplace bundles não conhecidos → bundle discovery e ativação coordenada"
+
+  modules_fully_integrated_post_034:
+    - "llm_runtime_adapter: FULL_CLAUDE_CODE + FULL_DEEPSEEK + FULL_GROK + PARTIAL_* + MINIMAL"
+    - "forgeskills_rapid_reader: INDEX.md + CATALOG.md (MCP) + AGENT.md (community)"
+    - "domain_skills_ingestion: 2.752 skills / 56 repos / 43 domínios"
+    - "hyperbolic_anchor_map: 7 bridges originais + 5 novos cross-domain bridges"
+    - "dynamic_skill_forge: git_clone + urllib_fetch + Skills_API + inline_paste"
+    - "dynamic_agent_roster: 10 base + 33 community OPTIONAL + 157 subagent patterns"
+    - "pot_engine: sintaxe correta por runtime ativo (@sandbox DeepSeek, ```python``` padrão)"
+    - "mcp_bridge_v2: 80+ server URLs via CATALOG.md auto-loading"
+    - "marketplace_skill_forge: bundles document/finance/knowledge-work/example/claude-api"
+    - "apex_superrepo: configurado, stats atualizados, em trusted_domains"
+
+  modules_verified_complete_pre_034:
+    - "orjson_serializer (OPP-92): ✓ with fallback json stdlib"
+    - "constitutional_anchor (OPP-93): ✓ anchored to 2026-01-20"
+    - "skill_quality_bar (OPP-94): ✓ 6 checks before ingestion"
+    - "risk_taxonomy_extended (OPP-95): ✓ none/safe/unknown/critical/offensive"
+    - "mcp_bridge_v2 (OPP-96): ✓ in-process servers"
+    - "knowledge_graph_memory (OPP-97): ✓ MCP memory server"
+    - "session_fork (OPP-98): ✓ SQLite fork for speculative PoT"
+    - "token_budget_tracker (OPP-99): ✓ per-stage real tracking"
+    - "design_fusion_injector (OPP-100): ✓ +3σ design patterns"
+    - "uco_extended_metrics (OPP-101): ✓ dead_code/coupling/cohesion"
+    - "sequential_thinking (OPP-103): ✓ thoughtNumber/isRevision/branch"
+    - "trusted_domains: ✓ https://raw.githubusercontent.com/thiagofernandes1987-create/"
+    - "inviolable_rules SR_37/SR_38/SR_39/SR_40: ✓ all enforced"
+    - "hypothesis_dag (OPP-MAS-01): ✓ edge-only serialization"
+    - "code_genetics_map (OPP-MAS-02): ✓ frozenset O(1) index"
+    - "error_evolution_loop (OPP-MAS-03): ✓ diagnose-patch-reexecute"
+    - "monte_carlo_simulator (OPP-73): ✓ P10/P50/P90 with numpy"
+    - "sqlite_snapshot_store (OPP-66): ✓ persistent sessions"
+
+  total_diffs_post_034: 113
+  fmea_rpn_max: 16
+  constitutional_citation:
+    section: "Being broadly safe — Supporting human oversight"
+    rationale: >
+      Todos os OPPs v00.34.0 expandem capacidades mas NUNCA removem proteções.
+      OPP-110 (DeepSeek sandbox) não bypassa AST scan ou UCO gate.
+      OPP-115 (Skills API) não contorna SR_37 (security scan obrigatório).
+      OPP-116 (community agents) respeita H5 (sem auto-apply).
+      SR_39 (LLM_RUNTIME_GUARD) enforced em todos os novos módulos SANDBOX_CODE.

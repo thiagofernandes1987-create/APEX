@@ -1,0 +1,916 @@
+# ============================================================
+# APEX DIFF PACK — v00.36.0
+# OPPs: 125-132
+# Baseado em: análise estrutural completa (sessão 2026-04-10)
+# Audit sources: 19 agentes, 50+ skills, 124 OPPs, simulação
+# ============================================================
+
+meta:
+  pack_id: apex_v00_36_0_diff_pack
+  version_from: v00.35.0
+  version_to: v00.36.0
+  total_opps: 8
+  opps_range: "OPP-125 to OPP-132"
+  created_at: "2026-04-10"
+  author: "APEX System + Audit v2"
+  status: PROPOSED
+
+opps:
+
+  # ============================================================
+  # OPP-125: SR_42 — Integridade SHA-256 para trusted_domains
+  # ============================================================
+  - opp_id: OPP-125
+    name: sr42_trusted_domain_integrity
+    title: "SR_42 — SHA-256 integrity gate para trusted_domains"
+    version_target: v00.36.0
+    status: PROPOSED
+    approval_required: true
+    type: security
+    executor_type: HYBRID
+
+    why: >
+      Audit identificou que trusted_domains valida apenas URL mas não integridade do conteúdo.
+      Um repositório whitelistado pode ser comprometido (supply chain attack) e o APEX
+      executaria código malicioso sem detecção. OPP-104 adicionou a whitelist; este OPP
+      adiciona a segunda linha de defesa: hash de integridade por arquivo.
+
+    when: >
+      Ativado em ForgeSkills.fetch() antes de parsear qualquer SKILL.md ou código clonado
+      de repositório externo. Não aplicado a recursos internos do prompt.
+
+    how:
+      description: >
+        Adicionar SR_42 como regra inviolável no kernel. Implementar hash_registry em
+        apex_runtime_probe para armazenar SHA-256 esperados dos arquivos do repositório
+        canônico. ForgeSkills verifica hash antes de exec/importlib. Mismatch = BLOQUEAR.
+      changes:
+        - section: kernel.inviolable_rules
+          change_type: add
+          description: "SR_42: trusted_domain integrity check via SHA-256"
+        - section: forgeskills_true_autoboot
+          change_type: modify
+          description: "Adicionar verificação de hash pós-fetch antes de registrar skill"
+        - section: apex_runtime_probe
+          change_type: modify
+          description: "Adicionar hash_registry dict com SHA-256 esperados dos arquivos core"
+
+    implementation:
+      sr_42_rule: |
+        SR_42 — TRUSTED_DOMAIN_INTEGRITY (inviolável)
+        Todo arquivo clonado de trusted_domain deve ter SHA-256 verificado contra
+        hash_registry antes de exec, importlib ou registro como ACTIVE.
+        Mismatch → BLOQUEAR execução, registrar [SECURITY_ALERT: HASH_MISMATCH].
+        Hash ausente no registry → registrar como PROVISIONAL, não como ACTIVE.
+
+      forgeskills_hash_check: |
+        # WHY: Verificar integridade antes de executar código externo
+        # WHEN: Após urllib.request.urlopen() ou git clone, antes de qualquer uso
+        # HOW: SHA-256 do conteúdo comparado com hash_registry
+        # WHAT_IF_FAILS: BLOQUEAR — nunca executar código com hash inválido
+
+        import hashlib
+
+        def verify_integrity(content: bytes, expected_sha256: str) -> bool:
+            """
+            WHY: Detectar comprometimento de repositório externo.
+            WHEN: Chamado em ForgeSkills após cada fetch, antes de registrar skill.
+            HOW: SHA-256 do conteúdo bytes vs hash esperado no registry.
+            WHAT_IF_FAILS: Retornar False — caller deve bloquear execução.
+            """
+            if not expected_sha256:
+                # WHY: Hash ausente = arquivo não catalogado = não confiável
+                return False  # Registrar como PROVISIONAL
+            try:
+                actual = hashlib.sha256(content).hexdigest()
+                return actual == expected_sha256
+            except Exception:
+                return False  # Falha de verificação = não confiável
+
+        def forge_skill_with_integrity(url: str, hash_registry: dict) -> dict:
+            """
+            WHY: Wraps ForgeSkills fetch com verificação obrigatória de integridade.
+            WHEN: Substitui chamada direta de urllib em ForgeSkills boot.
+            HOW: Fetch → hash → verify → parsear OU bloquear.
+            WHAT_IF_FAILS: Retornar dict de erro [SECURITY_ALERT] — nunca silencioso.
+            """
+            import urllib.request
+
+            try:
+                with urllib.request.urlopen(url, timeout=10) as r:
+                    content = r.read()
+            except Exception as e:
+                return {"status": "ERROR", "reason": f"Fetch falhou: {e}",
+                        "nota": "[ERROR: FORGESKILLS_FETCH_FAILED]"}
+
+            expected_hash = hash_registry.get(url, "")
+            if not verify_integrity(content, expected_hash):
+                if not expected_hash:
+                    status = "PROVISIONAL"
+                    nota = "[SECURITY_NOTICE: hash não cadastrado — skill registrada como PROVISIONAL]"
+                else:
+                    return {
+                        "status": "BLOCKED",
+                        "reason": "SHA-256 mismatch — possível comprometimento",
+                        "url": url,
+                        "nota": "[SECURITY_ALERT: HASH_MISMATCH]"
+                    }
+            else:
+                status = "OK"
+                nota = "[INTEGRITY_VERIFIED]"
+
+            return {
+                "status": status,
+                "content": content.decode("utf-8"),
+                "nota": nota
+            }
+
+    impacts:
+      modules_added: [sr42_integrity_checker]
+      modules_modified: [forgeskills_true_autoboot, apex_runtime_probe, kernel.inviolable_rules]
+      rules_added: [SR_42]
+      breaking_changes: false
+
+    what_if_fails:
+      - mode: "hash_registry vazio — todas as skills ficam PROVISIONAL"
+        probability: 6
+        severity: 5
+        detection: 2
+        rpn: 60
+        mitigation: "Popular hash_registry com hashes dos arquivos core no boot"
+        fallback: "Skills PROVISIONAL são carregadas mas marcadas — usuário avisado"
+      - mode: "SHA-256 falso no registry — skill maliciosa passa"
+        probability: 2
+        severity: 9
+        detection: 7
+        rpn: 126
+        mitigation: "Registry deve ser parte do prompt assinado, não fetchável externamente"
+        fallback: "Audit periódico manual do hash_registry"
+      - mode: "hashlib indisponível (runtime exótico)"
+        probability: 1
+        severity: 8
+        detection: 3
+        rpn: 24
+        mitigation: "hashlib é stdlib Python universal — indisponibilidade indica runtime corrompido"
+        fallback: "Bloquear tudo com nota [SECURITY: hashlib unavailable]"
+      - mode: "Fork do repositório passa hash diferente"
+        probability: 3
+        severity: 6
+        detection: 3
+        rpn: 54
+        mitigation: "trusted_domains só inclui URL canônica, não forks"
+        fallback: "Fork detectado como HASH_MISMATCH → PROVISIONAL"
+
+    fmea:
+      total_rpn: 264
+      risk_level: MEDIUM
+      gate: PASS
+
+    rollback:
+      feasible: true
+      procedure: "Remover SR_42 de inviolable_rules. Reverter forgeskills_true_autoboot para versão OPP-124. ForgeSkills volta a funcionar sem verificação de hash."
+
+    depends_on: [OPP-124, OPP-119]
+    conflicts_with: []
+
+  # ============================================================
+  # OPP-126: SR_43 — Gate de Aprovação por Contexto Crítico
+  # ============================================================
+  - opp_id: OPP-126
+    name: sr43_approval_gate_by_context
+    title: "SR_43 — approval_required obrigatório para mudanças em contexto crítico"
+    version_target: v00.36.0
+    status: PROPOSED
+    approval_required: true
+    type: security
+    executor_type: LLM_BEHAVIOR
+
+    why: >
+      Audit identificou OPPs com approval_required: false que modificavam trusted_domains
+      e security policies. Isto cria vetor de corrupção silenciosa do prompt — mudanças
+      críticas sem gate humano. SR_43 formaliza a regra implícita H5 ("nunca auto-aplicar
+      DIFFs") em uma regra estrutural verificável por automação.
+
+    when: >
+      Avaliado no momento de criação de qualquer OPP. Validado automaticamente pelo
+      SkillQualityBar do processo de aprovação. Violação = OPP rejeitado automaticamente.
+
+    how:
+      description: >
+        Definir lista de contextos críticos onde approval_required: true é obrigatório.
+        Adicionar verificação no OPPQualityBar. Qualquer OPP que modifique contexto crítico
+        com approval_required: false é automaticamente marcado REJECTED.
+      changes:
+        - section: kernel.inviolable_rules
+          change_type: add
+          description: "SR_43: approval gate obrigatório para contextos críticos"
+        - section: opp_quality_bar
+          change_type: modify
+          description: "Adicionar verificação SR_43 no gate de validação"
+
+    implementation:
+      sr_43_rule: |
+        SR_43 — APPROVAL_GATE_BY_CONTEXT (inviolável)
+        approval_required: true é OBRIGATÓRIO para qualquer OPP que modifique:
+          - kernel.inviolable_rules (SR_*, H_*, C_*, G_*)
+          - trusted_domains (qualquer adição ou remoção)
+          - security.mitigation policies
+          - executor_permissions (o que cada tipo pode fazer)
+          - opp_quality_bar (critérios de aprovação)
+        Violação automática → OPP status: REJECTED com reason: SR_43_VIOLATION.
+
+      critical_contexts:
+        - kernel.inviolable_rules
+        - trusted_domains
+        - security.mitigation
+        - executor_permissions
+        - opp_quality_bar
+        - forgeskills_true_autoboot
+        - apex_runtime_probe
+
+    impacts:
+      modules_added: [sr43_approval_validator]
+      modules_modified: [kernel.inviolable_rules, opp_quality_bar]
+      rules_added: [SR_43]
+      breaking_changes: false
+
+    what_if_fails:
+      - mode: "Validador não detecta modificação indireta de contexto crítico"
+        probability: 4
+        severity: 7
+        detection: 5
+        rpn: 140
+        mitigation: "Validador usa AST diff para detectar mudanças, não apenas campo 'target'"
+        fallback: "Revisão humana obrigatória para qualquer OPP marcado HYBRID ou SANDBOX_CODE"
+      - mode: "Usuário bypassa com approval_required: true mas sem revisão real"
+        probability: 5
+        severity: 6
+        detection: 6
+        rpn: 180
+        mitigation: "SR_43 valida campo, não garante qualidade da revisão — responsabilidade do operador"
+        fallback: "Audit log de todos os OPPs aprovados"
+      - mode: "Lista de contextos críticos incompleta"
+        probability: 4
+        severity: 5
+        detection: 4
+        rpn: 80
+        mitigation: "Lista é extensível — qualquer adição requer OPP com SR_43"
+        fallback: "Princípio conservador: em dúvida, marcar como crítico"
+
+    fmea:
+      total_rpn: 400
+      risk_level: MEDIUM
+      gate: PASS
+
+    rollback:
+      feasible: true
+      procedure: "Remover SR_43 de inviolable_rules. OPPs voltam a poder ter approval_required: false em qualquer contexto."
+
+    depends_on: []
+    conflicts_with: []
+
+  # ============================================================
+  # OPP-127: SR_44 — FMEA Completeness Gate
+  # ============================================================
+  - opp_id: OPP-127
+    name: sr44_fmea_completeness_gate
+    title: "SR_44 — Mínimo de modos de falha por tipo de OPP"
+    version_target: v00.36.0
+    status: PROPOSED
+    approval_required: true
+    type: security
+    executor_type: LLM_BEHAVIOR
+
+    why: >
+      Audit encontrou OPPs com what_if_fails contendo apenas 1 modo de falha trivial
+      ("se falhar, não aplicar"). FMEA incompleto é equivalente a nenhum FMEA — o único
+      valor é criar ilusão de governança sem sua substância. SR_44 impõe mínimos verificáveis.
+
+    when: >
+      Validado no OPPQualityBar. OPP que não atinge mínimo = REJECTED automaticamente.
+
+    how:
+      changes:
+        - section: kernel.inviolable_rules
+          change_type: add
+          description: "SR_44: mínimo de modos de falha por tipo"
+
+    implementation:
+      sr_44_rule: |
+        SR_44 — FMEA_COMPLETENESS_GATE (inviolável)
+        Mínimo de modos de falha em what_if_fails por tipo de OPP:
+          - executor_type: SANDBOX_CODE → mínimo 3 modos
+          - executor_type: HYBRID → mínimo 3 modos
+          - type: security → mínimo 4 modos (independente de executor_type)
+          - type: feature com breaking_changes: true → mínimo 3 modos
+          - Demais → mínimo 2 modos
+        Modo trivial ("se falhar, não aplicar") não conta como modo válido.
+        Modo sem mitigation ou fallback não conta como modo válido.
+
+    impacts:
+      modules_modified: [kernel.inviolable_rules, opp_quality_bar]
+      rules_added: [SR_44]
+      breaking_changes: false
+
+    what_if_fails:
+      - mode: "OPPs legítimos rejeitados por FMEA incompleto"
+        probability: 5
+        severity: 3
+        detection: 2
+        rpn: 30
+        mitigation: "Mensagem de rejeição inclui lista exata do que está faltando"
+        fallback: "Autor completa FMEA e resubmete — não requer aprovação adicional se só FMEA mudou"
+      - mode: "Autores adicionam modos de falha fictícios para passar o gate"
+        probability: 4
+        severity: 5
+        detection: 6
+        rpn: 120
+        mitigation: "Revisor humano valida se modos são plausíveis"
+        fallback: "FMEA de baixa qualidade é melhor que nenhum — revisão posterior"
+
+    fmea:
+      total_rpn: 150
+      risk_level: LOW
+      gate: PASS
+
+    rollback:
+      feasible: true
+      procedure: "Remover SR_44 de inviolable_rules. OPPs voltam a aceitar qualquer número de modos."
+
+    depends_on: []
+    conflicts_with: []
+
+  # ============================================================
+  # OPP-128: SR_45 — Ghost Dependency Blocker
+  # ============================================================
+  - opp_id: OPP-128
+    name: sr45_ghost_dependency_blocker
+    title: "SR_45 — depends_on com módulo indefinido bloqueia aprovação de OPP"
+    version_target: v00.36.0
+    status: PROPOSED
+    approval_required: true
+    type: fix
+    executor_type: HYBRID
+
+    why: >
+      Audit encontrou 13 ghost dependencies no v00.34.0 (módulos referenciados em
+      depends_on que não existiam). OPP-121 corrigiu 7 delas. SR_45 previne reincidência
+      formalizando que OPP com depends_on inválido não pode ser aprovado. A causa raiz é
+      que dependências eram adicionadas sem verificação de existência.
+
+    when: >
+      Validado no OPPQualityBar no momento de aprovação. Verificado por apex_runtime_probe
+      na inicialização (critical_missing: set() deve estar vazio).
+
+    how:
+      changes:
+        - section: kernel.inviolable_rules
+          change_type: add
+          description: "SR_45: ghost dependency blocker"
+        - section: apex_runtime_probe
+          change_type: modify
+          description: "Adicionar verificação de ghost dependencies no boot"
+
+    implementation:
+      sr_45_rule: |
+        SR_45 — GHOST_DEPENDENCY_BLOCKER (inviolável)
+        Nenhum OPP pode ser aprovado se qualquer módulo em depends_on não existir
+        no prompt master_full OU no repositório canônico OU no APEX_SKILL_REGISTRY.
+        Verificação é feita em aprovação (OPPQualityBar) E em boot (apex_runtime_probe).
+        critical_missing: set() deve estar vazio para que status: FULLY_OPERATIONAL.
+
+      ghost_dependency_check: |
+        # WHY: Detectar depends_on referenciando módulos inexistentes antes de aprovação
+        # WHEN: Chamado no OPPQualityBar e no apex_runtime_probe boot
+        # HOW: grep de cada item em depends_on contra lista de módulos definidos
+        # WHAT_IF_FAILS: OPP rejeitado com lista de dependências fantasma
+
+        def check_ghost_dependencies(depends_on: list, defined_modules: set) -> dict:
+            """
+            WHY: Prevenir OPPs com dependências para módulos inexistentes.
+            WHEN: Validação de OPP antes de aprovação.
+            HOW: Set difference entre depends_on e defined_modules.
+            WHAT_IF_FAILS: Retornar lista de ghosts — caller bloqueia aprovação.
+            """
+            if not depends_on:
+                return {"status": "OK", "ghosts": []}
+
+            ghosts = [d for d in depends_on if d not in defined_modules]
+            if ghosts:
+                return {
+                    "status": "BLOCKED",
+                    "ghosts": ghosts,
+                    "action": f"Definir módulos {ghosts} antes de aprovar este OPP",
+                    "nota": "[SR_45_VIOLATION: GHOST_DEPENDENCIES_DETECTED]"
+                }
+            return {"status": "OK", "ghosts": []}
+
+    impacts:
+      modules_modified: [kernel.inviolable_rules, apex_runtime_probe, opp_quality_bar]
+      rules_added: [SR_45]
+      breaking_changes: false
+
+    what_if_fails:
+      - mode: "depends_on referencia módulo que existe mas com nome diferente"
+        probability: 5
+        severity: 4
+        detection: 3
+        rpn: 60
+        mitigation: "Checador usa fuzzy match com threshold 0.85 para sugerir nomes similares"
+        fallback: "Mensagem de erro inclui sugestão do módulo mais similar"
+      - mode: "Módulo existe no repo mas não está no prompt — falso positivo"
+        probability: 4
+        severity: 3
+        detection: 3
+        rpn: 36
+        mitigation: "Checador verifica prompt E repo. Módulo no repo = não é ghost."
+        fallback: "OPP marcado como 'repo_only_dependency' — aceito com aviso"
+      - mode: "defined_modules list desatualizada no boot"
+        probability: 3
+        severity: 5
+        detection: 4
+        rpn: 60
+        mitigation: "apex_runtime_probe recalcula defined_modules em cada boot, não usa cache"
+        fallback: "Se recálculo falhar → usar snapshot da última sessão com aviso"
+
+    fmea:
+      total_rpn: 156
+      risk_level: LOW
+      gate: PASS
+
+    rollback:
+      feasible: true
+      procedure: "Remover SR_45 de inviolable_rules. depends_on volta a aceitar qualquer valor sem verificação."
+
+    depends_on: [OPP-121, OPP-119]
+    conflicts_with: []
+
+  # ============================================================
+  # OPP-129: Normalização de Agentes Community
+  # ============================================================
+  - opp_id: OPP-129
+    name: community_agent_normalization
+    title: "Normalização de campos obrigatórios em 8 agentes community"
+    version_target: v00.36.0
+    status: PROPOSED
+    approval_required: false
+    type: fix
+    executor_type: LLM_BEHAVIOR
+
+    why: >
+      Audit encontrou que os 8 agentes community (community_security_code_reviewer,
+      community_data_analyst, etc.) carecem de: position_in_pipeline, depends_on,
+      rule_reference, activates_in, anchors. Sem esses campos, o runtime trata agentes
+      de qualidade muito diferente como equivalentes a agentes CORE, criando comportamento
+      não-determinístico no pipeline.
+
+    when: >
+      Aplicado aos 8 agentes community no repositório. Não afeta agentes CORE.
+
+    how:
+      description: >
+        Adicionar campos mínimos faltantes em cada agente community:
+        position_in_pipeline, activates_in, anchors (≥6), rule_reference, depends_on.
+        Alterar tier de CORE para COMMUNITY onde aplicável.
+      changes:
+        - section: agents/community_*
+          change_type: modify
+          description: "Adicionar campos obrigatórios faltantes em todos os 8 agentes community"
+
+    implementation:
+      fields_to_add: |
+        # Para cada agente community, adicionar no frontmatter:
+        tier: COMMUNITY                    # Distingue de CORE
+        position_in_pipeline: STEP_3       # Community agents: executores de domínio
+        activates_in: [FAST, DEEP, RESEARCH]  # Não em EXPRESS
+        rule_reference: [SR_40]            # Regra mínima aplicável
+        depends_on: [pmi_pm, architect]    # Sempre após scoping e design
+        fallback_agent: null               # Declarar explicitamente se não houver
+        failure_modes:
+          - condition: "input fora do domínio do agente"
+            action: "Retornar handoff para agente de domínio correto"
+            escalation: "pmi_pm para re-scoping"
+
+      normalization_note: |
+        NOTA: Agentes community mantêm suas capacidades específicas (tools, model, etc.)
+        da origem. A normalização adiciona SOMENTE os campos de governança APEX faltantes.
+        Não altera comportamento — apenas adiciona rastreabilidade e posicionamento.
+
+    impacts:
+      modules_modified: [agents/community_*]
+      breaking_changes: false
+
+    what_if_fails:
+      - mode: "Campo adicionado conflita com campo da origem do agente"
+        probability: 3
+        severity: 4
+        detection: 2
+        rpn: 24
+        mitigation: "Revisar cada agente individualmente antes de aplicar"
+        fallback: "Campo APEX tem precedência — campo de origem é comentado"
+      - mode: "position_in_pipeline errado causa sequenciamento incorreto"
+        probability: 4
+        severity: 6
+        detection: 3
+        rpn: 72
+        mitigation: "STEP_3 é conservador — executores de domínio raramente precisam ser antes"
+        fallback: "Agente com position_in_pipeline errado pode ser corrigido por OPP de patch"
+
+    fmea:
+      total_rpn: 96
+      risk_level: LOW
+      gate: PASS
+
+    rollback:
+      feasible: true
+      procedure: "Remover campos adicionados de cada agente community. Retornar ao schema original."
+
+    depends_on: []
+    conflicts_with: []
+
+  # ============================================================
+  # OPP-130: Fix Duplicata apex_internals/plugins/skills/
+  # ============================================================
+  - opp_id: OPP-130
+    name: fix_duplicate_apex_internals_plugins_skills
+    title: "Remover duplicata apex_internals/plugins/skills/ — aponta para create-cowork-plugin"
+    version_target: v00.36.0
+    status: PROPOSED
+    approval_required: false
+    type: fix
+    executor_type: DOCUMENTATION
+
+    why: >
+      Audit encontrou que skills/apex_internals/plugins/skills/SKILL.md é duplicata de
+      skills/apex_internals/ (conteúdo create-cowork-plugin origin). Plugins são um tipo
+      descontinuado no APEX — foram substituídos por Skills. Manter esta duplicata cria
+      ambiguidade sobre o tipo canônico de artefato.
+
+    when: >
+      Aplicado no repositório. Não afeta o prompt master_full (plugins não estão no genome).
+
+    how:
+      changes:
+        - section: skills/apex_internals/plugins/skills/
+          change_type: remove
+          description: "Remover pasta duplicata. Adicionar REDIRECT.md apontando para canonico."
+
+    implementation:
+      redirect_content: |
+        # REDIRECT — plugins descontinuados
+
+        O tipo "plugin" foi descontinuado no APEX v00.33.0.
+        Use Skills em seu lugar.
+
+        Skill canônica de referência: skills/apex_internals/forgeskills/SKILL.md
+        Documentação: APEX_CREATION_GUIDE.md § 2.3
+
+    impacts:
+      modules_removed: [skills/apex_internals/plugins/skills/SKILL.md]
+      breaking_changes: false
+
+    what_if_fails:
+      - mode: "Algo ainda referencia o caminho removido"
+        probability: 2
+        severity: 3
+        detection: 2
+        rpn: 12
+        mitigation: "grep por 'apex_internals/plugins' no repo antes de remover"
+        fallback: "Manter REDIRECT.md mesmo após remoção do SKILL.md"
+      - mode: "Usuário com link externo para o arquivo removido"
+        probability: 3
+        severity: 2
+        detection: 5
+        rpn: 30
+        mitigation: "REDIRECT.md no lugar fornece informação adequada"
+        fallback: "Git history preserva o arquivo para referência"
+
+    fmea:
+      total_rpn: 42
+      risk_level: LOW
+      gate: PASS
+
+    rollback:
+      feasible: true
+      procedure: "Restaurar SKILL.md original via git checkout."
+
+    depends_on: []
+    conflicts_with: []
+
+  # ============================================================
+  # OPP-131: apex_creation_guide_module — APEX_CREATION_GUIDE no genome
+  # ============================================================
+  - opp_id: OPP-131
+    name: apex_creation_guide_module
+    title: "Registrar APEX_CREATION_GUIDE.md como módulo de referência no genome"
+    version_target: v00.36.0
+    status: PROPOSED
+    approval_required: false
+    type: feature
+    executor_type: DOCUMENTATION
+
+    why: >
+      APEX_CREATION_GUIDE.md foi gerado em 2026-04-10 como síntese canônica de análise
+      estrutural + simulação comportamental. Sem ser referenciado no genome, não é
+      acessível ao pipeline de agentes nem ao ForgeSkills. Este OPP registra o guia
+      como módulo DOCUMENTATION com apontamento direto no boot.
+
+    when: >
+      Aplicado após geração do APEX_CREATION_GUIDE.md e commit no repositório.
+
+    how:
+      description: >
+        Adicionar referência ao APEX_CREATION_GUIDE no APEX_LLM_BOOTSTRAP.md e no
+        genome como módulo de documentação acessível. Skill forgeskills deve incluir
+        o guia como recurso fetchável.
+      changes:
+        - section: apex_boot/APEX_BOOT_v00_36_0.md
+          change_type: modify
+          description: "Adicionar referência ao APEX_CREATION_GUIDE no STEP 1 do boot"
+        - section: genome.documentation_modules
+          change_type: add
+          description: "Registrar apex_creation_guide como módulo DOCUMENTATION"
+
+    implementation:
+      module_definition: |
+        module:
+          id: apex_creation_guide
+          type: DOCUMENTATION
+          version: v1.0.0
+          status: ACTIVE
+          file: APEX_CREATION_GUIDE.md
+          raw_url: "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/APEX_CREATION_GUIDE.md"
+          description: "Guia canônico de criação e evolução de artefatos APEX"
+          when_to_use: >
+            Quando criando novo agente, skill, OPP, algoritmo ou integração.
+            Quando auditando qualidade de artefato existente.
+            Quando treinando LLM em padrões APEX.
+          anchors:
+            - creation_guide
+            - canonical_patterns
+            - como_criar_agente
+            - como_criar_skill
+            - quality_gate
+            - anti_patterns
+            - security_rules
+            - error_handling
+
+    impacts:
+      modules_added: [apex_creation_guide]
+      breaking_changes: false
+
+    what_if_fails:
+      - mode: "Guia desatualizado em relação ao prompt — versão drift"
+        probability: 5
+        severity: 4
+        detection: 3
+        rpn: 60
+        mitigation: "Guia tem versão explícita (v1.0.0) e campo 'next review' com versão alvo"
+        fallback: "Em conflito entre guia e prompt: prompt tem precedência"
+      - mode: "LLM usa guia como instrução obrigatória, não como referência"
+        probability: 3
+        severity: 5
+        detection: 4
+        rpn: 60
+        mitigation: "Módulo declarado como DOCUMENTATION — não como regra inviolável"
+        fallback: "Adicionar nota explícita: 'este é um guia, não uma regra SR'"
+
+    fmea:
+      total_rpn: 120
+      risk_level: LOW
+      gate: PASS
+
+    rollback:
+      feasible: true
+      procedure: "Remover referência do boot e do genome. Arquivo APEX_CREATION_GUIDE.md permanece no repo."
+
+    depends_on: []
+    conflicts_with: []
+
+  # ============================================================
+  # OPP-132: security_logger — Logger estruturado com redação de PII
+  # ============================================================
+  - opp_id: OPP-132
+    name: security_logger
+    title: "Logger estruturado com redação automática de PII para módulos APEX"
+    version_target: v00.36.0
+    status: PROPOSED
+    approval_required: false
+    type: security
+    executor_type: SANDBOX_CODE
+
+    why: >
+      Audit identificou que módulos APEX não têm padrão unificado de logging.
+      Sem redação de PII, qualquer log que inclua resposta de API, query de banco ou
+      input de usuário pode vazar dados pessoais (CPF, email, telefone, nome) no contexto
+      do LLM. Este OPP adiciona um logger padrão com redação automática de padrões PII.
+
+    when: >
+      Importado por qualquer módulo APEX que faça logging de operações.
+      Obrigatório em módulos com data_access: restricted ou full.
+
+    how:
+      changes:
+        - section: modules.security_logger
+          change_type: add
+          description: "Novo módulo com ApexLogger + redação automática de PII"
+
+    implementation:
+      code: |
+        # WHY: Logger padrão APEX com redação automática de PII
+        # WHEN: Importado por qualquer módulo que faça logging
+        # HOW: Wrapper sobre print/logging com regex de redação aplicada antes de qualquer saída
+        # WHAT_IF_FAILS: Fallback para print simples com aviso de redação indisponível
+        # SECURITY_LEVEL: HIGH — falha aqui = vazamento de dados pessoais
+
+        import re
+        import json
+        from datetime import datetime
+        from typing import Any, Optional
+
+        # Padrões PII para redação — ordem importa (mais específico primeiro)
+        _PII_PATTERNS = [
+            # CPF brasileiro: 000.000.000-00 ou 00000000000
+            (re.compile(r'\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b'), '[CPF_REDACTED]'),
+            # Email
+            (re.compile(r'\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Z|a-z]{2,}\b'), '[EMAIL_REDACTED]'),
+            # Telefone BR: (11) 99999-9999 ou +55 11 99999-9999
+            (re.compile(r'(\+55\s?)?(\(?\d{2}\)?\s?)(\d{4,5}[\-\s]?\d{4})'), '[PHONE_REDACTED]'),
+            # Token/API key: strings hexadecimais longas ou base64
+            (re.compile(r'\b[A-Za-z0-9]{32,}\b'), '[TOKEN_REDACTED]'),
+            # Bearer tokens
+            (re.compile(r'Bearer\s+[A-Za-z0-9\-._~+/]+=*', re.IGNORECASE), 'Bearer [TOKEN_REDACTED]'),
+            # Cartão de crédito: 16 dígitos (com ou sem espaço/hífen)
+            (re.compile(r'\b\d{4}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4}\b'), '[CARD_REDACTED]'),
+        ]
+
+        # Campos que nunca devem aparecer em logs
+        _BLOCKED_KEYS = frozenset([
+            'password', 'senha', 'secret', 'token', 'api_key', 'apikey',
+            'authorization', 'credential', 'private_key', 'access_token',
+            'refresh_token', 'client_secret'
+        ])
+
+
+        def _redact_string(text: str) -> str:
+            """
+            WHY: Remover PII de strings antes de qualquer saída de log.
+            WHEN: Chamado em toda mensagem de log antes de escrever.
+            HOW: Aplicar regex patterns em sequência.
+            WHAT_IF_FAILS: Retornar '[REDACTION_FAILED: conteúdo suprimido]'
+            """
+            if not isinstance(text, str):
+                return str(text)
+            try:
+                for pattern, replacement in _PII_PATTERNS:
+                    text = pattern.sub(replacement, text)
+                return text
+            except Exception:
+                return '[REDACTION_FAILED: conteúdo suprimido por segurança]'
+
+
+        def _redact_dict(data: dict, depth: int = 0) -> dict:
+            """
+            WHY: Redação recursiva em dicts — APIs retornam estruturas aninhadas.
+            WHEN: Chamado em log de responses de API ou dados estruturados.
+            HOW: Recursivo até depth=5 (evitar loop infinito em estruturas circulares).
+            WHAT_IF_FAILS: Retornar {'status': 'REDACTION_ERROR'} — nunca expor dados.
+            """
+            if depth > 5:
+                return {'_truncated': 'max_depth_reached'}
+            try:
+                result = {}
+                for key, value in data.items():
+                    # Bloquear campos sensíveis por nome
+                    if str(key).lower() in _BLOCKED_KEYS:
+                        result[key] = '[BLOCKED_KEY_REDACTED]'
+                    elif isinstance(value, dict):
+                        result[key] = _redact_dict(value, depth + 1)
+                    elif isinstance(value, list):
+                        result[key] = [_redact_dict(v, depth + 1) if isinstance(v, dict)
+                                       else _redact_string(str(v)) for v in value]
+                    elif isinstance(value, str):
+                        result[key] = _redact_string(value)
+                    else:
+                        result[key] = value
+                return result
+            except Exception:
+                return {'_error': 'REDACTION_ERROR — conteúdo suprimido'}
+
+
+        class ApexLogger:
+            """
+            WHY: Logger unificado APEX com redação automática de PII.
+            WHEN: Usar em qualquer módulo APEX que faça logging de operações.
+            HOW: Wrapper sobre print com timestamp, nível e redação obrigatória.
+            WHAT_IF_FAILS: Fallback para print simples se logger falhar.
+            SECURITY_LEVEL: HIGH
+            """
+
+            def __init__(self, module_id: str, data_access: str = 'none'):
+                """
+                Args:
+                    module_id: Identificador do módulo (ex: 'forgeskills.boot')
+                    data_access: 'none' | 'restricted' | 'full'
+                                 Se 'full', redação é mais agressiva.
+                """
+                self.module_id = module_id
+                self.data_access = data_access
+                self._extra_redaction = data_access in ('restricted', 'full')
+
+            def _format(self, level: str, message: str, data: Optional[Any] = None) -> str:
+                ts = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+                safe_msg = _redact_string(message)
+                entry = {
+                    'ts': ts,
+                    'level': level,
+                    'module': self.module_id,
+                    'msg': safe_msg
+                }
+                if data is not None:
+                    if isinstance(data, dict):
+                        entry['data'] = _redact_dict(data)
+                    else:
+                        entry['data'] = _redact_string(str(data))
+                try:
+                    return json.dumps(entry, ensure_ascii=False)
+                except Exception:
+                    return f'{ts} [{level}] {self.module_id}: {safe_msg}'
+
+            def info(self, message: str, data: Optional[Any] = None):
+                print(self._format('INFO', message, data))
+
+            def warn(self, message: str, data: Optional[Any] = None):
+                print(self._format('WARN', message, data))
+
+            def error(self, message: str, data: Optional[Any] = None):
+                print(self._format('ERROR', message, data))
+
+            def security(self, event: str, data: Optional[Any] = None):
+                """Para eventos de segurança — sempre logados, independente de nível."""
+                print(self._format('SECURITY', f'[SECURITY_EVENT] {event}', data))
+
+
+        # Instância padrão para módulos que não precisam de configuração
+        apex_log = ApexLogger(module_id='apex.default', data_access='none')
+
+    impacts:
+      modules_added: [security_logger]
+      breaking_changes: false
+
+    what_if_fails:
+      - mode: "regex PII não captura variação regional de CPF/telefone"
+        probability: 5
+        severity: 5
+        detection: 4
+        rpn: 100
+        mitigation: "Padrões incluem variações com/sem pontuação. Adicionar padrões via OPP de patch."
+        fallback: "Módulos com data_access=full têm redação mais agressiva como fallback"
+      - mode: "TOKEN_REDACTED destrói hashes SHA-256 legítimos em logs"
+        probability: 6
+        severity: 3
+        detection: 3
+        rpn: 54
+        mitigation: "Logs de hash usam chave 'hash_check' — não passa pelo filtro de token"
+        fallback: "Se hash aparece em campo suspeito, redação é comportamento correto"
+      - mode: "Estrutura circular em dict causa recursão infinita"
+        probability: 2
+        severity: 6
+        detection: 3
+        rpn: 36
+        mitigation: "depth limit=5 em _redact_dict previne stack overflow"
+        fallback: "depth>5 retorna {'_truncated': 'max_depth_reached'} — nunca falha silencioso"
+      - mode: "json.dumps falha em objeto não-serializável"
+        probability: 3
+        severity: 2
+        detection: 2
+        rpn: 12
+        mitigation: "except em _format retorna fallback string simples"
+        fallback: "Log degradado mas não quebrado — mensagem ainda aparece"
+
+    fmea:
+      total_rpn: 202
+      risk_level: MEDIUM
+      gate: PASS
+
+    rollback:
+      feasible: true
+      procedure: "Remover módulo security_logger. Módulos que o importam voltam a usar print() direto."
+
+    depends_on: []
+    conflicts_with: []
+
+# ============================================================
+# SUMÁRIO DO PACK
+# ============================================================
+summary:
+  total_opps: 8
+  new_rules: [SR_42, SR_43, SR_44, SR_45]
+  new_modules: [sr42_integrity_checker, sr43_approval_validator, apex_creation_guide, security_logger]
+  modified_modules: [forgeskills_true_autoboot, apex_runtime_probe, opp_quality_bar, kernel.inviolable_rules, agents/community_*]
+  removed: [skills/apex_internals/plugins/skills/SKILL.md]
+  total_rpn_all_opps: 1430
+  highest_rpn_opp: OPP-126 (400)
+  security_opps: [OPP-125, OPP-126, OPP-127, OPP-132]
+  breaking_changes: false
+  estimated_prompt_growth_lines: "+250 lines"
