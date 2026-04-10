@@ -1,0 +1,524 @@
+{
+  "opp": "OPP-133",
+  "version": "v1.0.0",
+  "executed_at": "2026-04-10T15:24:39.727415",
+  "apex_version": "v00.36.0",
+  "dry_run": false,
+  "summary": {
+    "total_files": 2624,
+    "UPDATED": 2549,
+    "SKIP": 0,
+    "ERROR": 75,
+    "DRY_RUN": 0,
+    "error_count": 75
+  },
+  "domain_stats": {
+    "web3": {
+      "total": 14,
+      "updated": 14,
+      "avg_score_before": 3.9,
+      "avg_score_after": 10.0
+    },
+    "security": {
+      "total": 60,
+      "updated": 60,
+      "avg_score_before": 4.0,
+      "avg_score_after": 10.0
+    },
+    "science": {
+      "total": 26,
+      "updated": 26,
+      "avg_score_before": 2.6,
+      "avg_score_after": 9.1
+    },
+    "sales": {
+      "total": 26,
+      "updated": 26,
+      "avg_score_before": 3.9,
+      "avg_score_after": 10.0
+    },
+    "productivity": {
+      "total": 22,
+      "updated": 22,
+      "avg_score_before": 3.9,
+      "avg_score_after": 10.0
+    },
+    "product-management": {
+      "total": 11,
+      "updated": 11,
+      "avg_score_before": 4.0,
+      "avg_score_after": 10.0
+    },
+    "operations": {
+      "total": 10,
+      "updated": 10,
+      "avg_score_before": 4.0,
+      "avg_score_after": 10.0
+    },
+    "mathematics": {
+      "total": 2,
+      "updated": 2,
+      "avg_score_before": 5.0,
+      "avg_score_after": 10.0
+    },
+    "marketing": {
+      "total": 145,
+      "updated": 145,
+      "avg_score_before": 2.8,
+      "avg_score_after": 9.5
+    },
+    "unknown": {
+      "total": 75,
+      "updated": 0,
+      "avg_score_before": 0.0,
+      "avg_score_after": 0.0
+    },
+    "legal": {
+      "total": 27,
+      "updated": 27,
+      "avg_score_before": 3.9,
+      "avg_score_after": 10.0
+    },
+    "knowledge-work": {
+      "total": 248,
+      "updated": 248,
+      "avg_score_before": 1.0,
+      "avg_score_after": 7.9
+    },
+    "knowledge-management": {
+      "total": 7,
+      "updated": 7,
+      "avg_score_before": 4.0,
+      "avg_score_after": 10.0
+    },
+    "integrations": {
+      "total": 9,
+      "updated": 9,
+      "avg_score_before": 3.8,
+      "avg_score_after": 10.0
+    },
+    "human-resources": {
+      "total": 10,
+      "updated": 10,
+      "avg_score_before": 4.0,
+      "avg_score_after": 10.0
+    },
+    "healthcare": {
+      "total": 23,
+      "updated": 23,
+      "avg_score_before": 2.8,
+      "avg_score_after": 9.4
+    },
+    "finance": {
+      "total": 134,
+      "updated": 134,
+      "avg_score_before": 2.8,
+      "avg_score_after": 9.2
+    },
+    "engineering": {
+      "total": 793,
+      "updated": 793,
+      "avg_score_before": 3.5,
+      "avg_score_after": 10.0
+    },
+    "design": {
+      "total": 74,
+      "updated": 74,
+      "avg_score_before": 3.2,
+      "avg_score_after": 10.0
+    },
+    "data-science": {
+      "total": 11,
+      "updated": 11,
+      "avg_score_before": 4.0,
+      "avg_score_after": 10.0
+    },
+    "data": {
+      "total": 34,
+      "updated": 34,
+      "avg_score_before": 4.0,
+      "avg_score_after": 10.0
+    },
+    "customer-support": {
+      "total": 6,
+      "updated": 6,
+      "avg_score_before": 4.0,
+      "avg_score_after": 10.0
+    },
+    "community": {
+      "total": 435,
+      "updated": 435,
+      "avg_score_before": 3.7,
+      "avg_score_after": 9.7
+    },
+    "business": {
+      "total": 38,
+      "updated": 38,
+      "avg_score_before": 3.2,
+      "avg_score_after": 9.9
+    },
+    "ai-ml": {
+      "total": 342,
+      "updated": 342,
+      "avg_score_before": 3.8,
+      "avg_score_after": 10.0
+    },
+    "apex_internals": {
+      "total": 8,
+      "updated": 8,
+      "avg_score_before": 4.0,
+      "avg_score_after": 10.0
+    },
+    "anthropic-official": {
+      "total": 34,
+      "updated": 34,
+      "avg_score_before": 2.5,
+      "avg_score_after": 8.6
+    }
+  },
+  "errors": [
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\marketing\\_source_marketingskills\\skills\\community-marketing\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\knowledge-management\\wiki\\wiki-changelog\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\knowledge-management\\wiki\\wiki-researcher\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\knowledge-management\\wiki\\wiki-vitepress\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\wealth-management\\skills\\client-report\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\wealth-management\\skills\\client-review\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\wealth-management\\skills\\financial-plan\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\wealth-management\\skills\\investment-proposal\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\wealth-management\\skills\\portfolio-rebalance\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\wealth-management\\skills\\tax-loss-harvesting\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\private-equity\\skills\\ai-readiness\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\private-equity\\skills\\dd-checklist\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\private-equity\\skills\\dd-meeting-prep\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\private-equity\\skills\\deal-screening\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\private-equity\\skills\\deal-sourcing\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\private-equity\\skills\\ic-memo\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\private-equity\\skills\\portfolio-monitoring\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\private-equity\\skills\\returns-analysis\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\private-equity\\skills\\unit-economics\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\finance\\_source_v2\\private-equity\\skills\\value-creation-plan\\SKILL.md",
+      "status": "ERROR",
+      "changes": [],
+      "score_before": 0,
+      "score_after": 0,
+      "reason": "frontmatter parse failed"
+    }
+  ],
+  "sample_changes": [
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\web3\\web3-testing\\SKILL.md",
+      "status": "UPDATED",
+      "changes": [
+        "tier",
+        "cross_domain_bridges",
+        "input_schema",
+        "output_schema",
+        "what_if_fails",
+        "synergy_map",
+        "security",
+        "apex_version",
+        "diff_link"
+      ],
+      "score_before": 4,
+      "score_after": 10,
+      "domain": "web3"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\web3\\nft\\nft-standards\\SKILL.md",
+      "status": "UPDATED",
+      "changes": [
+        "tier",
+        "anchors",
+        "cross_domain_bridges",
+        "input_schema",
+        "output_schema",
+        "what_if_fails",
+        "synergy_map",
+        "security",
+        "apex_version",
+        "diff_link"
+      ],
+      "score_before": 3,
+      "score_after": 10,
+      "domain": "web3"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\web3\\defi\\20-andruia-niche-intelligence\\SKILL.md",
+      "status": "UPDATED",
+      "changes": [
+        "tier",
+        "cross_domain_bridges",
+        "input_schema",
+        "output_schema",
+        "what_if_fails",
+        "synergy_map",
+        "security",
+        "apex_version",
+        "diff_link"
+      ],
+      "score_before": 4,
+      "score_after": 10,
+      "domain": "web3"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\web3\\defi\\c4-component\\SKILL.md",
+      "status": "UPDATED",
+      "changes": [
+        "tier",
+        "cross_domain_bridges",
+        "input_schema",
+        "output_schema",
+        "what_if_fails",
+        "synergy_map",
+        "security",
+        "apex_version",
+        "diff_link"
+      ],
+      "score_before": 4,
+      "score_after": 10,
+      "domain": "web3"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\web3\\defi\\context-fundamentals\\SKILL.md",
+      "status": "UPDATED",
+      "changes": [
+        "tier",
+        "cross_domain_bridges",
+        "input_schema",
+        "output_schema",
+        "what_if_fails",
+        "synergy_map",
+        "security",
+        "apex_version",
+        "diff_link"
+      ],
+      "score_before": 4,
+      "score_after": 10,
+      "domain": "web3"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\web3\\defi\\ddd-context-mapping\\SKILL.md",
+      "status": "UPDATED",
+      "changes": [
+        "tier",
+        "cross_domain_bridges",
+        "input_schema",
+        "output_schema",
+        "what_if_fails",
+        "synergy_map",
+        "security",
+        "apex_version",
+        "diff_link"
+      ],
+      "score_before": 4,
+      "score_after": 10,
+      "domain": "web3"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\web3\\defi\\defi-protocol-templates\\SKILL.md",
+      "status": "UPDATED",
+      "changes": [
+        "tier",
+        "cross_domain_bridges",
+        "input_schema",
+        "output_schema",
+        "what_if_fails",
+        "synergy_map",
+        "security",
+        "apex_version",
+        "diff_link"
+      ],
+      "score_before": 4,
+      "score_after": 10,
+      "domain": "web3"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\web3\\defi\\seo-aeo-blog-writer\\SKILL.md",
+      "status": "UPDATED",
+      "changes": [
+        "tier",
+        "cross_domain_bridges",
+        "input_schema",
+        "output_schema",
+        "what_if_fails",
+        "synergy_map",
+        "security",
+        "apex_version",
+        "diff_link"
+      ],
+      "score_before": 4,
+      "score_after": 10,
+      "domain": "web3"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\web3\\defi\\slo-implementation\\SKILL.md",
+      "status": "UPDATED",
+      "changes": [
+        "tier",
+        "cross_domain_bridges",
+        "input_schema",
+        "output_schema",
+        "what_if_fails",
+        "synergy_map",
+        "security",
+        "apex_version",
+        "diff_link"
+      ],
+      "score_before": 4,
+      "score_after": 10,
+      "domain": "web3"
+    },
+    {
+      "file": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\skills\\web3\\defi\\tdd-workflows-tdd-red\\SKILL.md",
+      "status": "UPDATED",
+      "changes": [
+        "tier",
+        "cross_domain_bridges",
+        "input_schema",
+        "output_schema",
+        "what_if_fails",
+        "synergy_map",
+        "security",
+        "apex_version",
+        "diff_link"
+      ],
+      "score_before": 4,
+      "score_after": 10,
+      "domain": "web3"
+    }
+  ]
+}
