@@ -1,0 +1,184 @@
+# OUTPUT INTEGRITY CHECKER — OPP-134
+# VERSION: v1.0.0
+# WHY: Detectar claims de execução sem evidência real — prevenir mistura silenciosa
+#      entre sandbox executado e LLM simulado. Baseado em falhas observadas no DeepSeek.
+# WHEN: Pós-output — antes de entregar resposta ao usuário.
+# EXECUTOR: HYBRID (LLM_BEHAVIOR + SANDBOX_CODE quando disponível)
+
+module: output_integrity_checker
+opp: OPP-134
+version: v1.0.0
+status: ACTIVE
+tier: CORE
+
+# ═══════════════════════════════════════════════════════
+# PADRÕES SUSPEITOS — detectar no output gerado
+# ═══════════════════════════════════════════════════════
+
+suspicious_patterns:
+  high_risk:
+    - pattern: "[UCO_GATE_PASS]"
+      requires_evidence: "bloco Python com uco.analyze() ou uco.quick_optimize() acima"
+      if_missing: "substituir por [UCO_GATE_PASS: UNVERIFIED — sem código Python precedente]"
+
+    - pattern: "[SANDBOX_EXECUTED]"
+      requires_evidence: "bloco de código Python executável acima do marcador"
+      if_missing: "substituir por [SIMULATED: marcador incorreto — nenhum código precedente]"
+
+    - pattern: "Output Real do Subprocesso"
+      requires_evidence: "bloco subprocess.run() ou equivalente com output capturado"
+      if_missing: "adicionar [UNVERIFIED_CLAIM] ao lado"
+
+    - pattern: "sha256:[a-z_]+$"
+      description: "hash descritivo (ex: sha256:boot_skills) — não é hash real"
+      requires_evidence: "64 caracteres hexadecimais após sha256:"
+      if_missing: "substituir por [PLACEHOLDER_HASH: não é SHA-256 real]"
+
+  medium_risk:
+    - pattern: "[FORMAL_VERIFIED]"
+      requires_evidence: "bloco sympy ou prova matemática executada"
+      if_missing: "substituir por [APPROX: verificação formal não demonstrada]"
+
+    - pattern: "Saída Real:"
+      requires_evidence: "código executável imediatamente acima"
+      if_missing: "substituir por [SIMULATED OUTPUT:]"
+
+    - pattern: "skills carregadas dos domínios"
+      requires_evidence: "path de diretório válido no repositório APEX"
+      valid_paths:
+        - "engineering_frontend"  # não "frontend"
+        - "marketing"
+        - "design"
+        - "sales"
+        - "finance"
+        - "legal"
+        - "productivity"
+        - "data-science"
+      if_wrong_path: "adicionar [PATH_WARNING: verificar taxonomia em skills/]"
+
+# ═══════════════════════════════════════════════════════
+# VERIFICAÇÃO DE API UCO
+# ═══════════════════════════════════════════════════════
+
+uco_api_guard:
+  # WHY: DeepSeek alucionou uco.gate() — método que não existe.
+  valid_methods: [analyze, quick_optimize, optimize_fast, optimize]
+  invalid_methods: [gate, validate, check, run, verify, score_code, audit]
+  pattern_to_detect: "uco\\.(?!analyze|quick_optimize|optimize_fast|optimize)[a-z_]+\\("
+  if_detected: |
+    [UCO_API_HALLUCINATION: método '{method}' não existe em UniversalCodeOptimizer.
+     Métodos válidos: analyze(), quick_optimize(), optimize_fast(), optimize()
+     Ver: algorithms/uco/UCO_API_SURFACE.yaml]
+
+# ═══════════════════════════════════════════════════════
+# REGRAS DE MARCAÇÃO OBRIGATÓRIA
+# ═══════════════════════════════════════════════════════
+
+mandatory_markers:
+  rule_1:
+    condition: "Resultado numérico apresentado sem bloco de código executado"
+    marker: "[APPROX: valor gerado por LLM — não executado]"
+
+  rule_2:
+    condition: "Pipeline descrito como 'executado' mas com etapas 'simuladas'"
+    marker: "[HYBRID_EXEC: parte executada, parte simulada — ver detalhes acima]"
+
+  rule_3:
+    condition: "Hash SHA-256 com menos de 64 caracteres hex"
+    marker: "[PLACEHOLDER_HASH]"
+
+  rule_4:
+    condition: "Método UCO não-existente chamado"
+    marker: "[UCO_API_HALLUCINATION]"
+
+  rule_5:
+    condition: "Path de skill usando taxonomia incorreta"
+    marker: "[PATH_WARNING: verificar skills/ no repositório]"
+
+# ═══════════════════════════════════════════════════════
+# IMPLEMENTAÇÃO (SANDBOX_CODE)
+# ═══════════════════════════════════════════════════════
+
+code: |
+  import re
+
+  # WHY: Verificar output gerado antes de entregar ao usuário
+  # WHEN: Pós-geração, pré-entrega — especialmente em runtimes PARTIAL
+  # HOW: Regex contra padrões suspeitos conhecidos
+  # WHAT_IF_FAILS: Retornar output original com aviso geral [INTEGRITY_CHECK_FAILED]
+
+  INVALID_UCO_METHODS = re.compile(
+      r'uco\.(?!analyze|quick_optimize|optimize_fast|optimize\b)([a-zA-Z_]+)\('
+  )
+  FAKE_HASH = re.compile(r'sha256:[a-zA-Z_][a-zA-Z_0-9]*(?!\w{10})')
+  SANDBOX_CLAIM = re.compile(r'\[SANDBOX_EXECUTED\]|\[UCO_GATE_PASS\]')
+  CODE_BLOCK = re.compile(r'```python[\s\S]+?```', re.MULTILINE)
+
+  def check_output_integrity(output_text: str) -> dict:
+      """
+      WHY: Detectar claims de execução sem evidência real no output do LLM.
+      WHEN: Antes de entregar resposta ao usuário — especialmente em runtimes PARTIAL.
+      HOW: Regex contra padrões suspeitos; verificar se claims têm código precedente.
+      WHAT_IF_FAILS: Retornar {'status': 'CHECK_FAILED', 'output': output_text_original}.
+      """
+      warnings = []
+
+      # 1. UCO API hallucination
+      for match in INVALID_UCO_METHODS.finditer(output_text):
+          method = match.group(1)
+          warnings.append({
+              "type": "UCO_API_HALLUCINATION",
+              "detail": f"uco.{method}() não existe. Usar: analyze(), quick_optimize(), optimize_fast(), optimize()",
+              "position": match.start()
+          })
+
+      # 2. Fake SHA-256 hashes
+      for match in FAKE_HASH.finditer(output_text):
+          warnings.append({
+              "type": "PLACEHOLDER_HASH",
+              "detail": f"'{match.group()}' não é SHA-256 real (requer 64 chars hex)",
+              "position": match.start()
+          })
+
+      # 3. Execution claims without code blocks
+      code_blocks = CODE_BLOCK.findall(output_text)
+      execution_claims = SANDBOX_CLAIM.findall(output_text)
+      if execution_claims and not code_blocks:
+          warnings.append({
+              "type": "UNVERIFIED_EXECUTION_CLAIM",
+              "detail": f"{len(execution_claims)} claim(s) de execução sem bloco de código Python",
+              "claims": execution_claims
+          })
+
+      status = "CLEAN" if not warnings else "WARNINGS_FOUND"
+      return {
+          "status": status,
+          "warnings": warnings,
+          "warning_count": len(warnings),
+          "nota": f"[INTEGRITY_CHECK: {status} — {len(warnings)} warnings]"
+      }
+
+# ═══════════════════════════════════════════════════════
+# COMPORTAMENTO LLM_BEHAVIOR (quando sandbox indisponível)
+# ═══════════════════════════════════════════════════════
+
+llm_behavior: |
+  Antes de entregar qualquer resposta que contenha:
+    [UCO_GATE_PASS], [SANDBOX_EXECUTED], "Saída Real", "Output Real", hash SHA-256
+
+  Verificar mentalmente:
+    1. Existe bloco de código Python executável imediatamente antes deste claim?
+       NÃO → substituir claim por [SIMULATED] ou [APPROX]
+
+    2. O método UCO chamado é um de: analyze(), quick_optimize(), optimize_fast(), optimize()?
+       NÃO → é alucinação de API — remover e usar método correto
+
+    3. O hash SHA-256 tem 64 caracteres hexadecimais?
+       NÃO → marcar como [PLACEHOLDER_HASH] — não é hash real
+
+    4. O path de skill existe no repositório APEX?
+       Verificar: engineering_frontend, não frontend; engineering/ não eng/
+       NÃO → adicionar [PATH_WARNING]
+
+  Regra final: quando em dúvida, declare [APPROX] ou [SIMULATED].
+  É sempre melhor ser honesto sobre simulação do que alucinar execução.

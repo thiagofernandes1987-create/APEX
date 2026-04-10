@@ -1,0 +1,149 @@
+# UCO API SURFACE — Referência Canônica de Métodos
+# VERSION: v1.0.0
+# OPP: OPP-134
+# WHY: Prevenir alucinação de métodos inexistentes (ex: uco.gate() — não existe).
+#      Todo módulo APEX e todo LLM deve consultar este arquivo antes de chamar o UCO.
+# WHEN: Antes de qualquer chamada ao UniversalCodeOptimizer.
+# SOURCE: algorithms/uco/universal_code_optimizer_v4.py (4152 linhas, verificado 2026-04-10)
+
+class: UniversalCodeOptimizer
+module: universal_code_optimizer_v4
+entry_file: universal_code_optimizer_v4.py
+
+# ═══════════════════════════════════════════════════════
+# MÉTODOS PÚBLICOS — OS ÚNICOS QUE EXISTEM
+# ═══════════════════════════════════════════════════════
+
+methods:
+
+  analyze:
+    signature: "analyze(code: str, language: str = 'python') -> dict"
+    purpose: "Análise estática completa — AST, CFG, DSM, Halstead, dead code, duplicatas"
+    requires_numpy: false        # stdlib only — funciona em PARTIAL/MINIMAL
+    returns:
+      H: "Halstead difficulty (float)"
+      bugs: "bug estimate (float, 0.0-1.0)"
+      complexity: "cyclomatic complexity (int)"
+      dead_code: "list of dead code blocks"
+      duplicates: "list of duplicate blocks"
+      score: "quality score 0-100 (int)"
+    example: |
+      uco = UniversalCodeOptimizer()
+      result = uco.analyze(my_code)
+      print(f"H={result['H']:.1f} | bugs={result['bugs']:.3f} | score={result['score']}")
+    notes: "MÉTODO MAIS USADO — preferir para gates de qualidade"
+
+  quick_optimize:
+    signature: "quick_optimize(code: str) -> dict"
+    purpose: "Otimização rápida sem numpy — dead code removal, simplificações básicas"
+    requires_numpy: false        # stdlib only
+    returns:
+      optimized_code: "código otimizado (str)"
+      changes: "lista de mudanças aplicadas"
+      score_before: "score antes (int)"
+      score_after: "score depois (int)"
+    example: |
+      uco = UniversalCodeOptimizer()
+      result = uco.quick_optimize(my_code)
+      print(result['optimized_code'])
+    notes: "Fallback seguro para runtimes PARTIAL — não requer scipy/numpy"
+
+  optimize_fast:
+    signature: "optimize_fast(code: str, max_iterations: int = 10) -> dict"
+    purpose: "Otimização com Simulated Annealing leve — mais rápido que optimize()"
+    requires_numpy: false
+    returns:
+      optimized_code: "str"
+      iterations: "número de iterações executadas"
+      improvement_pct: "melhoria percentual de score"
+    example: |
+      uco = UniversalCodeOptimizer()
+      result = uco.optimize_fast(my_code, max_iterations=5)
+
+  optimize:
+    signature: "optimize(code: str, method: str = 'hmc') -> dict"
+    purpose: "Otimização completa com HMC (Hamiltonian Monte Carlo) — máxima qualidade"
+    requires_numpy: true         # REQUER numpy — falha em PARTIAL sem fallback
+    returns:
+      optimized_code: "str"
+      score_before: "int"
+      score_after: "int"
+      hmc_samples: "int"
+    example: |
+      uco = UniversalCodeOptimizer()
+      result = uco.optimize(my_code, method='hmc')
+    notes: "Usar quick_optimize() como fallback se numpy indisponível"
+
+# ═══════════════════════════════════════════════════════
+# MÉTODOS QUE NÃO EXISTEM — NUNCA CHAMAR
+# ═══════════════════════════════════════════════════════
+
+non_existent_methods:
+  # WHY: LLMs alucinam esses métodos. Documentado aqui para prevenir reincidência.
+  - name: "gate()"
+    hallucinated_by: "DeepSeek (2026-04-10)"
+    fake_usage: "uco.gate(html_template, cognitive_mode='SCIENTIFIC')"
+    correct_alternative: "uco.analyze(html_template)  # verificar result['score'] >= threshold"
+
+  - name: "validate()"
+    hallucinated_by: "[não confirmado — preventivo]"
+    correct_alternative: "uco.analyze(code)"
+
+  - name: "check()"
+    hallucinated_by: "[não confirmado — preventivo]"
+    correct_alternative: "uco.analyze(code)"
+
+  - name: "run()"
+    hallucinated_by: "[não confirmado — preventivo]"
+    correct_alternative: "uco.analyze(code) ou uco.quick_optimize(code)"
+
+# ═══════════════════════════════════════════════════════
+# PADRÃO CORRETO DE UCO GATE
+# ═══════════════════════════════════════════════════════
+
+uco_gate_pattern:
+  # WHY: Substituir o padrão alucinado uco.gate() pelo padrão real correto.
+  wrong: |
+    # ERRADO — gate() não existe
+    gate_decision = uco.gate(code, cognitive_mode="SCIENTIFIC")
+    print(gate_decision['decision'])
+
+  correct: |
+    # CORRETO — usar analyze() e verificar score manualmente
+    uco = UniversalCodeOptimizer()
+    result = uco.analyze(code)
+
+    THRESHOLDS = {"EXPRESS": 40, "FAST": 55, "DEEP": 70, "SCIENTIFIC": 85}
+    threshold = THRESHOLDS.get(cognitive_mode, 60)
+
+    gate_pass = result['score'] >= threshold and result['bugs'] < 0.1
+    decision = "PASS" if gate_pass else "FAIL"
+
+    print(f"[UCO_GATE: H={result['H']:.1f} | score={result['score']} | bugs={result['bugs']:.3f} | {decision}]")
+
+availability_by_runtime:
+  claude_full:
+    analyze: true
+    quick_optimize: true
+    optimize_fast: true
+    optimize: true        # numpy disponível
+  gpt4o_partial:
+    analyze: true
+    quick_optimize: true
+    optimize_fast: true
+    optimize: true        # numpy disponível no Code Interpreter
+  gemini_partial:
+    analyze: true
+    quick_optimize: true
+    optimize_fast: true
+    optimize: false       # verificar numpy
+  deepseek_partial:
+    analyze: true         # usar @Sandbox @Numpy
+    quick_optimize: true  # usar @Sandbox
+    optimize_fast: true   # usar @Sandbox
+    optimize: true        # usar @Sandbox @Numpy
+  llama_minimal:
+    analyze: false        # descrever analiticamente
+    quick_optimize: false
+    optimize_fast: false
+    optimize: false

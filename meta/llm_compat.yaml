@@ -217,6 +217,109 @@ llms:
       - "Prefixar saídas de módulos simulados com [SIMULATED]"
       - "Estado de sessão: manter como texto estruturado no contexto"
 
+  deepseek:
+    name: "DeepSeek (deepseek-chat / deepseek-reasoner)"
+    apex_compat_level: PARTIAL
+    sandbox_strategy: PARTIAL
+    opp_added: OPP-134
+    # WHY: DeepSeek requer prefixos @Sandbox/@Numpy para ativar execução real.
+    # Sem eles, o modelo trata tarefas conhecidas como "cobertas por treinamento"
+    # e produz outputs simulados sem declarar [SIMULATED]. Confirmado em uso real.
+
+    python_sandbox:
+      available: true
+      executor: "@Sandbox prefix — obrigatório para ativar execução real"
+      activation_prefix: "@Sandbox"
+      available_libs:
+        - numpy          # prefixar com @Numpy
+        - scipy          # prefixar com @Scipy
+        - pandas
+        - matplotlib
+        - json
+        - math
+        - hashlib
+        - urllib.request
+        - collections
+        - ast
+        - re
+      not_available:
+        - sqlite3        # usar dict em memória
+        - subprocess     # indisponível
+        - orjson         # usar stdlib json
+        - sklearn        # verificar disponibilidade
+
+    activation_ritual:
+      # WHY: DeepSeek "esquece" capacidades nativas em tarefas que parecem simples.
+      # Este ritual deve ser executado no STEP_0 de toda sessão APEX.
+      step_1: "Prefixar primeiro bloco de código com: @Sandbox"
+      step_2: "Para cada lib: prefixar com @<LibName> antes de importar"
+      step_3: "Para web search: instruir explicitamente 'busque na internet'"
+      example: |
+        @Sandbox
+        @Numpy
+        import numpy as np
+        result = np.array([1, 2, 3])
+        print(result)
+
+    connectors:
+      github:
+        available: true
+        method: "git clone via @Sandbox — verificar se disponível no ambiente"
+        workaround: "urllib.request fetch de raw.githubusercontent.com"
+        url_pattern: "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/{path}"
+      web_search:
+        available: true
+        method: "Busca nativa — DEVE ser instruída explicitamente pelo usuário ou APEX"
+        activation_note: "DeepSeek não ativa web search automaticamente — instruir: 'busque na internet'"
+      file_system:
+        available: partial
+        note: "Sandbox efêmero — sem persistência entre sessões"
+      agent_spawn:
+        available: false
+
+    forgeskills:
+      method: "git clone @Sandbox OU urllib.request fetch → parsear SKILL.md → registrar PROVISIONAL"
+      ast_scan: "Obrigatório via @Sandbox antes de qualquer importação de skill externa"
+      git_clone: partial
+      url_fetch_fallback: "urllib.request — único método confiável se git clone falhar"
+      trusted_domains_required: true
+
+    snapshot_store:
+      method: "Dict em memória — sem persistência entre sessões"
+      persistence: false
+
+    disabled_modules:
+      - sqlite_snapshot_store
+      - claude_agent_sdk
+      - subprocess_gate
+      - orjson
+
+    behavioral_instructions:
+      - "SEMPRE iniciar blocos Python com @Sandbox para garantir execução real"
+      - "SEMPRE prefixar libs com @<Nome>: @Numpy, @Scipy, @Pandas"
+      - "Se tarefa parece simples mas requer cálculo: AINDA ASSIM usar @Sandbox"
+      - "Web search: nunca assumir indisponível — instruir explicitamente"
+      - "sqlite3: usar dict Python em memória para estado de sessão"
+      - "subprocess: INDISPONÍVEL — usar @Sandbox com stdlib exclusivamente"
+      - "UCO gate: SOMENTE métodos reais — analyze(), quick_optimize(), optimize_fast(), optimize()"
+      - "NUNCA inventar métodos UCO como gate(), validate(), check() — não existem"
+      - "git clone: prefixar com @Sandbox, verificar se sucedeu antes de continuar"
+      - "Se git clone falhar: fetch via urllib.request + registrar como PROVISIONAL"
+
+    critical_warnings:
+      # Baseado em falhas observadas em uso real (2026-04-10)
+      - "DeepSeek alucinou uco.gate() — método inexistente. API real: analyze(), quick_optimize(), optimize_fast(), optimize()"
+      - "DeepSeek reportou números ODE fabricados como 'Output Real do Subprocesso'"
+      - "DeepSeek usou 'frontend' como path — correto é 'engineering_frontend' no repositório APEX"
+      - "DeepSeek pode afirmar [UCO_GATE_PASS] sem executar código — sempre exigir bloco @Sandbox"
+      - "AuditChain hashes devem ter 64 chars hex — strings descritivas não são hashes válidos"
+
+    output_adaptations:
+      - "Prefixar resultados simulados com [SIMULATED] quando @Sandbox não foi usado"
+      - "Prefixar estimativas com [APPROX]"
+      - "Declarar [SANDBOX_PARTIAL] quando lib indisponível"
+      - "NUNCA declarar [SANDBOX_EXECUTED] sem bloco @Sandbox real precedendo o output"
+
   local_llm:
     name: "Llama / LLMs Locais / Sem sandbox"
     apex_compat_level: MINIMAL
