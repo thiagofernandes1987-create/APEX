@@ -1,0 +1,86 @@
+# generate_index.yml — CI/CD para geração automática do INDEX.md
+# OPP: OPP-135
+# VERSION: v1.0.0
+# WHY: INDEX.md era mantido manualmente — deriva garantida com 2.624 skills.
+#      Este workflow garante que o índice esteja sempre sincronizado com skills/.
+# WHEN: A cada push em main que modifique skills/ ou o gerador.
+#       Também pode ser executado manualmente via workflow_dispatch.
+# HOW: Executa tools/generate_index.py → commita INDEX.md se houver mudanças.
+# WHAT_IF_FAILS: Falha no workflow não bloqueia o merge — apenas loga o erro.
+#                O INDEX.md anterior permanece válido.
+
+name: Generate INDEX.md
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "skills/**"
+      - "tools/generate_index.py"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Forçar regeneração mesmo sem mudanças em skills/"
+        required: false
+        default: "false"
+        type: boolean
+
+permissions:
+  contents: write  # Para fazer commit do INDEX.md gerado
+
+jobs:
+  generate-index:
+    name: Generate INDEX.md from skills/
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+        with:
+          # Necessário para fazer commit de volta ao repo
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Executar gerador de INDEX.md
+        id: generate
+        run: |
+          python tools/generate_index.py
+          echo "Generated INDEX.md successfully"
+
+      - name: Verificar se INDEX.md mudou
+        id: check_changes
+        run: |
+          git diff --quiet INDEX.md && echo "changed=false" >> $GITHUB_OUTPUT || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commitar INDEX.md atualizado
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add INDEX.md tools/index_generation_errors.log 2>/dev/null || git add INDEX.md
+          git commit -m "chore(index): auto-regenerar INDEX.md via generate_index.py
+
+          Triggered by: ${{ github.event_name }}
+          Skills indexadas: $(python -c "import re; content = open('INDEX.md').read(); m = re.search(r'Skills\*\*: (\d+)', content); print(m.group(1) if m else 'N/A')")
+          Co-Authored-By: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+          git push
+
+      - name: Resumo da execução
+        run: |
+          echo "### INDEX.md Generation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check_changes.outputs.changed }}" == "true" ]; then
+            echo "INDEX.md foi atualizado e commitado." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Sem mudanças — INDEX.md já estava atualizado." >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          # Estatísticas do INDEX.md gerado
+          SKILLS=$(python -c "import re; content = open('INDEX.md').read(); m = re.search(r'\*\*Skills\*\*: (\d+)', content); print(m.group(1) if m else 'N/A')")
+          DOMAINS=$(python -c "import re; content = open('INDEX.md').read(); m = re.search(r'\*\*Domínios\*\*: (\d+)', content); print(m.group(1) if m else 'N/A')")
+          echo "- Skills indexadas: **$SKILLS**" >> $GITHUB_STEP_SUMMARY
+          echo "- Domínios: **$DOMAINS**" >> $GITHUB_STEP_SUMMARY
