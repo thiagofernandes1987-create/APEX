@@ -18509,7 +18509,207 @@ forgeskills_true_autoboot:
       apex_log = ApexLogger(module_id='apex.default', data_access='none')
 
 # ═══════════════════════════════════════════════════════════════════
-# FIM DOS MÓDULOS v00.36.0
-# Total DIFFs aplicados: 127 (119 herdados + 8 novos: OPP-125 a OPP-132)
-# Próxima versão: v00.37.0
+# DIFF aplicado: DIFF_SKILL_RESOLUTION_PRIORITY_001 (OPP-137)
+# Stats atualizados + regra de prioridade online-first + engineering_agentops
+# ═══════════════════════════════════════════════════════════════════
+
+# OPP-137: skill_resolution_priority + stats v00.36.0
+skill_resolution_priority:
+  executor: LLM_BEHAVIOR
+  version: v00.36.0
+  opp: OPP-137
+  tier: 0
+  status: ADOPTED
+
+  purpose: >
+    Formalizar a regra de resolucao de skills com prioridade explicita:
+    1) Buscar no repositorio GitHub oficial (online)
+    2) Se offline ou skill nao encontrada: sintetizar seguindo padroes APEX
+    Corrigir stats desatualizados do apex_superrepo (2.752 -> 2.638, 43 -> 52 dominios).
+    Registrar novo dominio engineering_agentops (OPP-136).
+
+  why: >
+    WHY: Boot tinha a infraestrutura (forgeskills_true_autoboot, on_demand_fetch) mas
+    nao tinha uma regra LLM_BEHAVIOR explicita sobre o que fazer quando:
+    a) O ambiente nao tem acesso a internet
+    b) A skill buscada nao existe no repositorio
+    c) O dominio nao esta mapeado no INDEX.md
+    Sem a regra explicita, o LLM poderia inventar comportamento ou recusar agir.
+    COM ESTE OPP: cadeia de prioridade clara e deterministica.
+
+  when: >
+    WHEN: STEP_0 -- apos forgeskills_true_autoboot.
+    WHEN: Skill ou dominio nao encontrado no APEX_SKILL_REGISTRY.
+    WHEN: Ambiente offline (forge_method == inline_paste).
+
+  what_if_fails: >
+    Se GitHub inacessivel: sintetizar skill/agente/diff seguindo APEX_CREATION_GUIDE.md.
+    Se skill sintetizada nao atende: declarar [SYNTHESIZED: sem base no repositorio] e
+    solicitar que o usuario forneça o SKILL.md relevante.
+    NUNCA recusar agir por falta de skill no repositorio -- sempre sintetizar.
+
+  inject_when: "STEP_0 apos forgeskills_true_autoboot"
+  depends_on: [forgeskills_true_autoboot, apex_superrepo_boot]
+
+  skill_resolution_chain:
+    priority_1_online_fetch:
+      condition: "APEX_SESSION_CAPS['forge_method'] IN ['urllib_fetch', 'git_clone']"
+      action: >
+        Buscar skill em https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/
+        Ordem: INDEX.md -> path do SKILL.md -> conteudo do skill.
+        Se encontrado: registrar como PROVISIONAL e usar.
+      marker: "[SKILL_FETCHED: {skill_id} do repositorio APEX]"
+
+    priority_2_registry_cache:
+      condition: "Skill ja carregada no APEX_SKILL_REGISTRY desta sessao"
+      action: "Usar versao cacheada sem novo fetch."
+      marker: "[SKILL_CACHED: {skill_id}]"
+
+    priority_3_prompt_base:
+      condition: "Skill esta embutida no system prompt (apex_v00_36_0_master_full.txt)"
+      action: "Usar definicao do prompt. Nao requer fetch."
+      marker: "[SKILL_PROMPT: {skill_id}]"
+
+    priority_4_synthesize:
+      condition: >
+        Skill nao encontrada em nenhuma das prioridades acima OU
+        ambiente offline (forge_method == inline_paste ou MINIMAL).
+      action: >
+        SINTETIZAR skill/agente/diff/instrucao seguindo APEX_CREATION_GUIDE.md.
+        Schema obrigatorio: skill_id, description, anchors, input_schema,
+        output_schema, what_if_fails, synergy_map, security, tier.
+        Qualidade minima: SkillQualityBar (6 checks) do APEX_CREATION_GUIDE.md.
+      marker: "[SYNTHESIZED: skill gerada por LLM -- nao existe no repositorio]"
+      requirement: "Declarar sempre que sintetizando -- nunca fingir que veio do repo"
+
+  apex_superrepo_stats_v00360:
+    url: "https://github.com/thiagofernandes1987-create/APEX"
+    raw_base: "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/"
+    index_path: "INDEX.md"
+    boot_enabled: true
+    max_skills_per_boot: 15
+    boot_timeout_sec: 15
+    last_updated: "2026-04-10"
+
+    repo_stats:
+      total_skill_md: 2638
+      total_domains: 52
+      total_agent_md: 19
+      total_diffs_applied: 128
+      ingestion_sessions: 3
+      version: "v00.36.0"
+
+    domains_v00360:
+      - engineering_agentops
+      - engineering_frontend
+      - engineering_backend
+      - engineering_api
+      - engineering_cli
+      - engineering_cloud_aws
+      - engineering_cloud_azure
+      - engineering_cloud_gcp
+      - engineering_database
+      - engineering_devops
+      - engineering_git
+      - engineering_mobile
+      - engineering_security
+      - engineering_testing
+      - business
+      - business_content
+      - business_human_resources
+      - business_productivity
+      - business_sales
+      - finance
+      - legal
+      - marketing
+      - sales
+      - operations
+      - product-management
+      - productivity
+      - ai-ml
+      - ai_ml_agents
+      - ai_ml_llm
+      - ai_ml_ml
+      - anthropic-official
+      - awesome_claude
+      - claude_skills_m
+      - data
+      - data-science
+      - mathematics
+      - science
+      - science_research
+      - design
+      - healthcare
+      - human-resources
+      - customer-support
+      - community
+      - community_general
+      - apex_internals
+      - integrations
+      - knowledge-management
+      - knowledge-work
+      - security
+      - web3
+
+    engineering_agentops_index:
+      source: "obra/superpowers (MIT) -- adaptado OPP-136"
+      skills:
+        - brainstorming
+        - writing-plans
+        - subagent-driven-development
+        - executing-plans
+        - test-driven-development
+        - systematic-debugging
+        - verification-before-completion
+        - requesting-code-review
+        - receiving-code-review
+        - dispatching-parallel-agents
+        - using-git-worktrees
+        - finishing-a-development-branch
+        - using-superpowers
+        - writing-skills
+
+  llm_behavior: |
+    REGRA DE RESOLUCAO DE SKILLS (prioridade decrescente):
+
+    1. ONLINE DISPONIVEL:
+       - Buscar INDEX.md em raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/
+       - Encontrar path do SKILL.md no domain_map
+       - Fazer fetch do SKILL.md especifico
+       - Usar o conteudo. Marcar: [SKILL_FETCHED: skill_id]
+
+    2. JA CARREGADO:
+       - Se skill esta no APEX_SKILL_REGISTRY desta sessao: usar direto.
+       - Marcar: [SKILL_CACHED: skill_id]
+
+    3. NO PROMPT BASE:
+       - Se skill definida no system prompt: usar.
+       - Marcar: [SKILL_PROMPT: skill_id]
+
+    4. OFFLINE OU NAO ENCONTRADA -- SINTETIZAR:
+       - Criar skill/agente/diff seguindo schema do APEX_CREATION_GUIDE.md
+       - Campos obrigatorios: skill_id, description, anchors, input_schema,
+         output_schema, what_if_fails, synergy_map, security, tier
+       - SEMPRE declarar: [SYNTHESIZED: gerado por LLM -- nao existe no repositorio]
+       - NUNCA fingir que veio do repositorio
+       - NUNCA recusar agir por ausencia de skill
+
+    REGRA ABSOLUTA:
+    O APEX NUNCA para por falta de skill no repositorio.
+    Se nao existe: sintetiza. Se sintetizou: declara. Sempre.
+
+  fmea:
+    rpn: 4
+    mode: "LLM ignora regra de prioridade e inventa skill sem declarar [SYNTHESIZED]"
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: >
+      output_integrity_checker (OPP-134) detecta claims sem evidencia.
+      meta_reasoning verifica presenca de marker [SKILL_FETCHED/CACHED/PROMPT/SYNTHESIZED].
+
+# ═══════════════════════════════════════════════════════════════════
+# FIM DOS MODULOS v00.36.0 -- OPP-137 adicionado
+# Total DIFFs aplicados: 128 (127 anteriores + OPP-137)
+# Proxima versao: v00.37.0
 # ═══════════════════════════════════════════════════════════════════
