@@ -1,7 +1,7 @@
 # APEX Index — Hub de Navegação
 
-**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-10 20:09 UTC
-**Versão APEX**: v00.36.0 | **Skills**: 2624 | **Domínios**: 50 | **Erros de parse**: 0
+**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-10 20:27 UTC
+**Versão APEX**: v00.36.0 | **Skills**: 2638 | **Domínios**: 51 | **Erros de parse**: 0
 
 > Este arquivo é gerado automaticamente. Não editar manualmente.
 > Para atualizar: `python tools/generate_index.py` ou aguardar o GitHub Action.
@@ -45,6 +45,7 @@ PASSO 3: Leia o SKILL.md do skill específico
 | Data Science | 11 | `skills/data-science/` | OK |
 | Design | 73 | `skills/design/` | OK |
 | Engineering (Core) | 487 | `skills/engineering/` | OK |
+| Engineering Agentops | 14 | `skills/engineering_agentops/` | OK |
 | Engineering — API | 14 | `skills/engineering_api/` | OK |
 | Engineering — Backend | 9 | `skills/engineering_backend/` | OK |
 | Engineering — CLI | 3 | `skills/engineering_cli/` | OK |
@@ -2512,6 +2513,110 @@ domain_map:
             status: CANDIDATE
             anchors: [browser, automation, powers, testing, scraping]
           # ... +24 skills adicionais
+
+  ENGINEERING_AGENTOPS:
+    path: skills/engineering_agentops/
+    display_name: "Engineering Agentops"
+    skill_count: 14
+    sub_domains:
+      brainstorming:
+        path: skills/engineering_agentops/brainstorming/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.brainstorming
+            path: skills/engineering_agentops/brainstorming/SKILL.md
+            status: ADAPTED
+      dispatching-parallel-agents:
+        path: skills/engineering_agentops/dispatching-parallel-agents/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.dispatching-parallel-agents
+            path: skills/engineering_agentops/dispatching-parallel-agents/SKILL.md
+            status: ADAPTED
+      executing-plans:
+        path: skills/engineering_agentops/executing-plans/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.executing-plans
+            path: skills/engineering_agentops/executing-plans/SKILL.md
+            status: ADAPTED
+      finishing-a-development-branch:
+        path: skills/engineering_agentops/finishing-a-development-branch/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.finishing-a-development-branch
+            path: skills/engineering_agentops/finishing-a-development-branch/SKILL.md
+            status: ADAPTED
+      receiving-code-review:
+        path: skills/engineering_agentops/receiving-code-review/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.receiving-code-review
+            path: skills/engineering_agentops/receiving-code-review/SKILL.md
+            status: ADAPTED
+      requesting-code-review:
+        path: skills/engineering_agentops/requesting-code-review/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.requesting-code-review
+            path: skills/engineering_agentops/requesting-code-review/SKILL.md
+            status: ADAPTED
+      subagent-driven-development:
+        path: skills/engineering_agentops/subagent-driven-development/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.subagent-driven-development
+            path: skills/engineering_agentops/subagent-driven-development/SKILL.md
+            status: ADAPTED
+      systematic-debugging:
+        path: skills/engineering_agentops/systematic-debugging/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.systematic-debugging
+            path: skills/engineering_agentops/systematic-debugging/SKILL.md
+            status: ADAPTED
+      test-driven-development:
+        path: skills/engineering_agentops/test-driven-development/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.test-driven-development
+            path: skills/engineering_agentops/test-driven-development/SKILL.md
+            status: ADAPTED
+      using-git-worktrees:
+        path: skills/engineering_agentops/using-git-worktrees/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.using-git-worktrees
+            path: skills/engineering_agentops/using-git-worktrees/SKILL.md
+            status: ADAPTED
+      using-superpowers:
+        path: skills/engineering_agentops/using-superpowers/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.using-superpowers
+            path: skills/engineering_agentops/using-superpowers/SKILL.md
+            status: ADAPTED
+      verification-before-completion:
+        path: skills/engineering_agentops/verification-before-completion/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.verification-before-completion
+            path: skills/engineering_agentops/verification-before-completion/SKILL.md
+            status: ADAPTED
+      writing-plans:
+        path: skills/engineering_agentops/writing-plans/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.writing-plans
+            path: skills/engineering_agentops/writing-plans/SKILL.md
+            status: ADAPTED
+      writing-skills:
+        path: skills/engineering_agentops/writing-skills/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.writing-skills
+            path: skills/engineering_agentops/writing-skills/SKILL.md
+            status: ADAPTED
 
   ENGINEERING_API:
     path: skills/engineering_api/
@@ -7556,13 +7661,14 @@ domain_map:
 ## Estatísticas de Geração
 
 **Por Status:**
-- CANDIDATE: 1956 (74.5%)
-- UNKNOWN: 431 (16.4%)
+- CANDIDATE: 1956 (74.1%)
+- UNKNOWN: 431 (16.3%)
 - ADOPTED: 237 (9.0%)
+- ADAPTED: 14 (0.5%)
 
 **Por Tier:**
-- ADAPTED: 2512 (95.7%)
-- IMPORTED: 75 (2.9%)
+- ADAPTED: 2526 (95.8%)
+- IMPORTED: 75 (2.8%)
 - COMMUNITY: 37 (1.4%)
 
 **Top 10 Domínios por Quantidade de Skills:**
@@ -7579,4 +7685,4 @@ domain_map:
 
 ---
 
-*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-10 20:09 UTC*
+*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-10 20:27 UTC*
