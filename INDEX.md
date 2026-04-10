@@ -1,6 +1,6 @@
 # APEX Index — Hub de Navegação
 
-**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-10 20:08 UTC
+**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-10 20:09 UTC
 **Versão APEX**: v00.36.0 | **Skills**: 2624 | **Domínios**: 50 | **Erros de parse**: 0
 
 > Este arquivo é gerado automaticamente. Não editar manualmente.
@@ -7579,4 +7579,4 @@ domain_map:
 
 ---
 
-*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-10 20:08 UTC*
+*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-10 20:09 UTC*
