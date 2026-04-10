@@ -1,6 +1,6 @@
 # APEX — Autonomous Polymorphic Engineering eXpert
 
-**Version**: v00.36.0 | **Skills**: 2.624 | **Domínios**: 50 | **DIFFs**: 127
+**Version**: v00.36.0 | **Skills**: 2.624 | **Domínios**: 50 | **DIFFs**: 127 | [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 > Um framework DSL que transforma qualquer LLM em um sistema de engenharia cognitiva multi-agente — com governança, execução híbrida e trilha de auditoria.
 
@@ -243,3 +243,14 @@ Ver [`APEX_CREATION_GUIDE.md`](APEX_CREATION_GUIDE.md):
 **Repositório**: https://github.com/thiagofernandes1987-create/APEX
 **Raw base**: `https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/`
 **Whitelist APEX**: `trusted_domains` contém este repositório desde v00.33.0 (OPP-104)
+
+---
+
+## Licença
+
+Este projeto está licenciado sob **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**.
+
+- **Uso livre**: pesquisa, educação, projetos pessoais, open source não-comercial
+- **Uso comercial**: requer permissão explícita do autor
+
+Ver [`LICENSE`](LICENSE) | [Texto completo CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/legalcode)
