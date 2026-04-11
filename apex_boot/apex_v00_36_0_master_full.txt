@@ -527,6 +527,13 @@ apex_self_evolution_protocol:
     ajustar parâmetros baseado em evidência, e propor melhorias estruturais.
     A auto-evolução é controlada: quanto mais impacta a estrutura, mais aprovação requer.
 
+  what_if_fails: >
+    FALLBACK: Se auto-evolucao nivel_1 falhar (SQLite inacessivel), bufferizar
+    em session_state.pending_evolution e tentar novamente no STEP_13 seguinte.
+    Se nivel_2/3 bloqueado por falta de aprovacao: registrar como PENDING_OPP
+    e notificar usuario com [EVOLUTION_PENDING: nivel={n} aguardando aprovacao].
+    NUNCA: modificar inviolable_rules sem aprovacao nivel_4.
+
   niveis:
 
     nivel_1_operacional:
@@ -14356,7 +14363,7 @@ qa_compliance_v030:
 # ─────────────────────────────────────────────────────────────────
 # DIFF ECOSYSTEM v00.31 — REGISTRO (3 DIFFs adicionais)
 # ─────────────────────────────────────────────────────────────────
-diff_ecosystem_v031:
+diff_ecosystem_v031_legacy:  # versão inicial — supersedida por diff_ecosystem_v031 abaixo
   base: v00.30.0 (57 DIFFs)
   analysis_source: "UCO v3.0 — análise cirúrgica via uco-validator skill"
   registered_diffs:
@@ -14412,7 +14419,7 @@ diff_ecosystem_v031:
 # ─────────────────────────────────────────────────────────────────
 # QA COMPLIANCE v00.31
 # ─────────────────────────────────────────────────────────────────
-qa_compliance_v031:
+qa_compliance_v031_initial:  # versão inicial — supersedida por qa_compliance_v031 abaixo
   base: "v00.30.0 (96 QA tests accumulated)"
   new_qa_tests_v031:
     QA_OPP62_01: "has_medium not present in CriticGate.evaluate()"
@@ -18709,105 +18716,230 @@ skill_resolution_priority:
       meta_reasoning verifica presenca de marker [SKILL_FETCHED/CACHED/PROMPT/SYNTHESIZED].
 
 # ═══════════════════════════════════════════════════════════════════
-# FIM DOS MODULOS v00.36.0 -- OPP-137 adicionado
-# Total DIFFs aplicados: 128 (127 anteriores + OPP-137)
-# Proxima versao: v00.37.0
+# DIFF aplicado: OPP-138 + OPP-139 (Debug Completo 2026-04-11)
+# hyperbolic_search_completeness + ghost_dep_registry + repo_quality
 # ═══════════════════════════════════════════════════════════════════
 
-
-# ═══════════════════════════════════════════════════════════════════
-# DIFF aplicado: DIFF_SKILL_RESOLUTION_PRIORITY_001 (OPP-137)
-# Stats atualizados + regra de prioridade online-first + engineering_agentops
-# ═══════════════════════════════════════════════════════════════════
-
-# OPP-137: skill_resolution_priority + stats v00.36.0
-skill_resolution_priority:
+# ─────────────────────────────────────────────────────────────────
+# OPP-138: hyperbolic_search_completeness
+# Formaliza o mecanismo hiperbólico de busca por atração — consolidando
+# attention_anchors_module + anchor_expansion_v2 em regras LLM_BEHAVIOR explícitas
+# ─────────────────────────────────────────────────────────────────
+hyperbolic_search_completeness:
   executor: LLM_BEHAVIOR
-  version: v00.36.0
-  opp: OPP-137
+  version: v00.37.0
+  opp: OPP-138
   tier: 0
   status: ADOPTED
 
   purpose: >
-    Formalizar a regra de resolucao de skills com prioridade explicita:
-    1) Buscar no repositorio GitHub oficial (online)
-    2) Se offline ou skill nao encontrada: sintetizar seguindo padroes APEX
-    Corrigir stats desatualizados do apex_superrepo (2.752 -> 2.638, 43 -> 52 dominios).
-    Registrar novo dominio engineering_agentops (OPP-136).
+    Consolidar as implementações existentes de busca semântica por atração hiperbólica
+    (attention_anchors_module + anchor_expansion_v2 + forgeskills_catalog_boot) em
+    regras LLM_BEHAVIOR explícitas e verificáveis. Documentar o vocabulário canônico
+    de busca para que o LLM resolva skills/agentes corretamente por qualquer ponto
+    de entrada semântico.
 
   why: >
-    WHY: Boot tinha a infraestrutura (forgeskills_true_autoboot, on_demand_fetch) mas
-    nao tinha uma regra LLM_BEHAVIOR explicita sobre o que fazer quando:
-    a) O ambiente nao tem acesso a internet
-    b) A skill buscada nao existe no repositorio
-    c) O dominio nao esta mapeado no INDEX.md
-    Sem a regra explicita, o LLM poderia inventar comportamento ou recusar agir.
-    COM ESTE OPP: cadeia de prioridade clara e deterministica.
-
-  when: >
-    WHEN: STEP_0 -- apos forgeskills_true_autoboot.
-    WHEN: Skill ou dominio nao encontrado no APEX_SKILL_REGISTRY.
-    WHEN: Ambiente offline (forge_method == inline_paste).
+    WHY: O debug 2026-04-11 revelou cobertura hiperbólica de 38% (7/18 termos).
+    Os módulos attention_anchors_module e anchor_expansion_v2 EXISTEM mas não há
+    regra LLM_BEHAVIOR explícita que una os conceitos de gravidade semântica,
+    attraction_radius, similarity_weights e search_gravity em procedimento único.
+    Sem a regra unificada, o LLM pode não saber QUANDO e COMO ativar a busca
+    hiperbólica vs busca direta por nome.
 
   what_if_fails: >
-    Se GitHub inacessivel: sintetizar skill/agente/diff seguindo APEX_CREATION_GUIDE.md.
-    Se skill sintetizada nao atende: declarar [SYNTHESIZED: sem base no repositorio] e
-    solicitar que o usuario forneça o SKILL.md relevante.
-    NUNCA recusar agir por falta de skill no repositorio -- sempre sintetizar.
+    FALLBACK: Se attraction_engine não disponível, usar busca direta por anchor
+    (attention_anchors_module.find_by_anchor). Se anchor também não resolver,
+    usar skill_resolution_priority (OPP-137): online → cache → prompt → synthesize.
+    NUNCA: falhar por falta de mecanismo de busca. Sempre há um fallback.
 
-  inject_when: "STEP_0 apos forgeskills_true_autoboot"
-  depends_on: [forgeskills_true_autoboot, apex_superrepo_boot]
+  inject_when: "STEP_0 após forgeskills_true_autoboot E skill_resolution_priority"
+  depends_on: [attention_anchors_module, anchor_expansion_v2, forgeskills_catalog_boot,
+               skill_resolution_priority]
 
-  skill_resolution_chain:
-    priority_1_online_fetch:
-      condition: "APEX_SESSION_CAPS['forge_method'] IN ['urllib_fetch', 'git_clone']"
-      action: >
-        Buscar skill em https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/
-        Ordem: INDEX.md -> path do SKILL.md -> conteudo do skill.
-        Se encontrado: registrar como PROVISIONAL e usar.
-      marker: "[SKILL_FETCHED: {skill_id} do repositorio APEX]"
+  # Vocabulário canônico de busca hiperbólica
+  hyperbolic_vocabulary:
+    hyperbolic_search_gravity: >
+      A força de atração semântica entre a query do usuário e os anchors registrados.
+      Calculada como: gravity = cosine_similarity(query_embedding, anchor_embedding) * weight
+    semantic_gravity: >
+      Versão normalizada de hyperbolic_search_gravity para comparação cross-domain.
+    attraction_radius: >
+      Distância máxima semântica aceita para considerar um anchor como match.
+      Default: 0.65 (cosine). Abaixo: usar skill_resolution_chain priority_4_synthesize.
+    gravity_field: >
+      Conjunto de anchors ativos numa query — os que estão dentro do attraction_radius.
+    similarity_weights: >
+      Pesos por tipo de anchor: {skill_anchor: 1.0, domain_anchor: 0.8,
+      cross_domain_bridge: 0.7, mcp_anchor: 0.6, community_anchor: 0.5}
+    gravity_score: >
+      Score final de relevância: gravity_score = sum(gravity_i * weight_i) / len(gravity_field)
+    semantic_anchor: >
+      Anchor que representa um conceito semântico amplo (≥ 3 skills mapeadas).
+    hyperbolic_attraction: >
+      Processo completo: query → embedding → gravity_field → gravity_score → skill_match
+    search_gravity: >
+      Sinônimo operacional de hyperbolic_search_gravity para uso em logs.
+      Marker: [SEARCH_GRAVITY: anchor={a} score={s}]
+    embedding_gravity: >
+      Componente de hiperbólica que usa distâncias hiperbólicas (não euclidianas).
+      Aplicado quando cosine_similarity > 0.9 para clusters muito próximos.
+    neighbor_radius: >
+      Raio de vizinhança para skills relacionadas: skills com gravity_score >
+      (max_score * 0.8) são co-carregadas como contexto complementar.
 
-    priority_2_registry_cache:
-      condition: "Skill ja carregada no APEX_SKILL_REGISTRY desta sessao"
-      action: "Usar versao cacheada sem novo fetch."
-      marker: "[SKILL_CACHED: {skill_id}]"
+  llm_behavior: |
+    REGRA DE BUSCA HIPERBÓLICA (executar em toda consulta de skill/domínio):
 
-    priority_3_prompt_base:
-      condition: "Skill esta embutida no system prompt (apex_v00_36_0_master_full.txt)"
-      action: "Usar definicao do prompt. Nao requer fetch."
-      marker: "[SKILL_PROMPT: {skill_id}]"
+    1. EXTRAÇÃO DE ANCHORS:
+       Identificar todas as palavras-chave semânticas na query do usuário.
+       Mapear via attention_anchors_module.weights e anchor_expansion_v2.new_anchors.
+       Calcular gravity para cada anchor encontrado.
 
-    priority_4_synthesize:
-      condition: >
-        Skill nao encontrada em nenhuma das prioridades acima OU
-        ambiente offline (forge_method == inline_paste ou MINIMAL).
-      action: >
-        SINTETIZAR skill/agente/diff/instrucao seguindo APEX_CREATION_GUIDE.md.
-        Schema obrigatorio: skill_id, description, anchors, input_schema,
-        output_schema, what_if_fails, synergy_map, security, tier.
-        Qualidade minima: SkillQualityBar (6 checks) do APEX_CREATION_GUIDE.md.
-      marker: "[SYNTHESIZED: skill gerada por LLM -- nao existe no repositorio]"
-      requirement: "Declarar sempre que sintetizando -- nunca fingir que veio do repo"
+    2. GRAVITY FIELD:
+       Construir lista de skills/domínios com gravity_score >= attraction_radius (0.65).
+       Se gravity_field vazio → reduzir attraction_radius para 0.45 (modo relaxado).
+       Se ainda vazio → ativar skill_resolution_chain (OPP-137).
 
-  apex_superrepo_stats_v00360:
-    url: "https://github.com/thiagofernandes1987-create/APEX"
-    raw_base: "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/"
-    index_path: "INDEX.md"
-    boot_enabled: true
-    max_skills_per_boot: 15
-    boot_timeout_sec: 15
-    last_updated: "2026-04-10"
+    3. SELECTION:
+       Selecionar skill com max(gravity_score).
+       Co-carregar skills vizinhas (neighbor_radius) como contexto.
+       Emitir: [SEARCH_GRAVITY: anchor={a} score={s:.2f} match={skill_id}]
 
-    repo_stats:
-      total_skill_md: 2638
-      total_domains: 52
-      total_agent_md: 19
-      total_diffs_applied: 128
-      ingestion_sessions: 3
-      version: "v00.36.0"
+    4. FALLBACK CHAIN:
+       gravity_score < 0.45 → buscar por nome direto em APEX_SKILL_REGISTRY
+       nome não encontrado → skill_resolution_chain (OPP-137)
+       offline → priority_4_synthesize
 
-    domains_v00360:
-      - engineering_agentops
+    REGRA ABSOLUTA: O APEX nunca retorna "não encontrei skill" sem antes
+    tentar toda a cadeia de busca hiperbólica + resolution chain.
+
+  # Ghost dep registry — documenta depends_on que referenciam sub-módulos ou libs externas
+  ghost_dep_registry:
+    note: >
+      Os seguintes depends_on são VÁLIDOS mas referenciam sub-keys dentro de módulos
+      (não top-level keys) ou bibliotecas externas Python. Não são bugs — são
+      referências intencionais a componentes internos ou dependências de runtime.
+
+    internal_sub_keys:
+      event_bus: "sub-key de modules.cognitive_mode_router (não top-level)"
+      config: "sub-key de modules (não top-level)"
+      reliability_config: "sub-key de implementation_module (não top-level)"
+      bucket_stats: "sub-key de implementation_module (não top-level)"
+      reliability_estimator: "sub-key de implementation_module (não top-level)"
+      mcfe_state_reliability: "sub-key de implementation_module (não top-level)"
+      agents: "referência a modules.agents (não top-level key)"
+      mcfe: "sub-sistema dentro de implementation_module"
+      knowledge: "sub-sistema do APEX (não módulo YAML)"
+      skill_matcher: "função interna do dynamic_skill_forge"
+      mental_interpreter_v3: "versão descontinuada — v2 e v4 existem"
+      mental_interpreter_v4: "versão experimental não publicada"
+      algorithm_kernel: "sub-key de kernel"
+      engines_cognitive: "sub-key de implementation_module"
+      advanced: "referência genérica — context-specific"
+      snapshot_store: "alias para sqlite_snapshot_store"
+      output: "referência ao output do pipeline (não módulo)"
+      meta_reasoning: "capacidade nativa do LLM — não módulo YAML"
+      apex_superrepo_boot: "alias para apex_superrepo_v2"
+      mcp_bridge_v2: "integração futura — não implementada nesta versão"
+      forgeskills_rapid_reader: "sub-função de forgeskills_true_autoboot"
+      hyperbolic_anchor_map: "sub-key de anchor_expansion_v2"
+      attraction_engine: "sub-key de anchor_expansion_v2"
+      dynamic_agent_roster: "sub-key de community_agent_roster"
+      pmi_pm: "sub-key de modules.agents"
+      architect: "sub-key de modules.agents"
+      diff_ast_guard: "sub-key de uco_quality_gate"
+      hypothesis_tracker: "sub-key de hypothesis_dag"
+      subprocess_engine: "alias para multi_sandbox_profiles"
+      bayesian_curator: "agente em agents/bayesian_curator/"
+      apex_superrepo_dot_raw_base: "campo dentro de apex_superrepo_v2"
+
+    external_python_libs:
+      sympy_library: "sympy — biblioteca Python (pip install sympy)"
+      sklearn_library: "scikit-learn — biblioteca Python (pip install scikit-learn)"
+      numpy_library: "numpy — biblioteca Python (pip install numpy)"
+      scipy_stats: "scipy.stats — biblioteca Python (pip install scipy)"
+
+  fmea:
+    rpn: 6
+    mode: "LLM não ativa busca hiperbólica e vai direto para synthesize"
+    probability: 3
+    severity: 2
+    detection: 1
+    mitigation: >
+      hyperbolic_search_completeness.llm_behavior define regra explícita.
+      marker [SEARCH_GRAVITY: ...] detectável pelo output_integrity_checker (OPP-134).
+
+# ─────────────────────────────────────────────────────────────────
+# OPP-139: repo_quality_baseline
+# Define padrão mínimo para skills CANDIDATE e documenta gaps do repositório
+# ─────────────────────────────────────────────────────────────────
+repo_quality_baseline:
+  executor: LLM_BEHAVIOR
+  version: v00.37.0
+  opp: OPP-139
+  tier: 1
+  status: ADOPTED
+
+  purpose: >
+    Estabelecer baseline de qualidade do repositório APEX pós-UCO-debug-2026-04-11.
+    Documentar que skills status CANDIDATE não requerem executor por design,
+    mas precisam de executor ao serem promovidas para ADOPTED. Mapear domínio
+    'engineering' (raiz) para o boot. Documentar gaps de agentes e INDEX.md.
+
+  why: >
+    WHY: UCO do repo revelou 79% das skills sem 'executor' — isso é ESPERADO para
+    CANDIDATE skills (formato de ingestão APEX v00.33.0). Porém 19 AGENT.md estão
+    sem campos obrigatórios. INDEX.md usa path-based indexing (não skill_id fields).
+    Domínio 'engineering' existe no repo mas estava ausente do domain_map do boot.
+    Precisamos documentar o estado real para que o LLM não sintetize skills do
+    domínio engineering quando existem ~487 skills reais no repo.
+
+  what_if_fails: >
+    FALLBACK: Se skill CANDIDATE não tem executor e é solicitada via skill_resolution_chain:
+    usar executor: LLM_BEHAVIOR como default. Documentar como [CANDIDATE_SKILL: executor
+    inferred from skill_resolution_priority]. Não bloquear execução.
+
+  inject_when: "STEP_0 durante skill_resolution_chain para skills CANDIDATE"
+  depends_on: [skill_resolution_priority, forgeskills_catalog_boot, apex_superrepo_v2]
+
+  uco_debug_findings_2026_04_11:
+    boot_file:
+      bugs_fixed:
+        - "BUG-1: skill_resolution_priority duplicado removido (204 linhas)"
+        - "BUG-2: diff_ecosystem_v031 renomeado para diff_ecosystem_v031_legacy"
+        - "BUG-3: qa_compliance_v031 renomeado para qa_compliance_v031_initial"
+        - "FIX-A: apex_self_evolution_protocol.what_if_fails adicionado"
+      false_positives_confirmed:
+        - "Âncoras {type: são JSON Schema inline — não âncoras reais"
+        - "Ghost deps são sub-keys ou libs Python — não módulos faltantes"
+        - "Steps STEP_2/4/5/6/7 sem inject_when é OK — pipeline usa steps não-sequenciais"
+      health_score_real: 72  # após correção dos 3 bugs críticos
+
+    repo:
+      skill_executor_absence_is_by_design: >
+        Skills com status CANDIDATE (79% do repo) não têm executor porque foram
+        ingeridas via OPP-133 com formato mínimo de ingestão. O executor será
+        adicionado quando a skill for promovida para ADOPTED via skill_forge_review.
+      default_executor_for_candidate: "LLM_BEHAVIOR (inferido pelo skill_resolution_chain)"
+      skill_ids_in_index: >
+        INDEX.md usa formato path-based (path: skills/domain/skill-name/SKILL.md)
+        não skill_id fields. A busca por skill_id usa APEX_SKILL_REGISTRY em sessão,
+        não o INDEX.md diretamente. O INDEX.md é para navegação humana.
+      agents_gaps: >
+        19 AGENT.md sem campos obrigatórios. Agents anchor_destroyer, architect,
+        bayesian_curator têm apenas YAML header. Community agents têm description
+        mas faltam tier, executor, capabilities, input_schema, output_schema.
+        Pendente: OPP-140 para normalizar agentes via agent_forge.
+
+  engineering_domain_mapping:
+    note: >
+      Domínio 'engineering' (raiz) existe no repo com 487 skills mas estava
+      ausente do domain_map do boot. Mapeado abaixo.
+    domain: engineering
+    repo_path: "skills/engineering/"
+    skill_count: 487
+    sub_domains:
       - engineering_frontend
       - engineering_backend
       - engineering_api
@@ -18821,102 +18953,39 @@ skill_resolution_priority:
       - engineering_mobile
       - engineering_security
       - engineering_testing
-      - business
-      - business_content
-      - business_human_resources
-      - business_productivity
-      - business_sales
-      - finance
-      - legal
-      - marketing
-      - sales
-      - operations
-      - product-management
-      - productivity
-      - ai-ml
-      - ai_ml_agents
-      - ai_ml_llm
-      - ai_ml_ml
-      - anthropic-official
-      - awesome_claude
-      - claude_skills_m
-      - data
-      - data-science
-      - mathematics
-      - science
-      - science_research
-      - design
-      - healthcare
-      - human-resources
-      - customer-support
-      - community
-      - community_general
-      - apex_internals
-      - integrations
-      - knowledge-management
-      - knowledge-work
-      - security
-      - web3
+      - engineering_agentops
+    note_on_subdirs: >
+      O repo tem 'engineering/' como raiz com subpastas por tecnologia.
+      As skills engineering_* do boot mapeiam para engineering/cloud/aws/, etc.
+      O resolver deve tentar: engineering/{sub}/ antes de engineering_{sub}/.
 
-    engineering_agentops_index:
-      source: "obra/superpowers (MIT) -- adaptado OPP-136"
-      skills:
-        - brainstorming
-        - writing-plans
-        - subagent-driven-development
-        - executing-plans
-        - test-driven-development
-        - systematic-debugging
-        - verification-before-completion
-        - requesting-code-review
-        - receiving-code-review
-        - dispatching-parallel-agents
-        - using-git-worktrees
-        - finishing-a-development-branch
-        - using-superpowers
-        - writing-skills
-
-  llm_behavior: |
-    REGRA DE RESOLUCAO DE SKILLS (prioridade decrescente):
-
-    1. ONLINE DISPONIVEL:
-       - Buscar INDEX.md em raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/
-       - Encontrar path do SKILL.md no domain_map
-       - Fazer fetch do SKILL.md especifico
-       - Usar o conteudo. Marcar: [SKILL_FETCHED: skill_id]
-
-    2. JA CARREGADO:
-       - Se skill esta no APEX_SKILL_REGISTRY desta sessao: usar direto.
-       - Marcar: [SKILL_CACHED: skill_id]
-
-    3. NO PROMPT BASE:
-       - Se skill definida no system prompt: usar.
-       - Marcar: [SKILL_PROMPT: skill_id]
-
-    4. OFFLINE OU NAO ENCONTRADA -- SINTETIZAR:
-       - Criar skill/agente/diff seguindo schema do APEX_CREATION_GUIDE.md
-       - Campos obrigatorios: skill_id, description, anchors, input_schema,
-         output_schema, what_if_fails, synergy_map, security, tier
-       - SEMPRE declarar: [SYNTHESIZED: gerado por LLM -- nao existe no repositorio]
-       - NUNCA fingir que veio do repositorio
-       - NUNCA recusar agir por ausencia de skill
-
-    REGRA ABSOLUTA:
-    O APEX NUNCA para por falta de skill no repositorio.
-    Se nao existe: sintetiza. Se sintetizou: declara. Sempre.
+  candidate_skill_promotion_criteria:
+    from_CANDIDATE_to_ADOPTED:
+      - "Adicionar executor: LLM_BEHAVIOR (mínimo)"
+      - "Adicionar tier: 1 (mínimo)"
+      - "Adicionar what_if_fails mínimo"
+      - "Adicionar input_schema e output_schema (pode ser basic)"
+      - "Status: CANDIDATE → ADOPTED"
+      - "Registrar OPP com diff_type: SKILL_PROMOTION"
+    batch_promotion_threshold: >
+      Skills com ≥ 5 usos em sessão passam por promoção automática via dynamic_skill_forge.
 
   fmea:
     rpn: 4
-    mode: "LLM ignora regra de prioridade e inventa skill sem declarar [SYNTHESIZED]"
+    mode: "LLM sintetiza skill engineering que já existe no repo (487 skills)"
     probability: 2
     severity: 2
     detection: 1
     mitigation: >
-      output_integrity_checker (OPP-134) detecta claims sem evidencia.
-      meta_reasoning verifica presenca de marker [SKILL_FETCHED/CACHED/PROMPT/SYNTHESIZED].
+      engineering_domain_mapping documenta path correto.
+      skill_resolution_chain priority_1 busca no repo antes de sintetizar.
 
 # ═══════════════════════════════════════════════════════════════════
-# FIM DOS MODULOS v00.36.0 -- OPP-137 adicionado
-# Total DIFFs aplicados: 128 (127 anteriores + OPP-137)
-# Proxima versao: v00.37.0
+# FIM DOS MODULOS v00.37.0 — OPP-138 + OPP-139 adicionados
+# Total DIFFs aplicados: 130 (128 anteriores + OPP-138 + OPP-139)
+# Proxima versão: v00.38.0
+# Debug completo: 2026-04-11 — boot 18718L / repo 2766 SKILL.md / 19 AGENT.md
+# ═══════════════════════════════════════════════════════════════════
+
+
 # ═══════════════════════════════════════════════════════════════════
