@@ -1,6 +1,6 @@
 # APEX Index — Hub de Navegação
 
-**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-11 10:42 UTC
+**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-11 11:16 UTC
 **Versão APEX**: v00.36.0 | **Skills**: 2638 | **Domínios**: 51 | **Erros de parse**: 0
 
 > Este arquivo é gerado automaticamente. Não editar manualmente.
@@ -2525,98 +2525,98 @@ domain_map:
         skills:
           - skill: engineering_agentops.brainstorming
             path: skills/engineering_agentops/brainstorming/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       dispatching-parallel-agents:
         path: skills/engineering_agentops/dispatching-parallel-agents/
         skill_count: 1
         skills:
           - skill: engineering_agentops.dispatching-parallel-agents
             path: skills/engineering_agentops/dispatching-parallel-agents/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       executing-plans:
         path: skills/engineering_agentops/executing-plans/
         skill_count: 1
         skills:
           - skill: engineering_agentops.executing-plans
             path: skills/engineering_agentops/executing-plans/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       finishing-a-development-branch:
         path: skills/engineering_agentops/finishing-a-development-branch/
         skill_count: 1
         skills:
           - skill: engineering_agentops.finishing-a-development-branch
             path: skills/engineering_agentops/finishing-a-development-branch/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       receiving-code-review:
         path: skills/engineering_agentops/receiving-code-review/
         skill_count: 1
         skills:
           - skill: engineering_agentops.receiving-code-review
             path: skills/engineering_agentops/receiving-code-review/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       requesting-code-review:
         path: skills/engineering_agentops/requesting-code-review/
         skill_count: 1
         skills:
           - skill: engineering_agentops.requesting-code-review
             path: skills/engineering_agentops/requesting-code-review/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       subagent-driven-development:
         path: skills/engineering_agentops/subagent-driven-development/
         skill_count: 1
         skills:
           - skill: engineering_agentops.subagent-driven-development
             path: skills/engineering_agentops/subagent-driven-development/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       systematic-debugging:
         path: skills/engineering_agentops/systematic-debugging/
         skill_count: 1
         skills:
           - skill: engineering_agentops.systematic-debugging
             path: skills/engineering_agentops/systematic-debugging/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       test-driven-development:
         path: skills/engineering_agentops/test-driven-development/
         skill_count: 1
         skills:
           - skill: engineering_agentops.test-driven-development
             path: skills/engineering_agentops/test-driven-development/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       using-git-worktrees:
         path: skills/engineering_agentops/using-git-worktrees/
         skill_count: 1
         skills:
           - skill: engineering_agentops.using-git-worktrees
             path: skills/engineering_agentops/using-git-worktrees/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       using-superpowers:
         path: skills/engineering_agentops/using-superpowers/
         skill_count: 1
         skills:
           - skill: engineering_agentops.using-superpowers
             path: skills/engineering_agentops/using-superpowers/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       verification-before-completion:
         path: skills/engineering_agentops/verification-before-completion/
         skill_count: 1
         skills:
           - skill: engineering_agentops.verification-before-completion
             path: skills/engineering_agentops/verification-before-completion/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       writing-plans:
         path: skills/engineering_agentops/writing-plans/
         skill_count: 1
         skills:
           - skill: engineering_agentops.writing-plans
             path: skills/engineering_agentops/writing-plans/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
       writing-skills:
         path: skills/engineering_agentops/writing-skills/
         skill_count: 1
         skills:
           - skill: engineering_agentops.writing-skills
             path: skills/engineering_agentops/writing-skills/SKILL.md
-            status: ADAPTED
+            status: ADOPTED
 
   ENGINEERING_API:
     path: skills/engineering_api/
@@ -7663,8 +7663,7 @@ domain_map:
 **Por Status:**
 - CANDIDATE: 1956 (74.1%)
 - UNKNOWN: 431 (16.3%)
-- ADOPTED: 237 (9.0%)
-- ADAPTED: 14 (0.5%)
+- ADOPTED: 251 (9.5%)
 
 **Por Tier:**
 - ADAPTED: 2526 (95.8%)
@@ -7685,4 +7684,4 @@ domain_map:
 
 ---
 
-*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-11 10:42 UTC*
+*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-11 11:16 UTC*

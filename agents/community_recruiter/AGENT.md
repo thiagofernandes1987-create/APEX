@@ -6,6 +6,25 @@ version: v00.33.0
 status: CANDIDATE
 source_repo: claude-cookbooks
 apex_version: v00.33.0
+tier: 2
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - talent_evaluation
+  - pipeline_management
+  - job_description_creation
+  - interview_planning
+  - market_analysis
+input_schema:
+  role: "str"
+  requirements: "list[str]"
+  company_context: "optional[str]"
+output_schema:
+  candidate_evaluation: "dict"
+  job_description: "str"
+  interview_plan: "list[str]"
+  market_insights: "str"
+what_if_fails: >
+  FALLBACK: Se sem acesso a mercado externo, gerar análise baseada em padrões da indústria. Marcar [MARKET_DATA_UNAVAILABLE].
 ---
 
 # recruiter

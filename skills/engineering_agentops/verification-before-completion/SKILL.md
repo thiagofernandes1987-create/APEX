@@ -7,7 +7,7 @@ description: >
   SOMENTE ENTÃO fazer o claim com evidência. Iron Law: SEM EVIDÊNCIA = SEM CLAIM.
   Proíbe "should work", "probably", "seems to", e qualquer expressão de satisfação prematura.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/verification-before-completion
 source_repo: obra/superpowers
 risk: safe
@@ -74,6 +74,7 @@ security:
     mitigation: "RED-GREEN cycle: verificar que o teste FALHA sem o código antes de considerar verificado"
   - risk: "Verificação parcial (apenas subset de testes)"
     mitigation: "Sempre rodar a suite completa — verificação parcial não conta"
+executor: LLM_BEHAVIOR
 ---
 
 # Verification Before Completion

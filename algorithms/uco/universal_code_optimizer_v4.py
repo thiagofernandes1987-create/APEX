@@ -4027,6 +4027,98 @@ class UniversalCodeOptimizer:
 # 13) CLI / DEMO
 # ═══════════════════════════════════════════════════════════════════════════
 
+    def detect_patterns(self, code: str = None, language: str = "python") -> dict:
+        """
+        Detect code patterns for APEX boot integration.
+        Called by: apex_boot skill_resolution_chain, uco_quality_gate.
+        Returns structured pattern report compatible with APEX DSL.
+        """
+        source = code if code is not None else self.source
+        if not source:
+            return {
+                "patterns_found": [],
+                "dead_code": 0,
+                "duplicates": 0,
+                "silent_excepts": 0,
+                "long_functions": 0,
+                "todo_count": 0,
+                "complexity_score": 0.0,
+                "apex_uco_status": "NO_SOURCE",
+            }
+
+        lines = source.splitlines()
+        patterns = []
+
+        # Dead variables (simple heuristic)
+        dead_vars = 0
+        assignments = {}
+        for i, l in enumerate(lines, 1):
+            m = re.match(r'^\s+([a-z_][a-zA-Z0-9_]*)\s*=\s*[^=]', l)
+            if m:
+                var = m.group(1)
+                if var not in ('_', 'i', 'j', 'k', 'n', 'x', 'y', 'e'):
+                    assignments[var] = i
+        for var, ln in assignments.items():
+            if len(re.findall(r'\b' + re.escape(var) + r'\b', source)) == 1:
+                dead_vars += 1
+
+        # Silent excepts
+        silent = sum(
+            1 for i, l in enumerate(lines)
+            if re.match(r'\s+except\s*:', l) or re.match(r'\s+except\s+Exception\s*:', l)
+        )
+
+        # Long functions (>80 lines)
+        func_starts = [(i+1, m.group(1)) for i, l in enumerate(lines)
+                       for m in [re.match(r'^\s*def\s+(\w+)', l)] if m]
+        long_fns = sum(
+            1 for idx, (fl, fn) in enumerate(func_starts)
+            if (func_starts[idx+1][0] if idx+1 < len(func_starts) else len(lines)) - fl > 80
+        )
+
+        # TODO/FIXME
+        todos = sum(1 for l in lines if re.search(r'#\s*(TODO|FIXME|HACK|XXX)\b', l, re.IGNORECASE))
+
+        # Duplicated blocks (simple: same 3-line sequence appearing twice)
+        block_size = 3
+        blocks = {}
+        for i in range(len(lines) - block_size):
+            block = tuple(l.strip() for l in lines[i:i+block_size] if l.strip())
+            if len(block) == block_size:
+                blocks[block] = blocks.get(block, 0) + 1
+        duplicates = sum(1 for v in blocks.values() if v > 1)
+
+        # Complexity (lines / functions ratio)
+        fn_count = max(len(func_starts), 1)
+        complexity = round(len(lines) / fn_count, 1)
+
+        if dead_vars > 0:
+            patterns.append(f"dead_vars:{dead_vars}")
+        if silent > 0:
+            patterns.append(f"silent_except:{silent}")
+        if long_fns > 0:
+            patterns.append(f"long_functions:{long_fns}")
+        if todos > 0:
+            patterns.append(f"todo_fixme:{todos}")
+        if duplicates > 0:
+            patterns.append(f"duplicate_blocks:{duplicates}")
+
+        status = "CLEAN" if not patterns else ("WARNING" if len(patterns) <= 2 else "CRITICAL")
+
+        return {
+            "patterns_found": patterns,
+            "dead_code": dead_vars,
+            "duplicates": duplicates,
+            "silent_excepts": silent,
+            "long_functions": long_fns,
+            "todo_count": todos,
+            "complexity_score": complexity,
+            "lines_analyzed": len(lines),
+            "functions_found": fn_count,
+            "apex_uco_status": status,
+        }
+
+
 if __name__ == "__main__":
     import sys
     # PORT [14a]: UTF-8 reconfigure — evita crash de encoding em Windows

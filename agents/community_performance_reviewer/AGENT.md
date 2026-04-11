@@ -6,6 +6,24 @@ version: v00.33.0
 status: CANDIDATE
 source_repo: claude-code-action
 apex_version: v00.33.0
+tier: 2
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - performance_analysis
+  - bottleneck_detection
+  - query_optimization
+  - resource_efficiency
+  - profiling_recommendations
+input_schema:
+  code: "str"
+  language: "str"
+  performance_context: "optional[str]"
+output_schema:
+  bottlenecks: "list[dict]"
+  optimizations: "list[str]"
+  estimated_improvement: "str"
+what_if_fails: >
+  FALLBACK: Se sem profiling data, fornecer análise estática de complexidade. Marcar [STATIC_ANALYSIS_ONLY].
 ---
 
 # performance-reviewer

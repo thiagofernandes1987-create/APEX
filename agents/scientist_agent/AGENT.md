@@ -19,6 +19,27 @@ activates_in: [SCIENTIFIC]
 position_in_pipeline: STEP_SCI_01
 rule_reference: SR_06
 auto_spawned: true
+description: >
+  Agente de descoberta científica. Projeta experimentos, testa hipóteses via Monte Carlo e simulação fractal-cognitiva, valida via execução simbólica e produz resultados com significância estatística.
+tier: 1
+capabilities:
+  - hypothesis_testing
+  - monte_carlo_simulation
+  - experiment_design
+  - statistical_analysis
+  - falsification
+  - fractal_cognitive_decomposition
+input_schema:
+  hypothesis: "str"
+  available_data: "optional[str]"
+  simulation_budget: "int"
+output_schema:
+  hypothesis_status: "CONFIRMED|REJECTED|INCONCLUSIVE"
+  p_value: "float"
+  simulation_results: "dict"
+  discovery_notes: "str"
+what_if_fails: >
+  FALLBACK: Se simulação exceder budget, retornar resultados parciais com [PARTIAL_SIMULATION]. Se hipótese não testável computacionalmente, reencaminhar para researcher.
 ---
 
 # Scientist Agent — Descoberta Científica e Simulação

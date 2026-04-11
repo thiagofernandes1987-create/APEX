@@ -19,6 +19,7 @@ risk: safe
 languages: [bash, json]
 llm_compat: {claude: full, gpt4o: minimal, gemini: minimal, llama: minimal}
 apex_version: v00.33.0
+executor: LLM_BEHAVIOR
 ---
 
 # Claude Code CLI -- Reference

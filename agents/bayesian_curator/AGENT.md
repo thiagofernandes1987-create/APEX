@@ -18,6 +18,28 @@ anchors:
 activates_in: [RESEARCH, SCIENTIFIC]
 position_in_pipeline: STEP_5
 rule_reference: SR_09
+description: >
+  Quantifica incerteza probabilisticamente. Quando o researcher traz evidências conflitantes, converte graus de crença em probabilidades, atualiza priors com evidências e produz posteriors calibrados.
+tier: 1
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - bayesian_inference
+  - prior_elicitation
+  - likelihood_estimation
+  - posterior_computation
+  - calibration_check
+  - FMEA_probabilistic
+input_schema:
+  hypotheses: "list[str]"
+  evidence: "list[dict]"
+  prior_beliefs: "optional[dict]"
+output_schema:
+  posteriors: "dict[str, float]"
+  dominant_hypothesis: "str"
+  confidence_interval: "dict"
+  calibration_note: "str"
+what_if_fails: >
+  FALLBACK: Se evidências insuficientes para Bayesian update, retornar prior com flag [LOW_EVIDENCE]. Se conflito irresolvível, declarar [EPISTEMIC_UNCERTAINTY: High] e passar para critic.
 ---
 
 # Bayesian Curator — Sintetizador Probabilístico de Evidências

@@ -18,6 +18,28 @@ anchors:
 activates_in: [CLARIFY, DEEP, RESEARCH, SCIENTIFIC]
 position_in_pipeline: STEP_2
 rule_reference: SR_07
+description: >
+  Estrutura soluções de design de sistemas — propõe como organizar componentes, define ADRs, analisa trade-offs de acoplamento/coesão, e mapeia dependências estruturais.
+tier: 1
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - system_design
+  - ADR_generation
+  - trade_off_analysis
+  - dependency_mapping
+  - pattern_selection
+  - decomposition
+input_schema:
+  problem: "str"
+  constraints: "list[str]"
+  existing_architecture: "optional[str]"
+output_schema:
+  proposed_architecture: "str"
+  ADRs: "list[dict]"
+  trade_offs: "dict"
+  diagrams_description: "str"
+what_if_fails: >
+  FALLBACK: Se constraints insuficientes, solicitar esclarecimento via pmi_pm. Se múltiplas arquiteturas viáveis, apresentar top-3 com pros/cons.
 ---
 
 # Architect — Agente de Design Estrutural

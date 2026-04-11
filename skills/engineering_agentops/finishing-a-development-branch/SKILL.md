@@ -6,7 +6,7 @@ description: >
   merge local, push+PR, manter como-está, ou descartar com confirmação.
   Verifica testes antes de qualquer opção. Limpa worktree para opções 1 e 4.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/finishing-a-development-branch
 source_repo: obra/superpowers
 risk: safe
@@ -80,6 +80,7 @@ security:
     mitigation: "Verificar testes ANTES de apresentar qualquer opção — nunca pular"
   - risk: "Force-push sem consentimento"
     mitigation: "NUNCA force-push sem pedido explícito do usuário"
+executor: LLM_BEHAVIOR
 ---
 
 # Finishing a Development Branch

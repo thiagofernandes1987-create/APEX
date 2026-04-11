@@ -19,6 +19,26 @@ activates_in: [FOGGY]
 position_in_pipeline: CONDITIONAL
 activation_condition: "first_principles_ratio < 0.3"
 rule_reference: SR_05
+description: >
+  Ativa no modo FOGGY para destruir âncoras cognitivas falsas e recuperar contexto por primeiros princípios. Reinicia o raciocínio a partir de premissas verificadas quando CFI cai abaixo de 0.3.
+tier: 1
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - assumption_audit
+  - context_recovery
+  - first_principles_analysis
+  - anchor_invalidation
+  - CFI_recalculation
+input_schema:
+  trigger: "first_principles_ratio < 0.3 OR explicit_foggy_request"
+  context: "session_state com anchors e CFI atual"
+output_schema:
+  invalidated_anchors: "list[str]"
+  recovered_premises: "list[str]"
+  new_CFI: "float"
+  recovery_log: "str"
+what_if_fails: >
+  FALLBACK: Se CFI não recuperar após 2 iterações, emitir [ANCHOR_DESTROY_FAILED] e escalar para meta_reasoning. Nunca bloquear pipeline por falha de deanchoring.
 ---
 
 # Anchor Destroyer — Recuperador de Contexto por Primeiros Princípios

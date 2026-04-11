@@ -6,7 +6,7 @@ description: >
   comportamentos concretos, anti-patterns explícitos, testabilidade. Inclui
   metodologia de teste com subagentes e convenções de diagramas Graphviz.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/writing-skills
 source_repo: obra/superpowers
 risk: safe
@@ -74,6 +74,7 @@ security:
     mitigation: "Testar com subagentes para verificar interpretação correta; incluir anti-patterns explícitos"
   - risk: "Skill que modifica arquivos de produção sem gates de verificação"
     mitigation: "Toda skill que modifica estado deve incluir verification-before-completion"
+executor: LLM_BEHAVIOR
 ---
 
 # Writing Skills

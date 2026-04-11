@@ -22,7 +22,7 @@ import sys
 import json
 import argparse
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from collections import defaultdict
 
 # ═══════════════════════════════════════════════════════
@@ -432,7 +432,7 @@ def main():
 
     if args.json:
         output = json.dumps(
-            {"generated_at": datetime.utcnow().isoformat(), "domains": domains},
+            {"generated_at": datetime.now(timezone.utc).isoformat(), "domains": domains},
             ensure_ascii=False,
             indent=2
         )
@@ -445,7 +445,7 @@ def main():
         return
 
     # Gerar INDEX.md
-    generated_at = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     index_content = generate_index_md(domains, generated_at)
 
     if args.dry_run:

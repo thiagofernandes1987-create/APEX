@@ -18,6 +18,7 @@ risk: safe
 languages: [python]
 llm_compat: {claude: full, gpt4o: minimal, gemini: minimal, llama: minimal}
 apex_version: v00.33.0
+executor: LLM_BEHAVIOR
 ---
 
 # Claude Agent SDK (Python)

@@ -6,7 +6,7 @@ description: >
   o workflow básico (brainstorming → worktrees → writing-plans → SDD → TDD → review →
   finishing), e referências por plataforma (Claude Code, Codex, Gemini, Copilot).
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/using-superpowers
 source_repo: obra/superpowers
 risk: safe
@@ -57,6 +57,7 @@ synergy_map:
 security:
   - risk: "Usuário confundido sobre qual skill usar pode iniciar processo errado"
     mitigation: "brainstorming é o fallback universal seguro para qualquer intent ambíguo"
+executor: LLM_BEHAVIOR
 ---
 
 <SUBAGENT-STOP>

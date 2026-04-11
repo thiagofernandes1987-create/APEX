@@ -6,6 +6,25 @@ version: v00.33.0
 status: CANDIDATE
 source_repo: claude-cookbooks
 apex_version: v00.33.0
+tier: 2
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - financial_modeling
+  - burn_rate_analysis
+  - runway_calculation
+  - dcf_valuation
+  - budget_analysis
+  - startup_metrics
+input_schema:
+  financial_data: "dict"
+  analysis_type: "burn_rate|runway|dcf|budget|full"
+output_schema:
+  analysis: "str"
+  metrics: "dict"
+  recommendations: "list[str]"
+  risk_flags: "list[str]"
+what_if_fails: >
+  FALLBACK: Se dados incompletos, indicar quais métricas não puderam ser calculadas e solicitar dados faltantes.
 ---
 
 # financial-analyst

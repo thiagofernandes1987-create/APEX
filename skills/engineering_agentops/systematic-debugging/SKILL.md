@@ -6,7 +6,7 @@ description: >
   Hypothesis & Testing → Implementation. Iron Law: NENHUM FIX SEM INVESTIGAÇÃO DE
   ROOT CAUSE PRIMEIRO. Após 3 fixes falhos: questionar a arquitetura, não tentar Fix #4.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/systematic-debugging
 source_repo: obra/superpowers
 risk: safe
@@ -86,6 +86,7 @@ security:
     mitigation: "Sempre investigar root cause — fixes de sintoma são failure mode"
   - risk: "Instrumentação de diagnóstico expõe dados sensíveis em logs"
     mitigation: "Remover instrumentação diagnóstica após encontrar root cause; usar masking para dados sensíveis"
+executor: LLM_BEHAVIOR
 ---
 
 # Systematic Debugging

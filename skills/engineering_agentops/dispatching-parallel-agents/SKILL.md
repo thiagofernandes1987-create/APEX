@@ -7,7 +7,7 @@ description: >
   Indica quando usar (3+ falhas independentes) e quando não usar (falhas relacionadas,
   estado compartilhado).
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/dispatching-parallel-agents
 source_repo: obra/superpowers
 risk: safe
@@ -76,6 +76,7 @@ security:
     mitigation: "Verificar independência de domínio antes do dispatch; never despachar agentes com escopo sobreposto"
   - risk: "Agente com contexto incorreto pode fazer mudanças destrutivas"
     mitigation: "Construir contexto explicitamente por agente — nunca herdar sessão completa"
+executor: LLM_BEHAVIOR
 ---
 
 # Dispatching Parallel Agents

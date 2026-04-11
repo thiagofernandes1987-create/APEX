@@ -6,6 +6,23 @@ version: v00.33.0
 status: CANDIDATE
 source_repo: claude-code-action
 apex_version: v00.33.0
+tier: 2
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - documentation_review
+  - accuracy_check
+  - api_doc_validation
+  - completeness_assessment
+input_schema:
+  documentation: "str"
+  source_code: "optional[str]"
+  check_type: "accuracy|completeness|both"
+output_schema:
+  inaccuracies: "list[dict]"
+  missing_sections: "list[str]"
+  verdict: "ACCURATE|INACCURATE|INCOMPLETE"
+what_if_fails: >
+  FALLBACK: Se sem acesso ao source code, revisar documentação isoladamente e marcar [NO_CODE_VALIDATION].
 ---
 
 # documentation-accuracy-reviewer

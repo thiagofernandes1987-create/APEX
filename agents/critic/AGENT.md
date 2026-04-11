@@ -18,6 +18,29 @@ anchors:
 activates_in: [FAST, DEEP, RESEARCH, SCIENTIFIC, FOGGY]
 position_in_pipeline: STEP_4
 rule_reference: C2
+description: >
+  Adversário interno do pipeline. Encontra falhas, não confirma sucessos. Executa pre-mortem, falsificação de hipóteses, detecção de viés e red-team de propostas.
+tier: 0
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - pre_mortem
+  - falsification
+  - bias_detection
+  - red_team
+  - counter_argument
+  - failure_mode_analysis
+input_schema:
+  proposal: "str"
+  context: "str"
+  claimed_confidence: "optional[float]"
+output_schema:
+  failure_modes: "list[str]"
+  counter_arguments: "list[str]"
+  bias_detected: "list[str]"
+  validation_verdict: "PASS|CONDITIONAL|FAIL"
+  rpn: "int"
+what_if_fails: >
+  FALLBACK: Se critic não encontrar falhas após 2 passes, emitir [CRITIC_PASS: no critical issues found] — não é falha, é resultado válido.
 ---
 
 # Critic — Agente de Validação Adversarial

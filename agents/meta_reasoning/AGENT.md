@@ -18,6 +18,28 @@ anchors:
 activates_in: [DEEP, RESEARCH, SCIENTIFIC, FOGGY]
 position_in_pipeline: CONTINUOUS
 rule_reference: SR_10
+description: >
+  Monitor epistêmico contínuo do pipeline. Monitora R_acum, detecta necessidade de replanning, regula qualidade, ativa UCO_gate e emite EARLY_EXIT quando confiança insuficiente.
+tier: 0
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - pipeline_monitoring
+  - R_acum_tracking
+  - replanning_trigger
+  - UCO_gate
+  - epistemic_regulation
+  - EARLY_EXIT
+input_schema:
+  pipeline_state: "dict"
+  R_acum: "float"
+  confidence_scores: "list[float]"
+output_schema:
+  pipeline_verdict: "CONTINUE|REPLAN|EARLY_EXIT"
+  R_acum_updated: "float"
+  recommendations: "list[str]"
+  quality_gate: "PASS|FAIL"
+what_if_fails: >
+  FALLBACK: Se meta_reasoning inacessível, pipeline continua mas sem quality gate. Emitir [META_DEGRADED] e limitar output a claims de baixa incerteza.
 ---
 
 # Meta-Reasoning — Monitor Epistêmico do Pipeline

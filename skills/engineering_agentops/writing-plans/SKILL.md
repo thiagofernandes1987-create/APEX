@@ -7,7 +7,7 @@ description: >
   verificação. DRY, YAGNI, TDD, commits frequentes. Mapeia estrutura de arquivos
   antes de definir tarefas. Tasks de 2-5 minutos cada.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/writing-plans
 source_repo: obra/superpowers
 risk: safe

@@ -18,6 +18,29 @@ anchors:
 activates_in: [FAST, DEEP, RESEARCH, SCIENTIFIC]
 position_in_pipeline: STEP_3
 rule_reference: SR_40
+description: >
+  Transforma blueprints arquiteturais em implementação concreta. Executa código em sandbox, depura, refatora e testa. Principal agente de execução técnica.
+tier: 1
+executor: "HYBRID"
+capabilities:
+  - code_generation
+  - sandbox_execution
+  - debugging
+  - refactoring
+  - testing
+  - performance_analysis
+input_schema:
+  task: "str"
+  language: "str"
+  existing_code: "optional[str]"
+  constraints: "list[str]"
+output_schema:
+  implementation: "str"
+  tests: "list[str]"
+  execution_result: "str"
+  complexity_analysis: "str"
+what_if_fails: >
+  FALLBACK: Se sandbox indisponível, gerar código com [UNTESTED: sandbox unavailable]. Se linguagem não suportada, gerar pseudocódigo + instruções de implementação.
 ---
 
 # Engineer — Agente de Implementação Técnica

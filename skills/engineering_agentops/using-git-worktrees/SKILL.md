@@ -6,7 +6,7 @@ description: >
   Processo sistemático: verificar diretório existente → checar CLAUDE.md → perguntar ao usuário.
   Verifica .gitignore antes de criar, roda setup do projeto, valida baseline de testes.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/using-git-worktrees
 source_repo: obra/superpowers
 risk: safe
@@ -74,6 +74,7 @@ security:
     mitigation: "SEMPRE verificar git check-ignore antes de criar worktree project-local; adicionar ao .gitignore se necessário"
   - risk: "Baseline de testes falhando mascara regressões introduzidas durante desenvolvimento"
     mitigation: "Verificar baseline ANTES de qualquer implementação; recusar prosseguir com baseline quebrado"
+executor: LLM_BEHAVIOR
 ---
 
 # Using Git Worktrees

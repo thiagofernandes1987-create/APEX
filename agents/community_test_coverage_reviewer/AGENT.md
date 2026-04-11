@@ -6,6 +6,24 @@ version: v00.33.0
 status: CANDIDATE
 source_repo: claude-code-action
 apex_version: v00.33.0
+tier: 2
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - test_coverage_analysis
+  - missing_test_identification
+  - test_quality_review
+  - edge_case_detection
+input_schema:
+  implementation: "str"
+  existing_tests: "optional[str]"
+  language: "str"
+output_schema:
+  coverage_gaps: "list[str]"
+  missing_edge_cases: "list[str]"
+  test_quality_score: "int"
+  recommended_tests: "list[str]"
+what_if_fails: >
+  FALLBACK: Se sem testes existentes, gerar lista de casos de teste recomendados a partir da implementação.
 ---
 
 # test-coverage-reviewer

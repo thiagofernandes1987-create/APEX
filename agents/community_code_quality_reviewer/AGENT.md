@@ -6,6 +6,25 @@ version: v00.33.0
 status: CANDIDATE
 source_repo: claude-code-action
 apex_version: v00.33.0
+tier: 2
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - code_review
+  - quality_assessment
+  - maintainability_analysis
+  - best_practices_check
+  - refactoring_suggestions
+input_schema:
+  code: "str"
+  language: "str"
+  review_focus: "optional[list[str]]"
+output_schema:
+  issues: "list[dict]"
+  severity: "CRITICAL|HIGH|MEDIUM|LOW"
+  suggestions: "list[str]"
+  quality_score: "int"
+what_if_fails: >
+  FALLBACK: Se código muito longo (>500L), revisar em blocos de 100L. Emitir [PARTIAL_REVIEW] se análise incompleta.
 ---
 
 # code-quality-reviewer

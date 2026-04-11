@@ -6,6 +6,25 @@ version: v00.33.0
 status: CANDIDATE
 source_repo: claude-code-action
 apex_version: v00.33.0
+tier: 1
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - vulnerability_detection
+  - input_validation_check
+  - auth_review
+  - injection_analysis
+  - owasp_compliance
+input_schema:
+  code: "str"
+  language: "str"
+  security_focus: "optional[list[str]]"
+output_schema:
+  vulnerabilities: "list[dict]"
+  severity: "CRITICAL|HIGH|MEDIUM|LOW"
+  cve_references: "list[str]"
+  remediation: "list[str]"
+what_if_fails: >
+  FALLBACK: Se análise incompleta por complexidade, priorizar CRITICAL e HIGH. Emitir [PARTIAL_SECURITY_REVIEW] com scope coberto.
 ---
 
 # security-code-reviewer

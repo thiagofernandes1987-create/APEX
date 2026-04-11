@@ -6,7 +6,7 @@ description: >
   assista passar, refatore. Iron Law: NENHUM CÓDIGO DE PRODUÇÃO SEM TESTE FALHANDO ANTES.
   Código escrito antes do teste: deletar. Sem exceções sem permissão explícita do usuário.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/test-driven-development
 source_repo: obra/superpowers
 risk: safe
@@ -82,6 +82,7 @@ security:
     mitigation: "Ver testing-anti-patterns.md; usar mocks apenas quando inevitável; testar comportamento real"
   - risk: "Test suite lenta desincentiva execução frequente"
     mitigation: "Manter testes unitários < 100ms; usar test isolation para evitar dependências externas"
+executor: LLM_BEHAVIOR
 ---
 
 # Test-Driven Development (TDD)

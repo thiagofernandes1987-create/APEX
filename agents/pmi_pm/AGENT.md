@@ -20,6 +20,29 @@ anchors:
 activates_in: [EXPRESS, FAST, CLARIFY, DEEP, RESEARCH, SCIENTIFIC, FOGGY]
 position_in_pipeline: STEP_1  # Obrigatório primeiro
 rule_reference: H4  # "PMI_PM scoping DEVE ser o primeiro output analítico"
+description: >
+  Primeiro agente obrigatório do pipeline. Estrutura escopo, WBS, riscos e requisitos antes de qualquer execução. Garante que o APEX saiba exatamente o que fazer antes de fazer.
+tier: 0
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - scope_definition
+  - WBS_creation
+  - risk_identification
+  - requirements_elicitation
+  - stakeholder_analysis
+  - sprint_planning
+input_schema:
+  user_request: "str"
+  session_context: "dict"
+  constraints: "optional[list[str]]"
+output_schema:
+  scope: "str"
+  WBS: "list[str]"
+  risks: "list[dict]"
+  requirements: "list[str]"
+  recommended_pipeline: "list[str]"
+what_if_fails: >
+  FALLBACK: Se request ambíguo, emitir [SCOPE_UNCLEAR] e solicitar 1 pergunta de clarificação (nunca mais de 1). Se urgente, usar scope mínimo viável.
 ---
 
 # PMI-PM — Agente de Scoping e Governança

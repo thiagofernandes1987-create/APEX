@@ -16640,10 +16640,10 @@ apex_superrepo_v2:
     boot_timeout_sec: 20
 
     repo_stats:
-      total_skill_md: 2752
+      total_skill_md: 2766
       total_agent_md: 19
-      total_files: 12300
-      last_updated: "2026-04-09"
+      total_files: 12350
+      last_updated: "2026-04-11"
       ingestion_sessions: 2
       repos_ingested: 56
 
@@ -17218,6 +17218,50 @@ community_agent_roster:
           role: "Configurar equipe de agentes para problemas complexos"
           activates_when: [multi_agent, complex_problem, agent_selection]
           model: sonnet
+
+      anthropic_community_agents:
+        note: "Agentes ingeridos de repositórios Anthropic oficiais (OPP-129/133)"
+
+      code-quality-reviewer:
+        role: "Code quality assessment — maintainability, best practices, refactoring"
+        activates_when: [code_review, quality, maintainability, refactoring]
+        model: sonnet
+        source: "agents/community_code_quality_reviewer/"
+      code-reviewer-cookbooks:
+        role: "Code review para notebooks, GitHub Actions e scripts Python"
+        activates_when: [notebook, jupyter, github_actions, cookbook]
+        model: sonnet
+        source: "agents/community_code_reviewer/"
+      documentation-accuracy-reviewer:
+        role: "Verifica precisão e completude de documentação técnica"
+        activates_when: [documentation, api_docs, accuracy_check]
+        model: haiku
+        source: "agents/community_documentation_accuracy_reviewer/"
+      financial-analyst:
+        role: "Análise financeira — burn rate, runway, DCF, métricas de startup"
+        activates_when: [finance, startup_metrics, dcf, budget, burn_rate]
+        model: sonnet
+        source: "agents/community_financial_analyst/"
+      performance-reviewer:
+        role: "Análise de performance — bottlenecks, queries, profiling"
+        activates_when: [performance, bottleneck, optimization, profiling]
+        model: sonnet
+        source: "agents/community_performance_reviewer/"
+      recruiter:
+        role: "Recrutamento técnico — pipeline de talentos, job descriptions"
+        activates_when: [recruiting, hiring, talent, job_description]
+        model: sonnet
+        source: "agents/community_recruiter/"
+      security-code-reviewer:
+        role: "Revisão de segurança — OWASP, vulnerabilidades, validação de input"
+        activates_when: [security, vulnerability, owasp, authentication, injection]
+        model: opus
+        source: "agents/community_security_code_reviewer/"
+      test-coverage-reviewer:
+        role: "Revisão de cobertura de testes — casos faltantes, edge cases"
+        activates_when: [testing, coverage, edge_cases, test_quality]
+        model: sonnet
+        source: "agents/community_test_coverage_reviewer/"
 
   activation_protocol: |
     # STEP_1 (pmi_pm) detecta domínio -> meta_reasoning verifica roster:
@@ -18596,13 +18640,13 @@ skill_resolution_priority:
     boot_enabled: true
     max_skills_per_boot: 15
     boot_timeout_sec: 15
-    last_updated: "2026-04-10"
+    last_updated: "2026-04-11"
 
     repo_stats:
-      total_skill_md: 2638
-      total_domains: 52
+      total_skill_md: 2766
+      total_domains: 51
       total_agent_md: 19
-      total_diffs_applied: 128
+      total_diffs_applied: 130
       ingestion_sessions: 3
       version: "v00.36.0"
 

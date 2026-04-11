@@ -18,6 +18,28 @@ anchors:
 activates_in: [DEEP, RESEARCH, SCIENTIFIC]
 position_in_pipeline: GOVERNANCE
 rule_reference: H5
+description: >
+  Garante que todas as modificações ao APEX passem pelo processo correto de aprovação. Controla versionamento, valida OPPs, monitora impacto de DIFFs e executa rollback quando necessário.
+tier: 0
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - OPP_validation
+  - diff_approval
+  - impact_analysis
+  - rollback_execution
+  - changelog_maintenance
+  - FMEA_governance
+input_schema:
+  proposed_diff: "dict"
+  opp_id: "str"
+  approval_level: "1|2|3|4"
+output_schema:
+  approved: "bool"
+  approval_conditions: "list[str]"
+  impact_score: "float"
+  rollback_plan: "str"
+what_if_fails: >
+  FALLBACK: Se aprovação nivel_4 não obtida em 24h, manter estado anterior. Nunca aplicar DIFFs nível_3+ sem aprovação explícita.
 ---
 
 # Diff Governance — Controle de Versão do APEX

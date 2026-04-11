@@ -6,7 +6,7 @@ description: >
   Verifica antes de implementar, pergunta antes de assumir, faz pushback quando errado.
   Proíbe explicitamente "Você está absolutamente certo!" e implementação cega.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/receiving-code-review
 source_repo: obra/superpowers
 risk: safe
@@ -76,6 +76,7 @@ security:
     mitigation: "Sempre verificar contra codebase real; prioridade da decisão: human_partner > evidence > external_reviewer"
   - risk: "Feedback parcialmente entendido levando a implementação errada"
     mitigation: "Clarificar TODOS os itens antes de implementar qualquer um — itens podem ser relacionados"
+executor: LLM_BEHAVIOR
 ---
 
 # Code Review Reception

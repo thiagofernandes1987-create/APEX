@@ -18,6 +18,29 @@ anchors:
 activates_in: [CLARIFY, DEEP, RESEARCH, SCIENTIFIC, FOGGY]
 position_in_pipeline: STEP_2
 rule_reference: SR_08
+description: >
+  Preenche gaps de conhecimento com evidências. Busca literatura, valida fontes, cita referências e quantifica incerteza epistêmica antes de passar ao engineer ou architect.
+tier: 1
+executor: "LLM_BEHAVIOR"
+capabilities:
+  - literature_search
+  - evidence_synthesis
+  - source_validation
+  - citation_generation
+  - knowledge_gap_identification
+  - hypothesis_formation
+input_schema:
+  research_question: "str"
+  domains: "list[str]"
+  depth: "FAST|DEEP|SCIENTIFIC"
+output_schema:
+  findings: "list[dict]"
+  citations: "list[str]"
+  knowledge_gaps: "list[str]"
+  confidence: "float"
+  uncertainty_flag: "str"
+what_if_fails: >
+  FALLBACK: Se fontes indisponíveis, declarar [KNOWLEDGE_GAP] com estimativa de confiança. Nunca inventar citações. Usar [SYNTHESIZED] se nenhuma fonte disponível.
 ---
 
 # Researcher — Agente de Pesquisa e Evidência

@@ -7,7 +7,7 @@ description: >
   para imediatamente quando bloqueado. Alternativa ao subagent-driven-development
   para quando não há suporte a subagentes.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/executing-plans
 source_repo: obra/superpowers
 risk: safe
@@ -76,6 +76,7 @@ security:
     mitigation: "NUNCA iniciar em main/master sem permissão explícita do usuário"
   - risk: "Plano com instruções maliciosas injetadas"
     mitigation: "Revisar plano criticamente antes de executar; verificar que mudanças são coerentes"
+executor: LLM_BEHAVIOR
 ---
 
 # Executing Plans

@@ -7,7 +7,7 @@ description: >
   2-3 abordagens com trade-offs, obtém aprovação antes de codificar.
   HARD-GATE: nenhum código antes do design aprovado.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/brainstorming
 source_repo: obra/superpowers
 risk: safe
@@ -87,6 +87,7 @@ security:
     mitigation: "Revisar cada requisito de segurança durante a fase de design — não apenas durante implementação"
   - risk: "Spec pode ter ambiguidades que levam a implementações divergentes"
     mitigation: "Spec self-review obrigatório: placeholder scan, consistency check, ambiguity check"
+executor: LLM_BEHAVIOR
 ---
 
 # Brainstorming Ideas Into Designs

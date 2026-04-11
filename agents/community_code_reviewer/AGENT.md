@@ -6,6 +6,17 @@ version: v00.33.0
 status: CANDIDATE
 source_repo: claude-cookbooks
 apex_version: v00.33.0
+tier: 2
+executor: "LLM_BEHAVIOR"
+input_schema:
+  code_path: "str"
+  review_type: "full|diff|notebook"
+output_schema:
+  review_comments: "list[dict]"
+  approval_status: "APPROVE|REQUEST_CHANGES"
+  summary: "str"
+what_if_fails: >
+  FALLBACK: Se arquivo inacessível, solicitar conteúdo inline. Documentar limitações no review.
 ---
 
 # code-reviewer

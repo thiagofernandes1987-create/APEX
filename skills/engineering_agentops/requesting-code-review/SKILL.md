@@ -6,7 +6,7 @@ description: >
   histórico da sessão. Solicita review após cada tarefa em subagent-driven-development,
   após features maiores, e antes de merge. Usa SHAs git para delimitar o escopo exato.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/requesting-code-review
 source_repo: obra/superpowers
 risk: safe
@@ -84,6 +84,7 @@ security:
     mitigation: "Sempre incluir contexto de segurança no prompt do reviewer — nunca assumir que ele conhece o sistema"
   - risk: "SHA incorreto delimita escopo errado e review não cobre as mudanças reais"
     mitigation: "Verificar git diff entre BASE_SHA e HEAD_SHA antes de despachar"
+executor: LLM_BEHAVIOR
 ---
 
 # Requesting Code Review

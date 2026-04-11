@@ -7,7 +7,7 @@ description: >
   qualidade de código. O agente controlador cuida da coordenação; subagentes cuidam
   da implementação com contexto isolado e preciso.
 version: v00.36.0
-status: ADAPTED
+status: ADOPTED
 domain_path: engineering_agentops/subagent-driven-development
 source_repo: obra/superpowers
 risk: safe
@@ -94,6 +94,7 @@ security:
     mitigation: "Nunca despachar múltiplos implementers em paralelo — um por vez"
   - risk: "Implementação em main/master sem consentimento"
     mitigation: "Verificar branch antes de iniciar; recusar se main/master sem permissão explícita"
+executor: LLM_BEHAVIOR
 ---
 
 # Subagent-Driven Development
