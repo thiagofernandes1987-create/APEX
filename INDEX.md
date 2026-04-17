@@ -1,6 +1,6 @@
 # APEX Index — Hub de Navegação
 
-**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-17 10:31 UTC
+**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-17 10:32 UTC
 **Versão APEX**: v00.36.0 | **Skills**: 3761 | **Domínios**: 52 | **Erros de parse**: 0
 
 > Este arquivo é gerado automaticamente. Não editar manualmente.
@@ -1299,6 +1299,9 @@ domain_map:
         path: skills/business/business-growth/
         skill_count: 5
         skills:
+          - skill: business-growth
+            path: skills/business/business-growth/SKILL.md
+            status: UNKNOWN
           - skill: contract-and-proposal-writer
             path: skills/business/business-growth/contract-and-proposal-writer/SKILL.md
             status: UNKNOWN
@@ -1311,13 +1314,13 @@ domain_map:
           - skill: sales-engineer
             path: skills/business/business-growth/sales-engineer/SKILL.md
             status: UNKNOWN
-          - skill: business-growth
-            path: skills/business/business-growth/SKILL.md
-            status: UNKNOWN
       c-level-advisor:
         path: skills/business/c-level-advisor/
         skill_count: 34
         skills:
+          - skill: c-level-advisor
+            path: skills/business/c-level-advisor/SKILL.md
+            status: UNKNOWN
           - skill: agent-protocol
             path: skills/business/c-level-advisor/agent-protocol/SKILL.md
             status: UNKNOWN
@@ -1330,14 +1333,14 @@ domain_map:
           - skill: ceo-advisor
             path: skills/business/c-level-advisor/ceo-advisor/SKILL.md
             status: UNKNOWN
-          - skill: cfo-advisor
-            path: skills/business/c-level-advisor/cfo-advisor/SKILL.md
-            status: UNKNOWN
           # ... +29 skills adicionais
       finance:
         path: skills/business/finance/
         skill_count: 4
         skills:
+          - skill: finance
+            path: skills/business/finance/SKILL.md
+            status: UNKNOWN
           - skill: business-investment-advisor
             path: skills/business/finance/business-investment-advisor/SKILL.md
             status: UNKNOWN
@@ -1347,13 +1350,13 @@ domain_map:
           - skill: saas-metrics-coach
             path: skills/business/finance/saas-metrics-coach/SKILL.md
             status: UNKNOWN
-          - skill: finance
-            path: skills/business/finance/SKILL.md
-            status: UNKNOWN
       marketing-skill:
         path: skills/business/marketing-skill/
         skill_count: 45
         skills:
+          - skill: marketing-skill
+            path: skills/business/marketing-skill/SKILL.md
+            status: UNKNOWN
           - skill: ab-test-setup
             path: skills/business/marketing-skill/ab-test-setup/SKILL.md
             status: UNKNOWN
@@ -1365,9 +1368,6 @@ domain_map:
             status: UNKNOWN
           - skill: analytics-tracking
             path: skills/business/marketing-skill/analytics-tracking/SKILL.md
-            status: UNKNOWN
-          - skill: app-store-optimization
-            path: skills/business/marketing-skill/app-store-optimization/SKILL.md
             status: UNKNOWN
           # ... +40 skills adicionais
       personas:
@@ -1394,6 +1394,9 @@ domain_map:
         path: skills/business/product-team/
         skill_count: 16
         skills:
+          - skill: product-team
+            path: skills/business/product-team/SKILL.md
+            status: UNKNOWN
           - skill: agile-product-owner
             path: skills/business/product-team/agile-product-owner/SKILL.md
             status: UNKNOWN
@@ -1406,14 +1409,14 @@ domain_map:
           - skill: experiment-designer
             path: skills/business/product-team/experiment-designer/SKILL.md
             status: UNKNOWN
-          - skill: landing-page-generator
-            path: skills/business/product-team/landing-page-generator/SKILL.md
-            status: UNKNOWN
           # ... +11 skills adicionais
       project-management:
         path: skills/business/project-management/
         skill_count: 9
         skills:
+          - skill: project-management
+            path: skills/business/project-management/SKILL.md
+            status: UNKNOWN
           - skill: atlassian-admin
             path: skills/business/project-management/atlassian-admin/SKILL.md
             status: UNKNOWN
@@ -1426,14 +1429,14 @@ domain_map:
           - skill: jira-expert
             path: skills/business/project-management/jira-expert/SKILL.md
             status: UNKNOWN
-          - skill: meeting-analyzer
-            path: skills/business/project-management/meeting-analyzer/SKILL.md
-            status: UNKNOWN
           # ... +4 skills adicionais
       ra-qm-team:
         path: skills/business/ra-qm-team/
         skill_count: 14
         skills:
+          - skill: ra-qm-team
+            path: skills/business/ra-qm-team/SKILL.md
+            status: UNKNOWN
           - skill: capa-officer
             path: skills/business/ra-qm-team/capa-officer/SKILL.md
             status: UNKNOWN
@@ -1445,9 +1448,6 @@ domain_map:
             status: UNKNOWN
           - skill: information-security-manager-iso27001
             path: skills/business/ra-qm-team/information-security-manager-iso27001/SKILL.md
-            status: UNKNOWN
-          - skill: isms-audit-expert
-            path: skills/business/ra-qm-team/isms-audit-expert/SKILL.md
             status: UNKNOWN
           # ... +9 skills adicionais
       startup:
@@ -2741,6 +2741,9 @@ domain_map:
         path: skills/engineering/cs-engineering/
         skill_count: 58
         skills:
+          - skill: cs-engineering
+            path: skills/engineering/cs-engineering/SKILL.md
+            status: UNKNOWN
           - skill: agent-designer
             path: skills/engineering/cs-engineering/agent-designer/SKILL.md
             status: UNKNOWN
@@ -2753,14 +2756,14 @@ domain_map:
           - skill: board
             path: skills/engineering/cs-engineering/agenthub/skills/board/SKILL.md
             status: UNKNOWN
-          - skill: eval
-            path: skills/engineering/cs-engineering/agenthub/skills/eval/SKILL.md
-            status: UNKNOWN
           # ... +53 skills adicionais
       cs-engineering-team:
         path: skills/engineering/cs-engineering-team/
         skill_count: 51
         skills:
+          - skill: cs-engineering-team
+            path: skills/engineering/cs-engineering-team/SKILL.md
+            status: UNKNOWN
           - skill: a11y-audit
             path: skills/engineering/cs-engineering-team/a11y-audit/SKILL.md
             status: UNKNOWN
@@ -2772,9 +2775,6 @@ domain_map:
             status: UNKNOWN
           - skill: aws-solution-architect
             path: skills/engineering/cs-engineering-team/aws-solution-architect/SKILL.md
-            status: UNKNOWN
-          - skill: azure-cloud-architect
-            path: skills/engineering/cs-engineering-team/azure-cloud-architect/SKILL.md
             status: UNKNOWN
           # ... +46 skills adicionais
       devops:
@@ -8120,4 +8120,4 @@ domain_map:
 
 ---
 
-*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-17 10:31 UTC*
+*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-17 10:32 UTC*
