@@ -245,7 +245,10 @@ describe("sanitizeContent", () => {
 
 describe("redactGitHubTokens", () => {
   it("should redact personal access tokens (ghp_)", () => {
-    const token = "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";
+    // SECURITY FIX (APEX OPP-Phase1 / R-05): replaced real token with safe placeholder.
+    // WHY: real ghp_ tokens in public repos trigger GitHub secret scanning alerts
+    // and may grant API access if not yet revoked. Test only needs the prefix pattern.
+    const token = "ghp_EXAMPLE_FAKE_TOKEN_FOR_TESTING_000000";
     expect(redactGitHubTokens(`Token: ${token}`)).toBe(
       "Token: [REDACTED_GITHUB_TOKEN]",
     );

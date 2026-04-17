@@ -318,7 +318,13 @@ def run_recipe(name: str, dry_run: bool):
             continue
         print(f"  $ {cmd}")
         try:
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
+            # SECURITY FIX (APEX OPP-Phase1 / R-03): shell=True replaced with
+            # shlex.split() to prevent command injection via recipe.commands.
+            # WHY: recipe files may be edited by untrusted users; shell=True
+            # allows injection of pipes/redirects/subshell payloads.
+            import shlex
+            cmd_list = shlex.split(cmd) if isinstance(cmd, str) else list(cmd)
+            result = subprocess.run(cmd_list, shell=False, capture_output=True, text=True, timeout=30)
             if result.stdout:
                 print(result.stdout)
             if result.returncode != 0 and result.stderr:

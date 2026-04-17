@@ -85,15 +85,23 @@ def get_best_metric(experiment_dir, direction):
 def run_evaluation(project_root, eval_cmd, time_budget_minutes, log_file):
     """Run evaluation with time limit. Output goes to log_file.
 
-    Note: shell=True is intentional here — eval_cmd is user-provided and
-    may contain pipes, redirects, or chained commands.
+    SECURITY FIX (APEX OPP-Phase1 / R-01): shell=True removed to prevent
+    shell injection. eval_cmd is tokenized via shlex.split() so pipes/redirects
+    are NOT supported — use a wrapper script if chaining is required.
+    WHY: eval_cmd may be user-provided; shell=True + user input = arbitrary RCE.
+    WHAT_IF_FAILS: If eval_cmd contains shell metacharacters, subprocess will
+    raise FileNotFoundError — caller receives returncode=-2 and a safe message.
     """
+    import shlex  # stdlib — no extra deps
     hard_limit = time_budget_minutes * 60 * 2.5
     t0 = time.time()
     try:
+        # WHY shlex.split: safely tokenizes "python evaluate.py --arg val"
+        # without spawning a shell interpreter.
+        cmd_list = shlex.split(eval_cmd) if isinstance(eval_cmd, str) else list(eval_cmd)
         with open(log_file, "w") as lf:
             result = subprocess.run(
-                eval_cmd, shell=True,
+                cmd_list, shell=False,
                 stdout=lf, stderr=subprocess.STDOUT,
                 cwd=str(project_root),
                 timeout=hard_limit

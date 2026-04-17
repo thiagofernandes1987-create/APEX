@@ -1,3 +1,20 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# SECURITY NOTE (APEX OPP-Phase1 / R-15) — Path Traversal Risk
+# ─────────────────────────────────────────────────────────────────────────────
+# This script uses open(args.input / args.input_file / input_file) without
+# resolving or validating the path. If this script is exposed as a tool to an
+# agent that accepts user-provided arguments, path traversal is possible:
+#   e.g. --input ../../etc/passwd
+#
+# REMEDIATION: Replace open(args.input) with:
+#   from _shared.safe_io import safe_open_input
+#   with safe_open_input(args.input) as f:
+#       data = f.read()
+#
+# safe_io.safe_open_input() calls pathlib.Path.resolve() and verifies the
+# resolved path is within the current working directory (configurable).
+# See algorithms/claude-skills/src/_shared/safe_io.py for full API.
+# ─────────────────────────────────────────────────────────────────────────────
 #!/usr/bin/env python3
 """
 Budget Variance Analyzer

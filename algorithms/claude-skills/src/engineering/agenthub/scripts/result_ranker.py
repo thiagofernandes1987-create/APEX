@@ -79,10 +79,19 @@ def get_worktree_path(branch):
 
 
 def run_eval_in_worktree(worktree_path, eval_cmd):
-    """Run evaluation command in a worktree and return stdout."""
+    """Run evaluation command in a worktree and return stdout.
+
+    SECURITY FIX (APEX OPP-Phase1 / R-02): shell=True removed to prevent
+    shell injection via eval_cmd (CLI arg or config file value).
+    WHY: eval_cmd from args/config is attacker-controllable; shell=True = RCE.
+    WHAT_IF_FAILS: Commands with shell metacharacters will raise FileNotFoundError;
+    callers receive ("SHELL_META_NOT_SUPPORTED", 1) — use a wrapper script.
+    """
+    import shlex  # stdlib — no extra deps
     try:
+        cmd_list = shlex.split(eval_cmd) if isinstance(eval_cmd, str) else list(eval_cmd)
         result = subprocess.run(
-            eval_cmd, shell=True, capture_output=True, text=True,
+            cmd_list, shell=False, capture_output=True, text=True,
             cwd=worktree_path, timeout=120
         )
         return result.stdout.strip(), result.returncode
