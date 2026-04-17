@@ -19,6 +19,7 @@ risk: safe
 languages: [dsl]
 llm_compat: {claude: full, gpt4o: minimal, gemini: minimal, llama: minimal}
 apex_version: v00.33.0
+executor: LLM_BEHAVIOR
 ---
 
 # /discord:access — Discord Channel Access Management

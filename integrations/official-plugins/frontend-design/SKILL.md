@@ -19,6 +19,7 @@ risk: safe
 languages: [dsl]
 llm_compat: {claude: full, gpt4o: minimal, gemini: minimal, llama: minimal}
 apex_version: v00.33.0
+executor: LLM_BEHAVIOR
 ---
 
 This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
