@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.skill_installer
 name: skill-installer
-description: Instala, valida, registra e verifica novas skills no ecossistema. 10 checks de seguranca, copia, registro no
+description: "Use — Instala, valida, registra e verifica novas skills no ecossistema. 10 checks de seguranca, copia, registro no"
   orchestrator e verificacao pos-instalacao.
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Instala
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -356,3 +356,17 @@ apos o skill-creator finalizar uma skill.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Instala, valida, registra e verifica novas skills no ecossistema. 10 checks de seguranca, copia, registro no
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

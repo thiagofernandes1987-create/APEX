@@ -29,7 +29,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Run an incident response workflow — triage
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -227,3 +227,23 @@ If **~~chat** is connected:
 1. **Start writing immediately** — Don't wait for complete information. Update as you learn more.
 2. **Keep updates factual** — What we know, what we've done, what's next. No speculation.
 3. **Postmortems are blameless** — Focus on systems and processes, not individuals.
+
+---
+
+## Why This Skill Exists
+
+Run an incident response workflow — triage, communicate, and write postmortem. Trigger with "we have an incident",
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires incident response capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

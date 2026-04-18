@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.swift.ios_developer
 name: ios-developer
-description: Develop native iOS applications with Swift/SwiftUI. Masters iOS 18, SwiftUI, UIKit integration, Core Data, networking,
+description: "Implement — Develop native iOS applications with Swift/SwiftUI. Masters iOS 18, SwiftUI, UIKit integration, Core Data, networking,"
   and App Store optimization.
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Develop native iOS applications with Swift/SwiftUI
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -318,3 +318,23 @@ Focus on Swift-first solutions with modern iOS patterns. Include comprehensive e
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Develop native iOS applications with Swift/SwiftUI. Masters iOS 18, SwiftUI, UIKit integration, Core Data, networking,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ios developer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

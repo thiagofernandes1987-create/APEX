@@ -1,7 +1,7 @@
 ---
 skill_id: anthropic_official.xlsx
 name: xlsx
-description: '''Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user
+description: "Apply — "
   wants to: open, read, edit, or fix an existing .xlsx, .xlsm, .csv, or .tsv file (e.g., ad'
 version: v00.33.0
 status: ADOPTED
@@ -42,7 +42,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply xlsx task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -384,3 +384,23 @@ The script returns JSON with error details:
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires xlsx capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

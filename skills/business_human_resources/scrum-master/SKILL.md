@@ -1,7 +1,7 @@
 ---
 skill_id: business_human_resources.scrum_master
 name: scrum-master
-description: Advanced Scrum Master skill for data-driven agile team analysis and coaching. Use when the user asks about sprint
+description: "Use — Advanced Scrum Master skill for data-driven agile team analysis and coaching. Use when the user asks about sprint"
   planning, velocity tracking, retrospectives, standup facilitation, backlog grooming, s
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user asks about sprint
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -314,3 +314,23 @@ Apply stage-specific facilitation (details in `references/team-dynamics-framewor
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Advanced Scrum Master skill for data-driven agile team analysis and coaching.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks about sprint
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

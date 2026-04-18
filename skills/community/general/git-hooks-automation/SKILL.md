@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.git_hooks_automation
 name: git-hooks-automation
-description: '''Master Git hooks setup with Husky, lint-staged, pre-commit framework, and commitlint. Automate code quality
+description: "Use — "
   gates, formatting, linting, and commit message enforcement before code reaches CI.'''
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use git hooks automation task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -485,3 +485,17 @@ echo "npx --no -- commitlint --edit \$1" > .husky/commit-msg
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

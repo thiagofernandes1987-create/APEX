@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.google_docs_automation
 name: google-docs-automation
-description: '''Lightweight Google Docs integration with standalone OAuth authentication. No MCP server required.'''
+description: "Apply — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/mcp/google-docs-automation
@@ -43,7 +43,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply google docs automation task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -180,3 +180,17 @@ Access tokens are automatically refreshed when expired using Google's cloud func
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -283,3 +283,23 @@ Results above are from [successful sources] only.
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Search across all connected sources in one query. Trigger with 'find that doc about...', 'what did we decide
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires search capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Fonte de informação não verificável
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

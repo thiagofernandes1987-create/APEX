@@ -1,10 +1,16 @@
 ---
 name: product-analytics
-description: Use when defining product KPIs, building metric dashboards, running cohort or retention analysis, or interpreting feature adoption trends across product stages.
+description: "Manage — Use when defining product KPIs, building metric dashboards, running cohort or retention analysis, or interpreting feature adoption trends across product stages."
 executor: HYBRID
 skill_id: business.product-team.product-analytics
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - data_science
+  - visualization
+  - design
+  - web3
 ---
 
 # Product Analytics
@@ -149,3 +155,17 @@ u002,signup
 - Related: `product-team/product-manager-toolkit` — for RICE prioritization of metric-driven features
 - Related: `product-team/product-discovery` — for assumption mapping when metrics reveal unknowns
 - Related: `finance/saas-metrics-coach` — for SaaS-specific metrics (ARR, MRR, churn, LTV)
+
+---
+
+## Why This Skill Exists
+
+Manage —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

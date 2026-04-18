@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.browser_automation
 name: browser-automation
-description: Browser automation powers web testing, scraping, and AI agent
+description: "Implement — Browser automation powers web testing, scraping, and AI agent"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/testing/browser-automation
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Browser automation powers web testing
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1215,3 +1215,17 @@ Works well with: `agent-tool-builder`, `workflow-automation`, `computer-use-agen
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Browser automation powers web testing, scraping, and AI agent
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

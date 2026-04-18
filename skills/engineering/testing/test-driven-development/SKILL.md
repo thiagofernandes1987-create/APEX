@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.test_driven_development
 name: test-driven-development
-description: '''Use when implementing any feature or bugfix, before writing implementation code'''
+description: "Implement — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/testing/test-driven-development
@@ -43,7 +43,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement test driven development task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -469,3 +469,17 @@ No exceptions without your human partner's permission.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

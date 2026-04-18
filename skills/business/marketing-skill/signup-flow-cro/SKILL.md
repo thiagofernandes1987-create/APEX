@@ -1,6 +1,6 @@
 ---
 name: "signup-flow-cro"
-description: When the user wants to optimize signup, registration, account creation, or trial activation flows. Also use when the user mentions "signup conversions," "registration friction," "signup form optimization," "free trial signup," "reduce signup dropoff," or "account creation flow." For post-signup onboarding, see onboarding-cro. For lead capture forms (not account creation), see form-cro.
+description: "Manage — When the user wants to optimize signup, registration, account creation, or trial activation flows. Also use when the user mentions 'signup conversions,' 'registration friction,' 's"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,8 @@ executor: HYBRID
 skill_id: business.marketing-skill.signup-flow-cro
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 # Signup Flow CRO
@@ -227,3 +229,23 @@ Automatically surface signup-flow-cro when:
 | Flow Redesign Spec | Step-by-step outline | Recommended multi-step or single-step flow with copy for each screen |
 | SSO & Auth Options Recommendation | Decision table | Which auth methods to offer, placement, and priority for the target audience |
 | A/B Test Hypotheses | Table | Hypothesis × variant description × success metric × priority for top 3-5 tests |
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to optimize signup, registration, account creation, or trial activation flows. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

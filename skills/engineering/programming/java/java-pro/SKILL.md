@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.java.java_pro
 name: java-pro
-description: Master Java 21+ with modern features like virtual threads, pattern matching, and Spring Boot 3.x. Expert in the
+description: "Implement — Master Java 21+ with modern features like virtual threads, pattern matching, and Spring Boot 3.x. Expert in the"
   latest Java ecosystem including GraalVM, Project Loom, and cloud-native patterns.
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Master Java 21+ with modern features like virtual threads
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -280,3 +280,23 @@ Expert Java developer mastering Java 21+ features including virtual threads, pat
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Master Java 21+ with modern features like virtual threads, pattern matching, and Spring Boot 3.x. Expert in the
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires java pro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

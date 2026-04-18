@@ -1,11 +1,15 @@
 ---
 name: "board"
-description: "Read, write, and browse the AgentHub message board for agent coordination."
+description: "Implement — Read, write, and browse the AgentHub message board for agent coordination."
 command: /hub:board
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.agenthub.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - agent
+  - documentation
 ---
 
 # /hub:board — Message Board
@@ -108,3 +112,23 @@ parent: null
 - **Append-only** — never edit or delete existing posts
 - **Unique filenames** — `{seq:03d}-{author}-{timestamp}.md`
 - **Frontmatter required** — every post has author, timestamp, channel
+
+---
+
+## Why This Skill Exists
+
+Implement — Read, write, and browse the AgentHub message board for agent coordination.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires board capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

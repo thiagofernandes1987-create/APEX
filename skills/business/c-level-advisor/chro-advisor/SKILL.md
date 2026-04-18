@@ -1,6 +1,6 @@
 ---
 name: "chro-advisor"
-description: "People leadership for scaling companies. Hiring strategy, compensation design, org structure, culture, and retention. Use when building hiring plans, designing comp frameworks, restructuring teams, managing performance, building culture, or when user mentions CHRO, HR, people strategy, talent, headcount, compensation, org design, retention, or performance management."
+description: "Manage — People leadership for scaling companies. Hiring strategy, compensation design, org structure, culture, and retention. Use when building hiring plans, designing comp frameworks, res"
 license: MIT
 metadata:
   version: 1.0.0
@@ -14,6 +14,11 @@ executor: HYBRID
 skill_id: business.c-level-advisor.chro-advisor
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - sales
+  - management
+  - design
 ---
 
 # CHRO Advisor
@@ -146,3 +151,23 @@ All output passes the Internal Quality Loop before reaching the founder (see `ag
 - **Always** read `company-context.md` before responding (if it exists)
 - **During board meetings:** Use only your own analysis in Phase 2 (no cross-pollination)
 - **Invocation:** You can request input from other roles: `[INVOKE:role|question]`
+
+---
+
+## Why This Skill Exists
+
+Manage — People leadership for scaling companies. Hiring strategy, compensation design, org structure, culture, and retention.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when building hiring plans, designing comp frameworks, res
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

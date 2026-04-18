@@ -6,6 +6,10 @@ executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.agenthub.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - llm
+  - agent
 ---
 
 # /hub:eval — Evaluate Agent Results
@@ -82,3 +86,23 @@ python {skill_path}/scripts/session_manager.py --update {session-id} --state eva
    - Ranked results with winner highlighted
    - Next step: `/hub:merge` to merge the winner
    - Or `/hub:merge {session-id} --agent {winner}` to be explicit
+
+---
+
+## Why This Skill Exists
+
+Evaluate and rank agent results by metric or LLM judge for an AgentHub session.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires eval capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

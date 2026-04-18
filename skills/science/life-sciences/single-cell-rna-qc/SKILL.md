@@ -1,7 +1,7 @@
 ---
 skill_id: science.life_sciences.single_cell_rna_qc
 name: single-cell-rna-qc
-description: Performs quality control on single-cell RNA-seq data (.h5ad or .h5 files) using scverse best practices with MAD-based
+description: "Research — Performs quality control on single-cell RNA-seq data (.h5ad or .h5 files) using scverse best practices with MAD-based"
   filtering and comprehensive visualizations. Use when users request QC analysis, fi
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Performs quality control on single-cell RNA-seq data (
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -277,3 +277,17 @@ Typical downstream analysis steps:
 
 ## Diff History
 - **v00.33.0**: Ingested from life-sciences-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Research — Performs quality control on single-cell RNA-seq data (.h5ad or .h5 files) using scverse best practices with MAD-based
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Literatura científica beyond knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

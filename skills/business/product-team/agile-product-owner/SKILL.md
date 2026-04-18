@@ -1,6 +1,6 @@
 ---
 name: "agile-product-owner"
-description: Agile product ownership for backlog management and sprint execution. Covers user story writing, acceptance criteria, sprint planning, and velocity tracking. Use for writing user stories, creating acceptance criteria, planning sprints, estimating story points, breaking down epics, or prioritizing backlog.
+description: "Manage — Agile product ownership for backlog management and sprint execution. Covers user story writing, acceptance criteria, sprint planning, and velocity tracking. Use for writing user st"
 triggers:
   - write user story
   - create acceptance criteria
@@ -18,6 +18,9 @@ executor: HYBRID
 skill_id: business.product-team.agile-product-owner
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - observability
 ---
 
 # Agile Product Owner
@@ -398,3 +401,23 @@ Story is complete when:
 
 - **Scrum Master** (`project-management/scrum-master/`) — Velocity data and sprint ceremonies complement backlog management
 - **Product Manager Toolkit** (`product-team/product-manager-toolkit/`) — RICE prioritization feeds backlog ordering
+
+---
+
+## Why This Skill Exists
+
+Manage — Agile product ownership for backlog management and sprint execution. Covers user story writing, acceptance criteria, sprint planning, and velocity tracking. Use for writing user st
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires agile product owner capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

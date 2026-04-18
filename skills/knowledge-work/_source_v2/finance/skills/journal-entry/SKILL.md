@@ -1,6 +1,6 @@
 ---
 name: journal-entry
-description: Prepare journal entries with proper debits, credits, and supporting detail. Use when booking month-end accruals
+description: "Use — Prepare journal entries with proper debits, credits, and supporting detail. Use when booking month-end accruals"
   (AP, payroll, prepaid), recording depreciation or amortization, posting revenue recognition or deferred revenue adjustments,
   or documenting an entry for audit review.
 argument-hint: <entry type> [period]
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - booking month-end accruals
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -219,3 +219,23 @@ Provide:
 3. Comparison to prior period entry of the same type (if available)
 4. Any items flagged for review or follow-up
 5. Instructions for posting (manual entry or upload format for the user's ERP)
+
+---
+
+## Why This Skill Exists
+
+Use — Prepare journal entries with proper debits, credits, and supporting detail.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when booking month-end accruals
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

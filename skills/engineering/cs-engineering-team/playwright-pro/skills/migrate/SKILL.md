@@ -8,6 +8,8 @@ executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.playwright-pro.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
 ---
 
 # Migrate to Playwright
@@ -137,3 +139,23 @@ Ask user before deleting anything.
 - Any tests that couldn't be auto-converted (manual intervention needed)
 - Updated CI config
 - Before/after comparison of test run results
+
+---
+
+## Why This Skill Exists
+
+Migrate from Cypress or Selenium to Playwright.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

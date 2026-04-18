@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.telegram_mini_app
 name: telegram-mini-app
-description: Expert in building Telegram Mini Apps (TWA) - web apps that run
+description: "Use — Expert in building Telegram Mini Apps (TWA) - web apps that run"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/telegram-mini-app
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert in building Telegram Mini Apps (TWA) - web apps that run
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -779,3 +779,17 @@ Works well with: `telegram-bot-builder`, `frontend`, `blockchain-defi`, `viral-g
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Expert in building Telegram Mini Apps (TWA) - web apps that run
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

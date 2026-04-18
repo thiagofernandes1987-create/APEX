@@ -1,7 +1,7 @@
 ---
 skill_id: design.wiki_vitepress
 name: wiki-vitepress
-description: Packages generated wiki Markdown into a VitePress static site with dark theme, dark-mode Mermaid diagrams with
+description: "Design — Packages generated wiki Markdown into a VitePress static site with dark theme, dark-mode Mermaid diagrams with"
   click-to-zoom, and production build output. Use when the user wants to create a browsable
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Packages generated wiki Markdown into a VitePress static site with dark theme
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -262,3 +262,23 @@ Output goes to `wiki-site/.vitepress/dist/`.
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Packages generated wiki Markdown into a VitePress static site with dark theme, dark-mode Mermaid diagrams with
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires wiki vitepress capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

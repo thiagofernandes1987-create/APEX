@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.discord_bot_architect
 name: discord-bot-architect
-description: Specialized skill for building production-ready Discord bots.
+description: "Use — Specialized skill for building production-ready Discord bots."
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/discord-bot-architect
@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Specialized skill for building production-ready Discord bots
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1538,3 +1538,17 @@ Use this skill when the request clearly matches the capabilities and patterns de
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Specialized skill for building production-ready Discord bots.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

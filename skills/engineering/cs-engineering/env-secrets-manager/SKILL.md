@@ -1,10 +1,12 @@
 ---
 name: "env-secrets-manager"
-description: "Env & Secrets Manager"
+description: "Implement — Env & Secrets Manager"
 executor: HYBRID
 skill_id: engineering.cs-engineering.env-secrets-manager
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - engineering
 ---
 
 # Env & Secrets Manager
@@ -262,3 +264,17 @@ This skill covers env hygiene and secret detection. For deeper coverage of relat
 | **CI/CD Pipeline Builder** | `engineering/ci-cd-pipeline-builder` | Pipeline architecture, secret injection patterns |
 | **Infrastructure as Code** | `engineering/infrastructure-as-code` | Terraform/Pulumi secret backend configuration |
 | **Container Orchestration** | `engineering/container-orchestration` | Kubernetes secret mounting, sealed secrets |
+
+---
+
+## Why This Skill Exists
+
+Implement — Env & Secrets Manager
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

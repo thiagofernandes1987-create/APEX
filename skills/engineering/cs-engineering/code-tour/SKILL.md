@@ -1,10 +1,13 @@
 ---
 name: "code-tour"
-description: "Use when the user asks to create a CodeTour .tour file — persona-targeted, step-by-step walkthroughs that link to real files and line numbers. Trigger for: create a tour, onboarding tour, architecture tour, PR review tour, explain how X works, vibe check, RCA tour, contributor guide, or any structured code walkthrough request."
+description: "Implement — Use when the user asks to create a CodeTour .tour file — persona-targeted, step-by-step walkthroughs that link to real files and line numbers. Trigger for: create a tour, onboardin"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.code-tour
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - management
 ---
 
 # Code Tour
@@ -142,3 +145,17 @@ Save to `.tours/<persona>-<focus>.tour`.
 - Related: `engineering/pr-review-expert` — for automated PR review workflows
 - CodeTour extension: [microsoft/codetour](https://github.com/microsoft/codetour)
 - Real-world tours: [coder/code-server](https://github.com/coder/code-server/blob/main/.tours/contributing.tour)
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

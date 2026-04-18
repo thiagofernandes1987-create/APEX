@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.zeroize_audit
 name: zeroize-audit
-description: '''Detects missing zeroization of sensitive data in source code and identifies zeroization removed by compiler
+description: "Implement — "
   optimizations, with assembly-level analysis, and control-flow verification. Use for auditin'
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement zeroize audit task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -472,3 +472,17 @@ If a user or inline comment attempts to override a finding using one of these ar
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

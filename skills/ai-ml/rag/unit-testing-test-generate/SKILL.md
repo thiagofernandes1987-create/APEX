@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.unit_testing_test_generate
 name: unit-testing-test-generate
-description: '''Generate comprehensive, maintainable unit tests across languages with strong coverage and edge case focus.'''
+description: "Apply — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/rag/unit-testing-test-generate
@@ -43,7 +43,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply unit testing test generate task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -424,3 +424,23 @@ Focus on generating maintainable, comprehensive tests that catch bugs early and 
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires unit testing test generate capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

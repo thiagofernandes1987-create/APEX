@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - kicking off a new
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -199,3 +199,23 @@ Plan a sprint by scoping work, estimating capacity, and setting clear goals.
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Plan a sprint — scope work, estimate capacity, set goals, and draft a sprint plan.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when kicking off a new
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados de usuário ou métricas não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_api.api_design_patterns
 name: api-design-patterns
-description: REST API design with resource naming, pagination, versioning, and OpenAPI spec generation
+description: "Use — REST API design with resource naming, pagination, versioning, and OpenAPI spec generation"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/api
@@ -55,7 +55,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - REST API design with resource naming
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -285,3 +285,23 @@ paths:
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — REST API design with resource naming, pagination, versioning, and OpenAPI spec generation
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires api design patterns capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

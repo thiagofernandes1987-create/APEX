@@ -1,7 +1,7 @@
 ---
 skill_id: anthropic_official.pdf
 name: pdf
-description: Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables
+description: "Apply — Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables"
   from PDFs, combining or merging multiple PDFs into one, splitting PDFs apart, rota
 version: v00.33.0
 status: ADOPTED
@@ -33,7 +33,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Use this skill whenever the user wants to do anything with PDF files
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -387,3 +387,23 @@ with open("encrypted.pdf", "wb") as output:
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Apply — Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires pdf capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

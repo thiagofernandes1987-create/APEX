@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.subject_line_psychologist
 name: subject-line-psychologist
-description: '''One sentence - what this skill does and when to invoke it'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/subject-line-psychologist
@@ -40,7 +40,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use subject line psychologist task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -201,3 +201,17 @@ Before finalizing output, the agent asks:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

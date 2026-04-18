@@ -1,11 +1,13 @@
 ---
 name: "run"
-description: "One-shot lifecycle command that chains init → baseline → spawn → eval → merge in a single invocation."
+description: "Implement — One-shot lifecycle command that chains init → baseline → spawn → eval → merge in a single invocation."
 command: /hub:run
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.agenthub.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
 ---
 
 # /hub:run — One-Shot Lifecycle
@@ -112,3 +114,23 @@ If confirmed, run `/hub:merge`. If declined, inform the user they can:
 - **Stop on failure** — if any step fails, report the error and stop
 - **User confirms merge** — never auto-merge without asking
 - **Template is optional** — without `--template`, agents use the default dispatch prompt from `/hub:spawn`
+
+---
+
+## Why This Skill Exists
+
+Implement — One-shot lifecycle command that chains init → baseline → spawn → eval → merge in a single invocation.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires run capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.devops_automation
 name: devops-automation
-description: CI/CD pipeline design with GitHub Actions, Docker, Kubernetes, Helm, and GitOps patterns
+description: "Use — CI/CD pipeline design with GitHub Actions, Docker, Kubernetes, Helm, and GitOps patterns"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/devops
@@ -55,7 +55,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - CI/CD pipeline design with GitHub Actions
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -382,3 +382,23 @@ Alert on: error rate >1%, P99 latency >2s, memory >80% of limit, pod restarts >3
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — CI/CD pipeline design with GitHub Actions, Docker, Kubernetes, Helm, and GitOps patterns
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires devops automation capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

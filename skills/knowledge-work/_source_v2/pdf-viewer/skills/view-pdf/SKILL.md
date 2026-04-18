@@ -1,6 +1,6 @@
 ---
 name: view-pdf
-description: Interactive PDF viewer. Use when the user wants to open, show, or view a PDF and collaborate on it visually —
+description: "Use — Interactive PDF viewer. Use when the user wants to open, show, or view a PDF and collaborate on it visually —"
   annotate, highlight, stamp, fill form fields, place signature/initials, or review markup together. Not for summarization
   or text extraction (use native Read instead).
 tier: COMMUNITY
@@ -28,7 +28,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user wants to open
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -216,3 +216,17 @@ certified or cryptographic digital signature.
 - **Summarization / text extraction** — use native Read instead
 - **Certified digital signatures** — image stamping only
 - **PDF creation** — this works on existing PDFs only
+
+---
+
+## Why This Skill Exists
+
+Use — Interactive PDF viewer.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

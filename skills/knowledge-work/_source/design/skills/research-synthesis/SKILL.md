@@ -1,6 +1,6 @@
 ---
 name: research-synthesis
-description: Synthesize user research into themes, insights, and recommendations. Use when you have interview transcripts,
+description: "Use — Synthesize user research into themes, insights, and recommendations. Use when you have interview transcripts,"
   survey results, usability test notes, support tickets, or NPS responses that need to be distilled into patterns, user segments,
   and prioritized next steps.
 argument-hint: <research data, transcripts, or survey results>
@@ -33,7 +33,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - you have interview transcripts
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -170,3 +170,23 @@ If **~~knowledge base** is connected:
 1. **Include raw quotes** — Direct participant quotes make insights credible and memorable.
 2. **Separate observations from interpretations** — "5 of 8 users clicked the wrong button" is an observation. "The button placement is confusing" is an interpretation.
 3. **Quantify where possible** — "Most users" is vague. "7 of 10 users" is specific.
+
+---
+
+## Why This Skill Exists
+
+Use — Synthesize user research into themes, insights, and recommendations.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when you have interview transcripts,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

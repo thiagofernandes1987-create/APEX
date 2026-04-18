@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.20_andruia_niche_intelligence
 name: 20-andruia-niche-intelligence
-description: '''Estratega de Inteligencia de Dominio de Andru.ia. Analiza el nicho específico de un proyecto para inyectar
+description: "Deploy — "
   conocimientos, regulaciones y estándares únicos del sector. Actívalo tras definir el nicho.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - deploy 20 andruia niche intelligence task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -156,3 +156,17 @@ Activa este skill **después de que el nicho de mercado esté claro** y ya exist
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Deploy —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Rede blockchain congestionada ou indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

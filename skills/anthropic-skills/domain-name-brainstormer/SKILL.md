@@ -1,10 +1,13 @@
 ---
 name: domain-name-brainstormer
-description: Generates creative domain name ideas for your project and checks availability across multiple TLDs (.com, .io, .dev, .ai, etc.). Saves hours of brainstorming and manual checking.
+description: "Apply — Generates creative domain name ideas for your project and checks availability across multiple TLDs (.com, .io, .dev, .ai, etc.). Saves hours of brainstorming and manual checking."
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.domain-name-brainstormer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - automation
+  - apply
 ---
 
 # Domain Name Brainstormer
@@ -214,3 +217,16 @@ After picking a domain:
 - Research trademark availability
 - Plan brand identity colors/fonts
 
+---
+
+## Why This Skill Exists
+
+Apply — Generates creative domain name ideas for your project and checks availability across multiple TLDs (.com, .io, .dev, .ai, etc.). Saves hours of brainstorming and manual checking.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

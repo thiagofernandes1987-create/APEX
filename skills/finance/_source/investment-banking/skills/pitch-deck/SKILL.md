@@ -1,6 +1,6 @@
 ---
 name: pitch-deck
-description: 'Populates investment banking pitch deck templates with data from source files. Use when: user provides a PowerPoint
+description: "Analyze — Populates investment banking pitch deck templates with data from source files. Use when: user provides a PowerPoint"
   template to fill in, user has source data (Excel/CSV) to populate into slides, user mentions populating or filling a pitch
   deck template, or user needs to transfer data into existing slide layouts. Not for creating presentations from scratch.'
 tier: ADAPTED
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - user provides a PowerPoint
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -513,3 +513,23 @@ Before delivering the populated template, verify:
 
 ### Final Step
 - [ ] Recommend user validate in Microsoft PowerPoint before distribution (LibreOffice may render differently)
+
+---
+
+## Why This Skill Exists
+
+Analyze — Populates investment banking pitch deck templates with data from source files.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when user provides a PowerPoint
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

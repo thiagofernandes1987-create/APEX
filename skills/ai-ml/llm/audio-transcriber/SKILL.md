@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.audio_transcriber
 name: audio-transcriber
-description: '''Transform audio recordings into professional Markdown documentation with intelligent summaries using LLM integration'''
+description: "Apply — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/llm/audio-transcriber
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply audio transcriber task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -652,3 +652,17 @@ This skill is **platform-agnostic** and works in any terminal context where GitH
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

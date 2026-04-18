@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.preset
 name: preset
-description: 'Intelligently deploys Azure OpenAI models to optimal regions by analyzing capacity across all available regions.
+description: "Deploy — Intelligently deploys Azure OpenAI models to optimal regions by analyzing capacity across all available regions."
   Automatically checks current region first and shows alternatives if needed. USE FOR: qu'
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Intelligently deploys Azure OpenAI models to optimal regions by analyzing capacity across all avail
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -209,3 +209,23 @@ az cognitiveservices account deployment delete --name <acct> --resource-group <r
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Deploy — Intelligently deploys Azure OpenAI models to optimal regions by analyzing capacity across all available regions.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires preset capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

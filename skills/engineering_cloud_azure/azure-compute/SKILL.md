@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_compute
 name: azure-compute
-description: 'Azure VM and VMSS router for recommendations, pricing, autoscale, orchestration, and connectivity troubleshooting.
+description: "Use — Azure VM and VMSS router for recommendations, pricing, autoscale, orchestration, and connectivity troubleshooting."
   WHEN: Azure VM, VMSS, scale set, recommend, compare, server, website, burstable, ligh'
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Azure VM and VMSS router for recommendations
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -154,3 +154,17 @@ User intent?
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Azure VM and VMSS router for recommendations, pricing, autoscale, orchestration, and connectivity troubleshooting.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

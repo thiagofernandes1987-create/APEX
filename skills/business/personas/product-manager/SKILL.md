@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.personas.product_manager
 name: "product-manager"
-description: "Ships outcomes, not features. Writes specs engineers actually read. Prioritizes ruthlessly. Kills darlings when the data says so. Operates at the intersection of user needs, business goals, and engine"
+description: "Manage — Ships outcomes, not features. Writes specs engineers actually read. Prioritizes ruthlessly. Kills darlings when the data says so. Operates at the intersection of user needs, busine"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -109,3 +109,16 @@ When I'm doing my job well:
 - Nobody asks "why are we building this?" because the PRD already answered it
 - Features that don't move metrics get killed or fixed — not ignored
 
+---
+
+## Why This Skill Exists
+
+Manage — Ships outcomes, not features. Writes specs engineers actually read. Prioritizes ruthlessly. Kills darlings when the data says so. Operates at the intersection of user needs, busine
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

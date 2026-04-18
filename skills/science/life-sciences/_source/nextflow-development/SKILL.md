@@ -41,7 +41,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyzing RNA-seq
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -387,3 +387,23 @@ When publishing results, cite the appropriate pipeline. Citations are available 
 - **nf-core pipelines:** MIT License (https://nf-co.re/about)
 - **Nextflow:** Apache License, Version 2.0 (https://www.nextflow.io/about-us.html)
 - **NCBI SRA Toolkit:** Public Domain (https://github.com/ncbi/sra-tools/blob/master/LICENSE)
+
+---
+
+## Why This Skill Exists
+
+Run nf-core bioinformatics pipelines (rnaseq, sarek, atacseq) on sequencing data.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when analyzing RNA-seq,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Literatura científica beyond knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

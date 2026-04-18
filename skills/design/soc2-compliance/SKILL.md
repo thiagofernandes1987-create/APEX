@@ -1,7 +1,7 @@
 ---
 skill_id: design.soc2_compliance
 name: soc2-compliance
-description: Use when the user asks to prepare for SOC 2 audits, map Trust Service Criteria, build control matrices, collect
+description: "Design — Use when the user asks to prepare for SOC 2 audits, map Trust Service Criteria, build control matrices, collect"
   audit evidence, perform gap analysis, or assess SOC 2 Type I vs Type II readiness.
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user asks to prepare for SOC 2 audits
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -535,3 +535,23 @@ python scripts/gap_analyzer.py --controls current_controls.json --type type2 --j
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to prepare for SOC 2 audits, map Trust Service Criteria, build control matrices, collect
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

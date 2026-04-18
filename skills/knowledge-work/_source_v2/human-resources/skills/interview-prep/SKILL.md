@@ -28,7 +28,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Create structured interview plans with competency-based questions and scorecards
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -107,3 +107,23 @@ Structured format for interviewers to share findings and make a decision.
 ## Output
 
 Produce a complete interview kit: panel assignment (who interviews for what), question bank by competency, scoring rubric, and debrief template.
+
+---
+
+## Why This Skill Exists
+
+Create structured interview plans with competency-based questions and scorecards. Trigger with "interview plan
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires interview prep capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

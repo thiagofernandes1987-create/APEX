@@ -3,6 +3,11 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.wealth-management.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - reporting
+  - performance
+  - design
 ---
 # Client Report
 
@@ -100,3 +105,23 @@ Brief market summary tailored to the client's level of sophistication:
 - Match the level of detail to the client — some want every holding, others want a one-page summary
 - Benchmark selection matters — use the benchmark from the IPS, not whatever looks best
 - Review for compliance approval before first distribution of a new template
+
+---
+
+## Why This Skill Exists
+
+Generate professional client-facing performance reports with portfolio returns, allocation breakdowns, and market commentary. Suitable for quarterly or annual distribution. Triggers on "client report", "performance report", "quarterly report for [client]", "generate reports", or "client statement".
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires client report capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyze and optimize tweets for maximum reach using Twitter's open-source algorithm insights
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -427,3 +427,17 @@ Use Claude without this skill for:
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Analyze and optimize tweets for maximum reach using Twitter's open-source algorithm insights. Rewrite and edit
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

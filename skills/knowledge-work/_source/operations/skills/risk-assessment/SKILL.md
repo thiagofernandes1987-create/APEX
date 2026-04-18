@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Identify
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -128,3 +128,23 @@ For each risk, document:
 ## Output
 
 Produce a prioritized risk register with specific, actionable mitigations. Focus on risks that are controllable and material.
+
+---
+
+## Why This Skill Exists
+
+Identify, assess, and mitigate operational risks. Trigger with "what are the risks", "risk assessment", "risk
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires risk assessment capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

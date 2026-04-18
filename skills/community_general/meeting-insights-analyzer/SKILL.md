@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.meeting_insights_analyzer
 name: meeting-insights-analyzer
-description: Analyzes meeting transcripts and recordings to uncover behavioral patterns, communication insights, and actionable
+description: "Analyze — Analyzes meeting transcripts and recordings to uncover behavioral patterns, communication insights, and actionable"
   feedback. Identifies when you avoid conflict, use filler words, dominate conversation
 version: v00.33.0
 status: CANDIDATE
@@ -41,7 +41,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyzes meeting transcripts and recordings to uncover behavioral patterns
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -408,3 +408,17 @@ today."
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Analyze — Analyzes meeting transcripts and recordings to uncover behavioral patterns, communication insights, and actionable
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

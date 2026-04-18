@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_agents.agent_workflow_designer
 name: agent-workflow-designer
-description: Agent Workflow Designer
+description: "Use — Agent Workflow Designer"
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/agents
@@ -57,7 +57,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Agent Workflow Designer
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -196,3 +196,17 @@ Detailed templates: `references/workflow-patterns.md`
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Agent Workflow Designer
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

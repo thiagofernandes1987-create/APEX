@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.viral_generator_builder
 name: viral-generator-builder
-description: Expert in building shareable generator tools that go viral - name
+description: "Use — Expert in building shareable generator tools that go viral - name"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/viral-generator-builder
@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert in building shareable generator tools that go viral - name
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -381,3 +381,17 @@ Works well with: `viral-hooks`, `landing-page-design`, `seo`, `frontend`
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Expert in building shareable generator tools that go viral - name
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

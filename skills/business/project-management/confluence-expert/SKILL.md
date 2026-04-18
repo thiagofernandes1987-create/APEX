@@ -1,10 +1,13 @@
 ---
 name: "confluence-expert"
-description: Atlassian Confluence expert for creating and managing spaces, knowledge bases, and documentation. Configures space permissions and hierarchies, creates page templates with macros, sets up documentation taxonomies, designs page layouts, and manages content governance. Use when users need to build or restructure a Confluence space, design page hierarchies with permission structures, author or standardise documentation templates, embed Jira reports in pages, run knowledge base audits, or establish documentation standards and collaborative workflows.
+description: "Manage — Atlassian Confluence expert for creating and managing spaces, knowledge bases, and documentation. Configures space permissions and hierarchies, creates page templates with macros, "
 executor: HYBRID
 skill_id: business.project-management.confluence-expert
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - documentation
 ---
 
 # Atlassian Confluence Expert
@@ -377,3 +380,23 @@ const example = "code here";
 
 - **Jira Expert** (`project-management/jira-expert/`) — Jira issue macros and linking complement Confluence docs
 - **Atlassian Templates** (`project-management/atlassian-templates/`) — Template patterns for Confluence content creation
+
+---
+
+## Why This Skill Exists
+
+Manage — Atlassian Confluence expert for creating and managing spaces, knowledge bases, and documentation. Configures space permissions and hierarchies, creates page templates with macros,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires confluence expert capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

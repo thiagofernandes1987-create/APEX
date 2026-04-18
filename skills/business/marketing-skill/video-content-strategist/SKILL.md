@@ -1,10 +1,13 @@
 ---
 name: video-content-strategist
-description: "Use when planning video content strategy, writing video scripts, optimizing YouTube channels, building short-form video pipelines (Reels, TikTok, Shorts), or repurposing long-form content into video. Triggers: 'start a YouTube channel', 'video content strategy', 'write a video script', 'repurpose into video', 'YouTube SEO', 'short-form video'. NOT for written blog content (use content-production). NOT for social captions without video (use social-media-manager)."
+description: "Manage — Use when planning video content strategy, writing video scripts, optimizing YouTube channels, building short-form video pipelines (Reels, TikTok, Shorts), or repurposing long-form "
 executor: LLM_BEHAVIOR
 skill_id: business.marketing-skill.video-content-strategist
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - design
 ---
 
 # Video Content Strategist
@@ -220,3 +223,23 @@ All output follows the structured standard:
 - **seo-audit**: Use for auditing overall SEO. Pairs with this skill for YouTube keyword research and video SEO.
 - **social-media-manager**: Use for social media calendar and captions. NOT for video-specific strategy (that is this skill).
 - **launch-strategy**: Use when launching a product. Pairs with this skill for video launch content planning.
+
+---
+
+## Why This Skill Exists
+
+Manage —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when planning video content strategy, writing video scripts, optimizing YouTube channels, building short-form video pipelines (Reels, TikTok, Shorts), or repurposing long-form
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

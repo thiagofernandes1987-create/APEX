@@ -33,7 +33,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Build targeted account or contact lists using Common Room's Prospector
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -178,3 +178,23 @@ For `ProspectorOrganization` results (net-new companies not in CR), run a quick 
 ## Reference Files
 
 - **`references/prospect-guide.md`** — filter types, signal-based sorting, object type distinctions, and list-building strategies
+
+---
+
+## Why This Skill Exists
+
+Build targeted account or contact lists using Common Room's Prospector. Triggers on 'find companies that match
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires prospect capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

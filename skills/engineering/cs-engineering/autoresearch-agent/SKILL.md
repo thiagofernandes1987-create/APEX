@@ -1,6 +1,6 @@
 ---
 name: "autoresearch-agent"
-description: "Autonomous experiment loop that optimizes any file by a measurable metric. Inspired by Karpathy's autoresearch. The agent edits a target file, runs a fixed evaluation, keeps improvements (git commit), discards failures (git reset), and loops indefinitely. Use when: user wants to optimize code speed, reduce bundle/image size, improve test pass rate, optimize prompts, improve content quality (headlines, copy, CTR), or run any measurable improvement loop. Requires: a target file, an evaluation command that outputs a metric, and a git repo."
+description: "Implement — Autonomous experiment loop that optimizes any file by a measurable metric. Inspired by Karpathy"
 license: MIT
 metadata:
   version: 2.0.0
@@ -11,6 +11,10 @@ executor: HYBRID
 skill_id: engineering.cs-engineering.autoresearch-agent
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - agent
+  - research
 ---
 
 # Autoresearch Agent
@@ -310,3 +314,23 @@ clawhub install cs-autoresearch-agent
 - **senior-ml-engineer** — ML architecture decisions. Complementary — use for initial design, then autoresearch for optimization.
 - **tdd-guide** — test-driven development. Complementary — tests can be the evaluation function.
 - **skill-security-auditor** — audit skills before publishing. NOT for optimization loops.
+
+---
+
+## Why This Skill Exists
+
+Implement — Autonomous experiment loop that optimizes any file by a measurable metric. Inspired by Karpathy
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires autoresearch agent capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

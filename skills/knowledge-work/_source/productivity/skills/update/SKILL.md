@@ -1,6 +1,6 @@
 ---
 name: update
-description: Sync tasks and refresh memory from your current activity. Use when pulling new assignments from your project
+description: "Use — Sync tasks and refresh memory from your current activity. Use when pulling new assignments from your project"
   tracker into TASKS.md, triaging stale or overdue tasks, filling memory gaps for unknown people or projects, or running a
   comprehensive scan to catch todos buried in chat and email.
 argument-hint: '[--comprehensive]'
@@ -33,7 +33,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - pulling new assignments from your project
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -246,3 +246,23 @@ Present grouped by confidence. High-confidence items offered to add directly; lo
 - Fuzzy matching on task titles handles minor wording differences
 - Safe to run frequently — only updates when there's new info
 - `--comprehensive` always runs interactively
+
+---
+
+## Why This Skill Exists
+
+Use — Sync tasks and refresh memory from your current activity.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when pulling new assignments from your project
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

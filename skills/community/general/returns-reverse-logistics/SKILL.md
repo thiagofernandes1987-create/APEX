@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.returns_reverse_logistics
 name: returns-reverse-logistics
-description: Codified expertise for returns authorisation, receipt and inspection, disposition decisions, refund processing,
+description: "Use — Codified expertise for returns authorisation, receipt and inspection, disposition decisions, refund processing,"
   fraud detection, and warranty claims management.
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Codified expertise for returns authorisation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -304,3 +304,17 @@ Use this skill when you need to **design, improve, or troubleshoot returns and r
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Codified expertise for returns authorisation, receipt and inspection, disposition decisions, refund processing,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

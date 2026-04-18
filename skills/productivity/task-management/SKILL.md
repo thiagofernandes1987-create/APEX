@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.task_management
 name: task-management
-description: Simple task management using a shared TASKS.md file. Reference this when the user asks about their tasks, wants
+description: "Automate — Simple task management using a shared TASKS.md file. Reference this when the user asks about their tasks, wants"
   to add/complete tasks, or needs help tracking commitments.
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Simple task management using a shared TASKS
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -192,3 +192,23 @@ Ask before adding - don't auto-add without confirmation.
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Automate — Simple task management using a shared TASKS.md file. Reference this when the user asks about their tasks, wants
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires task management capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Arquivo de tasks ou memória não encontrado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

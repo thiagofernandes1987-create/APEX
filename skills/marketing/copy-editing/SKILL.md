@@ -1,7 +1,7 @@
 ---
 skill_id: marketingskills.marketing.copy_editing
 name: copy-editing
-description: 'When the user wants to edit, review, or improve existing marketing copy, or refresh outdated content. Also use
+description: "Create — When the user wants to edit, review, or improve existing marketing copy, or refresh outdated content. Also use"
   when the user mentions ''edit this copy,'' ''review my copy,'' ''copy feedback,'' ''proofread,'' '
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'When the user wants to edit
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -624,3 +624,17 @@ Copy editing isn't just for new content. Existing pages decay over time — outd
 
 ## Diff History
 - **v00.33.0**: Ingested from marketingskills-main
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to edit, review, or improve existing marketing copy, or refresh outdated content. Also use
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: paywall-upgrade-cro
-description: When the user wants to create or optimize in-app paywalls, upgrade screens, upsell modals, or feature gates.
+description: "Create — When the user wants to create or optimize in-app paywalls, upgrade screens, upsell modals, or feature gates."
   Also use when the user mentions "paywall," "upgrade screen," "upgrade modal," "upsell," "feature gate," "convert free to
   paid," "freemium conversion," "trial expiration screen," "limit reached screen," "plan upgrade prompt," "in-app pricing,"
   "free users won't upgrade," "trial to paid conversion," or "how do I get users to pay." Use this for any in-product moment
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to create or optimize in-app paywalls
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -331,3 +331,23 @@ What you've accomplished:
 - **page-cro**: For public pricing page optimization
 - **onboarding-cro**: For driving to aha moment before upgrade
 - **ab-test-setup**: For testing paywall variations
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to create or optimize in-app paywalls, upgrade screens, upsell modals, or feature gates.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires paywall upgrade cro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

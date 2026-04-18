@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_backend.spec_to_repo
 name: spec-to-repo
-description: Use when the user says 'build me an app', 'create a project from this spec', 'scaffold a new repo', 'generate
+description: "Generate — Use when the user says 'build me an app', 'create a project from this spec', 'scaffold a new repo', 'generate"
   a starter', 'turn this idea into code', 'bootstrap a project', 'I have requirements and ne
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user says 'build me an app'
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -384,3 +384,17 @@ Ask the user after MVP: "Core is working. Want me to add auth/polish/deploy next
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Generate —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,11 +1,14 @@
 ---
 name: "status"
-description: "Show DAG state, agent progress, and branch status for an AgentHub session."
+description: "Implement — Show DAG state, agent progress, and branch status for an AgentHub session."
 command: /hub:status
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.agenthub.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - agent
 ---
 
 # /hub:status — Session Status
@@ -80,3 +83,23 @@ If all agents have posted results:
 If some agents are still running:
 - Show which are done vs in-progress
 - Suggest waiting or checking again later
+
+---
+
+## Why This Skill Exists
+
+Implement — Show DAG state, agent progress, and branch status for an AgentHub session.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires status capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.filesystem_context
 name: filesystem-context
-description: Use for file-based context management, dynamic context discovery, and reducing context window bloat. Offload
+description: "Use — Use for file-based context management, dynamic context discovery, and reducing context window bloat. Offload"
   context to files for just-in-time loading.
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Use for file-based context management
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -410,3 +410,17 @@ External resources:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Use for file-based context management, dynamic context discovery, and reducing context window bloat. Offload
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

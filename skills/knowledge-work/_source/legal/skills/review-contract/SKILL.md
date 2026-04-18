@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Review a contract against your organization's negotiation playbook — flag deviations
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -447,3 +447,23 @@ Structure the output as:
 - If the contract is in a language other than English, note this and ask if the user wants a translation or review in the original language
 - For very long contracts (50+ pages), offer to focus on the most material sections first and then do a complete review
 - Always remind the user that this analysis should be reviewed by qualified legal counsel before being relied upon for legal decisions
+
+---
+
+## Why This Skill Exists
+
+Review a contract against your organization's negotiation playbook — flag deviations, generate redlines, provide
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires review contract capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

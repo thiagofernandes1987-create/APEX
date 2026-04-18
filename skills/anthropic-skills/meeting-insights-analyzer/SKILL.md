@@ -1,10 +1,13 @@
 ---
 name: meeting-insights-analyzer
-description: Analyzes meeting transcripts and recordings to uncover behavioral patterns, communication insights, and actionable feedback. Identifies when you avoid conflict, use filler words, dominate conversations, or miss opportunities to listen. Perfect for professionals seeking to improve their communication and leadership skills.
+description: "Apply — Analyzes meeting transcripts and recordings to uncover behavioral patterns, communication insights, and actionable feedback. Identifies when you avoid conflict, use filler words, d"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.meeting-insights-analyzer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - automation
+  - apply
 ---
 
 # Meeting Insights Analyzer
@@ -329,3 +332,16 @@ today."
 - Analyzing customer calls for sales or support patterns
 - Studying negotiation tactics and outcomes
 
+---
+
+## Why This Skill Exists
+
+Apply — Analyzes meeting transcripts and recordings to uncover behavioral patterns, communication insights, and actionable feedback. Identifies when you avoid conflict, use filler words, d
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

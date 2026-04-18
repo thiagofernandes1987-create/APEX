@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.python_performance_optimization
 name: python-performance-optimization
-description: '''Profile and optimize Python code using cProfile, memory profilers, and performance best practices. Use when
+description: "Implement — "
   debugging slow Python code, optimizing bottlenecks, or improving application performance.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement python performance optimization task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -136,3 +136,23 @@ Comprehensive guide to profiling, analyzing, and optimizing Python code for bett
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires python performance optimization capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

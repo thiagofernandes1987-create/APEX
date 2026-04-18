@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_hr_payroll_setup
 name: odoo-hr-payroll-setup
-description: '''Expert guide for Odoo HR and Payroll: salary structures, payslip rules, leave policies, employee contracts,
+description: "Analyze — "
   and payroll journal entries.'''
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyze odoo hr payroll setup task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -208,3 +208,17 @@ Employer taxes (e.g., FUTA, SUTA) post as separate journal entries.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: doc-coauthoring
-description: Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation,
+description: "Apply — Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation,"
   proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer
   context, refine content through iteration, and verify the doc works for readers. Trigger when user mentions writing docs,
   creating proposals, drafting specs, or similar documentation tasks.
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - user wants to write documentation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -464,3 +464,23 @@ Announce document completion. Provide a few final tips:
 - Don't rush through stages
 - Each iteration should make meaningful improvements
 - The goal is a document that actually works for readers
+
+---
+
+## Why This Skill Exists
+
+Apply — Guide users through a structured workflow for co-authoring documentation.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when user wants to write documentation,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

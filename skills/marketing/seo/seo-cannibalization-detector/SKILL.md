@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_cannibalization_detector
 name: seo-cannibalization-detector
-description: Analyzes multiple provided pages to identify keyword overlap and potential cannibalization issues. Suggests differentiation
+description: "Create — Analyzes multiple provided pages to identify keyword overlap and potential cannibalization issues. Suggests differentiation"
   strategies. Use PROACTIVELY when reviewing similar content.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyzes multiple provided pages to identify keyword overlap and potential cannibalization issues
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -236,3 +236,23 @@ Focus on clear differentiation. Each page should serve a unique purpose with dis
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create — Analyzes multiple provided pages to identify keyword overlap and potential cannibalization issues. Suggests differentiation
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires seo cannibalization detector capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

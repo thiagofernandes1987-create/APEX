@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.meeting_analyzer
 name: meeting-analyzer
-description: Analyzes meeting transcripts and recordings to surface behavioral patterns, communication anti-patterns, and
+description: "Create — Analyzes meeting transcripts and recordings to surface behavioral patterns, communication anti-patterns, and"
   actionable coaching feedback. Use this skill whenever the user uploads or points to meeting
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyzes meeting transcripts and recordings to surface behavioral patterns
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -365,3 +365,23 @@ Recommend `YYYY-MM-DD - Meeting Name.ext` naming convention for easy chronologic
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Create — Analyzes meeting transcripts and recordings to surface behavioral patterns, communication anti-patterns, and
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires meeting analyzer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

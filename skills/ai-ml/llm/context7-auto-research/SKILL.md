@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.context7_auto_research
 name: context7-auto-research
-description: '''Automatically fetch latest library/framework documentation for Claude Code via Context7 API. Use when you
+description: "Apply — "
   need up-to-date documentation for libraries and frameworks or asking about React, Next.js, Pr'
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply context7 auto research task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -136,3 +136,17 @@ See the GitHub repository for troubleshooting guides.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

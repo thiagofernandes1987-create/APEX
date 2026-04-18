@@ -1,6 +1,6 @@
 ---
 name: "context-engine"
-description: "Loads and manages company context for all C-suite advisor skills. Reads ~/.claude/company-context.md, detects stale context (>90 days), enriches context during conversations, and enforces privacy/anonymization rules before external API calls."
+description: "Manage — Loads and manages company context for all C-suite advisor skills. Reads ~/.claude/company-context.md, detects stale context (>90 days), enriches context during conversations, and e"
 license: MIT
 metadata:
   version: 1.0.0
@@ -13,6 +13,10 @@ executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.context-engine
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - business
+  - llm
+  - design
 ---
 
 # Company Context Engine
@@ -136,3 +140,23 @@ Missing required fields: note gaps, work around in session, ask in-session only 
 
 ## References
 - `references/anonymization-protocol.md` — detailed rules for stripping sensitive data before external calls
+
+---
+
+## Why This Skill Exists
+
+Manage — Loads and manages company context for all C-suite advisor skills. Reads ~/.claude/company-context.md, detects stale context (>90 days), enriches context during conversations, and e
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires context engine capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

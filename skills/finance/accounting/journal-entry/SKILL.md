@@ -1,7 +1,7 @@
 ---
 skill_id: finance.accounting.journal_entry
 name: journal-entry
-description: Prepare journal entries with proper debits, credits, and supporting detail. Use when booking month-end accruals
+description: "Analyze — Prepare journal entries with proper debits, credits, and supporting detail. Use when booking month-end accruals"
   (AP, payroll, prepaid), recording depreciation or amortization, posting revenue recognit
 version: v00.33.0
 status: ADOPTED
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - booking month-end accruals
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -236,3 +236,23 @@ Provide:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Analyze — Prepare journal entries with proper debits, credits, and supporting detail.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when booking month-end accruals
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,10 +1,16 @@
 ---
 name: "spec-driven-workflow"
-description: "Use when the user asks to write specs before code, define acceptance criteria, plan features before implementation, generate tests from specifications, or follow spec-first development practices."
+description: "Implement — Use when the user asks to write specs before code, define acceptance criteria, plan features before implementation, generate tests from specifications, or follow spec-first develop"
 executor: HYBRID
 skill_id: engineering.cs-engineering.spec-driven-workflow
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - testing
+  - workflow
+  - documentation
+  - web3
 ---
 
 # Spec-Driven Workflow — POWERFUL
@@ -335,3 +341,23 @@ python spec_validator.py --file specs/auth.md --strict
 # Extract test cases
 python test_extractor.py --file specs/auth.md --framework pytest --output tests/test_auth.py
 ```
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to write specs before code, define acceptance criteria, plan features before implementation, generate tests from specifications, or follow spec-first develop
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

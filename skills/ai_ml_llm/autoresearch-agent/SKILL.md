@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_llm.autoresearch_agent
 name: autoresearch-agent
-description: Autonomous experiment loop that optimizes any file by a measurable metric. Inspired by Karpathy's autoresearch.
+description: "Use — Autonomous experiment loop that optimizes any file by a measurable metric. Inspired by Karpathy's autoresearch."
   The agent edits a target file, runs a fixed evaluation, keeps improvements (git commit),
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Autonomous experiment loop that optimizes any file by a measurable metric
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -420,3 +420,23 @@ clawhub install cs-autoresearch-agent
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Autonomous experiment loop that optimizes any file by a measurable metric. Inspired by Karpathy
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires autoresearch agent capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

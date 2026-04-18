@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.cpp.unreal_engine_cpp_pro
 name: unreal-engine-cpp-pro
-description: '''Expert guide for Unreal Engine 5.x C++ development, covering UObject hygiene, performance patterns, and best
+description: "Implement — "
   practices.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement unreal engine cpp pro task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -211,3 +211,17 @@ void AMyCharacter::Equip() {
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

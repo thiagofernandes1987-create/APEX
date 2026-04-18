@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.git_pr_workflows_pr_enhance
 name: git-pr-workflows-pr-enhance
-description: '''You are a PR optimization expert specializing in creating high-quality pull requests that facilitate efficient
+description: "Use — "
   code reviews. Generate comprehensive PR descriptions, automate review processes, and ens'
 version: v00.33.0
 status: CANDIDATE
@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use git pr workflows pr enhance task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -131,3 +131,23 @@ Focus on creating PRs that are a pleasure to review, with all necessary context 
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires git pr workflows pr enhance capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

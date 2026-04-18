@@ -27,7 +27,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyze and improve business processes
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -108,3 +108,23 @@ Analyze existing processes and recommend improvements.
 ## Output
 
 Produce a before/after process comparison with specific improvement recommendations, estimated impact, and an implementation plan.
+
+---
+
+## Why This Skill Exists
+
+Analyze and improve business processes. Trigger with "this process is slow", "how can we improve", "streamline
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires process optimization capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

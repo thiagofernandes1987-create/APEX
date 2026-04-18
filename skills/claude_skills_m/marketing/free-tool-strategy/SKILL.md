@@ -1,7 +1,7 @@
 ---
 skill_id: claude_skills_m.marketing.free_tool_strategy
 name: free-tool-strategy
-description: When the user wants to build a free tool for marketing — lead generation, SEO value, or brand awareness. Use
+description: "Build — When the user wants to build a free tool for marketing — lead generation, SEO value, or brand awareness. Use"
   when they mention 'engineering as marketing,' 'free tool,' 'calculator,' 'generator,' 'chec
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to build a free tool for marketing — lead generation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -390,3 +390,23 @@ All output follows the structured communication standard:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Build — When the user wants to build a free tool for marketing — lead generation, SEO value, or brand awareness. Use
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires free tool strategy capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.performance_optimization
 name: performance-optimization
-description: Web performance optimization including bundle analysis, lazy loading, caching strategies, and Core Web Vitals
+description: "Use — Web performance optimization including bundle analysis, lazy loading, caching strategies, and Core Web Vitals"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Web performance optimization including bundle analysis
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -279,3 +279,23 @@ onLCP(sendMetric);
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — Web performance optimization including bundle analysis, lazy loading, caching strategies, and Core Web Vitals
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires performance optimization capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

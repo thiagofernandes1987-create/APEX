@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.dispatching-parallel-agents
 name: dispatching-parallel-agents
-description: >
+description: "Use — Orquestração de múltiplos subagentes em paralelo para problemas independentes."
   Orquestração de múltiplos subagentes em paralelo para problemas independentes.
   Cada agente recebe contexto isolado e preciso — sem herdar o histórico da sessão.
   Indica quando usar (3+ falhas independentes) e quando não usar (falhas relacionadas,
@@ -256,3 +256,17 @@ From debugging session (2025-10-03):
 - All investigations completed concurrently
 - All fixes integrated successfully
 - Zero conflicts between agent changes
+
+---
+
+## Why This Skill Exists
+
+Use — Orquestração de múltiplos subagentes em paralelo para problemas independentes.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+Se agentes modificam os mesmos arquivos: reverter e executar sequencialmente.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

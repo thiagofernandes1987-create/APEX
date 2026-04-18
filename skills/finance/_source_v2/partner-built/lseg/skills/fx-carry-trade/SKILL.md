@@ -41,7 +41,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Evaluate FX carry trade opportunities by combining spot rates
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -148,3 +148,23 @@ A carry trade earns the interest rate differential but bears FX spot risk. The c
 
 ### Carry Trade Recommendation
 For each recommended trade: pair and direction, tenor, annualized carry, carry-to-vol ratio, skew signal (bullish/neutral/bearish), key risks, and conviction (high/medium/low).
+
+---
+
+## Why This Skill Exists
+
+Evaluate FX carry trade opportunities by combining spot rates, forward points, interest rate differentials, volatility
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires fx carry trade capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

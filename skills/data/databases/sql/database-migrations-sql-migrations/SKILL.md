@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.database_migrations_sql_migrations
 name: database-migrations-sql-migrations
-description: '''SQL database migrations with zero-downtime strategies for PostgreSQL, MySQL, and SQL Server. Focus on data
+description: "Analyze — "
   integrity and rollback plans.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyze database migrations sql migrations task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -150,3 +150,17 @@ The user needs SQL database migrations that ensure data integrity, minimize down
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: "page-cro"
-description: When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage, landing pages, pricing pages, feature pages, or blog posts. Also use when the user says "CRO," "conversion rate optimization," "this page isn't converting," "improve conversions," or "why isn't this page working." For signup/registration flows, see signup-flow-cro. For post-signup activation, see onboarding-cro. For forms outside of signup, see form-cro. For popups/modals, see popup-cro.
+description: "Manage — When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage, landing pages, pricing pages, feature pages, or blog posts. Also use w"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,10 @@ executor: HYBRID
 skill_id: business.marketing-skill.page-cro
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - marketing
+  - observability
 ---
 
 # Page Conversion Rate Optimization (CRO)
@@ -226,3 +230,23 @@ Automatically surface page-cro recommendations when:
 | High-Impact Recommendations | Structured list | Each with rationale, effort estimate, and success metric |
 | Copy Alternatives | Side-by-side table | 2-3 variants per key element (headline, CTA, subhead) with reasoning |
 | A/B Test Hypotheses | Table | Hypothesis × variant description × success metric × priority |
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage, landing pages, pricing pages, feature pages, or blog posts. Also use w
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires page cro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

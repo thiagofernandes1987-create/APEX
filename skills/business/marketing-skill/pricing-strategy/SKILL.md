@@ -11,6 +11,12 @@ executor: HYBRID
 skill_id: business.marketing-skill.pricing-strategy
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - ai_ml
+  - finance
+  - customer_success
+  - design
 ---
 
 # Pricing Strategy
@@ -325,3 +331,23 @@ All output follows the structured communication standard:
 - **ab-test-setup**: Use to A/B test price points or pricing page layouts after initial design.
 - **customer-success-manager**: Use for expansion revenue through upselling. NOT for pricing design or packaging.
 - **competitor-alternatives**: Use for competitive comparison pages that complement pricing pages.
+
+---
+
+## Why This Skill Exists
+
+Design, optimize, and communicate SaaS pricing — tier structure, value metrics, pricing pages, and price increase strategy.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when building a pricing model from scratch, redesigning existing pricing, planning a price increase, or improving a pricing page
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_messaging
 name: azure-messaging
-description: 'Troubleshoot and resolve issues with Azure Messaging SDKs for Event Hubs and Service Bus. Covers connection
+description: "Use — Troubleshoot and resolve issues with Azure Messaging SDKs for Event Hubs and Service Bus. Covers connection"
   failures, authentication errors, message processing issues, and SDK configuration problems. '
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Troubleshoot and resolve issues with Azure Messaging SDKs for Event Hubs and Service Bus
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -168,3 +168,17 @@ Use `mcp_azure_mcp_documentation` to search Microsoft Learn for latest guidance.
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Troubleshoot and resolve issues with Azure Messaging SDKs for Event Hubs and Service Bus. Covers connection
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,10 +1,14 @@
 ---
 name: "database-schema-designer"
-description: "Use when the user asks to create ERD diagrams, normalize database schemas, design table relationships, or plan schema migrations."
+description: "Implement — Use when the user asks to create ERD diagrams, normalize database schemas, design table relationships, or plan schema migrations."
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.database-schema-designer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - data
+  - design
 ---
 
 # Database Schema Designer
@@ -250,3 +254,17 @@ npx prisma-erd-generator
 5. **Index foreign keys** — every FK column should have an index
 6. **Partial indexes** — use `WHERE deleted_at IS NULL` for active-only queries
 7. **RLS over application-level filtering** — database enforces tenancy, not just app code
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

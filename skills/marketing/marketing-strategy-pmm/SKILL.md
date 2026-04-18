@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.marketing_strategy_pmm
 name: marketing-strategy-pmm
-description: Product marketing skill for positioning, GTM strategy, competitive intelligence, and product launches. Use when
+description: "Create — Product marketing skill for positioning, GTM strategy, competitive intelligence, and product launches. Use when"
   the user asks about product positioning, go-to-market planning, competitive analysis, ta
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Product marketing skill for positioning
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -510,3 +510,23 @@ All output passes quality verification:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Create — Product marketing skill for positioning, GTM strategy, competitive intelligence, and product launches. Use when
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires marketing strategy pmm capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

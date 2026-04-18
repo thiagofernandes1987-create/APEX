@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_agents.self_improving_agent
 name: self-improving-agent
-description: Curate Claude Code's auto-memory into durable project knowledge. Analyze MEMORY.md for patterns, promote proven
+description: "Analyze — Curate Claude Code's auto-memory into durable project knowledge. Analyze MEMORY.md for patterns, promote proven"
   learnings to CLAUDE.md and .claude/rules/, extract recurring solutions into reusable ski
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Curate Claude Code's auto-memory into durable project knowledge
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -276,3 +276,23 @@ Monitors command output for errors. When detected, appends a structured entry to
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Analyze — Curate Claude Code
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires self improving agent capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

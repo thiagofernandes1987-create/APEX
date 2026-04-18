@@ -1,10 +1,14 @@
 ---
 name: "security-pen-testing"
-description: "Use when the user asks to perform security audits, penetration testing, vulnerability scanning, OWASP Top 10 checks, or offensive security assessments. Covers static analysis, dependency scanning, secret detection, API security testing, and pen test report generation."
+description: "Implement — Use when the user asks to perform security audits, penetration testing, vulnerability scanning, OWASP Top 10 checks, or offensive security assessments. Covers static analysis, depe"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.security-pen-testing
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - engineering
+  - testing
+  - security
 ---
 
 # Security Penetration Testing
@@ -308,3 +312,23 @@ Automated security checks on every PR: secret scanning (TruffleHog), dependency 
 | [senior-security](../senior-security/SKILL.md) | Security policy and governance — frameworks, risk registers, compliance |
 | [dependency-auditor](../../engineering/dependency-auditor/SKILL.md) | Deep supply chain security — SBOMs, license compliance, transitive risk |
 | [code-reviewer](../code-reviewer/SKILL.md) | Code review practices — includes security review checklist |
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to perform security audits, penetration testing, vulnerability scanning, OWASP Top 10 checks, or offensive security assessments
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

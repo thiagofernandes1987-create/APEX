@@ -1,6 +1,6 @@
 ---
 name: customer-research
-description: Multi-source research on a customer question or topic with source attribution. Use when a customer asks something
+description: "Use — Multi-source research on a customer question or topic with source attribution. Use when a customer asks something"
   you need to look up, investigating whether a bug has been reported before, checking what was previously told to a specific
   account, or gathering background before drafting a response.
 argument-hint: <question or topic>
@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - a customer asks something
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -339,3 +339,23 @@ After completing research, capture the knowledge for future use.
 - Review and update entries quarterly
 - Archive entries that are no longer relevant
 - Tag entries for searchability (by topic, product area, customer segment)
+
+---
+
+## Why This Skill Exists
+
+Use — Multi-source research on a customer question or topic with source attribution.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when a customer asks something
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,10 +1,15 @@
 ---
 name: "api-test-suite-builder"
-description: "Use when the user asks to generate API tests, create integration test suites, test REST endpoints, or build contract tests."
+description: "Implement — Use when the user asks to generate API tests, create integration test suites, test REST endpoints, or build contract tests."
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.api-test-suite-builder
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - testing
+  - api
+  - design
 ---
 
 # API Test Suite Builder
@@ -179,3 +184,17 @@ When given a codebase, follow this process:
 5. Test that sensitive fields (password, secret) are never in responses
 6. For auth tests, always test the "missing header" case separately from "invalid token"
 7. Add rate limit tests last — they can interfere with other test suites if run in parallel
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

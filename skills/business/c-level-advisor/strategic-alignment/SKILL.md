@@ -1,6 +1,6 @@
 ---
 name: "strategic-alignment"
-description: "Cascades strategy from boardroom to individual contributor. Detects and fixes misalignment between company goals and team execution. Covers strategy articulation, cascade mapping, orphan goal detection, silo identification, communication gap analysis, and realignment protocols. Use when teams are pulling in different directions, OKRs don't connect, departments optimize locally at company expense, or when user mentions alignment, strategy cascade, silo, conflicting OKRs, or strategy communication."
+description: "Manage — Cascades strategy from boardroom to individual contributor. Detects and fixes misalignment between company goals and team execution. Covers strategy articulation, cascade mapping, "
 license: MIT
 metadata:
   version: 1.0.0
@@ -14,6 +14,9 @@ executor: HYBRID
 skill_id: business.c-level-advisor.strategic-alignment
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - management
 ---
 
 # Strategic Alignment Engine
@@ -196,3 +199,23 @@ A quick health check. Score each area 0–10:
 ## Detailed References
 - `scripts/alignment_checker.py` — Automated OKR alignment analysis (orphans, conflicts, coverage)
 - `references/alignment-playbook.md` — Cascade techniques, quarterly alignment check, common patterns
+
+---
+
+## Why This Skill Exists
+
+Manage — Cascades strategy from boardroom to individual contributor. Detects and fixes misalignment between company goals and team execution. Covers strategy articulation, cascade mapping,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires strategic alignment capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

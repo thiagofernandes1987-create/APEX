@@ -1,6 +1,6 @@
 ---
 name: "cs-onboard"
-description: "Founder onboarding interview that captures company context across 7 dimensions. Invoke with /cs:setup for initial interview or /cs:update for quarterly refresh. Generates ~/.claude/company-context.md used by all C-suite advisor skills."
+description: "Manage — Founder onboarding interview that captures company context across 7 dimensions. Invoke with /cs:setup for initial interview or /cs:update for quarterly refresh. Generates ~/.claude"
 license: MIT
 metadata:
   version: 1.0.0
@@ -13,6 +13,9 @@ executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.cs-onboard
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - llm
 ---
 
 # C-Suite Onboarding
@@ -110,3 +113,23 @@ Update the context file, refresh timestamp, reset to `fresh`.
 ## References
 - `templates/company-context-template.md` — blank template for output
 - `references/interview-guide.md` — deep interview craft: probes, red flags, handling reluctant founders
+
+---
+
+## Why This Skill Exists
+
+Manage — Founder onboarding interview that captures company context across 7 dimensions. Invoke with /cs:setup for initial interview or /cs:update for quarterly refresh. Generates ~/.claude
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cs onboard capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.nano-nets-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: nano-nets-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Nano Nets Automation via Rube MCP

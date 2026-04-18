@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.fp_option_ref
 name: fp-option-ref
-description: Quick reference for Option type. Use when user needs to handle nullable values, optional data, or wants to avoid
+description: "Use — Quick reference for Option type. Use when user needs to handle nullable values, optional data, or wants to avoid"
   null checks.
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - user needs to handle nullable values
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -155,3 +155,17 @@ Use Option when you need to **chain** operations on optional values.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Quick reference for Option type.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.carrier_relationship_management
 name: carrier-relationship-management
-description: Codified expertise for managing carrier portfolios, negotiating freight rates, tracking carrier performance,
+description: "Use — Codified expertise for managing carrier portfolios, negotiating freight rates, tracking carrier performance,"
   allocating freight, and maintaining strategic carrier relationships.
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Codified expertise for managing carrier portfolios
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -277,3 +277,17 @@ Use this skill when you are **designing or tuning your carrier portfolio, routin
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Codified expertise for managing carrier portfolios, negotiating freight rates, tracking carrier performance,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

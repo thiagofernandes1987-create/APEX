@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_agents.gh_pr_review
 name: gh-pr-review
-description: 'Automated code review for local branches, PRs, commits, and files. Supports single-agent review with interactive
+description: "Automate — Automated code review for local branches, PRs, commits, and files. Supports single-agent review with interactive"
   fix selection, or multi-agent deep review with reviewer-verifier adversarial mechanism '
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Automated code review for local branches
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -181,3 +181,23 @@ Pass `$ARGUMENTS` to the target file. For teams-review, also pass `FIX_MODE`
 
 ## Diff History
 - **v00.33.0**: Ingested from cherry-studio
+
+---
+
+## Why This Skill Exists
+
+Automate — Automated code review for local branches, PRs, commits, and files. Supports single-agent review with interactive
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires gh pr review capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

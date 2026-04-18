@@ -1,10 +1,13 @@
 ---
 name: file-organizer
-description: Intelligently organizes your files and folders across your computer by understanding context, finding duplicates, suggesting better structures, and automating cleanup tasks. Reduces cognitive load and keeps your digital workspace tidy without manual effort.
+description: "Apply — Intelligently organizes your files and folders across your computer by understanding context, finding duplicates, suggesting better structures, and automating cleanup tasks. Reduce"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.file-organizer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - automation
+  - apply
 ---
 
 # File Organizer
@@ -435,3 +438,16 @@ Documents folder.
 - Organizing shared team folders
 - Structuring new project directories
 
+---
+
+## Why This Skill Exists
+
+Apply — Intelligently organizes your files and folders across your computer by understanding context, finding duplicates, suggesting better structures, and automating cleanup tasks. Reduce
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

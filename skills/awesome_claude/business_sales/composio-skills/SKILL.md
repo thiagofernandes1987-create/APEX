@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Automate Capsule CRM operations -- manage contacts (parties)
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -274,3 +274,23 @@ List projects (cases) and recent activity entries including notes, emails, and c
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Automate Capsule CRM operations -- manage contacts (parties), run structured filter queries, track tasks and
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires capsule crm automation capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

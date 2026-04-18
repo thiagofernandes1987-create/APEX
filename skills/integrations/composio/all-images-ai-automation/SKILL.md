@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.all-images-ai-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: all-images-ai-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # All Images AI Automation via Rube MCP

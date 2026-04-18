@@ -1,7 +1,7 @@
 ---
 skill_id: security.reverse_engineering.reverse_engineer
 name: reverse-engineer
-description: Expert reverse engineer specializing in binary analysis, disassembly, decompilation, and software analysis. Masters
+description: "Audit — Expert reverse engineer specializing in binary analysis, disassembly, decompilation, and software analysis. Masters"
   IDA Pro, Ghidra, radare2, x64dbg, and modern RE toolchains.
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert reverse engineer specializing in binary analysis
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -270,3 +270,23 @@ Response: For authorized analysis of the DLL:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Audit — Expert reverse engineer specializing in binary analysis, disassembly, decompilation, and software analysis. Masters
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires reverse engineer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Análise de código malicioso potencial
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

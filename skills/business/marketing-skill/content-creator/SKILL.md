@@ -1,6 +1,6 @@
 ---
 name: "content-creator"
-description: "Deprecated redirect skill that routes legacy 'content creator' requests to the correct specialist. Use when a user invokes 'content creator', asks to write a blog post, article, guide, or brand voice analysis (routes to content-production), or asks to plan content, build a topic cluster, or create a content calendar (routes to content-strategy). Does not handle requests directly — identifies user intent and redirects to content-production for writing/SEO/brand-voice tasks or content-strategy for planning tasks."
+description: "Manage — Deprecated redirect skill that routes legacy"
 license: MIT
 metadata:
   version: 2.0.0
@@ -12,6 +12,8 @@ executor: LLM_BEHAVIOR
 skill_id: business.marketing-skill.content-creator
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 # Content Creator → Redirected
@@ -57,3 +59,23 @@ This is a redirect skill. Route the user to the correct specialist — don't att
 - **content-strategy**: Content planning and topic selection (successor).
 - **content-humanizer**: Post-processing AI content to sound authentic.
 - **marketing-context**: Foundation context that both successors read.
+
+---
+
+## Why This Skill Exists
+
+Manage — Deprecated redirect skill that routes legacy
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires content creator capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

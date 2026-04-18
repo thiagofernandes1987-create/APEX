@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.skill_improver
 name: skill-improver
-description: '''Iteratively improve a Claude Code skill using the skill-reviewer agent until it meets quality standards. Use
+description: "Apply — "
   when improving a skill with multiple quality issues, iterating on a new skill until it mee'
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply skill improver task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -244,3 +244,17 @@ The marker is the ONLY way to complete the loop. Natural language like "looks go
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - writing a weekly or monthly status for
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -441,3 +441,23 @@ Keep updates scannable. Use bold for key points, bullets for lists. Executive up
 - For executives, frame everything in terms of outcomes and goals, not activities and tasks.
 - If there is bad news, lead with it. Do not hide it after good news.
 - Match the length to the audience's attention. Executives get a few bullets. Engineering gets the details they need.
+
+---
+
+## Why This Skill Exists
+
+Generate a stakeholder update tailored to audience and cadence.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when riting a weekly or monthly status for
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

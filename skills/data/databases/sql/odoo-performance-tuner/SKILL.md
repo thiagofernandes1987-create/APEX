@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.odoo_performance_tuner
 name: odoo-performance-tuner
-description: '''Expert guide for diagnosing and fixing Odoo performance issues: slow queries, worker configuration, memory
+description: "Analyze — "
   limits, PostgreSQL tuning, and profiling tools.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyze odoo performance tuner task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -203,3 +203,17 @@ What to look for:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

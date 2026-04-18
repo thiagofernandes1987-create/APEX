@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_structure_architect
 name: seo-structure-architect
-description: Analyzes and optimizes content structure including header hierarchy, suggests schema markup, and internal linking
+description: "Create — Analyzes and optimizes content structure including header hierarchy, suggests schema markup, and internal linking"
   opportunities. Creates search-friendly content organization.
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyzes and optimizes content structure including header hierarchy
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -225,3 +225,23 @@ Focus on logical flow and scannable content. Create clear information hierarchy 
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create — Analyzes and optimizes content structure including header hierarchy, suggests schema markup, and internal linking
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires seo structure architect capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

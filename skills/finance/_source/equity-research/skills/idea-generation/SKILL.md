@@ -3,11 +3,13 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.equity-research.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - research
 ---
 # Idea Generation
 
-description: Systematic stock screening and investment idea sourcing. Combines quantitative screens, thematic research, and pattern recognition to surface new long and short ideas. Use when looking for new ideas, running screens, or conducting thematic sweeps. Triggers on "idea generation", "stock screen", "find ideas", "what looks interesting", "screen for", "new ideas", or "pitch me something".
-
+description: "Analyze — Systematic stock screening and investment idea sourcing. Combines quantitative screens, thematic research, and pattern recognition to surface new long and short ideas. Use when loo"
 ## Workflow
 
 ### Step 1: Define Search Criteria
@@ -115,3 +117,23 @@ For each idea that passes the screen, present:
 - Contrarian ideas need a catalyst — being early without a catalyst is the same as being wrong
 - Track idea hit rates over time — which screens and approaches produce the best ideas?
 - Short ideas need higher conviction — timing is harder and risk is asymmetric
+
+---
+
+## Why This Skill Exists
+
+Analyze — Systematic stock screening and investment idea sourcing. Combines quantitative screens, thematic research, and pattern recognition to surface new long and short ideas.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires idea generation capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,10 +1,13 @@
 ---
 name: tailored-resume-generator
-description: Analyzes job descriptions and generates tailored resumes that highlight relevant experience, skills, and achievements to maximize interview chances
+description: "Apply — Analyzes job descriptions and generates tailored resumes that highlight relevant experience, skills, and achievements to maximize interview chances"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.tailored-resume-generator
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - automation
+  - apply
 ---
 
 # Tailored Resume Generator
@@ -347,3 +350,17 @@ Ask if user wants to:
 ## Privacy Note
 
 This skill processes your personal and professional information to generate tailored resumes. Always review the output before submitting to ensure accuracy and appropriateness. Remove or modify any information you prefer not to share with potential employers.
+
+---
+
+## Why This Skill Exists
+
+Apply — Analyzes job descriptions and generates tailored resumes that highlight relevant experience, skills, and achievements to maximize interview chances
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

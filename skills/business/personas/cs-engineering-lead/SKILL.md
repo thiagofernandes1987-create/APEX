@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.engineering-team.cs_engineering_lead
 name: "cs-engineering-lead"
-description: "Engineering Team Lead agent for coordinating QA, security, data engineering, ML, and frontend/backend teams. Orchestrates engineering-team skills for team-level technical decisions. Spawn when users n"
+description: "Manage — Engineering Team Lead agent for coordinating QA, security, data engineering, ML, and frontend/backend teams. Orchestrates engineering-team skills for team-level technical decisions"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -113,3 +113,22 @@ Engineering team lead coordinating across specializations: frontend, backend, QA
 - [cs-senior-engineer](../engineering/cs-senior-engineer.md) -- Architecture decisions, code review, and CI/CD pipeline setup
 - [cs-product-manager](../product/cs-product-manager.md) -- Feature prioritization and requirements alignment
 
+---
+
+## Why This Skill Exists
+
+Manage — Engineering Team Lead agent for coordinating QA, security, data engineering, ML, and frontend/backend teams. Orchestrates engineering-team skills for team-level technical decisions
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cs engineering lead capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

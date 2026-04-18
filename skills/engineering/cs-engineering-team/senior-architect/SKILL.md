@@ -1,10 +1,12 @@
 ---
 name: "senior-architect"
-description: This skill should be used when the user asks to "design system architecture", "evaluate microservices vs monolith", "create architecture diagrams", "analyze dependencies", "choose a database", "plan for scalability", "make technical decisions", or "review system design". Use for architecture decision records (ADRs), tech stack evaluation, system design reviews, dependency analysis, and generating architecture diagrams in Mermaid, PlantUML, or ASCII format.
+description: "Implement — This skill should be used when the user asks to 'design system architecture', 'evaluate microservices vs monolith', 'create architecture diagrams', 'analyze dependencies', 'choose "
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-architect
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
 ---
 
 # Senior Architect
@@ -345,3 +347,23 @@ python scripts/project_architect.py . --output json
 1. Run any script with `--help` for usage information
 2. Check reference documentation for detailed patterns and workflows
 3. Use `--verbose` flag for detailed explanations and recommendations
+
+---
+
+## Why This Skill Exists
+
+Implement — This skill should be used when the user asks to
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires senior architect capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

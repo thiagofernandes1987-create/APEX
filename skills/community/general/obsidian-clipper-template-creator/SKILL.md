@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.obsidian_clipper_template_creator
 name: obsidian-clipper-template-creator
-description: Guide for creating templates for the Obsidian Web Clipper. Use when you want to create a new clipping template,
+description: "Use — Guide for creating templates for the Obsidian Web Clipper. Use when you want to create a new clipping template,"
   understand available variables, or format clipped content.
 version: v00.33.0
 status: CANDIDATE
@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - you want to create a new clipping template
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -163,3 +163,17 @@ See [assets/](assets/) for JSON examples.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Guide for creating templates for the Obsidian Web Clipper.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

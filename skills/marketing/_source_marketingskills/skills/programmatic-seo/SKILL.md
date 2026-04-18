@@ -1,6 +1,6 @@
 ---
 name: programmatic-seo
-description: When the user wants to create SEO-driven pages at scale using templates and data. Also use when the user mentions
+description: "Create — When the user wants to create SEO-driven pages at scale using templates and data. Also use when the user mentions"
   "programmatic SEO," "template pages," "pages at scale," "directory pages," "location pages," "[keyword] + [city] pages,"
   "comparison pages," "integration pages," "building many pages for SEO," "pSEO," "generate 100 pages," "data-driven pages,"
   or "templated landing pages." Use this whenever someone wants to create many similar pages targeting different keywords
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user mentions
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -345,3 +345,23 @@ Watch for: Thin content warnings, Ranking drops, Manual actions, Crawl errors
 - **schema-markup**: For adding structured data
 - **site-architecture**: For page hierarchy, URL structure, and internal linking
 - **competitor-alternatives**: For comparison page frameworks
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to create SEO-driven pages at scale using templates and data. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

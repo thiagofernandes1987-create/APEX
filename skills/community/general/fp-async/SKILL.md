@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.fp_async
 name: fp-async
-description: Practical async patterns using TaskEither - clean pipelines instead of try/catch hell, with real API examples
+description: "Use — Practical async patterns using TaskEither - clean pipelines instead of try/catch hell, with real API examples"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/fp-async
@@ -39,7 +39,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Practical async patterns using TaskEither - clean pipelines instead of try/catch hell
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1049,3 +1049,17 @@ const getData = (id: string) =>
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Practical async patterns using TaskEither - clean pipelines instead of try/catch hell, with real API examples
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

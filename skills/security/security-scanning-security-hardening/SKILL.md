@@ -1,7 +1,7 @@
 ---
 skill_id: security.security_scanning_security_hardening
 name: security-scanning-security-hardening
-description: '''Coordinate multi-layer security scanning and hardening across application, infrastructure, and compliance
+description: "Audit — "
   controls.'''
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - audit security scanning security hardening task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -255,3 +255,23 @@ Security hardening target: $ARGUMENTS
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Audit —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires security scanning security hardening capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Análise de código malicioso potencial
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

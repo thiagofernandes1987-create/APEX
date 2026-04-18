@@ -1,6 +1,6 @@
 ---
 name: deploy-checklist
-description: Pre-deployment verification checklist. Use when about to ship a release, deploying a change with database migrations
+description: "Deploy — Pre-deployment verification checklist. Use when about to ship a release, deploying a change with database migrations"
   or feature flags, verifying CI status and approvals before going to production, or documenting rollback triggers ahead of
   time.
 argument-hint: '[service or release name]'
@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - about to ship a release
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -157,3 +157,23 @@ If **~~monitoring** is connected:
 1. **Run before every deploy** — Even routine ones. Checklists prevent "I forgot to..."
 2. **Customize once, reuse** — Tell me your stack and I'll remember your deploy process.
 3. **Include rollback criteria** — Decide when to roll back before you deploy, not during.
+
+---
+
+## Why This Skill Exists
+
+Deploy — Pre-deployment verification checklist.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when about to ship a release, deploying a change with database migrations
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.database_migrations_migration_observability
 name: database-migrations-migration-observability
-description: '''Migration monitoring, CDC, and observability infrastructure'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/database-migrations-migration-observability
@@ -45,7 +45,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use database migrations migration observability task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -511,3 +511,23 @@ This plugin integrates with:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires database migrations migration observability capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

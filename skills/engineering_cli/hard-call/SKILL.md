@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cli.hard_call
 name: hard-call
-description: /em -hard-call — Framework for Decisions With No Good Options
+description: "Use — /em -hard-call — Framework for Decisions With No Good Options"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/cli
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - /em -hard-call — Framework for Decisions With No Good Options
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -263,3 +263,23 @@ Make the call. Make it clearly. Make it with dignity.
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — /em -hard-call — Framework for Decisions With No Good Options
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires hard call capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,10 +1,12 @@
 ---
 name: "senior-prompt-engineer"
-description: This skill should be used when the user asks to "optimize prompts", "design prompt templates", "evaluate LLM outputs", "build agentic systems", "implement RAG", "create few-shot examples", "analyze token usage", or "design AI workflows". Use for prompt engineering patterns, LLM evaluation frameworks, agent architectures, and structured output design.
+description: "Implement — This skill should be used when the user asks to 'optimize prompts', 'design prompt templates', 'evaluate LLM outputs', 'build agentic systems', 'implement RAG', 'create few-shot ex"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-prompt-engineer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
 ---
 
 # Senior Prompt Engineer
@@ -357,3 +359,23 @@ python scripts/agent_orchestrator.py agent.yaml --validate       # Validate conf
 python scripts/agent_orchestrator.py agent.yaml --visualize      # Show workflow
 python scripts/agent_orchestrator.py agent.yaml --estimate-cost  # Token estimation
 ```
+
+---
+
+## Why This Skill Exists
+
+Implement — This skill should be used when the user asks to
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires senior prompt engineer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

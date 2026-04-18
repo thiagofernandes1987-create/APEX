@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.multi_agent_task_orchestrator
 name: multi-agent-task-orchestrator
-description: '''Route tasks to specialized AI agents with anti-duplication, quality gates, and 30-minute heartbeat monitoring'''
+description: "Apply — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/agents/multi-agent-task-orchestrator
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply multi agent task orchestrator task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -251,3 +251,17 @@ Action: Notify user of existing task, wait for completion
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

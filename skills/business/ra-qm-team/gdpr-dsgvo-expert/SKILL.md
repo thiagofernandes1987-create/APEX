@@ -1,10 +1,16 @@
 ---
 name: "gdpr-dsgvo-expert"
-description: GDPR and German DSGVO compliance automation. Scans codebases for privacy risks, generates DPIA documentation, tracks data subject rights requests. Use for GDPR compliance assessments, privacy audits, data protection planning, DPIA generation, and data subject rights management.
+description: "Manage — GDPR and German DSGVO compliance automation. Scans codebases for privacy risks, generates DPIA documentation, tracks data subject rights requests. Use for GDPR compliance assessmen"
 executor: HYBRID
 skill_id: business.ra-qm-team.gdpr-dsgvo-expert
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - business
+  - automation
+  - compliance
+  - data
+  - documentation
 ---
 
 # GDPR/DSGVO Expert
@@ -268,3 +274,23 @@ All rights must be fulfilled within **30 days** (extendable to 90 for complex re
 | Employment | § 26 | Detailed employee data rules |
 | Video | § 4 | Signage and proportionality |
 | Scoring | § 31 | Explainable algorithms |
+
+---
+
+## Why This Skill Exists
+
+Manage — GDPR and German DSGVO compliance automation. Scans codebases for privacy risks, generates DPIA documentation, tracks data subject rights requests. Use for GDPR compliance assessmen
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires gdpr dsgvo expert capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

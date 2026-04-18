@@ -1,6 +1,6 @@
 ---
 name: "engineering-advanced-skills"
-description: "25 advanced engineering agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. Agent design, RAG, MCP servers, CI/CD, database design, observability, security auditing, release management, platform ops."
+description: "Implement — 25 advanced engineering agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. Agent design, RAG, MCP servers, CI/CD, database design, observability, securi"
 version: 1.1.0
 author: Alireza Rezvani
 license: MIT
@@ -20,6 +20,13 @@ executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - engineering
+  - deployment
+  - llm
+  - agent
+  - data
+  - design
 ---
 
 # Engineering Advanced Skills (POWERFUL Tier)
@@ -72,3 +79,23 @@ npx agent-skills-cli add alirezarezvani/claude-skills/engineering
 
 - Load only the specific skill SKILL.md you need
 - These are advanced skills — combine with engineering-team/ core skills as needed
+
+---
+
+## Why This Skill Exists
+
+Implement — 25 advanced engineering agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. Agent design, RAG, MCP servers, CI/CD, database design, observability, securi
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires engineering advanced skills capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

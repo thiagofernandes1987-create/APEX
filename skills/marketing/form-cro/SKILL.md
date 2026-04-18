@@ -1,7 +1,7 @@
 ---
 skill_id: marketingskills.marketing.form_cro
 name: form-cro
-description: When the user wants to optimize any form that is NOT signup/registration — including lead capture forms, contact
+description: "Create — When the user wants to optimize any form that is NOT signup/registration — including lead capture forms, contact"
   forms, demo request forms, application forms, survey forms, or checkout forms. Also use
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to optimize any form that is NOT signup/registration — including lead capture fo
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -545,3 +545,23 @@ Ideas to A/B test with expected outcomes
 
 ## Diff History
 - **v00.33.0**: Ingested from marketingskills-main
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to optimize any form that is NOT signup/registration — including lead capture forms, contact
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires form cro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

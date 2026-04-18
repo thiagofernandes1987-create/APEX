@@ -1,6 +1,6 @@
 ---
 name: scientific-problem-selection
-description: This skill should be used when scientists need help with research problem selection, project ideation, troubleshooting
+description: "Research — This skill should be used when scientists need help with research problem selection, project ideation, troubleshooting"
   stuck projects, or strategic scientific decisions. Use this skill when users ask to pitch a new research idea, work through
   a project problem, evaluate project risks, plan research strategy, navigate decision trees, or get help choosing what scientific
   problem to work on. Typical requests include "I have an idea for a project", "I'm stuck on my research", "help me evaluate
@@ -51,7 +51,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - This skill should be used when scientists need help with research problem selection
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -376,3 +376,23 @@ Detailed skill documentation is available in the `references/` folder:
 **Fischbach, M.A., & Walsh, C.T. (2024).** "Problem choice and decision trees in science and engineering." *Cell*, 187, 1828-1833.
 
 Based on course BIOE 395 taught at Stanford University.
+
+---
+
+## Why This Skill Exists
+
+Research — This skill should be used when scientists need help with research problem selection, project ideation, troubleshooting
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires scientific problem selection capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Literatura científica beyond knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -3,11 +3,14 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source_v2.investment-banking.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - api
+  - observability
 ---
 # Process Letter
 
-description: Draft process letters and bid instructions for sell-side M&A processes. Covers initial indication of interest (IOI) instructions, final bid procedures, and management meeting logistics. Triggers on "process letter", "bid instructions", "IOI letter", "bid procedures", "final round letter", or "management meeting invite".
-
+description: "Analyze — Draft process letters and bid instructions for sell-side M&A processes. Covers initial indication of interest (IOI) instructions, final bid procedures, and management meeting logis"
 ## Workflow
 
 ### Step 1: Determine Letter Type
@@ -76,3 +79,23 @@ Additional requirements beyond IOI:
 - Coordinate with legal on any representations or commitments in the letter
 - Client should review and approve before sending — they may want to adjust tone or terms
 - Keep a log of who received each letter and when — this becomes the process tracker
+
+---
+
+## Why This Skill Exists
+
+Analyze — Draft process letters and bid instructions for sell-side M&A processes. Covers initial indication of interest (IOI) instructions, final bid procedures, and management meeting logis
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires process letter capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

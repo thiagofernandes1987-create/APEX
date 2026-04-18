@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.skill_creator
 name: skill-creator
-description: Guide for creating effective skills for AI coding agents working with Azure SDKs and Microsoft Foundry services.
+description: "Use — Guide for creating effective skills for AI coding agents working with Azure SDKs and Microsoft Foundry services."
   Use when creating new skills or updating existing skills.
 version: v00.33.0
 status: CANDIDATE
@@ -731,3 +731,23 @@ Before completing a skill:
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Guide for creating effective skills for AI coding agents working with Azure SDKs and Microsoft Foundry services.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires skill creator capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: design.cs_onboard
 name: cs-onboard
-description: 'Founder onboarding interview that captures company context across 7 dimensions. Invoke with /cs:setup for initial
+description: "Design — Founder onboarding interview that captures company context across 7 dimensions. Invoke with /cs:setup for initial"
   interview or /cs:update for quarterly refresh. Generates ~/.claude/company-context.md '
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Founder onboarding interview that captures company context across 7 dimensions
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -217,3 +217,23 @@ Update the context file, refresh timestamp, reset to `fresh`.
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Founder onboarding interview that captures company context across 7 dimensions. Invoke with /cs:setup for initial
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cs onboard capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - running a weekly pipeline
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -336,3 +336,23 @@ You can tell me to weight differently: "Focus on big deals over soon deals" or "
 2. **Kill dead deals** — Stale opportunities inflate your pipeline and distort forecasts. Be ruthless.
 3. **Multi-thread everything** — If one person goes dark, you need a backup contact.
 4. **Close dates should mean something** — A close date is when you expect signature, not when you hope for one.
+
+---
+
+## Why This Skill Exists
+
+Analyze pipeline health — prioritize deals, flag risks, get a weekly action plan.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when running a weekly pipeline
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

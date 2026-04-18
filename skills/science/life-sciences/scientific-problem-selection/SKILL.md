@@ -1,7 +1,7 @@
 ---
 skill_id: science.life_sciences.scientific_problem_selection
 name: scientific-problem-selection
-description: 'This skill should be used when scientists need help with research problem selection, project ideation, troubleshooting
+description: "Research — This skill should be used when scientists need help with research problem selection, project ideation, troubleshooting"
   stuck projects, or strategic scientific decisions. Use this skill when users ask '
 version: v00.33.0
 status: ADOPTED
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'This skill should be used when scientists need help with research problem selection
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -379,3 +379,23 @@ Based on course BIOE 395 taught at Stanford University.
 
 ## Diff History
 - **v00.33.0**: Ingested from life-sciences-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Research — This skill should be used when scientists need help with research problem selection, project ideation, troubleshooting
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires scientific problem selection capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Literatura científica beyond knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

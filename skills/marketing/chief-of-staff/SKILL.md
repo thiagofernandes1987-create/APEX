@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.chief_of_staff
 name: chief-of-staff
-description: C-suite orchestration layer. Routes founder questions to the right advisor role(s), triggers multi-role board
+description: "Create — C-suite orchestration layer. Routes founder questions to the right advisor role(s), triggers multi-role board"
   meetings for complex decisions, synthesizes outputs, and tracks decisions. Every C-suite i
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - C-suite orchestration layer
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -289,3 +289,23 @@ See `references/routing-matrix.md` for complete trigger mapping.
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Create — C-suite orchestration layer. Routes founder questions to the right advisor role(s), triggers multi-role board
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires chief of staff capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.sql_pro
 name: sql-pro
-description: Master modern SQL with cloud-native databases, OLTP/OLAP optimization, and advanced query techniques. Expert
+description: "Analyze — Master modern SQL with cloud-native databases, OLTP/OLAP optimization, and advanced query techniques. Expert"
   in performance tuning, data modeling, and hybrid analytical systems.
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Master modern SQL with cloud-native databases
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -277,3 +277,23 @@ Expert SQL professional focused on high-performance database systems, advanced q
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze — Master modern SQL with cloud-native databases, OLTP/OLAP optimization, and advanced query techniques. Expert
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires sql pro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

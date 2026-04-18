@@ -1,7 +1,7 @@
 ---
 skill_id: claude_skills_m.marketing.copywriting
 name: copywriting
-description: When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages,
+description: "Use — When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages,"
   pricing pages, feature pages, about pages, or product pages. Also use when the user s
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to write
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -404,3 +404,23 @@ Always provide alternatives for high-stakes elements (headline, CTA). Never deli
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires copywriting capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

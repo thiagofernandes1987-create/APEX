@@ -1,6 +1,6 @@
 ---
 name: "churn-prevention"
-description: "Reduce voluntary and involuntary churn through cancel flow design, save offers, exit surveys, and dunning sequences. Use when designing or optimizing a cancel flow, building save offers, setting up dunning emails, or reducing failed-payment churn. Trigger keywords: cancel flow, churn reduction, save offers, dunning, exit survey, payment recovery, win-back, involuntary churn, failed payments, cancel page. NOT for customer health scoring or expansion revenue — use customer-success-manager for that."
+description: "Manage — Reduce voluntary and involuntary churn through cancel flow design, save offers, exit surveys, and dunning sequences. Use when designing or optimizing a cancel flow, building save o"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,10 @@ executor: HYBRID
 skill_id: business.marketing-skill.churn-prevention
 status: CANDIDATE
 security: {level: high, pii: true, approval_required: true}
+anchors:
+  - business
+  - management
+  - design
 ---
 
 # Churn Prevention
@@ -242,3 +246,23 @@ All output follows the structured communication standard:
 - **pricing-strategy**: Use when churn root cause is pricing or packaging mismatch. NOT for save offer design (use this skill).
 - **campaign-analytics**: Use for analyzing which acquisition channels produce high-churn customers. NOT for setting up retention tracking.
 - **signup-flow-cro**: Use for reducing drop-off at signup. NOT for post-signup retention.
+
+---
+
+## Why This Skill Exists
+
+Manage — Reduce voluntary and involuntary churn through cancel flow design, save offers, exit surveys, and dunning sequences.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when designing or optimizing a cancel flow, building save o
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

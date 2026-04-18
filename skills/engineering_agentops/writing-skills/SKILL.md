@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.writing-skills
 name: writing-skills
-description: >
+description: "Use — Meta-skill para criar novas skills seguindo boas práticas: estrutura clara,"
   Meta-skill para criar novas skills seguindo boas práticas: estrutura clara,
   comportamentos concretos, anti-patterns explícitos, testabilidade. Inclui
   metodologia de teste com subagentes e convenções de diagramas Graphviz.
@@ -727,3 +727,17 @@ Same cycle: RED (baseline) → GREEN (write skill) → REFACTOR (close loopholes
 Same benefits: Better quality, fewer surprises, bulletproof results.
 
 If you follow TDD for code, follow it for skills. It's the same discipline applied to documentation.
+
+---
+
+## Why This Skill Exists
+
+Use — Meta-skill para criar novas skills seguindo boas práticas: estrutura clara,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+Se skill muito vaga para ser testável: usar brainstorming para refinar o comportamento.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

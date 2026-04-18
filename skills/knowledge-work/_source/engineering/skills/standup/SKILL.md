@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - preparing for daily standup
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -154,3 +154,23 @@ If **~~chat** is connected:
 1. **Run it every morning** — Build a habit and never scramble for standup notes.
 2. **Add context** — After I generate, add any nuance about blockers or priorities.
 3. **Share format** — Ask me to format for Slack, email, or your team's standup tool.
+
+---
+
+## Why This Skill Exists
+
+Generate a standup update from recent activity.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when preparing for daily standup, summarizing yesterday's
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

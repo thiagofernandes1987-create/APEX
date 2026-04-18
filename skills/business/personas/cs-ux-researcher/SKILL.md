@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.product.cs_ux_researcher
 name: "cs-ux-researcher"
-description: "UX research agent for research planning, persona generation, journey mapping, and usability test analysis"
+description: "Manage — UX research agent for research planning, persona generation, journey mapping, and usability test analysis"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -558,3 +558,22 @@ echo "See: ../../product-team/ui-design-system/references/developer-handoff.md"
 **Status:** Production Ready
 **Version:** 1.0
 
+---
+
+## Why This Skill Exists
+
+Manage — UX research agent for research planning, persona generation, journey mapping, and usability test analysis
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cs ux researcher capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

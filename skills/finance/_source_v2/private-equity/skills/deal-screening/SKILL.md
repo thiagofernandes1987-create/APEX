@@ -3,11 +3,13 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source_v2.private-equity.skills
 status: CANDIDATE
 security: {level: high, pii: true, approval_required: true}
+anchors:
+  - finance
+  - design
 ---
 # Deal Screening
 
-description: Quickly screen inbound deal flow — CIMs, teasers, and broker materials — against the fund's investment criteria. Extracts key deal metrics, runs a pass/fail framework, and outputs a one-page screening memo. Use when reviewing new deal flow, triaging inbound materials, or deciding whether to take a first call. Triggers on "screen this deal", "review this CIM", "should we look at this", "triage this teaser", or "deal screening".
-
+description: "Analyze — Quickly screen inbound deal flow — CIMs, teasers, and broker materials — against the fund's investment criteria. Extracts key deal metrics, runs a pass/fail framework, and outputs "
 ## Workflow
 
 ### Step 1: Extract Deal Facts
@@ -61,3 +63,23 @@ One-page screening memo suitable for sharing with partners or an IC quick screen
 - If financials seem inconsistent or incomplete, flag it explicitly
 - Ask for the fund's criteria upfront if this is the first screening
 - Save screening criteria in memory for future deals once confirmed
+
+---
+
+## Why This Skill Exists
+
+Analyze — Quickly screen inbound deal flow — CIMs, teasers, and broker materials — against the fund
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires deal screening capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

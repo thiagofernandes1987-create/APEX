@@ -1,10 +1,15 @@
 ---
 name: "senior-fullstack"
-description: Fullstack development toolkit with project scaffolding for Next.js, FastAPI, MERN, and Django stacks, code quality analysis with security and complexity scoring, and stack selection guidance. Use when the user asks to "scaffold a new project", "create a Next.js app", "set up FastAPI with React", "analyze code quality", "audit my codebase", "what stack should I use", "generate project boilerplate", or mentions fullstack development, project setup, or tech stack comparison.
+description: "Implement — Fullstack development toolkit with project scaffolding for Next.js, FastAPI, MERN, and Django stacks, code quality analysis with security and complexity scoring, and stack selectio"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-fullstack
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - engineering
+  - backend
+  - api
+  - security
 ---
 
 # Senior Fullstack
@@ -287,3 +292,23 @@ See `references/tech_stack_guide.md` for detailed comparison.
 | Auth complexity | Use Auth.js or Clerk |
 | Type errors | Enable strict mode in tsconfig |
 | CORS issues | Configure middleware properly |
+
+---
+
+## Why This Skill Exists
+
+Implement — Fullstack development toolkit with project scaffolding for Next.js, FastAPI, MERN, and Django stacks, code quality analysis with security and complexity scoring, and stack selectio
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires senior fullstack capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

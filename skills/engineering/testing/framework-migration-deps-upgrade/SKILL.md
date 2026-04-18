@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.framework_migration_deps_upgrade
 name: framework-migration-deps-upgrade
-description: '''You are a dependency management expert specializing in safe, incremental upgrades of project dependencies.
+description: "Implement — "
   Plan and execute dependency updates with minimal risk, proper testing, and clear migration p'
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement framework migration deps upgrade task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -152,3 +152,23 @@ Focus on safe, incremental upgrades that maintain system stability while keeping
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires framework migration deps upgrade capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

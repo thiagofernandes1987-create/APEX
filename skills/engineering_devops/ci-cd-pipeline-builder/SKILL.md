@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.ci_cd_pipeline_builder
 name: ci-cd-pipeline-builder
-description: CI/CD Pipeline Builder
+description: "Build — CI/CD Pipeline Builder"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/devops
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - CI/CD Pipeline Builder
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -256,3 +256,17 @@ Then layer advanced behavior (matrix builds, security scans, deploy gates).
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Build — CI/CD Pipeline Builder
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

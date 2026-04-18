@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.demo_video
 name: demo-video
-description: Use when the user asks to create a demo video, product walkthrough, feature showcase, animated presentation,
+description: "Create — Use when the user asks to create a demo video, product walkthrough, feature showcase, animated presentation,"
   marketing video, or GIF from screenshots or scene descriptions. Orchestrates playwright, ff
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user asks to create a demo video
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -227,3 +227,17 @@ See [references/scene-design-system.md](references/scene-design-system.md) for t
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

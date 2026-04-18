@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.linux.audit_skills
 name: audit-skills
-description: '''Expert security auditor for AI Skills and Bundles. Performs non-intrusive static analysis to identify malicious
+description: "Implement — "
   patterns, data leaks, system stability risks, and obfuscated payloads across Windows, m'
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement audit skills task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -227,3 +227,17 @@ Generates a security report with a score (0-10), platform target identification,
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

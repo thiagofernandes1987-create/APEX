@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.multi_agent_patterns
 name: multi-agent-patterns
-description: This skill should be used when the user asks to 'design multi-agent system', 'implement supervisor pattern',
+description: "Apply — This skill should be used when the user asks to 'design multi-agent system', 'implement supervisor pattern',"
   'create swarm architecture', 'coordinate multiple agents', or mentions multi-agent patterns
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - This skill should be used when the user asks to 'design multi-agent system'
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -354,3 +354,17 @@ External resources:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — This skill should be used when the user asks to
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

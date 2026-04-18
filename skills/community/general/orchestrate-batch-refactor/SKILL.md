@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.orchestrate_batch_refactor
 name: '''orchestrate-batch-refactor'''
-description: '''Plan and execute large refactors with dependency-aware work packets and parallel analysis.'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/orchestrate-batch-refactor
@@ -39,7 +39,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use ' task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -184,3 +184,17 @@ Prefer fast feedback loops, but never skip required behavior checks.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

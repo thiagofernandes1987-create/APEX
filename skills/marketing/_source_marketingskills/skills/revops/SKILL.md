@@ -1,6 +1,6 @@
 ---
 name: revops
-description: When the user wants help with revenue operations, lead lifecycle management, or marketing-to-sales handoff processes.
+description: "Create — When the user wants help with revenue operations, lead lifecycle management, or marketing-to-sales handoff processes."
   Also use when the user mentions 'RevOps,' 'revenue operations,' 'lead scoring,' 'lead routing,' 'MQL,' 'SQL,' 'pipeline
   stages,' 'deal desk,' 'CRM automation,' 'marketing-to-sales handoff,' 'data hygiene,' 'leads aren't getting to sales,' 'pipeline
   management,' 'lead qualification,' or 'when should marketing hand off to sales.' Use this for anything involving the systems
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants help with revenue operations
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -458,3 +458,23 @@ For implementation, see the [tools registry](../../tools/REGISTRY.md). Key RevOp
 - **analytics-tracking**: For tracking pipeline metrics and attribution
 - **launch-strategy**: For go-to-market launch planning
 - **sales-enablement**: For sales collateral, decks, and objection handling
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants help with revenue operations, lead lifecycle management, or marketing-to-sales handoff processes.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires revops capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.competitive_ads_extractor
 name: competitive-ads-extractor
-description: Extracts and analyzes competitors' ads from ad libraries (Facebook, LinkedIn, etc.) to understand what messaging,
+description: "Create — Extracts and analyzes competitors' ads from ad libraries (Facebook, LinkedIn, etc.) to understand what messaging,"
   problems, and creative approaches are working. Helps inspire and improve your own ad c
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Extracts and analyzes competitors' ads from ad libraries (Facebook
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -418,3 +418,17 @@ Which gets more engagement? (if data available)
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Create — Extracts and analyzes competitors
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

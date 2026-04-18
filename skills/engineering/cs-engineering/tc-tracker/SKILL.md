@@ -1,10 +1,12 @@
 ---
 name: "tc-tracker"
-description: "Use when the user asks to track technical changes, create change records, manage TC lifecycles, or hand off work between AI sessions. Covers init/create/update/status/resume/close/export workflows for structured code change documentation."
+description: "Implement — Use when the user asks to track technical changes, create change records, manage TC lifecycles, or hand off work between AI sessions. Covers init/create/update/status/resume/close/"
 executor: HYBRID
 skill_id: engineering.cs-engineering.tc-tracker
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
 ---
 
 # TC Tracker
@@ -209,3 +211,23 @@ For onboarding an existing project with undocumented history, build a `retro_cha
 - [references/tc-schema.md](references/tc-schema.md) — Full JSON schema for TC records and the registry.
 - [references/lifecycle.md](references/lifecycle.md) — State machine, valid transitions, and recovery flows.
 - [references/handoff-format.md](references/handoff-format.md) — Session handoff structure and best practices.
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to track technical changes, create change records, manage TC lifecycles, or hand off work between AI sessions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

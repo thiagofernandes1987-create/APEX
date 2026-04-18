@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.executing-plans
 name: executing-plans
-description: >
+description: "Use — Execução de plano de implementação em sessão dedicada com checkpoints humanos."
   Execução de plano de implementação em sessão dedicada com checkpoints humanos.
   Carrega o plano, revisa criticamente, executa todas as tarefas com verificações,
   para imediatamente quando bloqueado. Alternativa ao subagent-driven-development
@@ -144,3 +144,23 @@ After all tasks complete and verified:
 - **superpowers:using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
 - **superpowers:writing-plans** - Creates the plan this skill executes
 - **superpowers:finishing-a-development-branch** - Complete development after all tasks
+
+---
+
+## Why This Skill Exists
+
+Use — Execução de plano de implementação em sessão dedicada com checkpoints humanos.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires executing plans capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+Se bloqueado em qualquer tarefa: PARAR imediatamente e pedir ajuda ao humano.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

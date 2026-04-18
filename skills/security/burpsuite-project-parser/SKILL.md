@@ -1,7 +1,7 @@
 ---
 skill_id: security.burpsuite_project_parser
 name: burpsuite-project-parser
-description: Searches and explores Burp Suite project files (.burp) from the command line. Use when searching response headers
+description: "Audit — Searches and explores Burp Suite project files (.burp) from the command line. Use when searching response headers"
   or bodies with regex patterns, extracting security audit findings, dumping proxy histo
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - searching response headers
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -459,3 +459,17 @@ If not using the wrapper script, invoke directly:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Audit — Searches and explores Burp Suite project files (.burp) from the command line.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Análise de código malicioso potencial
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

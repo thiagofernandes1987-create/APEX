@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.receiving-code-review
 name: receiving-code-review
-description: >
+description: "Review — Protocolo de recepção de code review com rigor técnico — não concordância performativa."
   Protocolo de recepção de code review com rigor técnico — não concordância performativa.
   Verifica antes de implementar, pergunta antes de assumir, faz pushback quando errado.
   Proíbe explicitamente "Você está absolutamente certo!" e implementação cega.
@@ -287,3 +287,23 @@ When replying to inline review comments on GitHub, reply in the comment thread (
 Verify. Question. Then implement.
 
 No performative agreement. Technical rigor always.
+
+---
+
+## Why This Skill Exists
+
+Review — Protocolo de recepção de code review com rigor técnico — não concordância performativa.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires receiving code review capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+Se feedback ambíguo em qualquer item: parar tudo e pedir clarificação antes de implementar qualquer coisa.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

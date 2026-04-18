@@ -1,6 +1,6 @@
 ---
 name: signature-request
-description: Prepare and route a document for e-signature — run a pre-signature checklist, configure signing order, and send
+description: "Use — Prepare and route a document for e-signature — run a pre-signature checklist, configure signing order, and send"
   for execution. Use when a contract is finalized and ready to sign, when verifying entity names, exhibits, and signature
   blocks before sending, or when setting up an envelope with sequential or parallel signers.
 argument-hint: <document or contract to send>
@@ -29,7 +29,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Prepare and route a document for e-signature — run a pre-signature checklist
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -173,3 +173,23 @@ Gather signing details:
 1. **Check entity names carefully** — The most common signing error is incorrect legal entity names.
 2. **Verify authority** — Make sure each signer is authorized to bind their organization.
 3. **Keep a copy** — Executed copies should be filed in ~~cloud storage or ~~CLM immediately after execution.
+
+---
+
+## Why This Skill Exists
+
+Use — Prepare and route a document for e-signature — run a pre-signature checklist, configure signing order, and send
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires signature request capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

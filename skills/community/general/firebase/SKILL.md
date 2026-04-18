@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.firebase
 name: firebase
-description: Firebase gives you a complete backend in minutes - auth, database,
+description: "Use — Firebase gives you a complete backend in minutes - auth, database,"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/firebase
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Firebase gives you a complete backend in minutes - auth
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -786,3 +786,17 @@ Works well with: `nextjs-app-router`, `react-patterns`, `authentication-oauth`, 
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Firebase gives you a complete backend in minutes - auth, database,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

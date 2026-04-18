@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.cloud_security
 name: cloud-security
-description: 'Use when assessing cloud infrastructure for security misconfigurations, IAM privilege escalation paths, S3 public
+description: "Use — Use when assessing cloud infrastructure for security misconfigurations, IAM privilege escalation paths, S3 public"
   exposure, open security group rules, or IaC security gaps. Covers AWS, Azure, and GCP '
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - assessing cloud infrastructure for security misconfigurations
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -457,3 +457,23 @@ aws s3api get-bucket-policy --bucket "${BUCKET}" | jq '.Policy | fromjson' | \
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when assessing cloud infrastructure for security misconfigurations, IAM privilege escalation paths, S3 public
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

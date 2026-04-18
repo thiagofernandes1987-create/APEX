@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Write or review UX copy — microcopy
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -193,3 +193,23 @@ If **~~design tool** is connected:
 1. **Be specific about context** — "Error message when payment fails" is better than "error message."
 2. **Share your brand voice** — "We're professional but warm" helps me match your tone.
 3. **Consider the user's emotional state** — Error messages need empathy. Success messages can celebrate.
+
+---
+
+## Why This Skill Exists
+
+Write or review UX copy — microcopy, error messages, empty states, CTAs. Trigger with "write copy for", "what
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ux copy capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

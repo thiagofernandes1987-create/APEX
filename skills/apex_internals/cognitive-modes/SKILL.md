@@ -1,7 +1,7 @@
 ---
 skill_id: apex_internals.cognitive_modes
 name: Cognitive Modes — BDS Simplex Mode Selector
-description: Documenta os 7 modos cognitivos do APEX e como o BDS Simplex seleciona o modo certo. Inclui EXPRESS, FAST, CLARIFY,
+description: "Use — Documenta os 7 modos cognitivos do APEX e como o BDS Simplex seleciona o modo certo. Inclui EXPRESS, FAST, CLARIFY,"
   DEEP, RESEARCH, SCIENTIFIC, FOGGY.
 version: v00.33.0
 status: ADOPTED
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Documenta os 7 modos cognitivos do APEX e como o BDS Simplex seleciona o modo certo
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -227,3 +227,17 @@ PASSO 3: Declarar modo escolhido
 
 ## Diff History
 - **v00.33.0**: Criado para documentação dos modos cognitivos no super-repo
+
+---
+
+## When to Use
+
+Use this skill when the task requires cognitive modes — bds simplex mode selector capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

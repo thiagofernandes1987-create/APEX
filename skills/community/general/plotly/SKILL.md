@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.plotly
 name: plotly
-description: Interactive visualization library. Use when you need hover info, zoom, pan, or web-embeddable charts. Best for
+description: "Use — Interactive visualization library. Use when you need hover info, zoom, pan, or web-embeddable charts. Best for"
   dashboards, exploratory analysis, and presentations. For static publication figures use m
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - you need hover info
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -358,3 +358,17 @@ app.run_server(debug=True)
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Interactive visualization library.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.beautiful_prose
 name: beautiful-prose
-description: A hard-edged writing style contract for timeless, forceful English prose without modern AI tics. Use when users
+description: "Automate — A hard-edged writing style contract for timeless, forceful English prose without modern AI tics. Use when users"
   ask for prose or rewrites that must be clean, exact, concrete, and free of AI cadence, f
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - A hard-edged writing style contract for timeless
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -301,3 +301,17 @@ See `references/test-cases.md`.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Automate — A hard-edged writing style contract for timeless, forceful English prose without modern AI tics.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Arquivo de tasks ou memória não encontrado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

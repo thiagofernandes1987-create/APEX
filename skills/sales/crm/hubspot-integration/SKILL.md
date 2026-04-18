@@ -1,7 +1,7 @@
 ---
 skill_id: sales.crm.hubspot_integration
 name: hubspot-integration
-description: Expert patterns for HubSpot CRM integration including OAuth
+description: "Track — Expert patterns for HubSpot CRM integration including OAuth"
 version: v00.33.0
 status: CANDIDATE
 domain_path: sales/crm/hubspot-integration
@@ -61,7 +61,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert patterns for HubSpot CRM integration including OAuth
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -944,3 +944,17 @@ Message: Using deprecated API key. Migrate to Private App token or OAuth 2.0.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Track — Expert patterns for HubSpot CRM integration including OAuth
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: CRM ou enrichment tool indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

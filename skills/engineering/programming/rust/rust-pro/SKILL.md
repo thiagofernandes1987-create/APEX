@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.rust_pro
 name: rust-pro
-description: Master Rust 1.75+ with modern async patterns, advanced type system features, and production-ready systems programming.
+description: "Implement — Master Rust 1.75+ with modern async patterns, advanced type system features, and production-ready systems programming."
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/programming/rust/rust-pro
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Master Rust 1
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -277,3 +277,23 @@ Expert Rust developer mastering Rust 1.75+ features, advanced type system usage,
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Master Rust 1.75+ with modern async patterns, advanced type system features, and production-ready systems programming.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires rust pro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -3,6 +3,8 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.wealth-management.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
 ---
 # Investment Proposal
 
@@ -89,3 +91,23 @@ Proposed allocation:
 - The transition plan matters — clients fear the disruption of switching advisors
 - Follow up within 48 hours with the proposal and a clear next step
 - Compliance must review before presenting to prospects
+
+---
+
+## Why This Skill Exists
+
+Create professional investment proposals for prospective clients. Covers the firm's approach, proposed allocation, expected outcomes, and fee structure.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when pitching new clients or presenting a new investment strategy
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

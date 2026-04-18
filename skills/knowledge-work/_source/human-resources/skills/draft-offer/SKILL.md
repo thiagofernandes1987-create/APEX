@@ -1,6 +1,6 @@
 ---
 name: draft-offer
-description: Draft an offer letter with comp details and terms. Use when a candidate is ready for an offer, assembling a total
+description: "Use — Draft an offer letter with comp details and terms. Use when a candidate is ready for an offer, assembling a total"
   comp package (base, equity, signing bonus), writing the offer letter text itself, or prepping negotiation guidance for the
   hiring manager.
 argument-hint: <role and level>
@@ -28,7 +28,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - a candidate is ready for an offer
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -150,3 +150,23 @@ If **~~ATS** is connected:
 1. **Include total comp** — Candidates compare total compensation, not just base.
 2. **Be specific about equity** — Share count, current valuation method, vesting schedule.
 3. **Personalize** — Reference something from the interview process to make it warm.
+
+---
+
+## Why This Skill Exists
+
+Use — Draft an offer letter with comp details and terms.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when a candidate is ready for an offer, assembling a total
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

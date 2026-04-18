@@ -1,7 +1,7 @@
 ---
 skill_id: legal.contracts.ai_native_cli
 name: ai-native-cli
-description: '''Design spec with 98 rules for building CLI tools that AI agents can safely use. Covers structured JSON output,
+description: "Review — "
   error handling, input contracts, safety guardrails, exit codes, and agent self-descripti'
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - review ai native cli task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -415,3 +415,17 @@ Implement by layer -- each phase gets you the next certification level.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Review —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Legislação atualizada além do knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

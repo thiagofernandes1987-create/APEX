@@ -21,6 +21,9 @@ executor: HYBRID
 skill_id: engineering.cs-engineering-team.epic-design
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - design
 ---
 
 # Epic Design Skill
@@ -354,3 +357,23 @@ Checks: depth attributes, aria-hidden, reduced-motion, alt text, performance lim
 - **page-cro**: Use after the 2.5D site is built to optimize conversion. NOT during the initial build.
 - **senior-architect**: Use when the 2.5D site is part of a larger system architecture. NOT for standalone pages.
 - **accessibility-auditor**: Use to verify full WCAG compliance after build. This skill includes basic reduced-motion handling.
+
+---
+
+## Why This Skill Exists
+
+Build immersive, cinematic 2.5D interactive websites using scroll storytelling,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires epic design capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

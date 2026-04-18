@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.stitch_loop
 name: stitch-loop
-description: Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop pattern
+description: "Use — Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop pattern"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/stitch-loop
@@ -39,7 +39,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop patt
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -353,3 +353,17 @@ This skill works best with the `design-md` skill:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop pattern
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

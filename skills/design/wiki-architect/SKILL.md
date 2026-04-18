@@ -1,7 +1,7 @@
 ---
 skill_id: design.wiki_architect
 name: wiki-architect
-description: Analyzes code repositories and generates hierarchical documentation structures with onboarding guides. Use when
+description: "Design — Analyzes code repositories and generates hierarchical documentation structures with onboarding guides. Use when"
   the user wants to create a wiki, generate documentation, map a codebase structure, or un
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyzes code repositories and generates hierarchical documentation structures with onboarding guide
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -195,3 +195,23 @@ JSON code block following the catalogue schema with `items[].children[]` structu
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Analyzes code repositories and generates hierarchical documentation structures with onboarding guides. Use when
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires wiki architect capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

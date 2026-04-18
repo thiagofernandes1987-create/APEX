@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.fp_types_ref
 name: fp-types-ref
-description: Quick reference for fp-ts types. Use when user asks which type to use, needs Option/Either/Task decision help,
+description: "Use — Quick reference for fp-ts types. Use when user asks which type to use, needs Option/Either/Task decision help,"
   or wants fp-ts imports.
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - user asks which type to use
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -142,3 +142,17 @@ pipe(result, E.match(
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Quick reference for fp-ts types.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

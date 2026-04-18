@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_agents.board
 name: board
-description: Read, write, and browse the AgentHub message board for agent coordination.
+description: "Use — Read, write, and browse the AgentHub message board for agent coordination."
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/agents
@@ -57,7 +57,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Read
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -218,3 +218,23 @@ parent: null
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Read, write, and browse the AgentHub message board for agent coordination.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires board capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

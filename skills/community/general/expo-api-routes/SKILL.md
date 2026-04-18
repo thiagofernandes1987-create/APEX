@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.expo_api_routes
 name: expo-api-routes
-description: Guidelines for creating API routes in Expo Router with EAS Hosting
+description: "Use — Guidelines for creating API routes in Expo Router with EAS Hosting"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/expo-api-routes
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Guidelines for creating API routes in Expo Router with EAS Hosting
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -466,3 +466,17 @@ export async function GET(request: Request) {
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Guidelines for creating API routes in Expo Router with EAS Hosting
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

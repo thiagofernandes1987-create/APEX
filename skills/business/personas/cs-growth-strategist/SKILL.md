@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.business-growth.cs_growth_strategist
 name: "cs-growth-strategist"
-description: "Growth Strategist agent for revenue operations, sales engineering, customer success, and business development. Orchestrates business-growth skills. Spawn when users need pipeline analysis, churn preve"
+description: "Manage — Growth Strategist agent for revenue operations, sales engineering, customer success, and business development. Orchestrates business-growth skills. Spawn when users need pipeline a"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -93,3 +93,22 @@ Growth-focused operator covering the full revenue lifecycle: pipeline management
 - [cs-product-manager](../product/cs-product-manager.md) -- Product roadmap alignment for sales positioning and feature prioritization
 - [cs-financial-analyst](../finance/cs-financial-analyst.md) -- Revenue forecasting validation and financial modeling support
 
+---
+
+## Why This Skill Exists
+
+Manage — Growth Strategist agent for revenue operations, sales engineering, customer success, and business development. Orchestrates business-growth skills. Spawn when users need pipeline a
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cs growth strategist capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

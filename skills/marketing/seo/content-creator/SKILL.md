@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.content_creator
 name: content-creator
-description: '''Professional-grade brand voice analysis, SEO optimization, and platform-specific content frameworks.'''
+description: "Create — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: marketing/seo/content-creator
@@ -51,7 +51,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - create content creator task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -349,3 +349,17 @@ cp assets/content_calendar_template.md this_month_calendar.md
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.marketing_ops
 name: marketing-ops
-description: 'Central router for the marketing skill ecosystem. Use when unsure which marketing skill to use, when orchestrating
+description: "Create — Central router for the marketing skill ecosystem. Use when unsure which marketing skill to use, when orchestrating"
   a multi-skill campaign, or when coordinating across content, SEO, CRO, channels, and '
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - unsure which marketing skill to use
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -308,3 +308,23 @@ All output passes quality verification:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Create — Central router for the marketing skill ecosystem.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when unsure which marketing skill to use, when orchestrating
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

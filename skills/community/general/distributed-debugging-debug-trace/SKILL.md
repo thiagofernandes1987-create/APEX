@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.distributed_debugging_debug_trace
 name: distributed-debugging-debug-trace
-description: '''You are a debugging expert specializing in setting up comprehensive debugging environments, distributed tracing,
+description: "Use — "
   and diagnostic tools. Configure debugging workflows, implement tracing solutions, and '
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use distributed debugging debug trace task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -116,3 +116,23 @@ $ARGUMENTS
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires distributed debugging debug trace capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.deployment.acceptance_orchestrator
 name: acceptance-orchestrator
-description: Use when a coding task should be driven end-to-end from issue intake through implementation, review, deployment,
+description: "Implement — Use when a coding task should be driven end-to-end from issue intake through implementation, review, deployment,"
   and acceptance verification with minimal human re-intervention.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Use when a coding task should be driven end-to-end from issue intake through implementation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -217,3 +217,17 @@ Do not report "done" unless status is `accepted`.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

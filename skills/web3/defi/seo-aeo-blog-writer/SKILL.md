@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.seo_aeo_blog_writer
 name: seo-aeo-blog-writer
-description: '''Writes long-form blog posts with TL;DR block, definition sentence, comparison table, and 5-question FAQ for
+description: "Deploy — "
   SEO ranking and AEO citation. Activate when the user wants to write a blog post, article, o'
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - deploy seo aeo blog writer task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -189,3 +189,17 @@ Avoid live calls across more than 2 timezones.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Deploy —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Rede blockchain congestionada ou indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

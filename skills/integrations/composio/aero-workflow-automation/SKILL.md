@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.aero-workflow-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: aero-workflow-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Aero Workflow Automation via Rube MCP

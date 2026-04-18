@@ -1,7 +1,7 @@
 ---
 skill_id: sales.sales_enablement
 name: sales-enablement
-description: '''Create sales collateral such as decks, one-pagers, objection docs, demo scripts, playbooks, and proposal templates.
+description: "Track — "
   Use when a sales team needs assets that help reps move deals forward and close.'''
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - track sales enablement task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -470,3 +470,17 @@ If context is missing, ask:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Track —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: CRM ou enrichment tool indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

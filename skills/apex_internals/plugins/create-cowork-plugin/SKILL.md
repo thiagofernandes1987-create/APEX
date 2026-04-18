@@ -1,7 +1,7 @@
 ---
 skill_id: apex_internals.plugins.create_cowork_plugin
 name: create-cowork-plugin
-description: '>'
+description: "Use — >"
 version: v00.33.0
 status: ADOPTED
 domain_path: apex_internals/plugins/create-cowork-plugin
@@ -41,7 +41,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use create cowork plugin task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -358,3 +358,23 @@ The `.plugin` file will appear in the chat as a rich preview where the user can 
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Use — >
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires create cowork plugin capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: "schema-markup"
-description: "When the user wants to implement, audit, or validate structured data (schema markup) on their website. Use when the user mentions 'structured data,' 'schema.org,' 'JSON-LD,' 'rich results,' 'rich snippets,' 'schema markup,' 'FAQ schema,' 'Product schema,' 'HowTo schema,' or 'structured data errors in Search Console.' Also use when someone asks why their content isn't showing rich results or wants to improve AI search visibility. NOT for general SEO audits (use seo-audit) or technical SEO crawl issues (use site-architecture)."
+description: "Manage — When the user wants to implement, audit, or validate structured data (schema markup) on their website. Use when the user mentions"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,9 @@ executor: HYBRID
 skill_id: business.marketing-skill.schema-markup
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - data
 ---
 
 # Schema Markup Implementation
@@ -235,3 +238,23 @@ All output follows the structured communication standard:
 - **site-architecture**: For URL structure, internal linking, and navigation. Use when architecture is the root cause of SEO problems, not schema.
 - **content-strategy**: For what content to create. Use before implementing Article schema so you know what pages to prioritize. NOT for the schema itself.
 - **programmatic-seo**: For sites with thousands of pages that need schema at scale. Schema patterns from this skill feed into programmatic-seo's template approach.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to implement, audit, or validate structured data (schema markup) on their website.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

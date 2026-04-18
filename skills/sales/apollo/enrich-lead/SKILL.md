@@ -1,7 +1,7 @@
 ---
 skill_id: sales.apollo.enrich_lead
 name: enrich-lead
-description: '''Instant lead enrichment. Drop a name, company, LinkedIn URL, or email and get the full contact card with email,
+description: "Track — "
   phone, title, company intel, and next actions.'''
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - track enrich lead task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -180,3 +180,23 @@ Ask the user which action to take:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Track —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires enrich lead capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: CRM ou enrichment tool indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

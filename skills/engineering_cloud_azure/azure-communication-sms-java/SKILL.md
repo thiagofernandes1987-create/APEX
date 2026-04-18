@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_communication_sms_java
 name: azure-communication-sms-java
-description: Send SMS messages with Azure Communication Services SMS Java SDK. Use when implementing SMS notifications, alerts,
+description: "Use — Send SMS messages with Azure Communication Services SMS Java SDK. Use when implementing SMS notifications, alerts,"
   OTP delivery, bulk messaging, or delivery reports.
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implementing SMS notifications
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -381,3 +381,23 @@ SMS_FROM_NUMBER=+14255550100
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Send SMS messages with Azure Communication Services SMS Java SDK.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when implementing SMS notifications, alerts,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

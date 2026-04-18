@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_ml.competitive_teardown
 name: competitive-teardown
-description: Analyzes competitor products and companies by synthesizing data from pricing pages, app store reviews, job postings,
+description: "Analyze — Analyzes competitor products and companies by synthesizing data from pricing pages, app store reviews, job postings,"
   SEO signals, and social media into structured competitive intelligence. Produces fe
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyzes competitor products and companies by synthesizing data from pricing pages
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -289,3 +289,17 @@ Navigation: global search, keyboard shortcuts, in-app help.
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Analyze — Analyzes competitor products and companies by synthesizing data from pricing pages, app store reviews, job postings,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

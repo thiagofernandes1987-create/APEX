@@ -1,7 +1,7 @@
 ---
 skill_id: security.mobile_security_coder
 name: mobile-security-coder
-description: Expert in secure mobile coding practices specializing in input validation, WebView security, and mobile-specific
+description: "Audit — Expert in secure mobile coding practices specializing in input validation, WebView security, and mobile-specific"
   security patterns.
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert in secure mobile coding practices specializing in input validation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -287,3 +287,17 @@ Expert mobile security developer with comprehensive knowledge of mobile security
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Audit — Expert in secure mobile coding practices specializing in input validation, WebView security, and mobile-specific
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Análise de código malicioso potencial
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

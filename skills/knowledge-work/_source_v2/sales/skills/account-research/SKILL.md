@@ -1,6 +1,6 @@
 ---
 name: account-research
-description: Research a company or person and get actionable sales intel. Works standalone with web search, supercharged when
+description: "Use — Research a company or person and get actionable sales intel. Works standalone with web search, supercharged when"
   you connect enrichment tools or your CRM. Trigger with "research [company]", "look up [person]", "intel on [prospect]",
   "who is [name] at [company]", or "tell me about [company]".
 tier: ADAPTED
@@ -33,7 +33,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Research a company or person and get actionable sales intel
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -376,3 +376,23 @@ Focus on: Attendee backgrounds, recent news, relationship history
 - **call-prep** — Full meeting prep with this research plus context
 - **draft-outreach** — Write personalized message based on research
 - **prospecting** — Qualify and prioritize research targets
+
+---
+
+## Why This Skill Exists
+
+Use — Research a company or person and get actionable sales intel. Works standalone with web search, supercharged when
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires account research capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

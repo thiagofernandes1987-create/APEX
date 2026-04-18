@@ -1,6 +1,6 @@
 ---
 name: "marketing-strategy-pmm"
-description: Product marketing skill for positioning, GTM strategy, competitive intelligence, and product launches. Use when the user asks about product positioning, go-to-market planning, competitive analysis, target audience definition, ICP definition, market research, launch plans, or sales enablement. Covers April Dunford positioning, ICP definition, competitive battlecards, launch playbooks, and international market entry. Produces deliverables including positioning statements, battlecard documents, launch plans, and go-to-market strategies.
+description: "Manage — Product marketing skill for positioning, GTM strategy, competitive intelligence, and product launches. Use when the user asks about product positioning, go-to-market planning, comp"
 triggers:
   - product marketing
   - PMM
@@ -17,6 +17,9 @@ executor: LLM_BEHAVIOR
 skill_id: business.marketing-skill.marketing-strategy-pmm
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - marketing
 ---
 
 # Marketing Strategy & PMM
@@ -400,3 +403,23 @@ All output passes quality verification:
 - **launch-strategy**: For executing product launches planned by PMM.
 - **competitive-intel** (C-Suite): For strategic competitive intelligence.
 - **cmo-advisor** (C-Suite): For marketing budget and growth model decisions.
+
+---
+
+## Why This Skill Exists
+
+Manage — Product marketing skill for positioning, GTM strategy, competitive intelligence, and product launches.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks about product positioning, go-to-market planning, comp
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

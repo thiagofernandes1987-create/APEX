@@ -1,7 +1,7 @@
 ---
 skill_id: design.connect_apps
 name: connect-apps
-description: Connect Claude to external apps like Gmail, Slack, GitHub. Use this skill when the user wants to send emails,
+description: "Design — Connect Claude to external apps like Gmail, Slack, GitHub. Use this skill when the user wants to send emails,"
   create issues, post messages, or take actions in external services.
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Connect Claude to external apps like Gmail
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -190,3 +190,23 @@ If it works, you're connected!
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Design — Connect Claude to external apps like Gmail, Slack, GitHub. Use this skill when the user wants to send emails,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires connect apps capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

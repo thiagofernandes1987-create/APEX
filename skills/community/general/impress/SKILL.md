@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.impress
 name: impress
-description: '''Presentation creation, format conversion (ODP/PPTX/PDF), slide automation with LibreOffice Impress.'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/impress
@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use impress task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -249,3 +249,17 @@ soffice --headless --accept="socket,host=localhost,port=8100;urp;"
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

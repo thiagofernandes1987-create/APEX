@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.go.django_perf_review
 name: django-perf-review
-description: Django performance code review. Use when asked to 'review Django performance', 'find N+1 queries', 'optimize
+description: "Implement — Django performance code review. Use when asked to 'review Django performance', 'find N+1 queries', 'optimize"
   Django', 'check queryset performance', 'database performance', 'Django ORM issues', or audi
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - asked to 'review Django performance'
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -500,3 +500,17 @@ If your only suggestion is "combine these two lines" or "rename this variable" -
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Django performance code review.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

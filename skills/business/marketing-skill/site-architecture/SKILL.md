@@ -1,6 +1,6 @@
 ---
 name: "site-architecture"
-description: "When the user wants to audit, redesign, or plan their website's structure, URL hierarchy, navigation design, or internal linking strategy. Use when the user mentions 'site architecture,' 'URL structure,' 'internal links,' 'site navigation,' 'breadcrumbs,' 'topic clusters,' 'hub pages,' 'orphan pages,' 'silo structure,' 'information architecture,' or 'website reorganization.' Also use when someone has SEO problems and the root cause is structural (not content or schema). NOT for content strategy decisions about what to write (use content-strategy) or for schema markup (use schema-markup)."
+description: "Manage — When the user wants to audit, redesign, or plan their website"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,9 @@ executor: HYBRID
 skill_id: business.marketing-skill.site-architecture
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - design
 ---
 
 # Site Architecture & Internal Linking
@@ -291,3 +294,23 @@ All output follows the structured communication standard:
 - **content-strategy**: For deciding what content to create. Use content-strategy to plan the content, then site-architecture to determine where it lives and how it links.
 - **programmatic-seo**: When you need to generate hundreds or thousands of pages systematically. Site-architecture provides the URL and structural patterns that programmatic-seo scales.
 - **seo-audit**: For identifying technical issues. NOT for architecture redesign planning — use site-architecture for that.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to audit, redesign, or plan their website
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires site architecture capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

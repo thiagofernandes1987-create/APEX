@@ -1,6 +1,6 @@
 ---
 name: clean-data-xls
-description: Clean up messy spreadsheet data — trim whitespace, fix inconsistent casing, convert numbers-stored-as-text, standardize
+description: "Analyze — Clean up messy spreadsheet data — trim whitespace, fix inconsistent casing, convert numbers-stored-as-text, standardize"
   dates, remove duplicates, and flag mixed-type columns. Use when data is messy, inconsistent, or needs prep before analysis.
   Triggers on "clean this data", "clean up this sheet", "normalize this data", "fix formatting", "dedupe", "standardize this
   column", "this data is messy".
@@ -42,7 +42,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Clean up messy spreadsheet data — trim whitespace
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -148,3 +148,23 @@ Show a summary table before changing anything:
 - For destructive operations (removing duplicates, filling blanks, overwriting originals), confirm with the user first
 - After each category of fix (whitespace → casing → number conversion → dates → dedup), show the user a sample of what changed and get confirmation before moving to the next category
 - Report a before/after summary of what changed
+
+---
+
+## Why This Skill Exists
+
+Analyze — Clean up messy spreadsheet data — trim whitespace, fix inconsistent casing, convert numbers-stored-as-text, standardize
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires clean data xls capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

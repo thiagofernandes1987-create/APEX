@@ -1,6 +1,6 @@
 ---
 name: journal-entry-prep
-description: Prepare journal entries with proper debits, credits, and supporting documentation for month-end close. Use when
+description: "Use — Prepare journal entries with proper debits, credits, and supporting documentation for month-end close. Use when"
   booking accruals, prepaid amortization, fixed asset depreciation, payroll entries, revenue recognition, or any manual journal
   entry.
 user-invocable: false
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Prepare journal entries with proper debits
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -274,3 +274,23 @@ Before approving a journal entry, the reviewer should verify:
 10. **Missing intercompany elimination:** Entries between entities without corresponding elimination
 11. **Capitalization errors:** Expenses that should be capitalized, or capitalized items that should be expensed
 12. **Cut-off errors:** Transactions recorded in the wrong period based on delivery or service date
+
+---
+
+## Why This Skill Exists
+
+Use — Prepare journal entries with proper debits, credits, and supporting documentation for month-end close. Use when
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires journal entry prep capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

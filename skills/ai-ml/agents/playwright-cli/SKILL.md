@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_agents.playwright_cli
 name: playwright-cli
-description: Automates browser interactions for web testing, form filling, screenshots, and data extraction. Use when the
+description: "Apply — Automates browser interactions for web testing, form filling, screenshots, and data extraction. Use when the"
   user needs to navigate websites, interact with web pages, fill forms, take screenshots, tes
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Automates browser interactions for web testing
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -369,3 +369,23 @@ playwright-cli close
 
 ## Diff History
 - **v00.33.0**: Ingested from voltagent
+
+---
+
+## Why This Skill Exists
+
+Apply — Automates browser interactions for web testing, form filling, screenshots, and data extraction.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires playwright cli capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

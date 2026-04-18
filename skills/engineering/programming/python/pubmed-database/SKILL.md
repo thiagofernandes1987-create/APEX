@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.pubmed_database
 name: pubmed-database
-description: Direct REST API access to PubMed. Advanced Boolean/MeSH queries, E-utilities API, batch processing, citation
+description: "Implement — Direct REST API access to PubMed. Advanced Boolean/MeSH queries, E-utilities API, batch processing, citation"
   management. For Python workflows, prefer biopython (Bio.Entrez). Use this for direct HTTP/R
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Direct REST API access to PubMed
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -554,3 +554,17 @@ Load reference files into context as needed based on the specific task. For brie
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Direct REST API access to PubMed. Advanced Boolean/MeSH queries, E-utilities API, batch processing, citation
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

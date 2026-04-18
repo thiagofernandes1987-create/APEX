@@ -1,7 +1,7 @@
 ---
 skill_id: sales.call_prep
 name: call-prep
-description: Prepare for a sales call with account context, attendee research, and suggested agenda. Works standalone with
+description: "Track — Prepare for a sales call with account context, attendee research, and suggested agenda. Works standalone with"
   user input and web research, supercharged when you connect your CRM, email, chat, or trans
 version: v00.33.0
 status: ADOPTED
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Prepare for a sales call with account context
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -376,3 +376,23 @@ Run **call-follow-up** to:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Track — Prepare for a sales call with account context, attendee research, and suggested agenda. Works standalone with
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires call prep capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: CRM ou enrichment tool indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

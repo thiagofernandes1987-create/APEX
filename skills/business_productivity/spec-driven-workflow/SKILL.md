@@ -1,7 +1,7 @@
 ---
 skill_id: business_productivity.spec_driven_workflow
 name: spec-driven-workflow
-description: Use when the user asks to write specs before code, define acceptance criteria, plan features before implementation,
+description: "Use — Use when the user asks to write specs before code, define acceptance criteria, plan features before implementation,"
   generate tests from specifications, or follow spec-first development practices.
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user asks to write specs before code
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -434,3 +434,23 @@ python test_extractor.py --file specs/auth.md --framework pytest --output tests/
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to write specs before code, define acceptance criteria, plan features before implementation,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

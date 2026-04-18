@@ -1,7 +1,7 @@
 ---
 skill_id: design.social_content
 name: social-content
-description: When the user wants help creating, scheduling, or optimizing social media content for LinkedIn, Twitter/X, Instagram,
+description: "Design — When the user wants help creating, scheduling, or optimizing social media content for LinkedIn, Twitter/X, Instagram,"
   TikTok, Facebook, or other platforms. Also use when the user mentions 'LinkedIn po
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants help creating
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -437,3 +437,23 @@ Always include a hook as the first element. Never deliver body copy without it. 
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — When the user wants help creating, scheduling, or optimizing social media content for LinkedIn, Twitter/X, Instagram,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires social content capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

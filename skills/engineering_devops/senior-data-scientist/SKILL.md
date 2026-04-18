@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.senior_data_scientist
 name: senior-data-scientist
-description: 'World-class senior data scientist skill specialising in statistical modeling, experiment design, causal inference,
+description: "Use — World-class senior data scientist skill specialising in statistical modeling, experiment design, causal inference,"
   and predictive analytics. Covers A/B testing (sample sizing, two-proportion z-tests, '
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'World-class senior data scientist skill specialising in statistical modeling
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -333,3 +333,23 @@ python scripts/health_check.py
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — World-class senior data scientist skill specialising in statistical modeling, experiment design, causal inference,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires senior data scientist capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

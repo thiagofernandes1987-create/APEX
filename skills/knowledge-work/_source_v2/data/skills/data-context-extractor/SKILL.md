@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Generate or improve a company-specific data analysis skill by extracting tribal knowledge from anal
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -312,3 +312,23 @@ Before delivering a generated skill, verify:
 - [ ] At least 2-3 sample queries per domain
 - [ ] SQL uses correct dialect syntax
 - [ ] Reference files are linked from SKILL.md navigation section
+
+---
+
+## Why This Skill Exists
+
+'Generate or improve a company-specific data analysis skill by extracting tribal knowledge from analysts.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires data context extractor capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

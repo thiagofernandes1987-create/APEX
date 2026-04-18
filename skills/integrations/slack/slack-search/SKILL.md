@@ -1,7 +1,7 @@
 ---
 skill_id: integrations.slack.slack_search
 name: slack-search
-description: Guidance for effectively searching Slack to find messages, files, channels, and people
+description: "Automate — Guidance for effectively searching Slack to find messages, files, channels, and people"
 version: v00.33.0
 status: ADOPTED
 domain_path: integrations/slack/slack-search
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Guidance for effectively searching Slack to find messages
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -202,3 +202,17 @@ After finding relevant messages:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Automate — Guidance for effectively searching Slack to find messages, files, channels, and people
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Serviço externo indisponível ou timeout
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

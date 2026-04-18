@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.oss_hunter
 name: oss-hunter
-description: '''Automatically hunt for high-impact OSS contribution opportunities in trending repositories.'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/oss-hunter
@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use oss hunter task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -151,3 +151,17 @@ Build a better hunter by adding new heuristics to Phase 3. Submit your improveme
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

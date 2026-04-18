@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.census-bureau-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: census-bureau-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Census Bureau Automation via Rube MCP

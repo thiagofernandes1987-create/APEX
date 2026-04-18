@@ -1,7 +1,7 @@
 ---
 skill_id: integrations.n8n.n8n_workflow_patterns
 name: n8n-workflow-patterns
-description: '''Proven architectural patterns for building n8n workflows.'''
+description: "Automate — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: integrations/n8n/n8n-workflow-patterns
@@ -61,7 +61,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - automate n8n workflow patterns task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -534,3 +534,17 @@ Use `search_templates` and `get_template` from n8n-mcp tools to find examples!
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Automate —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Serviço externo indisponível ou timeout
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

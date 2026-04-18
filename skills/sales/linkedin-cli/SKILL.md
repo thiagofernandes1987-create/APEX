@@ -1,7 +1,7 @@
 ---
 skill_id: sales.linkedin_cli
 name: linkedin-cli
-description: '''Use when automating LinkedIn via CLI: fetch profiles, search people/companies, send messages, manage connections,
+description: "Track — "
   create posts, and Sales Navigator.'''
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - track linkedin cli task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -642,3 +642,17 @@ linkedin reset --all                             # Remove all accounts
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Track —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: CRM ou enrichment tool indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

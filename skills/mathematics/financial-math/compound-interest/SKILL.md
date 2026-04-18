@@ -1,7 +1,7 @@
 ---
 skill_id: mathematics.financial_math.compound_interest
 name: Juros Compostos / Compound Interest
-description: Calcula montante, juros acumulados e taxa efetiva anual para qualquer regime de capitalização composta. Suporte
+description: "Use — Calcula montante, juros acumulados e taxa efetiva anual para qualquer regime de capitalização composta. Suporte"
   a juros legais brasileiros (Art. 406 CC + SELIC).
 version: v00.33.0
 status: ADOPTED
@@ -63,7 +63,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Calcula montante
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:

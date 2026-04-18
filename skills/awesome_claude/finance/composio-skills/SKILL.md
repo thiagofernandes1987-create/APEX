@@ -1,7 +1,7 @@
 ---
 skill_id: awesome_claude.finance.composio_skills
 name: Ramp Automation
-description: 'Ramp Automation: manage corporate card transactions, reimbursements, users, and expense tracking via the Ramp
+description: "Use — Ramp Automation: manage corporate card transactions, reimbursements, users, and expense tracking via the Ramp"
   platform'
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Ramp Automation: manage corporate card transactions
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -311,3 +311,23 @@ Retrieve card information and custom accounting field configurations.
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Use — Ramp Automation: manage corporate card transactions, reimbursements, users, and expense tracking via the Ramp
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ramp automation capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

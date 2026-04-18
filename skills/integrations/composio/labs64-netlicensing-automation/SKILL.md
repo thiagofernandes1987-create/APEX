@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.labs64-netlicensing-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: labs64-netlicensing-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Labs64 Netlicensing Automation via Rube MCP

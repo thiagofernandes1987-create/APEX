@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_api.graphql_design
 name: graphql-design
-description: GraphQL schema design, resolver patterns, subscriptions, DataLoader for N+1 prevention, and error handling
+description: "Use — GraphQL schema design, resolver patterns, subscriptions, DataLoader for N+1 prevention, and error handling"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/api
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - GraphQL schema design
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -296,3 +296,23 @@ const resolvers = {
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — GraphQL schema design, resolver patterns, subscriptions, DataLoader for N+1 prevention, and error handling
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires graphql design capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.voice_agents
 name: voice-agents
-description: Voice agents represent the frontier of AI interaction - humans
+description: "Apply — Voice agents represent the frontier of AI interaction - humans"
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/agents/voice-agents
@@ -61,7 +61,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Voice agents represent the frontier of AI interaction - humans
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1096,3 +1096,17 @@ Works well with: `agent-tool-builder`, `multi-agent-orchestration`, `llm-archite
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — Voice agents represent the frontier of AI interaction - humans
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

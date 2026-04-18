@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.test_fixing
 name: "test-fixing"
-description: "'Systematically identify and fix all failing tests using smart grouping strategies. Use when explicitly asks to fix tests (\'fix these tests\', \'make tests pass\'), reports test failures (\'tests are"
+description: "Use — Systematically identify and fix all failing tests using smart grouping strategies. Use when explicitly asks to fix tests (\"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/test-fixing
@@ -141,3 +141,17 @@ User: "The tests are failing after my refactor"
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Systematically identify and fix all failing tests using smart grouping strategies.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

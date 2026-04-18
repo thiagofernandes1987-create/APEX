@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.track_management
 name: track-management
-description: Use this skill when creating, managing, or working with Conductor tracks - the logical work units for features,
+description: "Use — Use this skill when creating, managing, or working with Conductor tracks - the logical work units for features,"
   bugs, and refactors. Applies to spec.md, plan.md, and track lifecycle operations.
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Use this skill when creating
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -106,3 +106,23 @@ Guide for creating, managing, and completing Conductor tracks - the logical work
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Use this skill when creating, managing, or working with Conductor tracks - the logical work units for features,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires track management capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

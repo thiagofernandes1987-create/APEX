@@ -13,6 +13,9 @@ executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.culture-architect
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - design
 ---
 
 # Culture Architect
@@ -169,3 +172,23 @@ Rituals are the delivery mechanism for culture. What works at 10 people breaks a
 ## Detailed References
 - `references/culture-playbook.md` — Netflix analysis, survey design, ritual examples, M&A playbook
 - `templates/culture-code-template.md` — Culture code document template
+
+---
+
+## Why This Skill Exists
+
+Build, measure, and evolve company culture as operational behavior — not wall posters. Covers mission/vision/values workshops, values-to-behaviors translation, culture code creation, culture health assessment, and cultural rituals by stage.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires culture architect capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

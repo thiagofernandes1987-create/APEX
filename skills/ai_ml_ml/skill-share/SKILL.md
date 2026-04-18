@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_ml.skill_share
 name: skill-share
-description: A skill that creates new Claude skills and automatically shares them on Slack using Rube for seamless team collaboration
+description: "Create — A skill that creates new Claude skills and automatically shares them on Slack using Rube for seamless team collaboration"
   and skill discovery.
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - A skill that creates new Claude skills and automatically shares them on Slack using Rube for seamles
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -197,3 +197,17 @@ This skill leverages Rube for:
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Create — A skill that creates new Claude skills and automatically shares them on Slack using Rube for seamless team collaboration
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

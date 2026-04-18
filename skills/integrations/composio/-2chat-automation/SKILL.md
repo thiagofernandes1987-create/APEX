@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.-2chat-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: 2chat-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # 2chat Automation via Rube MCP

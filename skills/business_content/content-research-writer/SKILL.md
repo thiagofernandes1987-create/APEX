@@ -1,7 +1,7 @@
 ---
 skill_id: business_content.content_research_writer
 name: content-research-writer
-description: Assists in writing high-quality content by conducting research, adding citations, improving hooks, iterating
+description: "Use — Assists in writing high-quality content by conducting research, adding citations, improving hooks, iterating"
   on outlines, and providing real-time feedback on each section. Transforms your writing proc
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Assists in writing high-quality content by conducting research
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -638,3 +638,17 @@ Recommended structure for writing projects:
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Use — Assists in writing high-quality content by conducting research, adding citations, improving hooks, iterating
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

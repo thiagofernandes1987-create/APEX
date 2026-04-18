@@ -1,7 +1,7 @@
 ---
 skill_id: business.startup.team_composition_analysis
 name: team-composition-analysis
-description: '''Design optimal team structures, hiring plans, compensation strategies, and equity allocation for early-stage
+description: "Manage — "
   startups from pre-seed through Series A.'''
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - manage team composition analysis task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -499,3 +499,23 @@ For detailed compensation benchmarks and hiring plan templates, see `references/
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Manage —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires team composition analysis capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

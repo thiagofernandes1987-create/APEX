@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.bash.bash_defensive_patterns
 name: bash-defensive-patterns
-description: '''Master defensive Bash programming techniques for production-grade scripts. Use when writing robust shell scripts,
+description: "Implement — "
   CI/CD pipelines, or system utilities requiring fault tolerance and safety.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement bash defensive patterns task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -143,3 +143,23 @@ Refer to `resources/implementation-playbook.md` for detailed patterns, checklist
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires bash defensive patterns capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

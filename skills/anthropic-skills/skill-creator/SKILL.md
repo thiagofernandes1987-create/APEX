@@ -1,11 +1,14 @@
 ---
 name: skill-creator
-description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
+description: "Apply — Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specializ"
 license: Complete terms in LICENSE.txt
 executor: HYBRID
 skill_id: anthropic-skills.skill-creator
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - llm
+  - design
 ---
 
 # Skill Creator
@@ -211,3 +214,23 @@ After testing the skill, users may request improvements. Often this happens righ
 2. Notice struggles or inefficiencies
 3. Identify how SKILL.md or bundled resources should be updated
 4. Implement changes and test again
+
+---
+
+## Why This Skill Exists
+
+Apply — Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires skill creator capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

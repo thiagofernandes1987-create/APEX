@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - proposing a system or process
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -207,3 +207,23 @@ If **~~chat** is connected:
 1. **Be specific about impact** — "Everyone" is not an impact assessment. "200 users in the billing team" is.
 2. **Always have a rollback plan** — Even if you're confident, plan for failure.
 3. **Communicate early** — Surprises create resistance. Previews create buy-in.
+
+---
+
+## Why This Skill Exists
+
+Create a change management request with impact analysis and rollback plan.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when proposing a system or process
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

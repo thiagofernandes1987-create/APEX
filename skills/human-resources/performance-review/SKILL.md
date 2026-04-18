@@ -1,7 +1,7 @@
 ---
 skill_id: human_resources.performance_review
 name: performance-review
-description: Structure a performance review with self-assessment, manager template, and calibration prep. Use when review
+description: "Review — Structure a performance review with self-assessment, manager template, and calibration prep. Use when review"
   season kicks off and you need a self-assessment template, writing a manager review for a di
 version: v00.33.0
 status: ADOPTED
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Structure a performance review with self-assessment
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -254,3 +254,23 @@ If **~~project tracker** is connected:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Review — Structure a performance review with self-assessment, manager template, and calibration prep.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires performance review capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Legislação trabalhista da jurisdição não especificada
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Generate a response to a common legal inquiry using configured templates
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -544,3 +544,23 @@ When helping users create new templates:
 - Track response deadlines and offer to set calendar reminders
 - For regulated responses (DSRs, subpoenas), always note the applicable deadline and regulatory requirements
 - Templates should be living documents; suggest updates when the user modifies a templated response, so the template can be improved over time
+
+---
+
+## Why This Skill Exists
+
+Generate a response to a common legal inquiry using configured templates, with built-in escalation checks for
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires legal response capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

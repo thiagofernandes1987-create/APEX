@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.ml.hugging_face_tool_builder
 name: hugging-face-tool-builder
-description: '''Your purpose is now is to create reusable command line scripts and utilities for using the Hugging Face API,
+description: "Apply — "
   allowing chaining, piping and intermediate processing where helpful. You can access the AP'
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply hugging face tool builder task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -220,3 +220,17 @@ The `hf` CLI command has replaced the now deprecated `huggingface_hub` CLI comma
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

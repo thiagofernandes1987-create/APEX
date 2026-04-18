@@ -1,7 +1,7 @@
 ---
 skill_id: business_productivity.composio_skills
 name: Braintree Automation
-description: 'Braintree Automation: manage payment processing via Stripe-compatible tools for customers, subscriptions, payment
+description: "Use — Braintree Automation: manage payment processing via Stripe-compatible tools for customers, subscriptions, payment"
   methods, and transactions'
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Braintree Automation: manage payment processing via Stripe-compatible tools for customers
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -265,3 +265,23 @@ Arguments:
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Use — Braintree Automation: manage payment processing via Stripe-compatible tools for customers, subscriptions, payment
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires braintree automation capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

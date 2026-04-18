@@ -1,6 +1,6 @@
 ---
 name: discover-brand
-description: This skill orchestrates autonomous discovery of brand materials across enterprise platforms (Notion, Confluence,
+description: "Use — This skill orchestrates autonomous discovery of brand materials across enterprise platforms (Notion, Confluence,"
   Google Drive, Box, SharePoint, Figma, Gong, Granola, Slack). It should be used when the user asks to "discover brand materials",
   "find brand documents", "search for brand guidelines", "audit brand content", "what brand materials do we have", "find our
   style guide", "where are our brand docs", "do we have a style guide", "discover brand voice", "brand content audit", or
@@ -30,7 +30,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - This skill orchestrates autonomous discovery of brand materials across enterprise platforms (Notion
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -191,3 +191,23 @@ For detailed discovery patterns and algorithms, consult:
 
 - **`references/search-strategies.md`** — Platform-specific search queries, query patterns by platform, and tips for maximizing discovery coverage
 - **`references/source-ranking.md`** — Source category definitions, ranking algorithm weights, and triage decision criteria
+
+---
+
+## Why This Skill Exists
+
+Use — This skill orchestrates autonomous discovery of brand materials across enterprise platforms (Notion, Confluence,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires discover brand capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

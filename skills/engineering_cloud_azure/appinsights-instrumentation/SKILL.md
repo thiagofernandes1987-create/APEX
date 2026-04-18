@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.appinsights_instrumentation
 name: appinsights-instrumentation
-description: 'Guidance for instrumenting webapps with Azure Application Insights. Provides telemetry patterns, SDK setup,
+description: "Use — Guidance for instrumenting webapps with Azure Application Insights. Provides telemetry patterns, SDK setup,"
   and configuration references. WHEN: how to instrument app, App Insights SDK, telemetry patte'
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Guidance for instrumenting webapps with Azure Application Insights
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -178,3 +178,17 @@ No matter which option you choose, recommend the user to create the App Insights
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Guidance for instrumenting webapps with Azure Application Insights. Provides telemetry patterns, SDK setup,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

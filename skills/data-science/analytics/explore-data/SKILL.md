@@ -1,7 +1,7 @@
 ---
 skill_id: data_science.analytics.explore_data
 name: explore-data
-description: Profile and explore a dataset to understand its shape, quality, and patterns. Use when encountering a new table
+description: "Use — Profile and explore a dataset to understand its shape, quality, and patterns. Use when encountering a new table"
   or file, checking null rates and column distributions, spotting data quality issues like
 version: v00.33.0
 status: ADOPTED
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - encountering a new table
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -434,3 +434,23 @@ When exploring an unfamiliar data environment:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Use — Profile and explore a dataset to understand its shape, quality, and patterns.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when countering a new table
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dataset não disponível ou muito grande para contexto
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

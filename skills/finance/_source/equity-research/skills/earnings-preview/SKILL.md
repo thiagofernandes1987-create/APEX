@@ -3,6 +3,11 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.equity-research.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - ai_ml
+  - reporting
+  - design
 ---
 # Earnings Preview
 
@@ -74,3 +79,23 @@ One-page earnings preview with:
 - "Whisper numbers" from buy-side surveys are often more relevant than published consensus
 - Historical earnings reactions help calibrate expectations (search for "[company] earnings reaction history")
 - Options-implied move tells you what the market expects — compare to your scenarios
+
+---
+
+## Why This Skill Exists
+
+Build pre-earnings analysis with estimate models, scenario frameworks, and key metrics to watch. Use before a company reports quarterly earnings to prepare positioning notes, set up bull/bear scenarios, and identify what will move the stock. Triggers on "earnings preview", "what to watch for [compan
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires earnings preview capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

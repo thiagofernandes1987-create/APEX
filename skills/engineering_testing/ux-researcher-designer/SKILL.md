@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_testing.ux_researcher_designer
 name: ux-researcher-designer
-description: UX research and design toolkit for Senior UX Designer/Researcher including data-driven persona generation, journey
+description: "Use — UX research and design toolkit for Senior UX Designer/Researcher including data-driven persona generation, journey"
   mapping, usability testing frameworks, and research synthesis. Use for user research,
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - UX research and design toolkit for Senior UX Designer/Researcher including data-driven persona gener
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -529,3 +529,23 @@ Detailed reference guides in `references/`:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — UX research and design toolkit for Senior UX Designer/Researcher including data-driven persona generation, journey
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ux researcher designer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

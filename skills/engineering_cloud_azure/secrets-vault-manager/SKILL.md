@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.secrets_vault_manager
 name: secrets-vault-manager
-description: Use when the user asks to set up secret management infrastructure, integrate HashiCorp Vault, configure cloud
+description: "Use — Use when the user asks to set up secret management infrastructure, integrate HashiCorp Vault, configure cloud"
   secret stores (AWS Secrets Manager, Azure Key Vault, GCP Secret Manager), implement secret
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user asks to set up secret management infrastructure
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -521,3 +521,23 @@ Eliminate long-lived secrets in CI by using OIDC federation:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to set up secret management infrastructure, integrate HashiCorp Vault, configure cloud
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

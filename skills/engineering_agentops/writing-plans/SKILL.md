@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.writing-plans
 name: writing-plans
-description: >
+description: "Use — Cria planos de implementação exaustivos assumindo que o executor tem zero contexto"
   Cria planos de implementação exaustivos assumindo que o executor tem zero contexto
   do projeto. Cada tarefa tem: arquivo exato a modificar, código completo, steps de
   verificação. DRY, YAGNI, TDD, commits frequentes. Mapeia estrutura de arquivos
@@ -230,3 +230,23 @@ After saving the plan, offer execution choice:
 **If Inline Execution chosen:**
 - **REQUIRED SUB-SKILL:** Use superpowers:executing-plans
 - Batch execution with checkpoints for review
+
+---
+
+## Why This Skill Exists
+
+Use — Cria planos de implementação exaustivos assumindo que o executor tem zero contexto
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires writing plans capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+Se spec cobre múltiplos subsistemas independentes: decompor em planos separados.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

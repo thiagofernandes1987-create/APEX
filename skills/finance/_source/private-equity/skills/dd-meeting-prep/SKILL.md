@@ -3,11 +3,13 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.private-equity.skills
 status: CANDIDATE
 security: {level: high, pii: true, approval_required: true}
+anchors:
+  - finance
+  - customer_success
 ---
 # Diligence Meeting Prep
 
-description: Prepare for due diligence meetings — management presentations, expert network calls, customer references, and advisor sessions. Generates targeted question lists, benchmarks to reference, and red flags to probe. Use before any diligence meeting or call. Triggers on "prep for management meeting", "diligence call prep", "expert call questions", "customer reference questions", or "meeting prep for [company]".
-
+description: "Analyze — Prepare for due diligence meetings — management presentations, expert network calls, customer references, and advisor sessions. Generates targeted question lists, benchmarks to ref"
 ## Workflow
 
 ### Step 1: Meeting Context
@@ -104,3 +106,23 @@ One-page meeting prep doc:
 - Take notes on body language and confidence levels, not just answers
 - Always end with: "What haven't we asked about that we should?"
 - Keep the question list to 15-20 max — you won't get through more in a 60-90 min session
+
+---
+
+## Why This Skill Exists
+
+Analyze — Prepare for due diligence meetings — management presentations, expert network calls, customer references, and advisor sessions. Generates targeted question lists, benchmarks to ref
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires dd meeting prep capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.engineering.cs_senior_engineer
 name: "cs-senior-engineer"
-description: "Senior Engineer agent for architecture decisions, code review, DevOps, and API design. Orchestrates engineering and engineering-team skills for technical implementation work. Spawn when users need sys"
+description: "Manage — Senior Engineer agent for architecture decisions, code review, DevOps, and API design. Orchestrates engineering and engineering-team skills for technical implementation work. Spawn"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -124,3 +124,22 @@ Cross-cutting senior engineer covering architecture, backend, DevOps, security, 
 - [cs-engineering-lead](../engineering-team/cs-engineering-lead.md) -- Team coordination, incident response, and cross-functional delivery
 - [cs-product-manager](../product/cs-product-manager.md) -- Feature prioritization and requirements context
 
+---
+
+## Why This Skill Exists
+
+Manage — Senior Engineer agent for architecture decisions, code review, DevOps, and API design. Orchestrates engineering and engineering-team skills for technical implementation work. Spawn
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cs senior engineer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

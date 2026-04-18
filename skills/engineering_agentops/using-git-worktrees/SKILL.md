@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.using-git-worktrees
 name: using-git-worktrees
-description: >
+description: "Use — Cria workspaces git isolados para desenvolvimento paralelo sem troca de branches."
   Cria workspaces git isolados para desenvolvimento paralelo sem troca de branches.
   Processo sistemático: verificar diretório existente → checar CLAUDE.md → perguntar ao usuário.
   Verifica .gitignore antes de criar, roda setup do projeto, valida baseline de testes.
@@ -290,3 +290,23 @@ Ready to implement auth feature
 
 **Pairs with:**
 - **finishing-a-development-branch** - REQUIRED for cleanup after work complete
+
+---
+
+## Why This Skill Exists
+
+Use — Cria workspaces git isolados para desenvolvimento paralelo sem troca de branches.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires using git worktrees capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+Se diretório não está no .gitignore: adicionar imediatamente antes de criar o worktree.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

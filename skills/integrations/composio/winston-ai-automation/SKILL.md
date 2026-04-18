@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.winston-ai-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: winston-ai-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Winston AI Automation via Rube MCP

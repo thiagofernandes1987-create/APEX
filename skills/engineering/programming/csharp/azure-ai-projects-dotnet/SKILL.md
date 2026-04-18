@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.csharp.azure_ai_projects_dotnet
 name: azure-ai-projects-dotnet
-description: Azure AI Projects SDK for .NET. High-level client for Azure AI Foundry projects including agents, connections,
+description: "Implement — Azure AI Projects SDK for .NET. High-level client for Azure AI Foundry projects including agents, connections,"
   datasets, deployments, evaluations, and indexes.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Azure AI Projects SDK for
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -449,3 +449,17 @@ This skill is applicable to execute the workflow or actions described in the ove
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Azure AI Projects SDK for .NET. High-level client for Azure AI Foundry projects including agents, connections,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

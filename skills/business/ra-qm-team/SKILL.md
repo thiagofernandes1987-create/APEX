@@ -1,6 +1,6 @@
 ---
 name: "ra-qm-skills"
-description: "12 regulatory & QM agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. ISO 13485 QMS, MDR 2017/745, FDA 510(k)/PMA, ISO 27001 ISMS, GDPR/DSGVO, risk management (ISO 14971), CAPA, document control, auditing. Python tools (stdlib-only)."
+description: "Manage — 12 regulatory & QM agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. ISO 13485 QMS, MDR 2017/745, FDA 510(k)/PMA, ISO 27001 ISMS, GDPR/DSGVO, risk mana"
 version: 1.0.0
 author: Alireza Rezvani
 license: MIT
@@ -20,6 +20,11 @@ executor: LLM_BEHAVIOR
 skill_id: business.ra-qm-team
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - business
+  - llm
+  - agent
+  - compliance
 ---
 
 # Regulatory Affairs & Quality Management Skills
@@ -68,3 +73,23 @@ python3 gdpr-dsgvo-expert/scripts/gdpr_compliance_checker.py --help
 
 - Load only the specific skill SKILL.md you need
 - Always verify compliance outputs against current regulations
+
+---
+
+## Why This Skill Exists
+
+Manage — 12 regulatory & QM agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. ISO 13485 QMS, MDR 2017/745, FDA 510(k)/PMA, ISO 27001 ISMS, GDPR/DSGVO, risk mana
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ra qm skills capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: security.supply_chain_risk_auditor
 name: supply-chain-risk-auditor
-description: '''Identifies dependencies at heightened risk of exploitation or takeover. Use when assessing supply chain attack
+description: "Audit — "
   surface, evaluating dependency health, or scoping security engagements.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - audit supply chain risk auditor task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -160,3 +160,17 @@ You achieve your purpose by:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Audit —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Análise de código malicioso potencial
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

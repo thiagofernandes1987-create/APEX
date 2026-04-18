@@ -1,7 +1,7 @@
 ---
 skill_id: marketingskills.marketing.schema_markup
 name: schema-markup
-description: When the user wants to add, fix, or optimize schema markup and structured data on their site. Also use when the
+description: "Create — When the user wants to add, fix, or optimize schema markup and structured data on their site. Also use when the"
   user mentions 'schema markup,' 'structured data,' 'JSON-LD,' 'rich snippets,' 'schema.or
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to add
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -295,3 +295,23 @@ You can combine multiple schema types on one page using `@graph`:
 
 ## Diff History
 - **v00.33.0**: Ingested from marketingskills-main
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to add, fix, or optimize schema markup and structured data on their site. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires schema markup capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

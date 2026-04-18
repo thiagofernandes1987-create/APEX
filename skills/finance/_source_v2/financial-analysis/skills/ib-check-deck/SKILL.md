@@ -1,6 +1,6 @@
 ---
 name: ib-check-deck
-description: Investment banking presentation quality checker. Reviews a pitch deck or client-ready presentation for (1) number
+description: "Analyze — Investment banking presentation quality checker. Reviews a pitch deck or client-ready presentation for (1) number"
   consistency across slides, (2) data-narrative alignment, (3) language polish against IB standards, (4) visual and formatting
   QC. Use whenever the user asks to review, check, QC, proof, or do a final pass on a deck, pitch, or client materials — including
   requests like "check my numbers", "reconcile figures across slides", "is this client-ready", or "what am I missing before
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Investment banking presentation quality checker
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -186,3 +186,23 @@ Use `references/report-format.md` as the structure. Categorize by severity:
 - **Minor** — font sizes, spacing, date formats. Polish.
 
 Lead with criticals. If there aren't any, say so explicitly — "no number inconsistencies found" is a finding, not an absence of one.
+
+---
+
+## Why This Skill Exists
+
+Analyze — Investment banking presentation quality checker. Reviews a pitch deck or client-ready presentation for (1) number
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ib check deck capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

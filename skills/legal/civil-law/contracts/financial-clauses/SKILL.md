@@ -1,7 +1,7 @@
 ---
 skill_id: legal.civil_law.contracts.financial_clauses
 name: Cláusulas Financeiras em Contratos Civis Brasileiros
-description: Interpreta e calcula cláusulas de reajuste, correção monetária, juros de mora e multa em contratos civis. Integra
+description: "Review — Interpreta e calcula cláusulas de reajuste, correção monetária, juros de mora e multa em contratos civis. Integra"
   Art. 406 CC (SELIC), IGPM, IPCA, INPC.
 version: v00.33.0
 status: ADOPTED
@@ -48,7 +48,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Interpreta e calcula cláusulas de reajuste
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:

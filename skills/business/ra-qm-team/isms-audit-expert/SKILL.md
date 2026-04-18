@@ -1,6 +1,6 @@
 ---
 name: "isms-audit-expert"
-description: Information Security Management System (ISMS) audit expert for ISO 27001 compliance verification, security control assessment, and certification support. Use when the user mentions ISO 27001, ISMS audit, Annex A controls, Statement of Applicability (SOA), gap analysis, nonconformity management, internal audit, surveillance audit, or security certification preparation. Helps review control implementation evidence, document audit findings, classify nonconformities, generate risk-based audit plans, map controls to Annex A requirements, prepare Stage 1 and Stage 2 audit documentation, and support corrective action workflows.
+description: "Manage — Information Security Management System (ISMS) audit expert for ISO 27001 compliance verification, security control assessment, and certification support. Use when the user mentions"
 triggers:
   - ISMS audit
   - ISO 27001 audit
@@ -15,6 +15,11 @@ executor: HYBRID
 skill_id: business.ra-qm-team.isms-audit-expert
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - business
+  - customer_success
+  - compliance
+  - security
 ---
 
 # ISMS Audit Expert
@@ -236,3 +241,23 @@ python scripts/isms_audit_scheduler.py --controls controls.csv --format markdown
 | Finding closure rate | >90% within SLA | Closed on time vs. total |
 | Major nonconformities | 0 at certification | Count per certification cycle |
 | Audit effectiveness | Incidents prevented | Security improvements implemented |
+
+---
+
+## Why This Skill Exists
+
+Manage — Information Security Management System (ISMS) audit expert for ISO 27001 compliance verification, security control assessment, and certification support.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

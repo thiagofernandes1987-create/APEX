@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.remotion_best_practices
 name: remotion-best-practices
-description: '''Best practices for Remotion - Video creation in React'''
+description: "Implement — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/frontend/react/remotion-best-practices
@@ -43,7 +43,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement remotion best practices task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -139,3 +139,17 @@ Read individual rule files for detailed explanations and code examples:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

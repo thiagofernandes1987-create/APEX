@@ -1,7 +1,7 @@
 ---
 skill_id: data_science.analytics.analyze
 name: analyze
-description: Answer data questions -- from quick lookups to full analyses. Use when looking up a single metric, investigating
+description: "Use — Answer data questions -- from quick lookups to full analyses. Use when looking up a single metric, investigating"
   what's driving a trend or drop, comparing segments over time, or preparing a formal dat
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - looking up a single metric
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -220,3 +220,23 @@ When a chart would communicate results more effectively than a table:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Use — Answer data questions -- from quick lookups to full analyses.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when looking up a single metric, investigating
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dataset não disponível ou muito grande para contexto
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

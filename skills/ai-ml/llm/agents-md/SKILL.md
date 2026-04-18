@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.agents_md
 name: agents-md
-description: This skill should be used when the user asks to 'create AGENTS.md', 'update AGENTS.md', 'maintain agent docs',
+description: "Apply — This skill should be used when the user asks to 'create AGENTS.md', 'update AGENTS.md', 'maintain agent docs',"
   'set up CLAUDE.md', or needs to keep agent instructions concise. Enforces research-backed
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - This skill should be used when the user asks to 'create AGENTS
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -228,3 +228,17 @@ Co-Authored-By: (the agent model's name and attribution byline)
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — This skill should be used when the user asks to
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

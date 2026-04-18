@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.go-to-webinar-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: go-to-webinar-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # GoToWebinar Automation via Rube MCP

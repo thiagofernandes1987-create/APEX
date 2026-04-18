@@ -1,6 +1,6 @@
 ---
 name: "testrail"
-description: >-
+description: "Implement — Sync tests with TestRail. Use when user mentions 'testrail', 'test management',"
   Sync tests with TestRail. Use when user mentions "testrail", "test management",
   "test cases", "test run", "sync test cases", "push results to testrail",
   or "import from testrail".
@@ -8,6 +8,9 @@ executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.playwright-pro.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - testing
 ---
 
 # TestRail Integration
@@ -131,3 +134,23 @@ This annotation is the bridge between Playwright and TestRail.
 - Operation summary with counts
 - Any errors or unmatched cases
 - Link to TestRail run/results
+
+---
+
+## Why This Skill Exists
+
+Implement — Sync tests with TestRail.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

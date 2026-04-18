@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.performance_testing_review_ai_review
 name: performance-testing-review-ai-review
-description: '''You are an expert AI-powered code review specialist combining automated static analysis, intelligent pattern
+description: "Apply — "
   recognition, and modern DevOps practices. Leverage AI tools (GitHub Copilot, Qodo, GPT-5, '
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply performance testing review ai review task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -558,3 +558,23 @@ Use this tool to transform code review from manual process to automated AI-assis
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires performance testing review ai review capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

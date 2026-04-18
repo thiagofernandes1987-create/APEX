@@ -1,6 +1,6 @@
 ---
 name: competitor-alternatives
-description: 'When the user wants to create competitor comparison or alternative pages for SEO and sales enablement. Also
+description: "Create — When the user wants to create competitor comparison or alternative pages for SEO and sales enablement. Also"
   use when the user mentions ''alternative page,'' ''vs page,'' ''competitor comparison,'' ''comparison page,'' ''[Product]
   vs [Product],'' ''[Product] alternative,'' ''competitive landing pages,'' ''how do we compare to X,'' ''battle card,'' or
   ''competitor teardown.'' Use this for any content that positions your product against competitors. Covers four formats:
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'When the user wants to create competitor comparison or alternative pages for SEO and sales enableme
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -364,3 +364,23 @@ Recommended pages to create with priority order based on search volume.
 - **seo-audit**: For optimizing competitor pages
 - **schema-markup**: For FAQ and comparison schema
 - **sales-enablement**: For internal sales collateral, decks, and objection docs
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to create competitor comparison or alternative pages for SEO and sales enablement. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires competitor alternatives capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.viboscope
 name: viboscope
-description: '''Psychological compatibility matching — find cofounders, collaborators, and friends through validated psychometrics'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/viboscope
@@ -30,7 +30,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use viboscope task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -128,3 +128,17 @@ When someone opens it with their AI agent, both see a compatibility breakdown.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

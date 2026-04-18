@@ -1,6 +1,6 @@
 ---
 name: schema-markup
-description: When the user wants to add, fix, or optimize schema markup and structured data on their site. Also use when the
+description: "Create — When the user wants to add, fix, or optimize schema markup and structured data on their site. Also use when the"
   user mentions "schema markup," "structured data," "JSON-LD," "rich snippets," "schema.org," "FAQ schema," "product schema,"
   "review schema," "breadcrumb schema," "Google rich results," "knowledge panel," "star ratings in search," or "add structured
   data." Use this whenever someone wants their pages to show enhanced results in Google. For broader SEO issues, see seo-audit.
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to add
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -286,3 +286,23 @@ You can combine multiple schema types on one page using `@graph`:
 - **ai-seo**: For AI search optimization (schema helps AI understand content)
 - **programmatic-seo**: For templated schema at scale
 - **site-architecture**: For breadcrumb structure and navigation schema planning
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to add, fix, or optimize schema markup and structured data on their site. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires schema markup capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

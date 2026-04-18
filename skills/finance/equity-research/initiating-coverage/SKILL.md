@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Create institutional-quality equity research initiation reports through a 5-task workflow
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -893,3 +893,23 @@ A successful initiation report workflow should:
 
 ## Diff History
 - **v00.33.0**: Ingested from financial-services-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Create institutional-quality equity research initiation reports through a 5-task workflow. Tasks must be executed
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires initiating coverage capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

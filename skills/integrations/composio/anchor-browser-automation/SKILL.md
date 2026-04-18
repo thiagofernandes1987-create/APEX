@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.anchor-browser-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: anchor-browser-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Anchor Browser Automation via Rube MCP

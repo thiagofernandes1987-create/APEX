@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.upstash_qstash
 name: upstash-qstash
-description: Upstash QStash expert for serverless message queues, scheduled
+description: "Use — Upstash QStash expert for serverless message queues, scheduled"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/upstash-qstash
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Upstash QStash expert for serverless message queues
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1040,3 +1040,17 @@ Works well with: `vercel-deployment`, `nextjs-app-router`, `redis-specialist`, `
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Upstash QStash expert for serverless message queues, scheduled
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

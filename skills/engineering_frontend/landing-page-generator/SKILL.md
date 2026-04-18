@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_frontend.landing_page_generator
 name: landing-page-generator
-description: 'Generates high-converting landing pages as complete Next.js/React (TSX) components with Tailwind CSS. Creates
+description: "Generate — Generates high-converting landing pages as complete Next.js/React (TSX) components with Tailwind CSS. Creates"
   hero sections, feature grids, pricing tables, FAQ accordions, testimonial blocks, and CTA '
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Generates high-converting landing pages as complete Next
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -312,3 +312,23 @@ Inject `FAQPage` JSON-LD via `<script type="application/ld+json" dangerouslySetI
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Generate — Generates high-converting landing pages as complete Next.js/React (TSX) components with Tailwind CSS. Creates
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires landing page generator capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

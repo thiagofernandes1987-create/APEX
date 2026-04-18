@@ -1,10 +1,14 @@
 ---
 name: "ci-cd-pipeline-builder"
-description: "CI/CD Pipeline Builder"
+description: "Implement — CI/CD Pipeline Builder"
 executor: HYBRID
 skill_id: engineering.cs-engineering.ci-cd-pipeline-builder
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - deployment
+  - design
 ---
 
 # CI/CD Pipeline Builder
@@ -149,3 +153,17 @@ Then layer advanced behavior (matrix builds, security scans, deploy gates).
 - Introduce test matrix only when compatibility truly requires it.
 - Separate deploy jobs from CI jobs to keep feedback fast.
 - Track pipeline duration and flakiness as first-class metrics.
+
+---
+
+## Why This Skill Exists
+
+Implement — CI/CD Pipeline Builder
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.pdf4me-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: pdf4me-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Pdf4me Automation via Rube MCP

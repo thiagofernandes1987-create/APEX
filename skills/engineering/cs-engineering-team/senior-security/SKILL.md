@@ -1,6 +1,6 @@
 ---
 name: "senior-security"
-description: Security engineering toolkit for threat modeling, vulnerability analysis, secure architecture, and penetration testing. Includes STRIDE analysis, OWASP guidance, cryptography patterns, and security scanning tools. Use when the user asks about security reviews, threat analysis, vulnerability assessments, secure coding practices, security audits, attack surface analysis, CVE remediation, or security best practices.
+description: "Implement — Security engineering toolkit for threat modeling, vulnerability analysis, secure architecture, and penetration testing. Includes STRIDE analysis, OWASP guidance, cryptography patte"
 triggers:
   - security architecture
   - threat modeling
@@ -18,6 +18,13 @@ executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-security
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - engineering
+  - testing
+  - ai_ml
+  - management
+  - security
+  - design
 ---
 
 # Senior Security Engineer
@@ -446,3 +453,23 @@ For compliance framework requirements (OWASP ASVS, CIS Benchmarks, NIST CSF, PCI
 | [senior-secops](../senior-secops/) | Security monitoring, incident response |
 | [senior-backend](../senior-backend/) | Secure API development |
 | [senior-architect](../senior-architect/) | Security architecture decisions |
+
+---
+
+## Why This Skill Exists
+
+Implement — Security engineering toolkit for threat modeling, vulnerability analysis, secure architecture, and penetration testing. Includes STRIDE analysis, OWASP guidance, cryptography patte
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires senior security capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

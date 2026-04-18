@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.dx_optimizer
 name: dx-optimizer
-description: Developer Experience specialist. Improves tooling, setup, and workflows. Use PROACTIVELY when setting up new
+description: "Use — Developer Experience specialist. Improves tooling, setup, and workflows. Use PROACTIVELY when setting up new"
   projects, after team feedback, or when development friction is noticed.
 version: v00.33.0
 status: CANDIDATE
@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Developer Experience specialist
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -161,3 +161,23 @@ Remember: Great DX is invisible when it works and obvious when it doesn't. Aim f
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Developer Experience specialist. Improves tooling, setup, and workflows. Use PROACTIVELY when setting up new
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires dx optimizer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: prospect
-description: Full ICP-to-leads pipeline. Describe your ideal customer in plain English and get a ranked table of enriched
+description: "Use — Full ICP-to-leads pipeline. Describe your ideal customer in plain English and get a ranked table of enriched"
   decision-maker leads with emails and phone numbers.
 user-invocable: true
 argument-hint: '[describe your ideal customer]'
@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Full ICP-to-leads pipeline
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -168,3 +168,23 @@ Ask the user:
 3. **Deep-dive a company** — Run `/apollo:company-intel` on any company from the list
 4. **Refine the search** — Adjust filters and re-run
 5. **Export** — Format leads as a CSV-style table for easy copy-paste
+
+---
+
+## Why This Skill Exists
+
+Use — Full ICP-to-leads pipeline. Describe your ideal customer in plain English and get a ranked table of enriched
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires prospect capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

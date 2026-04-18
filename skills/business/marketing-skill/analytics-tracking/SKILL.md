@@ -11,6 +11,13 @@ executor: HYBRID
 skill_id: business.marketing-skill.analytics-tracking
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - marketing
+  - data
+  - data_science
+  - visualization
+  - design
 ---
 
 # Analytics Tracking
@@ -373,3 +380,23 @@ All output follows the structured communication standard:
 - **analytics-tracking** (this skill): covers setup only. For dashboards and reporting, use campaign-analytics.
 - **seo-audit**: Use for technical SEO. NOT for analytics tracking (though both use GA4 data).
 - **gdpr-dsgvo-expert**: Use for GDPR compliance posture. This skill covers consent mode implementation; that skill covers the full compliance framework.
+
+---
+
+## Why This Skill Exists
+
+Set up, audit, and debug analytics tracking implementation — GA4, Google Tag Manager, event taxonomy, conversion tracking, and data quality.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when building a tracking plan from scratch, auditing existing analytics for gaps or errors, debugging missing events, or setting up GTM
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

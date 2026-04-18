@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_mobile.app_store_optimization
 name: app-store-optimization
-description: App Store Optimization (ASO) toolkit for researching keywords, analyzing competitor rankings, generating metadata
+description: "Use — App Store Optimization (ASO) toolkit for researching keywords, analyzing competitor rankings, generating metadata"
   suggestions, and improving app visibility on Apple App Store and Google Play Store. Us
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - App Store Optimization (ASO) toolkit for researching keywords
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -593,3 +593,23 @@ All output passes quality verification:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — App Store Optimization (ASO) toolkit for researching keywords, analyzing competitor rankings, generating metadata
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires app store optimization capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

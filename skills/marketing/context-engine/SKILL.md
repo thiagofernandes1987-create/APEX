@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.context_engine
 name: context-engine
-description: Loads and manages company context for all C-suite advisor skills. Reads ~/.claude/company-context.md, detects
+description: "Create — Loads and manages company context for all C-suite advisor skills. Reads ~/.claude/company-context.md, detects"
   stale context (>90 days), enriches context during conversations, and enforces privacy/anon
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Loads and manages company context for all C-suite advisor skills
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -240,3 +240,23 @@ Missing required fields: note gaps, work around in session, ask in-session only 
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Create — Loads and manages company context for all C-suite advisor skills. Reads ~/.claude/company-context.md, detects
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires context engine capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

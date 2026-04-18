@@ -1,7 +1,7 @@
 ---
 skill_id: business_human_resources.codebase_onboarding
 name: codebase-onboarding
-description: Codebase Onboarding
+description: "Use — Codebase Onboarding"
 version: v00.33.0
 status: CANDIDATE
 domain_path: business/human-resources
@@ -45,7 +45,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use codebase onboarding task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -180,3 +180,17 @@ Detailed template and section examples live in:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Codebase Onboarding
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

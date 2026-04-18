@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.documentation.sred_project_organizer
 name: sred-project-organizer
-description: Take a list of projects and their related documentation, and organize them into the SRED format for submission.
+description: "Implement — Take a list of projects and their related documentation, and organize them into the SRED format for submission."
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/documentation/sred-project-organizer
@@ -43,7 +43,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Take a list of projects and their related documentation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -232,3 +232,17 @@ Full documentation on the SRED program: https://www.canada.ca/en/revenue-agency/
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Take a list of projects and their related documentation, and organize them into the SRED format for submission.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

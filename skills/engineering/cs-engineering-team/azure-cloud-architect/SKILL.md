@@ -5,6 +5,10 @@ executor: HYBRID
 skill_id: engineering.cs-engineering-team.azure-cloud-architect
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - cloud
+  - design
 ---
 
 # Azure Cloud Architect
@@ -465,3 +469,23 @@ Provide these details for architecture design:
 | `references/architecture_patterns.md` | 5 patterns: web app, microservices/AKS, serverless, data pipeline, multi-region |
 | `references/service_selection.md` | Decision matrices for compute, database, storage, messaging, networking |
 | `references/best_practices.md` | Naming conventions, tagging, RBAC, network security, monitoring, DR |
+
+---
+
+## Why This Skill Exists
+
+Design Azure architectures for startups and enterprises.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when asked to design Azure infrastructure, create Bicep/ARM templates, optimize Azure costs, set up Azure DevOps pipelines, or migrate to Azure
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

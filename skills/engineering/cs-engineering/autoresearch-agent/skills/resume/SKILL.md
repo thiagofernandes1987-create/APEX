@@ -1,11 +1,14 @@
 ---
 name: "resume"
-description: "Resume a paused experiment. Checkout the experiment branch, read results history, continue iterating."
+description: "Implement — Resume a paused experiment. Checkout the experiment branch, read results history, continue iterating."
 command: /ar:resume
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.autoresearch-agent.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - research
 ---
 
 # /ar:resume — Resume Experiment
@@ -79,3 +82,23 @@ How would you like to continue?
 
 If the user picks loop, hand off to `/ar:loop` with the experiment pre-selected.
 If single, hand off to `/ar:run`.
+
+---
+
+## Why This Skill Exists
+
+Implement — Resume a paused experiment. Checkout the experiment branch, read results history, continue iterating.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires resume capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

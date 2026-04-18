@@ -1,7 +1,7 @@
 ---
 skill_id: anthropic_official.slack_gif_creator
 name: slack-gif-creator
-description: Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools,
+description: "Apply — Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools,"
   and animation concepts. Use when users request animated GIFs for Slack like 'make me a G
 version: v00.33.0
 status: ADOPTED
@@ -33,7 +33,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Knowledge and utilities for creating animated GIFs optimized for Slack
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -327,3 +327,23 @@ pip install pillow imageio numpy
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Apply — Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires slack gif creator capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

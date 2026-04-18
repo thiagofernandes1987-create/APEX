@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_api.chro_advisor
 name: chro-advisor
-description: People leadership for scaling companies. Hiring strategy, compensation design, org structure, culture, and retention.
+description: "Use — People leadership for scaling companies. Hiring strategy, compensation design, org structure, culture, and retention."
   Use when building hiring plans, designing comp frameworks, restructuring teams, ma
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - People leadership for scaling companies
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -259,3 +259,23 @@ All output passes the Internal Quality Loop before reaching the founder (see `ag
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — People leadership for scaling companies. Hiring strategy, compensation design, org structure, culture, and retention.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires chro advisor capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

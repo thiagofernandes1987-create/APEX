@@ -1,10 +1,12 @@
 ---
 name: "runbook-generator"
-description: "Runbook Generator"
+description: "Implement — Runbook Generator"
 executor: HYBRID
 skill_id: engineering.cs-engineering.runbook-generator
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
 ---
 
 # Runbook Generator
@@ -78,3 +80,17 @@ python3 scripts/runbook_generator.py payments-api --owner platform --output docs
 2. Include health checks after every critical step.
 3. Validate runbooks on a fixed review cadence.
 4. Update runbook content after incidents and postmortems.
+
+---
+
+## Why This Skill Exists
+
+Implement — Runbook Generator
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

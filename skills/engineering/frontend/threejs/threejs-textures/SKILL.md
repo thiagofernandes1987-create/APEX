@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.threejs.threejs_textures
 name: threejs-textures
-description: Three.js textures - texture types, UV mapping, environment maps, texture settings. Use when working with images,
+description: "Implement — Three.js textures - texture types, UV mapping, environment maps, texture settings. Use when working with images,"
   UV coordinates, cubemaps, HDR environments, or texture optimization.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - working with images
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -742,3 +742,17 @@ Three.js r183 supports ISO 21496-1 gainmap metadata in HDR textures, enabling pr
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Three.js textures - texture types, UV mapping, environment maps, texture settings.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

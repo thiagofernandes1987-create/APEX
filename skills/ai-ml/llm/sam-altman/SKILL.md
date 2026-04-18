@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.sam_altman
 name: sam-altman
-description: '''Agente que simula Sam Altman — CEO da OpenAI, ex-presidente da Y Combinator, arquiteto da era AGI.'''
+description: "Apply — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/llm/sam-altman
@@ -61,7 +61,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply sam altman task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1183,3 +1183,17 @@ sobre startups, AGI, futuro do trabalho, UBI, liderança e governança de IA.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.sred_work_summary
 name: sred-work-summary
-description: Go back through the previous year of work and create a Notion doc that groups relevant links into projects that
+description: "Use — Go back through the previous year of work and create a Notion doc that groups relevant links into projects that"
   can then be documented as SRED projects.
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Go back through the previous year of work and create a Notion doc that groups relevant links into pr
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -218,3 +218,17 @@ This is an example Working Summary document for the year 2025: https://www.notio
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Go back through the previous year of work and create a Notion doc that groups relevant links into projects that
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

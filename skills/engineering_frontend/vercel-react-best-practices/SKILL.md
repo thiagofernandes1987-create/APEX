@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_frontend.vercel_react_best_practices
 name: vercel-react-best-practices
-description: React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when
+description: "Use — React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when"
   writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patter
 version: v00.33.0
 status: CANDIDATE
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - React and Next
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -246,3 +246,23 @@ For the complete guide with all rules expanded: `AGENTS.md`
 
 ## Diff History
 - **v00.33.0**: Ingested from cherry-studio
+
+---
+
+## Why This Skill Exists
+
+Use — React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires vercel react best practices capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

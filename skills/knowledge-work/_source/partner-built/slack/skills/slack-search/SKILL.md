@@ -1,6 +1,6 @@
 ---
 name: slack-search
-description: Guidance for effectively searching Slack to find messages, files, channels, and people
+description: "Use — Guidance for effectively searching Slack to find messages, files, channels, and people"
 tier: ADAPTED
 anchors:
 - slack-search
@@ -31,7 +31,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Guidance for effectively searching Slack to find messages
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -174,3 +174,17 @@ After finding relevant messages:
 - **Parentheses don't work.** Don't try to group search terms with `()`.
 - **Search is not real-time.** Very recent messages (last few seconds) may not appear in search results. Use `slack_read_channel` for the most recent messages.
 - **Private channel access.** Use `slack_search_public_and_private` when you need to include private channels, but note this requires user consent.
+
+---
+
+## Why This Skill Exists
+
+Use — Guidance for effectively searching Slack to find messages, files, channels, and people
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

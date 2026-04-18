@@ -1,7 +1,7 @@
 ---
 skill_id: finance.financial_analysis.ib_check_deck
 name: ib-check-deck
-description: Investment banking presentation quality checker. Reviews a pitch deck or client-ready presentation for (1) number
+description: "Analyze — Investment banking presentation quality checker. Reviews a pitch deck or client-ready presentation for (1) number"
   consistency across slides, (2) data-narrative alignment, (3) language polish against I
 version: v00.33.0
 status: ADOPTED
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Investment banking presentation quality checker
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -189,3 +189,23 @@ Lead with criticals. If there aren't any, say so explicitly — "no number incon
 
 ## Diff History
 - **v00.33.0**: Ingested from financial-services-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Analyze — Investment banking presentation quality checker. Reviews a pitch deck or client-ready presentation for (1) number
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ib check deck capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

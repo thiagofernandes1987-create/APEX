@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.monitoring.grafana_dashboards
 name: grafana-dashboards
-description: '''Create and manage production-ready Grafana dashboards for comprehensive system observability.'''
+description: "Implement — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/devops/monitoring/grafana-dashboards
@@ -42,7 +42,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement grafana dashboards task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -479,3 +479,23 @@ resource "grafana_folder" "monitoring" {
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires grafana dashboards capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

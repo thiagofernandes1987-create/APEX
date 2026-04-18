@@ -1,7 +1,7 @@
 ---
 skill_id: healthcare.fhir_developer_skill
 name: fhir-developer-skill
-description: '>'
+description: "Analyze — >"
 version: v00.33.0
 status: ADOPTED
 domain_path: healthcare/fhir-developer-skill
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyze fhir developer skill task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -392,3 +392,23 @@ Creates a FastAPI project with correct models, OperationOutcome helpers, and Pat
 
 ## Diff History
 - **v00.33.0**: Ingested from healthcare-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Analyze — >
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires fhir developer skill capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Informação clínica usada para decisão médica real
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

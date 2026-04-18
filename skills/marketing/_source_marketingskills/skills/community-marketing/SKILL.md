@@ -7,6 +7,11 @@ executor: LLM_BEHAVIOR
 skill_id: marketing._source_marketingskills.skills.community-marketing
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - marketing
+  - customer_success
+  - management
+  - design
 ---
 
 # Community Marketing
@@ -145,3 +150,23 @@ Depending on what the user needs, produce one of:
 - **Health Audit Report** — Current metrics, diagnosis, top 3 priorities to fix
 
 Always be specific. Generic advice ("be consistent," "provide value") is not useful. Give the user something they can act on today.
+
+---
+
+## Why This Skill Exists
+
+Build and leverage online communities to drive product growth and brand loyalty.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires community marketing capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

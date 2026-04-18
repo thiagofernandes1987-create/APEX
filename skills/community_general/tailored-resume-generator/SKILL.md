@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.tailored_resume_generator
 name: tailored-resume-generator
-description: Analyzes job descriptions and generates tailored resumes that highlight relevant experience, skills, and achievements
+description: "Generate — Analyzes job descriptions and generates tailored resumes that highlight relevant experience, skills, and achievements"
   to maximize interview chances
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyzes job descriptions and generates tailored resumes that highlight relevant experience
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -446,3 +446,17 @@ This skill processes your personal and professional information to generate tail
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Generate — Analyzes job descriptions and generates tailored resumes that highlight relevant experience, skills, and achievements
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

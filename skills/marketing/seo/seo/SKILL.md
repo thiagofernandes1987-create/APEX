@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo
 name: seo
-description: '''Run a broad SEO audit across technical SEO, on-page SEO, schema, sitemaps, content quality, AI search readiness,
+description: "Create — "
   and GEO. Use as the umbrella skill when the user asks for a full SEO analysis or strat'
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - create seo task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -238,3 +238,17 @@ For parallel analysis during audits:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

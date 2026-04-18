@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.similarweb-digitalrank-api-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: similarweb-digitalrank-api-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # SimilarWeb Automation via Rube MCP

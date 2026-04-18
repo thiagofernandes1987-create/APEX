@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.hookdeck-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: hookdeck-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Hookdeck Automation via Rube MCP

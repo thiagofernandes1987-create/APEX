@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.ml.hugging_face_dataset_viewer
 name: hugging-face-dataset-viewer
-description: Query Hugging Face datasets through the Dataset Viewer API for splits, rows, search, filters, and parquet links.
+description: "Apply — Query Hugging Face datasets through the Dataset Viewer API for splits, rows, search, filters, and parquet links."
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/ml/hugging-face-dataset-viewer
@@ -43,7 +43,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Query Hugging Face datasets through the Dataset Viewer API for splits
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -338,3 +338,17 @@ After upload, call `/parquet` to discover `<config>/<split>/<shard>` values for 
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — Query Hugging Face datasets through the Dataset Viewer API for splits, rows, search, filters, and parquet links.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -3,6 +3,8 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source_v2.wealth-management.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
 ---
 # Tax-Loss Harvesting
 
@@ -108,3 +110,23 @@ After 30+ days, optionally:
 - Mutual fund capital gains distributions in December can create additional harvesting urgency
 - Document everything for tax reporting and compliance
 - Not all losses are worth harvesting — transaction costs and tracking error have real costs
+
+---
+
+## Why This Skill Exists
+
+Identify tax-loss harvesting opportunities across taxable accounts. Finds positions with unrealized losses, suggests replacement securities, and tracks wash sale windows. Triggers on "tax-loss harvesting", "TLH", "harvest losses", "tax losses", "unrealized losses", or "year-end tax planning".
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires tax loss harvesting capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

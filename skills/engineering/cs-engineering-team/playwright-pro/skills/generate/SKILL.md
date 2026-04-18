@@ -8,6 +8,10 @@ executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.playwright-pro.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - testing
+  - documentation
 ---
 
 # Generate Playwright Tests
@@ -146,3 +150,23 @@ If it fails:
 - Any supporting files created (page objects, fixtures, data)
 - Test run result
 - Coverage note: what behaviors are now tested
+
+---
+
+## Why This Skill Exists
+
+Generate Playwright tests.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when user says "write tests", "generate tests",
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

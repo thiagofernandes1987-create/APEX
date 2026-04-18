@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Find leads matching criteria and bulk-add them to an Apollo outreach sequence
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -198,3 +198,23 @@ Ask the user:
 2. **Review sequence** — Show sequence details and all enrolled contacts
 3. **Remove a contact** — Use `mcp__claude_ai_Apollo_MCP__apollo_emailer_campaigns_remove_or_stop_contact_ids` to remove specific contacts
 4. **Pause a contact** — Re-add with `status: "paused"` and an `auto_unpause_at` date
+
+---
+
+## Why This Skill Exists
+
+Find leads matching criteria and bulk-add them to an Apollo outreach sequence. Handles enrichment, contact creation,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires sequence load capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

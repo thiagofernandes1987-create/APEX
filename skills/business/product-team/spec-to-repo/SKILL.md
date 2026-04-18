@@ -1,10 +1,12 @@
 ---
 name: spec-to-repo
-description: "Use when the user says 'build me an app', 'create a project from this spec', 'scaffold a new repo', 'generate a starter', 'turn this idea into code', 'bootstrap a project', 'I have requirements and need a codebase', or provides a natural-language project specification and expects a complete, runnable repository. Stack-agnostic: Next.js, FastAPI, Rails, Go, Rust, Flutter, and more."
+description: "Manage — Use when the user says"
 executor: HYBRID
 skill_id: business.product-team.spec-to-repo
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 # Spec to Repo
@@ -276,3 +278,17 @@ Ask the user after MVP: "Core is working. Want me to add auth/polish/deploy next
 - Related: `engineering/spec-driven-workflow` — spec-first development methodology
 - Related: `engineering/database-designer` — database schema design patterns
 - Related: `engineering-team/senior-fullstack` — full-stack implementation patterns
+
+---
+
+## Why This Skill Exists
+
+Manage —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

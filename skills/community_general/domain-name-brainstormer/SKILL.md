@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.domain_name_brainstormer
 name: domain-name-brainstormer
-description: Generates creative domain name ideas for your project and checks availability across multiple TLDs (.com, .io,
+description: "Generate — Generates creative domain name ideas for your project and checks availability across multiple TLDs (.com, .io,"
   .dev, .ai, etc.). Saves hours of brainstorming and manual checking.
 version: v00.33.0
 status: CANDIDATE
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Generates creative domain name ideas for your project and checks availability across multiple TLDs (
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -303,3 +303,17 @@ After picking a domain:
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Generate — Generates creative domain name ideas for your project and checks availability across multiple TLDs (.com, .io,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

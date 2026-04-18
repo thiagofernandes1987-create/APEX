@@ -3,11 +3,13 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.equity-research.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - data
 ---
 # Thesis Tracker
 
-description: Maintain and update investment theses for portfolio positions and watchlist names. Track key data points, catalysts, and thesis milestones over time. Use when updating a thesis with new information, reviewing position rationale, or checking if a thesis is still intact. Triggers on "update thesis for [company]", "is my thesis still intact", "thesis check", "add data point to [company]", or "review my positions".
-
+description: "Analyze — Maintain and update investment theses for portfolio positions and watchlist names. Track key data points, catalysts, and thesis milestones over time. Use when updating a thesis wit"
 ## Workflow
 
 ### Step 1: Define or Load Thesis
@@ -68,3 +70,23 @@ Format: Concise markdown or Word doc with the scorecard, recent updates, and cur
 - Review theses at least quarterly, even when nothing dramatic has happened
 - If the user manages multiple positions, offer to do a full portfolio thesis review
 - Store thesis data in a structured format so it can be referenced across sessions
+
+---
+
+## Why This Skill Exists
+
+Analyze — Maintain and update investment theses for portfolio positions and watchlist names. Track key data points, catalysts, and thesis milestones over time.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when updating a thesis wit
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

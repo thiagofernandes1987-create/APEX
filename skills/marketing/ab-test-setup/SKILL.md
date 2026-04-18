@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.ab_test_setup
 name: ab-test-setup
-description: When the user wants to plan, design, or implement an A/B test or experiment, or build a growth experimentation
+description: "Create — When the user wants to plan, design, or implement an A/B test or experiment, or build a growth experimentation"
   program. Also use when the user mentions 'A/B test,' 'split test,' 'experiment,' 'test th
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to plan
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -469,3 +469,23 @@ Over time, your playbook becomes a library of proven growth patterns specific to
 
 ## Diff History
 - **v00.33.0**: Ingested from marketingskills-main
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to plan, design, or implement an A/B test or experiment, or build a growth experimentation
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ab test setup capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.speckit_updater
 name: speckit-updater
-description: SpecKit Safe Update
+description: "Use — SpecKit Safe Update"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/speckit-updater
@@ -41,7 +41,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use speckit updater task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -258,3 +258,17 @@ pwsh -NoProfile -Command "& '{skill_path}/scripts/update-wrapper.ps1' [parameter
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — SpecKit Safe Update
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

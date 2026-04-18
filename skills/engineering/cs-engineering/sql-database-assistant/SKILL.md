@@ -1,10 +1,16 @@
 ---
 name: "sql-database-assistant"
-description: "Use when the user asks to write SQL queries, optimize database performance, generate migrations, explore database schemas, or work with ORMs like Prisma, Drizzle, TypeORM, or SQLAlchemy."
+description: "Implement — Use when the user asks to write SQL queries, optimize database performance, generate migrations, explore database schemas, or work with ORMs like Prisma, Drizzle, TypeORM, or SQLAl"
 executor: HYBRID
 skill_id: engineering.cs-engineering.sql-database-assistant
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - database
+  - data
+  - performance
+  - documentation
 ---
 
 # SQL Database Assistant - POWERFUL Tier Skill
@@ -459,3 +465,23 @@ sqlite3 dbname ".backup backup.db"
 | **migration-architect** | Complex multi-step migration orchestration |
 | **api-design-reviewer** | Ensuring API endpoints align with query patterns |
 | **observability-platform** | Query performance monitoring, slow query alerts |
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to write SQL queries, optimize database performance, generate migrations, explore database schemas, or work with ORMs like Prisma, Drizzle, TypeORM, or SQLAl
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

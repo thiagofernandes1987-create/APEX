@@ -33,7 +33,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - first getting oriented with the plugin
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -158,3 +158,23 @@ Ask the researcher what they're working on today. Suggest starting points based 
 5. **Research strategy** — "Help me evaluate a new project idea"
 
 Wait for the user's response and guide them to the appropriate tools and skills.
+
+---
+
+## Why This Skill Exists
+
+Set up your bio-research environment and explore available tools.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when first getting oriented with the plugin,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

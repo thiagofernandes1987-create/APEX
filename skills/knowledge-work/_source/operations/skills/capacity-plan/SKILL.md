@@ -33,7 +33,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - heading into quarterly planning
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -191,3 +191,23 @@ If **~~calendar** is connected:
 1. **Include all work** — BAU, projects, support, meetings. People aren't 100% available for project work.
 2. **Plan for buffer** — Target 80% utilization. 100% means no room for surprises.
 3. **Update regularly** — Capacity plans go stale fast. Review monthly.
+
+---
+
+## Why This Skill Exists
+
+Plan resource capacity — workload analysis and utilization forecasting.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when ading into quarterly planning,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

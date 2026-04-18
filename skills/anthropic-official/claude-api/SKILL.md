@@ -1,7 +1,7 @@
 ---
 skill_id: anthropic_official.claude_api
 name: claude-api
-description: ''
+description: "Apply — "
 version: v00.33.0
 status: ADOPTED
 domain_path: anthropic-official/claude-api
@@ -41,7 +41,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply claude api task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -411,3 +411,17 @@ Live documentation URLs are in `shared/live-sources.md`.
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

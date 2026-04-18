@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_eventhub_dotnet
 name: azure-eventhub-dotnet
-description: '|'
+description: "Use — |"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/cloud/azure
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use azure eventhub dotnet task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -468,3 +468,23 @@ processor.ProcessEventAsync += async args =>
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — |
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires azure eventhub dotnet capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

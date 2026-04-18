@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Create professional equity research earnings update reports (8-12 pages
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -347,3 +347,17 @@ Examples of good/bad headlines, tips for success, common mistakes to avoid, and 
 
 ## Diff History
 - **v00.33.0**: Ingested from financial-services-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Create professional equity research earnings update reports (8-12 pages, 3,000-5,000 words) analyzing quarterly
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

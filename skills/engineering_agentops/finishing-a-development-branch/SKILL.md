@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.finishing-a-development-branch
 name: finishing-a-development-branch
-description: >
+description: "Use — Guia o encerramento de uma branch de desenvolvimento com 4 opções estruturadas:"
   Guia o encerramento de uma branch de desenvolvimento com 4 opções estruturadas:
   merge local, push+PR, manter como-está, ou descartar com confirmação.
   Verifica testes antes de qualquer opção. Limpa worktree para opções 1 e 4.
@@ -278,3 +278,23 @@ git worktree remove <worktree-path>
 
 **Pairs with:**
 - **using-git-worktrees** - Cleans up worktree created by that skill
+
+---
+
+## Why This Skill Exists
+
+Use — Guia o encerramento de uma branch de desenvolvimento com 4 opções estruturadas:
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires finishing a development branch capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+Se testes falharem: não apresentar opções — reportar falhas e aguardar correção.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.seek_and_analyze_video
 name: seek-and-analyze-video
-description: '''Seek and analyze video content using Memories.ai Large Visual Memory Model for persistent video intelligence'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/seek-and-analyze-video
@@ -35,7 +35,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use seek and analyze video task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -172,3 +172,17 @@ Agent: uploads recording -> waits -> gets transcript -> uses chat_video for stru
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

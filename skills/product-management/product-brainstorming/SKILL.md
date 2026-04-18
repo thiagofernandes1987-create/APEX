@@ -1,7 +1,7 @@
 ---
 skill_id: product_management.product_brainstorming
 name: product-brainstorming
-description: Brainstorm product ideas, explore problem spaces, and challenge assumptions as a thinking partner. Use when exploring
+description: "Use — Brainstorm product ideas, explore problem spaces, and challenge assumptions as a thinking partner. Use when exploring"
   a new opportunity, generating solutions to a product problem, stress-testing an id
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Brainstorm product ideas
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -375,3 +375,23 @@ Document what matters. A brainstorm with no capture is a brainstorm that never h
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Use — Brainstorm product ideas, explore problem spaces, and challenge assumptions as a thinking partner.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires product brainstorming capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados de usuário ou métricas não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,10 +1,12 @@
 ---
 name: "hard-call"
-description: "/em -hard-call — Framework for Decisions With No Good Options"
+description: "Manage — /em -hard-call — Framework for Decisions With No Good Options"
 executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.executive-mentor.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 # /em:hard-call — Framework for Decisions With No Good Options
@@ -159,3 +161,23 @@ You know you've been avoiding a hard call if:
 Every month you wait, the problem compounds. The co-founder who's not working out becomes more entrenched. The product line that needs to die consumes more resources. The person who needs to be let go affects the people around them.
 
 Make the call. Make it clearly. Make it with dignity.
+
+---
+
+## Why This Skill Exists
+
+Manage — /em -hard-call — Framework for Decisions With No Good Options
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires hard call capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: legal.lex
 name: lex
-description: '''Centralized ''Truth Engine'' for cross-jurisdictional legal context (US, EU, CA) and contract scaffolding.'''
+description: "Review — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: legal/lex
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - review lex task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -166,3 +166,17 @@ lex draft "Czech house sale contract"
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Review —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Legislação atualizada além do knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

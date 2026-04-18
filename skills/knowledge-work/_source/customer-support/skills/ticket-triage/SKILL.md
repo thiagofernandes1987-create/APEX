@@ -1,6 +1,6 @@
 ---
 name: ticket-triage
-description: Triage and prioritize a support ticket or customer issue. Use when a new ticket comes in and needs categorization,
+description: "Use — Triage and prioritize a support ticket or customer issue. Use when a new ticket comes in and needs categorization,"
   assigning P1-P4 priority, deciding which team should handle it, or checking whether it's a duplicate or known issue before
   routing.
 argument-hint: <ticket or issue description>
@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - a new ticket comes in and needs categorization
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -362,3 +362,23 @@ We'll follow up with you within [timeframe] with our findings.
 5. Write internal notes that help the next person pick up context quickly
 6. Include what you've already checked or ruled out to avoid duplicate investigation
 7. Flag patterns — if you're seeing the same issue repeatedly, escalate the pattern even if individual tickets are low priority
+
+---
+
+## Why This Skill Exists
+
+Use — Triage and prioritize a support ticket or customer issue.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when a new ticket comes in and needs categorization,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

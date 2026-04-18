@@ -1,6 +1,6 @@
 ---
 name: call-prep
-description: Prepare for a customer or prospect call using Common Room signals. Triggers on 'prep me for my call with [company]',
+description: "Use — Prepare for a customer or prospect call using Common Room signals. Triggers on 'prep me for my call with [company]',"
   'prepare for a meeting with [company]', 'what should I know before talking to [company]', or any call preparation request.
 tier: ADAPTED
 anchors:
@@ -32,7 +32,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Prepare for a customer or prospect call using Common Room signals
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -216,3 +216,23 @@ Do not generate a full call prep brief from sparse data. A short honest output i
 ## Reference Files
 
 - **`references/call-types-guide.md`** — guidance for different call types (discovery, expansion, renewal, QBR) and how to tailor prep accordingly
+
+---
+
+## Why This Skill Exists
+
+Use — Prepare for a customer or prospect call using Common Room signals. Triggers on
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires call prep capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -5,6 +5,11 @@ executor: HYBRID
 skill_id: engineering.cs-engineering-team.gcp-cloud-architect
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - database
+  - cloud
+  - design
 ---
 
 # GCP Cloud Architect
@@ -446,3 +451,23 @@ Provide these details for architecture design:
 | `references/architecture_patterns.md` | 6 patterns: serverless, GKE microservices, three-tier, data pipeline, ML platform, multi-region |
 | `references/service_selection.md` | Decision matrices for compute, database, storage, messaging |
 | `references/best_practices.md` | Naming, labels, IAM, networking, monitoring, disaster recovery |
+
+---
+
+## Why This Skill Exists
+
+Design GCP architectures for startups and enterprises.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when asked to design Google Cloud infrastructure, deploy to GKE or Cloud Run, configure BigQuery pipelines, optimize GCP costs, or migrate to GCP
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

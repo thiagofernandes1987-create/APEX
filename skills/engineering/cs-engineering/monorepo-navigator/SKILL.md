@@ -1,10 +1,12 @@
 ---
 name: "monorepo-navigator"
-description: "Monorepo Navigator"
+description: "Implement — Monorepo Navigator"
 executor: HYBRID
 skill_id: engineering.cs-engineering.monorepo-navigator
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
 ---
 
 # Monorepo Navigator
@@ -99,3 +101,17 @@ Also see `references/monorepo-patterns.md` for common architecture and CI patter
 6. **Shared configs in root, extended in packages** — tsconfig.base.json, .eslintrc.base.js, jest.base.config.js
 7. **Impact analysis before merging shared package changes** — run affected check, communicate blast radius
 8. **Keep packages/types as pure TypeScript** — no runtime code, no dependencies, fast to build and type-check
+
+---
+
+## Why This Skill Exists
+
+Implement — Monorepo Navigator
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

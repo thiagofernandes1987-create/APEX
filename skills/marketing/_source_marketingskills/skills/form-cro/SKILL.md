@@ -1,6 +1,6 @@
 ---
 name: form-cro
-description: When the user wants to optimize any form that is NOT signup/registration — including lead capture forms, contact
+description: "Create — When the user wants to optimize any form that is NOT signup/registration — including lead capture forms, contact"
   forms, demo request forms, application forms, survey forms, or checkout forms. Also use when the user mentions "form optimization,"
   "lead form conversions," "form friction," "form fields," "form completion rate," "contact form," "nobody fills out our form,"
   "form abandonment," "too many fields," "demo request form," or "lead form isn't converting." Use this for any non-signup
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to optimize any form that is NOT signup/registration — including lead capture fo
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -536,3 +536,23 @@ Ideas to A/B test with expected outcomes
 - **popup-cro**: For forms inside popups/modals
 - **page-cro**: For the page containing the form
 - **ab-test-setup**: For testing form changes
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to optimize any form that is NOT signup/registration — including lead capture forms, contact
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires form cro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

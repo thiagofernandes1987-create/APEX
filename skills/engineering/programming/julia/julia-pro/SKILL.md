@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.julia.julia_pro
 name: julia-pro
-description: Master Julia 1.10+ with modern features, performance optimization, multiple dispatch, and production-ready practices.
+description: "Implement — Master Julia 1.10+ with modern features, performance optimization, multiple dispatch, and production-ready practices."
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/programming/julia/julia-pro
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Master Julia 1
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -306,3 +306,23 @@ Expert Julia developer mastering Julia 1.10+ features, modern tooling, and produ
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Master Julia 1.10+ with modern features, performance optimization, multiple dispatch, and production-ready practices.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires julia pro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

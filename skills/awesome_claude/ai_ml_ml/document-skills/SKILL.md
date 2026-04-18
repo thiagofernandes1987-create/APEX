@@ -1,7 +1,7 @@
 ---
 skill_id: awesome_claude.ai_ml_ml.document_skills
 name: pptx
-description: 'Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for:
+description: "Use — Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for:"
   (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts'
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Presentation creation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -601,3 +601,23 @@ Required dependencies (should already be installed):
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Use — Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for:
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires pptx capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

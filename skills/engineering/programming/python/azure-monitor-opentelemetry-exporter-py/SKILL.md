@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.azure_monitor_opentelemetry_exporter_py
 name: azure-monitor-opentelemetry-exporter-py
-description: Azure Monitor OpenTelemetry Exporter for Python. Use for low-level OpenTelemetry export to Application Insights.
+description: "Implement — Azure Monitor OpenTelemetry Exporter for Python. Use for low-level OpenTelemetry export to Application Insights."
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/programming/python/azure-monitor-opentelemetry-exporter-py
@@ -42,7 +42,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Azure Monitor OpenTelemetry Exporter for Python
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -301,3 +301,17 @@ exporter = AzureMonitorTraceExporter(
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Azure Monitor OpenTelemetry Exporter for Python. Use for low-level OpenTelemetry export to Application Insights.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

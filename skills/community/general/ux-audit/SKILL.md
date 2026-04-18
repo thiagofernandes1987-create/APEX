@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ux_audit
 name: ux-audit
-description: '''Audit screens against Nielsen''s heuristics and mobile UX best practices using the StyleSeed Toss design language
+description: "Use — "
   as the implementation context.'''
 version: v00.33.0
 status: CANDIDATE
@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use ux audit task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -143,3 +143,17 @@ Return:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

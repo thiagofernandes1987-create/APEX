@@ -1,7 +1,7 @@
 ---
 skill_id: mathematics.financial_math.inflation_adjustment
 name: Correção Monetária / Inflation Adjustment
-description: Calcula fator de correção monetária por IGPM, IPCA, INPC, IPCA-E. Atualiza valores pelo índice acumulado entre
+description: "Use — Calcula fator de correção monetária por IGPM, IPCA, INPC, IPCA-E. Atualiza valores pelo índice acumulado entre"
   duas datas. Integrado com Art. 406 CC e contratos civis.
 version: v00.33.0
 status: ADOPTED
@@ -53,7 +53,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Calcula fator de correção monetária por IGPM
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:

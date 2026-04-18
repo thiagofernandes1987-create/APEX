@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.tpscheck-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: tpscheck-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Tpscheck Automation via Rube MCP

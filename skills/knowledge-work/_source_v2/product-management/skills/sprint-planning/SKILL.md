@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - kicking off a new
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -181,3 +181,23 @@ Plan a sprint by scoping work, estimating capacity, and setting clear goals.
 2. **One clear sprint goal** — If you can't state it in one sentence, the sprint is unfocused.
 3. **Identify stretch items** — Know what to cut if things take longer than expected.
 4. **Carry over honestly** — If something didn't ship, understand why before re-committing.
+
+---
+
+## Why This Skill Exists
+
+Plan a sprint — scope work, estimate capacity, set goals, and draft a sprint plan.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when kicking off a new
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

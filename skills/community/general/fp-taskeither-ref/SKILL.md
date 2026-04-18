@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.fp_taskeither_ref
 name: fp-taskeither-ref
-description: Quick reference for TaskEither. Use when user needs async error handling, API calls, or Promise-based operations
+description: "Use — Quick reference for TaskEither. Use when user needs async error handling, API calls, or Promise-based operations"
   that can fail.
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - user needs async error handling
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -179,3 +179,17 @@ Use TaskEither when you need **typed errors** for async operations.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Quick reference for TaskEither.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

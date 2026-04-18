@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.membervault-automation
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+extends: integrations.composio.meta
+toolkit: membervault-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Membervault Automation via Rube MCP

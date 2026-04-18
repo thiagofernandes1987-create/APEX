@@ -35,7 +35,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - reviewing a new vendor proposal
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -189,3 +189,23 @@ If **~~procurement** is connected:
 1. **Upload the proposal** — I can extract pricing, terms, and SLAs from vendor documents.
 2. **Compare vendors** — "Compare Vendor A vs Vendor B" gets you a side-by-side analysis.
 3. **Include current spend** — For renewals, knowing what you pay now helps evaluate price changes.
+
+---
+
+## Why This Skill Exists
+
+Evaluate a vendor — cost analysis, risk assessment, and recommendation.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when reviewing a new vendor proposal,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

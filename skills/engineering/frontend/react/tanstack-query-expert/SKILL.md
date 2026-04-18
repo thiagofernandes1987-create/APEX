@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.tanstack_query_expert
 name: tanstack-query-expert
-description: '''Expert in TanStack Query (React Query) — asynchronous state management. Covers data fetching, stale time configuration,
+description: "Implement — "
   mutations, optimistic updates, and Next.js App Router (SSR) integration.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement tanstack query expert task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -339,3 +339,17 @@ export default function PostsList() {
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

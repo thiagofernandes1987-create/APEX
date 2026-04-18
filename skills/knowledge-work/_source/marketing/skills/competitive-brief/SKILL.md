@@ -1,6 +1,6 @@
 ---
 name: competitive-brief
-description: Research competitors and generate a positioning and messaging comparison with content gaps, opportunities, and
+description: "Generate — Research competitors and generate a positioning and messaging comparison with content gaps, opportunities, and"
   threats. Use when building sales battlecards, when finding positioning gaps and messaging angles competitors haven't claimed,
   or when a competitor makes a move and you need to assess the impact.
 argument-hint: <competitor or market segment>
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Research competitors and generate a positioning and messaging comparison with content gaps
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -428,3 +428,23 @@ After the brief, ask:
 - Draft messaging that exploits the positioning gaps identified?
 - Dive deeper into any specific competitor?
 - Set up a competitive monitoring plan?"
+
+---
+
+## Why This Skill Exists
+
+Generate — Research competitors and generate a positioning and messaging comparison with content gaps, opportunities, and
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires competitive brief capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

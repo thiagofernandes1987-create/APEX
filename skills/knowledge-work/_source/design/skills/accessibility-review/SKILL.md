@@ -29,7 +29,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Run a WCAG 2
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -197,3 +197,23 @@ If **~~project tracker** is connected:
 1. **Start with contrast and keyboard** — These catch the most common and impactful issues.
 2. **Test with real assistive technology** — My audit is a great start, but manual testing with VoiceOver/NVDA catches things I can't.
 3. **Prioritize by impact** — Fix issues that block users first, polish later.
+
+---
+
+## Why This Skill Exists
+
+Run a WCAG 2.1 AA accessibility audit on a design or page. Trigger with "audit accessibility", "check a11y",
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires accessibility review capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

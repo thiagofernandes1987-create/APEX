@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.dwarf_expert
 name: dwarf-expert
-description: Provides expertise for analyzing DWARF debug files and understanding the DWARF debug format/standard (v3-v5).
+description: "Use — Provides expertise for analyzing DWARF debug files and understanding the DWARF debug format/standard (v3-v5)."
   Triggers when understanding DWARF information, interacting with DWARF files, answering DWA
 version: v00.33.0
 status: CANDIDATE
@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Provides expertise for analyzing DWARF debug files and understanding the DWARF debug format/standard
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -170,3 +170,17 @@ This skill supports writing, modifying, and reviewing code that interacts with D
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Provides expertise for analyzing DWARF debug files and understanding the DWARF debug format/standard (v3-v5).
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

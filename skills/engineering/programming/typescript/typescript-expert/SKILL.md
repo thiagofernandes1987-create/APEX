@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.typescript.typescript_expert
 name: typescript-expert
-description: TypeScript and JavaScript expert with deep knowledge of type-level programming, performance optimization, monorepo
+description: "Implement — TypeScript and JavaScript expert with deep knowledge of type-level programming, performance optimization, monorepo"
   management, migration strategies, and modern tooling.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - TypeScript and JavaScript expert with deep knowledge of type-level programming
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -522,3 +522,17 @@ This skill is applicable to execute the workflow or actions described in the ove
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — TypeScript and JavaScript expert with deep knowledge of type-level programming, performance optimization, monorepo
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

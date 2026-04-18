@@ -1,10 +1,13 @@
 ---
 name: invoice-organizer
-description: Automatically organizes invoices and receipts for tax preparation by reading messy files, extracting key information, renaming them consistently, and sorting them into logical folders. Turns hours of manual bookkeeping into minutes of automated organization.
+description: "Apply — Automatically organizes invoices and receipts for tax preparation by reading messy files, extracting key information, renaming them consistently, and sorting them into logical fold"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.invoice-organizer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - finance
+  - observability
 ---
 
 # Invoice Organizer
@@ -448,3 +451,16 @@ For unusual receipt formats:
 - Preparing for audits
 - Tracking subscription costs over time
 
+---
+
+## Why This Skill Exists
+
+Apply — Automatically organizes invoices and receipts for tax preparation by reading messy files, extracting key information, renaming them consistently, and sorting them into logical fold
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

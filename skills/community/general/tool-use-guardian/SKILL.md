@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.tool_use_guardian
 name: tool-use-guardian
-description: '''FREE — Intelligent tool-call reliability wrapper. Monitors, retries, fixes, and learns from tool failures.
+description: "Use — "
   Auto-recovers from truncated JSON, timeouts, rate limits, and mid-chain failures.'''
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use tool use guardian task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -149,3 +149,17 @@ Guardian tracks failure patterns per tool. After 3+ failures of the same type, i
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

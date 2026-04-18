@@ -1,7 +1,7 @@
 ---
 skill_id: business_productivity.gh_create_issue
 name: gh-create-issue
-description: Use when user wants to create a GitHub issue for the current repository. Must read and follow the repository's
+description: "Create — Use when user wants to create a GitHub issue for the current repository. Must read and follow the repository's"
   issue template format.
 version: v00.33.0
 status: CANDIDATE
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - user wants to create a GitHub issue for the current repository
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -186,3 +186,23 @@ rm -f "$issue_body_file"
 
 ## Diff History
 - **v00.33.0**: Ingested from cherry-studio
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when user wants to create a GitHub issue for the current repository
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: finance.investment_banking.buyer_list
 name: buyer-list
-description: ''
+description: "Analyze — "
 version: v00.33.0
 status: ADOPTED
 domain_path: finance/investment-banking/buyer-list
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyze buyer list task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -205,3 +205,23 @@ For each Tier 1 buyer:
 
 ## Diff History
 - **v00.33.0**: Ingested from financial-services-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Analyze —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires buyer list capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

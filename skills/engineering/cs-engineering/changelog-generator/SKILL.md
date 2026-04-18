@@ -1,10 +1,13 @@
 ---
 name: "changelog-generator"
-description: "Changelog Generator"
+description: "Implement — Changelog Generator"
 executor: HYBRID
 skill_id: engineering.cs-engineering.changelog-generator
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - observability
 ---
 
 # Changelog Generator
@@ -167,3 +170,17 @@ Use this release flow for predictability:
 - If no valid conventional commits found: fail early, do not generate misleading empty notes.
 - If git range invalid: surface explicit range in error output.
 - If write target missing: create safe changelog header scaffolding.
+
+---
+
+## Why This Skill Exists
+
+Implement — Changelog Generator
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

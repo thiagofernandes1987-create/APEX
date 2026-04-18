@@ -1,10 +1,15 @@
 ---
 name: "google-workspace-cli"
-description: "Google Workspace administration via the gws CLI. Install, authenticate, and automate Gmail, Drive, Sheets, Calendar, Docs, Chat, and Tasks. Run security audits, execute 43 built-in recipes, and use 10 persona bundles. Use for Google Workspace admin, gws CLI setup, Gmail automation, Drive management, or Calendar scheduling."
+description: "Implement — Google Workspace administration via the gws CLI. Install, authenticate, and automate Gmail, Drive, Sheets, Calendar, Docs, Chat, and Tasks. Run security audits, execute 43 built-in"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.google-workspace-cli
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - engineering
+  - security
+  - authentication
+  - design
 ---
 
 # Google Workspace CLI
@@ -375,3 +380,23 @@ python3 scripts/auth_setup_guide.py --scopes gmail,drive,calendar,sheets
 | Calendar | `calendar`, `calendar.events` |
 | Admin | `admin.directory.user.readonly`, `admin.directory.group` |
 | Tasks | `tasks` |
+
+---
+
+## Why This Skill Exists
+
+Implement — Google Workspace administration via the gws CLI. Install, authenticate, and automate Gmail, Drive, Sheets, Calendar, Docs, Chat, and Tasks. Run security audits, execute 43 built-in
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires google workspace cli capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,10 +1,13 @@
 ---
 name: "git-worktree-manager"
-description: "Git Worktree Manager"
+description: "Implement — Git Worktree Manager"
 executor: HYBRID
 skill_id: engineering.cs-engineering.git-worktree-manager
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - git
 ---
 
 # Git Worktree Manager
@@ -195,3 +198,17 @@ Use this quick selector before creating a new worktree:
 - If dependency install fails: keep worktree created, mark status and continue manual recovery.
 - If env copy fails: continue with warning and explicit missing file list.
 - If port allocation collides with external service: rerun with adjusted base ports.
+
+---
+
+## Why This Skill Exists
+
+Implement — Git Worktree Manager
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.lightning_channel_factories
 name: lightning-channel-factories
-description: Technical reference on Lightning Network channel factories, multi-party channels, LSP architectures, and Bitcoin
+description: "Implement — Technical reference on Lightning Network channel factories, multi-party channels, LSP architectures, and Bitcoin"
   Layer 2 scaling without soft forks. Covers Decker-Wattenhofer, timeout trees, MuSig2 ke
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Technical reference on Lightning Network channel factories
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -148,3 +148,23 @@ Technical reference for Lightning Network channel factory implementations. Cover
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Technical reference on Lightning Network channel factories, multi-party channels, LSP architectures, and Bitcoin
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires lightning channel factories capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

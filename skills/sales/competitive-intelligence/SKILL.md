@@ -1,7 +1,7 @@
 ---
 skill_id: sales.competitive_intelligence
 name: competitive-intelligence
-description: Research your competitors and build an interactive battlecard. Outputs an HTML artifact with clickable competitor
+description: "Track — Research your competitors and build an interactive battlecard. Outputs an HTML artifact with clickable competitor"
   cards and a comparison matrix. Trigger with 'competitive intel', 'research competitors
 version: v00.33.0
 status: ADOPTED
@@ -511,3 +511,23 @@ Competitive intel gets stale. Recommended refresh:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Track — Research your competitors and build an interactive battlecard. Outputs an HTML artifact with clickable competitor
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires competitive intelligence capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: CRM ou enrichment tool indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

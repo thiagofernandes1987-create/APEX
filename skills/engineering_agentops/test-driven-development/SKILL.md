@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.test-driven-development
 name: test-driven-development
-description: >
+description: "Use — RED-GREEN-REFACTOR: escreva o teste primeiro, assista falhar, escreva código mínimo,"
   RED-GREEN-REFACTOR: escreva o teste primeiro, assista falhar, escreva código mínimo,
   assista passar, refatore. Iron Law: NENHUM CÓDIGO DE PRODUÇÃO SEM TESTE FALHANDO ANTES.
   Código escrito antes do teste: deletar. Sem exceções sem permissão explícita do usuário.
@@ -451,3 +451,17 @@ Otherwise → not TDD
 ```
 
 No exceptions without your human partner's permission.
+
+---
+
+## Why This Skill Exists
+
+Use — RED-GREEN-REFACTOR: escreva o teste primeiro, assista falhar, escreva código mínimo,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+Se teste muito difícil de escrever: o design está complicado — simplificar interface.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

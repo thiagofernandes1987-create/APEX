@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.content_production
 name: content-production
-description: 'Full content production pipeline — takes a topic from blank page to published-ready piece. Use when you need
+description: "Use — Full content production pipeline — takes a topic from blank page to published-ready piece. Use when you need"
   to execute content: write a blog post, article, or guide end-to-end. Triggers: ''write a pos'
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Full content production pipeline — takes a topic from blank page to published-ready piece
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -360,3 +360,23 @@ When reviewing drafts: flag issues → explain impact → give specific fix. Don
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Full content production pipeline — takes a topic from blank page to published-ready piece.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires content production capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

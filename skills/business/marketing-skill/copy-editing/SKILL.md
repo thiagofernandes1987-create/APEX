@@ -1,6 +1,6 @@
 ---
 name: "copy-editing"
-description: "When the user wants to edit, review, or improve existing marketing copy. Also use when the user mentions 'edit this copy,' 'review my copy,' 'copy feedback,' 'proofread,' 'polish this,' 'make this better,' or 'copy sweep.' This skill provides a systematic approach to editing marketing copy through multiple focused passes."
+description: "Manage — When the user wants to edit, review, or improve existing marketing copy. Also use when the user mentions"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,9 @@ executor: HYBRID
 skill_id: business.marketing-skill.copy-editing
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - marketing
 ---
 
 # Copy Editing
@@ -493,3 +496,17 @@ Deliver findings sweep-by-sweep. Don't dump all issues at once. Prioritize by co
 - **marketing-ideas**: USE when the client needs a new marketing angle entirely. NOT for editorial improvement.
 - **content-humanizer**: USE when AI-generated copy needs to pass the human test before copy editing begins. NOT for structural review.
 - **ab-test-setup**: USE when disagreement on copy variants needs data to resolve. NOT for the editing process itself.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to edit, review, or improve existing marketing copy. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

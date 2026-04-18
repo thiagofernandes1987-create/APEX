@@ -1,7 +1,7 @@
 ---
 skill_id: finance.saas_metrics_coach
 name: saas-metrics-coach
-description: SaaS financial health advisor. Use when a user shares revenue or customer numbers, or mentions ARR, MRR, churn,
+description: "Analyze — SaaS financial health advisor. Use when a user shares revenue or customer numbers, or mentions ARR, MRR, churn,"
   LTV, CAC, NRR, or asks how their SaaS business is doing.
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - a user shares revenue or customer numbers
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -262,3 +262,23 @@ python scripts/unit_economics_simulator.py --mrr 50000 --growth 10 --churn 3 --c
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Analyze — SaaS financial health advisor.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when a user shares revenue or customer numbers, or mentions ARR, MRR, churn,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

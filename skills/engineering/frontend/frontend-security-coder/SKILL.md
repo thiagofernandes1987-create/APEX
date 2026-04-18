@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.frontend_security_coder
 name: frontend-security-coder
-description: Expert in secure frontend coding practices specializing in XSS prevention, output sanitization, and client-side
+description: "Implement — Expert in secure frontend coding practices specializing in XSS prevention, output sanitization, and client-side"
   security patterns.
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert in secure frontend coding practices specializing in XSS prevention
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -271,3 +271,17 @@ Expert frontend security developer with comprehensive knowledge of client-side s
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Expert in secure frontend coding practices specializing in XSS prevention, output sanitization, and client-side
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

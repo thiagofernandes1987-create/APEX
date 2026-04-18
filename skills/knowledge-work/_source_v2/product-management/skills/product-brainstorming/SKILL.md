@@ -1,6 +1,6 @@
 ---
 name: product-brainstorming
-description: Brainstorm product ideas, explore problem spaces, and challenge assumptions as a thinking partner. Use when exploring
+description: "Use — Brainstorm product ideas, explore problem spaces, and challenge assumptions as a thinking partner. Use when exploring"
   a new opportunity, generating solutions to a product problem, stress-testing an idea, or when a PM needs to think out loud
   with a sharp sparring partner before converging on a direction.
 tier: COMMUNITY
@@ -28,7 +28,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Brainstorm product ideas
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -342,3 +342,23 @@ Document what matters. A brainstorm with no capture is a brainstorm that never h
 **Analysis paralysis**: Too much exploration, no convergence. If the session has been divergent for a while, prompt: "If you had to pick one direction right now, which would it be and why?"
 
 **Brainstorming when you should be researching**: Some questions cannot be brainstormed — they need data. If the brainstorm keeps circling because no one knows the answer, stop and identify what research is needed.
+
+---
+
+## Why This Skill Exists
+
+Use — Brainstorm product ideas, explore problem spaces, and challenge assumptions as a thinking partner.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires product brainstorming capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

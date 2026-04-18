@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.openclaw_github_repo_commander
 name: openclaw-github-repo-commander
-description: '''7-stage super workflow for GitHub repo audit, cleanup, PR review, and competitor analysis'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/openclaw-github-repo-commander
@@ -39,7 +39,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use openclaw github repo commander task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -179,3 +179,17 @@ Compare my skill repo with the top 5 similar repos on GitHub
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

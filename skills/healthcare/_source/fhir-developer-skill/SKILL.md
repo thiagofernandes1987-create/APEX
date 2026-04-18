@@ -1,6 +1,6 @@
 ---
 name: fhir-developer-skill
-description: 'FHIR API development guide for building healthcare endpoints. Use when: (1) Creating FHIR REST endpoints (Patient,
+description: "Analyze — FHIR API development guide for building healthcare endpoints. Use when: (1) Creating FHIR REST endpoints (Patient,"
   Observation, Encounter, Condition, MedicationRequest), (2) Validating FHIR resources and returning proper HTTP status codes
   and error responses, (3) Implementing SMART on FHIR authorization and OAuth scopes, (4) Working with Bundles, transactions,
   batch operations, or search pagination. Covers FHIR R4 resource structures, required fields, value sets (status codes, gender,
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - (1) Creating FHIR REST endpoints (Patient
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -390,3 +390,23 @@ python scripts/setup_fhir_project.py my_fhir_api
 ```
 
 Creates a FastAPI project with correct models, OperationOutcome helpers, and Patient CRUD endpoints.
+
+---
+
+## Why This Skill Exists
+
+Analyze — FHIR API development guide for building healthcare endpoints.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when (1) Creating FHIR REST endpoints (Patient,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Informação clínica usada para decisão médica real
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

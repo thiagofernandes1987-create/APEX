@@ -1,7 +1,7 @@
 ---
 skill_id: design.document_skills
 name: pdf
-description: Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents,
+description: "Design — Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents,"
   and handling forms. When Claude needs to fill in a PDF form or programmatically p
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Comprehensive PDF manipulation toolkit for extracting text and tables
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -403,3 +403,23 @@ with open("encrypted.pdf", "wb") as output:
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Design — Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires pdf capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

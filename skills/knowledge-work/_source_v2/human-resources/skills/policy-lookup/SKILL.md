@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Find and explain company policies in plain language
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -173,3 +173,23 @@ If **~~HRIS** is connected:
 
 1. **Ask in plain language** — "Can I work from Europe for a month?" is better than "international remote work policy."
 2. **Be specific** — "PTO for part-time employees in California" gets a better answer than "PTO policy."
+
+---
+
+## Why This Skill Exists
+
+Find and explain company policies in plain language. Trigger with "what's our PTO policy", "can I work remotely
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires policy lookup capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

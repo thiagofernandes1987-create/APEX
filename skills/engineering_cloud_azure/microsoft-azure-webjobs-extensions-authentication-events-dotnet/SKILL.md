@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.microsoft_azure_webjobs_extensions_authentication_events_dotnet
 name: microsoft-azure-webjobs-extensions-authentication-events-dotnet
-description: 'Microsoft Entra Authentication Events SDK for .NET. Azure Functions triggers for custom authentication extensions.
+description: "Use — Microsoft Entra Authentication Events SDK for .NET. Azure Functions triggers for custom authentication extensions."
   Use for token enrichment, custom claims, attribute collection, and OTP customization '
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Microsoft Entra Authentication Events SDK for
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -553,3 +553,23 @@ public static WebJobsAuthenticationEventResponse Run(
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Microsoft Entra Authentication Events SDK for .NET. Azure Functions triggers for custom authentication extensions.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires microsoft azure webjobs extensions authentication events dotnet capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

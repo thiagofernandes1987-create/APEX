@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.imagekit-io-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: imagekit-io-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Imagekit IO Automation via Rube MCP

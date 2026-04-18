@@ -1,6 +1,6 @@
 ---
 name: explore-data
-description: Profile and explore a dataset to understand its shape, quality, and patterns. Use when encountering a new table
+description: "Use — Profile and explore a dataset to understand its shape, quality, and patterns. Use when encountering a new table"
   or file, checking null rates and column distributions, spotting data quality issues like duplicates or suspicious values,
   or deciding which dimensions and metrics to analyze.
 argument-hint: <table or file>
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - encountering a new table
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -413,3 +413,23 @@ When exploring an unfamiliar data environment:
 - For very large tables (100M+ rows), profiling queries use sampling by default -- mention if you need exact counts
 - If exploring a new dataset for the first time, this command gives you the lay of the land before writing specific queries
 - The quality flags are heuristic -- not every flag is a real problem, but each is worth a quick look
+
+---
+
+## Why This Skill Exists
+
+Use — Profile and explore a dataset to understand its shape, quality, and patterns.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when countering a new table
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

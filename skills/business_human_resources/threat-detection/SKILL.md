@@ -1,7 +1,7 @@
 ---
 skill_id: business_human_resources.threat_detection
 name: threat-detection
-description: Use when hunting for threats in an environment, analyzing IOCs, or detecting behavioral anomalies in telemetry.
+description: "Use — Use when hunting for threats in an environment, analyzing IOCs, or detecting behavioral anomalies in telemetry."
   Covers hypothesis-driven threat hunting, IOC sweep generation, z-score anomaly detection
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - hunting for threats in an environment
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -400,3 +400,23 @@ fi
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when unting for threats in an environment, analyzing IOCs, or detecting behavioral anomalies in telemetry
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

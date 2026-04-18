@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.skill_creator
 name: skill-creator
-description: '''To create new CLI skills following Anthropic''s official best practices with zero manual configuration. This
+description: "Automate — "
   skill automates brainstorming, template application, validation, and installation processes'
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - automate skill creator task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -685,3 +685,17 @@ Executable utilities for skill maintenance:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Automate —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Arquivo de tasks ou memória não encontrado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

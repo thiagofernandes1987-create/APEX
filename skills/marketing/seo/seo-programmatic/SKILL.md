@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_programmatic
 name: seo-programmatic
-description: '''Plan and audit programmatic SEO pages generated at scale from structured data. Use when designing templates,
+description: "Create — "
   URL systems, internal linking, quality gates, and index-bloat safeguards for pages at scal'
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - create seo programmatic task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -280,3 +280,17 @@ Measure against all other pages in the programmatic set. Shared headers, footers
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

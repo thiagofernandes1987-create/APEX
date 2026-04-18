@@ -13,6 +13,10 @@ executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.internal-narrative
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - customer_success
+  - design
 ---
 
 # Internal Narrative Builder
@@ -199,3 +203,23 @@ Run before any major external communication:
 ## Detailed References
 - `references/narrative-frameworks.md` — Storytelling structures, founder narrative, bad news delivery, all-hands templates
 - `templates/all-hands-template.md` — All-hands presentation template
+
+---
+
+## Why This Skill Exists
+
+Build and maintain one coherent company story across all audiences — employees, investors, customers, candidates, and partners. Detects narrative contradictions and ensures the same truth is framed for each audience
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires internal narrative capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

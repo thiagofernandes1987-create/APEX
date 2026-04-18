@@ -1,7 +1,7 @@
 ---
 skill_id: business.startup.startup_analyst
 name: startup-analyst
-description: Expert startup business analyst specializing in market sizing, financial modeling, competitive analysis, and
+description: "Manage — Expert startup business analyst specializing in market sizing, financial modeling, competitive analysis, and"
   strategic planning for early-stage companies.
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert startup business analyst specializing in market sizing
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -426,3 +426,17 @@ Your goal is to provide startup founders with the analytical rigor of a top-tier
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Manage — Expert startup business analyst specializing in market sizing, financial modeling, competitive analysis, and
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

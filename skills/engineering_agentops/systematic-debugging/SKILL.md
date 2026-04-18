@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.systematic-debugging
 name: systematic-debugging
-description: >
+description: "Debug — Processo de 4 fases para debugging sistemático: Root Cause → Pattern Analysis →"
   Processo de 4 fases para debugging sistemático: Root Cause → Pattern Analysis →
   Hypothesis & Testing → Implementation. Iron Law: NENHUM FIX SEM INVESTIGAÇÃO DE
   ROOT CAUSE PRIMEIRO. Após 3 fixes falhos: questionar a arquitetura, não tentar Fix #4.
@@ -380,3 +380,17 @@ From debugging sessions:
 - Random fixes approach: 2-3 hours of thrashing
 - First-time fix rate: 95% vs 40%
 - New bugs introduced: Near zero vs common
+
+---
+
+## Why This Skill Exists
+
+Debug — Processo de 4 fases para debugging sistemático: Root Cause → Pattern Analysis →
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+Se root cause não encontrada após investigação completa: documentar o que foi investigado,
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

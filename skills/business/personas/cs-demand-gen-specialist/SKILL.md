@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.marketing.cs_demand_gen_specialist
 name: "cs-demand-gen-specialist"
-description: "Demand generation and customer acquisition specialist for lead generation, conversion optimization, and multi-channel acquisition campaigns"
+description: "Manage — Demand generation and customer acquisition specialist for lead generation, conversion optimization, and multi-channel acquisition campaigns"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -318,3 +318,22 @@ fi
 **Status:** Production Ready
 **Version:** 1.0
 
+---
+
+## Why This Skill Exists
+
+Manage — Demand generation and customer acquisition specialist for lead generation, conversion optimization, and multi-channel acquisition campaigns
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cs demand gen specialist capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

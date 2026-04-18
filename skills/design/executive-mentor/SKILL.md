@@ -1,7 +1,7 @@
 ---
 skill_id: design.executive_mentor
 name: executive-mentor
-description: 'Adversarial thinking partner for founders and executives. Stress-tests plans, prepares for brutal board meetings,
+description: "Design — Adversarial thinking partner for founders and executives. Stress-tests plans, prepares for brutal board meetings,"
   dissects decisions with no good options, and forces honest post-mortems. Use when you '
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Adversarial thinking partner for founders and executives
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -251,3 +251,17 @@ All output passes the Internal Quality Loop before reaching the founder (see `ag
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Adversarial thinking partner for founders and executives. Stress-tests plans, prepares for brutal board meetings,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

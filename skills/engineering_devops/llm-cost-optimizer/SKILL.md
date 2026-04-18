@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.llm_cost_optimizer
 name: llm-cost-optimizer
-description: 'Use when you need to reduce LLM API spend, control token usage, route between models by cost/quality, implement
+description: "Use — Use when you need to reduce LLM API spend, control token usage, route between models by cost/quality, implement"
   prompt caching, or build cost observability for AI features. Triggers: ''my AI costs are '
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - you need to reduce LLM API spend
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -312,3 +312,23 @@ All output follows the structured standard:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when you need to reduce LLM API spend, control token usage, route between models by cost/quality, implement
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

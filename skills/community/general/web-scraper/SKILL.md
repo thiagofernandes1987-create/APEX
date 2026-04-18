@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.web_scraper
 name: web-scraper
-description: Web scraping inteligente multi-estrategia. Extrai dados estruturados de paginas web (tabelas, listas, precos).
+description: "Use — Web scraping inteligente multi-estrategia. Extrai dados estruturados de paginas web (tabelas, listas, precos)."
   Paginacao, monitoramento e export CSV/JSON.
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Web scraping inteligente multi-estrategia
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -828,3 +828,17 @@ When extraction fails or is blocked:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Web scraping inteligente multi-estrategia. Extrai dados estruturados de paginas web (tabelas, listas, precos).
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

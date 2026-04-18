@@ -1,7 +1,7 @@
 ---
 skill_id: integrations.n8n.n8n_node_configuration
 name: n8n-node-configuration
-description: Operation-aware node configuration guidance. Use when configuring nodes, understanding property dependencies,
+description: "Automate — Operation-aware node configuration guidance. Use when configuring nodes, understanding property dependencies,"
   determining required fields, choosing between get_node detail levels, or learning common c
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - configuring nodes
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -895,3 +895,17 @@ For comprehensive guides on specific topics:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Automate — Operation-aware node configuration guidance.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Serviço externo indisponível ou timeout
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

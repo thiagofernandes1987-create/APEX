@@ -1,7 +1,7 @@
 ---
 skill_id: healthcare.wellness.weightloss_analyzer
 name: weightloss-analyzer
-description: 分析减肥数据、计算代谢率、追踪能量缺口、管理减肥阶段
+description: "Analyze — 分析减肥数据、计算代谢率、追踪能量缺口、管理减肥阶段"
 version: v00.33.0
 status: CANDIDATE
 domain_path: healthcare/wellness/weightloss-analyzer
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 分析减肥数据、计算代谢率、追踪能量缺口、管理减肥阶段
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -426,3 +426,17 @@ executor: LLM_BEHAVIOR
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze — 分析减肥数据、计算代谢率、追踪能量缺口、管理减肥阶段
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Informação clínica usada para decisão médica real
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

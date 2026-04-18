@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.fal_platform
 name: fal-platform
-description: '''Platform APIs for model management, pricing, and usage tracking'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/fal-platform
@@ -36,7 +36,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use fal platform task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -97,3 +97,17 @@ For more information, see the [source repository](https://github.com/fal-ai-comm
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

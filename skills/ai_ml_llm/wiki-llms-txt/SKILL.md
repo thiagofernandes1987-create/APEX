@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_llm.wiki_llms_txt
 name: wiki-llms-txt
-description: Generates llms.txt and llms-full.txt files for LLM-friendly project documentation following the llms.txt specification.
+description: "Generate — Generates llms.txt and llms-full.txt files for LLM-friendly project documentation following the llms.txt specification."
   Use when the user wants to create LLM-readable summaries, llms.txt files, or mak
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Generates llms
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -246,3 +246,23 @@ Before finalizing:
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Generate — Generates llms.txt and llms-full.txt files for LLM-friendly project documentation following the llms.txt specification.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires wiki llms txt capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

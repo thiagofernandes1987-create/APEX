@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.clean_code
 name: "clean-code"
-description: "'This skill embodies the principles of \'Clean Code\' by Robert C. Martin (Uncle Bob). Use it to transform \'code that works\' into \'code that is clean.\''"
+description: "Use — This skill embodies the principles of \"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/clean-code
@@ -114,3 +114,17 @@ Use this skill when:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — This skill embodies the principles of \
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

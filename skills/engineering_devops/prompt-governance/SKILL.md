@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.prompt_governance
 name: prompt-governance
-description: 'Use when managing prompts in production at scale: versioning prompts, running A/B tests on prompts, building
+description: "Build — Use when managing prompts in production at scale: versioning prompts, running A/B tests on prompts, building"
   prompt registries, preventing prompt regressions, or creating eval pipelines for production'
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - managing prompts in production at scale: versioning prompts
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -340,3 +340,23 @@ All output follows the structured standard:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Build —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when managing prompts in production at scale: versioning prompts, running A/B tests on prompts, building
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: knowledge-synthesis
-description: Combines search results from multiple sources into coherent, deduplicated answers with source attribution. Handles
+description: "Use — Combines search results from multiple sources into coherent, deduplicated answers with source attribution. Handles"
   confidence scoring based on freshness and authority, and summarizes large result sets effectively.
 user-invocable: false
 tier: ADAPTED
@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Combines search results from multiple sources into coherent
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -345,3 +345,23 @@ Want me to dig deeper into any specific aspect?
 - Surface conflicts explicitly
 - Attribute all claims to sources
 - Offer to go deeper when result sets are large
+
+---
+
+## Why This Skill Exists
+
+Use — Combines search results from multiple sources into coherent, deduplicated answers with source attribution. Handles
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires knowledge synthesis capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

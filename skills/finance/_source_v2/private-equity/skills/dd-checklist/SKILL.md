@@ -3,6 +3,9 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source_v2.private-equity.skills
 status: CANDIDATE
 security: {level: high, pii: true, approval_required: true}
+anchors:
+  - finance
+  - data
 ---
 # Due Diligence Checklist
 
@@ -118,3 +121,23 @@ Automatically add relevant items based on sector:
 - Flag items where the seller is slow to respond — may indicate issues
 - Cross-reference data room contents against the checklist to identify gaps
 - Update the checklist as diligence progresses — it's a living document
+
+---
+
+## Why This Skill Exists
+
+Generate and track comprehensive due diligence checklists tailored to the target company's sector, deal type, and complexity. Covers all major workstreams with request lists, status tracking, and red flag escalation.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when kicking off diligence, organizing a data room review, or tracking outstanding items
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

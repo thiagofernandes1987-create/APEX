@@ -1,10 +1,13 @@
 ---
 name: "contract-and-proposal-writer"
-description: "Contract & Proposal Writer"
+description: "Manage — Contract & Proposal Writer"
 executor: LLM_BEHAVIOR
 skill_id: business.business-growth.contract-and-proposal-writer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - documentation
 ---
 
 # Contract & Proposal Writer
@@ -425,3 +428,17 @@ Data transfers outside EEA covered by: [ ] SCCs  [ ] Adequacy Decision  [ ] BCRs
 - Keep templates in version control; track changes with `git diff`
 - Review annually - laws change, especially GDPR enforcement interpretations
 - For NDAs: always specify the return/destruction of confidential materials on termination
+
+---
+
+## Why This Skill Exists
+
+Manage — Contract & Proposal Writer
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

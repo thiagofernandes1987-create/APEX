@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.ai_md
 name: ai-md
-description: '''Convert human-written CLAUDE.md into AI-native structured-label format. Battle-tested across 4 models. Same
+description: "Apply — "
   rules, fewer tokens, higher compliance.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply ai md task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -615,3 +615,17 @@ might be HURTING your AI's performance. Structure > Prose. Always.**
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

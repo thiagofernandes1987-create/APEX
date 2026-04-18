@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_database.postgres_optimization
 name: postgres-optimization
-description: PostgreSQL optimization including indexes, query plans, partitioning, JSONB operations, and connection pooling
+description: "Use — PostgreSQL optimization including indexes, query plans, partitioning, JSONB operations, and connection pooling"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/database
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - PostgreSQL optimization including indexes
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -255,3 +255,23 @@ ORDER BY pg_relation_size(indexrelid) DESC;
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — PostgreSQL optimization including indexes, query plans, partitioning, JSONB operations, and connection pooling
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires postgres optimization capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_git.senior_pm
 name: senior-pm
-description: Senior Project Manager for enterprise software, SaaS, and digital transformation projects. Specializes in portfolio
+description: "Use — Senior Project Manager for enterprise software, SaaS, and digital transformation projects. Specializes in portfolio"
   management, quantitative risk analysis, resource optimization, stakeholder alignment
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Senior Project Manager for enterprise software
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -526,3 +526,23 @@ Reference: `references/portfolio-kpis.md` for full definitions and measurement g
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Senior Project Manager for enterprise software, SaaS, and digital transformation projects. Specializes in portfolio
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires senior pm capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

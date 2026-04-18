@@ -1,6 +1,6 @@
 ---
 name: contact-research
-description: Research a specific person using Common Room data. Triggers on 'who is [name]', 'look up [email]', 'research
+description: "Use — Research a specific person using Common Room data. Triggers on 'who is [name]', 'look up [email]', 'research"
   [contact]', 'is [name] a warm lead', or any contact-level question.
 tier: ADAPTED
 anchors:
@@ -32,7 +32,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Research a specific person using Common Room data
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -214,3 +214,23 @@ Do not generate conversation starters, persona inferences, or engagement assessm
 ## Reference Files
 
 - **`references/contact-signals-guide.md`** — full field descriptions, Spark persona guide, and conversation starter principles
+
+---
+
+## Why This Skill Exists
+
+Use — Research a specific person using Common Room data. Triggers on
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires contact research capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

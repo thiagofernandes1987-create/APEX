@@ -3,6 +3,11 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.private-equity.skills
 status: CANDIDATE
 security: {level: high, pii: true, approval_required: true}
+anchors:
+  - finance
+  - testing
+  - ai_ml
+  - design
 ---
 # Returns Analysis
 
@@ -120,3 +125,23 @@ Build 3 scenarios:
 - Dividend recaps or interim distributions affect IRR significantly — include if planned
 - Don't forget transaction costs (typically 2-4% of EV) — they reduce Day 1 equity value
 - Tax considerations (asset vs. stock deal, 338(h)(10) election) can materially affect after-tax returns
+
+---
+
+## Why This Skill Exists
+
+Build quick IRR/MOIC sensitivity tables for PE deal evaluation. Models returns across entry multiple, leverage, exit multiple, growth, and hold period scenarios.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when sizing up a deal, stress-testing assumptions, or preparing IC returns exhibits
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.ddd_context_mapping
 name: ddd-context-mapping
-description: '''Map relationships between bounded contexts and define integration contracts using DDD context mapping patterns.'''
+description: "Deploy — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: web3/defi/ddd-context-mapping
@@ -43,7 +43,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - deploy ddd context mapping task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -153,3 +153,23 @@ Inventory, and Fraud contexts, including ACL and contract ownership.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Deploy —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ddd context mapping capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Rede blockchain congestionada ou indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

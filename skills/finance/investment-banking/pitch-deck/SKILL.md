@@ -1,7 +1,7 @@
 ---
 skill_id: finance.investment_banking.pitch_deck
 name: pitch-deck
-description: '''Populates investment banking pitch deck templates with data from source files. Use when: user provides a PowerPoint
+description: "Analyze — "
   template to fill in, user has source data (Excel/CSV) to populate into slides, user'
 version: v00.33.0
 status: ADOPTED
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyze pitch deck task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -518,3 +518,23 @@ Before delivering the populated template, verify:
 
 ## Diff History
 - **v00.33.0**: Ingested from financial-services-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Analyze —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires pitch deck capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -3,6 +3,10 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source_v2.private-equity.skills
 status: CANDIDATE
 security: {level: high, pii: true, approval_required: true}
+anchors:
+  - finance
+  - customer_success
+  - design
 ---
 # Unit Economics Analysis
 
@@ -96,3 +100,23 @@ Synthesize into a revenue quality assessment:
 - Differentiate between contracted ARR and actual recognized revenue
 - For usage-based models, focus on consumption trends and expansion patterns rather than traditional ARR metrics
 - Professional services revenue should be evaluated separately — it's not recurring and margins are typically lower
+
+---
+
+## Why This Skill Exists
+
+Analyze unit economics for PE targets — ARR cohorts, LTV/CAC, net retention, payback periods, revenue quality, and margin waterfall. Essential for software/SaaS, recurring revenue, and subscription businesses.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when valuating revenue quality, building a cohort analysis, or assessing customer economics
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.vexor_cli
 name: vexor-cli
-description: Semantic file discovery via `vexor`. Use whenever locating where something is implemented/loaded/defined in a
+description: "Deploy — Semantic file discovery via `vexor`. Use whenever locating where something is implemented/loaded/defined in a"
   medium or large repo, or when the file location is unclear. Prefer this over manual browsi
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Semantic file discovery via `vexor`
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -185,3 +185,17 @@ vexor search "config loader" --path . --exclude-pattern tests/** --exclude-patte
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Deploy — Semantic file discovery via `vexor`. Use whenever locating where something is implemented/loaded/defined in a
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Rede blockchain congestionada ou indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

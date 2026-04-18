@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.benchmark-email-automation
 status: CANDIDATE
 security: {level: standard, pii: true, approval_required: false}
+extends: integrations.composio.meta
+toolkit: benchmark-email-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Benchmark Email Automation via Rube MCP

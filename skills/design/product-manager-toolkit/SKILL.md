@@ -1,7 +1,7 @@
 ---
 skill_id: design.product_manager_toolkit
 name: product-manager-toolkit
-description: Comprehensive toolkit for product managers including RICE prioritization, customer interview analysis, PRD templates,
+description: "Design — Comprehensive toolkit for product managers including RICE prioritization, customer interview analysis, PRD templates,"
   discovery frameworks, and go-to-market strategies. Use for feature prioritization,
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Comprehensive toolkit for product managers including RICE prioritization
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -470,3 +470,23 @@ python scripts/customer_interview_analyzer.py interview.txt json
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Comprehensive toolkit for product managers including RICE prioritization, customer interview analysis, PRD templates,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires product manager toolkit capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

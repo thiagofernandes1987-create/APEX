@@ -6,6 +6,9 @@ executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.autoresearch-agent.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - research
 ---
 
 # /ar:setup — Create New Experiment
@@ -79,3 +82,23 @@ Report to the user:
 - Experiment path and branch name
 - Whether the eval command worked and the baseline metric
 - Suggest: "Run `/ar:run {domain}/{name}` to start iterating, or `/ar:loop {domain}/{name}` for autonomous mode."
+
+---
+
+## Why This Skill Exists
+
+Set up a new autoresearch experiment interactively. Collects domain, target file, eval command, metric, direction, and evaluator.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires setup capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.shader_programming_glsl
 name: shader-programming-glsl
-description: '''Expert guide for writing efficient GLSL shaders (Vertex/Fragment) for web and game engines, covering syntax,
+description: "Apply — "
   uniforms, and common effects.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply shader programming glsl task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -219,3 +219,17 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

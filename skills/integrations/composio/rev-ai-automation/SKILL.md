@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.rev-ai-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: rev-ai-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Rev AI Automation via Rube MCP

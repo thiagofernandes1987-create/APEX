@@ -5,6 +5,13 @@ executor: LLM_BEHAVIOR
 skill_id: business.project-management.team-communications
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - sales
+  - management
+  - reporting
+  - reliability
+  - documentation
 ---
 
 # Internal Comms
@@ -69,3 +76,23 @@ If the user hasn't connected Slack, Gmail, Drive, or Calendar, don't stall. Ask 
 | `project-management/meeting-analyzer` | Meeting insights can feed into 3P updates and status reports |
 | `project-management/confluence-expert` | Publish comms as Confluence pages for permanent record |
 | `marketing-skill/content-production` | External comms — use for public-facing content, not internal |
+
+---
+
+## Why This Skill Exists
+
+Write internal company communications — 3P updates (Progress/Plans/Problems), company-wide newsletters, FAQ roundups, incident reports, leadership updates, status reports, project updates, and general internal comms. Use this skill any time the user asks to draft, edit, or format something meant for
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires team communications capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

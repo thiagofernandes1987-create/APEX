@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.ai_seo
 name: ai-seo
-description: When the user wants to optimize content for AI search engines, get cited by LLMs, or appear in AI-generated answers.
+description: "Create — When the user wants to optimize content for AI search engines, get cited by LLMs, or appear in AI-generated answers."
   Also use when the user mentions 'AI SEO,' 'AEO,' 'GEO,' 'LLMO,' 'answer engine opti
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to optimize content for AI search engines
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -559,3 +559,23 @@ For implementation, see the [tools registry](../../tools/REGISTRY.md).
 
 ## Diff History
 - **v00.33.0**: Ingested from marketingskills-main
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to optimize content for AI search engines, get cited by LLMs, or appear in AI-generated answers.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ai seo capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

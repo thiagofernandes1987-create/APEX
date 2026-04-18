@@ -1,7 +1,7 @@
 ---
 skill_id: security.service_mesh_expert
 name: service-mesh-expert
-description: '''Expert service mesh architect specializing in Istio, Linkerd, and cloud-native networking patterns. Masters
+description: "Audit — "
   traffic management, security policies, observability integration, and multi-cluster mesh co'
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - audit service mesh expert task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -158,3 +158,23 @@ Expert service mesh architect specializing in Istio, Linkerd, and cloud-native n
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Audit —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires service mesh expert capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Análise de código malicioso potencial
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

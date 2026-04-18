@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_content_refresher
 name: seo-content-refresher
-description: Identifies outdated elements in provided content and suggests updates to maintain freshness. Finds statistics,
+description: "Create — Identifies outdated elements in provided content and suggests updates to maintain freshness. Finds statistics,"
   dates, and examples that need updating. Use PROACTIVELY for older content.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Identifies outdated elements in provided content and suggests updates to maintain freshness
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -230,3 +230,23 @@ Focus on meaningful updates that add value. Identify specific elements that need
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create — Identifies outdated elements in provided content and suggests updates to maintain freshness. Finds statistics,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires seo content refresher capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

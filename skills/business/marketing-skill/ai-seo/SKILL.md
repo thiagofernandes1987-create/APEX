@@ -11,6 +11,10 @@ executor: LLM_BEHAVIOR
 skill_id: business.marketing-skill.ai-seo
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - llm
+  - marketing
 ---
 
 # AI SEO
@@ -333,3 +337,23 @@ AI SEO is still a young field. Be honest about confidence levels. What gets cite
 - **content-humanizer**: Use after writing for AI SEO. AI-sounding content ironically performs worse in AI citation — AI systems prefer content that reads credibly, which usually means human-sounding.
 - **seo-audit**: Use for traditional search ranking optimization. Run both — AI SEO and traditional SEO are complementary, not competing. Many signals overlap.
 - **content-strategy**: Use when deciding which topics and queries to target for AI visibility. Strategy first, then optimize.
+
+---
+
+## Why This Skill Exists
+
+Optimize content to get cited by AI search engines — ChatGPT, Perplexity, Google AI Overviews, Claude, Gemini, Copilot.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when you want your content to appear in AI-generated answers, not just ranked in blue links
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: "ad-creative"
-description: "When the user needs to generate, iterate, or scale ad creative for paid advertising. Use when they say 'write ad copy,' 'generate headlines,' 'create ad variations,' 'bulk creative,' 'iterate on ads,' 'ad copy validation,' 'RSA headlines,' 'Meta ad copy,' 'LinkedIn ad,' or 'creative testing.' This is pure creative production — distinct from paid-ads (campaign strategy). Use ad-creative when you need the copy, not the campaign plan."
+description: "Manage — When the user needs to generate, iterate, or scale ad creative for paid advertising. Use when they say"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,9 @@ executor: HYBRID
 skill_id: business.marketing-skill.ad-creative
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - scalability
 ---
 
 # Ad Creative
@@ -269,3 +272,23 @@ Notes: Benefit-first formula, tested format for consideration stage
 - **ab-test-setup**: Use when planning which ad variants to test and how to measure significance. NOT for generating the variants (use ad-creative for that).
 - **content-creator**: Use for organic social content and blog content. NOT for paid ad copy (different constraints, different voice).
 - **copy-editing**: Use when polishing existing copy. NOT for bulk generation or platform-specific formatting.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user needs to generate, iterate, or scale ad creative for paid advertising.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ad creative capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

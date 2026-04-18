@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.subagent-driven-development
 name: subagent-driven-development
-description: >
+description: "Use — Executa plano de implementação despachando um subagente fresco por tarefa, com"
   Executa plano de implementação despachando um subagente fresco por tarefa, com
   revisão em duas etapas após cada uma: conformidade com spec primeiro, depois
   qualidade de código. O agente controlador cuida da coordenação; subagentes cuidam
@@ -369,3 +369,17 @@ Done!
 
 **Alternative workflow:**
 - **superpowers:executing-plans** - Use for parallel session instead of same-session execution
+
+---
+
+## Why This Skill Exists
+
+Use — Executa plano de implementação despachando um subagente fresco por tarefa, com
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+Se implementer retorna BLOCKED: fornecer mais contexto e re-despachar com modelo mais capaz.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

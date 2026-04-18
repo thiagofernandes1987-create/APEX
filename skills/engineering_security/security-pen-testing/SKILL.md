@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_security.security_pen_testing
 name: security-pen-testing
-description: Use when the user asks to perform security audits, penetration testing, vulnerability scanning, OWASP Top 10
+description: "Use — Use when the user asks to perform security audits, penetration testing, vulnerability scanning, OWASP Top 10"
   checks, or offensive security assessments. Covers static analysis, dependency scanning, sec
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user asks to perform security audits
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -424,3 +424,23 @@ Automated security checks on every PR: secret scanning (TruffleHog), dependency 
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to perform security audits, penetration testing, vulnerability scanning, OWASP Top 10
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

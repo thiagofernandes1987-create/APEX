@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_content_planner
 name: seo-content-planner
-description: '''Creates comprehensive content outlines and topic clusters for SEO.'
+description: "Create — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: marketing/seo/seo-content-planner
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - create seo content planner task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -214,3 +214,23 @@ Focus on comprehensive coverage and logical content progression. Plan for topica
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires seo content planner capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

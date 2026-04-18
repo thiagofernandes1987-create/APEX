@@ -1,10 +1,13 @@
 ---
 name: "mcp-server-builder"
-description: "MCP Server Builder"
+description: "Implement — MCP Server Builder"
 executor: HYBRID
 skill_id: engineering.cs-engineering.mcp-server-builder
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - design
 ---
 
 # MCP Server Builder
@@ -166,3 +169,17 @@ Before publishing a manifest:
 - Do not proxy arbitrary URLs from user-provided input.
 - Redact secrets and auth headers from logs.
 - Rate-limit high-cost tools and add request timeouts.
+
+---
+
+## Why This Skill Exists
+
+Implement — MCP Server Builder
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

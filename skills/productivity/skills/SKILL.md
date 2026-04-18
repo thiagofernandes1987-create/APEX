@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.skills
 name: update
-description: Sync tasks and refresh memory from your current activity. Use when pulling new assignments from your project
+description: "Automate — Sync tasks and refresh memory from your current activity. Use when pulling new assignments from your project"
   tracker into TASKS.md, triaging stale or overdue tasks, filling memory gaps for unknown peo
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - pulling new assignments from your project
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -269,3 +269,23 @@ Present grouped by confidence. High-confidence items offered to add directly; lo
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Automate — Sync tasks and refresh memory from your current activity.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when pulling new assignments from your project
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Arquivo de tasks ou memória não encontrado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

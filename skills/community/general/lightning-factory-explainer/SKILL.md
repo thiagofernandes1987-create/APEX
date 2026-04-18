@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.lightning_factory_explainer
 name: lightning-factory-explainer
-description: 'Explain Bitcoin Lightning channel factories and the SuperScalar protocol — scalable Lightning onboarding using
+description: "Use — Explain Bitcoin Lightning channel factories and the SuperScalar protocol — scalable Lightning onboarding using"
   shared UTXOs, Decker-Wattenhofer trees, timeout-signature trees, MuSig2, and Taproot. No '
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Explain Bitcoin Lightning channel factories and the SuperScalar protocol — scalable Lightning onboa
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -120,3 +120,23 @@ Expert guide for understanding Bitcoin Lightning Network channel factories and t
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Explain Bitcoin Lightning channel factories and the SuperScalar protocol — scalable Lightning onboarding using
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires lightning factory explainer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

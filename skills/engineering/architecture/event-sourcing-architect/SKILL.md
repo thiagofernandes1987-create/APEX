@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.event_sourcing_architect
 name: event-sourcing-architect
-description: '''Expert in event sourcing, CQRS, and event-driven architecture patterns. Masters event store design, projection
+description: "Implement — "
   building, saga orchestration, and eventual consistency patterns. Use PROACTIVELY for eve'
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement event sourcing architect task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -163,3 +163,23 @@ Works well with: `saga-orchestration`, `architecture-patterns`, `dbos-*`
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires event sourcing architect capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

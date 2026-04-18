@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.pdf-co-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: pdf-co-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # PDF co Automation via Rube MCP

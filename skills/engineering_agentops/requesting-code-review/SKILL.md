@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.requesting-code-review
 name: requesting-code-review
-description: >
+description: "Review — Despacha subagente code-reviewer com contexto preciso e isolado — nunca herda"
   Despacha subagente code-reviewer com contexto preciso e isolado — nunca herda
   histórico da sessão. Solicita review após cada tarefa em subagent-driven-development,
   após features maiores, e antes de merge. Usa SHAs git para delimitar o escopo exato.
@@ -187,3 +187,23 @@ You: [Fix progress indicators]
 - Request clarification
 
 See template at: requesting-code-review/code-reviewer.md
+
+---
+
+## Why This Skill Exists
+
+Review — Despacha subagente code-reviewer com contexto preciso e isolado — nunca herda
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires requesting code review capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+Se subagente reviewer não disponível: fazer auto-review com checklist da spec.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

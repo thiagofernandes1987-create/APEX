@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - someone has a start date coming
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -183,3 +183,23 @@ If **~~calendar** is connected:
 1. **Customize for the role** — An engineer's onboarding looks different from a designer's.
 2. **Don't overload Day 1** — Focus on setup and relationships. Deep work starts Week 2.
 3. **Assign a buddy** — Having a go-to person who isn't their manager makes a huge difference.
+
+---
+
+## Why This Skill Exists
+
+Generate an onboarding checklist and first-week plan for a new hire.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when someone has a start date coming
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

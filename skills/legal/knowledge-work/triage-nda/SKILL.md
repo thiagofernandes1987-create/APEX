@@ -1,7 +1,7 @@
 ---
 skill_id: legal.knowledge_work.triage_nda
 name: triage-nda
-description: Rapidly triage an incoming NDA and classify it as GREEN (standard approval), YELLOW (counsel review), or RED
+description: "Review — Rapidly triage an incoming NDA and classify it as GREEN (standard approval), YELLOW (counsel review), or RED"
   (full legal review). Use when a new NDA arrives from sales or business development, when sc
 version: v00.33.0
 status: ADOPTED
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Rapidly triage an incoming NDA and classify it as GREEN (standard approval)
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -371,3 +371,23 @@ For YELLOW and RED classifications:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Review — Rapidly triage an incoming NDA and classify it as GREEN (standard approval), YELLOW (counsel review), or RED
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires triage nda capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Legislação atualizada além do knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

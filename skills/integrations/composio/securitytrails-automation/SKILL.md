@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.securitytrails-automation
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+extends: integrations.composio.meta
+toolkit: securitytrails-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Securitytrails Automation via Rube MCP

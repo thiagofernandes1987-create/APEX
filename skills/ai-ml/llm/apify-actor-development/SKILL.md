@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.apify_actor_development
 name: "apify-actor-development"
-description: "'Important: Before you begin, fill in the generatedBy property in the meta section of .actor/actor.json. Replace it with the tool and model you're currently using, such as \'Claude Code with Claude So"
+description: "Apply — Important: Before you begin, fill in the generatedBy property in the meta section of .actor/actor.json. Replace it with the tool and model you"
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/llm/apify-actor-development
@@ -248,3 +248,17 @@ Otherwise, the MCP Server url: `https://mcp.apify.com/?tools=docs`.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — Important: Before you begin, fill in the generatedBy property in the meta section of .actor/actor.json. Replace it with the tool and model you
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

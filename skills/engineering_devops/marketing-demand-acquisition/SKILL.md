@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.marketing_demand_acquisition
 name: marketing-demand-acquisition
-description: Creates demand generation campaigns, optimizes paid ad spend across LinkedIn, Google, and Meta, develops SEO
+description: "Create — Creates demand generation campaigns, optimizes paid ad spend across LinkedIn, Google, and Meta, develops SEO"
   strategies, and structures partnership programs for Series A+ startups scaling internationa
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Creates demand generation campaigns
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -408,3 +408,23 @@ Required:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Create — Creates demand generation campaigns, optimizes paid ad spend across LinkedIn, Google, and Meta, develops SEO
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires marketing demand acquisition capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

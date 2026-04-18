@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cli.board_prep
 name: board-prep
-description: /em -board-prep — Board Meeting Preparation
+description: "Use — /em -board-prep — Board Meeting Preparation"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/cli
@@ -57,7 +57,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - /em -board-prep — Board Meeting Preparation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -269,3 +269,23 @@ The next board prep starts now.
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — /em -board-prep — Board Meeting Preparation
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires board prep capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

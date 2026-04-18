@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_security.red_team
 name: red-team
-description: Use when planning or executing authorized red team engagements, attack path analysis, or offensive security simulations.
+description: "Use — Use when planning or executing authorized red team engagements, attack path analysis, or offensive security simulations."
   Covers MITRE ATT&CK kill-chain planning, technique scoring, choke point identif
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - planning or executing authorized red team engagements
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -453,3 +453,23 @@ done
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when planning or executing authorized red team engagements, attack path analysis, or offensive security simulations
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

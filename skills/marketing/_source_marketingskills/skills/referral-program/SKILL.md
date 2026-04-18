@@ -1,6 +1,6 @@
 ---
 name: referral-program
-description: When the user wants to create, optimize, or analyze a referral program, affiliate program, or word-of-mouth strategy.
+description: "Create — When the user wants to create, optimize, or analyze a referral program, affiliate program, or word-of-mouth strategy."
   Also use when the user mentions 'referral,' 'affiliate,' 'ambassador,' 'word of mouth,' 'viral loop,' 'refer a friend,'
   'partner program,' 'referral incentive,' 'how to get referrals,' 'customers referring customers,' or 'affiliate payout.'
   Use this whenever someone wants existing users or partners to bring in new customers. For launch-specific virality, see
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to create
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -360,3 +360,23 @@ For implementation, see the [tools registry](../../tools/REGISTRY.md). Key tools
 - **email-sequence**: For referral nurture campaigns
 - **marketing-psychology**: For understanding referral motivation
 - **analytics-tracking**: For tracking referral attribution
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to create, optimize, or analyze a referral program, affiliate program, or word-of-mouth strategy.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires referral program capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

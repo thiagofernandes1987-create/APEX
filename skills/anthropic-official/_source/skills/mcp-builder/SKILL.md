@@ -1,6 +1,6 @@
 ---
 name: mcp-builder
-description: Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external
+description: "Apply — Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external"
   services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python
   (FastMCP) or Node/TypeScript (MCP SDK).
 license: Complete terms in LICENSE.txt
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact wi
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -324,3 +324,23 @@ Load these resources as needed during development:
   - XML format specifications
   - Example questions and answers
   - Running an evaluation with the provided scripts
+
+---
+
+## Why This Skill Exists
+
+Apply — Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires mcp builder capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

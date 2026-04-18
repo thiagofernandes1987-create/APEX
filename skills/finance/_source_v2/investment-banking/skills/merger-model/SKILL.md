@@ -3,6 +3,10 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source_v2.investment-banking.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - ai_ml
+  - design
 ---
 # Merger Model
 
@@ -112,3 +116,23 @@ Calculate the minimum synergies needed for the deal to be EPS-neutral in Year 1.
 - Synergy phase-in is critical — Year 1 is often only 25-50% of run-rate synergies
 - Don't forget foregone interest income on cash used and new interest expense on debt raised
 - Tax rate on synergies and interest adjustments should match the acquirer's marginal rate
+
+---
+
+## Why This Skill Exists
+
+Build accretion/dilution analysis for M&A transactions. Models pro forma EPS impact, synergy sensitivities, and purchase price allocation.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when valuating a potential acquisition, preparing merger consequences analysis for a pitch, or advising on deal terms
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

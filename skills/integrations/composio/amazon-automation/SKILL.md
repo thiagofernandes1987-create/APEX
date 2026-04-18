@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.amazon-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: amazon-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Amazon Automation via Rube MCP

@@ -1,10 +1,14 @@
 ---
 name: "demo-video"
-description: "Use when the user asks to create a demo video, product walkthrough, feature showcase, animated presentation, marketing video, or GIF from screenshots or scene descriptions. Orchestrates playwright, ffmpeg, and edge-tts MCPs to produce polished video content."
+description: "Implement — Use when the user asks to create a demo video, product walkthrough, feature showcase, animated presentation, marketing video, or GIF from screenshots or scene descriptions. Orchest"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.demo-video
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - marketing
+  - management
 ---
 
 # Demo Video
@@ -112,3 +116,17 @@ See [references/scene-design-system.md](references/scene-design-system.md) for t
 
 - Related: `engineering/browser-automation` — for playwright-based browser workflows
 - See also: [framecraft](https://github.com/vaddisrinivas/framecraft) — open-source scene rendering pipeline
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

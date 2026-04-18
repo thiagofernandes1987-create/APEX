@@ -1,7 +1,7 @@
 ---
 skill_id: design.skill_creator
 name: skill-creator
-description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update
+description: "Design — Guide for creating effective skills. This skill should be used when users want to create a new skill (or update"
   an existing skill) that extends Claude's capabilities with specialized knowledge, workfl
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Guide for creating effective skills
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -326,3 +326,23 @@ After testing the skill, users may request improvements. Often this happens righ
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Design — Guide for creating effective skills. This skill should be used when users want to create a new skill (or update
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires skill creator capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_ml.theme_factory
 name: theme-factory
-description: Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages,
+description: "Use — Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages,"
   etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact t
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Toolkit for styling artifacts with a theme
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -167,3 +167,23 @@ To handle cases where none of the existing themes work for an artifact, create a
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Use — Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires theme factory capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

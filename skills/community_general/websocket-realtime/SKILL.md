@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.websocket_realtime
 name: websocket-realtime
-description: Real-time communication patterns with WebSocket, Socket.io, Server-Sent Events, and scaling strategies
+description: "Use — Real-time communication patterns with WebSocket, Socket.io, Server-Sent Events, and scaling strategies"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Real-time communication patterns with WebSocket
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -300,3 +300,23 @@ class ReconnectingWebSocket {
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — Real-time communication patterns with WebSocket, Socket.io, Server-Sent Events, and scaling strategies
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires websocket realtime capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

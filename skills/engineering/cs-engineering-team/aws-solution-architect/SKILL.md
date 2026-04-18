@@ -5,6 +5,12 @@ executor: HYBRID
 skill_id: engineering.cs-engineering-team.aws-solution-architect
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - cloud
+  - deployment
+  - api
+  - design
 ---
 
 # AWS Solution Architect
@@ -383,3 +389,23 @@ Provide these details for architecture design:
 | `references/architecture_patterns.md` | 6 patterns: serverless, microservices, three-tier, data processing, GraphQL, multi-region |
 | `references/service_selection.md` | Decision matrices for compute, database, storage, messaging |
 | `references/best_practices.md` | Serverless design, cost optimization, security hardening, scalability |
+
+---
+
+## Why This Skill Exists
+
+Design AWS architectures for startups using serverless patterns and IaC templates.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when asked to design serverless architecture, create CloudFormation templates, optimize AWS costs, set up CI/CD pipelines, or migrate to AWS
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

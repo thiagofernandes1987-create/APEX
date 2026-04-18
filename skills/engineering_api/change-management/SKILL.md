@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_api.change_management
 name: change-management
-description: Framework for rolling out organizational changes without chaos. Covers the ADKAR model adapted for startups,
+description: "Use — Framework for rolling out organizational changes without chaos. Covers the ADKAR model adapted for startups,"
   communication templates, resistance patterns, and change fatigue management. Handles proces
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Framework for rolling out organizational changes without chaos
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -363,3 +363,23 @@ When organizations change too fast, people stop believing any change will stick.
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Framework for rolling out organizational changes without chaos. Covers the ADKAR model adapted for startups,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires change management capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

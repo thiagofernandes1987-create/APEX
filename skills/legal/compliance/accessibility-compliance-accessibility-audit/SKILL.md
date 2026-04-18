@@ -1,7 +1,7 @@
 ---
 skill_id: legal.compliance.accessibility_compliance_accessibility_audit
 name: accessibility-compliance-accessibility-audit
-description: '''You are an accessibility expert specializing in WCAG compliance, inclusive design, and assistive technology
+description: "Review — "
   compatibility. Conduct audits, identify barriers, and provide remediation guidance.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - review accessibility compliance accessibility audit task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -142,3 +142,23 @@ $ARGUMENTS
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Review —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires accessibility compliance accessibility audit capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Legislação atualizada além do knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

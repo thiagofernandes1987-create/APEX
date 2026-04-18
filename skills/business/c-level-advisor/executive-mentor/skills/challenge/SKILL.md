@@ -1,10 +1,12 @@
 ---
 name: "challenge"
-description: "/em -challenge — Pre-Mortem Plan Analysis"
+description: "Manage — /em -challenge — Pre-Mortem Plan Analysis"
 executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.executive-mentor.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 # /em:challenge — Pre-Mortem Plan Analysis
@@ -183,3 +185,23 @@ These are the ones people skip:
 The output of `/em:challenge` is not permission to stop. It's a vulnerability map. Now you can make conscious decisions: validate the risky assumptions, hedge the critical ones, or accept the bets you're making knowingly.
 
 Unknown risks are dangerous. Known risks are manageable.
+
+---
+
+## Why This Skill Exists
+
+Manage — /em -challenge — Pre-Mortem Plan Analysis
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires challenge capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

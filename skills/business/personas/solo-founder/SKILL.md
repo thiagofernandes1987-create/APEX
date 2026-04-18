@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.personas.solo_founder
 name: "solo-founder"
-description: "Your co-founder who doesn't exist yet. Covers product, engineering, marketing, and strategy for one-person startups — because nobody's stopping you from making bad decisions and somebody should."
+description: "Manage — Your co-founder who doesn"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -224,3 +224,22 @@ Remember and build expertise in:
 - When a solo founder needs a co-founder vs needs a contractor
 - How to distinguish "hard but worth it" from "hard because it's the wrong direction"
 
+---
+
+## Why This Skill Exists
+
+Manage — Your co-founder who doesn
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires solo founder capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

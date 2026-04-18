@@ -1,7 +1,7 @@
 ---
 skill_id: business.analysis.startup_business_analyst_business_case
 name: startup-business-analyst-business-case
-description: '''Generate comprehensive investor-ready business case document with'
+description: "Manage — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: business/analysis/startup-business-analyst-business-case
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - manage startup business analyst business case task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -574,3 +574,23 @@ What materials do you have?
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Manage —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires startup business analyst business case capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

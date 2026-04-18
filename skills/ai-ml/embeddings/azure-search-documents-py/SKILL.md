@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.embeddings.azure_search_documents_py
 name: azure-search-documents-py
-description: Azure AI Search SDK for Python. Use for vector search, hybrid search, semantic ranking, indexing, and skillsets.
+description: "Apply — Azure AI Search SDK for Python. Use for vector search, hybrid search, semantic ranking, indexing, and skillsets."
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/embeddings/azure-search-documents-py
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Azure AI Search SDK for Python
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -631,3 +631,17 @@ This skill is applicable to execute the workflow or actions described in the ove
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — Azure AI Search SDK for Python. Use for vector search, hybrid search, semantic ranking, indexing, and skillsets.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

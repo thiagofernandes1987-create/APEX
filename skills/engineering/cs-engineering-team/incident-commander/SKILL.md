@@ -1,10 +1,13 @@
 ---
 name: "incident-commander"
-description: "Incident Commander Skill"
+description: "Implement — Incident Commander Skill"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.incident-commander
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - reliability
 ---
 
 # Incident Commander Skill
@@ -478,3 +481,23 @@ The Incident Commander skill provides a comprehensive framework for managing inc
 The key to successful incident management is preparation, practice, and continuous learning. Use this framework as a starting point, but adapt it to your organization's specific needs, culture, and technical environment.
 
 Remember: The goal isn't to prevent all incidents (which is impossible), but to detect them quickly, respond effectively, communicate clearly, and learn continuously.
+
+---
+
+## Why This Skill Exists
+
+Implement — Incident Commander Skill
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires incident commander capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

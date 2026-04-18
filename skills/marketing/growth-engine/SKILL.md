@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.growth_engine
 name: growth-engine
-description: '''Motor de crescimento para produtos digitais -- growth hacking, SEO, ASO, viral loops, email marketing, CRM,
+description: "Create — "
   referral programs e aquisicao organica.'''
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - create growth engine task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -331,3 +331,17 @@ Dia 0 -- Boas-vindas (imediato apos cadastro)
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

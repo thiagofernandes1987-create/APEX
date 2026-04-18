@@ -1,10 +1,13 @@
 ---
 name: "pr-review-expert"
-description: "Use when the user asks to review pull requests, analyze code changes, check for security issues in PRs, or assess code quality of diffs."
+description: "Implement — Use when the user asks to review pull requests, analyze code changes, check for security issues in PRs, or assess code quality of diffs."
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.pr-review-expert
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - engineering
+  - security
 ---
 
 # PR Review Expert
@@ -386,3 +389,17 @@ Breaking Changes: None detected
 5. Label each comment clearly: "nit:", "must:", "question:", "suggestion:"
 6. Batch all comments in one review round — don't trickle feedback
 7. Acknowledge good patterns, not just problems — specific praise improves culture
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

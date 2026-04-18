@@ -1,6 +1,6 @@
 ---
 name: draft-response
-description: Draft a professional customer-facing response tailored to the situation and relationship. Use when answering
+description: "Use — Draft a professional customer-facing response tailored to the situation and relationship. Use when answering"
   a product question, responding to an escalation or outage, delivering bad news like a delay or won't-fix, declining a feature
   request, or replying to a billing issue.
 argument-hint: <situation description>
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Draft a professional customer-facing response tailored to the situation and relationship
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -506,3 +506,23 @@ What I've tried: [Actions taken so far]
 What I need: [Specific help or decision needed]
 Deadline: [When this needs to be resolved by]
 ```
+
+---
+
+## Why This Skill Exists
+
+Use — Draft a professional customer-facing response tailored to the situation and relationship.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires draft response capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_frontend.artifacts_builder
 name: artifacts-builder
-description: Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies
+description: "Use — Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies"
   (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state manag
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Suite of tools for creating elaborate
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -183,3 +183,23 @@ To test/visualize the artifact, use available tools (including other Skills or b
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Use — Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires artifacts builder capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

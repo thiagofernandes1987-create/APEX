@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.microsoft_docs
 name: microsoft-docs
-description: Understand Microsoft technologies by querying official documentation. Use whenever the user asks how something
+description: "Use — Understand Microsoft technologies by querying official documentation. Use whenever the user asks how something"
   works, wants tutorials, needs configuration options, limits, quotas, or best practices fo
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Understand Microsoft technologies by querying official documentation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -185,3 +185,17 @@ The `fetch` command also supports `--section <heading>` to extract a single sect
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Understand Microsoft technologies by querying official documentation. Use whenever the user asks how something
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

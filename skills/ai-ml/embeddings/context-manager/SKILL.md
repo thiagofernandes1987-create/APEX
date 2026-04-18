@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.embeddings.context_manager
 name: context-manager
-description: Elite AI context engineering specialist mastering dynamic context management, vector databases, knowledge graphs,
+description: "Apply — Elite AI context engineering specialist mastering dynamic context management, vector databases, knowledge graphs,"
   and intelligent memory systems.
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Elite AI context engineering specialist mastering dynamic context management
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -287,3 +287,23 @@ Master context engineer specializing in building dynamic systems that provide th
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — Elite AI context engineering specialist mastering dynamic context management, vector databases, knowledge graphs,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires context manager capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

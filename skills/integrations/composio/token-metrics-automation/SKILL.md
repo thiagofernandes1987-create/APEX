@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.token-metrics-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: token-metrics-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Token Metrics Automation via Rube MCP

@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Design and draft multi-email sequences with full copy
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -308,3 +308,23 @@ Ask: "Would you like me to:
 - Create a variation of this sequence for a different audience segment?
 - Draft the A/B test variants for the subject lines?
 - Build a companion sequence (e.g., a post-purchase follow-up after this lead nurture converts)?"
+
+---
+
+## Why This Skill Exists
+
+Design and draft multi-email sequences with full copy, timing, branching logic, exit conditions, and performance
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires email sequence capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

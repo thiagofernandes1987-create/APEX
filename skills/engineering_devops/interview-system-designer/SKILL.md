@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.interview_system_designer
 name: interview-system-designer
-description: This skill should be used when the user asks to 'design interview processes', 'create hiring pipelines', 'calibrate
+description: "Create — This skill should be used when the user asks to 'design interview processes', 'create hiring pipelines', 'calibrate"
   interview loops', 'generate interview questions', 'design competency matrices', 'ana
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - This skill should be used when the user asks to 'design interview processes'
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -169,3 +169,23 @@ python3 scripts/interview_planner.py --role "Product Manager" --level mid --json
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Create — This skill should be used when the user asks to
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires interview system designer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

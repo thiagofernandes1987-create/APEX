@@ -1,6 +1,6 @@
 ---
 name: triage-nda
-description: Rapidly triage an incoming NDA and classify it as GREEN (standard approval), YELLOW (counsel review), or RED
+description: "Review — Rapidly triage an incoming NDA and classify it as GREEN (standard approval), YELLOW (counsel review), or RED"
   (full legal review). Use when a new NDA arrives from sales or business development, when screening for embedded non-solicits,
   non-competes, or missing carveouts, or when deciding whether an NDA can be signed under standard delegation.
 argument-hint: <NDA file or text>
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Rapidly triage an incoming NDA and classify it as GREEN (standard approval)
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -350,3 +350,23 @@ For YELLOW and RED classifications:
 - If the document is not actually an NDA (e.g., it's labeled as an NDA but contains substantive commercial terms), flag this immediately as a RED and recommend full contract review instead
 - For NDAs that are part of a larger agreement (e.g., confidentiality section in an MSA), note that the broader agreement context may affect the analysis
 - Always note that this is a screening tool and counsel should review any items the user is uncertain about
+
+---
+
+## Why This Skill Exists
+
+Review — Rapidly triage an incoming NDA and classify it as GREEN (standard approval), YELLOW (counsel review), or RED
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires triage nda capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_api.api_design_reviewer
 name: api-design-reviewer
-description: API Design Reviewer
+description: "Review — API Design Reviewer"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/api
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use api design reviewer task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -535,3 +535,23 @@ Regular use of the linting, breaking change detection, and scoring tools ensures
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Review — API Design Reviewer
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires api design reviewer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

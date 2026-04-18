@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Build a marketing performance report with key metrics
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -484,3 +484,23 @@ Ask: "Would you like me to:
 - Draft a stakeholder email with the key takeaways?
 - Dive deeper into any specific metric or channel?
 - Set up a reporting template you can reuse next period?"
+
+---
+
+## Why This Skill Exists
+
+Build a marketing performance report with key metrics, trend analysis, wins and misses, and prioritized optimization
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires performance report capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,10 +1,13 @@
 ---
 name: "risk-management-specialist"
-description: Medical device risk management specialist implementing ISO 14971 throughout product lifecycle. Provides risk analysis, risk evaluation, risk control, and post-production information analysis. Use when user mentions risk management, ISO 14971, risk analysis, FMEA, fault tree analysis, hazard identification, risk control, risk matrix, benefit-risk analysis, residual risk, risk acceptability, or post-market risk.
+description: "Manage — Medical device risk management specialist implementing ISO 14971 throughout product lifecycle. Provides risk analysis, risk evaluation, risk control, and post-production informatio"
 executor: HYBRID
 skill_id: business.ra-qm-team.risk-management-specialist
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - management
 ---
 
 # Risk Management Specialist
@@ -453,3 +456,23 @@ What is the risk level?
 | [capa-officer](../capa-officer/) | Risk-based CAPA |
 | [regulatory-affairs-head](../regulatory-affairs-head/) | Regulatory submissions |
 | [quality-documentation-manager](../quality-documentation-manager/) | Risk file management |
+
+---
+
+## Why This Skill Exists
+
+Manage — Medical device risk management specialist implementing ISO 14971 throughout product lifecycle. Provides risk analysis, risk evaluation, risk control, and post-production informatio
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires risk management specialist capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

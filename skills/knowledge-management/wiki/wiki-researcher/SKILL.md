@@ -1,7 +1,7 @@
 ---
 skill_id: knowledge_management.wiki.wiki_researcher
 name: "wiki-researcher"
-description: "'You are an expert software engineer and systems analyst. Use when user asks \'how does X work\' with expectation of depth, user wants to understand a complex system spanning many files, or user asks "
+description: "Use — You are an expert software engineer and systems analyst. Use when user asks \"
 version: v00.33.0
 status: CANDIDATE
 domain_path: knowledge-management/wiki/wiki-researcher
@@ -90,3 +90,17 @@ This skill is applicable to execute the workflow or actions described in the ove
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — You are an expert software engineer and systems analyst.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

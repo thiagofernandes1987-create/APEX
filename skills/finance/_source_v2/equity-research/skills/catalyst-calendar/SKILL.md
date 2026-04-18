@@ -3,6 +3,9 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source_v2.equity-research.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - design
 ---
 # Catalyst Calendar
 
@@ -85,3 +88,23 @@ Each week, generate a forward-looking summary:
 - Some catalysts are recurring (monthly industry data) — build a template and auto-populate
 - Color-code by impact level: Red = high impact, Yellow = moderate, Green = routine
 - Archive past catalysts with the actual outcome — builds pattern recognition over time
+
+---
+
+## Why This Skill Exists
+
+Build and maintain a calendar of upcoming catalysts across a coverage universe — earnings dates, conferences, product launches, regulatory decisions, and macro events. Helps prioritize attention and position ahead of events. Triggers on "catalyst calendar", "upcoming events", "what's coming up", "ea
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires catalyst calendar capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

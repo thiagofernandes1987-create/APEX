@@ -3,6 +3,9 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source_v2.investment-banking.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - design
 ---
 # Buyer List
 
@@ -99,3 +102,23 @@ For each Tier 1 buyer:
 - Financial sponsors: check fund vintage and deployment pace — a fund nearing end of investment period may be more motivated
 - Always ask the seller if there are buyers they want included or excluded
 - Update the list as the process progresses — move buyers between tiers based on feedback
+
+---
+
+## Why This Skill Exists
+
+Build and organize a universe of potential acquirers for sell-side M&A processes. Identifies strategic and financial buyers, assesses fit, and prioritizes outreach.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when preparing for a sell-side mandate, building a buyer universe, or evaluating potential partners
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

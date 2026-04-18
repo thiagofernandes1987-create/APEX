@@ -1,6 +1,6 @@
 ---
 name: "customer-success-manager"
-description: Monitors customer health, predicts churn risk, and identifies expansion opportunities using weighted scoring models for SaaS customer success. Use when analyzing customer accounts, reviewing retention metrics, scoring at-risk customers, or when the user mentions churn, customer health scores, upsell opportunities, expansion revenue, retention analysis, or customer analytics. Runs three Python CLI tools to produce deterministic health scores, churn risk tiers, and prioritized expansion recommendations across Enterprise, Mid-Market, and SMB segments.
+description: "Manage — Monitors customer health, predicts churn risk, and identifies expansion opportunities using weighted scoring models for SaaS customer success. Use when analyzing customer accounts,"
 license: MIT
 metadata:
   version: 1.0.0
@@ -14,6 +14,11 @@ executor: HYBRID
 skill_id: business.business-growth.customer-success-manager
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - ai_ml
+  - customer_success
+  - monitoring
 ---
 
 # Customer Success Manager
@@ -217,3 +222,23 @@ python scripts/expansion_opportunity_scorer.py customer_data.json --format json
 **Last Updated:** February 2026
 **Tools:** 3 Python CLI tools
 **Dependencies:** Python 3.7+ standard library only
+
+---
+
+## Why This Skill Exists
+
+Manage — Monitors customer health, predicts churn risk, and identifies expansion opportunities using weighted scoring models for SaaS customer success.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when analyzing customer accounts,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

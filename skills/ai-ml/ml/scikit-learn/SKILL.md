@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.ml.scikit_learn
 name: scikit-learn
-description: Machine learning in Python with scikit-learn. Use for classification, regression, clustering, model evaluation,
+description: "Apply — Machine learning in Python with scikit-learn. Use for classification, regression, clustering, model evaluation,"
   and ML pipelines.
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Machine learning in Python with scikit-learn
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -619,3 +619,17 @@ model = MiniBatchKMeans(n_clusters=8, batch_size=100)
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — Machine learning in Python with scikit-learn. Use for classification, regression, clustering, model evaluation,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,11 +1,14 @@
 ---
 name: slack-gif-creator
-description: Toolkit for creating animated GIFs optimized for Slack, with validators for size constraints and composable animation primitives. This skill applies when users request animated GIFs or emoji animations for Slack from descriptions like "make me a GIF for Slack of X doing Y".
+description: "Apply — Toolkit for creating animated GIFs optimized for Slack, with validators for size constraints and composable animation primitives. This skill applies when users request animated GIF"
 license: Complete terms in LICENSE.txt
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.slack-gif-creator
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - automation
+  - apply
 ---
 
 # Slack GIF Creator - Flexible Toolkit
@@ -648,3 +651,23 @@ To use this toolkit, install these dependencies only if they aren't already pres
 ```bash
 pip install pillow imageio numpy
 ```
+
+---
+
+## Why This Skill Exists
+
+Apply — Toolkit for creating animated GIFs optimized for Slack, with validators for size constraints and composable animation primitives. This skill applies when users request animated GIF
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires slack gif creator capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

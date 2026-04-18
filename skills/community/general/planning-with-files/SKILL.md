@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.planning_with_files
 name: "planning-with-files"
-description: "'Work like Manus: Use persistent markdown files as your \'working memory on disk.\''"
+description: "Use — Work like Manus: Use persistent markdown files as your \"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/planning-with-files
@@ -204,3 +204,17 @@ Helper scripts for automation:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Work like Manus: Use persistent markdown files as your \
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

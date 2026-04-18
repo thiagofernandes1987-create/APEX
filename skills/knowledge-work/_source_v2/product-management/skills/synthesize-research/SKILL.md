@@ -1,6 +1,6 @@
 ---
 name: synthesize-research
-description: Synthesize user research from interviews, surveys, and feedback into structured insights. Use when you have a
+description: "Use — Synthesize user research from interviews, surveys, and feedback into structured insights. Use when you have a"
   pile of interview notes, survey responses, or support tickets to make sense of, need to extract themes and rank findings
   by frequency and impact, or want to turn raw feedback into roadmap recommendations.
 argument-hint: <research topic or question>
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - you have a
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -401,3 +401,23 @@ Use clear headers and structured formatting. Each finding should stand on its ow
 - Contradictions in the data are interesting, not inconvenient. They often reveal distinct user segments.
 - Recommendations should be specific enough to act on. "Improve onboarding" is not actionable. "Add a progress indicator to the setup flow" is.
 - Resist the temptation to synthesize too many themes. 5-8 strong findings are better than 20 weak ones.
+
+---
+
+## Why This Skill Exists
+
+Use — Synthesize user research from interviews, surveys, and feedback into structured insights.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when you have a
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

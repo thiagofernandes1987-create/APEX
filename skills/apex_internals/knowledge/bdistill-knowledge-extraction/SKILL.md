@@ -1,7 +1,7 @@
 ---
 skill_id: apex_internals.knowledge.bdistill_knowledge_extraction
 name: bdistill-knowledge-extraction
-description: '''Extract structured domain knowledge from AI models in-session or from local open-source models via Ollama.
+description: "Use — "
   No API key needed.'''
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use bdistill knowledge extraction task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -190,3 +190,17 @@ bdistill extract --domain medical --model qwen3:4b
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

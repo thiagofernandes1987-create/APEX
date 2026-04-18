@@ -1,6 +1,6 @@
 ---
 name: draft-content
-description: Draft blog posts, social media, email newsletters, landing pages, press releases, and case studies with channel-specific
+description: "Use — Draft blog posts, social media, email newsletters, landing pages, press releases, and case studies with channel-specific"
   formatting and SEO recommendations. Use when writing any marketing content, when you need headline or subject line options,
   or when adapting a message for a specific platform, audience, and brand voice.
 argument-hint: <content type and topic>
@@ -32,7 +32,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Draft blog posts
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -200,3 +200,23 @@ Present the draft with clear formatting. After the draft, include:
 - Suggestions for next steps (e.g., "Review with your team", "Add customer quotes", "Pair with a visual")
 
 Ask: "Would you like me to revise any section, adjust the tone, or create a variation for a different channel?"
+
+---
+
+## Why This Skill Exists
+
+Use — Draft blog posts, social media, email newsletters, landing pages, press releases, and case studies with channel-specific
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires draft content capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

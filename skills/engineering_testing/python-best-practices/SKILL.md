@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_testing.python_best_practices
 name: python-best-practices
-description: Pythonic code with modern type hints, dataclasses, async patterns, packaging, and testing
+description: "Use — Pythonic code with modern type hints, dataclasses, async patterns, packaging, and testing"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/testing
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Pythonic code with modern type hints
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -391,3 +391,23 @@ Never use bare `except:`. Catch the most specific exception. Use `logger.excepti
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — Pythonic code with modern type hints, dataclasses, async patterns, packaging, and testing
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires python best practices capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

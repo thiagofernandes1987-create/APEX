@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.remember
 name: remember
-description: Explicitly save important knowledge to auto-memory with timestamp and context. Use when a discovery is too important
+description: "Use — Explicitly save important knowledge to auto-memory with timestamp and context. Use when a discovery is too important"
   to rely on auto-capture.
 version: v00.33.0
 status: CANDIDATE
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - a discovery is too important
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -190,3 +190,17 @@ If the knowledge sounds like a rule (imperative, always/never, convention):
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Explicitly save important knowledge to auto-memory with timestamp and context.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

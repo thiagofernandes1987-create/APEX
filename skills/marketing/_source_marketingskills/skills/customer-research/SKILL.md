@@ -1,6 +1,6 @@
 ---
 name: customer-research
-description: When the user wants to conduct, analyze, or synthesize customer research. Use when the user mentions "customer
+description: "Create — When the user wants to conduct, analyze, or synthesize customer research. Use when the user mentions 'customer"
   research," "ICP research," "talk to customers," "analyze transcripts," "customer interviews," "survey analysis," "support
   ticket analysis," "voice of customer," "VOC," "build personas," "customer personas," "jobs to be done," "JTBD," "what do
   customers say," "what are customers struggling with," "Reddit mining," "G2 reviews," "review mining," "digital watering
@@ -51,7 +51,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user mentions "customer
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -375,3 +375,23 @@ Don't ask all five at once — lead with #1 and #2, then follow up as needed.
 | Planning paid ads informed by research | `paid-ads` |
 | Writing cold email using research on pain/trigger | `cold-email` |
 | Planning content based on discovered topics | `content-strategy` |
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to conduct, analyze, or synthesize customer research.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

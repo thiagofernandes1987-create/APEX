@@ -1,6 +1,6 @@
 ---
 name: "intl-expansion"
-description: "International market expansion strategy. Market selection, entry modes, localization, regulatory compliance, and go-to-market by region. Use when expanding to new countries, evaluating international markets, planning localization, or building regional teams."
+description: "Manage — International market expansion strategy. Market selection, entry modes, localization, regulatory compliance, and go-to-market by region. Use when expanding to new countries, evalua"
 license: MIT
 metadata:
   version: 1.0.0
@@ -12,6 +12,9 @@ executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.intl-expansion
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - business
+  - compliance
 ---
 
 # International Expansion
@@ -107,3 +110,23 @@ international expansion, market entry, localization, go-to-market, GTM, regional
 ## Resources
 - `references/market-entry-playbook.md` — detailed entry playbook by market type
 - `references/regional-guide.md` — specific considerations for key regions (EU, US, APAC, LATAM)
+
+---
+
+## Why This Skill Exists
+
+Manage — International market expansion strategy. Market selection, entry modes, localization, regulatory compliance, and go-to-market by region.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when xpanding to new countries, evalua
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

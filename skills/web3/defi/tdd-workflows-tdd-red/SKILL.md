@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.tdd_workflows_tdd_red
 name: tdd-workflows-tdd-red
-description: '''Generate failing tests for the TDD red phase to define expected behavior and edge cases.'''
+description: "Deploy — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: web3/defi/tdd-workflows-tdd-red
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - deploy tdd workflows tdd red task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -275,3 +275,23 @@ Test requirements: $ARGUMENTS
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Deploy —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires tdd workflows tdd red capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Rede blockchain congestionada ou indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

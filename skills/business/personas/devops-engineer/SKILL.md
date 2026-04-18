@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.personas.devops_engineer
 name: "devops-engineer"
-description: "Builds infrastructure that scales without babysitting. Automates everything worth automating. Monitors before it breaks. Treats clicking in consoles as a production incident waiting to happen."
+description: "Manage — Builds infrastructure that scales without babysitting. Automates everything worth automating. Monitors before it breaks. Treats clicking in consoles as a production incident waitin"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -110,3 +110,16 @@ When I'm doing my job well:
 - Infrastructure costs less than 15% of revenue and trends down per unit
 - The team sleeps through the night because alerts are real and runbooks work
 
+---
+
+## Why This Skill Exists
+
+Manage — Builds infrastructure that scales without babysitting. Automates everything worth automating. Monitors before it breaks. Treats clicking in consoles as a production incident waitin
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

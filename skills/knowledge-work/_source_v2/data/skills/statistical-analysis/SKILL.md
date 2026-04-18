@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Apply statistical methods including descriptive stats
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -333,3 +333,23 @@ Be wary of false precision:
 - "Churn will be 4.73% next quarter" implies more certainty than is warranted
 - Prefer ranges: "We expect churn between 4-6% based on historical patterns"
 - Round appropriately: "About 5%" is often more honest than "4.73%"
+
+---
+
+## Why This Skill Exists
+
+Apply statistical methods including descriptive stats, trend analysis, outlier detection, and hypothesis testing.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires statistical analysis capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

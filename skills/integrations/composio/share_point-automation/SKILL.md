@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.share_point-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: share_point-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # SharePoint Automation via Rube MCP

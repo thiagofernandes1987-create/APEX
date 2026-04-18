@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.typescript_advanced
 name: typescript-advanced
-description: Advanced TypeScript patterns including generics, conditional types, mapped types, template literals, and type
+description: "Use — Advanced TypeScript patterns including generics, conditional types, mapped types, template literals, and type"
   guards
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Advanced TypeScript patterns including generics
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -268,3 +268,23 @@ type UpdateUserInput = RequireAtLeastOne<{ name: string; email: string; age: num
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — Advanced TypeScript patterns including generics, conditional types, mapped types, template literals, and type
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires typescript advanced capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

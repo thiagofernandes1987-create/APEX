@@ -1,10 +1,16 @@
 ---
 name: "browser-automation"
-description: "Use when the user asks to automate browser tasks, scrape websites, fill forms, capture screenshots, extract structured data from web pages, or build web automation workflows. NOT for testing — use playwright-pro for that."
+description: "Implement — Use when the user asks to automate browser tasks, scrape websites, fill forms, capture screenshots, extract structured data from web pages, or build web automation workflows. NOT f"
 executor: HYBRID
 skill_id: engineering.cs-engineering.browser-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - workflow
+  - automation
+  - data
+  - design
 ---
 
 # Browser Automation - POWERFUL
@@ -268,3 +274,23 @@ All scripts are stdlib-only. Run `python3 <script> --help` for full usage.
 - **api-test-suite-builder** — When the website has a public API, hit the API directly instead of scraping the rendered page. Faster, more reliable, less detectable.
 - **performance-profiler** — If your automation scripts are slow, profile the bottlenecks before adding concurrency.
 - **env-secrets-manager** — For securely managing credentials used in authenticated automation workflows.
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to automate browser tasks, scrape websites, fill forms, capture screenshots, extract structured data from web pages, or build web automation workflows
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

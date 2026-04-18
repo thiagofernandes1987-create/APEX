@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.skill_creator_ms
 name: skill-creator-ms
-description: '''Guide for creating effective skills for AI coding agents working with Azure SDKs and Microsoft Foundry services.
+description: "Implement — "
   Use when creating new skills or updating existing skills.'''
 version: v00.33.0
 status: CANDIDATE
@@ -724,3 +724,17 @@ This skill is applicable to execute the workflow or actions described in the ove
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

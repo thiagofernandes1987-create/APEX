@@ -41,7 +41,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyze the interest rate swap curve by pricing swaps at multiple tenors
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -154,3 +154,23 @@ The swap curve prices the market's expectation of future short-term rates, credi
 
 ### Curve Trade Recommendation
 For each trade: structure (e.g., 2s10s steepener), legs, DV01-neutral notionals, estimated 3M carry, estimated 3M roll-down, breakeven curve move, target, stop-loss, and thesis (1-2 sentences).
+
+---
+
+## Why This Skill Exists
+
+Analyze the interest rate swap curve by pricing swaps at multiple tenors, overlaying government and inflation
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires swap curve strategy capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

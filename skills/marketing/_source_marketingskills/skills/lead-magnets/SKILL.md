@@ -1,6 +1,6 @@
 ---
 name: lead-magnets
-description: When the user wants to create, plan, or optimize a lead magnet for email capture or lead generation. Also use
+description: "Create — When the user wants to create, plan, or optimize a lead magnet for email capture or lead generation. Also use"
   when the user mentions "lead magnet," "gated content," "content upgrade," "downloadable," "ebook," "cheat sheet," "checklist,"
   "template download," "opt-in," "freebie," "PDF download," "resource library," "content offer," "email capture content,"
   "Notion template," "spreadsheet template," or "what should I give away for emails." Use this for planning what to create
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to create
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -414,3 +414,23 @@ When creating a lead magnet strategy, provide:
 - **analytics-tracking**: For measuring lead magnet performance
 - **paid-ads**: For paid promotion of lead magnets
 - **social-content**: For social media promotion
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to create, plan, or optimize a lead magnet for email capture or lead generation. Also use
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires lead magnets capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

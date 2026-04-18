@@ -1,7 +1,7 @@
 ---
 skill_id: human_resources.draft_offer
 name: draft-offer
-description: Draft an offer letter with comp details and terms. Use when a candidate is ready for an offer, assembling a total
+description: "Use — Draft an offer letter with comp details and terms. Use when a candidate is ready for an offer, assembling a total"
   comp package (base, equity, signing bonus), writing the offer letter text itself, or p
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - a candidate is ready for an offer
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -183,3 +183,23 @@ If **~~ATS** is connected:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Use — Draft an offer letter with comp details and terms.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when a candidate is ready for an offer, assembling a total
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Legislação trabalhista da jurisdição não especificada
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.senior_computer_vision
 name: senior-computer-vision
-description: Computer vision engineering skill for object detection, image segmentation, and visual AI systems. Covers CNN
+description: "Use — Computer vision engineering skill for object detection, image segmentation, and visual AI systems. Covers CNN"
   and Vision Transformer architectures, YOLO/Faster R-CNN/DETR detection, Mask R-CNN/SAM seg
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Computer vision engineering skill for object detection
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -549,3 +549,23 @@ python scripts/dataset_pipeline_builder.py data/final/ \
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Computer vision engineering skill for object detection, image segmentation, and visual AI systems. Covers CNN
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires senior computer vision capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

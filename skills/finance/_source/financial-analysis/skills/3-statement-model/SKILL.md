@@ -1,6 +1,6 @@
 ---
 name: 3-statement-model
-description: Complete, populate and fill out 3-statement financial model templates (Income Statement, Balance Sheet, Cash
+description: "Analyze — Complete, populate and fill out 3-statement financial model templates (Income Statement, Balance Sheet, Cash"
   Flow Statement) . Use when asked to fill out model templates, complete existing model frameworks, populate financial models
   with data, complete a partially filled IS/BS/CF framework, or link integrated financial statements within an existing template
   structure. Triggers include requests to fill in, complete, or populate a 3-statement model template
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Complete
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -510,3 +510,23 @@ When Master Status shows errors:
 3. Navigate to source tab to investigate
 4. Fix the underlying issue
 5. Return to Checks tab to verify resolution
+
+---
+
+## Why This Skill Exists
+
+Analyze — Complete, populate and fill out 3-statement financial model templates (Income Statement, Balance Sheet, Cash
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires 3 statement model capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

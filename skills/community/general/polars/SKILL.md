@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.polars
 name: polars
-description: Fast in-memory DataFrame library for datasets that fit in RAM. Use when pandas is too slow but data still fits
+description: "Use — Fast in-memory DataFrame library for datasets that fit in RAM. Use when pandas is too slow but data still fits"
   in memory. Lazy evaluation, parallel execution, Apache Arrow backend. Best for 1-100GB da
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - pandas is too slow but data still fits
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -478,3 +478,17 @@ Load these references as needed when users require detailed information about sp
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Fast in-memory DataFrame library for datasets that fit in RAM.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

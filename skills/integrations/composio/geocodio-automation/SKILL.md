@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.geocodio-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: geocodio-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Geocodio Automation via Rube MCP

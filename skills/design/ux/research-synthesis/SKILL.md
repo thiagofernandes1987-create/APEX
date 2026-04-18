@@ -1,7 +1,7 @@
 ---
 skill_id: design.ux.research_synthesis
 name: research-synthesis
-description: Synthesize user research into themes, insights, and recommendations. Use when you have interview transcripts,
+description: "Design — Synthesize user research into themes, insights, and recommendations. Use when you have interview transcripts,"
   survey results, usability test notes, support tickets, or NPS responses that need to be di
 version: v00.33.0
 status: ADOPTED
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - you have interview transcripts
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -197,3 +197,23 @@ If **~~knowledge base** is connected:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Design — Synthesize user research into themes, insights, and recommendations.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when you have interview transcripts,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

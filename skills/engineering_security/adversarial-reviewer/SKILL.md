@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_security.adversarial_reviewer
 name: adversarial-reviewer
-description: Adversarial code review that breaks the self-review monoculture. Use when you want a genuinely critical review
+description: "Review — Adversarial code review that breaks the self-review monoculture. Use when you want a genuinely critical review"
   of recent changes, before merging a PR, or when you suspect Claude is being too agreeable
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - you want a genuinely critical review
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -358,3 +358,17 @@ You are likely reviewing code you just wrote or just read. Your brain (weights) 
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Review — Adversarial code review that breaks the self-review monoculture.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

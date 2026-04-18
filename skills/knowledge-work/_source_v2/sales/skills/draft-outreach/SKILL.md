@@ -1,6 +1,6 @@
 ---
 name: draft-outreach
-description: Research a prospect then draft personalized outreach. Uses web research by default, supercharged with enrichment
+description: "Use — Research a prospect then draft personalized outreach. Uses web research by default, supercharged with enrichment"
   and CRM. Trigger with "draft outreach to [person/company]", "write cold email to [prospect]", "reach out to [name]".
 tier: ADAPTED
 anchors:
@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Research a prospect then draft personalized outreach
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -534,3 +534,23 @@ Best,
 ## Email Draft Status
 Draft created - check ~~email
 ```
+
+---
+
+## Why This Skill Exists
+
+Use — Research a prospect then draft personalized outreach. Uses web research by default, supercharged with enrichment
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires draft outreach capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

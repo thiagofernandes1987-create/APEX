@@ -1,7 +1,7 @@
 ---
 skill_id: finance.financial_analysis.deck_refresh
 name: deck-refresh
-description: 'Updates a presentation with new numbers — quarterly refreshes, earnings updates, comp rolls, rebased market
+description: "Analyze — Updates a presentation with new numbers — quarterly refreshes, earnings updates, comp rolls, rebased market"
   data. Use whenever the user asks to ''update the deck with Q4 numbers'', ''refresh the comps'', '
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Updates a presentation with new numbers — quarterly refreshes
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -213,3 +213,23 @@ Run standard visual verification checks on every edited slide. A number that got
 
 ## Diff History
 - **v00.33.0**: Ingested from financial-services-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Analyze — Updates a presentation with new numbers — quarterly refreshes, earnings updates, comp rolls, rebased market
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires deck refresh capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

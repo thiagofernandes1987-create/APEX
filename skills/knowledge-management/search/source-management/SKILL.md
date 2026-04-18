@@ -1,7 +1,7 @@
 ---
 skill_id: knowledge_management.search.source_management
 name: source-management
-description: Manages connected MCP sources for enterprise search. Detects available sources, guides users to connect new ones,
+description: "Use — Manages connected MCP sources for enterprise search. Detects available sources, guides users to connect new ones,"
   handles source priority ordering, and manages rate limiting awareness.
 version: v00.33.0
 status: ADOPTED
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Manages connected MCP sources for enterprise search
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -282,3 +282,23 @@ To add a new source:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Use — Manages connected MCP sources for enterprise search. Detects available sources, guides users to connect new ones,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires source management capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Fonte de informação não verificável
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

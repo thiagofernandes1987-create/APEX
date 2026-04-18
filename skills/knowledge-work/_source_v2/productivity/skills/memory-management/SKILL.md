@@ -1,6 +1,6 @@
 ---
 name: memory-management
-description: Two-tier memory system that makes Claude a true workplace collaborator. Decodes shorthand, acronyms, nicknames,
+description: "Use — Two-tier memory system that makes Claude a true workplace collaborator. Decodes shorthand, acronyms, nicknames,"
   and internal language so Claude understands requests like a colleague would. CLAUDE.md for working memory, memory/ directory
   for the full knowledge base.
 user-invocable: false
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Two-tier memory system that makes Claude a true workplace collaborator
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -411,3 +411,23 @@ Use `/productivity:start` to initialize by scanning your chat, calendar, email, 
 - Term rarely used
 
 This keeps CLAUDE.md fresh and relevant.
+
+---
+
+## Why This Skill Exists
+
+Use — Two-tier memory system that makes Claude a true workplace collaborator. Decodes shorthand, acronyms, nicknames,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires memory management capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

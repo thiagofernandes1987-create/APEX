@@ -33,7 +33,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - choosing between technologies (e
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -172,3 +172,23 @@ If **~~project tracker** is connected:
 1. **State constraints upfront** — "We need to ship in 2 weeks" or "Must handle 10K rps" shapes the answer.
 2. **Name your options** — Even if you're leaning one way, I'll give a more balanced analysis with explicit alternatives.
 3. **Include non-functional requirements** — Latency, cost, team expertise, and maintenance burden matter as much as features.
+
+---
+
+## Why This Skill Exists
+
+Create or evaluate an architecture decision record (ADR).
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when choosing between technologies (e
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

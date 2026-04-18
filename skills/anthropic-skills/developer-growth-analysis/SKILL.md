@@ -1,10 +1,12 @@
 ---
 name: developer-growth-analysis
-description: Analyzes your recent Claude Code chat history to identify coding patterns, development gaps, and areas for improvement, curates relevant learning resources from HackerNews, and automatically sends a personalized growth report to your Slack DMs.
+description: "Apply — Analyzes your recent Claude Code chat history to identify coding patterns, development gaps, and areas for improvement, curates relevant learning resources from HackerNews, and aut"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.developer-growth-analysis
 status: CANDIDATE
 security: {level: standard, pii: true, approval_required: false}
+anchors:
+  - llm
 ---
 
 # Developer Growth Analysis
@@ -324,3 +326,17 @@ This skill:
 - Focuses on actionable improvements, not vague feedback
 - Provides specific time estimates based on complexity
 - Prioritizes areas that will have the most impact on your development velocity
+
+---
+
+## Why This Skill Exists
+
+Apply — Analyzes your recent Claude Code chat history to identify coding patterns, development gaps, and areas for improvement, curates relevant learning resources from HackerNews, and aut
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

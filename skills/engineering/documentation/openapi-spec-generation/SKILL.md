@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.documentation.openapi_spec_generation
 name: openapi-spec-generation
-description: '''Generate and maintain OpenAPI 3.1 specifications from code, design-first specs, and validation patterns. Use
+description: "Implement — "
   when creating API documentation, generating SDKs, or ensuring API contract compliance.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement openapi spec generation task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -133,3 +133,23 @@ Comprehensive patterns for creating, maintaining, and validating OpenAPI 3.1 spe
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires openapi spec generation capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

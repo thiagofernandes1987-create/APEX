@@ -1,7 +1,7 @@
 ---
 skill_id: finance.payments.churn_prevention
 name: churn-prevention
-description: '''Reduce voluntary and involuntary churn with cancel flows, save offers, dunning, win-back tactics, and retention
+description: "Analyze — "
   strategy. Use when users are cancelling, failed payments are rising, or subscription re'
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyze churn prevention task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -536,3 +536,17 @@ For implementation, use the billing, analytics, and experimentation tools availa
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: design.focused_fix
 name: focused-fix
-description: 'Use when the user asks to fix, debug, or make a specific feature/module/area work end-to-end. Triggers: ''make
+description: "Design — Use when the user asks to fix, debug, or make a specific feature/module/area work end-to-end. Triggers:"
   X work'', ''fix the Y feature'', ''the Z module is broken'', ''focus on [area]''. Not for quick s'
 version: v00.33.0
 status: CANDIDATE
@@ -434,3 +434,17 @@ If you catch yourself thinking any of these, you are skipping phases:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

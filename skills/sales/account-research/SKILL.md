@@ -1,7 +1,7 @@
 ---
 skill_id: sales.account_research
 name: account-research
-description: Research a company or person and get actionable sales intel. Works standalone with web search, supercharged when
+description: "Track — Research a company or person and get actionable sales intel. Works standalone with web search, supercharged when"
   you connect enrichment tools or your CRM. Trigger with 'research [company]', 'look up [
 version: v00.33.0
 status: ADOPTED
@@ -399,3 +399,23 @@ Focus on: Attendee backgrounds, recent news, relationship history
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Track — Research a company or person and get actionable sales intel. Works standalone with web search, supercharged when
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires account research capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: CRM ou enrichment tool indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

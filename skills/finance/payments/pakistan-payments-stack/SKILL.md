@@ -1,7 +1,7 @@
 ---
 skill_id: finance.payments.pakistan_payments_stack
 name: pakistan-payments-stack
-description: '''Design and implement production-grade Pakistani payment integrations (JazzCash, Easypaisa, bank/PSP rails,
+description: "Analyze — "
   optional Raast) for SaaS with PKR billing, webhook reliability, and reconciliation.'''
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyze pakistan payments stack task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -272,3 +272,17 @@ Related Skills
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

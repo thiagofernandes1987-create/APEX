@@ -1,7 +1,7 @@
 ---
 skill_id: finance.composio_skills
 name: FreshBooks Automation
-description: 'FreshBooks Automation: manage businesses, projects, time tracking, and billing in FreshBooks cloud accounting'
+description: "Analyze — FreshBooks Automation: manage businesses, projects, time tracking, and billing in FreshBooks cloud accounting"
 version: v00.33.0
 status: CANDIDATE
 domain_path: finance
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - FreshBooks Automation: manage businesses
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -246,3 +246,23 @@ Arguments:
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Analyze — FreshBooks Automation: manage businesses, projects, time tracking, and billing in FreshBooks cloud accounting
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires freshbooks automation capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

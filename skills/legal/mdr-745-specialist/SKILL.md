@@ -1,7 +1,7 @@
 ---
 skill_id: legal.mdr_745_specialist
 name: mdr-745-specialist
-description: 'EU MDR 2017/745 compliance specialist for medical device classification, technical documentation, clinical evidence,
+description: "Review — EU MDR 2017/745 compliance specialist for medical device classification, technical documentation, clinical evidence,"
   and post-market surveillance. Covers Annex VIII classification rules, Annex II/III '
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'EU MDR 2017/745 compliance specialist for medical device classification
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -438,3 +438,23 @@ Analyzes device against MDR requirements, identifies compliance gaps, generates 
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Review — EU MDR 2017/745 compliance specialist for medical device classification, technical documentation, clinical evidence,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires mdr 745 specialist capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Legislação atualizada além do knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

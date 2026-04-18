@@ -1,10 +1,15 @@
 ---
 name: "playwright-pro"
-description: "Production-grade Playwright testing toolkit. Use when the user mentions Playwright tests, end-to-end testing, browser automation, fixing flaky tests, test migration, CI/CD testing, or test suites. Generate tests, fix flaky failures, migrate from Cypress/Selenium, sync with TestRail, run on BrowserStack. 55 templates, 3 agents, smart reporting."
+description: "Implement — Production-grade Playwright testing toolkit. Use when the user mentions Playwright tests, end-to-end testing, browser automation, fixing flaky tests, test migration, CI/CD testing,"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.playwright-pro
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - deployment
+  - testing
+  - automation
 ---
 
 # Playwright Pro
@@ -126,3 +131,23 @@ See `reference/` directory for:
 - `flaky-tests.md` — Diagnosis commands and quick fixes
 
 See `templates/README.md` for the full template index.
+
+---
+
+## Why This Skill Exists
+
+Implement — Production-grade Playwright testing toolkit.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions Playwright tests, end-to-end testing, browser automation, fixing flaky tests, test migration, CI/CD testing,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

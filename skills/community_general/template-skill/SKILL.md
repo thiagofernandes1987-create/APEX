@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.template_skill
 name: template-skill
-description: Replace with description of the skill and when Claude should use it.
+description: "Use — Replace with description of the skill and when Claude should use it."
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general
@@ -33,7 +33,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Replace with description of the skill and when Claude should use it
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -80,3 +80,23 @@ executor: LLM_BEHAVIOR
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Use — Replace with description of the skill and when Claude should use it.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires template skill capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

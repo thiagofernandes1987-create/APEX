@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_enterprise_infra_planner
 name: azure-enterprise-infra-planner
-description: 'Architect and provision enterprise Azure infrastructure from workload descriptions. For cloud architects and
+description: "Use — Architect and provision enterprise Azure infrastructure from workload descriptions. For cloud architects and"
   platform engineers planning networking, identity, security, compliance, and multi-resource '
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Architect and provision enterprise Azure infrastructure from workload descriptions
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -168,3 +168,17 @@ Read [workflow.md](references/workflow.md) for detailed step-by-step instruction
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Architect and provision enterprise Azure infrastructure from workload descriptions. For cloud architects and
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

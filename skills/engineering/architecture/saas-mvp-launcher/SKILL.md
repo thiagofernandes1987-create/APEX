@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.saas_mvp_launcher
 name: saas-mvp-launcher
-description: '''Use when planning or building a SaaS MVP from scratch. Provides a structured roadmap covering tech stack,
+description: "Implement — "
   architecture, auth, payments, and launch checklist.'''
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement saas mvp launcher task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -323,3 +323,17 @@ export async function createCheckoutSession(userId: string, priceId: string) {
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

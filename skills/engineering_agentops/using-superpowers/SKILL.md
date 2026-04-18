@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.using-superpowers
 name: using-superpowers
-description: >
+description: "Use — Introdução ao sistema de skills Superpowers: como as skills são ativadas automaticamente,"
   Introdução ao sistema de skills Superpowers: como as skills são ativadas automaticamente,
   o workflow básico (brainstorming → worktrees → writing-plans → SDD → TDD → review →
   finishing), e referências por plataforma (Claude Code, Codex, Gemini, Copilot).
@@ -172,3 +172,23 @@ The skill itself tells you which.
 ## User Instructions
 
 Instructions say WHAT, not HOW. "Add X" or "Fix Y" doesn't mean skip workflows.
+
+---
+
+## Why This Skill Exists
+
+Use — Introdução ao sistema de skills Superpowers: como as skills são ativadas automaticamente,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires using superpowers capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+Se plataforma não reconhecida: usar CLAUDE_CODE como padrão.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

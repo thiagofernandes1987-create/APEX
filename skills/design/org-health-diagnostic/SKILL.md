@@ -1,7 +1,7 @@
 ---
 skill_id: design.org_health_diagnostic
 name: org-health-diagnostic
-description: 'Cross-functional organizational health check combining signals from all C-suite roles. Scores 8 dimensions on
+description: "Design — Cross-functional organizational health check combining signals from all C-suite roles. Scores 8 dimensions on"
   a traffic-light scale with drill-down recommendations. Use when assessing overall company '
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Cross-functional organizational health check combining signals from all C-suite roles
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -294,3 +294,23 @@ You don't need all metrics to run a diagnostic. The tool handles partial data:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Cross-functional organizational health check combining signals from all C-suite roles. Scores 8 dimensions on
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires org health diagnostic capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

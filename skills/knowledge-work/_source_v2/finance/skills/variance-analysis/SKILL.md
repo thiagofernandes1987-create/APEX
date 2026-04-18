@@ -1,6 +1,6 @@
 ---
 name: variance-analysis
-description: Decompose financial variances into drivers with narrative explanations and waterfall analysis. Use when analyzing
+description: "Use — Decompose financial variances into drivers with narrative explanations and waterfall analysis. Use when analyzing"
   budget vs. actual, period-over-period changes, revenue or expense variances, or preparing variance commentary for leadership.
 argument-hint: <line item> <period> vs <comparison>
 tier: ADAPTED
@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Decompose financial variances into drivers with narrative explanations and waterfall analysis
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -353,3 +353,23 @@ Track how variances evolve over the year to identify systematic bias:
 - **Growing unfavorable:** Deteriorating performance or unrealistic targets
 - **Shrinking variance:** Forecast accuracy improving through the year (normal pattern)
 - **Volatile:** Unpredictable business or poor forecasting methodology
+
+---
+
+## Why This Skill Exists
+
+Use — Decompose financial variances into drivers with narrative explanations and waterfall analysis.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires variance analysis capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

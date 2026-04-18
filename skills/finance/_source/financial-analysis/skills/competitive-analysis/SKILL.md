@@ -1,6 +1,6 @@
 ---
 name: competitive-analysis
-description: Framework for building competitive landscape decks — market positioning, competitor deep-dives, comparative analysis,
+description: "Analyze — Framework for building competitive landscape decks — market positioning, competitor deep-dives, comparative analysis,"
   strategic synthesis. Use when the user asks for a competitive landscape, competitor analysis, peer comparison, market positioning
   assessment, strategic review, or investment memo deck. Also triggers on "who are the competitors to X", "benchmark X against
   peers", "build a market map", or any request to systematically evaluate competitive dynamics across an industry.
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Framework for building competitive landscape decks — market positioning
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -385,3 +385,23 @@ Before finishing:
 - Charts are real chart objects
 
 Run standard visual verification checks on every slide — this catches overlaps, overflow, and low-contrast text that don't show up when you're reading back the XML.
+
+---
+
+## Why This Skill Exists
+
+Analyze — Framework for building competitive landscape decks — market positioning, competitor deep-dives, comparative analysis,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires competitive analysis capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

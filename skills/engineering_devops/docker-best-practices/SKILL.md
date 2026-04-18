@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.docker_best_practices
 name: docker-best-practices
-description: Docker best practices including multi-stage builds, compose patterns, image optimization, and security
+description: "Build — Docker best practices including multi-stage builds, compose patterns, image optimization, and security"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/devops
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Docker best practices including multi-stage builds
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -261,3 +261,23 @@ Combine `RUN` commands to reduce layers. Order instructions from least to most f
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Build — Docker best practices including multi-stage builds, compose patterns, image optimization, and security
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires docker best practices capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

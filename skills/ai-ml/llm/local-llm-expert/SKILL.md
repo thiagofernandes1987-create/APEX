@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.local_llm_expert
 name: local-llm-expert
-description: Master local LLM inference, model selection, VRAM optimization, and local deployment using Ollama, llama.cpp,
+description: "Apply — Master local LLM inference, model selection, VRAM optimization, and local deployment using Ollama, llama.cpp,"
   vLLM, and LM Studio. Expert in quantization formats (GGUF, EXL2) and local AI privacy.
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Master local LLM inference
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -188,3 +188,23 @@ Expert AI systems engineer mastering local LLM deployment, hardware optimization
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — Master local LLM inference, model selection, VRAM optimization, and local deployment using Ollama, llama.cpp,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires local llm expert capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.trigger_dev
 name: trigger-dev
-description: Trigger.dev expert for background jobs, AI workflows, and reliable
+description: "Use — Trigger.dev expert for background jobs, AI workflows, and reliable"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/trigger-dev
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Trigger
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1056,3 +1056,17 @@ Works well with: `nextjs-app-router`, `vercel-deployment`, `ai-agents-architect`
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Trigger.dev expert for background jobs, AI workflows, and reliable
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

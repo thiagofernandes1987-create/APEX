@@ -1,11 +1,13 @@
 ---
 name: "extract"
-description: "Turn a proven pattern or debugging solution into a standalone reusable skill with SKILL.md, reference docs, and examples."
+description: "Implement — Turn a proven pattern or debugging solution into a standalone reusable skill with SKILL.md, reference docs, and examples."
 command: /si:extract
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.self-improving-agent.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
 ---
 
 # /si:extract — Create Skills from Patterns
@@ -181,3 +183,23 @@ Creates `api-client-regen/SKILL.md` with:
 - Keep skills focused — one problem per skill
 - Include the error messages people would search for
 - Test the skill by reading it without the original context — does it make sense?
+
+---
+
+## Why This Skill Exists
+
+Implement — Turn a proven pattern or debugging solution into a standalone reusable skill with SKILL.md, reference docs, and examples.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires extract capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

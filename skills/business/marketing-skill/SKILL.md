@@ -1,6 +1,6 @@
 ---
 name: "marketing-skills"
-description: "42 marketing agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw, and 6 more coding agents. 7 pods: content, SEO, CRO, channels, growth, intelligence, sales. Foundation context + orchestration router. 27 Python tools (stdlib-only)."
+description: "Manage — 42 marketing agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw, and 6 more coding agents. 7 pods: content, SEO, CRO, channels, growth, intelligence, sal"
 version: 2.0.0
 author: Alireza Rezvani
 license: MIT
@@ -20,6 +20,11 @@ executor: LLM_BEHAVIOR
 skill_id: business.marketing-skill
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - llm
+  - agent
+  - marketing
 ---
 
 # Marketing Skills Division
@@ -107,3 +112,23 @@ python3 marketing-skill/analytics-tracking/scripts/tracking_plan_generator.py
 - **Context Foundation** — One brand context file feeds all 42 skills
 - **Orchestration Router** — Smart routing by keyword + complexity scoring
 - **Zero Dependencies** — All Python tools use stdlib only
+
+---
+
+## Why This Skill Exists
+
+Manage — 42 marketing agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw, and 6 more coding agents. 7 pods: content, SEO, CRO, channels, growth, intelligence, sal
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires marketing skills capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

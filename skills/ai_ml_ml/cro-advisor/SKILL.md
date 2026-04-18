@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_ml.cro_advisor
 name: cro-advisor
-description: Revenue leadership for B2B SaaS companies. Revenue forecasting, sales model design, pricing strategy, net revenue
+description: "Use — Revenue leadership for B2B SaaS companies. Revenue forecasting, sales model design, pricing strategy, net revenue"
   retention, and sales team scaling. Use when designing the revenue engine, setting quot
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Revenue leadership for B2B SaaS companies
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -298,3 +298,23 @@ All output passes the Internal Quality Loop before reaching the founder (see `ag
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Revenue leadership for B2B SaaS companies. Revenue forecasting, sales model design, pricing strategy, net revenue
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cro advisor capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

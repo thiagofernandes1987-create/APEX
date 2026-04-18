@@ -1,6 +1,6 @@
 ---
 name: "content-strategy"
-description: "When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover. Also use when the user mentions \"content strategy,\" \"what should I write about,\" \"content ideas,\" \"blog strategy,\" \"topic clusters,\" or \"content planning.\" For writing individual pieces, see copywriting. For SEO-specific audits, see seo-audit."
+description: "Manage — When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover. Also use when the user mentions \"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,8 @@ executor: HYBRID
 skill_id: business.marketing-skill.content-strategy
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 # Content Strategy
@@ -129,3 +131,23 @@ Output format defaults: tables for prioritization, bullet lists for options, pro
 - **seo-audit**: USE when auditing existing content for technical and on-page issues. NOT for creating new strategy from scratch.
 - **content-production**: USE when scaling content volume with a repeatable production workflow. NOT for initial strategy definition.
 - **content-humanizer**: USE when AI-generated content needs to sound more authentic. NOT for topic selection.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions \
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

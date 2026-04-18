@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.global_chat_agent_discovery
 name: global-chat-agent-discovery
-description: '''Discover and search 18K+ MCP servers and AI agents across 6+ registries using Global Chat''s cross-protocol
+description: "Apply — "
   directory and MCP server.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply global chat agent discovery task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -210,3 +210,17 @@ Agent (via Global Chat MCP): 4 registries carry Kubernetes-related agents (23 to
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

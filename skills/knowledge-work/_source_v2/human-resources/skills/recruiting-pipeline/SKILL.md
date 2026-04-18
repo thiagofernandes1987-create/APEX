@@ -30,7 +30,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Track and manage recruiting pipeline stages
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -107,3 +107,23 @@ Help manage the recruiting pipeline from sourcing through offer acceptance.
 ## If ATS Connected
 
 Pull candidate data automatically, update statuses, and track pipeline metrics in real time.
+
+---
+
+## Why This Skill Exists
+
+Track and manage recruiting pipeline stages. Trigger with "recruiting update", "candidate pipeline", "how many
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires recruiting pipeline capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

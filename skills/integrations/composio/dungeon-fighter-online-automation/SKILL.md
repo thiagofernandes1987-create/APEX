@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.dungeon-fighter-online-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: dungeon-fighter-online-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Dungeon Fighter Online Automation via Rube MCP

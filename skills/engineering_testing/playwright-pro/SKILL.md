@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_testing.playwright_pro
 name: playwright-pro
-description: Production-grade Playwright testing toolkit. Use when the user mentions Playwright tests, end-to-end testing,
+description: "Use — Production-grade Playwright testing toolkit. Use when the user mentions Playwright tests, end-to-end testing,"
   browser automation, fixing flaky tests, test migration, CI/CD testing, or test suites. Gen
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user mentions Playwright tests
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -234,3 +234,23 @@ See `templates/README.md` for the full template index.
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Production-grade Playwright testing toolkit.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions Playwright tests, end-to-end testing,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

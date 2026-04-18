@@ -1,6 +1,6 @@
 ---
 name: "copywriting"
-description: "When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages, pricing pages, feature pages, about pages, or product pages. Also use when the user says \"write copy for,\" \"improve this copy,\" \"rewrite this page,\" \"marketing copy,\" \"headline help,\" or \"CTA copy.\" For email copy, see email-sequence. For popup copy, see popup-cro."
+description: "Manage — When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages, pricing pages, feature pages, about pages, or product pages. Also"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,10 @@ executor: HYBRID
 skill_id: business.marketing-skill.copywriting
 status: CANDIDATE
 security: {level: standard, pii: true, approval_required: false}
+anchors:
+  - business
+  - marketing
+  - documentation
 ---
 
 # Copywriting
@@ -298,3 +302,23 @@ Always provide alternatives for high-stakes elements (headline, CTA). Never deli
 - **content-humanizer**: USE when AI-drafted copy sounds robotic or templated. NOT for strategic decisions.
 - **ab-test-setup**: USE to design experiments testing copy variants. NOT for writing the copy itself.
 - **email-sequence**: USE for email copywriting specifically. NOT for page or landing page copy.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages, pricing pages, feature pages, about pages, or product pages. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires copywriting capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

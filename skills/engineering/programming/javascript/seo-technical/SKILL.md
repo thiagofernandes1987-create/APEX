@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.javascript.seo_technical
 name: seo-technical
-description: '''Audit technical SEO across crawlability, indexability, security, URLs, mobile, Core Web Vitals, structured
+description: "Implement — "
   data, JavaScript rendering, and related platform signals like robots.txt and AI crawler acce'
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement seo technical task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -272,3 +272,17 @@ If DataForSEO MCP tools are available, use `on_page_instant_pages` for real page
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

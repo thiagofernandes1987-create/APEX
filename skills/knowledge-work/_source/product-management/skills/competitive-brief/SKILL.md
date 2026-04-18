@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - informing product
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -391,3 +391,23 @@ Use tables for feature comparisons. Use clear headers for each section. Keep the
 - Customer reviews are gold. They reveal what real users love and hate, unfiltered by marketing.
 - The most valuable part of competitive analysis is the "so what" — the strategic implications. Do not skip this.
 - Competitive analysis has a shelf life. Note the date and flag areas that change quickly.
+
+---
+
+## Why This Skill Exists
+
+Create a competitive analysis brief for one or more competitors or a feature area.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when informing product
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

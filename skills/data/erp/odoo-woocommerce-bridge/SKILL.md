@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_woocommerce_bridge
 name: odoo-woocommerce-bridge
-description: '''Sync Odoo with WooCommerce: products, inventory, orders, and customers via WooCommerce REST API and Odoo external
+description: "Analyze — "
   API.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyze odoo woocommerce bridge task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -233,3 +233,17 @@ def sync_inventory_to_woocommerce():
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

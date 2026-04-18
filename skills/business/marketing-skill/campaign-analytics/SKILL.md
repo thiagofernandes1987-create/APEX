@@ -1,6 +1,6 @@
 ---
 name: "campaign-analytics"
-description: Analyzes campaign performance with multi-touch attribution, funnel conversion analysis, and ROI calculation for marketing optimization. Use when analyzing marketing campaigns, ad performance, attribution models, conversion rates, or calculating marketing ROI, ROAS, CPA, and campaign metrics across channels.
+description: "Manage — Analyzes campaign performance with multi-touch attribution, funnel conversion analysis, and ROI calculation for marketing optimization. Use when analyzing marketing campaigns, ad p"
 license: MIT
 metadata:
   version: 1.0.0
@@ -14,6 +14,11 @@ executor: HYBRID
 skill_id: business.marketing-skill.campaign-analytics
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - marketing
+  - data_science
+  - performance
 ---
 
 # Campaign Analytics
@@ -230,3 +235,23 @@ Calculates comprehensive ROI metrics with industry benchmarking:
 - **ab-test-setup**: For designing experiments to test what analytics reveals.
 - **marketing-ops**: For routing insights to the right execution skill.
 - **paid-ads**: For optimizing ad spend based on analytics findings.
+
+---
+
+## Why This Skill Exists
+
+Manage — Analyzes campaign performance with multi-touch attribution, funnel conversion analysis, and ROI calculation for marketing optimization.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when analyzing marketing campaigns, ad p
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

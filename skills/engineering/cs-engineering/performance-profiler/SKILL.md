@@ -1,10 +1,13 @@
 ---
 name: "performance-profiler"
-description: "Performance Profiler"
+description: "Implement — Performance Profiler"
 executor: HYBRID
 skill_id: engineering.cs-engineering.performance-profiler
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - performance
 ---
 
 # Performance Profiler
@@ -172,3 +175,17 @@ API
 5. **Monitor continuously** — add Datadog/Prometheus metrics for key paths
 6. **Cache invalidation strategy** — cache aggressively, invalidate precisely
 7. **Document the win** — before/after in the PR description motivates the team
+
+---
+
+## Why This Skill Exists
+
+Implement — Performance Profiler
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

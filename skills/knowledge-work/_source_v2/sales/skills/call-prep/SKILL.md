@@ -1,6 +1,6 @@
 ---
 name: call-prep
-description: Prepare for a sales call with account context, attendee research, and suggested agenda. Works standalone with
+description: "Use — Prepare for a sales call with account context, attendee research, and suggested agenda. Works standalone with"
   user input and web research, supercharged when you connect your CRM, email, chat, or transcripts. Trigger with "prep me
   for my call with [company]", "I'm meeting with [company] prep me", "call prep [company]", or "get me ready for [meeting]".
 tier: ADAPTED
@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Prepare for a sales call with account context
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -358,3 +358,23 @@ Run **call-follow-up** to:
 - **account-research** — Deep dive on a company before first contact
 - **call-follow-up** — Process call notes and execute post-call workflow
 - **draft-outreach** — Write personalized outreach after research
+
+---
+
+## Why This Skill Exists
+
+Use — Prepare for a sales call with account context, attendee research, and suggested agenda. Works standalone with
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires call prep capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

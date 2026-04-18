@@ -1,7 +1,7 @@
 ---
 skill_id: product_management.synthesize_research
 name: synthesize-research
-description: Synthesize user research from interviews, surveys, and feedback into structured insights. Use when you have a
+description: "Use — Synthesize user research from interviews, surveys, and feedback into structured insights. Use when you have a"
   pile of interview notes, survey responses, or support tickets to make sense of, need to ex
 version: v00.33.0
 status: ADOPTED
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - you have a
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -418,3 +418,23 @@ Use clear headers and structured formatting. Each finding should stand on its ow
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Use — Synthesize user research from interviews, surveys, and feedback into structured insights.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when you have a
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados de usuário ou métricas não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

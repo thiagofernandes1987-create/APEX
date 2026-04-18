@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.neon_postgres
 name: neon-postgres
-description: Expert patterns for Neon serverless Postgres, branching, connection
+description: "Analyze — Expert patterns for Neon serverless Postgres, branching, connection"
 version: v00.33.0
 status: CANDIDATE
 domain_path: data/databases/sql/neon-postgres
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert patterns for Neon serverless Postgres
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -720,3 +720,17 @@ Message: HTTP driver with transaction. Use Pool from @neondatabase/serverless.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze — Expert patterns for Neon serverless Postgres, branching, connection
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

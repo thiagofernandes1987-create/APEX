@@ -1,7 +1,7 @@
 ---
 skill_id: legal.contract_and_proposal_writer
 name: contract-and-proposal-writer
-description: Contract & Proposal Writer
+description: "Review — Contract & Proposal Writer"
 version: v00.33.0
 status: CANDIDATE
 domain_path: legal
@@ -55,7 +55,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Contract & Proposal Writer
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -534,3 +534,17 @@ Data transfers outside EEA covered by: [ ] SCCs  [ ] Adequacy Decision  [ ] BCRs
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Review — Contract & Proposal Writer
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Legislação atualizada além do knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

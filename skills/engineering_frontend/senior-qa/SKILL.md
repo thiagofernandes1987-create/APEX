@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_frontend.senior_qa
 name: senior-qa
-description: Generates unit tests, integration tests, and E2E tests for React/Next.js applications. Scans components to create
+description: "Generate — Generates unit tests, integration tests, and E2E tests for React/Next.js applications. Scans components to create"
   Jest + React Testing Library test stubs, analyzes Istanbul/LCOV coverage reports to su
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Generates unit tests
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -441,3 +441,23 @@ python scripts/coverage_analyzer.py coverage/coverage-final.json
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Generate — Generates unit tests, integration tests, and E2E tests for React/Next.js applications. Scans components to create
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires senior qa capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

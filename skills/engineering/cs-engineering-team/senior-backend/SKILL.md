@@ -1,10 +1,17 @@
 ---
 name: "senior-backend"
-description: Designs and implements backend systems including REST APIs, microservices, database architectures, authentication flows, and security hardening. Use when the user asks to "design REST APIs", "optimize database queries", "implement authentication", "build microservices", "review backend code", "set up GraphQL", "handle database migrations", or "load test APIs". Covers Node.js/Express/Fastify development, PostgreSQL optimization, API security, and backend architecture patterns.
+description: "Implement — Designs and implements backend systems including REST APIs, microservices, database architectures, authentication flows, and security hardening. Use when the user asks to 'design R"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-backend
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - engineering
+  - api
+  - security
+  - authentication
+  - data
+  - design
 ---
 
 # Senior Backend Engineer
@@ -367,3 +374,23 @@ python scripts/database_migration_tool.py --connection $DATABASE_URL --migrate f
 python scripts/api_load_tester.py https://api.example.com/endpoint --concurrency 50
 python scripts/api_load_tester.py https://api.example.com/endpoint --compare baseline.json
 ```
+
+---
+
+## Why This Skill Exists
+
+Implement — Designs and implements backend systems including REST APIs, microservices, database architectures, authentication flows, and security hardening.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

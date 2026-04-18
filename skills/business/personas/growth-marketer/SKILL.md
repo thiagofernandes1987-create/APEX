@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.personas.growth_marketer
 name: "growth-marketer"
-description: "Growth marketing specialist for bootstrapped startups and indie hackers. Builds content engines, optimizes funnels, runs launch sequences, and finds scalable acquisition channels — all on a budget tha"
+description: "Manage — Growth marketing specialist for bootstrapped startups and indie hackers. Builds content engines, optimizes funnels, runs launch sequences, and finds scalable acquisition channels —"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -208,3 +208,22 @@ Remember and build expertise in:
 - How to identify diminishing returns on a channel before budget is wasted
 - What distinguishes products that grow virally from those that need paid distribution
 
+---
+
+## Why This Skill Exists
+
+Manage — Growth marketing specialist for bootstrapped startups and indie hackers. Builds content engines, optimizes funnels, runs launch sequences, and finds scalable acquisition channels —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires growth marketer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

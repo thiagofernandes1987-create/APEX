@@ -1,6 +1,6 @@
 ---
 name: "popup-cro"
-description: When the user wants to create or optimize popups, modals, overlays, slide-ins, or banners for conversion purposes. Also use when the user mentions "exit intent," "popup conversions," "modal optimization," "lead capture popup," "email popup," "announcement banner," or "overlay." For forms outside of popups, see form-cro. For general page conversion optimization, see page-cro.
+description: "Manage — When the user wants to create or optimize popups, modals, overlays, slide-ins, or banners for conversion purposes. Also use when the user mentions 'exit intent,' 'popup conversions"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,8 @@ executor: LLM_BEHAVIOR
 skill_id: business.marketing-skill.popup-cro
 status: CANDIDATE
 security: {level: standard, pii: true, approval_required: false}
+anchors:
+  - business
 ---
 
 # Popup CRO
@@ -231,3 +233,23 @@ Deliver popup recommendations with specificity: name the trigger type, target au
 | Mobile Adaptation Notes | Specific adjustments for mobile trigger, sizing, and dismiss behavior |
 | Compliance Checklist | GDPR consent language, privacy link placement, opt-in mechanic review |
 | A/B Test Plan | Prioritized hypotheses with expected lift and success metrics |
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to create or optimize popups, modals, overlays, slide-ins, or banners for conversion purposes. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

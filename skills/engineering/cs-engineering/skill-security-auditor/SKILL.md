@@ -1,6 +1,6 @@
 ---
 name: "skill-security-auditor"
-description: >
+description: "Implement — Security audit and vulnerability scanner for AI agent skills before installation."
   Security audit and vulnerability scanner for AI agent skills before installation.
   Use when: (1) evaluating a skill from an untrusted source, (2) auditing a skill
   directory or git repo URL for malicious code, (3) pre-install security gate for
@@ -14,6 +14,10 @@ executor: HYBRID
 skill_id: engineering.cs-engineering.skill-security-auditor
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - engineering
+  - agent
+  - security
 ---
 
 # Skill Security Auditor
@@ -173,3 +177,23 @@ For the complete threat model, detection patterns, and known attack vectors agai
 - Dependency vulnerability checks use local pattern matching, not live CVE databases
 
 When in doubt after an audit, **don't install**. Ask the skill author for clarification.
+
+---
+
+## Why This Skill Exists
+
+Implement — Security audit and vulnerability scanner for AI agent skills before installation.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires skill security auditor capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

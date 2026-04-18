@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_security.content_humanizer
 name: content-humanizer
-description: Makes AI-generated content sound genuinely human — not just cleaned up, but alive. Use when content feels robotic,
+description: "Generate — Makes AI-generated content sound genuinely human — not just cleaned up, but alive. Use when content feels robotic,"
   uses too many AI clichés, lacks personality, or reads like it was written by committe
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - content feels robotic
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -379,3 +379,23 @@ When auditing: name the pattern → explain why it reads as AI → give the spec
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Generate — Makes AI-generated content sound genuinely human — not just cleaned up, but alive.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when content feels robotic,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

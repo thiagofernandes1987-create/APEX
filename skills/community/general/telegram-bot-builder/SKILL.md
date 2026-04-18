@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.telegram_bot_builder
 name: telegram-bot-builder
-description: Expert in building Telegram bots that solve real problems - from
+description: "Use — Expert in building Telegram bots that solve real problems - from"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/telegram-bot-builder
@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert in building Telegram bots that solve real problems - from
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -456,3 +456,17 @@ Works well with: `telegram-mini-app`, `backend`, `ai-wrapper-product`, `workflow
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Expert in building Telegram bots that solve real problems - from
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

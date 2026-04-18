@@ -1,6 +1,6 @@
 ---
 name: "social-media-manager"
-description: "When the user wants to develop social media strategy, plan content calendars, manage community engagement, or grow their social presence across platforms. Also use when the user mentions 'social media strategy,' 'social calendar,' 'community management,' 'social media plan,' 'grow followers,' 'engagement rate,' 'social media audit,' or 'which platforms should I use.' For writing individual social posts, see social-content. For analyzing social performance data, see social-media-analyzer."
+description: "Manage — When the user wants to develop social media strategy, plan content calendars, manage community engagement, or grow their social presence across platforms. Also use when the user me"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,8 @@ executor: HYBRID
 skill_id: business.marketing-skill.social-media-manager
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 # Social Media Manager
@@ -199,3 +201,23 @@ All output passes quality verification:
 - **copywriting**: For landing pages and web copy that social drives to.
 - **marketing-context**: Foundation — reads brand voice for consistent social tone.
 - **ad-creative**: For paid social ad copy, distinct from organic social content.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to develop social media strategy, plan content calendars, manage community engagement, or grow their social presence across platforms. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user me
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

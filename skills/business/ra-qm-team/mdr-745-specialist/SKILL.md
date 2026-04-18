@@ -1,6 +1,6 @@
 ---
 name: "mdr-745-specialist"
-description: EU MDR 2017/745 compliance specialist for medical device classification, technical documentation, clinical evidence, and post-market surveillance. Covers Annex VIII classification rules, Annex II/III technical files, Annex XIV clinical evaluation, and EUDAMED integration.
+description: "Manage — EU MDR 2017/745 compliance specialist for medical device classification, technical documentation, clinical evidence, and post-market surveillance. Covers Annex VIII classification "
 triggers:
   - MDR compliance
   - EU MDR
@@ -16,6 +16,10 @@ executor: HYBRID
 skill_id: business.ra-qm-team.mdr-745-specialist
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - business
+  - compliance
+  - documentation
 ---
 
 # MDR 2017/745 Specialist
@@ -337,3 +341,23 @@ Analyzes device against MDR requirements, identifies compliance gaps, generates 
 - [ ] QMS (ISO 13485) certified
 - [ ] Labeling and IFU finalized
 - [ ] **Validation:** Internal gap assessment complete
+
+---
+
+## Why This Skill Exists
+
+Manage — EU MDR 2017/745 compliance specialist for medical device classification, technical documentation, clinical evidence, and post-market surveillance. Covers Annex VIII classification
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires mdr 745 specialist capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

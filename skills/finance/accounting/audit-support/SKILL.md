@@ -1,7 +1,7 @@
 ---
 skill_id: finance.accounting.audit_support
 name: audit-support
-description: Support SOX 404 compliance with control testing methodology, sample selection, and documentation standards. Use
+description: "Analyze — Support SOX 404 compliance with control testing methodology, sample selection, and documentation standards. Use"
   when generating testing workpapers, selecting audit samples, classifying control deficie
 version: v00.33.0
 status: ADOPTED
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Support SOX 404 compliance with control testing methodology
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -483,3 +483,23 @@ Broad controls that operate at the organizational level and affect multiple proc
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Analyze — Support SOX 404 compliance with control testing methodology, sample selection, and documentation standards. Use
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires audit support capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

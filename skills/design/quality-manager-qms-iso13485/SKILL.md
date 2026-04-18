@@ -1,7 +1,7 @@
 ---
 skill_id: design.quality_manager_qms_iso13485
 name: quality-manager-qms-iso13485
-description: ISO 13485 Quality Management System implementation and maintenance for medical device organizations. Provides
+description: "Design — ISO 13485 Quality Management System implementation and maintenance for medical device organizations. Provides"
   QMS design, documentation control, internal auditing, CAPA management, and certification s
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - ISO 13485 Quality Management System implementation and maintenance for medical device organizations
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -540,3 +540,23 @@ Nonconforming Product Identified
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — ISO 13485 Quality Management System implementation and maintenance for medical device organizations. Provides
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires quality manager qms iso13485 capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

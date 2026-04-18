@@ -1,7 +1,7 @@
 ---
 skill_id: anthropic_official.brand_guidelines
 name: brand-guidelines
-description: Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having
+description: "Apply — Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having"
   Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting
 version: v00.33.0
 status: ADOPTED
@@ -33,7 +33,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit fr
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -146,3 +146,23 @@ To access Anthropic's official brand identity and style resources, use this skil
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Apply — Applies Anthropic
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires brand guidelines capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

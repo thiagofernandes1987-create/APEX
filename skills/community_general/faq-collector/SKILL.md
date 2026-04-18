@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.faq_collector
 name: faq-collector
-description: 将成功解决的用户问题收录到 FAQ 知识库。问题解决后自动判断是否收录。也可以在用户说'收录到 FAQ'、'记录这个问题'、'add to FAQ'时手动触发。
+description: "Use — 将成功解决的用户问题收录到 FAQ 知识库。问题解决后自动判断是否收录。也可以在用户说'收录到 FAQ'、'记录这个问题'、'add to FAQ'时手动触发。"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general
@@ -29,7 +29,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 将成功解决的用户问题收录到 FAQ 知识库。问题解决后自动判断是否收录。也可以在用户说'收录到 FAQ'、'记录这个问题'、'add to FAQ'时手动触发。
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -97,3 +97,23 @@ executor: LLM_BEHAVIOR
 
 ## Diff History
 - **v00.33.0**: Ingested from cherry-studio
+
+---
+
+## Why This Skill Exists
+
+Use — 将成功解决的用户问题收录到 FAQ 知识库。问题解决后自动判断是否收录。也可以在用户说
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires faq collector capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

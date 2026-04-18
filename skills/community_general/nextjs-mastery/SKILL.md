@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.nextjs_mastery
 name: nextjs-mastery
-description: Next.js 14+ App Router patterns including RSC, ISR, middleware, parallel routes, and data fetching
+description: "Use — Next.js 14+ App Router patterns including RSC, ISR, middleware, parallel routes, and data fetching"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general
@@ -45,7 +45,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Next
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -252,3 +252,23 @@ export async function updateProfile(prevState: any, formData: FormData) {
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — Next.js 14+ App Router patterns including RSC, ISR, middleware, parallel routes, and data fetching
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires nextjs mastery capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

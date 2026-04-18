@@ -1,6 +1,6 @@
 ---
 name: "agent-protocol"
-description: "Inter-agent communication protocol for C-suite agent teams. Defines invocation syntax, loop prevention, isolation rules, and response formats. Use when C-suite agents need to query each other, coordinate cross-functional analysis, or run board meetings with multiple agent roles."
+description: "Manage — Inter-agent communication protocol for C-suite agent teams. Defines invocation syntax, loop prevention, isolation rules, and response formats. Use when C-suite agents need to query"
 license: MIT
 metadata:
   version: 1.0.0
@@ -13,6 +13,12 @@ executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.agent-protocol
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - agent
+  - management
+  - design
+  - web3
 ---
 
 # Inter-Agent Protocol
@@ -420,3 +426,23 @@ ACTION ITEMS
 
 ## Reference
 - `references/invocation-patterns.md` — common cross-functional patterns with examples
+
+---
+
+## Why This Skill Exists
+
+Manage — Inter-agent communication protocol for C-suite agent teams. Defines invocation syntax, loop prevention, isolation rules, and response formats.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when C-suite agents need to query
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

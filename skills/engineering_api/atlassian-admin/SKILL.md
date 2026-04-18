@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_api.atlassian_admin
 name: atlassian-admin
-description: Atlassian Administrator for managing and organizing Atlassian products (Jira, Confluence, Bitbucket, Trello),
+description: "Use — Atlassian Administrator for managing and organizing Atlassian products (Jira, Confluence, Bitbucket, Trello),"
   users, permissions, security, integrations, system configuration, and org-wide governance.
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Atlassian Administrator for managing and organizing Atlassian products (Jira
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -352,3 +352,23 @@ executor: LLM_BEHAVIOR
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Atlassian Administrator for managing and organizing Atlassian products (Jira, Confluence, Bitbucket, Trello),
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires atlassian admin capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

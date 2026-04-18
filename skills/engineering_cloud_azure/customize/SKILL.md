@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.customize
 name: customize
-description: Interactive guided deployment flow for Azure OpenAI models with full customization control. Step-by-step selection
+description: "Deploy — Interactive guided deployment flow for Azure OpenAI models with full customization control. Step-by-step selection"
   of model version, SKU (GlobalStandard/Standard/ProvisionedManaged), capacity, RAI pol
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Interactive guided deployment flow for Azure OpenAI models with full customization control
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -274,3 +274,17 @@ az cognitiveservices account deployment delete --name <account> --resource-group
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Deploy — Interactive guided deployment flow for Azure OpenAI models with full customization control. Step-by-step selection
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

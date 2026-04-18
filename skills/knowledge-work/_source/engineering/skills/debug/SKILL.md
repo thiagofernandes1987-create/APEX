@@ -1,6 +1,6 @@
 ---
 name: debug
-description: Structured debugging session — reproduce, isolate, diagnose, and fix. Trigger with an error message or stack
+description: "Debug — Structured debugging session — reproduce, isolate, diagnose, and fix. Trigger with an error message or stack"
   trace, "this works in staging but not prod", "something broke after the deploy", or when behavior diverges from expected
   and the cause isn't obvious.
 argument-hint: <error message or problem description>
@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Structured debugging session — reproduce
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -174,3 +174,23 @@ If **~~project tracker** is connected:
 1. **Share error messages exactly** — Don't paraphrase. The exact text matters.
 2. **Mention what changed** — Recent deploys, dependency updates, and config changes are top suspects.
 3. **Include context** — "This works in staging but not prod" or "Only affects large payloads" narrows things fast.
+
+---
+
+## Why This Skill Exists
+
+Debug — Structured debugging session — reproduce, isolate, diagnose, and fix. Trigger with an error message or stack
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires debug capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

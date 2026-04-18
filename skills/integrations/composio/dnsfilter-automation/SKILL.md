@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.dnsfilter-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: dnsfilter-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Dnsfilter Automation via Rube MCP

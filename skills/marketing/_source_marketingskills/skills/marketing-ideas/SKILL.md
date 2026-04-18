@@ -1,6 +1,6 @@
 ---
 name: marketing-ideas
-description: When the user needs marketing ideas, inspiration, or strategies for their SaaS or software product. Also use
+description: "Create — When the user needs marketing ideas, inspiration, or strategies for their SaaS or software product. Also use"
   when the user asks for 'marketing ideas,' 'growth ideas,' 'how to market,' 'marketing strategies,' 'marketing tactics,'
   'ways to promote,' 'ideas to grow,' 'what else can I try,' 'I don't know how to market this,' 'brainstorm marketing,' or
   'what marketing should I do.' Use this as a starting point whenever someone is stuck or looking for inspiration on how to
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user needs marketing ideas
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -279,3 +279,23 @@ When recommending ideas, provide for each:
 - **email-sequence**: For email marketing tactics
 - **free-tool-strategy**: For engineering as marketing (#15)
 - **referral-program**: For viral growth (#93)
+
+---
+
+## Why This Skill Exists
+
+Create — When the user needs marketing ideas, inspiration, or strategies for their SaaS or software product. Also use
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires marketing ideas capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

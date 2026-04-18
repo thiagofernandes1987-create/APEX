@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_llm.senior_prompt_engineer
 name: senior-prompt-engineer
-description: This skill should be used when the user asks to 'optimize prompts', 'design prompt templates', 'evaluate LLM
+description: "Use — This skill should be used when the user asks to 'optimize prompts', 'design prompt templates', 'evaluate LLM"
   outputs', 'build agentic systems', 'implement RAG', 'create few-shot examples', 'analyze to
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - This skill should be used when the user asks to 'optimize prompts'
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -469,3 +469,23 @@ python scripts/agent_orchestrator.py agent.yaml --estimate-cost  # Token estimat
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — This skill should be used when the user asks to
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires senior prompt engineer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: science.bio_research.scvi_tools
 name: scvi-tools
-description: Deep learning for single-cell analysis using scvi-tools. This skill should be used when users need (1) data integration
+description: "Research — Deep learning for single-cell analysis using scvi-tools. This skill should be used when users need (1) data integration"
   and batch correction with scVI/scANVI, (2) ATAC-seq analysis with PeakVI, (3) CI
 version: v00.33.0
 status: ADOPTED
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Deep learning for single-cell analysis using scvi-tools
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -261,3 +261,17 @@ Strong cross-technology batch effects?
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Research — Deep learning for single-cell analysis using scvi-tools. This skill should be used when users need (1) data integration
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Literatura científica beyond knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

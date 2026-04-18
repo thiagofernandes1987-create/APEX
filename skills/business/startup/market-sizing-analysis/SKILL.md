@@ -1,7 +1,7 @@
 ---
 skill_id: business.startup.market_sizing_analysis
 name: market-sizing-analysis
-description: '''Comprehensive market sizing methodologies for calculating Total Addressable Market (TAM), Serviceable Available
+description: "Manage — "
   Market (SAM), and Serviceable Obtainable Market (SOM) for startup opportunities.'''
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - manage market sizing analysis task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -511,3 +511,23 @@ For detailed step-by-step guidance on each methodology, reference the files in `
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Manage —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires market sizing analysis capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

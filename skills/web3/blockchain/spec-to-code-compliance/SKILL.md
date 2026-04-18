@@ -1,7 +1,7 @@
 ---
 skill_id: web3.blockchain.spec_to_code_compliance
 name: spec-to-code-compliance
-description: Verifies code implements exactly what documentation specifies for blockchain audits. Use when comparing code
+description: "Deploy — Verifies code implements exactly what documentation specifies for blockchain audits. Use when comparing code"
   against whitepapers, finding gaps between specs and implementation, or performing complianc
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - comparing code
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -470,3 +470,17 @@ Invoke directly: "Use the spec-compliance-checker agent to verify this codebase 
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Deploy — Verifies code implements exactly what documentation specifies for blockchain audits.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Rede blockchain congestionada ou indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

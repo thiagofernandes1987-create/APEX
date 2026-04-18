@@ -1,7 +1,7 @@
 ---
 skill_id: sales.common_room.skills
 name: weekly-prep-brief
-description: '''Generate a comprehensive weekly briefing for all external calls in the next 7 days. Triggers on ''weekly prep
+description: "Track — "
   brief'', ''prepare my week'', ''what calls do I have this week'', ''Monday prep'', or any weekly '
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - track weekly prep brief task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -230,3 +230,23 @@ Do not generate a full meeting prep section (company snapshot, signal highlights
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Track —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires weekly prep brief capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: CRM ou enrichment tool indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

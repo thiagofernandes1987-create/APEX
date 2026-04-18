@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.content_strategy
 name: content-strategy
-description: '''Plan a content strategy, topic clusters, editorial roadmap, and content mix for traffic, authority, and lead
+description: "Use — "
   generation. Use when deciding what to publish, what topics to prioritize, or how to struct'
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use content strategy task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -460,3 +460,17 @@ Visual or structured representation of how content interconnects.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

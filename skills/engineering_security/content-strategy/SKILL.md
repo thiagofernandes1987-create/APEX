@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_security.content_strategy
 name: "content-strategy"
-description: "When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover. Also use when the user mentions \'content strategy,\' \'what should I write about,\' "
+description: "Create — When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover. Also use when the user mentions \"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/security
@@ -140,3 +140,23 @@ Output format defaults: tables for prioritization, bullet lists for options, pro
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions \
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

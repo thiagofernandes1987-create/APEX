@@ -3,11 +3,12 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source_v2.investment-banking.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
 ---
 # Teaser
 
-description: Draft anonymous one-page company teasers for sell-side M&A processes. Creates a compelling summary without revealing the company's identity, designed to gauge buyer interest before NDA execution. Triggers on "teaser", "blind teaser", "anonymous profile", "one-pager for process", or "draft teaser for sell-side".
-
+description: "Analyze — Draft anonymous one-page company teasers for sell-side M&A processes. Creates a compelling summary without revealing the company's identity, designed to gauge buyer interest before"
 ## Workflow
 
 ### Step 1: Gather Inputs
@@ -81,3 +82,23 @@ Ensure the teaser doesn't inadvertently identify the company:
 - Include enough financial detail to qualify serious buyers but not so much that tire-kickers waste your time
 - Always have the client and legal review before distribution
 - Track who receives the teaser — it becomes the outreach log for the process
+
+---
+
+## Why This Skill Exists
+
+Analyze — Draft anonymous one-page company teasers for sell-side M&A processes. Creates a compelling summary without revealing the company
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires teaser capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

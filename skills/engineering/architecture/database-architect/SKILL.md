@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.database_architect
 name: database-architect
-description: Expert database architect specializing in data layer design from scratch, technology selection, schema modeling,
+description: "Implement — Expert database architect specializing in data layer design from scratch, technology selection, schema modeling,"
   and scalable database architectures.
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert database architect specializing in data layer design from scratch
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -375,3 +375,23 @@ When designing architecture, provide:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Expert database architect specializing in data layer design from scratch, technology selection, schema modeling,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires database architect capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

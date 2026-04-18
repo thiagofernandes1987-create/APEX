@@ -1,7 +1,7 @@
 ---
 skill_id: claude_skills_m.marketing.brand_guidelines
 name: brand-guidelines
-description: When the user wants to apply, document, or enforce brand guidelines for any product or company. Also use when
+description: "Use — When the user wants to apply, document, or enforce brand guidelines for any product or company. Also use when"
   the user mentions 'brand guidelines,' 'brand colors,' 'typography,' 'logo usage,' 'brand v
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to apply
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -211,3 +211,23 @@ Brand consistency is not a design preference — it's a trust signal. Every devi
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — When the user wants to apply, document, or enforce brand guidelines for any product or company. Also use when
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires brand guidelines capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

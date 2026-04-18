@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.blog_writing_guide
 name: blog-writing-guide
-description: '''This skill enforces Sentry''s blog writing standards across every post — whether you''re helping an engineer
+description: "Automate — "
   write their first blog post or a marketer draft a product announcement.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - automate blog writing guide task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -261,3 +261,17 @@ When providing feedback, be specific and constructive. Quote the weak passage, e
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Automate —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Arquivo de tasks ou memória não encontrado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -6,7 +6,7 @@ Dependencies: none
 Author: Alireza Rezvani
 Version: 2.1.2
 name: code-to-prd
-description: |
+description: "Manage — |"
   Reverse-engineer any codebase into a complete Product Requirements Document (PRD).
   Analyzes routes, components, state management, API integrations, and user interactions to produce
   business-readable documentation detailed enough for engineers or AI agents to fully reconstruct
@@ -24,6 +24,8 @@ executor: HYBRID
 skill_id: business.product-team.code-to-prd
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 ## Name
@@ -509,3 +511,23 @@ Both scripts are **stdlib-only** — no pip install needed.
 ## Attribution
 
 This skill was inspired by [code-to-prd](https://github.com/lihanglogan/code-to-prd) by [@lihanglogan](https://github.com/lihanglogan), who proposed the original concept and methodology in [PR #368](https://github.com/alirezarezvani/claude-skills/pull/368). The core three-phase workflow (global scan → page-by-page analysis → structured document generation) originated from that work. This version was rebuilt from scratch in English with added tooling (analysis scripts, scaffolder, framework reference, quality checklist).
+
+---
+
+## Why This Skill Exists
+
+Manage — |
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires code to prd capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

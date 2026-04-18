@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.arm_cortex_expert
 name: arm-cortex-expert
-description: Senior embedded software engineer specializing in firmware and driver development for ARM Cortex-M microcontrollers
+description: "Use — Senior embedded software engineer specializing in firmware and driver development for ARM Cortex-M microcontrollers"
   (Teensy, STM32, nRF52, SAMD).
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Senior embedded software engineer specializing in firmware and driver development for ARM Cortex-M m
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -390,3 +390,23 @@ __set_BASEPRI(basepri);
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Senior embedded software engineer specializing in firmware and driver development for ARM Cortex-M microcontrollers
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires arm cortex expert capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

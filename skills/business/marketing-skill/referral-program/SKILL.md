@@ -1,6 +1,6 @@
 ---
 name: "referral-program"
-description: "When the user wants to design, launch, or optimize a referral or affiliate program. Use when they mention 'referral program,' 'affiliate program,' 'word of mouth,' 'refer a friend,' 'incentive program,' 'customer referrals,' 'brand ambassador,' 'partner program,' 'referral link,' or 'growth through referrals.' Covers program mechanics, incentive design, and optimization — not just the idea of referrals but the actual system."
+description: "Manage — When the user wants to design, launch, or optimize a referral or affiliate program. Use when they mention"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,9 @@ executor: HYBRID
 skill_id: business.marketing-skill.referral-program
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - design
 ---
 
 # Referral Program
@@ -288,3 +291,23 @@ All output follows the structured communication standard:
 - **marketing-demand-acquisition**: Use for multi-channel paid and organic acquisition strategy. NOT for referral-specific mechanics.
 - **ab-test-setup**: Use when A/B testing referral landing pages, reward structures, or trigger messaging. NOT for the program design.
 - **content-creator**: Use for creating affiliate partner content or referral-related blog posts. NOT for program mechanics.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to design, launch, or optimize a referral or affiliate program.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when they mention
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

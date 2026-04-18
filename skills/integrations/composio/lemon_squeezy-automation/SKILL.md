@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.lemon_squeezy-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: lemon_squeezy-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Lemon Squeezy Automation via Rube MCP

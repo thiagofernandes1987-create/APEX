@@ -1,6 +1,6 @@
 ---
 name: "onboarding-cro"
-description: When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value. Also use when the user mentions "onboarding flow," "activation rate," "user activation," "first-run experience," "empty states," "onboarding checklist," "aha moment," or "new user experience." For signup/registration optimization, see signup-flow-cro. For ongoing email sequences, see email-sequence.
+description: "Manage — When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value. Also use when the user mentions 'onboarding flow,' 'activation rate"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,8 @@ executor: HYBRID
 skill_id: business.marketing-skill.onboarding-cro
 status: CANDIDATE
 security: {level: standard, pii: true, approval_required: false}
+anchors:
+  - business
 ---
 
 # Onboarding CRO
@@ -255,3 +257,23 @@ Deliver recommendations following the output quality standard: lead with the hig
 | Checklist Copy | 3–7 onboarding checklist items ordered by value, with completion messaging |
 | Email Trigger Map | Trigger conditions, timing, and goals for each onboarding email in the sequence |
 | Experiment Backlog | Prioritized A/B test ideas for onboarding steps, sorted by expected impact |
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.threejs.threejs_loaders
 name: threejs-loaders
-description: Three.js asset loading - GLTF, textures, images, models, async patterns. Use when loading 3D models, textures,
+description: "Implement — Three.js asset loading - GLTF, textures, images, models, async patterns. Use when loading 3D models, textures,"
   HDR environments, or managing loading progress.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - loading 3D models
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -749,3 +749,17 @@ As of r183, `VRMLLoader` supports loading cameras defined in VRML files.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Three.js asset loading - GLTF, textures, images, models, async patterns.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

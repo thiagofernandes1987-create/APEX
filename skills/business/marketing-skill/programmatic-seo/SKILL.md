@@ -1,6 +1,6 @@
 ---
 name: "programmatic-seo"
-description: When the user wants to create SEO-driven pages at scale using templates and data. Also use when the user mentions "programmatic SEO," "template pages," "pages at scale," "directory pages," "location pages," "[keyword] + [city] pages," "comparison pages," "integration pages," or "building many pages for SEO." For auditing existing SEO issues, see seo-audit.
+description: "Manage — When the user wants to create SEO-driven pages at scale using templates and data. Also use when the user mentions 'programmatic SEO,' 'template pages,' 'pages at scale,' 'directory"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,11 @@ executor: HYBRID
 skill_id: business.marketing-skill.programmatic-seo
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - marketing
+  - data
+  - scalability
 ---
 
 # Programmatic SEO
@@ -282,3 +287,23 @@ Automatically surface programmatic-seo when:
 | Page Template Spec | Markdown with annotated sections | URL pattern, title/meta templates, content block structure, unique value rules |
 | Pre-Launch Checklist | Checkbox list | Content quality, technical SEO, internal linking, indexation gates |
 | Post-Launch Monitoring Plan | Table | Metrics to track × tools × alert thresholds × review cadence |
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to create SEO-driven pages at scale using templates and data. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

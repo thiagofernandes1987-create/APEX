@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.go.golang_pro
 name: golang-pro
-description: Master Go 1.21+ with modern patterns, advanced concurrency, performance optimization, and production-ready microservices.
+description: "Implement — Master Go 1.21+ with modern patterns, advanced concurrency, performance optimization, and production-ready microservices."
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/programming/go/golang-pro
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Master Go 1
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -277,3 +277,23 @@ Expert Go developer mastering Go 1.21+ features, modern development practices, a
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Master Go 1.21+ with modern patterns, advanced concurrency, performance optimization, and production-ready microservices.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires golang pro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

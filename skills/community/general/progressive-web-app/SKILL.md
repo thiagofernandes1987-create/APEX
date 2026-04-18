@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.progressive_web_app
 name: progressive-web-app
-description: '''Build Progressive Web Apps (PWAs) with offline support, installability, and caching strategies. Trigger whenever
+description: "Use — "
   the user mentions PWA, service workers, web app manifests, Workbox, ''add to home scree'
 version: v00.33.0
 status: CANDIDATE
@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use progressive web app task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -429,3 +429,17 @@ registerRoute(({ request }) => request.destination === 'script', new StaleWhileR
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

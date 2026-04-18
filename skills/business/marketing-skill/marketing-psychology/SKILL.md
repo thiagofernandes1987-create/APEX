@@ -1,6 +1,6 @@
 ---
 name: "marketing-psychology"
-description: "When the user wants to apply psychological principles, mental models, or behavioral science to marketing. Also use when the user mentions 'psychology,' 'mental models,' 'cognitive bias,' 'persuasion,' 'behavioral science,' 'why people buy,' 'decision-making,' or 'consumer behavior.' This skill provides 70+ mental models organized for marketing application."
+description: "Manage — When the user wants to apply psychological principles, mental models, or behavioral science to marketing. Also use when the user mentions"
 license: MIT
 metadata:
   version: 1.1.0
@@ -11,6 +11,11 @@ executor: LLM_BEHAVIOR
 skill_id: business.marketing-skill.marketing-psychology
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - ai_ml
+  - marketing
+  - observability
 ---
 
 # Marketing Psychology
@@ -125,3 +130,23 @@ All output passes quality verification:
 - **pricing-strategy**: For pricing decisions. Psychology provides the buyer behavior lens.
 - **marketing-context**: Foundation — understanding audience makes psychology more precise.
 - **ab-test-setup**: For testing which psychological approach works. Data beats theory.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to apply psychological principles, mental models, or behavioral science to marketing. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_api.find_skills
 name: find-skills
-description: Helps users discover and install agent skills when they ask questions like 'how do I do X', 'find a skill for
+description: "Use — Helps users discover and install agent skills when they ask questions like 'how do I do X', 'find a skill for"
   X', 'is there a skill that can...', or express interest in extending capabilities. This sk
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Helps users discover and install agent skills when they ask questions like 'how do I do X'
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -283,3 +283,17 @@ npx skills init my-xyz-skill
 
 ## Diff History
 - **v00.33.0**: Ingested from cherry-studio
+
+---
+
+## Why This Skill Exists
+
+Use — Helps users discover and install agent skills when they ask questions like
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

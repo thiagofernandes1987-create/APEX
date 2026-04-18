@@ -1,7 +1,7 @@
 ---
 skill_id: business_productivity.tc_tracker
 name: tc-tracker
-description: Use when the user asks to track technical changes, create change records, manage TC lifecycles, or hand off work
+description: "Create — Use when the user asks to track technical changes, create change records, manage TC lifecycles, or hand off work"
   between AI sessions. Covers init/create/update/status/resume/close/export workflows for
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user asks to track technical changes
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -308,3 +308,23 @@ For onboarding an existing project with undocumented history, build a `retro_cha
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to track technical changes, create change records, manage TC lifecycles, or hand off work
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

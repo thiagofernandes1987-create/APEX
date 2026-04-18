@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_aeo_content_cluster
 name: seo-aeo-content-cluster
-description: '''Builds a topical authority map with a pillar page, prioritised cluster articles, content types, internal link
+description: "Create — "
   map, and content gap analysis. Activate when the user wants to build a content cluster, t'
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - create seo aeo content cluster task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -186,3 +186,17 @@ AEO Priority:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

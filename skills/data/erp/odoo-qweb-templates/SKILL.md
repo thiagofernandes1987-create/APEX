@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_qweb_templates
 name: odoo-qweb-templates
-description: '''Expert in Odoo QWeb templating for PDF reports, email templates, and website pages. Covers t-if, t-foreach,
+description: "Analyze — "
   t-field, and report actions.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyze odoo qweb templates task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -193,3 +193,17 @@ QWeb is Odoo's primary templating engine, used for PDF reports, website pages, a
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

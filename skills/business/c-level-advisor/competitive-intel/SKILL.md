@@ -1,6 +1,6 @@
 ---
 name: "competitive-intel"
-description: "Systematic competitor tracking that feeds CMO positioning, CRO battlecards, and CPO roadmap decisions. Use when analyzing competitors, building sales battlecards, tracking market moves, positioning against alternatives, or when user mentions competitive intelligence, competitive analysis, competitor research, battlecards, win/loss, or market positioning."
+description: "Manage — Systematic competitor tracking that feeds CMO positioning, CRO battlecards, and CPO roadmap decisions. Use when analyzing competitors, building sales battlecards, tracking market m"
 license: MIT
 metadata:
   version: 1.0.0
@@ -13,6 +13,10 @@ executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.competitive-intel
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - sales
+  - design
 ---
 
 # Competitive Intelligence
@@ -205,3 +209,23 @@ This is the highest-signal competitive data you have. Most companies do it too r
 ## References
 - `references/ci-playbook.md` — OSINT sources, win/loss framework, positioning map construction
 - `templates/battlecard-template.md` — sales battlecard template
+
+---
+
+## Why This Skill Exists
+
+Manage — Systematic competitor tracking that feeds CMO positioning, CRO battlecards, and CPO roadmap decisions.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when analyzing competitors, building sales battlecards, tracking market m
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

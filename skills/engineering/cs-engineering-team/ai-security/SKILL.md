@@ -1,10 +1,16 @@
 ---
 name: "ai-security"
-description: "Use when assessing AI/ML systems for prompt injection, jailbreak vulnerabilities, model inversion risk, data poisoning exposure, or agent tool abuse. Covers MITRE ATLAS technique mapping, injection signature detection, and adversarial robustness scoring."
+description: "Implement — Use when assessing AI/ML systems for prompt injection, jailbreak vulnerabilities, model inversion risk, data poisoning exposure, or agent tool abuse. Covers MITRE ATLAS technique m"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.ai-security
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - engineering
+  - ai_ml
+  - agent
+  - security
+  - data
 ---
 
 # AI Security
@@ -366,3 +372,23 @@ fi
 | [incident-response](../incident-response/SKILL.md) | Confirmed prompt injection exploitation or data extraction from a model should be classified as a security incident |
 | [cloud-security](../cloud-security/SKILL.md) | LLM API keys and model endpoints are cloud resources — IAM misconfiguration enables unauthorized model access (AML.T0012) |
 | [security-pen-testing](../security-pen-testing/SKILL.md) | Application-layer security testing covers the web interface and API layer; ai-security covers the model and agent layer |
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when assessing AI/ML systems for prompt injection, jailbreak vulnerabilities, model inversion risk, data poisoning exposure, or agent tool abuse
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.lead_research_assistant
 name: lead-research-assistant
-description: Identifies high-quality leads for your product or service by analyzing your business, searching for target companies,
+description: "Create — Identifies high-quality leads for your product or service by analyzing your business, searching for target companies,"
   and providing actionable contact strategies. Perfect for sales, business developme
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Identifies high-quality leads for your product or service by analyzing your business
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -313,3 +313,17 @@ When a user requests lead research:
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Create — Identifies high-quality leads for your product or service by analyzing your business, searching for target companies,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

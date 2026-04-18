@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.dropbox-sign-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: dropbox-sign-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Dropbox Sign Automation via Rube MCP

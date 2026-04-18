@@ -3,11 +3,14 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.private-equity.skills
 status: CANDIDATE
 security: {level: high, pii: true, approval_required: true}
+anchors:
+  - finance
+  - workflow
+  - sales
 ---
 # Deal Sourcing
 
-description: PE deal sourcing workflow — discover target companies, check CRM for existing relationships, and draft personalized founder outreach emails. Use when sourcing new deals, prospecting companies in a sector, or reaching out to founders. Triggers on "find companies", "source deals", "draft founder email", "check if we've seen this company", or "outreach to founder".
-
+description: "Analyze — PE deal sourcing workflow — discover target companies, check CRM for existing relationships, and draft personalized founder outreach emails. Use when sourcing new deals, prospectin"
 ## Workflow
 
 This skill follows a 3-step sourcing pipeline:
@@ -69,3 +72,23 @@ Draft personalized cold emails to founders/CEOs:
 - Never send emails without explicit user approval
 - If the user's firm intro or investment criteria aren't clear, ask before drafting
 - Prioritize quality over quantity — 5 well-researched targets beat 20 generic ones
+
+---
+
+## Why This Skill Exists
+
+Analyze — PE deal sourcing workflow — discover target companies, check CRM for existing relationships, and draft personalized founder outreach emails.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when sourcing new deals, prospectin
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

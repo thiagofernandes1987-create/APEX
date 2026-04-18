@@ -41,7 +41,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Review fixed income portfolios by pricing multiple bonds
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -156,3 +156,23 @@ Present sector, rating, and maturity bucket distributions as percentage tables. 
 | Base | -- | -- | -- | -- |
 | +100bp | ... | ... | ... | ... |
 | +200bp | ... | ... | ... | ... |
+
+---
+
+## Why This Skill Exists
+
+Review fixed income portfolios by pricing multiple bonds, retrieving reference data, analyzing cashflows, and
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires fixed income portfolio capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

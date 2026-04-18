@@ -1,6 +1,6 @@
 ---
 name: "launch-strategy"
-description: "When the user wants to plan a product launch, feature announcement, or release strategy. Also use when the user mentions 'launch,' 'Product Hunt,' 'feature release,' 'announcement,' 'go-to-market,' 'beta launch,' 'early access,' 'waitlist,' 'product update,' 'GTM plan,' 'launch checklist,' or 'launch momentum.' This skill covers phased launches, channel strategy, and ongoing launch momentum."
+description: "Manage — When the user wants to plan a product launch, feature announcement, or release strategy. Also use when the user mentions"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,8 @@ executor: HYBRID
 skill_id: business.marketing-skill.launch-strategy
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 # Launch Strategy
@@ -76,3 +78,23 @@ Launch plans should be concrete, time-bound, and channel-specific — no vague "
 - **content-strategy** — USE when the launch requires a sustained content program (blog posts, case studies) in the weeks after; NOT for single-day launch execution.
 - **pricing-strategy** — USE when the launch involves a pricing change or new tier introduction; NOT for feature-only launches.
 - **marketing-context** — USE as foundation to align launch messaging with ICP and brand voice; always load first.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to plan a product launch, feature announcement, or release strategy. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

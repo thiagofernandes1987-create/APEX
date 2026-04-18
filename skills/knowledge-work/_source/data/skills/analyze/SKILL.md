@@ -1,6 +1,6 @@
 ---
 name: analyze
-description: Answer data questions -- from quick lookups to full analyses. Use when looking up a single metric, investigating
+description: "Use — Answer data questions -- from quick lookups to full analyses. Use when looking up a single metric, investigating"
   what's driving a trend or drop, comparing segments over time, or preparing a formal data report for stakeholders.
 argument-hint: <question>
 tier: COMMUNITY
@@ -25,7 +25,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - looking up a single metric
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -184,3 +184,23 @@ When a chart would communicate results more effectively than a table:
 - If you know the table names, mention them to speed up the process
 - For complex questions, Claude may break them into multiple queries
 - Results are always validated before presentation -- if something looks off, Claude will flag it
+
+---
+
+## Why This Skill Exists
+
+Use — Answer data questions -- from quick lookups to full analyses.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when looking up a single metric, investigating
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

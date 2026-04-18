@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_cost
 name: "azure-cost"
-description: "Unified Azure cost management: query historical costs, forecast future spending, and optimize to reduce waste. WHEN: \'Azure costs\', \'Azure spending\', \'Azure bill\', \'cost breakdown\', \'cost by "
+description: "Use — Unified Azure cost management: query historical costs, forecast future spending, and optimize to reduce waste. WHEN: \"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/cloud/azure
@@ -153,3 +153,17 @@ For the full cost forecast workflow (scope selection, time period rules, dataset
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Unified Azure cost management: query historical costs, forecast future spending, and optimize to reduce waste. WHEN: \
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

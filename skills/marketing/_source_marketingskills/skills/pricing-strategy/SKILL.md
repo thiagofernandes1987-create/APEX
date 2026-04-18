@@ -1,6 +1,6 @@
 ---
 name: pricing-strategy
-description: When the user wants help with pricing decisions, packaging, or monetization strategy. Also use when the user
+description: "Create — When the user wants help with pricing decisions, packaging, or monetization strategy. Also use when the user"
   mentions 'pricing,' 'pricing tiers,' 'freemium,' 'free trial,' 'packaging,' 'price increase,' 'value metric,' 'Van Westendorp,'
   'willingness to pay,' 'monetization,' 'how much should I charge,' 'my pricing is wrong,' 'pricing page,' 'annual vs monthly,'
   'per seat pricing,' or 'should I offer a free plan.' Use this whenever someone is figuring out what to charge or how to
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants help with pricing decisions
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -334,3 +334,23 @@ Identifies which features customers value most:
 - **ab-test-setup**: For testing pricing changes
 - **revops**: For deal desk processes and pipeline pricing
 - **sales-enablement**: For proposal templates and pricing presentations
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants help with pricing decisions, packaging, or monetization strategy. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires pricing strategy capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,11 +1,14 @@
 ---
 name: "merge"
-description: "Merge the winning agent's branch into base, archive losers, and clean up worktrees."
+description: "Implement — Merge the winning agent"
 command: /hub:merge
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.agenthub.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - agent
 ---
 
 # /hub:merge — Merge Winner
@@ -96,3 +99,23 @@ Tell the user:
 - Losers archived with tags `hub/archive/{session-id}/agent-{N}`
 - Worktrees cleaned up
 - Session state: `merged`
+
+---
+
+## Why This Skill Exists
+
+Implement — Merge the winning agent
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires merge capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: xlsx
-description: 'Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user
+description: "Apply — Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user"
   wants to: open, read, edit, or fix an existing .xlsx, .xlsm, .csv, or .tsv file (e.g., adding columns, computing formulas,
   formatting, charting, cleaning messy data); create a new spreadsheet from scratch or from other data sources; or convert
   between tabular file formats. Trigger especially when the user references a spreadsheet file by name or path — even casually
@@ -43,7 +43,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Use this skill any time a spreadsheet file is the primary input or output
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -385,3 +385,23 @@ The script returns JSON with error details:
 - Add comments to cells with complex formulas or important assumptions
 - Document data sources for hardcoded values
 - Include notes for key calculations and model sections
+
+---
+
+## Why This Skill Exists
+
+Apply — Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires xlsx capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_security.senior_security
 name: senior-security
-description: Security engineering toolkit for threat modeling, vulnerability analysis, secure architecture, and penetration
+description: "Use — Security engineering toolkit for threat modeling, vulnerability analysis, secure architecture, and penetration"
   testing. Includes STRIDE analysis, OWASP guidance, cryptography patterns, and security sc
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Security engineering toolkit for threat modeling
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -549,3 +549,23 @@ For compliance framework requirements (OWASP ASVS, CIS Benchmarks, NIST CSF, PCI
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Security engineering toolkit for threat modeling, vulnerability analysis, secure architecture, and penetration
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires senior security capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

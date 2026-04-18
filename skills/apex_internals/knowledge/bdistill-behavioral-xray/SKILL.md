@@ -1,7 +1,7 @@
 ---
 skill_id: apex_internals.knowledge.bdistill_behavioral_xray
 name: bdistill-behavioral-xray
-description: '''X-ray any AI model''s behavioral patterns — refusal boundaries, hallucination tendencies, reasoning style,
+description: "Use — "
   formatting defaults. No API key needed.'''
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use bdistill behavioral xray task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -178,3 +178,17 @@ A styled HTML report showing:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

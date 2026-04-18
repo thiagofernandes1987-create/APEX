@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_database.database_designer
 name: database-designer
-description: Use when the user asks to design database schemas, plan data migrations, optimize queries, choose between SQL
+description: "Use — Use when the user asks to design database schemas, plan data migrations, optimize queries, choose between SQL"
   and NoSQL, or model data relationships.
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user asks to design database schemas
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -407,3 +407,23 @@ The included tools automate common analysis and optimization tasks, while the co
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to design database schemas, plan data migrations, optimize queries, choose between SQL
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.video_downloader
 name: youtube-downloader
-description: Download YouTube videos with customizable quality and format options. Use this skill when the user asks to download,
+description: "Create — Download YouTube videos with customizable quality and format options. Use this skill when the user asks to download,"
   save, or grab YouTube videos. Supports various quality settings (best, 1080p, 720p,
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Download YouTube videos with customizable quality and format options
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -209,3 +209,23 @@ The skill uses `yt-dlp`, a robust YouTube downloader that:
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Create — Download YouTube videos with customizable quality and format options. Use this skill when the user asks to download,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires youtube downloader capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

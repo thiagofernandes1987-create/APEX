@@ -8,6 +8,9 @@ executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.playwright-pro.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - testing
 ---
 
 # BrowserStack Integration
@@ -170,3 +173,23 @@ For testing localhost or staging behind firewall:
 - Per-browser pass/fail status
 - Links to BrowserStack dashboard for video/screenshots
 - Any browser-specific failures highlighted
+
+---
+
+## Why This Skill Exists
+
+Run tests on BrowserStack.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when user mentions "browserstack",
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

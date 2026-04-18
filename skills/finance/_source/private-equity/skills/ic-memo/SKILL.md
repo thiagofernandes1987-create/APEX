@@ -3,11 +3,13 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.private-equity.skills
 status: CANDIDATE
 security: {level: high, pii: true, approval_required: true}
+anchors:
+  - finance
+  - documentation
 ---
 # Investment Committee Memo
 
-description: Draft a structured investment committee memo for PE deal approval. Synthesizes due diligence findings, financial analysis, and deal terms into a professional IC-ready document. Use when preparing for investment committee, writing up a deal, or creating a formal recommendation. Triggers on "write IC memo", "investment committee memo", "deal write-up", "prepare IC materials", or "recommendation memo".
-
+description: "Analyze — Draft a structured investment committee memo for PE deal approval. Synthesizes due diligence findings, financial analysis, and deal terms into a professional IC-ready document. Use"
 ## Workflow
 
 ### Step 1: Gather Inputs
@@ -89,3 +91,23 @@ Standard IC memo format:
 - Use the firm's standard memo template if the user provides one
 - Financial tables should tie — check that EBITDA bridges, S&U balances, and returns math is consistent
 - Ask for missing inputs rather than making assumptions on deal terms or returns
+
+---
+
+## Why This Skill Exists
+
+Analyze — Draft a structured investment committee memo for PE deal approval. Synthesizes due diligence findings, financial analysis, and deal terms into a professional IC-ready document. Use
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ic memo capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

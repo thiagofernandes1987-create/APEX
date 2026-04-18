@@ -1,7 +1,7 @@
 ---
 skill_id: security.vibers_code_review
 name: vibers-code-review
-description: Human review workflow for AI-generated GitHub projects with spec-based feedback, security review, and follow-up
+description: "Audit — Human review workflow for AI-generated GitHub projects with spec-based feedback, security review, and follow-up"
   PRs from the Vibers service.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Human review workflow for AI-generated GitHub projects with spec-based feedback
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -237,3 +237,17 @@ Yes — write to Telegram with your code and spec.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Audit — Human review workflow for AI-generated GitHub projects with spec-based feedback, security review, and follow-up
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Análise de código malicioso potencial
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

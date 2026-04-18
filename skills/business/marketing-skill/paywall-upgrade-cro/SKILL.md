@@ -1,6 +1,6 @@
 ---
 name: "paywall-upgrade-cro"
-description: When the user wants to create or optimize in-app paywalls, upgrade screens, upsell modals, or feature gates. Also use when the user mentions "paywall," "upgrade screen," "upgrade modal," "upsell," "feature gate," "convert free to paid," "freemium conversion," "trial expiration screen," "limit reached screen," "plan upgrade prompt," or "in-app pricing." Distinct from public pricing pages (see page-cro) — this skill focuses on in-product upgrade moments where the user has already experienced value.
+description: "Manage — When the user wants to create or optimize in-app paywalls, upgrade screens, upsell modals, or feature gates. Also use when the user mentions 'paywall,' 'upgrade screen,' 'upgrade m"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,8 @@ executor: LLM_BEHAVIOR
 skill_id: business.marketing-skill.paywall-upgrade-cro
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 # Paywall and Upgrade Screen CRO
@@ -262,3 +264,23 @@ Paywall recommendations must account for where the user is in their value journe
 | Upgrade Flow Diagram | Step-by-step from paywall click to post-upgrade confirmation with friction reduction notes |
 | Anti-Pattern Audit | Review of existing paywall for dark patterns, trust-damaging copy, and conversion killers |
 | A/B Test Backlog | Prioritized experiment ideas for trigger timing, copy, and pricing display |
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to create or optimize in-app paywalls, upgrade screens, upsell modals, or feature gates. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

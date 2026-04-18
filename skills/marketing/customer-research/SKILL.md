@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.customer_research
 name: customer-research
-description: When the user wants to conduct, analyze, or synthesize customer research. Use when the user mentions 'customer
+description: "Create — When the user wants to conduct, analyze, or synthesize customer research. Use when the user mentions 'customer"
   research,' 'ICP research,' 'talk to customers,' 'analyze transcripts,' 'customer intervie
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user mentions 'customer
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -382,3 +382,23 @@ Don't ask all five at once — lead with #1 and #2, then follow up as needed.
 
 ## Diff History
 - **v00.33.0**: Ingested from marketingskills-main
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to conduct, analyze, or synthesize customer research.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

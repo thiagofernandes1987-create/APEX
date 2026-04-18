@@ -1,7 +1,7 @@
 ---
 skill_id: business_content.changelog_generator
 name: changelog-generator
-description: Automatically creates user-facing changelogs from git commits by analyzing commit history, categorizing changes,
+description: "Create — Automatically creates user-facing changelogs from git commits by analyzing commit history, categorizing changes,"
   and transforming technical commits into clear, customer-friendly release notes. Turns h
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Automatically creates user-facing changelogs from git commits by analyzing commit history
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -204,3 +204,17 @@ guidelines from CHANGELOG_STYLE.md
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Create — Automatically creates user-facing changelogs from git commits by analyzing commit history, categorizing changes,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: business_productivity.qms_audit_expert
 name: qms-audit-expert
-description: ISO 13485 internal audit expertise for medical device QMS. Covers audit planning, execution, nonconformity classification,
+description: "Use — ISO 13485 internal audit expertise for medical device QMS. Covers audit planning, execution, nonconformity classification,"
   and CAPA verification. Use for internal audit planning, audit execution, find
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - ISO 13485 internal audit expertise for medical device QMS
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -413,3 +413,23 @@ Track audit program effectiveness:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — ISO 13485 internal audit expertise for medical device QMS. Covers audit planning, execution, nonconformity classification,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires qms audit expert capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

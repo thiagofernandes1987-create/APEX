@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.fp_pipe_ref
 name: fp-pipe-ref
-description: Quick reference for pipe and flow. Use when user needs to chain functions, compose operations, or build data
+description: "Use — Quick reference for pipe and flow. Use when user needs to chain functions, compose operations, or build data"
   pipelines in fp-ts.
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - user needs to chain functions
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -152,3 +152,17 @@ getActiveNames(users2)
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Quick reference for pipe and flow.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

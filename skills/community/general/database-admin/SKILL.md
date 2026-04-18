@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.database_admin
 name: database-admin
-description: Expert database administrator specializing in modern cloud databases, automation, and reliability engineering.
+description: "Use — Expert database administrator specializing in modern cloud databases, automation, and reliability engineering."
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/database-admin
@@ -39,7 +39,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert database administrator specializing in modern cloud databases
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -248,3 +248,23 @@ Expert database administrator with comprehensive knowledge of cloud-native datab
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Expert database administrator specializing in modern cloud databases, automation, and reliability engineering.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires database admin capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

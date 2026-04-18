@@ -1,6 +1,6 @@
 ---
 name: bond-relative-value
-description: Perform relative value analysis on bonds by combining pricing, yield curve context, credit spreads, and scenario
+description: "Analyze — Perform relative value analysis on bonds by combining pricing, yield curve context, credit spreads, and scenario"
   stress testing. Use when analyzing bond richness/cheapness, computing spread decomposition, comparing bonds, assessing bond
   value vs curves, or running rate shock scenarios.
 tier: ADAPTED
@@ -41,7 +41,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Perform relative value analysis on bonds by combining pricing
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -148,3 +148,23 @@ Relative value is about whether a bond's spread adequately compensates for its r
 
 ### Rich/Cheap Summary
 State the primary spread metric, its historical context (percentile, comparison to averages), the residual spread signal, and a clear recommendation: rich (avoid/underweight), cheap (buy/overweight), or fair (neutral). Quantify how many bp of spread move would change the recommendation.
+
+---
+
+## Why This Skill Exists
+
+Analyze — Perform relative value analysis on bonds by combining pricing, yield curve context, credit spreads, and scenario
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires bond relative value capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

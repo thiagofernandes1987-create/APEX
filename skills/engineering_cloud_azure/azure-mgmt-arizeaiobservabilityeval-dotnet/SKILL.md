@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_mgmt_arizeaiobservabilityeval_dotnet
 name: azure-mgmt-arizeaiobservabilityeval-dotnet
-description: "Azure Resource Manager SDK for Arize AI Observability and Evaluation (.NET). Use when managing Arize AI organizations\
+description: "Use — Azure Resource Manager SDK for Arize AI Observability and Evaluation (.NET). Use when managing Arize AI organizations\"
   \ \non Azure via Azure Marketplace, creating/updating/deleting Arize resources, or i"
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - managing Arize AI organizations\
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -336,3 +336,23 @@ var data = await org.GetAsync();
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Azure Resource Manager SDK for Arize AI Observability and Evaluation (.NET).
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when managing Arize AI organizations\
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

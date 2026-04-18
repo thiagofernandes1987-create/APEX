@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.googlemeet-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: googlemeet-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Google Meet Automation via Rube MCP

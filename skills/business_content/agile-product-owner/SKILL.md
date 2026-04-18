@@ -1,7 +1,7 @@
 ---
 skill_id: business_content.agile_product_owner
 name: agile-product-owner
-description: Agile product ownership for backlog management and sprint execution. Covers user story writing, acceptance criteria,
+description: "Use — Agile product ownership for backlog management and sprint execution. Covers user story writing, acceptance criteria,"
   sprint planning, and velocity tracking. Use for writing user stories, creating acce
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Agile product ownership for backlog management and sprint execution
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -484,3 +484,23 @@ Story is complete when:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Agile product ownership for backlog management and sprint execution. Covers user story writing, acceptance criteria,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires agile product owner capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

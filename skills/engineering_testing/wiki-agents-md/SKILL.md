@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_testing.wiki_agents_md
 name: wiki-agents-md
-description: Generates AGENTS.md files for repository folders — coding agent context files with build commands, testing instructions,
+description: "Generate — Generates AGENTS.md files for repository folders — coding agent context files with build commands, testing instructions,"
   code style, project structure, and boundaries. Only generates where AGENTS.md i
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Generates AGENTS
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -486,3 +486,23 @@ This ensures Claude Code (and similar tools that look for `CLAUDE.md`) are redir
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Generate — Generates AGENTS.md files for repository folders — coding agent context files with build commands, testing instructions,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires wiki agents md capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

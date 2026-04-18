@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.android_ui_verification
 name: android_ui_verification
-description: Automated end-to-end UI testing and verification on an Android Emulator using ADB.
+description: "Implement — Automated end-to-end UI testing and verification on an Android Emulator using ADB."
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/testing/android_ui_verification
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Automated end-to-end UI testing and verification on an Android Emulator using ADB
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -172,3 +172,17 @@ Always store generated files in the `artifacts/` folder to satisfy project organ
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Automated end-to-end UI testing and verification on an Android Emulator using ADB.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

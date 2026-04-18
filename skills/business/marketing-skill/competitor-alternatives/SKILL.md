@@ -1,6 +1,6 @@
 ---
 name: "competitor-alternatives"
-description: "When the user wants to create competitor comparison or alternative pages for SEO and sales enablement. Also use when the user mentions 'alternative page,' 'vs page,' 'competitor comparison,' 'comparison page,' '[Product] vs [Product],' '[Product] alternative,' 'competitive landing pages,' 'switch from competitor,' or 'comparison content.' Covers four formats: singular alternative, plural alternatives, you vs competitor, and competitor vs competitor. Emphasizes deep research, modular content architecture, and varied section types beyond feature tables."
+description: "Manage — When the user wants to create competitor comparison or alternative pages for SEO and sales enablement. Also use when the user mentions"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,10 @@ executor: HYBRID
 skill_id: business.marketing-skill.competitor-alternatives
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - sales
+  - marketing
 ---
 
 # Competitor & Alternative Pages
@@ -292,3 +296,23 @@ All competitor page outputs should be factually accurate, legally safe (no false
 - **content-strategy** — USE when planning a full competitive content program across multiple pages; NOT for single-page execution.
 - **competitive-intel** — USE when C-level strategic competitive analysis is needed beyond page creation; NOT for tactical page writing.
 - **marketing-context** — USE as foundation before any competitor page work to align positioning; always load first.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to create competitor comparison or alternative pages for SEO and sales enablement. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

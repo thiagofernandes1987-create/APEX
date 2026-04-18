@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.resume
 name: resume
-description: Resume a paused experiment. Checkout the experiment branch, read results history, continue iterating.
+description: "Create — Resume a paused experiment. Checkout the experiment branch, read results history, continue iterating."
 version: v00.33.0
 status: CANDIDATE
 domain_path: marketing
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Resume a paused experiment
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -182,3 +182,23 @@ If single, hand off to `/ar:run`.
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Create — Resume a paused experiment. Checkout the experiment branch, read results history, continue iterating.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires resume capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: web3.nft.nft_standards
 name: nft-standards
-description: '''Master ERC-721 and ERC-1155 NFT standards, metadata best practices, and advanced NFT features.'''
+description: "Deploy — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: web3/nft/nft-standards
@@ -57,7 +57,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - deploy nft standards task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -508,3 +508,23 @@ contract OptimizedNFT is ERC721A {
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Deploy —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires nft standards capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Rede blockchain congestionada ou indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

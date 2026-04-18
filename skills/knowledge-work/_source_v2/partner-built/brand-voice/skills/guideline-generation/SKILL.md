@@ -1,6 +1,6 @@
 ---
 name: guideline-generation
-description: This skill generates, creates, or builds brand voice guidelines from source materials. It should be used when
+description: "Generate — This skill generates, creates, or builds brand voice guidelines from source materials. It should be used when"
   the user asks to "generate brand guidelines", "create a style guide", "extract brand voice", "create guidelines from calls",
   "consolidate brand materials", "analyze my sales calls for brand voice", "build a brand playbook from documents", "synthesize
   a voice and tone guide", or uploads brand documents, transcripts, or meeting recordings for brand analysis. Also triggers
@@ -39,7 +39,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - This skill generates
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -223,3 +223,23 @@ Enforce these privacy constraints throughout the entire generation workflow, not
 
 - **`references/guideline-template.md`** — Complete output template with all sections, field definitions, and formatting guidance
 - **`references/confidence-scoring.md`** — Confidence scoring methodology, thresholds, and examples
+
+---
+
+## Why This Skill Exists
+
+Generate — This skill generates, creates, or builds brand voice guidelines from source materials. It should be used when
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires guideline generation capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

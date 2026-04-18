@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.tdd_workflows_tdd_green
 name: tdd-workflows-tdd-green
-description: '''Implement the minimal code needed to make failing tests pass in the TDD green phase.'''
+description: "Implement — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/testing/tdd-workflows-tdd-green
@@ -43,7 +43,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement tdd workflows tdd green task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -172,3 +172,23 @@ app.post('/api/users',
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires tdd workflows tdd green capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.phase_gated_debugging
 name: phase-gated-debugging
-description: '''Use when debugging any bug. Enforces a 5-phase protocol where code edits are blocked until root cause is confirmed.
+description: "Use — "
   Prevents premature fix attempts.'''
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use phase gated debugging task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -139,3 +139,17 @@ If verification fails: root cause was wrong, go back to Phase 2.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

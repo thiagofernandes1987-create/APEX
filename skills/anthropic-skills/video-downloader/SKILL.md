@@ -1,10 +1,12 @@
 ---
 name: youtube-downloader
-description: Download YouTube videos with customizable quality and format options. Use this skill when the user asks to download, save, or grab YouTube videos. Supports various quality settings (best, 1080p, 720p, 480p, 360p), multiple formats (mp4, webm, mkv), and audio-only downloads as MP3.
+description: "Apply — Download YouTube videos with customizable quality and format options. Use this skill when the user asks to download, save, or grab YouTube videos. Supports various quality settings"
 executor: HYBRID
 skill_id: anthropic-skills.video-downloader
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - customer_success
 ---
 
 # YouTube Video Downloader
@@ -101,3 +103,23 @@ The skill uses `yt-dlp`, a robust YouTube downloader that:
 - The script handles installation of yt-dlp automatically
 - Only single videos are downloaded (playlists are skipped by default)
 - Higher quality videos may take longer to download and use more disk space
+
+---
+
+## Why This Skill Exists
+
+Apply — Download YouTube videos with customizable quality and format options. Use this skill when the user asks to download, save, or grab YouTube videos. Supports various quality settings
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires youtube downloader capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -33,7 +33,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - a design is ready for engineering and needs a spec sheet
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -209,3 +209,23 @@ If **~~project tracker** is connected:
 1. **Share the Figma link** — I can pull exact measurements, tokens, and component info.
 2. **Mention edge cases** — "What happens with 100 items?" helps me spec boundary conditions.
 3. **Specify the tech stack** — "We use React + Tailwind" helps me give relevant implementation notes.
+
+---
+
+## Why This Skill Exists
+
+Generate developer handoff specs from a design.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when a design is ready for engineering and needs a spec sheet
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.latex_paper_conversion
 name: latex-paper-conversion
-description: '''This skill should be used when the user asks to convert an academic paper in LaTeX from one format (e.g.,
+description: "Use — "
   Springer, IPOL) to another format (e.g., MDPI, IEEE, Nature). It automates extraction, inject'
 version: v00.33.0
 status: CANDIDATE
@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use latex paper conversion task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -147,3 +147,17 @@ AGENT: *Triggers latex-paper-conversion skill*
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

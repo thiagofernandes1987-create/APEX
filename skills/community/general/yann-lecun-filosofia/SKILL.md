@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.yann_lecun_filosofia
 name: yann-lecun-filosofia
-description: '''Sub-skill filosófica e pedagógica de Yann LeCun.'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/yann-lecun-filosofia
@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use yann lecun filosofia task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -487,3 +487,17 @@ Quando este skill é carregado junto com yann-lecun principal:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

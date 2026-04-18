@@ -1,6 +1,6 @@
 ---
 name: "adversarial-reviewer"
-description: "Adversarial code review that breaks the self-review monoculture. Use when you want a genuinely critical review of recent changes, before merging a PR, or when you suspect Claude is being too agreeable about code quality. Forces perspective shifts through hostile reviewer personas that catch blind spots the author's mental model shares with the reviewer."
+description: "Implement — Adversarial code review that breaks the self-review monoculture. Use when you want a genuinely critical review of recent changes, before merging a PR, or when you suspect Claude is"
 tier: "STANDARD"
 category: "Engineering / Code Quality"
 dependencies: "None (prompt-only, no external tools required)"
@@ -11,6 +11,10 @@ executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.adversarial-reviewer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - llm
+  - design
 ---
 
 # Adversarial Code Reviewer
@@ -249,3 +253,17 @@ You are likely reviewing code you just wrote or just read. Your brain (weights) 
 - Related: `engineering-team/senior-security` — deep security analysis
 - Related: `engineering-team/code-reviewer` — general code quality review
 - Complementary: `ra-qm-team/` — quality management workflows
+
+---
+
+## Why This Skill Exists
+
+Implement — Adversarial code review that breaks the self-review monoculture.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

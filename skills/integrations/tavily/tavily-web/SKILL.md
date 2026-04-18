@@ -1,7 +1,7 @@
 ---
 skill_id: integrations.tavily.tavily_web
 name: tavily-web
-description: '''Web search, content extraction, crawling, and research capabilities using Tavily API. Use when you need to
+description: "Automate — "
   search the web for current information, extracting content from URLs, or crawling websites.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - automate tavily web task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -136,3 +136,17 @@ See the GitHub repository for troubleshooting guides.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Automate —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Serviço externo indisponível ou timeout
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

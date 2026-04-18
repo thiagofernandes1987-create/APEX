@@ -1,10 +1,16 @@
 ---
 name: "agent-designer"
-description: "Use when the user asks to design multi-agent systems, create agent architectures, define agent communication patterns, or build autonomous agent workflows."
+description: "Implement — Use when the user asks to design multi-agent systems, create agent architectures, define agent communication patterns, or build autonomous agent workflows."
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.agent-designer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - agent
+  - workflow
+  - design
+  - web3
 ---
 
 # Agent Designer - Multi-Agent System Architecture
@@ -281,3 +287,23 @@ Agent Designer is a comprehensive toolkit for designing, architecting, and evalu
 - **Knowledge Base Updates:** Continuous learning and adaptation
 
 This skill provides the foundation for designing robust, scalable multi-agent systems that can handle complex tasks while maintaining safety, reliability, and performance at scale.
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to design multi-agent systems, create agent architectures, define agent communication patterns, or build autonomous agent workflows
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

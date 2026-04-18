@@ -1,7 +1,7 @@
 ---
 skill_id: business_productivity.prepare_release
 name: prepare-release
-description: Prepare a new release by collecting commits, generating bilingual release notes, updating version files, and
+description: "Use — Prepare a new release by collecting commits, generating bilingual release notes, updating version files, and"
   creating a release branch with PR. Use when asked to prepare/create a release, bump version
 version: v00.33.0
 status: CANDIDATE
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Prepare a new release by collecting commits
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -275,3 +275,23 @@ Creating a PR from `release/v*` to `main` automatically triggers:
 
 ## Diff History
 - **v00.33.0**: Ingested from cherry-studio
+
+---
+
+## Why This Skill Exists
+
+Use — Prepare a new release by collecting commits, generating bilingual release notes, updating version files, and
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires prepare release capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

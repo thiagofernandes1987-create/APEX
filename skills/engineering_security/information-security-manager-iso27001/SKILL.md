@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_security.information_security_manager_iso27001
 name: information-security-manager-iso27001
-description: ISO 27001 ISMS implementation and cybersecurity governance for HealthTech and MedTech companies. Use for ISMS
+description: "Use — ISO 27001 ISMS implementation and cybersecurity governance for HealthTech and MedTech companies. Use for ISMS"
   design, security risk assessment, control implementation, ISO 27001 certification, securit
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - ISO 27001 ISMS implementation and cybersecurity governance for HealthTech and MedTech companies
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -537,3 +537,23 @@ Overall Compliance: 87%
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — ISO 27001 ISMS implementation and cybersecurity governance for HealthTech and MedTech companies. Use for ISMS
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires information security manager iso27001 capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

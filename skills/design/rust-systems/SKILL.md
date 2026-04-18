@@ -1,7 +1,7 @@
 ---
 skill_id: design.rust_systems
 name: rust-systems
-description: Rust systems programming patterns including ownership, traits, async runtime, error handling, and unsafe guidelines
+description: "Design — Rust systems programming patterns including ownership, traits, async runtime, error handling, and unsafe guidelines"
 version: v00.33.0
 status: CANDIDATE
 domain_path: design
@@ -51,7 +51,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Rust systems programming patterns including ownership
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -295,3 +295,23 @@ impl ServerConfigBuilder {
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Design — Rust systems programming patterns including ownership, traits, async runtime, error handling, and unsafe guidelines
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires rust systems capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

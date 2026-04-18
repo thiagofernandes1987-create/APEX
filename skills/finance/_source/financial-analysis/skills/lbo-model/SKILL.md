@@ -1,6 +1,6 @@
 ---
 name: lbo-model
-description: This skill should be used when completing LBO (Leveraged Buyout) model templates in Excel for private equity
+description: "Analyze — This skill should be used when completing LBO (Leveraged Buyout) model templates in Excel for private equity"
   transactions, deal materials, or investment committee presentations. The skill fills in formulas, validates calculations,
   and ensures professional formatting standards that adapt to any template structure.
 tier: ADAPTED
@@ -45,7 +45,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - This skill should be used when completing LBO (Leveraged Buyout) model templates in Excel for privat
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -375,3 +375,23 @@ Must return success with zero errors.
 ---
 
 **This skill produces investment banking-quality LBO models by filling templates with correct formulas, proper formatting, and validated calculations. The skill adapts to any template structure while ensuring financial accuracy and professional presentation standards.**
+
+---
+
+## Why This Skill Exists
+
+Analyze — This skill should be used when completing LBO (Leveraged Buyout) model templates in Excel for private equity
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires lbo model capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

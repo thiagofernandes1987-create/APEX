@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.ml.hugging_face_paper_publisher
 name: hugging-face-paper-publisher
-description: Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets,
+description: "Apply — Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets,"
   claiming authorship, and generating professional markdown-based research artic
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Publish and manage research papers on Hugging Face Hub
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -728,3 +728,17 @@ Planned features for future versions:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

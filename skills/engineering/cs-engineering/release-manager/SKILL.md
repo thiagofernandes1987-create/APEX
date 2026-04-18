@@ -1,10 +1,13 @@
 ---
 name: "release-manager"
-description: "Use when the user asks to plan releases, manage changelogs, coordinate deployments, create release branches, or automate versioning."
+description: "Implement — Use when the user asks to plan releases, manage changelogs, coordinate deployments, create release branches, or automate versioning."
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.release-manager
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - observability
 ---
 
 # Release Manager
@@ -492,3 +495,23 @@ def monitor_deployment():
 7. **Iteration**: Continuously improve based on feedback and metrics
 
 The Release Manager skill transforms chaotic deployments into predictable, reliable releases that build confidence across your entire organization.
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks to plan releases, manage changelogs, coordinate deployments, create release branches, or automate versioning
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_audit
 name: seo-audit
-description: Diagnose and audit SEO issues affecting crawlability, indexation, rankings, and organic performance.
+description: "Create — Diagnose and audit SEO issues affecting crawlability, indexation, rankings, and organic performance."
 version: v00.33.0
 status: CANDIDATE
 domain_path: marketing/seo/seo-audit
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Diagnose and audit SEO issues affecting crawlability
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -590,3 +590,17 @@ This skill is applicable to execute the workflow or actions described in the ove
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create — Diagnose and audit SEO issues affecting crawlability, indexation, rankings, and organic performance.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

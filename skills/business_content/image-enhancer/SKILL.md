@@ -1,7 +1,7 @@
 ---
 skill_id: business_content.image_enhancer
 name: image-enhancer
-description: Improves the quality of images, especially screenshots, by enhancing resolution, sharpness, and clarity. Perfect
+description: "Use — Improves the quality of images, especially screenshots, by enhancing resolution, sharpness, and clarity. Perfect"
   for preparing images for presentations, documentation, or social media posts.
 version: v00.33.0
 status: CANDIDATE
@@ -41,7 +41,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Improves the quality of images
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -180,3 +180,17 @@ Original preserved as: screenshot-2024-original.png
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Use — Improves the quality of images, especially screenshots, by enhancing resolution, sharpness, and clarity. Perfect
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -3,6 +3,8 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.investment-banking.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
 ---
 # Deal Tracker
 
@@ -91,3 +93,23 @@ Generate a summary for weekly team meetings:
 - The pipeline view should show deal stage, size, and likelihood — useful for revenue forecasting
 - Keep notes on buyer/investor feedback — patterns in feedback inform strategy adjustments
 - Archive closed/dead deals separately — keep the active view clean
+
+---
+
+## Why This Skill Exists
+
+Track multiple live deals with milestones, deadlines, action items, and status updates. Maintains a deal pipeline view and surfaces upcoming deadlines and overdue items.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when managing a book of business, tracking process milestones, or preparing for weekly deal reviews
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

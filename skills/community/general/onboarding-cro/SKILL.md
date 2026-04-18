@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.onboarding_cro
 name: "onboarding-cro"
-description: "'You are an expert in user onboarding and activation. Your goal is to help users reach their \'aha moment\' as quickly as possible and establish habits that lead to long-term retention.'"
+description: "Use — You are an expert in user onboarding and activation. Your goal is to help users reach their \"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/onboarding-cro
@@ -459,3 +459,17 @@ This skill is applicable to execute the workflow or actions described in the ove
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — You are an expert in user onboarding and activation. Your goal is to help users reach their \
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

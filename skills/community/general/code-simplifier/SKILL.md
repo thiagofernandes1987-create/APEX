@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.code_simplifier
 name: code-simplifier
-description: Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality.
+description: "Use — Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality."
   Use when asked to 'simplify code', 'clean up code', 'refactor for clarity', 'improve reada
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Simplifies and refines code for clarity
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -197,3 +197,17 @@ if (items.length > 0) {
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_rbac
 name: azure-rbac
-description: 'Helps users find the right Azure RBAC role for an identity with least privilege access, then generate CLI commands
+description: "Generate — Helps users find the right Azure RBAC role for an identity with least privilege access, then generate CLI commands"
   and Bicep code to assign it. Also provides guidance on permissions required to grant '
 version: v00.33.0
 status: CANDIDATE
@@ -51,7 +51,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Helps users find the right Azure RBAC role for an identity with least privilege access
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -121,3 +121,23 @@ To assign RBAC roles to identities, you need a role that includes the `Microsoft
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Generate — Helps users find the right Azure RBAC role for an identity with least privilege access, then generate CLI commands
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires azure rbac capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

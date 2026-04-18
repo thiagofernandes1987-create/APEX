@@ -3,6 +3,11 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source_v2.equity-research.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - reporting
+  - research
+  - design
 ---
 # Sector Overview
 
@@ -89,3 +94,23 @@ For each company, brief profile:
 - Sector overviews age fast — note the date and flag data that may be stale
 - Charts are essential — market size waterfall, competitive positioning matrix, valuation scatter plot
 - If for a client, tailor the "so what" to their specific situation (M&A target identification, competitive positioning, market entry)
+
+---
+
+## Why This Skill Exists
+
+Create comprehensive industry and sector landscape reports covering market dynamics, competitive positioning, key players, and thematic trends. Use for client requests, sector initiations, thematic research pieces, or internal knowledge building. Triggers on "sector overview", "industry report", "ma
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires sector overview capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

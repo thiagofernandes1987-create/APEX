@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Search across all connected sources in one query
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -266,3 +266,23 @@ Results above are from [successful sources] only.
 - When a query mentions a specific person, search for their messages/docs/mentions across all sources
 - For time-sensitive queries, prioritize recency in ranking
 - If only one source is connected, still provide useful results from that source
+
+---
+
+## Why This Skill Exists
+
+Search across all connected sources in one query. Trigger with "find that doc about...", "what did we decide
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires search capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

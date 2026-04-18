@@ -1,10 +1,15 @@
 ---
 name: "agent-workflow-designer"
-description: "Agent Workflow Designer"
+description: "Implement — Agent Workflow Designer"
 executor: HYBRID
 skill_id: engineering.cs-engineering.agent-workflow-designer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - agent
+  - workflow
+  - design
 ---
 
 # Agent Workflow Designer
@@ -85,3 +90,17 @@ Detailed templates: `references/workflow-patterns.md`
 2. Keep handoff payloads explicit and bounded.
 3. Validate intermediate outputs before fan-in synthesis.
 4. Enforce budget and timeout limits in every step.
+
+---
+
+## Why This Skill Exists
+
+Implement — Agent Workflow Designer
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

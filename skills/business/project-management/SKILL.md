@@ -1,6 +1,6 @@
 ---
 name: "pm-skills"
-description: "6 project management agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. Senior PM, scrum master, Jira expert (JQL), Confluence expert, Atlassian admin, template creator. MCP integration for live Jira/Confluence automation."
+description: "Manage — 6 project management agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. Senior PM, scrum master, Jira expert (JQL), Confluence expert, Atlassian admin, "
 version: 1.0.0
 author: Alireza Rezvani
 license: MIT
@@ -19,6 +19,10 @@ executor: LLM_BEHAVIOR
 skill_id: business.project-management
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - llm
+  - agent
 ---
 
 # Project Management Skills
@@ -61,3 +65,23 @@ python3 scrum-master/scripts/velocity_analyzer.py --help
 
 - Load only the specific skill SKILL.md you need
 - Use MCP tools for live Jira/Confluence operations when available
+
+---
+
+## Why This Skill Exists
+
+Manage — 6 project management agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. Senior PM, scrum master, Jira expert (JQL), Confluence expert, Atlassian admin,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires pm skills capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

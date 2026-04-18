@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_api.springboot_patterns
 name: springboot-patterns
-description: Spring Boot patterns including JPA repositories, REST controllers, layered services, and configuration
+description: "Use — Spring Boot patterns including JPA repositories, REST controllers, layered services, and configuration"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/api
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Spring Boot patterns including JPA repositories
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -268,3 +268,23 @@ public class GlobalExceptionHandler {
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — Spring Boot patterns including JPA repositories, REST controllers, layered services, and configuration
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires springboot patterns capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

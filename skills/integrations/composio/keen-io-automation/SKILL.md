@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.keen-io-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: keen-io-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Keen IO Automation via Rube MCP

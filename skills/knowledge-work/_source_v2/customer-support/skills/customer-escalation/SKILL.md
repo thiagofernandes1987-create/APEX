@@ -1,6 +1,6 @@
 ---
 name: customer-escalation
-description: Package an escalation for engineering, product, or leadership with full context. Use when a bug needs engineering
+description: "Use — Package an escalation for engineering, product, or leadership with full context. Use when a bug needs engineering"
   attention beyond normal support, multiple customers report the same issue, a customer is threatening to churn, or an issue
   has sat unresolved past its SLA.
 argument-hint: <issue summary> [customer name]
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - a bug needs engineering
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -336,3 +336,23 @@ When de-escalating:
 5. Maintain ownership of the customer relationship even after escalating the technical issue
 6. Follow up proactively — don't wait for the receiving team to come to you
 7. Document everything — the escalation trail is valuable for pattern detection and process improvement
+
+---
+
+## Why This Skill Exists
+
+Use — Package an escalation for engineering, product, or leadership with full context.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when a bug needs engineering
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

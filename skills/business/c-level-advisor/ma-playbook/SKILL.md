@@ -1,6 +1,6 @@
 ---
 name: "ma-playbook"
-description: "M&A strategy for acquiring companies or being acquired. Due diligence, valuation, integration, and deal structure. Use when evaluating acquisitions, preparing for acquisition, M&A due diligence, integration planning, or deal negotiation."
+description: "Manage — M&A strategy for acquiring companies or being acquired. Due diligence, valuation, integration, and deal structure. Use when evaluating acquisitions, preparing for acquisition, M&A "
 license: MIT
 metadata:
   version: 1.0.0
@@ -12,6 +12,9 @@ executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.ma-playbook
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - design
 ---
 
 # M&A Playbook
@@ -100,3 +103,23 @@ See `references/integration-playbook.md` for the 100-day integration plan.
 ## Resources
 - `references/integration-playbook.md` — 100-day post-acquisition integration plan
 - `references/due-diligence-checklist.md` — comprehensive DD checklist by domain
+
+---
+
+## Why This Skill Exists
+
+Manage — M&A strategy for acquiring companies or being acquired. Due diligence, valuation, integration, and deal structure.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when valuating acquisitions, preparing for acquisition, M&A
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

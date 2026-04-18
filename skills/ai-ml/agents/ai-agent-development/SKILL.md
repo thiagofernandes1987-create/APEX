@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.ai_agent_development
 name: ai-agent-development
-description: '''AI agent development workflow for building autonomous agents, multi-agent systems, and agent orchestration
+description: "Apply — "
   with CrewAI, LangGraph, and custom agents.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply ai agent development task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -269,3 +269,17 @@ User Input -> Planner -> Agent -> Tools -> Memory -> Response
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

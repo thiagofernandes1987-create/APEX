@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.video_content_strategist
 name: video-content-strategist
-description: 'Use when planning video content strategy, writing video scripts, optimizing YouTube channels, building short-form
+description: "Build — Use when planning video content strategy, writing video scripts, optimizing YouTube channels, building short-form"
   video pipelines (Reels, TikTok, Shorts), or repurposing long-form content into video. '
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - planning video content strategy
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -342,3 +342,23 @@ All output follows the structured standard:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Build —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when planning video content strategy, writing video scripts, optimizing YouTube channels, building short-form
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

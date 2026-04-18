@@ -1,7 +1,7 @@
 ---
 skill_id: security.security_auditor
 name: security-auditor
-description: Expert security auditor specializing in DevSecOps, comprehensive cybersecurity, and compliance frameworks.
+description: "Audit — Expert security auditor specializing in DevSecOps, comprehensive cybersecurity, and compliance frameworks."
 version: v00.33.0
 status: CANDIDATE
 domain_path: security/security-auditor
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert security auditor specializing in DevSecOps
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -269,3 +269,23 @@ Expert security auditor with comprehensive knowledge of modern cybersecurity pra
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Audit — Expert security auditor specializing in DevSecOps, comprehensive cybersecurity, and compliance frameworks.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires security auditor capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Análise de código malicioso potencial
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

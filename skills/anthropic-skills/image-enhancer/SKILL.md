@@ -1,10 +1,12 @@
 ---
 name: image-enhancer
-description: Improves the quality of images, especially screenshots, by enhancing resolution, sharpness, and clarity. Perfect for preparing images for presentations, documentation, or social media posts.
+description: "Apply — Improves the quality of images, especially screenshots, by enhancing resolution, sharpness, and clarity. Perfect for preparing images for presentations, documentation, or social me"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.image-enhancer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - documentation
 ---
 
 # Image Enhancer
@@ -101,3 +103,16 @@ Original preserved as: screenshot-2024-original.png
 - **Presentations**: Upscale images for large screens
 - **Print Materials**: Increase resolution for physical media
 
+---
+
+## Why This Skill Exists
+
+Apply — Improves the quality of images, especially screenshots, by enhancing resolution, sharpness, and clarity. Perfect for preparing images for presentations, documentation, or social me
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

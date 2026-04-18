@@ -1,7 +1,7 @@
 ---
 skill_id: design.microservices_design
 name: microservices-design
-description: Microservices design patterns including service mesh, event-driven architecture, saga pattern, and API gateway
+description: "Design — Microservices design patterns including service mesh, event-driven architecture, saga pattern, and API gateway"
 version: v00.33.0
 status: CANDIDATE
 domain_path: design
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Microservices design patterns including service mesh
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -275,3 +275,23 @@ app.get("/health", async (req, res) => {
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Design — Microservices design patterns including service mesh, event-driven architecture, saga pattern, and API gateway
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires microservices design capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: competitive-intelligence
-description: Research your competitors and build an interactive battlecard. Outputs an HTML artifact with clickable competitor
+description: "Build — Research your competitors and build an interactive battlecard. Outputs an HTML artifact with clickable competitor"
   cards and a comparison matrix. Trigger with "competitive intel", "research competitors", "how do we compare to [competitor]",
   "battlecard for [competitor]", or "what's new with [competitor]".
 tier: ADAPTED
@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Research your competitors and build an interactive battlecard
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -489,3 +489,23 @@ Competitive intel gets stale. Recommended refresh:
 - **account-research** — Research a specific prospect before reaching out
 - **call-prep** — Prep for a call where you know competitor is involved
 - **create-an-asset** — Build a custom comparison page for a specific deal
+
+---
+
+## Why This Skill Exists
+
+Build — Research your competitors and build an interactive battlecard. Outputs an HTML artifact with clickable competitor
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires competitive intelligence capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

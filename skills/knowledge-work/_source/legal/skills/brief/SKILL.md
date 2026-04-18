@@ -39,7 +39,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Generate contextual briefings for legal work — daily summary
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -297,3 +297,23 @@ Rapid briefing for developing situations that require immediate legal attention 
 - For daily briefs, learn the user's preferences over time (what they find useful, what they want filtered out)
 - Briefs should be actionable: every item should have a clear next step or reason for inclusion
 - Keep briefs concise. Link to source materials rather than reproducing them in full
+
+---
+
+## Why This Skill Exists
+
+Generate contextual briefings for legal work — daily summary, topic research, or incident response. Use when
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires brief capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

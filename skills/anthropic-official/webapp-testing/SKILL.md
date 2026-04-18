@@ -1,7 +1,7 @@
 ---
 skill_id: anthropic_official.webapp_testing
 name: webapp-testing
-description: Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend
+description: "Apply — Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend"
   functionality, debugging UI behavior, capturing browser screenshots, and viewing browser l
 version: v00.33.0
 status: ADOPTED
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Toolkit for interacting with and testing local web applications using Playwright
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -179,3 +179,23 @@ with sync_playwright() as p:
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Apply — Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires webapp testing capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

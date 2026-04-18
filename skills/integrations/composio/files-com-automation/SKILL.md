@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.files-com-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: files-com-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Files Com Automation via Rube MCP

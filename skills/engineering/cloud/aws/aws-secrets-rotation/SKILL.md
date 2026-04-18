@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.aws.aws_secrets_rotation
 name: aws-secrets-rotation
-description: '''Automate AWS secrets rotation for RDS, API keys, and credentials'''
+description: "Implement — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/cloud/aws/aws-secrets-rotation
@@ -57,7 +57,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement aws secrets rotation task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -573,3 +573,17 @@ kiro-cli chat "Create a rotation audit report with aws-secrets-rotation"
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

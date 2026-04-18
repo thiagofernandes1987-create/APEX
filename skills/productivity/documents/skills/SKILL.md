@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.documents.skills
 name: view-pdf
-description: Interactive PDF viewer. Use when the user wants to open, show, or view a PDF and collaborate on it visually —
+description: "Automate — Interactive PDF viewer. Use when the user wants to open, show, or view a PDF and collaborate on it visually —"
   annotate, highlight, stamp, fill form fields, place signature/initials, or review markup t
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user wants to open
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -249,3 +249,17 @@ certified or cryptographic digital signature.
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Automate — Interactive PDF viewer.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Arquivo de tasks ou memória não encontrado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

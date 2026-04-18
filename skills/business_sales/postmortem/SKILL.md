@@ -1,7 +1,7 @@
 ---
 skill_id: business_sales.postmortem
 name: postmortem
-description: /em -postmortem — Honest Analysis of What Went Wrong
+description: "Use — /em -postmortem — Honest Analysis of What Went Wrong"
 version: v00.33.0
 status: CANDIDATE
 domain_path: business/sales
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - /em -postmortem — Honest Analysis of What Went Wrong
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -293,3 +293,23 @@ Both might be true simultaneously. The distinction is: which one actually preven
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — /em -postmortem — Honest Analysis of What Went Wrong
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires postmortem capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

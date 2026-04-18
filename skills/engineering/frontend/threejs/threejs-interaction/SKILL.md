@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.threejs.threejs_interaction
 name: threejs-interaction
-description: Three.js interaction - raycasting, controls, mouse/touch input, object selection. Use when handling user input,
+description: "Implement — Three.js interaction - raycasting, controls, mouse/touch input, object selection. Use when handling user input,"
   implementing click detection, adding camera controls, or creating interactive 3D experie
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - handling user input
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -778,3 +778,17 @@ clickables.push(collisionMesh);
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Three.js interaction - raycasting, controls, mouse/touch input, object selection.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

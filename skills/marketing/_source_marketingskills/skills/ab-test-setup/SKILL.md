@@ -1,6 +1,6 @@
 ---
 name: ab-test-setup
-description: When the user wants to plan, design, or implement an A/B test or experiment, or build a growth experimentation
+description: "Create — When the user wants to plan, design, or implement an A/B test or experiment, or build a growth experimentation"
   program. Also use when the user mentions "A/B test," "split test," "experiment," "test this change," "variant copy," "multivariate
   test," "hypothesis," "should I test this," "which version is better," "test two versions," "statistical significance," "how
   long should I run this test," "growth experiments," "experiment velocity," "experiment backlog," "ICE score," "experimentation
@@ -55,7 +55,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to plan
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -462,3 +462,23 @@ Over time, your playbook becomes a library of proven growth patterns specific to
 - **page-cro**: For generating test ideas based on CRO principles
 - **analytics-tracking**: For setting up test measurement
 - **copywriting**: For creating variant copy
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to plan, design, or implement an A/B test or experiment, or build a growth experimentation
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ab test setup capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

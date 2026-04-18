@@ -1,7 +1,7 @@
 ---
 skill_id: human_resources.org_planning
 name: org-planning
-description: Headcount planning, org design, and team structure optimization. Trigger with 'org planning', 'headcount plan',
+description: "Use — Headcount planning, org design, and team structure optimization. Trigger with 'org planning', 'headcount plan',"
   'team structure', 'reorg', 'who should we hire next', or when the user is thinking about
 version: v00.33.0
 status: ADOPTED
@@ -135,3 +135,23 @@ Produce org charts (text-based), headcount plans with cost modeling, and sequenc
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Use — Headcount planning, org design, and team structure optimization. Trigger with
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires org planning capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Legislação trabalhista da jurisdição não especificada
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

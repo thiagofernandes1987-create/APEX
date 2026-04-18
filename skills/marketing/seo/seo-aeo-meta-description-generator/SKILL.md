@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_aeo_meta_description_generator
 name: seo-aeo-meta-description-generator
-description: '''Writes 3 title tag variants and 3 meta description variants per page with SERP preview, OG tags, and Twitter
+description: "Create — "
   Card tags. Activate when the user wants to write meta tags, title tags, or social sharing '
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - create seo aeo meta description generator task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -184,3 +184,17 @@ scattered tools with one async-first workspace. Try it free.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

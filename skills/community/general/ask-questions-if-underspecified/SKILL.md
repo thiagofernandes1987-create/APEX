@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ask_questions_if_underspecified
 name: ask-questions-if-underspecified
-description: Clarify requirements before implementing. Use when serious doubts arise.
+description: "Use — Clarify requirements before implementing. Use when serious doubts arise."
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/ask-questions-if-underspecified
@@ -29,7 +29,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - serious doubts arise
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -154,3 +154,17 @@ Reply with: defaults (or 1a 2a)
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Clarify requirements before implementing.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

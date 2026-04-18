@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.dart.awt_e2e_testing
 name: awt-e2e-testing
-description: '''AI-powered E2E web testing — eyes and hands for AI coding tools. Declarative YAML scenarios, Playwright execution,
+description: "Implement — "
   visual matching (OpenCV + OCR), platform auto-detection (Flutter/React/Vue), learnin'
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement awt e2e testing task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -134,3 +134,17 @@ Actively developed by a solo developer at AILoopLab. Feedback welcome!
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

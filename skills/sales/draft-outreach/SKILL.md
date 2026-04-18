@@ -1,7 +1,7 @@
 ---
 skill_id: sales.draft_outreach
 name: draft-outreach
-description: Research a prospect then draft personalized outreach. Uses web research by default, supercharged with enrichment
+description: "Track — Research a prospect then draft personalized outreach. Uses web research by default, supercharged with enrichment"
   and CRM. Trigger with 'draft outreach to [person/company]', 'write cold email to [prosp
 version: v00.33.0
 status: ADOPTED
@@ -553,3 +553,23 @@ Draft created - check ~~email
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Track — Research a prospect then draft personalized outreach. Uses web research by default, supercharged with enrichment
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires draft outreach capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: CRM ou enrichment tool indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

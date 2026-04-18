@@ -1,6 +1,6 @@
 ---
 name: meeting-briefing
-description: Prepare structured briefings for meetings with legal relevance and track resulting action items. Use when preparing
+description: "Use — Prepare structured briefings for meetings with legal relevance and track resulting action items. Use when preparing"
   for contract negotiations, board meetings, compliance reviews, or any meeting where legal context, background research,
   or action tracking is needed.
 tier: ADAPTED
@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Prepare structured briefings for meetings with legal relevance and track resulting action items
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -308,3 +308,23 @@ After the meeting:
 - **Medium priority items**: Check at next team sync or weekly review
 - **Low priority items**: Check at next scheduled meeting or monthly review
 - **Overdue items**: Escalate to the owner and their manager; flag in next relevant meeting
+
+---
+
+## Why This Skill Exists
+
+Use — Prepare structured briefings for meetings with legal relevance and track resulting action items.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires meeting briefing capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

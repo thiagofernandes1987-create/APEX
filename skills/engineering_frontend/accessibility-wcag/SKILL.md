@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_frontend.accessibility_wcag
 name: accessibility-wcag
-description: Web accessibility patterns for WCAG 2.2 compliance including ARIA, keyboard navigation, screen readers, and testing
+description: "Use — Web accessibility patterns for WCAG 2.2 compliance including ARIA, keyboard navigation, screen readers, and testing"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/frontend
@@ -57,7 +57,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Web accessibility patterns for WCAG 2
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -329,3 +329,23 @@ WCAG AA requires 4.5:1 contrast for normal text, 3:1 for large text (18px bold o
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — Web accessibility patterns for WCAG 2.2 compliance including ARIA, keyboard navigation, screen readers, and testing
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires accessibility wcag capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

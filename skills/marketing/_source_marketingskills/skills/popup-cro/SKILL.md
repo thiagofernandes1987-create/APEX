@@ -1,6 +1,6 @@
 ---
 name: popup-cro
-description: When the user wants to create or optimize popups, modals, overlays, slide-ins, or banners for conversion purposes.
+description: "Create — When the user wants to create or optimize popups, modals, overlays, slide-ins, or banners for conversion purposes."
   Also use when the user mentions "exit intent," "popup conversions," "modal optimization," "lead capture popup," "email popup,"
   "announcement banner," "overlay," "collect emails with a popup," "exit popup," "scroll trigger," "sticky bar," or "notification
   bar." Use this for any overlay or interrupt-style conversion element. For forms outside of popups, see form-cro. For general
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to create or optimize popups
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -557,3 +557,23 @@ Ideas to A/B test with expected outcomes
 - **page-cro**: For the page context around popups
 - **email-sequence**: For what happens after popup conversion
 - **ab-test-setup**: For testing popup variations
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to create or optimize popups, modals, overlays, slide-ins, or banners for conversion purposes.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires popup cro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

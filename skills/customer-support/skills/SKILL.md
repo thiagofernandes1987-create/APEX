@@ -1,7 +1,7 @@
 ---
 skill_id: customer_support.skills
 name: ticket-triage
-description: Triage and prioritize a support ticket or customer issue. Use when a new ticket comes in and needs categorization,
+description: "Use — Triage and prioritize a support ticket or customer issue. Use when a new ticket comes in and needs categorization,"
   assigning P1-P4 priority, deciding which team should handle it, or checking whether i
 version: v00.33.0
 status: ADOPTED
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - a new ticket comes in and needs categorization
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -384,3 +384,23 @@ We'll follow up with you within [timeframe] with our findings.
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Use — Triage and prioritize a support ticket or customer issue.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when a new ticket comes in and needs categorization,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Base de conhecimento não disponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

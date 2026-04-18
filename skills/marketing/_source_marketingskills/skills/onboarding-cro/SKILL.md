@@ -1,6 +1,6 @@
 ---
 name: onboarding-cro
-description: When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value.
+description: "Create — When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value."
   Also use when the user mentions "onboarding flow," "activation rate," "user activation," "first-run experience," "empty
   states," "onboarding checklist," "aha moment," "new user experience," "users aren't activating," "nobody completes setup,"
   "low activation rate," "users sign up but don't use the product," "time to value," or "first session experience." Use this
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to optimize post-signup onboarding
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -320,3 +320,23 @@ When recommending experiments, consider tests for:
 - **email-sequence**: For onboarding email series
 - **paywall-upgrade-cro**: For converting to paid during/after onboarding
 - **ab-test-setup**: For testing onboarding changes
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires onboarding cro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

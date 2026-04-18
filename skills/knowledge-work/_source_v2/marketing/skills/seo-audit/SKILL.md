@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Run a comprehensive SEO audit — keyword research
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -276,3 +276,23 @@ After presenting the audit, ask:
 - Build a content calendar based on the gap analysis?
 - Dive deeper into any specific section of the audit?
 - Run this same analysis for a different competitor or domain?"
+
+---
+
+## Why This Skill Exists
+
+Run a comprehensive SEO audit — keyword research, on-page analysis, content gaps, technical checks, and competitor
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires seo audit capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

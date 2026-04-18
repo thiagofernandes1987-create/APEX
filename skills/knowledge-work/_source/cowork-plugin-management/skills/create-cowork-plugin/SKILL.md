@@ -1,6 +1,6 @@
 ---
 name: create-cowork-plugin
-description: 'Guide users through creating a new plugin from scratch in a cowork session. Use when users want to create a
+description: "Create — Guide users through creating a new plugin from scratch in a cowork session. Use when users want to create a"
   plugin, build a plugin, make a new plugin, develop a plugin, scaffold a plugin, start a plugin from scratch, or design a
   plugin. This skill requires Cowork mode with access to the outputs directory for delivering the final .plugin file.
 
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - users want to create a
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -357,3 +357,23 @@ The `.plugin` file will appear in the chat as a rich preview where the user can 
 
 - **`references/component-schemas.md`** — Detailed format specifications for every component type (skills, agents, hooks, MCP, legacy commands, CONNECTORS.md)
 - **`references/example-plugins.md`** — Three complete example plugin structures at different complexity levels
+
+---
+
+## Why This Skill Exists
+
+Create — Guide users through creating a new plugin from scratch in a cowork session.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when users want to create a
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

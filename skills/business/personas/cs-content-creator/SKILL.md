@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.marketing.cs_content_creator
 name: "cs-content-creator"
-description: "AI-powered content creation specialist for brand voice consistency, SEO optimization, and multi-platform content strategy"
+description: "Manage — AI-powered content creation specialist for brand voice consistency, SEO optimization, and multi-platform content strategy"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -274,3 +274,22 @@ cat ../../marketing-skill/content-creator/references/analytics_guide.md
 **Status:** Production Ready
 **Version:** 1.0
 
+---
+
+## Why This Skill Exists
+
+Manage — AI-powered content creation specialist for brand voice consistency, SEO optimization, and multi-platform content strategy
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cs content creator capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

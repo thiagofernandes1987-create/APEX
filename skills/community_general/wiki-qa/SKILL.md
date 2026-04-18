@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.wiki_qa
 name: wiki-qa
-description: Answers questions about a code repository using source file analysis. Use when the user asks a question about
+description: "Use — Answers questions about a code repository using source file analysis. Use when the user asks a question about"
   how something works, wants to understand a component, or needs help navigating the codebas
 version: v00.33.0
 status: CANDIDATE
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user asks a question about
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -142,3 +142,23 @@ Before answering any question, you MUST determine the source repository context:
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Answers questions about a code repository using source file analysis.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user asks a question about
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

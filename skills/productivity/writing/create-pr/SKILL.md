@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.create_pr
 name: create-pr
-description: Alias for sentry-skills:pr-writer. Use when users explicitly ask for 'create-pr' or reference the legacy skill
+description: "Automate — Alias for sentry-skills:pr-writer. Use when users explicitly ask for 'create-pr' or reference the legacy skill"
   name. Redirects to the canonical PR writing workflow.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - users explicitly ask for 'create-pr' or reference the legacy skill
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -118,3 +118,17 @@ If invoked via `create-pr`, run the same workflow and conventions documented in 
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Automate — Alias for sentry-skills:pr-writer.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Arquivo de tasks ou memória não encontrado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

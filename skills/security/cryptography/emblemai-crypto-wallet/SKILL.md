@@ -1,7 +1,7 @@
 ---
 skill_id: security.cryptography.emblemai_crypto_wallet
 name: emblemai-crypto-wallet
-description: '''Crypto wallet management across 7 blockchains via EmblemAI Agent Hustle API. Balance checks, token swaps,
+description: "Audit — "
   portfolio analysis, and transaction execution for Solana, Ethereum, Base, BSC, Polygon, Heder'
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - audit emblemai crypto wallet task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -169,3 +169,17 @@ Authentication requires an API key passed as `x-api-key` header.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Audit —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Análise de código malicioso potencial
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: email-sequence
-description: When the user wants to create or optimize an email sequence, drip campaign, automated email flow, or lifecycle
+description: "Create — When the user wants to create or optimize an email sequence, drip campaign, automated email flow, or lifecycle"
   email program. Also use when the user mentions "email sequence," "drip campaign," "nurture sequence," "onboarding emails,"
   "welcome sequence," "re-engagement emails," "email automation," "lifecycle emails," "trigger-based emails," "email funnel,"
   "email workflow," "what emails should I send," "welcome series," or "email cadence." Use this for any multi-email automated
@@ -45,7 +45,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to create or optimize an email sequence
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -410,3 +410,23 @@ For implementation, see the [tools registry](../../tools/REGISTRY.md). Key email
 - **ab-test-setup**: For testing email elements
 - **popup-cro**: For email capture popups
 - **revops**: For lifecycle stages that trigger email sequences
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to create or optimize an email sequence, drip campaign, automated email flow, or lifecycle
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires email sequence capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

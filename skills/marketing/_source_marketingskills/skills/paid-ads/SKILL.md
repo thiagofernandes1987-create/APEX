@@ -1,6 +1,6 @@
 ---
 name: paid-ads
-description: When the user wants help with paid advertising campaigns on Google Ads, Meta (Facebook/Instagram), LinkedIn,
+description: "Create — When the user wants help with paid advertising campaigns on Google Ads, Meta (Facebook/Instagram), LinkedIn,"
   Twitter/X, or other ad platforms. Also use when the user mentions 'PPC,' 'paid media,' 'ROAS,' 'CPA,' 'ad campaign,' 'retargeting,'
   'audience targeting,' 'Google Ads,' 'Facebook ads,' 'LinkedIn ads,' 'ad budget,' 'cost per click,' 'ad spend,' or 'should
   I run ads.' Use this for campaign strategy, audience targeting, bidding, and optimization. For bulk ad creative generation
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants help with paid advertising campaigns on Google Ads
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -418,3 +418,23 @@ For tracking, see also: [ga4.md](../../tools/integrations/ga4.md), [segment.md](
 - **analytics-tracking**: For proper conversion tracking setup
 - **ab-test-setup**: For landing page testing to improve ROAS
 - **page-cro**: For optimizing post-click conversion rates
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants help with paid advertising campaigns on Google Ads, Meta (Facebook/Instagram), LinkedIn,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires paid ads capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

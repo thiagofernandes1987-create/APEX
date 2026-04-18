@@ -1,7 +1,7 @@
 ---
 skill_id: data_science.analytics.validate_data
 name: validate-data
-description: QA an analysis before sharing -- methodology, accuracy, and bias checks. Use when reviewing an analysis before
+description: "Review — QA an analysis before sharing -- methodology, accuracy, and bias checks. Use when reviewing an analysis before"
   a stakeholder presentation, spot-checking calculations and aggregation logic, verifying a
 version: v00.33.0
 status: ADOPTED
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - reviewing an analysis before
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -492,3 +492,23 @@ Output:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Review — QA an analysis before sharing -- methodology, accuracy, and bias checks.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when reviewing an analysis before
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dataset não disponível ou muito grande para contexto
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.capacity
 name: capacity
-description: Discovers available Azure OpenAI model capacity across regions and projects. Analyzes quota limits, compares
+description: "Analyze — Discovers available Azure OpenAI model capacity across regions and projects. Analyzes quota limits, compares"
   availability, and recommends optimal deployment locations based on capacity requirements. U
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Discovers available Azure OpenAI model capacity across regions and projects
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -252,3 +252,17 @@ If the discovery table shows a sample project for the chosen region, suggest it 
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Analyze — Discovers available Azure OpenAI model capacity across regions and projects. Analyzes quota limits, compares
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

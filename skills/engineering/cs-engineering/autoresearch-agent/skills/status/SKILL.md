@@ -1,11 +1,15 @@
 ---
 name: "status"
-description: "Show experiment dashboard with results, active loops, and progress."
+description: "Implement — Show experiment dashboard with results, active loops, and progress."
 command: /ar:status
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.autoresearch-agent.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - visualization
+  - research
 ---
 
 # /ar:status — Experiment Dashboard
@@ -73,3 +77,23 @@ engineering     bundle-size          23     8   412KB        -58.3%    paused   
 marketing       medium-ctr           31    11   8.4/10       +68.0%    active   daily
 prompts         support-tone         15     6   82/100       +46.4%    done     —
 ```
+
+---
+
+## Why This Skill Exists
+
+Implement — Show experiment dashboard with results, active loops, and progress.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires status capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

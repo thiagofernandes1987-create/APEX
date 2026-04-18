@@ -1,6 +1,6 @@
 ---
 name: free-tool-strategy
-description: When the user wants to plan, evaluate, or build a free tool for marketing purposes — lead generation, SEO value,
+description: "Create — When the user wants to plan, evaluate, or build a free tool for marketing purposes — lead generation, SEO value,"
   or brand awareness. Also use when the user mentions "engineering as marketing," "free tool," "marketing tool," "calculator,"
   "generator," "interactive tool," "lead gen tool," "build a tool for leads," "free resource," "ROI calculator," "grader tool,"
   "audit tool," "should I build a free tool," or "tools for lead gen." Use this whenever someone wants to build something
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to plan
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -283,3 +283,23 @@ Rate each factor 1-5:
 - **seo-audit**: For SEO-optimizing the tool
 - **analytics-tracking**: For measuring tool usage
 - **email-sequence**: For nurturing leads from the tool
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to plan, evaluate, or build a free tool for marketing purposes — lead generation, SEO value,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires free tool strategy capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

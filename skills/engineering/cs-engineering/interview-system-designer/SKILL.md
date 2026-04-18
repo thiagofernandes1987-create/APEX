@@ -1,10 +1,13 @@
 ---
 name: "interview-system-designer"
-description: This skill should be used when the user asks to "design interview processes", "create hiring pipelines", "calibrate interview loops", "generate interview questions", "design competency matrices", "analyze interviewer bias", "create scoring rubrics", "build question banks", or "optimize hiring systems". Use for designing role-specific interview loops, competency assessments, and hiring calibration systems.
+description: "Implement — This skill should be used when the user asks to 'design interview processes', 'create hiring pipelines', 'calibrate interview loops', 'generate interview questions', 'design compet"
 executor: HYBRID
 skill_id: engineering.cs-engineering.interview-system-designer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - design
 ---
 
 # Interview System Designer
@@ -61,3 +64,23 @@ python3 scripts/interview_planner.py --role "Product Manager" --level mid --json
 2. Require evidence for each score recommendation.
 3. Use the same baseline rubric across comparable roles.
 4. Revisit loop design based on quality-of-hire outcomes.
+
+---
+
+## Why This Skill Exists
+
+Implement — This skill should be used when the user asks to
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires interview system designer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

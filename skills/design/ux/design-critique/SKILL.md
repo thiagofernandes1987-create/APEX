@@ -1,7 +1,7 @@
 ---
 skill_id: design.ux.design_critique
 name: design-critique
-description: Get structured design feedback on usability, hierarchy, and consistency. Trigger with 'review this design', 'critique
+description: "Design — Get structured design feedback on usability, hierarchy, and consistency. Trigger with 'review this design', 'critique"
   this mockup', 'what do you think of this screen?', or when sharing a Figma link or
 version: v00.33.0
 status: ADOPTED
@@ -219,3 +219,23 @@ If **~~user feedback** is connected:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Design — Get structured design feedback on usability, hierarchy, and consistency. Trigger with
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires design critique capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

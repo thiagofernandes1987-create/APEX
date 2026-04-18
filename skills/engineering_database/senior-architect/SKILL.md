@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_database.senior_architect
 name: senior-architect
-description: This skill should be used when the user asks to 'design system architecture', 'evaluate microservices vs monolith',
+description: "Use — This skill should be used when the user asks to 'design system architecture', 'evaluate microservices vs monolith',"
   'create architecture diagrams', 'analyze dependencies', 'choose a database', 'plan f
 version: v00.33.0
 status: CANDIDATE
@@ -58,7 +58,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - This skill should be used when the user asks to 'design system architecture'
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -457,3 +457,23 @@ python scripts/project_architect.py . --output json
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — This skill should be used when the user asks to
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires senior architect capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

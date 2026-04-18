@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.local_legal_seo_audit
 name: local-legal-seo-audit
-description: '''Audit and improve local SEO for law firms, attorneys, forensic experts and legal/professional services sites
+description: "Create — "
   with local presence, focusing on GBP, directories, E-E-A-T and practice/location pages.'''
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - create local legal seo audit task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -452,3 +452,17 @@ Same format
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

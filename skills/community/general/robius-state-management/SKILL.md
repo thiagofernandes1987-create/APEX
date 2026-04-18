@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.robius_state_management
 name: robius-state-management
-description: '|'
+description: "Use — |"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/robius-state-management
@@ -36,7 +36,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use robius state management task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -484,3 +484,17 @@ pub fn clear_ui_cache(_cx: &mut Cx) {
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — |
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

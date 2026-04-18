@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.writing_skills
 name: writing-skills
-description: '''Use when creating, updating, or improving agent skills.'''
+description: "Automate — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: productivity/writing/writing-skills
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - automate writing skills task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -226,3 +226,17 @@ touch ~/.config/opencode/skills/my-skill/references/core/README.md
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Automate —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Arquivo de tasks ou memória não encontrado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

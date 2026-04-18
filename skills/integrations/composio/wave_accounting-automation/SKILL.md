@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.wave_accounting-automation
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+extends: integrations.composio.meta
+toolkit: wave_accounting-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Wave Accounting Automation via Rube MCP

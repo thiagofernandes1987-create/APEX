@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_content_writer
 name: seo-content-writer
-description: Writes SEO-optimized content based on provided keywords and topic briefs. Creates engaging, comprehensive content
+description: "Create — Writes SEO-optimized content based on provided keywords and topic briefs. Creates engaging, comprehensive content"
   following best practices. Use PROACTIVELY for content creation tasks.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Writes SEO-optimized content based on provided keywords and topic briefs
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -204,3 +204,23 @@ Focus on value-first content. Write for humans while optimizing for search engin
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create — Writes SEO-optimized content based on provided keywords and topic briefs. Creates engaging, comprehensive content
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires seo content writer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

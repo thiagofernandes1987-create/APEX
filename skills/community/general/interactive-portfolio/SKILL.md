@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.interactive_portfolio
 name: interactive-portfolio
-description: Expert in building portfolios that actually land jobs and clients -
+description: "Use — Expert in building portfolios that actually land jobs and clients -"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/interactive-portfolio
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert in building portfolios that actually land jobs and clients -
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -609,3 +609,17 @@ Works well with: `scroll-experience`, `3d-web-experience`, `landing-page-design`
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Expert in building portfolios that actually land jobs and clients -
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

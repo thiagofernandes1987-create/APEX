@@ -6,6 +6,9 @@ executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.autoresearch-agent.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - research
 ---
 
 # /ar:run — Single Experiment Iteration
@@ -86,3 +89,23 @@ After every 10th experiment (check results.tsv line count), update the Strategy 
 - NEVER modify the evaluator (evaluate.py). It's ground truth.
 - Simplicity wins. Equal performance with simpler code is an improvement.
 - No new dependencies.
+
+---
+
+## Why This Skill Exists
+
+Run a single experiment iteration. Edit the target file, evaluate, keep or discard.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires run capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

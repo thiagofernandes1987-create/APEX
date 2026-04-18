@@ -1,10 +1,13 @@
 ---
 name: content-research-writer
-description: Assists in writing high-quality content by conducting research, adding citations, improving hooks, iterating on outlines, and providing real-time feedback on each section. Transforms your writing process from solo effort to collaborative partnership.
+description: "Apply — Assists in writing high-quality content by conducting research, adding citations, improving hooks, iterating on outlines, and providing real-time feedback on each section. Transfor"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.content-research-writer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - research
+  - documentation
 ---
 
 # Content Research Writer
@@ -540,3 +543,16 @@ Recommended structure for writing projects:
 - Writing case studies
 - Developing course outlines
 
+---
+
+## Why This Skill Exists
+
+Apply — Assists in writing high-quality content by conducting research, adding citations, improving hooks, iterating on outlines, and providing real-time feedback on each section. Transfor
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

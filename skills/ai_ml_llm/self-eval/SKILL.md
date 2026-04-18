@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_llm.self_eval
 name: self-eval
-description: Honestly evaluate AI work quality using a two-axis scoring system. Use after completing a task, code review,
+description: "Review — Honestly evaluate AI work quality using a two-axis scoring system. Use after completing a task, code review,"
   or work session to get an unbiased assessment. Detects score inflation, forces devil's advo
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Honestly evaluate AI work quality using a two-axis scoring system
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -290,3 +290,23 @@ Present your evaluation as:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Review — Honestly evaluate AI work quality using a two-axis scoring system. Use after completing a task, code review,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires self eval capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: healthcare.analyze_project
 name: analyze-project
-description: Forensic root cause analyzer for Antigravity sessions. Classifies scope deltas, rework patterns, root causes,
+description: "Analyze — Forensic root cause analyzer for Antigravity sessions. Classifies scope deltas, rework patterns, root causes,"
   hotspots, and auto-improves prompts/health.
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Forensic root cause analyzer for Antigravity sessions
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -540,3 +540,17 @@ Prefer explicit uncertainty over fake precision.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze — Forensic root cause analyzer for Antigravity sessions. Classifies scope deltas, rework patterns, root causes,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Informação clínica usada para decisão médica real
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

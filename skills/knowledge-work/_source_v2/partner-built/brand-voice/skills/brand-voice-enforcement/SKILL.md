@@ -1,6 +1,6 @@
 ---
 name: brand-voice-enforcement
-description: This skill applies brand guidelines to content creation. It should be used when the user asks to "write an email",
+description: "Use — This skill applies brand guidelines to content creation. It should be used when the user asks to 'write an email',"
   "draft a proposal", "create a pitch deck", "write a LinkedIn post", "draft a presentation", "write a Slack message", "draft
   sales content", or any content creation request where brand voice should be applied. Also triggers on "on-brand", "brand
   voice", "enforce voice", "apply brand guidelines", "brand-aligned content", "write in our voice", "use our brand tone",
@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - This skill applies brand guidelines to content creation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -180,3 +180,23 @@ Open questions are unresolved brand positioning decisions flagged during guideli
 
 - **`references/voice-constant-tone-flexes.md`** — The "voice constant, tone flexes" mental model, "We Are / We Are Not" table structure, and tone-by-context matrix explanation
 - **`references/before-after-examples.md`** — Before/after content examples per content type showing enforcement in practice
+
+---
+
+## Why This Skill Exists
+
+Use — This skill applies brand guidelines to content creation. It should be used when the user asks to
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires brand voice enforcement capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

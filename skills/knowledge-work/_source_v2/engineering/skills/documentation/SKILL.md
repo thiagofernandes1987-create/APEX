@@ -31,7 +31,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Write and maintain technical documentation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -126,3 +126,23 @@ Write clear, maintainable technical documentation for different audiences and pu
 3. **Show, don't tell** — Code examples, commands, screenshots
 4. **Keep it current** — Outdated docs are worse than no docs
 5. **Link, don't duplicate** — Reference other docs instead of copying
+
+---
+
+## Why This Skill Exists
+
+Write and maintain technical documentation. Trigger with "write docs for", "document this", "create a README",
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires documentation capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

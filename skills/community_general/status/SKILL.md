@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.status
 name: status
-description: Show experiment dashboard with results, active loops, and progress.
+description: "Use — Show experiment dashboard with results, active loops, and progress."
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general
@@ -40,7 +40,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Show experiment dashboard with results
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -157,3 +157,23 @@ prompts         support-tone         15     6   82/100       +46.4%    done     
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Show experiment dashboard with results, active loops, and progress.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires status capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

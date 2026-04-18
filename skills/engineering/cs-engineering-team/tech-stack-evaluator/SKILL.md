@@ -1,10 +1,14 @@
 ---
 name: "tech-stack-evaluator"
-description: Technology stack evaluation and comparison with TCO analysis, security assessment, and ecosystem health scoring. Use when comparing frameworks, evaluating technology stacks, calculating total cost of ownership, assessing migration paths, or analyzing ecosystem viability.
+description: "Implement — Technology stack evaluation and comparison with TCO analysis, security assessment, and ecosystem health scoring. Use when comparing frameworks, evaluating technology stacks, calcul"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.tech-stack-evaluator
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - engineering
+  - security
+  - observability
 ---
 
 # Technology Stack Evaluator
@@ -186,3 +190,17 @@ python scripts/migration_analyzer.py --from angular-1.x --to react
 - Trivial decisions between similar tools (use team preference)
 - Mandated technology choices (decision already made)
 - Emergency production issues (use monitoring tools)
+
+---
+
+## Why This Skill Exists
+
+Implement — Technology stack evaluation and comparison with TCO analysis, security assessment, and ecosystem health scoring.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

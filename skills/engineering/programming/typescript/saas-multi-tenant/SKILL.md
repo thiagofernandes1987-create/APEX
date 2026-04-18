@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.typescript.saas_multi_tenant
 name: saas-multi-tenant
-description: '''Design and implement multi-tenant SaaS architectures with row-level security, tenant-scoped queries, shared-schema
+description: "Implement — "
   isolation, and safe cross-tenant admin patterns in PostgreSQL and TypeScript.'''
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement saas multi tenant task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -286,3 +286,17 @@ function createTenantPrisma(tenantId: string): PrismaClient {
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

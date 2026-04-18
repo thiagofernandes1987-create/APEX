@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.smtp2go-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: smtp2go-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Smtp2go Automation via Rube MCP

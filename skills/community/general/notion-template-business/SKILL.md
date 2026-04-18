@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.notion_template_business
 name: notion-template-business
-description: Expert in building and selling Notion templates as a business - not
+description: "Use — Expert in building and selling Notion templates as a business - not"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/notion-template-business
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert in building and selling Notion templates as a business - not
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -642,3 +642,17 @@ Works well with: `micro-saas-launcher`, `copywriting`, `landing-page-design`, `s
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Expert in building and selling Notion templates as a business - not
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

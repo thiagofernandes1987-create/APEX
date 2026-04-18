@@ -1,6 +1,6 @@
 ---
 name: "content-production"
-description: "Full content production pipeline — takes a topic from blank page to published-ready piece. Use when you need to execute content: write a blog post, article, or guide end-to-end. Triggers: 'write a post about', 'draft an article', 'create content for', 'help me write', 'I need a blog post'. NOT for content strategy or calendar planning (use content-strategy). NOT for repurposing existing content (use content-repurposing). NOT for social captions only."
+description: "Manage — Full content production pipeline — takes a topic from blank page to published-ready piece. Use when you need to execute content: write a blog post, article, or guide end-to-end. Tr"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,11 @@ executor: HYBRID
 skill_id: business.marketing-skill.content-production
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - observability
+  - documentation
+  - design
 ---
 
 # Content Production
@@ -247,3 +252,23 @@ When reviewing drafts: flag issues → explain impact → give specific fix. Don
 - **ai-seo**: Use when optimizing specifically for AI search citation (ChatGPT, Perplexity, AI Overviews) in addition to traditional SEO.
 - **copywriting**: Use for landing pages, CTAs, and conversion copy. NOT for long-form content (that's this skill).
 - **seo-audit**: Use when auditing an existing content library for SEO gaps. NOT for single-piece production.
+
+---
+
+## Why This Skill Exists
+
+Manage — Full content production pipeline — takes a topic from blank page to published-ready piece.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when you need to execute content: write a blog post, article, or guide end-to-end
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

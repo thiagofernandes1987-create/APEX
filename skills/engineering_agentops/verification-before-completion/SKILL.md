@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.verification-before-completion
 name: verification-before-completion
-description: >
+description: "Use — Gate function obrigatória antes de qualquer claim de conclusão: identificar o comando"
   Gate function obrigatória antes de qualquer claim de conclusão: identificar o comando
   de verificação, executá-lo, ler o output completo, verificar se confirma o claim —
   SOMENTE ENTÃO fazer o claim com evidência. Iron Law: SEM EVIDÊNCIA = SEM CLAIM.
@@ -211,3 +211,23 @@ From 24 failure memories:
 Run the command. Read the output. THEN claim the result.
 
 This is non-negotiable.
+
+---
+
+## Why This Skill Exists
+
+Use — Gate function obrigatória antes de qualquer claim de conclusão: identificar o comando
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires verification before completion capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+Se comando de verificação não existe: NÃO fazer o claim — reportar que verificação não é possível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

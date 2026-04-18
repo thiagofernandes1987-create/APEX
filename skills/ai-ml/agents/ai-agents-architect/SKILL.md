@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.ai_agents_architect
 name: ai-agents-architect
-description: Expert in designing and building autonomous AI agents. Masters tool
+description: "Apply — Expert in designing and building autonomous AI agents. Masters tool"
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/agents/ai-agents-architect
@@ -41,7 +41,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert in designing and building autonomous AI agents
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -429,3 +429,17 @@ Works well with: `rag-engineer`, `prompt-engineer`, `backend`, `mcp-builder`
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — Expert in designing and building autonomous AI agents. Masters tool
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

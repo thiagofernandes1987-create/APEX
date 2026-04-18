@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.c-level.cs_cto_advisor
 name: "cs-cto-advisor"
-description: "Technical leadership advisor for CTOs covering technology strategy, team scaling, architecture decisions, and engineering excellence"
+description: "Manage — Technical leadership advisor for CTOs covering technology strategy, team scaling, architecture decisions, and engineering excellence"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -439,3 +439,22 @@ echo "- Process improvements identified"
 **Status:** Production Ready
 **Version:** 1.0
 
+---
+
+## Why This Skill Exists
+
+Manage — Technical leadership advisor for CTOs covering technology strategy, team scaling, architecture decisions, and engineering excellence
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cs cto advisor capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

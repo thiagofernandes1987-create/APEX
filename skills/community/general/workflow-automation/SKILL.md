@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.workflow_automation
 name: workflow-automation
-description: Workflow automation is the infrastructure that makes AI agents
+description: "Use — Workflow automation is the infrastructure that makes AI agents"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/workflow-automation
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Workflow automation is the infrastructure that makes AI agents
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1121,3 +1121,17 @@ Works well with: `multi-agent-orchestration`, `agent-tool-builder`, `backend`, `
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Workflow automation is the infrastructure that makes AI agents
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

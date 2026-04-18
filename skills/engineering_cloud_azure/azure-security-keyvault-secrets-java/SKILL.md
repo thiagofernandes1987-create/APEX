@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_security_keyvault_secrets_java
 name: azure-security-keyvault-secrets-java
-description: Azure Key Vault Secrets Java SDK for secret management. Use when storing, retrieving, or managing passwords,
+description: "Use — Azure Key Vault Secrets Java SDK for secret management. Use when storing, retrieving, or managing passwords,"
   API keys, connection strings, or other sensitive configuration data.
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - storing, retrieving
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -465,3 +465,23 @@ secretClient.setSecret(new KeyVaultSecret("cert-password", "CertP@ss!")
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Azure Key Vault Secrets Java SDK for secret management.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when storing, retrieving, or managing passwords,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

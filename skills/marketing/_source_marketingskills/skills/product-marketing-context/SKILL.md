@@ -1,6 +1,6 @@
 ---
 name: product-marketing-context
-description: When the user wants to create or update their product marketing context document. Also use when the user mentions
+description: "Create — When the user wants to create or update their product marketing context document. Also use when the user mentions"
   'product context,' 'marketing context,' 'set up context,' 'positioning,' 'who is my target audience,' 'describe my product,'
   'ICP,' 'ideal customer profile,' or wants to avoid repeating foundational information across marketing tasks. Use this at
   the start of any new project before using other marketing skills — it creates `.agents/product-marketing-context.md` that
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - the user mentions
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -344,3 +344,23 @@ After gathering information, create `.agents/product-marketing-context.md` with 
 - **Ask for examples**: "Can you give me an example?" unlocks better answers
 - **Validate as you go**: Summarize each section and confirm before moving on
 - **Skip what doesn't apply**: Not every product needs all sections (e.g., Personas for B2C)
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to create or update their product marketing context document. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

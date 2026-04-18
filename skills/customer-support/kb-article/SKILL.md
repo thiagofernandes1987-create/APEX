@@ -1,7 +1,7 @@
 ---
 skill_id: customer_support.kb_article
 name: kb-article
-description: Draft a knowledge base article from a resolved issue or common question. Use when a ticket resolution is worth
+description: "Use — Draft a knowledge base article from a resolved issue or common question. Use when a ticket resolution is worth"
   documenting for self-service, the same question keeps coming up, a workaround needs to be
 version: v00.33.0
 status: ADOPTED
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - a ticket resolution is worth
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -460,3 +460,23 @@ Billing & Account
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Use — Draft a knowledge base article from a resolved issue or common question.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when a ticket resolution is worth
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Base de conhecimento não disponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: "social-media-analyzer"
-description: Social media campaign analysis and performance tracking. Calculates engagement rates, ROI, and benchmarks across platforms. Use for analyzing social media performance, calculating engagement rate, measuring campaign ROI, comparing platform metrics, or benchmarking against industry standards.
+description: "Manage — Social media campaign analysis and performance tracking. Calculates engagement rates, ROI, and benchmarks across platforms. Use for analyzing social media performance, calculating "
 triggers:
   - analyze social media
   - calculate engagement rate
@@ -16,6 +16,10 @@ executor: HYBRID
 skill_id: business.marketing-skill.social-media-analyzer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - marketing
+  - performance
 ---
 
 # Social Media Analyzer
@@ -311,3 +315,23 @@ All output passes quality verification:
 - **campaign-analytics**: For cross-channel analytics including social.
 - **content-strategy**: For planning social content themes.
 - **marketing-context**: Provides audience context for better analysis.
+
+---
+
+## Why This Skill Exists
+
+Manage — Social media campaign analysis and performance tracking. Calculates engagement rates, ROI, and benchmarks across platforms. Use for analyzing social media performance, calculating
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires social media analyzer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

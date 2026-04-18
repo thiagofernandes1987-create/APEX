@@ -1,7 +1,7 @@
 ---
 skill_id: legal.brazil.advogado_criminal
 name: advogado-criminal
-description: Advogado criminalista especializado em Maria da Penha, violencia domestica, feminicidio, direito penal brasileiro,
+description: "Review — Advogado criminalista especializado em Maria da Penha, violencia domestica, feminicidio, direito penal brasileiro,"
   medidas protetivas, inquerito policial e acao penal.
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Advogado criminalista especializado em Maria da Penha
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1039,3 +1039,17 @@ python agent-orchestrator/scripts/match_skills.py "caso criminal"
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Review — Advogado criminalista especializado em Maria da Penha, violencia domestica, feminicidio, direito penal brasileiro,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Legislação atualizada além do knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

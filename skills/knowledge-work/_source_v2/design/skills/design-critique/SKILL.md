@@ -1,6 +1,6 @@
 ---
 name: design-critique
-description: Get structured design feedback on usability, hierarchy, and consistency. Trigger with "review this design", "critique
+description: "Review — Get structured design feedback on usability, hierarchy, and consistency. Trigger with 'review this design', 'critique"
   this mockup", "what do you think of this screen?", or when sharing a Figma link or screenshot for feedback at any stage
   from exploration to final polish.
 argument-hint: <Figma URL, screenshot, or description>
@@ -27,7 +27,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Get structured design feedback on usability
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -185,3 +185,23 @@ If **~~user feedback** is connected:
 1. **Share the context** — "This is a checkout flow for a B2B SaaS" helps me give relevant feedback.
 2. **Specify your stage** — Early exploration gets different feedback than final polish.
 3. **Ask me to focus** — "Just look at the navigation" gives you more depth on one area.
+
+---
+
+## Why This Skill Exists
+
+Review — Get structured design feedback on usability, hierarchy, and consistency. Trigger with
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires design critique capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

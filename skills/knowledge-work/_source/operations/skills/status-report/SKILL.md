@@ -28,7 +28,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - writing a weekly or monthly update for
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -145,3 +145,23 @@ If **~~calendar** is connected:
 1. **Lead with the headline** — Busy leaders read the first 3 lines. Make them count.
 2. **Be honest about risks** — Surfacing issues early builds trust. Surprises erode it.
 3. **Make decisions easy** — For each decision needed, provide context and a recommendation.
+
+---
+
+## Why This Skill Exists
+
+Generate a status report with KPIs, risks, and action items.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when riting a weekly or monthly update for
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

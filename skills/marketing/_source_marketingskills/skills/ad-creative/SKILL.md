@@ -1,6 +1,6 @@
 ---
 name: ad-creative
-description: When the user wants to generate, iterate, or scale ad creative — headlines, descriptions, primary text, or full
+description: "Create — When the user wants to generate, iterate, or scale ad creative — headlines, descriptions, primary text, or full"
   ad variations — for any paid advertising platform. Also use when the user mentions 'ad copy variations,' 'ad creative,'
   'generate headlines,' 'RSA headlines,' 'bulk ad copy,' 'ad iterations,' 'creative testing,' 'ad performance optimization,'
   'write me some ads,' 'Facebook ad copy,' 'Google ad headlines,' 'LinkedIn ad text,' or 'I need more ad variations.' Use
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to generate
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -470,3 +470,23 @@ node tools/clis/google-ads.js reports get --type ad_performance --date-range las
 - **ab-test-setup**: For structuring creative tests with statistical rigor
 - **marketing-psychology**: For psychological principles behind high-performing creative
 - **copy-editing**: For polishing ad copy before launch
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to generate, iterate, or scale ad creative — headlines, descriptions, primary text, or full
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ad creative capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

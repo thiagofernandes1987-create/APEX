@@ -1,6 +1,6 @@
 ---
 name: "cto-advisor"
-description: "Technical leadership guidance for engineering teams, architecture decisions, and technology strategy. Use when assessing technical debt, scaling engineering teams, evaluating technologies, making architecture decisions, establishing engineering metrics, or when user mentions CTO, tech debt, technical debt, team scaling, architecture decisions, technology evaluation, engineering metrics, DORA metrics, or technology strategy."
+description: "Manage — Technical leadership guidance for engineering teams, architecture decisions, and technology strategy. Use when assessing technical debt, scaling engineering teams, evaluating techn"
 license: MIT
 metadata:
   version: 2.0.0
@@ -14,6 +14,12 @@ executor: HYBRID
 skill_id: business.c-level-advisor.cto-advisor
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - sales
+  - management
+  - observability
+  - design
 ---
 
 # CTO Advisor
@@ -259,3 +265,23 @@ All output passes the Internal Quality Loop before reaching the founder (see `ag
 - `references/technology_evaluation_framework.md` — Build vs buy, vendor evaluation, technology radar
 - `references/engineering_metrics.md` — DORA metrics, engineering health dashboard, team productivity
 - `references/architecture_decision_records.md` — ADR templates, decision governance, review process
+
+---
+
+## Why This Skill Exists
+
+Manage — Technical leadership guidance for engineering teams, architecture decisions, and technology strategy.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when assessing technical debt, scaling engineering teams, evaluating techn
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.ai_engineering_toolkit
 name: ai-engineering-toolkit
-description: '''6 production-ready AI engineering workflows: prompt evaluation (8-dimension scoring), context budget planning,
+description: "Apply — "
   RAG pipeline design, agent security audit (65-point checklist), eval harness building, a'
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply ai engineering toolkit task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -208,3 +208,17 @@ cp -r ai-engineering-toolkit/skills/* ~/.claude/skills/
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

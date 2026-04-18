@@ -1,10 +1,16 @@
 ---
 name: business-investment-advisor
-description: "Business investment analysis and capital allocation advisor. Use when evaluating whether to invest in equipment, real estate, a new business, hiring, technology, or any capital expenditure. Also use for ROI calculations, IRR, NPV, payback period, build vs buy decisions, lease vs buy analysis, vendor evaluation, or deciding where to allocate limited budget for maximum return."
+description: "Manage — Business investment analysis and capital allocation advisor. Use when evaluating whether to invest in equipment, real estate, a new business, hiring, technology, or any capital exp"
 executor: LLM_BEHAVIOR
 skill_id: business.finance.business-investment-advisor
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - business
+  - api
+  - management
+  - observability
+  - design
 ---
 
 # Business Investment Advisor
@@ -222,3 +228,23 @@ For every investment analysis:
 - **financial-analyst**: Use for DCF valuation of entire companies, ratio analysis of financial statements. NOT for single capital expenditure decisions.
 - **saas-metrics-coach**: Use for SaaS-specific unit economics (CAC, LTV, churn). NOT for equipment or real estate investments.
 - **ceo-advisor**: Use for strategic direction and capital allocation across the entire business. NOT for individual investment math.
+
+---
+
+## Why This Skill Exists
+
+Manage — Business investment analysis and capital allocation advisor.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when valuating whether to invest in equipment, real estate, a new business, hiring, technology, or any capital exp
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

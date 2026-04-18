@@ -1,10 +1,16 @@
 ---
 name: llm-cost-optimizer
-description: "Use when you need to reduce LLM API spend, control token usage, route between models by cost/quality, implement prompt caching, or build cost observability for AI features. Triggers: 'my AI costs are too high', 'optimize token usage', 'which model should I use', 'LLM spend is out of control', 'implement prompt caching'. NOT for RAG pipeline design (use rag-architect). NOT for prompt writing quality (use senior-prompt-engineer)."
+description: "Implement — Use when you need to reduce LLM API spend, control token usage, route between models by cost/quality, implement prompt caching, or build cost observability for AI features. Trigger"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.llm-cost-optimizer
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - api
+  - llm
+  - ai_ml
+  - design
 ---
 
 # LLM Cost Optimizer
@@ -194,3 +200,23 @@ All output follows the structured standard:
 - **observability-designer**: Use when designing the broader monitoring stack. Pairs with this skill for LLM cost dashboards.
 - **performance-profiler**: Use for latency profiling. Pairs with this skill when optimizing the cost-latency tradeoff.
 - **api-design-reviewer**: Use when reviewing AI feature APIs. Cross-reference for cost-per-endpoint analysis.
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when you need to reduce LLM API spend, control token usage, route between models by cost/quality, implement prompt caching, or build cost observability for AI features
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

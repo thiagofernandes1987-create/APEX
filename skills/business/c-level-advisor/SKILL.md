@@ -1,6 +1,6 @@
 ---
 name: "c-level-advisor"
-description: "10 C-level advisory agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. CEO, CTO, COO, CPO, CMO, CFO, CRO, CISO, CHRO, Executive Mentor. Multi-role board meetings, strategy routing, structured recommendations. For founders needing executive-level decision support."
+description: "Manage — 10 C-level advisory agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. CEO, CTO, COO, CPO, CMO, CFO, CRO, CISO, CHRO, Executive Mentor. Multi-role board"
 license: MIT
 metadata:
   version: 2.0.0
@@ -15,6 +15,11 @@ executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - llm
+  - agent
+  - management
 ---
 
 # C-Level Advisory Ecosystem
@@ -155,3 +160,23 @@ Culture Architect, Company OS, Founder Coach, Strategic Alignment, Change Manage
 - `CLAUDE.md` — full architecture diagram and integration guide
 - `agent-protocol/SKILL.md` — communication standard and quality loop details
 - `chief-of-staff/SKILL.md` — routing matrix for all 28 skills
+
+---
+
+## Why This Skill Exists
+
+Manage — 10 C-level advisory agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. CEO, CTO, COO, CPO, CMO, CFO, CRO, CISO, CHRO, Executive Mentor. Multi-role board
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires c level advisor capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.saga_orchestration
 name: saga-orchestration
-description: '''Patterns for managing distributed transactions and long-running business processes.'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/saga-orchestration
@@ -39,7 +39,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use saga orchestration task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -594,3 +594,23 @@ Works well with: `event-sourcing-architect`, `workflow-automation`, `dbos-*`
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires saga orchestration capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

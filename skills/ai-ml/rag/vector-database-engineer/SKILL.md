@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.vector_database_engineer
 name: vector-database-engineer
-description: '''Expert in vector databases, embedding strategies, and semantic search implementation. Masters Pinecone, Weaviate,
+description: "Apply — "
   Qdrant, Milvus, and pgvector for RAG applications, recommendation systems, and simila'
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply vector database engineer task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -160,3 +160,23 @@ Expert in vector databases, embedding strategies, and semantic search implementa
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires vector database engineer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

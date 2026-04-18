@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.algolia_search
 name: algolia-search
-description: Expert patterns for Algolia search implementation, indexing
+description: "Use — Expert patterns for Algolia search implementation, indexing"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/algolia-search
@@ -49,7 +49,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert patterns for Algolia search implementation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1016,3 +1016,17 @@ Message: No customRanking configured. Add business metrics (popularity, rating).
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Expert patterns for Algolia search implementation, indexing
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

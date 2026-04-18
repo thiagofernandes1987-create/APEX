@@ -18,6 +18,11 @@ executor: HYBRID
 skill_id: business.ra-qm-team.quality-documentation-manager
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - business
+  - workflow
+  - compliance
+  - documentation
 ---
 
 # Quality Documentation Manager
@@ -439,3 +444,23 @@ Track document control system performance.
 | Incomplete change history | Require history update with each revision |
 | No periodic review schedule | Establish and enforce review calendar |
 | Inadequate audit trail | Validate DMS for Part 11 compliance |
+
+---
+
+## Why This Skill Exists
+
+Document control system management for medical device QMS. Covers document numbering, version control, change management, and 21 CFR Part 11 compliance. Use for document control procedures, change control workflow, document numbering, version management, electronic signature compliance, or regulator
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires quality documentation manager capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

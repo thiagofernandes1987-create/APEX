@@ -1,7 +1,7 @@
 ---
 skill_id: business_sales.competitive_intel
 name: competitive-intel
-description: Systematic competitor tracking that feeds CMO positioning, CRO battlecards, and CPO roadmap decisions. Use when
+description: "Use — Systematic competitor tracking that feeds CMO positioning, CRO battlecards, and CPO roadmap decisions. Use when"
   analyzing competitors, building sales battlecards, tracking market moves, positioning ag
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Systematic competitor tracking that feeds CMO positioning
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -296,3 +296,23 @@ This is the highest-signal competitive data you have. Most companies do it too r
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Systematic competitor tracking that feeds CMO positioning, CRO battlecards, and CPO roadmap decisions. Use when
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires competitive intel capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

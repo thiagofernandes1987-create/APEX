@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_security.security_hardening
 name: security-hardening
-description: Application security covering input validation, auth, headers, secrets management, and dependency auditing
+description: "Use — Application security covering input validation, auth, headers, secrets management, and dependency auditing"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/security
@@ -61,7 +61,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Application security covering input validation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -329,3 +329,23 @@ Run dependency audits in CI on every PR. Block merges on critical/high vulnerabi
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — Application security covering input validation, auth, headers, secrets management, and dependency auditing
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires security hardening capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

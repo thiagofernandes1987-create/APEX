@@ -1,7 +1,7 @@
 ---
 skill_id: finance.financial_analysis.competitive_analysis
 name: competitive-analysis
-description: Framework for building competitive landscape decks — market positioning, competitor deep-dives, comparative analysis,
+description: "Analyze — Framework for building competitive landscape decks — market positioning, competitor deep-dives, comparative analysis,"
   strategic synthesis. Use when the user asks for a competitive landscape, competito
 version: v00.33.0
 status: ADOPTED
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Framework for building competitive landscape decks — market positioning
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -389,3 +389,23 @@ Run standard visual verification checks on every slide — this catches overlaps
 
 ## Diff History
 - **v00.33.0**: Ingested from financial-services-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Analyze — Framework for building competitive landscape decks — market positioning, competitor deep-dives, comparative analysis,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires competitive analysis capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

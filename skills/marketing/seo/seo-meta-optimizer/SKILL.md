@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_meta_optimizer
 name: seo-meta-optimizer
-description: Creates optimized meta titles, descriptions, and URL suggestions based on character limits and best practices.
+description: "Create — Creates optimized meta titles, descriptions, and URL suggestions based on character limits and best practices."
   Generates compelling, keyword-rich metadata. Use PROACTIVELY for new content.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Creates optimized meta titles
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -196,3 +196,23 @@ Focus on psychological triggers and user benefits. Create metadata that compels 
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create — Creates optimized meta titles, descriptions, and URL suggestions based on character limits and best practices.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires seo meta optimizer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

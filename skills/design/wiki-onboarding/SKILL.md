@@ -1,7 +1,7 @@
 ---
 skill_id: design.wiki_onboarding
 name: wiki-onboarding
-description: Generates four audience-tailored onboarding guides in an onboarding/ folder — Contributor, Staff Engineer, Executive,
+description: "Design — Generates four audience-tailored onboarding guides in an onboarding/ folder — Contributor, Staff Engineer, Executive,"
   and Product Manager. Use when the user wants onboarding documentation for a codeba
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Generates four audience-tailored onboarding guides in an onboarding/ folder — Contributor
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -347,3 +347,23 @@ After generating each guide, verify:
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Generates four audience-tailored onboarding guides in an onboarding/ folder — Contributor, Staff Engineer, Executive,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires wiki onboarding capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

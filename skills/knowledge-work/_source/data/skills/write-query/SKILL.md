@@ -32,7 +32,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - translating a natural-language data need into
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -199,3 +199,23 @@ If a data warehouse is connected, offer to run the query and analyze the results
 - If you know the table names, include them -- otherwise Claude will help you find them
 - Specify if you need the query to be idempotent (safe to re-run) or one-time
 - For recurring queries, mention if it should be parameterized for date ranges
+
+---
+
+## Why This Skill Exists
+
+Write optimized SQL for your dialect with best practices.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when translating a natural-language data need into
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

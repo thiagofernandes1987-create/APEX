@@ -1,7 +1,7 @@
 ---
 skill_id: apex_internals.forgeskills
 name: ForgeSkills — Rapid Repository Reader & Skill Ingestion Pipeline
-description: Pipeline 4-estágios para leitura rápida e ingestão segura de skills externas de repositórios GitHub. Combina
+description: "Use — Pipeline 4-estágios para leitura rápida e ingestão segura de skills externas de repositórios GitHub. Combina"
   C4-Architecture (discovery) + DocsArchitect (analysis) + ClarityGate (validation) + dynamic_skill_forge (execution).
 version: v00.33.0
 status: ADOPTED
@@ -45,7 +45,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Pipeline 4-estágios para leitura rápida e ingestão segura de skills externas de repositórios GitHub
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:

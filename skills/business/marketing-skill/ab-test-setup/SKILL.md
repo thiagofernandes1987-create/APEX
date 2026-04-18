@@ -1,6 +1,6 @@
 ---
 name: "ab-test-setup"
-description: When the user wants to plan, design, or implement an A/B test or experiment. Also use when the user mentions "A/B test," "split test," "experiment," "test this change," "variant copy," "multivariate test," "hypothesis," "conversion experiment," "statistical significance," or "test this." For tracking implementation, see analytics-tracking.
+description: "Manage — When the user wants to plan, design, or implement an A/B test or experiment. Also use when the user mentions 'A/B test,' 'split test,' 'experiment,' 'test this change,' 'variant co"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,11 @@ executor: HYBRID
 skill_id: business.marketing-skill.ab-test-setup
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - testing
+  - research
+  - design
 ---
 
 # A/B Test Setup
@@ -304,3 +309,23 @@ All outputs should meet the quality standard: clear hypothesis, pre-registered m
 - **campaign-analytics** — USE after tests conclude to fold results into broader campaign attribution; NOT during the test itself.
 - **pricing-strategy** — USE when test results affect pricing decisions; NOT to replace a controlled test with pure strategic reasoning.
 - **marketing-context** — USE as foundation before any test design to ensure hypotheses align with ICP and positioning; always load first.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to plan, design, or implement an A/B test or experiment. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

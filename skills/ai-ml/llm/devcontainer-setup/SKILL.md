@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.devcontainer_setup
 name: devcontainer-setup
-description: Creates devcontainers with Claude Code, language-specific tooling (Python/Node/Rust/Go), and persistent volumes.
+description: "Apply — Creates devcontainers with Claude Code, language-specific tooling (Python/Node/Rust/Go), and persistent volumes."
   Use when adding devcontainer support to a project, setting up isolated development envi
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Creates devcontainers with Claude Code
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -406,3 +406,17 @@ After generating, inform the user:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — Creates devcontainers with Claude Code, language-specific tooling (Python/Node/Rust/Go), and persistent volumes.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

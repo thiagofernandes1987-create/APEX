@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.product.cs_product_manager
 name: "cs-product-manager"
-description: "Product management agent for feature prioritization, customer discovery, PRD development, and roadmap planning using RICE framework"
+description: "Manage — Product management agent for feature prioritization, customer discovery, PRD development, and roadmap planning using RICE framework"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -711,3 +711,22 @@ echo "Report: $QUARTER-roadmap.txt"
 **Status:** Production Ready
 **Version:** 2.0
 
+---
+
+## Why This Skill Exists
+
+Manage — Product management agent for feature prioritization, customer discovery, PRD development, and roadmap planning using RICE framework
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cs product manager capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

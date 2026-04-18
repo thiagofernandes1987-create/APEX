@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.extract
 name: extract
-description: Turn a proven pattern or debugging solution into a standalone reusable skill with SKILL.md, reference docs, and
+description: "Debug skill name — Transforms a recurring pattern or debugging solution into a standalone, portable skill that can be installed in any proj"
   examples.
 version: v00.33.0
 status: CANDIDATE
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Debug skill name — Transforms a recurring pattern or debugging solution into a standalone
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -270,3 +270,23 @@ Creates `api-client-regen/SKILL.md` with:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Debug skill name — Transforms a recurring pattern or debugging solution into a standalone, portable skill that can be installed in any proj
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires skill name capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

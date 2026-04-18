@@ -1,11 +1,13 @@
 ---
 name: "remember"
-description: "Explicitly save important knowledge to auto-memory with timestamp and context. Use when a discovery is too important to rely on auto-capture."
+description: "Implement — Explicitly save important knowledge to auto-memory with timestamp and context. Use when a discovery is too important to rely on auto-capture."
 command: /si:remember
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.self-improving-agent.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
 ---
 
 # /si:remember — Save Knowledge Explicitly
@@ -101,3 +103,17 @@ If the knowledge sounds like a rule (imperative, always/never, convention):
   - ✅ "Build with `pnpm build`, tests with `pnpm test:e2e`"
   - ❌ "The project uses pnpm for building and testing"
 - If you're remembering the same thing twice, promote it to CLAUDE.md
+
+---
+
+## Why This Skill Exists
+
+Implement — Explicitly save important knowledge to auto-memory with timestamp and context.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_llm.agenthub
 name: agenthub
-description: Multi-agent collaboration plugin that spawns N parallel subagents competing on the same task via git worktree
+description: "Use — Multi-agent collaboration plugin that spawns N parallel subagents competing on the same task via git worktree"
   isolation. Agents work independently, results are evaluated by metric or LLM judge, and th
 version: v00.33.0
 status: CANDIDATE
@@ -367,3 +367,23 @@ clawhub install agenthub
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Multi-agent collaboration plugin that spawns N parallel subagents competing on the same task via git worktree
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires agenthub capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

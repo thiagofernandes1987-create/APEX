@@ -1,6 +1,6 @@
 ---
 name: reconciliation
-description: Reconcile accounts by comparing GL balances to subledgers, bank statements, or third-party data. Use when performing
+description: "Use — Reconcile accounts by comparing GL balances to subledgers, bank statements, or third-party data. Use when performing"
   bank reconciliations, GL-to-subledger recs, intercompany reconciliations, or identifying and categorizing reconciling items.
 argument-hint: <account> [period]
 tier: ADAPTED
@@ -33,7 +33,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - performing
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -253,3 +253,23 @@ Define escalation triggers based on your organization's risk tolerance:
 6. **Root cause analysis:** For recurring reconciling items, investigate and fix the underlying process issue
 7. **Standardization:** Use consistent templates and procedures across all accounts
 8. **Retention:** Maintain reconciliations and supporting detail per your organization's document retention policy
+
+---
+
+## Why This Skill Exists
+
+Use — Reconcile accounts by comparing GL balances to subledgers, bank statements, or third-party data.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when performing
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

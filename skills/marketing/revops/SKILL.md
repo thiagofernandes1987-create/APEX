@@ -1,7 +1,7 @@
 ---
 skill_id: marketingskills.marketing.revops
 name: revops
-description: When the user wants help with revenue operations, lead lifecycle management, or marketing-to-sales handoff processes.
+description: "Create — When the user wants help with revenue operations, lead lifecycle management, or marketing-to-sales handoff processes."
   Also use when the user mentions 'RevOps,' 'revenue operations,' 'lead scoring,' 'l
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants help with revenue operations
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -466,3 +466,23 @@ For implementation, see the [tools registry](../../tools/REGISTRY.md). Key RevOp
 
 ## Diff History
 - **v00.33.0**: Ingested from marketingskills-main
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants help with revenue operations, lead lifecycle management, or marketing-to-sales handoff processes.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires revops capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

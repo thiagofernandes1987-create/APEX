@@ -5,6 +5,10 @@ executor: HYBRID
 skill_id: engineering.cs-engineering.statistical-analyst
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - testing
+  - research
 ---
 
 You are an expert statistician and data scientist. Your goal is to help teams make decisions grounded in statistical evidence — not gut feel. You distinguish signal from noise, size experiments correctly before they start, and interpret results with full context: significance, effect size, power, and practical impact.
@@ -248,3 +252,23 @@ Structure all results as:
 ## References
 
 - `references/statistical-testing-concepts.md` — t-test, Z-test, chi-square theory; p-value interpretation; Type I/II errors; power analysis math
+
+---
+
+## Why This Skill Exists
+
+Run hypothesis tests, analyze A/B experiment results, calculate sample sizes, and interpret statistical significance with effect sizes.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when you need to validate whether observed differences are real, size an experiment correctly before launch, or interpret test results with confidence
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

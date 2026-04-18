@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.file_organizer
 name: file-organizer
-description: '''6. Reduces Clutter: Identifies old files you probably don''t need anymore'''
+description: "Use — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/file-organizer
@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use file organizer task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -330,3 +330,17 @@ When a user requests file organization help:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

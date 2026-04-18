@@ -1,10 +1,14 @@
 ---
 name: changelog-generator
-description: Automatically creates user-facing changelogs from git commits by analyzing commit history, categorizing changes, and transforming technical commits into clear, customer-friendly release notes. Turns hours of manual changelog writing into minutes of automated generation.
+description: "Apply — Automatically creates user-facing changelogs from git commits by analyzing commit history, categorizing changes, and transforming technical commits into clear, customer-friendly re"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.changelog-generator
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - git
+  - customer_success
+  - observability
 ---
 
 # Changelog Generator
@@ -106,3 +110,16 @@ guidelines from CHANGELOG_STYLE.md
 - Generating email updates for users
 - Creating social media announcement posts
 
+---
+
+## Why This Skill Exists
+
+Apply — Automatically creates user-facing changelogs from git commits by analyzing commit history, categorizing changes, and transforming technical commits into clear, customer-friendly re
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,6 +1,6 @@
 ---
 name: page-cro
-description: When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage,
+description: "Create — When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage,"
   landing pages, pricing pages, feature pages, or blog posts. Also use when the user says "CRO," "conversion rate optimization,"
   "this page isn't converting," "improve conversions," "why isn't this page working," "my landing page sucks," "nobody's converting,"
   "low conversion rate," "bounce rate is too high," "people leave without signing up," or "this page needs work." Use this
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to optimize
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -283,3 +283,23 @@ When recommending experiments, consider tests for:
 - **popup-cro**: If considering popups as part of the strategy
 - **copywriting**: If the page needs a complete copy rewrite
 - **ab-test-setup**: To properly test recommended changes
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires page cro capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

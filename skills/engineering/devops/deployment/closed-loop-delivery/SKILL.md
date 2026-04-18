@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.deployment.closed_loop_delivery
 name: closed-loop-delivery
-description: Use when a coding task must be completed against explicit acceptance criteria with minimal user re-intervention
+description: "Implement — Use when a coding task must be completed against explicit acceptance criteria with minimal user re-intervention"
   across implementation, review feedback, deployment, and runtime verification.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Use when a coding task must be completed against explicit acceptance criteria with minimal user re-i
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -221,3 +221,17 @@ Do not claim success without evidence.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.launch_strategy
 name: launch-strategy
-description: When the user wants to plan a product launch, feature announcement, or release strategy. Also use when the user
+description: "Create — When the user wants to plan a product launch, feature announcement, or release strategy. Also use when the user"
   mentions 'launch,' 'Product Hunt,' 'feature release,' 'announcement,' 'go-to-market,' 'b
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to plan a product launch
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -469,3 +469,23 @@ Even small changelog updates remind customers your product is evolving. This bui
 
 ## Diff History
 - **v00.33.0**: Ingested from marketingskills-main
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to plan a product launch, feature announcement, or release strategy. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires launch strategy capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

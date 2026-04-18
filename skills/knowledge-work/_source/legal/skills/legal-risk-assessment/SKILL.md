@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - evaluating
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -353,3 +353,23 @@ When recommending outside counsel engagement, suggest the user consider:
 - Budget expectations and fee arrangements (hourly, fixed fee, blended rates, success fees)
 - Diversity and inclusion considerations
 - Existing relationships (panel firms, prior engagements)
+
+---
+
+## Why This Skill Exists
+
+Assess and classify legal risks using a severity-by-likelihood framework with escalation criteria.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when valuating
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

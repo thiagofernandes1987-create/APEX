@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_database.connect
 name: connect
-description: Connect Claude to any app. Send emails, create issues, post messages, update databases - take real actions across
+description: "Create — Connect Claude to any app. Send emails, create issues, post messages, update databases - take real actions across"
   Gmail, Slack, GitHub, Notion, and 1000+ services.
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Connect Claude to any app
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -266,3 +266,17 @@ Connection persists after that.
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Create — Connect Claude to any app. Send emails, create issues, post messages, update databases - take real actions across
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

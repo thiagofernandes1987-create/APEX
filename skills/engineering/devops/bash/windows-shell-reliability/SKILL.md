@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.bash.windows_shell_reliability
 name: windows-shell-reliability
-description: '''Reliable command execution on Windows: paths, encoding, and common binary pitfalls.'''
+description: "Implement — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/devops/bash/windows-shell-reliability
@@ -43,7 +43,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement windows shell reliability task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -203,3 +203,17 @@ Windows has a 260-character path limit by default.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

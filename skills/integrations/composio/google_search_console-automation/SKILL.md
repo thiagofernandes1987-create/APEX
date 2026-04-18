@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.google_search_console-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: google_search_console-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Google Search Console Automation via Rube MCP

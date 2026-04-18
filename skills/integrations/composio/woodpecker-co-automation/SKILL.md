@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.woodpecker-co-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: woodpecker-co-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Woodpecker co Automation via Rube MCP

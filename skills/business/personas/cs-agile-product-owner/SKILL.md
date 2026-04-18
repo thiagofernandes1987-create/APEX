@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.product.cs_agile_product_owner
 name: "cs-agile-product-owner"
-description: "Agile product owner agent for epic breakdown, sprint planning, backlog refinement, and INVEST-compliant user story generation"
+description: "Manage — Agile product owner agent for epic breakdown, sprint planning, backlog refinement, and INVEST-compliant user story generation"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -444,3 +444,22 @@ echo "Location: ../../product-team/agile-product-owner/references/user-story-tem
 **Status:** Production Ready
 **Version:** 1.0
 
+---
+
+## Why This Skill Exists
+
+Manage — Agile product owner agent for epic breakdown, sprint planning, backlog refinement, and INVEST-compliant user story generation
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cs agile product owner capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

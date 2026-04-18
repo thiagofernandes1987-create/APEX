@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_testing.ad_creative
 name: ad-creative
-description: When the user needs to generate, iterate, or scale ad creative for paid advertising. Use when they say 'write
+description: "Generate — When the user needs to generate, iterate, or scale ad creative for paid advertising. Use when they say 'write"
   ad copy,' 'generate headlines,' 'create ad variations,' 'bulk creative,' 'iterate on ads,'
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - they say 'write
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -385,3 +385,23 @@ Notes: Benefit-first formula, tested format for consideration stage
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Generate — When the user needs to generate, iterate, or scale ad creative for paid advertising.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ad creative capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

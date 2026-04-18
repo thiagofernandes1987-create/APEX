@@ -1,6 +1,6 @@
 ---
 name: cowork-plugin-customizer
-description: 'Customize a Claude Code plugin for a specific organization''s tools and workflows. Use when: customize plugin,
+description: "Use — Customize a Claude Code plugin for a specific organization"
   set up plugin, configure plugin, tailor plugin, adjust plugin settings, customize plugin connectors, customize plugin skill,
   tweak plugin, modify plugin configuration.
 
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Customize a Claude Code plugin for a specific organization
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -236,3 +236,23 @@ If no knowledge MCPs were available in Phase 1, and the user had to answer at le
 - **`references/mcp-servers.md`** — MCP discovery workflow, category-to-keywords mapping, config file locations
 - **`references/search-strategies.md`** — Knowledge MCP query patterns for finding tool names and org values
 - **`examples/customized-mcp.json`** — Example fully configured `.mcp.json`
+
+---
+
+## Why This Skill Exists
+
+Use — Customize a Claude Code plugin for a specific organization
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cowork plugin customizer capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

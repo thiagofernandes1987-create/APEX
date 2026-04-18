@@ -1,11 +1,14 @@
 ---
 name: "status"
-description: "Memory health dashboard showing line counts, topic files, capacity, stale entries, and recommendations."
+description: "Implement — Memory health dashboard showing line counts, topic files, capacity, stale entries, and recommendations."
 command: /si:status
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.self-improving-agent.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - visualization
 ---
 
 # /si:status — Memory Health Dashboard
@@ -106,3 +109,23 @@ Output: `📊 Memory: {{n}}/200 lines | {{count}} rules | {{status_emoji}} {{sta
 - If capacity is yellow+, run `/si:review` to identify promotion candidates
 - Stale entries waste space — delete references to files that no longer exist
 - Topic files are fine — Claude creates them to keep MEMORY.md under 200 lines
+
+---
+
+## Why This Skill Exists
+
+Implement — Memory health dashboard showing line counts, topic files, capacity, stale entries, and recommendations.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires status capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

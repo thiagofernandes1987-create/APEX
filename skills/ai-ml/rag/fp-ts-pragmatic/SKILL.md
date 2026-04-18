@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.fp_ts_pragmatic
 name: fp-ts-pragmatic
-description: '''A practical, jargon-free guide to fp-ts functional programming - the 80/20 approach that gets results without
+description: "Apply — "
   the academic overhead. Use when writing TypeScript with fp-ts library.'''
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - apply fp ts pragmatic task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -696,3 +696,17 @@ But don't rush. The basics here will handle 80% of real-world scenarios. Get com
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

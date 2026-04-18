@@ -1,6 +1,6 @@
 ---
 name: slack-messaging
-description: Guidance for composing well-formatted, effective Slack messages using mrkdwn syntax
+description: "Use — Guidance for composing well-formatted, effective Slack messages using mrkdwn syntax"
 tier: ADAPTED
 anchors:
 - slack-messaging
@@ -31,7 +31,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Guidance for composing well-formatted
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -135,3 +135,17 @@ Slack uses its own markup syntax called **mrkdwn**, which differs from standard 
 - Match the tone to the channel — `#general` is usually more formal than `#random`.
 - Use emoji reactions instead of reply messages for simple acknowledgments (though note: the MCP tools can't add reactions, so suggest the user do this manually if appropriate).
 - When writing announcements, use a clear structure: context, key info, call to action.
+
+---
+
+## Why This Skill Exists
+
+Use — Guidance for composing well-formatted, effective Slack messages using mrkdwn syntax
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

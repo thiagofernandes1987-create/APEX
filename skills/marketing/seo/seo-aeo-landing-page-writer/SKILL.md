@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_aeo_landing_page_writer
 name: seo-aeo-landing-page-writer
-description: '''Writes complete, structured landing pages optimized for SEO ranking, AEO citation, and visitor conversion.
+description: "Create — "
   Activate when the user wants to write or generate a landing page for a product, service, or '
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - create seo aeo landing page writer task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -195,3 +195,17 @@ users. A 14-day free trial is available — no credit card required.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

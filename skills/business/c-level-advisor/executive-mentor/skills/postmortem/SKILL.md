@@ -1,10 +1,12 @@
 ---
 name: "postmortem"
-description: "/em -postmortem — Honest Analysis of What Went Wrong"
+description: "Manage — /em -postmortem — Honest Analysis of What Went Wrong"
 executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.executive-mentor.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 # /em:postmortem — Honest Analysis of What Went Wrong
@@ -195,3 +197,23 @@ The goal isn't to establish that someone made a mistake. The goal is to understa
 The first version fires or shames someone. The second version builds a more resilient organization.
 
 Both might be true simultaneously. The distinction is: which one actually prevents recurrence?
+
+---
+
+## Why This Skill Exists
+
+Manage — /em -postmortem — Honest Analysis of What Went Wrong
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires postmortem capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

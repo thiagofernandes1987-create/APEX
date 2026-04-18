@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.stripe_integration_expert
 name: stripe-integration-expert
-description: Stripe Integration Expert
+description: "Use — Stripe Integration Expert"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general
@@ -45,7 +45,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Stripe Integration Expert
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -572,3 +572,17 @@ export async function requireActiveSubscription() {
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Stripe Integration Expert
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

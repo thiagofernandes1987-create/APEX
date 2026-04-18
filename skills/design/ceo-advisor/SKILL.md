@@ -1,7 +1,7 @@
 ---
 skill_id: design.ceo_advisor
 name: ceo-advisor
-description: Executive leadership guidance for strategic decision-making, organizational development, and stakeholder management.
+description: "Design — Executive leadership guidance for strategic decision-making, organizational development, and stakeholder management."
   Use when planning strategy, preparing board presentations, managing investors, deve
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Executive leadership guidance for strategic decision-making
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -284,3 +284,23 @@ All output passes the Internal Quality Loop before reaching the founder (see `ag
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Executive leadership guidance for strategic decision-making, organizational development, and stakeholder management.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ceo advisor capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

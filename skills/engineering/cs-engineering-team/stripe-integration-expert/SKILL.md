@@ -1,10 +1,12 @@
 ---
 name: "stripe-integration-expert"
-description: "Stripe Integration Expert"
+description: "Implement — Stripe Integration Expert"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.stripe-integration-expert
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
 ---
 
 # Stripe Integration Expert
@@ -478,3 +480,17 @@ export async function requireActiveSubscription() {
 - **Proration surprises** — always preview proration before upgrade; show user the amount before confirming
 - **Customer portal not configured** — must enable features in Stripe dashboard under Billing → Customer portal settings
 - **Missing metadata on checkout** — always pass `userId` in metadata; can't link subscription to user without it
+
+---
+
+## Why This Skill Exists
+
+Implement — Stripe Integration Expert
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

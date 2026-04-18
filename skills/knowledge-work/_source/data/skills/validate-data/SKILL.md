@@ -1,6 +1,6 @@
 ---
 name: validate-data
-description: QA an analysis before sharing -- methodology, accuracy, and bias checks. Use when reviewing an analysis before
+description: "Review — QA an analysis before sharing -- methodology, accuracy, and bias checks. Use when reviewing an analysis before"
   a stakeholder presentation, spot-checking calculations and aggregation logic, verifying a SQL query's results look right,
   or assessing whether conclusions are actually supported by the data.
 argument-hint: <analysis to review>
@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - reviewing an analysis before
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -471,3 +471,23 @@ Output:
 - Even quick analyses benefit from a sanity check -- it takes a minute and can save your credibility
 - If the validation finds issues, fix them and re-validate
 - Share the validation output alongside your analysis to build stakeholder confidence
+
+---
+
+## Why This Skill Exists
+
+Review — QA an analysis before sharing -- methodology, accuracy, and bias checks.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when reviewing an analysis before
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.file_uploads
 name: file-uploads
-description: Expert at handling file uploads and cloud storage. Covers S3,
+description: "Apply — Expert at handling file uploads and cloud storage. Covers S3,"
 version: v00.33.0
 status: CANDIDATE
 domain_path: ai-ml/rag/file-uploads
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Expert at handling file uploads and cloud storage
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -332,3 +332,17 @@ Fix action: Use path.basename() and generate safe name
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Apply — Expert at handling file uploads and cloud storage. Covers S3,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

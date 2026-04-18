@@ -3,11 +3,14 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.wealth-management.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - data
+  - performance
 ---
 # Client Review Prep
 
-description: Prepare for client review meetings with portfolio performance summary, allocation analysis, talking points, and action items. Pulls together account data into a concise meeting-ready format. Use before quarterly reviews, annual checkups, or ad-hoc client meetings. Triggers on "client review", "meeting prep for [client]", "quarterly review", "prep for [client name]", or "client meeting".
-
+description: "Analyze — Prepare for client review meetings with portfolio performance summary, allocation analysis, talking points, and action items. Pulls together account data into a concise meeting-rea"
 ## Workflow
 
 ### Step 1: Client Context
@@ -91,3 +94,23 @@ Based on the review, suggest:
 - Always end with clear action items and next steps with dates
 - Document the meeting notes and any changes to the IPS
 - Compliance: ensure all materials are compliant with firm policies and regulatory requirements
+
+---
+
+## Why This Skill Exists
+
+Analyze — Prepare for client review meetings with portfolio performance summary, allocation analysis, talking points, and action items. Pulls together account data into a concise meeting-rea
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires client review capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

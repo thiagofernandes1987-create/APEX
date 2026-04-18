@@ -1,7 +1,7 @@
 ---
 skill_id: finance.market_data.funding_digest
 name: funding-digest
-description: '''Generate a polished one-page PowerPoint slide summarizing key takeaways from recent funding rounds and notable
+description: "Analyze — "
   capital markets activity across a user''s watched sectors or companies. Use this skill wh'
 version: v00.33.0
 status: ADOPTED
@@ -626,3 +626,17 @@ Follow the QA process from the PPTX skill:
 
 ## Diff History
 - **v00.33.0**: Ingested from financial-services-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Analyze —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.logistics_exception_management
 name: logistics-exception-management
-description: Codified expertise for handling freight exceptions, shipment delays, damages, losses, and carrier disputes. Informed
+description: "Use — Codified expertise for handling freight exceptions, shipment delays, damages, losses, and carrier disputes. Informed"
   by logistics professionals with 15+ years operational experience.
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Codified expertise for handling freight exceptions
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -291,3 +291,17 @@ Use this skill when you need to **triage and resolve logistics exceptions or des
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Codified expertise for handling freight exceptions, shipment delays, damages, losses, and carrier disputes. Informed
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

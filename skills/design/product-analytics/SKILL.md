@@ -1,7 +1,7 @@
 ---
 skill_id: design.product_analytics
 name: product-analytics
-description: Use when defining product KPIs, building metric dashboards, running cohort or retention analysis, or interpreting
+description: "Design — Use when defining product KPIs, building metric dashboards, running cohort or retention analysis, or interpreting"
   feature adoption trends across product stages.
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - defining product KPIs
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -257,3 +257,17 @@ u002,signup
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

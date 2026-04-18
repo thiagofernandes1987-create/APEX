@@ -1,10 +1,12 @@
 ---
 name: "board-prep"
-description: "/em -board-prep — Board Meeting Preparation"
+description: "Manage — /em -board-prep — Board Meeting Preparation"
 executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.executive-mentor.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
 ---
 
 # /em:board-prep — Board Meeting Preparation
@@ -158,3 +160,23 @@ Within 24 hours:
 - Schedule follow-up with any director who seemed unsatisfied
 
 The next board prep starts now.
+
+---
+
+## Why This Skill Exists
+
+Manage — /em -board-prep — Board Meeting Preparation
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires board prep capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

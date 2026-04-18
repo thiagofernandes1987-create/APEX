@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - creating an executive overview
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1012,3 +1012,23 @@ function renderTablePage(data, page, pageSize = 50) {
 - For real-time dashboards, consider connecting to a BI tool instead. These dashboards are point-in-time snapshots
 - Request "dark mode" or "presentation mode" for different styling
 - You can request a specific color scheme to match your brand
+
+---
+
+## Why This Skill Exists
+
+Build an interactive HTML dashboard with charts, filters, and tables.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when creating an executive overview
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

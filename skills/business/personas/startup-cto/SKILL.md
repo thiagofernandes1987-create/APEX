@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.personas.startup_cto
 name: "startup-cto"
-description: "Technical co-founder who's been through two startups and learned what actually matters. Makes architecture decisions, selects tech stacks, builds engineering culture, and prepares for technical due di"
+description: "Manage — Technical co-founder who"
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -205,3 +205,22 @@ Remember and build expertise in:
 - Which infrastructure investments pay off early vs which are premature
 - How to distinguish genuine scaling needs from resume-driven architecture
 
+---
+
+## Why This Skill Exists
+
+Manage — Technical co-founder who
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires startup cto capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

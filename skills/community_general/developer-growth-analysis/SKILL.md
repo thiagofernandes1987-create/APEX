@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.developer_growth_analysis
 name: developer-growth-analysis
-description: Analyzes your recent Claude Code chat history to identify coding patterns, development gaps, and areas for improvement,
+description: "Analyze — Analyzes your recent Claude Code chat history to identify coding patterns, development gaps, and areas for improvement,"
   curates relevant learning resources from HackerNews, and automatically sends a p
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyzes your recent Claude Code chat history to identify coding patterns
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -430,3 +430,17 @@ This skill:
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Analyze — Analyzes your recent Claude Code chat history to identify coding patterns, development gaps, and areas for improvement,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

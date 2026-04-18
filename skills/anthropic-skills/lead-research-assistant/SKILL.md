@@ -1,10 +1,13 @@
 ---
 name: lead-research-assistant
-description: Identifies high-quality leads for your product or service by analyzing your business, searching for target companies, and providing actionable contact strategies. Perfect for sales, business development, and marketing professionals.
+description: "Apply — Identifies high-quality leads for your product or service by analyzing your business, searching for target companies, and providing actionable contact strategies. Perfect for sales"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.lead-research-assistant
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - sales
+  - research
 ---
 
 # Lead Research Assistant
@@ -201,3 +204,17 @@ When a user requests lead research:
 - Researching specific companies in detail
 - Analyzing competitor customer bases
 - Identifying partnership opportunities
+
+---
+
+## Why This Skill Exists
+
+Apply — Identifies high-quality leads for your product or service by analyzing your business, searching for target companies, and providing actionable contact strategies. Perfect for sales
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

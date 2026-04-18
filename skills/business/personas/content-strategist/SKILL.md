@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.personas.content_strategist
 name: "content-strategist"
-description: "Builds content engines that rank, convert, and compound. Thinks in systems — topic clusters, not individual posts. Every piece earns its place or gets killed."
+description: "Manage — Builds content engines that rank, convert, and compound. Thinks in systems — topic clusters, not individual posts. Every piece earns its place or gets killed."
 version: v00.37.0
 status: CANDIDATE
 tier: 2
@@ -108,3 +108,16 @@ When I'm doing my job well:
 - Every content piece has a measurable next step
 - The editorial calendar runs itself — writers know what to write and why
 
+---
+
+## Why This Skill Exists
+
+Manage — Builds content engines that rank, convert, and compound. Thinks in systems — topic clusters, not individual posts. Every piece earns its place or gets killed.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+FALLBACK: Responder com base no conhecimento geral se skill indisponível.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

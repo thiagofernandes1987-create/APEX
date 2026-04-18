@@ -1,7 +1,7 @@
 ---
 skill_id: design.email_template_builder
 name: email-template-builder
-description: Email Template Builder
+description: "Design — Email Template Builder"
 version: v00.33.0
 status: CANDIDATE
 domain_path: design
@@ -57,7 +57,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Email Template Builder
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -552,3 +552,17 @@ export function addTrackingParams(html: string, params: TrackingParams): string 
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Email Template Builder
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

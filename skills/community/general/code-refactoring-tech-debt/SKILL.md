@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.code_refactoring_tech_debt
 name: code-refactoring-tech-debt
-description: '''You are a technical debt expert specializing in identifying, quantifying, and prioritizing technical debt
+description: "Use — "
   in software projects. Analyze the codebase to uncover debt, assess its impact, and create act'
 version: v00.33.0
 status: CANDIDATE
@@ -40,7 +40,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - use code refactoring tech debt task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -481,3 +481,23 @@ Focus on delivering measurable improvements that directly impact development vel
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires code refactoring tech debt capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

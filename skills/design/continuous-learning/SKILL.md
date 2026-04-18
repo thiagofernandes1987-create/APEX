@@ -1,7 +1,7 @@
 ---
 skill_id: design.continuous_learning
 name: continuous-learning
-description: Auto-extract patterns from coding sessions, track corrections, and build reusable knowledge with confidence scoring
+description: "Design — Auto-extract patterns from coding sessions, track corrections, and build reusable knowledge with confidence scoring"
 version: v00.33.0
 status: CANDIDATE
 domain_path: design
@@ -57,7 +57,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Auto-extract patterns from coding sessions
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -254,3 +254,23 @@ Review and prune the knowledge base monthly. Remove entries that have not been r
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Design — Auto-extract patterns from coding sessions, track corrections, and build reusable knowledge with confidence scoring
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires continuous learning capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

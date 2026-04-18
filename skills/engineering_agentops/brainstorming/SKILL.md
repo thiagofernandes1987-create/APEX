@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.brainstorming
 name: brainstorming
-description: >
+description: "Use — Processo estruturado de refinamento de ideias antes de qualquer implementação."
   Processo estruturado de refinamento de ideias antes de qualquer implementação.
   Explora intenção, requisitos e design através de diálogo socrático, propõe
   2-3 abordagens com trade-offs, obtém aprovação antes de codificar.
@@ -249,3 +249,23 @@ A question about a UI topic is not automatically a visual question. "What does p
 
 If they agree to the companion, read the detailed guide before proceeding:
 `skills/brainstorming/visual-companion.md`
+
+---
+
+## Why This Skill Exists
+
+Use — Processo estruturado de refinamento de ideias antes de qualquer implementação.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires brainstorming capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+Se usuário recusa aprovar o design: iterar com clarificações adicionais.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

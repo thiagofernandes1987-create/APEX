@@ -1,7 +1,7 @@
 ---
 skill_id: security.semgrep_rule_creator
 name: semgrep-rule-creator
-description: Creates custom Semgrep rules for detecting security vulnerabilities, bug patterns, and code patterns. Use when
+description: "Audit — Creates custom Semgrep rules for detecting security vulnerabilities, bug patterns, and code patterns. Use when"
   writing Semgrep rules or building custom static analysis detections.
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Creates custom Semgrep rules for detecting security vulnerabilities
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -263,3 +263,17 @@ Semgrep Rule Progress:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Audit — Creates custom Semgrep rules for detecting security vulnerabilities, bug patterns, and code patterns. Use when
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Análise de código malicioso potencial
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

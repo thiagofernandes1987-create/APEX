@@ -1,6 +1,6 @@
 ---
 name: enrich-lead
-description: Instant lead enrichment. Drop a name, company, LinkedIn URL, or email and get the full contact card with email,
+description: "Use — Instant lead enrichment. Drop a name, company, LinkedIn URL, or email and get the full contact card with email,"
   phone, title, company intel, and next actions.
 user-invocable: true
 argument-hint: '[name, company, LinkedIn URL, or email]'
@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Instant lead enrichment
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -158,3 +158,23 @@ Ask the user which action to take:
 2. **Add to a sequence** — Ask which sequence, then run the sequence-load flow
 3. **Find colleagues** — Search for more people at the same company using `mcp__claude_ai_Apollo_MCP__apollo_mixed_people_api_search` with `q_organization_domains_list` set to this company
 4. **Find similar people** — Search for people with the same title/seniority at other companies
+
+---
+
+## Why This Skill Exists
+
+Use — Instant lead enrichment. Drop a name, company, LinkedIn URL, or email and get the full contact card with email,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires enrich lead capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

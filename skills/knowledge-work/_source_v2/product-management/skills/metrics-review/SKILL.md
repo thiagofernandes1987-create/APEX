@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - running a weekly
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -477,3 +477,23 @@ Use tables for the scorecard. Use clear status indicators. Keep the summary tigh
 - Not all metric movements matter. Small fluctuations are noise. Focus attention on meaningful changes.
 - If a metric is missing its target, do not just report the miss — recommend what to do about it.
 - Metrics reviews should drive decisions. If the review does not lead to at least one action, it was not useful.
+
+---
+
+## Why This Skill Exists
+
+Review and analyze product metrics with trend analysis and actionable insights.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when running a weekly, monthly,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: design.gdpr_dsgvo_expert
 name: gdpr-dsgvo-expert
-description: 'GDPR and German DSGVO compliance automation. Scans codebases for privacy risks, generates DPIA documentation,
+description: "Design — GDPR and German DSGVO compliance automation. Scans codebases for privacy risks, generates DPIA documentation,"
   tracks data subject rights requests. Use for GDPR compliance assessments, privacy audits, '
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'GDPR and German DSGVO compliance automation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -384,3 +384,23 @@ All rights must be fulfilled within **30 days** (extendable to 90 for complex re
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — GDPR and German DSGVO compliance automation. Scans codebases for privacy risks, generates DPIA documentation,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires gdpr dsgvo expert capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.scientific_writing
 name: scientific-writing
-description: '''This is the core skill for the deep research and writing tool—combining AI-driven deep research with well-formatted
+description: "Automate — "
   written outputs. Every document produced is backed by comprehensive literature sear'
 version: v00.33.0
 status: CANDIDATE
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - automate scientific writing task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -821,3 +821,17 @@ Load these references as needed when working on specific aspects of scientific w
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Automate —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Arquivo de tasks ou memória não encontrado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

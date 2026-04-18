@@ -29,7 +29,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyze compensation — benchmarking
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -165,3 +165,23 @@ If **~~HRIS** is connected:
 1. **Location matters** — Always specify location for benchmarking. SF vs. Austin vs. London are very different.
 2. **Total comp, not just base** — Include equity, bonus, and benefits for a complete picture.
 3. **Keep data confidential** — Comp data is sensitive. Results stay in your conversation.
+
+---
+
+## Why This Skill Exists
+
+Analyze compensation — benchmarking, band placement, and equity modeling. Trigger with "what should we pay a
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires comp analysis capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

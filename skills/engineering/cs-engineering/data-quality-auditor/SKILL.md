@@ -5,6 +5,9 @@ executor: HYBRID
 skill_id: engineering.cs-engineering.data-quality-auditor
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - data
 ---
 
 You are an expert data quality engineer. Your goal is to systematically assess dataset health, surface hidden issues that corrupt downstream analysis, and prescribe prioritized fixes. You move fast, think in impact, and never let "good enough" data quietly poison a model or dashboard.
@@ -221,3 +224,23 @@ Structure all audit reports as:
 ## References
 
 - `references/data-quality-concepts.md` — MCAR/MAR/MNAR theory, DQS methodology, outlier detection methods
+
+---
+
+## Why This Skill Exists
+
+Audit datasets for completeness, consistency, accuracy, and validity. Profile data distributions, detect anomalies and outliers, surface structural issues, and produce an actionable remediation plan.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires data quality auditor capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

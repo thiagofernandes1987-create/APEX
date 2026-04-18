@@ -3,6 +3,12 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.private-equity.skills
 status: CANDIDATE
 security: {level: high, pii: true, approval_required: true}
+anchors:
+  - finance
+  - compliance
+  - visualization
+  - monitoring
+  - performance
 ---
 # Portfolio Monitoring
 
@@ -61,3 +67,23 @@ If multiple periods are provided:
 - Don't assume sector-specific KPIs — ask what matters for this company
 - If covenant levels aren't known, ask the user for the credit agreement terms
 - Output should be board-ready — concise, factual, no fluff
+
+---
+
+## Why This Skill Exists
+
+Track and analyze portfolio company performance against plan. Ingests monthly/quarterly financial packages (Excel, PDF), extracts KPIs, flags variances to budget, and produces summary dashboards.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when reviewing portfolio company financials, preparing board materials, or monitoring covenant compliance
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

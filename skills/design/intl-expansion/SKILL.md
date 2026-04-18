@@ -1,7 +1,7 @@
 ---
 skill_id: design.intl_expansion
 name: intl-expansion
-description: International market expansion strategy. Market selection, entry modes, localization, regulatory compliance,
+description: "Design — International market expansion strategy. Market selection, entry modes, localization, regulatory compliance,"
   and go-to-market by region. Use when expanding to new countries, evaluating international m
 version: v00.33.0
 status: CANDIDATE
@@ -60,7 +60,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - International market expansion strategy
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -214,3 +214,23 @@ international expansion, market entry, localization, go-to-market, GTM, regional
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — International market expansion strategy. Market selection, entry modes, localization, regulatory compliance,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires intl expansion capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

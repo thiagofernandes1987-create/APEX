@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.l2s-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: l2s-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # L2s Automation via Rube MCP

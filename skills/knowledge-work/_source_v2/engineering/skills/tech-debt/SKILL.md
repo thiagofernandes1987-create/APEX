@@ -32,7 +32,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Identify
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -111,3 +111,23 @@ Priority = (Impact + Risk) x (6 - Effort)
 ## Output
 
 Produce a prioritized list with estimated effort, business justification for each item, and a phased remediation plan that can be done alongside feature work.
+
+---
+
+## Why This Skill Exists
+
+Identify, categorize, and prioritize technical debt. Trigger with "tech debt", "technical debt audit", "what
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires tech debt capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

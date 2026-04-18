@@ -33,7 +33,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - formalizing a process that lives in someone's
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -160,3 +160,23 @@ If **~~project tracker** is connected:
 1. **Start messy** — You don't need a perfect description. Tell me how it works today and I'll structure it.
 2. **Include the exceptions** — "Usually we do X, but sometimes Y" is the most valuable part to document.
 3. **Name the people** — Even if roles change, knowing who does what today helps get the process right.
+
+---
+
+## Why This Skill Exists
+
+Document a business process — flowcharts, RACI, and SOPs.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when formalizing a process that lives in someone's
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

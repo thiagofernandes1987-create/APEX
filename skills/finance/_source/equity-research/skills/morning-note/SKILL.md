@@ -3,11 +3,13 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.equity-research.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - design
 ---
 # Morning Note
 
-description: Draft concise morning meeting notes summarizing overnight developments, trade ideas, and key events for coverage stocks. Designed for the 7am morning meeting format — tight, opinionated, actionable. Triggers on "morning note", "morning meeting", "what happened overnight", "trade idea", "morning call prep", or "daily note".
-
+description: "Analyze — Draft concise morning meeting notes summarizing overnight developments, trade ideas, and key events for coverage stocks. Designed for the 7am morning meeting format — tight, opinio"
 ## Workflow
 
 ### Step 1: Overnight Developments
@@ -90,3 +92,23 @@ If a coverage company reported, provide a quick reaction:
 - Distinguish between actionable events (earnings, M&A) and noise (minor analyst notes, non-events)
 - Time-stamp your takes — if you're writing at 6am, note that pre-market may change by open
 - If you're wrong, own it in the next morning note — credibility matters more than being right every time
+
+---
+
+## Why This Skill Exists
+
+Analyze — Draft concise morning meeting notes summarizing overnight developments, trade ideas, and key events for coverage stocks. Designed for the 7am morning meeting format — tight, opinio
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires morning note capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

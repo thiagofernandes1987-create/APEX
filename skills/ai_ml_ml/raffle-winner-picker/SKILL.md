@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_ml.raffle_winner_picker
 name: raffle-winner-picker
-description: Picks random winners from lists, spreadsheets, or Google Sheets for giveaways, raffles, and contests. Ensures
+description: "Use — Picks random winners from lists, spreadsheets, or Google Sheets for giveaways, raffles, and contests. Ensures"
   fair, unbiased selection with transparency.
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Picks random winners from lists
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -268,3 +268,17 @@ Pick 1 winner and 3 runner-ups from the list
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Use — Picks random winners from lists, spreadsheets, or Google Sheets for giveaways, raffles, and contests. Ensures
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Modelo de ML indisponível ou não carregado
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

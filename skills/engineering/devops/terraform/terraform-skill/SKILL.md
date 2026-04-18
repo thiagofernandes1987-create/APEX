@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.terraform.terraform_skill
 name: terraform-skill
-description: '''Terraform infrastructure as code best practices'''
+description: "Implement — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/devops/terraform/terraform-skill
@@ -52,7 +52,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement terraform skill task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -620,3 +620,17 @@ This skill is licensed under the **Apache License 2.0**. See the LICENSE file fo
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

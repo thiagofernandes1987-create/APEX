@@ -1,10 +1,13 @@
 ---
 name: "email-template-builder"
-description: "Email Template Builder"
+description: "Implement — Email Template Builder"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.email-template-builder
 status: CANDIDATE
 security: {level: standard, pii: true, approval_required: false}
+anchors:
+  - engineering
+  - design
 ---
 
 # Email Template Builder
@@ -441,3 +444,17 @@ export function addTrackingParams(html: string, params: TrackingParams): string 
 - **Dark mode media queries** — must use `!important` to override inline styles
 - **Missing plain text** — all major providers have a plain text field; always populate it
 - **Transactional vs marketing** — use separate sending domains/IPs to protect deliverability
+
+---
+
+## Why This Skill Exists
+
+Implement — Email Template Builder
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

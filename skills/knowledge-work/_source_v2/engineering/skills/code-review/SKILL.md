@@ -36,7 +36,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Review code changes for security
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -204,3 +204,23 @@ If **~~knowledge base** is connected:
 1. **Provide context** — "This is a hot path" or "This handles PII" helps me focus.
 2. **Specify concerns** — "Focus on security" narrows the review.
 3. **Include tests** — I'll check test coverage and quality too.
+
+---
+
+## Why This Skill Exists
+
+Review code changes for security, performance, and correctness. Trigger with a PR URL or diff, "review this before
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires code review capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

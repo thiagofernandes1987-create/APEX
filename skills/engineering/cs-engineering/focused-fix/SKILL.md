@@ -1,10 +1,12 @@
 ---
 name: "focused-fix"
-description: "Use when the user asks to fix, debug, or make a specific feature/module/area work end-to-end. Triggers: 'make X work', 'fix the Y feature', 'the Z module is broken', 'focus on [area]'. Not for quick single-bug fixes — this is for systematic deep-dive repair across all files and dependencies."
+description: "Implement — Use when the user asks to fix, debug, or make a specific feature/module/area work end-to-end. Triggers:"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.focused-fix
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
 ---
 
 # Focused Fix — Deep-Dive Feature Repair
@@ -320,3 +322,17 @@ If you catch yourself thinking any of these, you are skipping phases:
 | DIAGNOSE | Check code, runtime, tests, logs, config | Diagnosis report |
 | FIX | Fix in order: deps → types → logic → tests → integration | Fix log per issue |
 | VERIFY | Run all tests, check consumers, summarize | Completion report |
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

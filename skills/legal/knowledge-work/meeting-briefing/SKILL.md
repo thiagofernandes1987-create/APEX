@@ -1,7 +1,7 @@
 ---
 skill_id: legal.knowledge_work.meeting_briefing
 name: meeting-briefing
-description: 'Prepare structured briefings for meetings with legal relevance and track resulting action items. Use when preparing
+description: "Review — Prepare structured briefings for meetings with legal relevance and track resulting action items. Use when preparing"
   for contract negotiations, board meetings, compliance reviews, or any meeting where '
 version: v00.33.0
 status: ADOPTED
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Prepare structured briefings for meetings with legal relevance and track resulting action items
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -326,3 +326,23 @@ After the meeting:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Review — Prepare structured briefings for meetings with legal relevance and track resulting action items.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires meeting briefing capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Legislação atualizada além do knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

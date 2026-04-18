@@ -1,6 +1,6 @@
 ---
 name: "brand-guidelines"
-description: "When the user wants to apply, document, or enforce brand guidelines for any product or company. Also use when the user mentions 'brand guidelines,' 'brand colors,' 'typography,' 'logo usage,' 'brand voice,' 'visual identity,' 'tone of voice,' 'brand standards,' 'style guide,' 'brand consistency,' or 'company design standards.' Covers color systems, typography, logo rules, imagery guidelines, and tone matrix for any brand — including Anthropic's official identity."
+description: "Manage — When the user wants to apply, document, or enforce brand guidelines for any product or company. Also use when the user mentions"
 license: MIT
 metadata:
   version: 1.0.0
@@ -11,6 +11,10 @@ executor: LLM_BEHAVIOR
 skill_id: business.marketing-skill.brand-guidelines
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - documentation
+  - design
 ---
 
 # Brand Guidelines
@@ -95,3 +99,23 @@ Brand consistency is not a design preference — it's a trust signal. Every devi
 - **content-humanizer** — USE when existing content needs to be rewritten to match brand tone without losing information; NOT for structural content work.
 - **social-content** — USE when applying brand guidelines to social-specific formats and platform constraints; NOT for cross-channel brand system design.
 - **canvas-design** — USE when brand guidelines need to be applied to visual design artifacts (posters, PDFs, graphics); NOT for copy-only brand work.
+
+---
+
+## Why This Skill Exists
+
+Manage — When the user wants to apply, document, or enforce brand guidelines for any product or company. Also
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

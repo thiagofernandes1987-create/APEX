@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.supportivekoala-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: supportivekoala-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Supportivekoala Automation via Rube MCP

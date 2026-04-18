@@ -1,6 +1,6 @@
 ---
 name: single-cell-rna-qc
-description: Performs quality control on single-cell RNA-seq data (.h5ad or .h5 files) using scverse best practices with MAD-based
+description: "Use — Performs quality control on single-cell RNA-seq data (.h5ad or .h5 files) using scverse best practices with MAD-based"
   filtering and comprehensive visualizations. Use when users request QC analysis, filtering low-quality cells, assessing data
   quality, or following scverse/scanpy best practices for single-cell analysis.
 tier: ADAPTED
@@ -33,7 +33,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Performs quality control on single-cell RNA-seq data (
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -254,3 +254,17 @@ Typical downstream analysis steps:
 - Normalization (log-normalize, scran)
 - Feature selection and dimensionality reduction
 - Clustering and cell type annotation
+
+---
+
+## Why This Skill Exists
+
+Use — Performs quality control on single-cell RNA-seq data (.h5ad or .h5 files) using scverse best practices with MAD-based
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

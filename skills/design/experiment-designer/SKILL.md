@@ -1,7 +1,7 @@
 ---
 skill_id: design.experiment_designer
 name: experiment-designer
-description: Use when planning product experiments, writing testable hypotheses, estimating sample size, prioritizing tests,
+description: "Design — Use when planning product experiments, writing testable hypotheses, estimating sample size, prioritizing tests,"
   or interpreting A/B outcomes with practical statistical rigor.
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - planning product experiments
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -214,3 +214,17 @@ python3 scripts/sample_size_calculator.py \
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

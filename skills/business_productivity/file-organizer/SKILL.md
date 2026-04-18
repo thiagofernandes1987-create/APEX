@@ -1,7 +1,7 @@
 ---
 skill_id: business_productivity.file_organizer
 name: file-organizer
-description: Intelligently organizes your files and folders across your computer by understanding context, finding duplicates,
+description: "Use — Intelligently organizes your files and folders across your computer by understanding context, finding duplicates,"
   suggesting better structures, and automating cleanup tasks. Reduces cognitive load and
 version: v00.33.0
 status: CANDIDATE
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Intelligently organizes your files and folders across your computer by understanding context
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -533,3 +533,17 @@ Documents folder.
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-skills
+
+---
+
+## Why This Skill Exists
+
+Use — Intelligently organizes your files and folders across your computer by understanding context, finding duplicates,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

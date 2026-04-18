@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_keyword_strategist
 name: seo-keyword-strategist
-description: Analyzes keyword usage in provided content, calculates density, suggests semantic variations and LSI keywords
+description: "Create — Analyzes keyword usage in provided content, calculates density, suggests semantic variations and LSI keywords"
   based on the topic. Prevents over-optimization. Use PROACTIVELY for content optimization.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Analyzes keyword usage in provided content
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -206,3 +206,23 @@ Focus on natural keyword integration and semantic relevance. Build topical depth
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Create — Analyzes keyword usage in provided content, calculates density, suggests semantic variations and LSI keywords
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires seo keyword strategist capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,11 +1,14 @@
 ---
 name: "promote"
-description: "Graduate a proven pattern from auto-memory (MEMORY.md) to CLAUDE.md or .claude/rules/ for permanent enforcement."
+description: "Implement — Graduate a proven pattern from auto-memory (MEMORY.md) to CLAUDE.md or .claude/rules/ for permanent enforcement."
 command: /si:promote
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.self-improving-agent.skills
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - engineering
+  - llm
 ---
 
 # /si:promote — Graduate Learnings to Rules
@@ -147,3 +150,23 @@ The pattern is now an enforced instruction. Claude will follow it in all future 
 - One rule per line is easier to maintain than paragraphs
 - Include the concrete command, not just the concept
 - Review promoted rules quarterly — remove what's no longer relevant
+
+---
+
+## Why This Skill Exists
+
+Implement — Graduate a proven pattern from auto-memory (MEMORY.md) to CLAUDE.md or .claude/rules/ for permanent enforcement.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires promote capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

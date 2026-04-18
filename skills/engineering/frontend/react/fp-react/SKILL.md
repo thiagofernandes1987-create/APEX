@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.fp_react
 name: fp-react
-description: Practical patterns for using fp-ts with React - hooks, state, forms, data fetching. Works with React 18/19, Next.js
+description: "Implement — Practical patterns for using fp-ts with React - hooks, state, forms, data fetching. Works with React 18/19, Next.js"
   14/15.
 version: v00.33.0
 status: CANDIDATE
@@ -44,7 +44,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Practical patterns for using fp-ts with React - hooks
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -887,3 +887,17 @@ const modalProps = {
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Practical patterns for using fp-ts with React - hooks, state, forms, data fetching. Works with React 18/19, Next.js
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

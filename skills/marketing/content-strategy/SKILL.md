@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.content_strategy
 name: content-strategy
-description: When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover.
+description: "Create — When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover."
   Also use when the user mentions 'content strategy,' 'what should I write about,' 'con
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to plan a content strategy
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -481,3 +481,23 @@ Visual or structured representation of how content interconnects.
 
 ## Diff History
 - **v00.33.0**: Ingested from marketingskills-main
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires content strategy capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

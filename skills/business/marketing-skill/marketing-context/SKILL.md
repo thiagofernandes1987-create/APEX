@@ -11,6 +11,10 @@ executor: HYBRID
 skill_id: business.marketing-skill.marketing-context
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+anchors:
+  - business
+  - marketing
+  - documentation
 ---
 
 # Marketing Context
@@ -171,3 +175,23 @@ All output passes quality verification:
 - **content-strategy**: For planning what content to create. Reads target keywords + personas from this context.
 - **marketing-strategy-pmm**: For positioning and GTM strategy. Reads competitive landscape from this context.
 - **cs-onboard** (C-Suite): For company-level context. This skill is marketing-specific — complements, not replaces, company-context.md.
+
+---
+
+## Why This Skill Exists
+
+Create and maintain the marketing context document that all marketing skills read before starting.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the user mentions
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

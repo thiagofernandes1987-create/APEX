@@ -3,11 +3,15 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source_v2.equity-research.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - ai_ml
+  - data
+  - design
 ---
 # Model Update
 
-description: Update financial models with new data — quarterly earnings, management guidance, macro changes, or revised assumptions. Adjusts estimates, recalculates valuation, and flags material changes. Use after earnings, guidance updates, or when assumptions need refreshing. Triggers on "update model", "plug earnings", "refresh estimates", "update numbers for [company]", "new guidance", or "revise estimates".
-
+description: "Analyze — Update financial models with new data — quarterly earnings, management guidance, macro changes, or revised assumptions. Adjusts estimates, recalculates valuation, and flags materia"
 ## Workflow
 
 ### Step 1: Identify What Changed
@@ -96,3 +100,23 @@ Recalculate valuation with updated estimates:
 - If the quarter was noisy, separate signal from noise in your estimate changes
 - Check consensus after updating — how do your revised estimates compare to the Street?
 - Share count matters — dilution from stock comp, converts, or buybacks can materially affect EPS
+
+---
+
+## Why This Skill Exists
+
+Analyze — Update financial models with new data — quarterly earnings, management guidance, macro changes, or revised assumptions. Adjusts estimates, recalculates valuation, and flags materia
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires model update capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

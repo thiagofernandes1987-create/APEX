@@ -38,7 +38,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - turning query results or a DataFrame into a chart
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -242,3 +242,23 @@ plt.show()
 - Specify "presentation" if you need larger fonts and higher contrast
 - You can request multiple charts at once (e.g., "create a 2x2 grid of charts showing...")
 - Charts are saved to your current directory as PNG files
+
+---
+
+## Why This Skill Exists
+
+Create publication-quality visualizations with Python.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when turning query results or a DataFrame into a chart,
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

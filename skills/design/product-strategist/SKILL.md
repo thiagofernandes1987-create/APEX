@@ -1,7 +1,7 @@
 ---
 skill_id: design.product_strategist
 name: product-strategist
-description: 'Strategic product leadership toolkit for Head of Product covering OKR cascade generation, quarterly planning,
+description: "Design — Strategic product leadership toolkit for Head of Product covering OKR cascade generation, quarterly planning,"
   competitive landscape analysis, product vision documents, and team scaling proposals. Use '
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Strategic product leadership toolkit for Head of Product covering OKR cascade generation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -337,3 +337,23 @@ See `references/examples/sample_growth_okrs.json` for a complete example.
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Strategic product leadership toolkit for Head of Product covering OKR cascade generation, quarterly planning,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires product strategist capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_security.git_advanced
 name: git-advanced
-description: Advanced git workflows including worktrees, bisect, interactive rebase, hooks, and recovery techniques
+description: "Use — Advanced git workflows including worktrees, bisect, interactive rebase, hooks, and recovery techniques"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/security
@@ -53,7 +53,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Advanced git workflows including worktrees
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -278,3 +278,23 @@ git reset --hard HEAD@{5}  # point before rebase started
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — Advanced git workflows including worktrees, bisect, interactive rebase, hooks, and recovery techniques
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires git advanced capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

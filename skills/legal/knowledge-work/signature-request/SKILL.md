@@ -1,7 +1,7 @@
 ---
 skill_id: legal.knowledge_work.signature_request
 name: signature-request
-description: Prepare and route a document for e-signature — run a pre-signature checklist, configure signing order, and send
+description: "Review — Prepare and route a document for e-signature — run a pre-signature checklist, configure signing order, and send"
   for execution. Use when a contract is finalized and ready to sign, when verifying entity
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Prepare and route a document for e-signature — run a pre-signature checklist
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -205,3 +205,23 @@ Gather signing details:
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Review — Prepare and route a document for e-signature — run a pre-signature checklist, configure signing order, and send
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires signature request capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Legislação atualizada além do knowledge cutoff
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

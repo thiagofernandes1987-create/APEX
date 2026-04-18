@@ -3,6 +3,10 @@ executor: LLM_BEHAVIOR
 skill_id: finance._source.wealth-management.skills
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - finance
+  - ai_ml
+  - design
 ---
 # Financial Plan
 
@@ -119,3 +123,23 @@ Prioritized action items:
 - Social Security timing is a major lever — model start ages of 62, 67, and 70
 - Always stress-test the plan — a plan that only works in the base case isn't a good plan
 - Compliance: ensure recommendations align with suitability/fiduciary standards
+
+---
+
+## Why This Skill Exists
+
+Build or update a comprehensive financial plan covering retirement projections, education funding, estate planning, and cash flow analysis. Use for new client onboarding, annual plan reviews, or scenario modeling. Triggers on "financial plan", "retirement plan", "can I retire", "education funding", 
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires financial plan capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

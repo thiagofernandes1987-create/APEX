@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.deployment.deployment_pipeline_design
 name: deployment-pipeline-design
-description: '''Architecture patterns for multi-stage CI/CD pipelines with approval gates and deployment strategies.'''
+description: "Implement — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/devops/deployment/deployment-pipeline-design
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement deployment pipeline design task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -474,3 +474,23 @@ kubectl rollout undo deployment/my-app --to-revision=3
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires deployment pipeline design capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

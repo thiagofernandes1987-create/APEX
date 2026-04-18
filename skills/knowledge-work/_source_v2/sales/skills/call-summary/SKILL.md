@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Process call notes or a transcript — extract action items
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -247,3 +247,23 @@ Here's what we discussed:
 2. **Name the attendees** — Helps me structure the summary and assign action items.
 3. **Flag what matters** — If something was important, tell me: "The big thing was..."
 4. **Tell me the deal stage** — Helps me tailor the follow-up tone and next steps.
+
+---
+
+## Why This Skill Exists
+
+Process call notes or a transcript — extract action items, draft follow-up email, generate internal summary.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires call summary capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

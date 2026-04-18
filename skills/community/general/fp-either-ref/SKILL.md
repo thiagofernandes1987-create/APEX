@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.fp_either_ref
 name: fp-either-ref
-description: Quick reference for Either type. Use when user needs error handling, validation, or operations that can fail
+description: "Use — Quick reference for Either type. Use when user needs error handling, validation, or operations that can fail"
   with typed errors.
 version: v00.33.0
 status: CANDIDATE
@@ -31,7 +31,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - user needs error handling
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -159,3 +159,17 @@ Use Either when **error type matters** and you want to chain operations.
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — Quick reference for Either type.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

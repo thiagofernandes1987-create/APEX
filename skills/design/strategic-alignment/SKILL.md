@@ -1,7 +1,7 @@
 ---
 skill_id: design.strategic_alignment
 name: strategic-alignment
-description: Cascades strategy from boardroom to individual contributor. Detects and fixes misalignment between company goals
+description: "Design — Cascades strategy from boardroom to individual contributor. Detects and fixes misalignment between company goals"
   and team execution. Covers strategy articulation, cascade mapping, orphan goal detectio
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Cascades strategy from boardroom to individual contributor
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -303,3 +303,23 @@ A quick health check. Score each area 0–10:
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Cascades strategy from boardroom to individual contributor. Detects and fixes misalignment between company goals
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires strategic alignment capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

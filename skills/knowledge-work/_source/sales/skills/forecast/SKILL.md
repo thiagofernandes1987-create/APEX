@@ -34,7 +34,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Generate a weighted sales forecast with best/likely/worst scenarios
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -303,3 +303,23 @@ Tell me if your stages or probabilities are different.
 2. **Update close dates** — Stale close dates kill forecast accuracy. Push out deals that won't close in time.
 3. **Coverage matters** — 3x pipeline coverage is healthy. Below 2x is risky.
 4. **Activity = signal** — Deals with no recent activity are at higher risk than stage suggests.
+
+---
+
+## Why This Skill Exists
+
+Generate a weighted sales forecast with best/likely/worst scenarios, commit vs. upside breakdown, and gap analysis.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires forecast capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

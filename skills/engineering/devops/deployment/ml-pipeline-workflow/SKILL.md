@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.deployment.ml_pipeline_workflow
 name: ml-pipeline-workflow
-description: '''Complete end-to-end MLOps pipeline orchestration from data preparation through model deployment.'''
+description: "Implement — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/devops/deployment/ml-pipeline-workflow
@@ -43,7 +43,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - implement ml pipeline workflow task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -356,3 +356,23 @@ After setting up your pipeline:
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires ml pipeline workflow capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.helcim-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: helcim-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Helcim Automation via Rube MCP

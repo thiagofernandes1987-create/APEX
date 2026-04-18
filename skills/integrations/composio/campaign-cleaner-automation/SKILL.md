@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.campaign-cleaner-automation
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
+extends: integrations.composio.meta
+toolkit: campaign-cleaner-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Campaign Cleaner Automation via Rube MCP

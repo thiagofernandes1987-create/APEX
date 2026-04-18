@@ -624,3 +624,17 @@ Follow the QA process from the PPTX skill:
 - "Deal roundup for my coverage — cybersecurity, cloud infrastructure, and dev tools — last 2 weeks"
 - "What happened in venture this week across all sectors I follow?"
 - "Quick deal flow slide for climate tech this month"
+
+---
+
+## Why This Skill Exists
+
+'Generate a polished one-page PowerPoint slide summarizing key takeaways from recent funding rounds and notable
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

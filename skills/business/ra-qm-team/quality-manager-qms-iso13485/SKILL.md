@@ -1,6 +1,6 @@
 ---
 name: "quality-manager-qms-iso13485"
-description: ISO 13485 Quality Management System implementation and maintenance for medical device organizations. Provides QMS design, documentation control, internal auditing, CAPA management, and certification support. Use when working with medical device quality systems, preparing for ISO 13485 audits, managing regulatory compliance documentation, setting up corrective actions, or building audit preparation programs. Useful for quality management, audit preparation, regulatory compliance, medical device documentation, and corrective action workflows.
+description: "Manage — ISO 13485 Quality Management System implementation and maintenance for medical device organizations. Provides QMS design, documentation control, internal auditing, CAPA management,"
 triggers:
   - ISO 13485
   - QMS implementation
@@ -18,6 +18,10 @@ executor: HYBRID
 skill_id: business.ra-qm-team.quality-manager-qms-iso13485
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+anchors:
+  - business
+  - documentation
+  - design
 ---
 
 # Quality Manager - QMS ISO 13485 Specialist
@@ -437,3 +441,23 @@ Nonconforming Product Identified
 | [qms-audit-expert](../qms-audit-expert/) | Advanced audit techniques |
 | [quality-documentation-manager](../quality-documentation-manager/) | DHF, DMR, DHR management |
 | [risk-management-specialist](../risk-management-specialist/) | ISO 14971 integration |
+
+---
+
+## Why This Skill Exists
+
+Manage — ISO 13485 Quality Management System implementation and maintenance for medical device organizations. Provides QMS design, documentation control, internal auditing, CAPA management,
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires quality manager qms iso13485 capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+If this skill fails to produce the expected output: (1) verify input completeness, (2) retry with more specific context, (3) fall back to the parent workflow without this skill.
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

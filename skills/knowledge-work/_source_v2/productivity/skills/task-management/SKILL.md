@@ -1,6 +1,6 @@
 ---
 name: task-management
-description: Simple task management using a shared TASKS.md file. Reference this when the user asks about their tasks, wants
+description: "Use — Simple task management using a shared TASKS.md file. Reference this when the user asks about their tasks, wants"
   to add/complete tasks, or needs help tracking commitments.
 user-invocable: false
 tier: COMMUNITY
@@ -27,7 +27,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Simple task management using a shared TASKS
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -158,3 +158,23 @@ When summarizing meetings or conversations, offer to add extracted tasks:
 - Follow-ups mentioned
 
 Ask before adding - don't auto-add without confirmation.
+
+---
+
+## Why This Skill Exists
+
+Use — Simple task management using a shared TASKS.md file. Reference this when the user asks about their tasks, wants
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires task management capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

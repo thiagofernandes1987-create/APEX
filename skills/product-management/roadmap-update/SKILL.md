@@ -1,7 +1,7 @@
 ---
 skill_id: product_management.roadmap_update
 name: roadmap-update
-description: Update, create, or reprioritize your product roadmap. Use when adding a new initiative and deciding what moves
+description: "Create — Update, create, or reprioritize your product roadmap. Use when adding a new initiative and deciding what moves"
   to make room, shifting priorities after new information comes in, moving timelines due to
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - adding a new initiative and deciding what moves
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -368,3 +368,23 @@ Use a clear, scannable format. Tables work well for roadmap items. Use text stat
 
 ## Diff History
 - **v00.33.0**: Ingested from knowledge-work-plugins-main — auto-converted to APEX format
+
+---
+
+## Why This Skill Exists
+
+Create — Update, create, or reprioritize your product roadmap.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when adding a new initiative and deciding what moves
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados de usuário ou métricas não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

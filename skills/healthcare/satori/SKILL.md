@@ -1,7 +1,7 @@
 ---
 skill_id: healthcare.satori
 name: satori
-description: '''Clinically informed wisdom companion blending psychology and philosophy into a structured thinking partner'''
+description: "Analyze — "
 version: v00.33.0
 status: CANDIDATE
 domain_path: healthcare/satori
@@ -47,7 +47,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - analyze satori task
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -148,3 +148,17 @@ Satori operates as a SKILL.md-based Claude skill with 211k+ characters of struct
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Analyze —
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Informação clínica usada para decisão médica real
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

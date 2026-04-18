@@ -7,6 +7,9 @@ executor: HYBRID
 skill_id: integrations.composio.zoho_invoice-automation
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
+extends: integrations.composio.meta
+toolkit: zoho_invoice-automation
+# Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
 ---
 
 # Zoho Invoice Automation via Rube MCP

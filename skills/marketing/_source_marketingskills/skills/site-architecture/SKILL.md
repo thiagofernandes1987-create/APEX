@@ -1,6 +1,6 @@
 ---
 name: site-architecture
-description: When the user wants to plan, map, or restructure their website's page hierarchy, navigation, URL structure, or
+description: "Create — When the user wants to plan, map, or restructure their website's page hierarchy, navigation, URL structure, or"
   internal linking. Also use when the user mentions "sitemap," "site map," "visual sitemap," "site structure," "page hierarchy,"
   "information architecture," "IA," "navigation design," "URL structure," "breadcrumbs," "internal linking strategy," "website
   planning," "what pages do I need," "how should I organize my site," or "site navigation." Use this whenever someone is planning
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - When the user wants to plan
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -465,3 +465,23 @@ Mermaid diagram showing page relationships and navigation zones. Use `graph TD` 
 - **page-cro**: For optimizing individual pages for conversion
 - **schema-markup**: For implementing breadcrumb and site navigation structured data
 - **competitor-alternatives**: For comparison page frameworks and URL patterns
+
+---
+
+## Why This Skill Exists
+
+Create — When the user wants to plan, map, or restructure their website
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires site architecture capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Brand guidelines não disponíveis
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

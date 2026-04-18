@@ -1,7 +1,7 @@
 ---
 skill_id: legal.civil_law.obligations
 name: Obrigações Civis — Art. 394/406 CC
-description: 'Analisa inadimplemento, mora e juros de mora em obrigações civis. Calcula dívida total com juros SELIC e correção
+description: "Review — Analisa inadimplemento, mora e juros de mora em obrigações civis. Calcula dívida total com juros SELIC e correção"
   monetária. Base: CC Arts. 394-420.'
 version: v00.33.0
 status: ADOPTED
@@ -46,7 +46,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Analisa inadimplemento
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:

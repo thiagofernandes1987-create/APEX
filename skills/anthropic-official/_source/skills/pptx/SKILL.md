@@ -1,6 +1,6 @@
 ---
 name: pptx
-description: 'Use this skill any time a .pptx file is involved in any way — as input, output, or both. This includes: creating
+description: "Apply — Use this skill any time a .pptx file is involved in any way — as input, output, or both. This includes: creating"
   slide decks, pitch decks, or presentations; reading, parsing, or extracting text from any .pptx file (even if the extracted
   content will be used elsewhere, like in an email or summary); editing, modifying, or updating existing presentations; combining
   or splitting slide files; working with templates, layouts, speaker notes, or comments. Trigger whenever the user mentions
@@ -32,7 +32,7 @@ anchors:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Use this skill any time a
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -304,3 +304,23 @@ pdftoppm -jpeg -r 150 -f N -l N output.pdf slide-fixed
 - `npm install -g pptxgenjs` - creating from scratch
 - LibreOffice (`soffice`) - PDF conversion (auto-configured for sandboxed environments via `scripts/office/soffice.py`)
 - Poppler (`pdftoppm`) - PDF to images
+
+---
+
+## Why This Skill Exists
+
+Apply — Use this skill any time a .pptx file is involved in any way — as input, output, or both. This includes: creating
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires pptx capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.llm_integration
 name: llm-integration
-description: LLM integration patterns including API usage, streaming, function calling, RAG pipelines, and cost optimization
+description: "Use — LLM integration patterns including API usage, streaming, function calling, RAG pipelines, and cost optimization"
 version: v00.33.0
 status: CANDIDATE
 domain_path: engineering/devops
@@ -56,7 +56,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - LLM integration patterns including API usage
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -337,3 +337,23 @@ Use the smallest model that achieves acceptable quality. Cache embeddings and re
 
 ## Diff History
 - **v00.33.0**: Ingested from awesome-claude-code-toolkit
+
+---
+
+## Why This Skill Exists
+
+Use — LLM integration patterns including API usage, streaming, function calling, RAG pipelines, and cost optimization
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires llm integration capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

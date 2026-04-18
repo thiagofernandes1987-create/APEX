@@ -1,6 +1,6 @@
 ---
 name: dcf-model
-description: Real DCF (Discounted Cash Flow) model creation for equity valuation. Retrieves financial data from SEC filings
+description: "Analyze — Real DCF (Discounted Cash Flow) model creation for equity valuation. Retrieves financial data from SEC filings"
   and analyst reports, builds comprehensive cash flow projections with proper WACC calculations, performs sensitivity analysis,
   and outputs professional Excel models with executive summaries. Use when users need to value a company using DCF methodology,
   request intrinsic value analysis, or ask for detailed financial modeling with growth projections and terminal value calculations.
@@ -50,7 +50,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Real DCF (Discounted Cash Flow) model creation for equity valuation
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -1370,3 +1370,23 @@ Before delivering DCF model:
 - Terminal growth < WACC
 - Tax rate 21-28%
 - File naming: `[Ticker]_DCF_Model_[Date].xlsx`
+
+---
+
+## Why This Skill Exists
+
+Analyze — Real DCF (Discounted Cash Flow) model creation for equity valuation. Retrieves financial data from SEC filings
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires dcf model capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Dados financeiros desatualizados ou ausentes
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

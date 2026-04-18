@@ -1,7 +1,7 @@
 ---
 skill_id: design.cpo_advisor
 name: cpo-advisor
-description: 'Product leadership for scaling companies. Product vision, portfolio strategy, product-market fit, and product
+description: "Design — Product leadership for scaling companies. Product vision, portfolio strategy, product-market fit, and product"
   org design. Use when setting product vision, managing a product portfolio, measuring PMF, '
 version: v00.33.0
 status: CANDIDATE
@@ -62,7 +62,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Product leadership for scaling companies
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -315,3 +315,23 @@ All output passes the Internal Quality Loop before reaching the founder (see `ag
 
 ## Diff History
 - **v00.33.0**: Ingested from claude-skills-main
+
+---
+
+## Why This Skill Exists
+
+Design — Product leadership for scaling companies. Product vision, portfolio strategy, product-market fit, and product
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires cpo advisor capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Assets visuais não disponíveis para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

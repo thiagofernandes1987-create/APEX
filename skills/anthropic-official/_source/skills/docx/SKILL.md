@@ -1,6 +1,6 @@
 ---
 name: docx
-description: 'Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files). Triggers
+description: "Apply — Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files). Triggers"
   include: any mention of ''Word doc'', ''word document'', ''.docx'', or requests to produce professional documents with formatting
   like tables of contents, headings, page numbers, or letterheads. Also use when extracting or reorganizing content from .docx
   files, inserting or replacing images in documents, performing find-and-replace in Word files, working with tracked changes
@@ -42,7 +42,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 'Use this skill whenever the user wants to create
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -682,3 +682,23 @@ After running `comment.py` (see Step 2), add markers to document.xml. For replie
 - **docx**: `npm install -g docx` (new documents)
 - **LibreOffice**: PDF conversion (auto-configured for sandboxed environments via `scripts/office/soffice.py`)
 - **Poppler**: `pdftoppm` for images
+
+---
+
+## Why This Skill Exists
+
+Apply — Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files). Triggers
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when the task requires docx capabilities.
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.csharp.azure_maps_search_dotnet
 name: azure-maps-search-dotnet
-description: Azure Maps SDK for .NET. Location-based services including geocoding, routing, rendering, geolocation, and weather.
+description: "Implement — Azure Maps SDK for .NET. Location-based services including geocoding, routing, rendering, geolocation, and weather."
   Use for address search, directions, map tiles, IP geolocation, and weather data.
 version: v00.33.0
 status: CANDIDATE
@@ -48,7 +48,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - Azure Maps SDK for
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -599,3 +599,17 @@ This skill is applicable to execute the workflow or actions described in the ove
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Implement — Azure Maps SDK for .NET. Location-based services including geocoding, routing, rendering, geolocation, and weather.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

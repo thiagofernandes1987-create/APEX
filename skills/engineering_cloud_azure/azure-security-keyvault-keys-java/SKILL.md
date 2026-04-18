@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_security_keyvault_keys_java
 name: azure-security-keyvault-keys-java
-description: Azure Key Vault Keys Java SDK for cryptographic key management. Use when creating, managing, or using RSA/EC
+description: "Use — Azure Key Vault Keys Java SDK for cryptographic key management. Use when creating, managing, or using RSA/EC"
   keys, performing encrypt/decrypt/sign/verify operations, or working with HSM-backed keys.
 version: v00.33.0
 status: CANDIDATE
@@ -54,7 +54,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - creating, managing
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -471,3 +471,23 @@ AZURE_KEYVAULT_URL=https://<vault-name>.vault.azure.net
 
 ## Diff History
 - **v00.33.0**: Ingested from skills-main
+
+---
+
+## Why This Skill Exists
+
+Use — Azure Key Vault Keys Java SDK for cryptographic key management.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when creating, managing, or using RSA/EC
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Código não disponível para análise
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

@@ -37,7 +37,7 @@ cross_domain_bridges:
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - turning a vague idea or user request
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -338,3 +338,23 @@ Use markdown with clear headers. Keep the document scannable — busy stakeholde
 - Success metrics should be specific and measurable, not vague ("improve user experience").
 - Non-goals are as important as goals. They prevent scope creep during implementation.
 - Open questions should be genuinely open — do not include questions you can answer from context.
+
+---
+
+## Why This Skill Exists
+
+Write a feature spec or PRD from a problem statement or feature idea.
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## When to Use
+
+Use this skill when turning a vague idea or user request
+
+<!-- SR_40: auto-generated from frontmatter `when`/`description` (OPP-Phase3). -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->

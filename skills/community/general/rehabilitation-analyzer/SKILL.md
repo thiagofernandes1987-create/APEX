@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.rehabilitation_analyzer
 name: rehabilitation-analyzer
-description: 分析康复训练数据、识别康复模式、评估康复进展，并提供个性化康复建议
+description: "Use — 分析康复训练数据、识别康复模式、评估康复进展，并提供个性化康复建议"
 version: v00.33.0
 status: CANDIDATE
 domain_path: community/general/rehabilitation-analyzer
@@ -45,7 +45,7 @@ tier: ADAPTED
 input_schema:
   type: natural_language
   triggers:
-  - <describe your request>
+  - 分析康复训练数据、识别康复模式、评估康复进展，并提供个性化康复建议
   required_context: Fornecer contexto suficiente para completar a tarefa
   optional: Ferramentas conectadas (CRM, APIs, dados) melhoram a qualidade do output
 output_schema:
@@ -727,3 +727,17 @@ executor: LLM_BEHAVIOR
 
 ## Diff History
 - **v00.33.0**: Ingested from antigravity-awesome-skills community repo
+
+---
+
+## Why This Skill Exists
+
+Use — 分析康复训练数据、识别康复模式、评估康复进展，并提供个性化康复建议
+
+<!-- SR_40: auto-generated from frontmatter `purpose`/`description` (OPP-Phase3). Expand with domain-specific rationale. -->
+
+## What If Fails
+
+- condition: Recurso ou ferramenta necessária indisponível
+
+<!-- SR_40: auto-generated from frontmatter `what_if_fails` (OPP-Phase3). -->
