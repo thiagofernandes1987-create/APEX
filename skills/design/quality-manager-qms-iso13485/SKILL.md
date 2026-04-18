@@ -4,7 +4,7 @@ name: quality-manager-qms-iso13485
 description: "Design — ISO 13485 Quality Management System implementation and maintenance for medical device organizations. Provides"
   QMS design, documentation control, internal auditing, CAPA management, and certification s
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - quality

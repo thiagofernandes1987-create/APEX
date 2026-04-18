@@ -3,7 +3,7 @@ skill_id: community.general.viral_generator_builder
 name: viral-generator-builder
 description: "Use — Expert in building shareable generator tools that go viral - name"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/viral-generator-builder
 anchors:
 - viral

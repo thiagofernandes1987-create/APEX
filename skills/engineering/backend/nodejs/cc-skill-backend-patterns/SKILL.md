@@ -4,7 +4,7 @@ name: cc-skill-backend-patterns
 description: "Implement — "
   Express, and Next.js API routes.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/nodejs/cc-skill-backend-patterns
 anchors:
 - skill

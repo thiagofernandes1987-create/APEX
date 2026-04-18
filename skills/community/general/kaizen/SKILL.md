@@ -4,7 +4,7 @@ name: kaizen
 description: "Use — "
   to improve code quality, refactor, or discuss process improvements.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/kaizen
 anchors:
 - kaizen

@@ -4,7 +4,7 @@ name: wordpress-plugin-development
 description: "Implement — "
   best practices, and WordPress 7.0 features: Real-Time Collaboration, AI Connectors, Abi'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/php/wordpress-plugin-development
 anchors:
 - wordpress

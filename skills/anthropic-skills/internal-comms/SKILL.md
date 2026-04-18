@@ -4,11 +4,25 @@ description: "Apply — A set of resources to help me write all kinds of interna
 license: Complete terms in LICENSE.txt
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.internal-comms
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - llm
   - documentation
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from internal comms"
 ---
 
 ## When to use this skill

@@ -4,7 +4,7 @@ name: cpp-pro
 description: Write idiomatic C++ code with modern features, RAII, smart pointers, and STL algorithms. Handles templates, move
   semantics, and performance optimization.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/cpp/cpp-pro
 anchors:
 - write

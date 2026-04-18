@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.performance_testing_review_multi_agent_review
 name: performance-testing-review-multi-agent-review
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/performance-testing-review-multi-agent-review
 anchors:
 - performance

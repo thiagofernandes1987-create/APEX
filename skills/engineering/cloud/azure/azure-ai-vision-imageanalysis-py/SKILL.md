@@ -4,7 +4,7 @@ name: azure-ai-vision-imageanalysis-py
 description: "Implement — Azure AI Vision Image Analysis SDK for captions, tags, objects, OCR, people detection, and smart cropping. Use"
   for computer vision and image understanding tasks.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-vision-imageanalysis-py
 anchors:
 - azure

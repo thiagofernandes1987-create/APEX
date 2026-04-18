@@ -3,7 +3,7 @@ skill_id: ai_ml.rag.azure_storage_file_share_py
 name: azure-storage-file-share-py
 description: "Apply — Azure Storage File Share SDK for Python. Use for SMB file shares, directories, and file operations in the cloud."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-storage-file-share-py
 anchors:
 - azure

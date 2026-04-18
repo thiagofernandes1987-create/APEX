@@ -4,7 +4,7 @@ name: marketing-ideas
 description: "Use — When the user needs marketing ideas, inspiration, or strategies for their SaaS or software product. Also use"
   when the user asks for 'marketing ideas,' 'growth ideas,' 'how to market,' 'marketing strat
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - marketing

@@ -4,7 +4,7 @@ name: domain-driven-design
 description: "Implement — "
   patterns.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/domain-driven-design
 anchors:
 - domain

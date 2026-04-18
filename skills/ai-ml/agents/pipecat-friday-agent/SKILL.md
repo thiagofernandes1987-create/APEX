@@ -4,7 +4,7 @@ name: pipecat-friday-agent
 description: "Apply — "
   OpenAI.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/pipecat-friday-agent
 anchors:
 - pipecat

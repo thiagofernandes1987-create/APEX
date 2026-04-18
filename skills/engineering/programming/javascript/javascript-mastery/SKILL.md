@@ -3,7 +3,7 @@ skill_id: engineering.programming.javascript.javascript_mastery
 name: javascript-mastery
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/javascript/javascript-mastery
 anchors:
 - javascript

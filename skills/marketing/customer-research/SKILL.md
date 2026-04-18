@@ -4,7 +4,7 @@ name: customer-research
 description: "Create — When the user wants to conduct, analyze, or synthesize customer research. Use when the user mentions 'customer"
   research,' 'ICP research,' 'talk to customers,' 'analyze transcripts,' 'customer intervie
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - customer

@@ -4,7 +4,7 @@ name: database-migrations-sql-migrations
 description: "Analyze — "
   integrity and rollback plans.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/database-migrations-sql-migrations
 anchors:
 - database

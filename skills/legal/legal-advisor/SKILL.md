@@ -4,7 +4,7 @@ name: legal-advisor
 description: "Review — Draft privacy policies, terms of service, disclaimers, and legal notices. Creates GDPR-compliant texts, cookie"
   policies, and data processing agreements.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal/legal-advisor
 anchors:
 - legal

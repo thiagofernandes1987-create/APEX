@@ -4,7 +4,7 @@ name: returns-reverse-logistics
 description: "Use — Codified expertise for returns authorisation, receipt and inspection, disposition decisions, refund processing,"
   fraud detection, and warranty claims management.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/returns-reverse-logistics
 anchors:
 - returns

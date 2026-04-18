@@ -4,7 +4,7 @@ name: blockchain-developer
 description: Build production-ready Web3 applications, smart contracts, and decentralized systems. Implements DeFi protocols,
   NFT platforms, DAOs, and enterprise blockchain integrations.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/blockchain/blockchain-developer
 anchors:
 - blockchain

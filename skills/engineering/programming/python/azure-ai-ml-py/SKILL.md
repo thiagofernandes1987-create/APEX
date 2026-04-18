@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.azure_ai_ml_py
 name: azure-ai-ml-py
 description: "Implement — Azure Machine Learning SDK v2 for Python. Use for ML workspaces, jobs, models, datasets, compute, and pipelines."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-ai-ml-py
 anchors:
 - azure

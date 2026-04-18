@@ -4,7 +4,7 @@ name: box-automation
 description: "Use — "
   metadata queries, and sign requests through Composio''s Box toolkit.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/box-automation
 anchors:
 - automation

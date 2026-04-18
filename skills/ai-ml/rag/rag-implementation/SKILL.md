@@ -4,7 +4,7 @@ name: rag-implementation
 description: "Apply — "
   setup, chunking strategies, and retrieval optimization.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/rag-implementation
 anchors:
 - implementation

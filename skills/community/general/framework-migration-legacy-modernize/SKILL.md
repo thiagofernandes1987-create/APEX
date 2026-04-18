@@ -4,7 +4,7 @@ name: framework-migration-legacy-modernize
 description: "Use — "
   replacement of outdated components while maintaining continuous business operations through e'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/framework-migration-legacy-modernize
 anchors:
 - framework

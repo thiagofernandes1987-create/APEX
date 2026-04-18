@@ -3,7 +3,7 @@ skill_id: ai_ml_llm.eval
 name: eval
 description: Evaluate and rank agent results by metric or LLM judge for an AgentHub session.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm
 anchors:
 - eval

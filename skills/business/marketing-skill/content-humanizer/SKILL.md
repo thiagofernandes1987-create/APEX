@@ -9,11 +9,24 @@ metadata:
   updated: 2026-03-06
 executor: HYBRID
 skill_id: business.marketing-skill.content-humanizer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: true, approval_required: false}
 anchors:
   - business
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # Content Humanizer

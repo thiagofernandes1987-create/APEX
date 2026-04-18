@@ -4,7 +4,7 @@ name: linux-shell-scripting
 description: "Implement — "
   monitoring, user management, log analysis, and automation. These scripts serve as build'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/linux/linux-shell-scripting
 anchors:
 - linux

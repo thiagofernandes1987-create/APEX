@@ -3,7 +3,7 @@ skill_id: engineering.programming.rust.bevy_ecs_expert
 name: bevy-ecs-expert
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/bevy-ecs-expert
 anchors:
 - bevy

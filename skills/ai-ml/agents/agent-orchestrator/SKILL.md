@@ -4,7 +4,7 @@ name: agent-orchestrator
 description: "Apply — Descricao com keywords de ativacao..."
   de workflows multi-skill e registry management.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/agent-orchestrator
 anchors:
 - agent

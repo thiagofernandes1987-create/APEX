@@ -4,7 +4,7 @@ name: bash-linux
 description: "Implement — "
   or Linux systems.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/bash/bash-linux
 anchors:
 - bash

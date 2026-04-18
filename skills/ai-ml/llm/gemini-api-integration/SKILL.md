@@ -4,7 +4,7 @@ name: gemini-api-integration
 description: "Apply — "
   function calling, and production best practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/gemini-api-integration
 anchors:
 - gemini

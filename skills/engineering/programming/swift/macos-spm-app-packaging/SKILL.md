@@ -3,7 +3,7 @@ skill_id: engineering.programming.swift.macos_spm_app_packaging
 name: macos-spm-app-packaging
 description: Scaffold, build, sign, and package SwiftPM macOS apps without Xcode projects.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/swift/macos-spm-app-packaging
 anchors:
 - macos

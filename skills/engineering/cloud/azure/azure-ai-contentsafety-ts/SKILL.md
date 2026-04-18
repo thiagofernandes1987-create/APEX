@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_ai_contentsafety_ts
 name: azure-ai-contentsafety-ts
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-contentsafety-ts
 anchors:
 - azure

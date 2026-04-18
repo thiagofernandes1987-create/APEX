@@ -11,11 +11,21 @@ metadata:
   frameworks: leadership-growth, founder-toolkit
 executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.founder-coach
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: true, approval_required: false}
 anchors:
   - business
   - sales
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from founder coach"
 ---
 
 # Founder Development Coach

@@ -4,7 +4,7 @@ name: claude-code-expert
 description: "Apply — "
   configuracoes avancadas, workflows, CLAUDE.md, memoria, sub-agentes, permissoes e integracao '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/claude-code-expert
 anchors:
 - claude

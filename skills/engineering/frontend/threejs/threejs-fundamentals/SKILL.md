@@ -4,7 +4,7 @@ name: threejs-fundamentals
 description: "Implement — Three.js scene setup, cameras, renderer, Object3D hierarchy, coordinate systems. Use when setting up 3D scenes,"
   creating cameras, configuring renderers, managing object hierarchies, or working with tr
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/threejs/threejs-fundamentals
 anchors:
 - threejs

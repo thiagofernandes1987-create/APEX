@@ -4,7 +4,7 @@ name: matematico-tao
 description: "Use — "
   profunda: teoria da informação, teoria dos grafos, complexidade computacional, álgeb'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/matematico-tao
 anchors:
 - matematico

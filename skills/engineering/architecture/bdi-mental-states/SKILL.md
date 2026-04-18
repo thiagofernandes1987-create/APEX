@@ -4,7 +4,7 @@ name: bdi-mental-states
 description: "Implement — This skill should be used when the user asks to 'model agent mental states', 'implement BDI architecture', 'create"
   belief-desire-intention models', 'transform RDF to beliefs', 'build cognitive agent',
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/bdi-mental-states
 anchors:
 - mental

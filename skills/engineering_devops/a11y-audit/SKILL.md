@@ -4,7 +4,7 @@ name: a11y-audit
 description: "Use — Accessibility audit skill for scanning, fixing, and verifying WCAG 2.2 Level A and AA compliance across React,"
   Next.js, Vue, Angular, Svelte, and plain HTML codebases. Use when auditing accessibility,
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - a11y

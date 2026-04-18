@@ -3,7 +3,7 @@ skill_id: community.general.calc
 name: calc
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/calc
 anchors:
 - calc

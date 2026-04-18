@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.ffuf_claude_skill
 name: ffuf-claude-skill
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/ffuf-claude-skill
 anchors:
 - ffuf

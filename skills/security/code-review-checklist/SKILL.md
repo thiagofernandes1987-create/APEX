@@ -4,7 +4,7 @@ name: code-review-checklist
 description: "Audit — "
   and maintainability'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/code-review-checklist
 anchors:
 - code

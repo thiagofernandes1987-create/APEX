@@ -4,7 +4,7 @@ name: context-fundamentals
 description: "Deploy — "
   model can attend to when generating responses: system instructions, tool definitions, retriev'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/defi/context-fundamentals
 anchors:
 - context

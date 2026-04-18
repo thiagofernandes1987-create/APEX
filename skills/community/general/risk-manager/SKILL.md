@@ -4,7 +4,7 @@ name: risk-manager
 description: Monitor portfolio risk, R-multiples, and position limits. Creates hedging strategies, calculates expectancy,
   and implements stop-losses.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/risk-manager
 anchors:
 - risk

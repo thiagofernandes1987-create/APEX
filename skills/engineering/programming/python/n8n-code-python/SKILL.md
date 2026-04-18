@@ -4,7 +4,7 @@ name: n8n-code-python
 description: Write Python code in n8n Code nodes. Use when writing Python in n8n, using _input/_json/_node syntax, working
   with standard library, or need to understand Python limitations in n8n Code nodes.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/n8n-code-python
 anchors:
 - code

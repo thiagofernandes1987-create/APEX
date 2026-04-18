@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_mgmt_apimanagement_dotnet
 name: azure-mgmt-apimanagement-dotnet
 description: "Implement — Azure Resource Manager SDK for API Management in .NET."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-mgmt-apimanagement-dotnet
 anchors:
 - azure

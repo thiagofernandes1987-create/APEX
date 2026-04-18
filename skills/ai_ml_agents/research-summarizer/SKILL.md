@@ -4,7 +4,7 @@ name: research-summarizer
 description: "Use — Structured research summarization agent skill for non-dev users. Handles academic papers, web articles, reports,"
   and documentation. Extracts key findings, generates comparative analyses, and produces '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - research

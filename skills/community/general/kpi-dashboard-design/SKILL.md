@@ -4,7 +4,7 @@ name: kpi-dashboard-design
 description: "Use — "
   decisions.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/kpi-dashboard-design
 anchors:
 - dashboard

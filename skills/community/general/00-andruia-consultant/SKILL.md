@@ -4,7 +4,7 @@ name: 00-andruia-consultant
 description: "Use — "
   óptima para proyectos de IA en español.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/00-andruia-consultant
 anchors:
 - andruia

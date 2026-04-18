@@ -4,7 +4,7 @@ name: lead-magnets
 description: "Create — When the user wants to create, plan, or optimize a lead magnet for email capture or lead generation. Also use"
   when the user mentions ''lead magnet,'' ''gated content,'' ''content upgrade,'' ''downloadable,'' '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - lead

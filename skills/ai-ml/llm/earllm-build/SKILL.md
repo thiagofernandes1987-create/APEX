@@ -4,7 +4,7 @@ name: earllm-build
 description: "Apply — "
   earbuds to an LLM via voice pipeline.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/earllm-build
 anchors:
 - earllm

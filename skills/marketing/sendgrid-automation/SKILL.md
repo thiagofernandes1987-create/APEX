@@ -4,7 +4,7 @@ name: sendgrid-automation
 description: "Create — "
   management, sender identity setup, and email analytics through Composio''s SendGrid toolkit.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/sendgrid-automation
 anchors:
 - sendgrid

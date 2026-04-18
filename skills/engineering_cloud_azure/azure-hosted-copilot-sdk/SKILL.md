@@ -4,7 +4,7 @@ name: azure-hosted-copilot-sdk
 description: 'Build, deploy, modify GitHub Copilot SDK apps on Azure. MANDATORY when codebase contains @github/copilot-sdk
   or CopilotClient — use this skill instead of azure-prepare. PREFER OVER azure-prepare when '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

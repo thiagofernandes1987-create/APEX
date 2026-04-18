@@ -4,7 +4,7 @@ name: memory-safety-patterns
 description: "Use — "
   management.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/memory-safety-patterns
 anchors:
 - memory

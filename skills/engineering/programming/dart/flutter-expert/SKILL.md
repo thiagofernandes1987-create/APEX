@@ -3,7 +3,7 @@ skill_id: engineering.programming.dart.flutter_expert
 name: flutter-expert
 description: "Implement — Master Flutter development with Dart 3, advanced widgets, and multi-platform deployment."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/dart/flutter-expert
 anchors:
 - flutter

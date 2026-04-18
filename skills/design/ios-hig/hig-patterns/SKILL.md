@@ -3,7 +3,7 @@ skill_id: design.ios_hig.hig_patterns
 name: hig-patterns
 description: "Design — Apple Human Interface Guidelines interaction and UX patterns."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ios-hig/hig-patterns
 anchors:
 - patterns

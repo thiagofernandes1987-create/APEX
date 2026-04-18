@@ -3,7 +3,7 @@ skill_id: design.ios_hig.hig_components_search
 name: hig-components-search
 description: "Design — Apple HIG guidance for navigation-related components including search fields, page controls, and path controls."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ios-hig/hig-components-search
 anchors:
 - components

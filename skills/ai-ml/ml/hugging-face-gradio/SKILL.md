@@ -3,7 +3,7 @@ skill_id: ai_ml.ml.hugging_face_gradio
 name: hugging-face-gradio
 description: Build or edit Gradio apps, layouts, components, and chat interfaces in Python.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/hugging-face-gradio
 anchors:
 - hugging

@@ -3,7 +3,7 @@ name: "aws-solution-architect"
 description: Design AWS architectures for startups using serverless patterns and IaC templates. Use when asked to design serverless architecture, create CloudFormation templates, optimize AWS costs, set up CI/CD pipelines, or migrate to AWS. Covers Lambda, API Gateway, DynamoDB, ECS, Aurora, and cost optimization.
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.aws-solution-architect
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
@@ -11,6 +11,18 @@ anchors:
   - deployment
   - api
   - design
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # AWS Solution Architect

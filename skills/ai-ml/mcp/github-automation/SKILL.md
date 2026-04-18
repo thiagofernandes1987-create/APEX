@@ -4,7 +4,7 @@ name: github-automation
 description: "Apply — "
   Manage code workflows, review PRs, search code, and handle deployments programmatically.'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/github-automation
 anchors:
 - github

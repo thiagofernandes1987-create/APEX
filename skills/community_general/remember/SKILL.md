@@ -4,7 +4,7 @@ name: remember
 description: "Use — Explicitly save important knowledge to auto-memory with timestamp and context. Use when a discovery is too important"
   to rely on auto-capture.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - remember

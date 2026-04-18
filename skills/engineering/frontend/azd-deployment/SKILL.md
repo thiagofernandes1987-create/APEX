@@ -4,7 +4,7 @@ name: azd-deployment
 description: "Implement — "
   and idempotent infrastructure.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/azd-deployment
 anchors:
 - deployment

@@ -4,7 +4,7 @@ name: ai-ml
 description: "Apply — "
   ML pipelines, and AI-powered features.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/ai-ml
 anchors:
 - machine

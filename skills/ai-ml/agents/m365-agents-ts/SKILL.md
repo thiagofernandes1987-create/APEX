@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.m365_agents_ts
 name: m365-agents-ts
 description: "Apply — Microsoft 365 Agents SDK for TypeScript/Node.js."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/m365-agents-ts
 anchors:
 - m365

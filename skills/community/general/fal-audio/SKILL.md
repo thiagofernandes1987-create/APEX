@@ -3,7 +3,7 @@ skill_id: community.general.fal_audio
 name: fal-audio
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fal-audio
 anchors:
 - audio

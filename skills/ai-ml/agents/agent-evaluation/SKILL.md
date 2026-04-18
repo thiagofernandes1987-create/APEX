@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.agent_evaluation
 name: agent-evaluation
 description: "Apply — Testing and benchmarking LLM agents including behavioral testing,"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/agent-evaluation
 anchors:
 - agent

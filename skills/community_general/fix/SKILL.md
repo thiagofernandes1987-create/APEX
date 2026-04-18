@@ -3,7 +3,7 @@ skill_id: community_general.fix
 name: fix
 description: "Use — >-"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - fix

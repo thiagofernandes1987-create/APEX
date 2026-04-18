@@ -4,7 +4,7 @@ name: seaborn
 description: "Implement — "
   skill for dataset-oriented plotting, multivariate analysis, automatic statistical estimation,'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/seaborn
 anchors:
 - seaborn

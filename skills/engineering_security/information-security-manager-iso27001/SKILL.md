@@ -4,7 +4,7 @@ name: information-security-manager-iso27001
 description: "Use — ISO 27001 ISMS implementation and cybersecurity governance for HealthTech and MedTech companies. Use for ISMS"
   design, security risk assessment, control implementation, ISO 27001 certification, securit
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - information

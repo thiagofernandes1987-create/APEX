@@ -4,7 +4,7 @@ name: apify-ultimate-scraper
 description: "Use — "
   best Actor for your task.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/apify-ultimate-scraper
 anchors:
 - apify

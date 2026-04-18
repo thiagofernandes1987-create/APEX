@@ -3,7 +3,7 @@ name: "senior-data-engineer"
 description: "Implement — Data engineering skill for building scalable data pipelines, ETL/ELT systems, and data infrastructure. Expertise in Python, SQL, Spark, Airflow, dbt, Kafka, and modern data stack. "
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-data-engineer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
@@ -11,6 +11,19 @@ anchors:
   - database
   - data
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # Senior Data Engineer

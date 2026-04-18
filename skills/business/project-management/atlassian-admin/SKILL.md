@@ -3,11 +3,25 @@ name: "atlassian-admin"
 description: "Manage — Atlassian Administrator for managing and organizing Atlassian products (Jira, Confluence, Bitbucket, Trello), users, permissions, security, integrations, system configuration, and "
 executor: HYBRID
 skill_id: business.project-management.atlassian-admin
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
   - security
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from atlassian admin"
 ---
 
 # Atlassian Administrator Expert

@@ -4,7 +4,7 @@ name: lightning-channel-factories
 description: "Implement — Technical reference on Lightning Network channel factories, multi-party channels, LSP architectures, and Bitcoin"
   Layer 2 scaling without soft forks. Covers Decker-Wattenhofer, timeout trees, MuSig2 ke
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/lightning-channel-factories
 anchors:
 - lightning

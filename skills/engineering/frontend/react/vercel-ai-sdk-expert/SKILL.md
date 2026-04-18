@@ -4,7 +4,7 @@ name: vercel-ai-sdk-expert
 description: "Implement — "
   tool calling, and streaming UI components with React and Next.js.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/vercel-ai-sdk-expert
 anchors:
 - vercel

@@ -16,7 +16,7 @@ agents:
   - openclaw
 executor: LLM_BEHAVIOR
 skill_id: business.business-growth
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
@@ -25,6 +25,19 @@ anchors:
   - finance
   - sales
   - customer_success
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # Business & Growth Skills

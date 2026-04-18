@@ -4,7 +4,7 @@ name: git-pr-workflows-pr-enhance
 description: "Use — "
   code reviews. Generate comprehensive PR descriptions, automate review processes, and ens'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/git-pr-workflows-pr-enhance
 anchors:
 - workflows

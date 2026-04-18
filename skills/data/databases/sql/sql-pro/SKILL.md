@@ -4,7 +4,7 @@ name: sql-pro
 description: "Analyze — Master modern SQL with cloud-native databases, OLTP/OLAP optimization, and advanced query techniques. Expert"
   in performance tuning, data modeling, and hybrid analytical systems.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/sql-pro
 anchors:
 - master

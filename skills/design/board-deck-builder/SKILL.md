@@ -4,7 +4,7 @@ name: board-deck-builder
 description: "Design — Assembles comprehensive board and investor update decks by pulling perspectives from all C-suite roles. Use"
   when preparing board meetings, investor updates, quarterly business reviews, or fundraising '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - board

@@ -3,7 +3,7 @@ skill_id: business.personas.business-growth.cs_growth_strategist
 name: "cs-growth-strategist"
 description: "Manage — Growth Strategist agent for revenue operations, sales engineering, customer success, and business development. Orchestrates business-growth skills. Spawn when users need pipeline a"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.business-growth/cs-growth-strategist

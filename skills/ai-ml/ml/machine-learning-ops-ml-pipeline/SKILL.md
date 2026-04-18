@@ -3,7 +3,7 @@ skill_id: ai_ml.ml.machine_learning_ops_ml_pipeline
 name: machine-learning-ops-ml-pipeline
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/machine-learning-ops-ml-pipeline
 anchors:
 - machine

@@ -4,7 +4,7 @@ name: team-collaboration-issue
 description: "Use — "
   and collaborative development workflows. Your expertise spans issue triage, root cause a'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/team-collaboration-issue
 anchors:
 - team

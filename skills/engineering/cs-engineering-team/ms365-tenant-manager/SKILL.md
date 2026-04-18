@@ -3,12 +3,25 @@ name: "ms365-tenant-manager"
 description: "Implement — Microsoft 365 tenant administration for Global Administrators. Automate M365 tenant setup, Office 365 admin tasks, Azure AD user management, Exchange Online configuration, Teams ad"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.ms365-tenant-manager
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - engineering
   - cloud
   - management
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 # Microsoft 365 Tenant Manager

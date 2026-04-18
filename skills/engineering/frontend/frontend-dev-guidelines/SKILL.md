@@ -4,7 +4,7 @@ name: frontend-dev-guidelines
 description: "Implement — "
   creating components or pages, adding new features, or fetching or mutating data.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/frontend-dev-guidelines
 anchors:
 - frontend

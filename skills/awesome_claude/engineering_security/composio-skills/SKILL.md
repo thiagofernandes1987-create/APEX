@@ -3,7 +3,7 @@ skill_id: awesome_claude.engineering_security.composio_skills
 name: auth0-automation
 description: Automate Auth0 tasks via Rube MCP (Composio). Always search tools first for current schemas.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - composio

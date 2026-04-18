@@ -4,7 +4,7 @@ name: capa-officer
 description: "Use — CAPA system management for medical device QMS. Covers root cause analysis, corrective action planning, effectiveness"
   verification, and CAPA metrics. Use for CAPA investigations, 5-Why analysis, fishbo
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - capa

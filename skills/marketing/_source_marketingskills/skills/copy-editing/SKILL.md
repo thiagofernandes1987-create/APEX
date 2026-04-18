@@ -112,7 +112,7 @@ apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: LLM_BEHAVIOR
 skill_id: marketing._source_marketingskills.skills.copy-editing
-status: CANDIDATE
+status: ADOPTED
 ---
 # Copy Editing
 

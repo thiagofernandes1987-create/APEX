@@ -4,7 +4,7 @@ name: microsoft-foundry
 description: 'Deploy, evaluate, and manage Foundry agents end-to-end: Docker build, ACR push, hosted/prompt agent create,
   container start, batch eval, prompt optimization, prompt optimizer workflows, agent.yaml, da'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - microsoft

@@ -12,13 +12,22 @@ metadata:
   tech-stack: customer-success, saas-metrics, health-scoring
 executor: HYBRID
 skill_id: business.business-growth.customer-success-manager
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - ai_ml
   - customer_success
   - monitoring
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from customer success manager"
 ---
 
 # Customer Success Manager

@@ -4,7 +4,7 @@ name: find-skills
 description: "Use — Helps users discover and install agent skills when they ask questions like 'how do I do X', 'find a skill for"
   X', 'is there a skill that can...', or express interest in extending capabilities. This sk
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - find

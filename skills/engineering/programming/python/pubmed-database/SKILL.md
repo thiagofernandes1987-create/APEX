@@ -4,7 +4,7 @@ name: pubmed-database
 description: "Implement — Direct REST API access to PubMed. Advanced Boolean/MeSH queries, E-utilities API, batch processing, citation"
   management. For Python workflows, prefer biopython (Bio.Entrez). Use this for direct HTTP/R
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/pubmed-database
 anchors:
 - pubmed

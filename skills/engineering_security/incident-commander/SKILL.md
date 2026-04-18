@@ -3,7 +3,7 @@ skill_id: engineering_security.incident_commander
 name: incident-commander
 description: "Use — Incident Commander Skill"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - incident

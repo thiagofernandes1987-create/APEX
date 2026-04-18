@@ -3,7 +3,7 @@ skill_id: ai_ml.rag.azure_storage_blob_java
 name: azure-storage-blob-java
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-storage-blob-java
 anchors:
 - azure

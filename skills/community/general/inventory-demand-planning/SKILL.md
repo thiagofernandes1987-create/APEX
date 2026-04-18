@@ -4,7 +4,7 @@ name: inventory-demand-planning
 description: "Use — Codified expertise for demand forecasting, safety stock optimisation, replenishment planning, and promotional"
   lift estimation at multi-location retailers.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/inventory-demand-planning
 anchors:
 - inventory

@@ -4,7 +4,7 @@ name: azure-compute
 description: "Use — Azure VM and VMSS router for recommendations, pricing, autoscale, orchestration, and connectivity troubleshooting."
   WHEN: Azure VM, VMSS, scale set, recommend, compare, server, website, burstable, ligh'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

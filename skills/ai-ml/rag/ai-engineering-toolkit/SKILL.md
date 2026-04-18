@@ -4,7 +4,7 @@ name: ai-engineering-toolkit
 description: "Apply — "
   RAG pipeline design, agent security audit (65-point checklist), eval harness building, a'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/ai-engineering-toolkit
 anchors:
 - engineering

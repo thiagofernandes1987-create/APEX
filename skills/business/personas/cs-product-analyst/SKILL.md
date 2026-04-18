@@ -3,7 +3,7 @@ skill_id: business.personas.product.cs_product_analyst
 name: "cs-product-analyst"
 description: "Manage — Product analytics agent for KPI definition, dashboard setup, experiment design, and test result interpretation."
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.product/cs-product-analyst

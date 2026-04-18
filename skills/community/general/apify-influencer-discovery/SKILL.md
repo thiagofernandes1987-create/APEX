@@ -4,7 +4,7 @@ name: apify-influencer-discovery
 description: Find and evaluate influencers for brand partnerships, verify authenticity, and track collaboration performance
   across Instagram, Facebook, YouTube, and TikTok.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/apify-influencer-discovery
 anchors:
 - apify

@@ -4,7 +4,7 @@ name: moodle-external-api-development
 description: "Use — "
   external API framework and coding standards.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/moodle-external-api-development
 anchors:
 - moodle

@@ -4,7 +4,7 @@ name: content-marketer
 description: "Create — Elite content marketing strategist specializing in AI-powered content creation, omnichannel distribution, SEO"
   optimization, and data-driven performance marketing.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/content-marketer
 anchors:
 - content

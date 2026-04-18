@@ -4,7 +4,7 @@ name: templates
 description: "Use — "
   12 templates for various tech stacks.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/templates
 anchors:
 - templates

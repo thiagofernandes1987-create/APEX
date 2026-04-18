@@ -4,7 +4,7 @@ name: codebase-cleanup-refactor-clean
 description: "Use — "
   software engineering best practices. Analyze and refactor the provided code to improve its q'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/codebase-cleanup-refactor-clean
 anchors:
 - codebase

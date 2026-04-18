@@ -3,7 +3,7 @@ skill_id: design.microservices_design
 name: microservices-design
 description: "Design — Microservices design patterns including service mesh, event-driven architecture, saga pattern, and API gateway"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - microservices

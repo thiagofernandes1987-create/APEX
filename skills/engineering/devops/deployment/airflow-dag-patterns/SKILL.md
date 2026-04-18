@@ -4,7 +4,7 @@ name: airflow-dag-patterns
 description: "Implement — "
   Use when creating data pipelines, orchestrating workflows, or scheduling batch jobs.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/airflow-dag-patterns
 anchors:
 - airflow

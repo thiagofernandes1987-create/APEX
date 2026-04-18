@@ -4,7 +4,7 @@ name: azure-mgmt-mongodbatlas-dotnet
 description: Manage MongoDB Atlas Organizations as Azure ARM resources using Azure.ResourceManager.MongoDBAtlas SDK. Use when
   creating, updating, listing, or deleting MongoDB Atlas organizations through Azure Mark
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

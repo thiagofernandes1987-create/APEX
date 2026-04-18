@@ -3,7 +3,7 @@ skill_id: awesome_claude.engineering_api.composio_skills
 name: onesignal-rest-api-automation
 description: Automate OneSignal tasks via Rube MCP (Composio). Always search tools first for current schemas.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - composio

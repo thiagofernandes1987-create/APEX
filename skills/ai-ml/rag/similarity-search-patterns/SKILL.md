@@ -4,7 +4,7 @@ name: similarity-search-patterns
 description: "Apply — "
   nearest neighbor queries, or optimizing retrieval performance.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/similarity-search-patterns
 anchors:
 - similarity

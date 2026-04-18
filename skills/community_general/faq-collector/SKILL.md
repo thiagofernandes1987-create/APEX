@@ -3,7 +3,7 @@ skill_id: community_general.faq_collector
 name: faq-collector
 description: "Use — 将成功解决的用户问题收录到 FAQ 知识库。问题解决后自动判断是否收录。也可以在用户说'收录到 FAQ'、'记录这个问题'、'add to FAQ'时手动触发。"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - collector

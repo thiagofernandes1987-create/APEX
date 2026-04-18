@@ -4,7 +4,7 @@ name: monetization
 description: "Use — "
   freemium, upgrade flows, churn prevention, revenue optimization e modelos de negocio Saa'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/monetization
 anchors:
 - monetization

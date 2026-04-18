@@ -4,7 +4,7 @@ name: stability-ai
 description: "Use — Geracao de imagens via Stability AI (SD3.5, Ultra, Core). Text-to-image, img2img, inpainting, upscale, remove-bg,"
   search-replace. 15 estilos artisticos.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/stability-ai
 anchors:
 - stability

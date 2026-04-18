@@ -3,7 +3,7 @@ name: "ai-security"
 description: "Implement — Use when assessing AI/ML systems for prompt injection, jailbreak vulnerabilities, model inversion risk, data poisoning exposure, or agent tool abuse. Covers MITRE ATLAS technique m"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.ai-security
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - engineering
@@ -11,6 +11,15 @@ anchors:
   - agent
   - security
   - data
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from ai security"
 ---
 
 # AI Security

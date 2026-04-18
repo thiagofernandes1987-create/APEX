@@ -4,7 +4,7 @@ name: mlops-engineer
 description: Build comprehensive ML pipelines, experiment tracking, and model registries with MLflow, Kubeflow, and modern
   MLOps tools.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/mlops-engineer
 anchors:
 - mlops

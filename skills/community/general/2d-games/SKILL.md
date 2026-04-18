@@ -3,7 +3,7 @@ skill_id: community.general.2d_games
 name: 2d-games
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/2d-games
 anchors:
 - games

@@ -4,7 +4,7 @@ name: pricing-strategy
 description: "Create — When the user wants help with pricing decisions, packaging, or monetization strategy. Also use when the user"
   mentions 'pricing,' 'pricing tiers,' 'freemium,' 'free trial,' 'packaging,' 'price increase
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - pricing

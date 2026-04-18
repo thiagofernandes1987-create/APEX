@@ -4,7 +4,7 @@ name: ui-ux-pro-max
 description: "Design — "
   choosing color palettes and typography, or reviewing code for UX issues.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ux/ui-ux-pro-max
 anchors:
 - comprehensive

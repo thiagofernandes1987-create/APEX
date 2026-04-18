@@ -3,7 +3,7 @@ skill_id: ai_ml.rag.azure_storage_file_share_ts
 name: azure-storage-file-share-ts
 description: "Apply — Azure File Share JavaScript/TypeScript SDK (@azure/storage-file-share) for SMB file share operations."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-storage-file-share-ts
 anchors:
 - azure

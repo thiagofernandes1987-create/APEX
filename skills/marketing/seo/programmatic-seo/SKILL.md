@@ -4,7 +4,7 @@ name: programmatic-seo
 description: Design and evaluate programmatic SEO strategies for creating SEO-driven pages at scale using templates and structured
   data.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/programmatic-seo
 anchors:
 - programmatic

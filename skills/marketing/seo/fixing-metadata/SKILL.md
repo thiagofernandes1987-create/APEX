@@ -4,7 +4,7 @@ name: fixing-metadata
 description: "Create — "
   cards, favicons, JSON-LD structured data, and robots directives. Use when adding or revi'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/fixing-metadata
 anchors:
 - fixing

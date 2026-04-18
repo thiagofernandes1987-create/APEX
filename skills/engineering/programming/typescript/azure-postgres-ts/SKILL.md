@@ -4,7 +4,7 @@ name: azure-postgres-ts
 description: "Implement — Connect to Azure Database for PostgreSQL Flexible Server from Node.js/TypeScript using the pg (node-postgres)"
   package.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/azure-postgres-ts
 anchors:
 - azure

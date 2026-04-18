@@ -4,7 +4,7 @@ name: react-native-architecture
 description: "Implement — "
   native modules, and offline-first architecture.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/react-native-architecture
 anchors:
 - react

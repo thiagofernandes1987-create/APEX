@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.langfuse
 name: langfuse
 description: "Apply — Expert in Langfuse - the open-source LLM observability platform."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/langfuse
 anchors:
 - langfuse

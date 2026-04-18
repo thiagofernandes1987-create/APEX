@@ -4,7 +4,7 @@ name: yann-lecun-debate
 description: "Apply — "
   (LeCun vs Hinton, Sutskever, Russell, Yudkowsky, Bostrom), lista completa de rejei'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/yann-lecun-debate
 anchors:
 - yann

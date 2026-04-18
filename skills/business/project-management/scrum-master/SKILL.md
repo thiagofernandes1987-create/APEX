@@ -12,12 +12,26 @@ metadata:
   tech-stack: scrum, agile-coaching, team-dynamics, data-analysis
 executor: HYBRID
 skill_id: business.project-management.scrum-master
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - management
   - data
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from scrum master"
 ---
 
 # Scrum Master Expert

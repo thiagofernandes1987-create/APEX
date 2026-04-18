@@ -4,7 +4,7 @@ name: deployment-procedures
 description: "Implement — "
   verification. Teaches thinking, not scripts.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/deployment-procedures
 anchors:
 - deployment

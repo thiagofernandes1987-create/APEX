@@ -3,7 +3,7 @@ skill_id: community.general.fix_review
 name: fix-review
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fix-review
 anchors:
 - review

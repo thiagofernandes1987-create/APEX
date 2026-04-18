@@ -4,7 +4,7 @@ name: changelog-automation
 description: "Use — "
   setting up release workflows, generating release notes, or standardizing commit conventions.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/changelog-automation
 anchors:
 - changelog

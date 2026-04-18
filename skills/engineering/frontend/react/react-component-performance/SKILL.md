@@ -3,7 +3,7 @@ skill_id: engineering.frontend.react.react_component_performance
 name: react-component-performance
 description: "Implement — Diagnose slow React components and suggest targeted performance fixes."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/react-component-performance
 anchors:
 - react

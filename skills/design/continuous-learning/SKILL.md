@@ -3,7 +3,7 @@ skill_id: design.continuous_learning
 name: continuous-learning
 description: "Design — Auto-extract patterns from coding sessions, track corrections, and build reusable knowledge with confidence scoring"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - continuous

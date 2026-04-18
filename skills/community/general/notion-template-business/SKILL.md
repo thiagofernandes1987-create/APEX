@@ -3,7 +3,7 @@ skill_id: community.general.notion_template_business
 name: notion-template-business
 description: "Use — Expert in building and selling Notion templates as a business - not"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/notion-template-business
 anchors:
 - notion

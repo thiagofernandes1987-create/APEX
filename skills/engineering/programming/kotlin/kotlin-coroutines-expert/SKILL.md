@@ -3,7 +3,7 @@ skill_id: engineering.programming.kotlin.kotlin_coroutines_expert
 name: kotlin-coroutines-expert
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/kotlin/kotlin-coroutines-expert
 anchors:
 - kotlin

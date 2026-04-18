@@ -3,7 +3,7 @@ skill_id: legal.lex
 name: lex
 description: "Review — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal/lex
 anchors:
 - centralized

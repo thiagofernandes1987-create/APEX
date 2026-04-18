@@ -4,7 +4,7 @@ name: azure-eventhub-ts
 description: Build event streaming applications using Azure Event Hubs SDK for JavaScript (@azure/event-hubs). Use when implementing
   high-throughput event ingestion, real-time analytics, IoT telemetry, or event-dr
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

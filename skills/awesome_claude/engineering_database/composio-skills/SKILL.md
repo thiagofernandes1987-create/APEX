@@ -4,7 +4,7 @@ name: Snowflake Automation
 description: Automate Snowflake data warehouse operations -- list databases, schemas, and tables, execute SQL statements,
   and manage data workflows via the Composio MCP integration.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/database
 anchors:
 - composio

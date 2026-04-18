@@ -4,7 +4,7 @@ name: uncle-bob-craft
 description: "Implement — "
   and does not replace project linter/formatter.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/uncle-bob-craft
 anchors:
 - uncle

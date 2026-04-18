@@ -4,7 +4,7 @@ name: azure-storage-blob-ts
 description: "Apply — Azure Blob Storage JavaScript/TypeScript SDK (@azure/storage-blob) for blob operations. Use for uploading, downloading,"
   listing, and managing blobs and containers.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-storage-blob-ts
 anchors:
 - azure

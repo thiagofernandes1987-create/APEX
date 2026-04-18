@@ -4,7 +4,7 @@ name: blueprint
 description: "Use — "
   has a self-contained context brief — a fresh agent in a new session can pick up any step w'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/blueprint
 anchors:
 - blueprint

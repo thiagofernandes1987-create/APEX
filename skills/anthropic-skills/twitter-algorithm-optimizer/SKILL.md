@@ -4,10 +4,20 @@ description: Analyze and optimize tweets for maximum reach using Twitter's open-
 license: AGPL-3.0 (referencing Twitter's algorithm source)
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.twitter-algorithm-optimizer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - documentation
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from twitter algorithm optimizer"
 ---
 
 # Twitter Algorithm Optimizer

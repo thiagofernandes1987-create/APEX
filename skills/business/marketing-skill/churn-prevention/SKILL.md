@@ -9,12 +9,25 @@ metadata:
   updated: 2026-03-06
 executor: HYBRID
 skill_id: business.marketing-skill.churn-prevention
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: true, approval_required: true}
 anchors:
   - business
   - management
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # Churn Prevention

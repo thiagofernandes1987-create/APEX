@@ -4,7 +4,7 @@ name: building-native-ui
 description: "Use — Complete guide for building beautiful apps with Expo Router. Covers fundamentals, styling, components, navigation,"
   animations, patterns, and native tabs.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/building-native-ui
 anchors:
 - building

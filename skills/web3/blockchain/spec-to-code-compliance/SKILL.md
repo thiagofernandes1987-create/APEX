@@ -4,7 +4,7 @@ name: spec-to-code-compliance
 description: "Deploy — Verifies code implements exactly what documentation specifies for blockchain audits. Use when comparing code"
   against whitepapers, finding gaps between specs and implementation, or performing complianc
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/blockchain/spec-to-code-compliance
 anchors:
 - spec

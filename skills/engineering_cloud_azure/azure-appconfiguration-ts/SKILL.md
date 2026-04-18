@@ -4,7 +4,7 @@ name: azure-appconfiguration-ts
 description: Build applications using Azure App Configuration SDK for JavaScript (@azure/app-configuration). Use when working
   with configuration settings, feature flags, Key Vault references, dynamic refresh, or c
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

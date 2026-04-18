@@ -4,7 +4,7 @@ name: isms-audit-expert
 description: "Use — Information Security Management System (ISMS) audit expert for ISO 27001 compliance verification, security control"
   assessment, and certification support. Use when the user mentions ISO 27001, ISMS aud
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - isms

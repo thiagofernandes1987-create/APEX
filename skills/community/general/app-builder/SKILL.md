@@ -4,7 +4,7 @@ name: app-builder
 description: "Use — "
   project type, selects tech stack, coordinates agents.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/app-builder
 anchors:
 - builder

@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.azure_maps_search_dotnet
 name: azure-maps-search-dotnet
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

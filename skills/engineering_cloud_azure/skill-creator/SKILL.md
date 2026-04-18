@@ -4,7 +4,7 @@ name: skill-creator
 description: "Use — Guide for creating effective skills for AI coding agents working with Azure SDKs and Microsoft Foundry services."
   Use when creating new skills or updating existing skills.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - skill

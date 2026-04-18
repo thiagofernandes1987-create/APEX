@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.azure_mgmt_botservice_py
 name: azure-mgmt-botservice-py
 description: "Implement — Azure Bot Service Management SDK for Python. Use for creating, managing, and configuring Azure Bot Service resources."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-mgmt-botservice-py
 anchors:
 - azure

@@ -4,7 +4,7 @@ name: architecture-decision-records
 description: "Implement — "
   the context and rationale behind significant technical decisions.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/architecture-decision-records
 anchors:
 - architecture

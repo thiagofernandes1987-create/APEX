@@ -3,7 +3,7 @@ skill_id: business.analysis.startup_business_analyst_market_opportunity
 name: startup-business-analyst-market-opportunity
 description: "Manage — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/analysis/startup-business-analyst-market-opportunity
 anchors:
 - startup

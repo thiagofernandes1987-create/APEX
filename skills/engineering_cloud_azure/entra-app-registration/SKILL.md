@@ -4,7 +4,7 @@ name: entra-app-registration
 description: "Create — Guides Microsoft Entra ID app registration, OAuth 2.0 authentication, and MSAL integration. USE FOR: create"
   app registration, register Azure AD app, configure OAuth, set up authentication, add API per'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - entra

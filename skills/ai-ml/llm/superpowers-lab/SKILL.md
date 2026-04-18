@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.superpowers_lab
 name: superpowers-lab
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/superpowers-lab
 anchors:
 - superpowers

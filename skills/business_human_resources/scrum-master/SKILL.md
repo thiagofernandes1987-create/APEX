@@ -4,7 +4,7 @@ name: scrum-master
 description: "Use — Advanced Scrum Master skill for data-driven agile team analysis and coaching. Use when the user asks about sprint"
   planning, velocity tracking, retrospectives, standup facilitation, backlog grooming, s
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/human-resources
 anchors:
 - scrum

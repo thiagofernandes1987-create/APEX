@@ -4,7 +4,7 @@ name: analytics-tracking
 description: "Create — When the user wants to set up, improve, or audit analytics tracking and measurement. Also use when the user mentions"
   'set up tracking,' 'GA4,' 'Google Analytics,' 'conversion tracking,' 'event trackin
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - analytics

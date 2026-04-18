@@ -3,7 +3,7 @@ skill_id: community.general.cc_skill_project_guidelines_example
 name: cc-skill-project-guidelines-example
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/cc-skill-project-guidelines-example
 anchors:
 - skill

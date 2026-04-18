@@ -4,7 +4,7 @@ name: team-communications
 description: Write internal company communications — 3P updates (Progress/Plans/Problems), company-wide newsletters, FAQ roundups,
   incident reports, leadership updates, status reports, project updates, and general
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/git
 anchors:
 - team

@@ -4,7 +4,7 @@ name: azure-identity-ts
 description: "Use — Authenticate to Azure services using Azure Identity library for JavaScript (@azure/identity). Use when configuring"
   authentication with DefaultAzureCredential, managed identity, service principals, or '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

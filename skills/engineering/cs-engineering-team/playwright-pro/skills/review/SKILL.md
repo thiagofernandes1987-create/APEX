@@ -6,11 +6,25 @@ description: >-
   or "playwright best practices check".
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering_team.playwright_pro.review
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - testing
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from review"
 ---
 
 # Review Playwright Tests

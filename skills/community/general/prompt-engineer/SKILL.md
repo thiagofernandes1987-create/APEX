@@ -4,7 +4,7 @@ name: prompt-engineer
 description: "Use — "
   of Density, RACE, RISE, STAR, SOAP, CLEAR, GROW)'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/prompt-engineer
 anchors:
 - prompt

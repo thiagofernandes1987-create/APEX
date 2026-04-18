@@ -4,7 +4,7 @@ name: stripe-integration
 description: "Analyze — "
   webhooks, and refunds.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: finance/payments/stripe-integration
 anchors:
 - stripe

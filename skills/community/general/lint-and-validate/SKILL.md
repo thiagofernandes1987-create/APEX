@@ -4,7 +4,7 @@ name: lint-and-validate
 description: "Use — "
   error-free.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/lint-and-validate
 anchors:
 - lint

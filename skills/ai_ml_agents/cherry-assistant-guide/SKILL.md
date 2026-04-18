@@ -3,7 +3,7 @@ skill_id: ai_ml_agents.cherry_assistant_guide
 name: cherry-assistant-guide
 description: "Use — Cherry Studio 产品知识库、源码路径索引、故障排查和页面导航。当用户询问 Cherry Studio 的功能、配置、报错、使用方法时触发。也适用于用户提到 provider、模型、知识库、Agent、MCP、OpenClaw、PDF、快捷短语等关键词的场景。"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - cherry

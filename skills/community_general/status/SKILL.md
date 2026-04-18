@@ -3,7 +3,7 @@ skill_id: community_general.status
 name: status
 description: "Use — Show experiment dashboard with results, active loops, and progress."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - status

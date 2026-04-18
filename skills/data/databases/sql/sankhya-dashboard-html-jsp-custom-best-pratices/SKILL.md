@@ -4,7 +4,7 @@ name: sankhya-dashboard-html-jsp-custom-best-pratices
 description: "Analyze — "
   dashboards using HTML, JSP, Java, and SQL.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/sankhya-dashboard-html-jsp-custom-best-pratices
 anchors:
 - sankhya

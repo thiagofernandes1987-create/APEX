@@ -4,7 +4,7 @@ name: internal-comms
 description: "Use — A set of resources to help me write all kinds of internal communications, using the formats that my company likes"
   to use. Claude should use this skill whenever asked to write some sort of internal com
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - internal

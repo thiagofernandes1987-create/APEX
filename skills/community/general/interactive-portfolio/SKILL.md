@@ -3,7 +3,7 @@ skill_id: community.general.interactive_portfolio
 name: interactive-portfolio
 description: "Use — Expert in building portfolios that actually land jobs and clients -"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/interactive-portfolio
 anchors:
 - interactive

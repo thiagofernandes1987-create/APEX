@@ -3,7 +3,7 @@ skill_id: integrations.n8n.n8n_workflow_patterns
 name: n8n-workflow-patterns
 description: "Automate — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: integrations/n8n/n8n-workflow-patterns
 anchors:
 - workflow

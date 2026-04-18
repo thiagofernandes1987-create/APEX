@@ -3,7 +3,7 @@ skill_id: engineering.programming.julia.julia_pro
 name: julia-pro
 description: "Implement — Master Julia 1.10+ with modern features, performance optimization, multiple dispatch, and production-ready practices."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/julia/julia-pro
 anchors:
 - julia

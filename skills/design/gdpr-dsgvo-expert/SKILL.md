@@ -4,7 +4,7 @@ name: gdpr-dsgvo-expert
 description: "Design — GDPR and German DSGVO compliance automation. Scans codebases for privacy risks, generates DPIA documentation,"
   tracks data subject rights requests. Use for GDPR compliance assessments, privacy audits, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - gdpr

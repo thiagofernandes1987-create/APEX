@@ -4,7 +4,7 @@ name: scanpy
 description: "Implement — "
   for complete single-cell workflows including quality control, normalization, dimensional'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/scanpy
 anchors:
 - scanpy

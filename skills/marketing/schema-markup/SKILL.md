@@ -4,7 +4,7 @@ name: schema-markup
 description: "Create — When the user wants to add, fix, or optimize schema markup and structured data on their site. Also use when the"
   user mentions 'schema markup,' 'structured data,' 'JSON-LD,' 'rich snippets,' 'schema.or
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - schema

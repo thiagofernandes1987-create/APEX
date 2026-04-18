@@ -4,7 +4,7 @@ name: imagen
 description: "Apply — "
   documentation, and design assets.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/imagen
 anchors:
 - imagen

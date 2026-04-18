@@ -4,7 +4,7 @@ name: fp-ts-pragmatic
 description: "Apply — "
   the academic overhead. Use when writing TypeScript with fp-ts library.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/fp-ts-pragmatic
 anchors:
 - pragmatic

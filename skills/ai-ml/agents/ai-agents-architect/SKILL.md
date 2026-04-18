@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.ai_agents_architect
 name: ai-agents-architect
 description: "Apply — Expert in designing and building autonomous AI agents. Masters tool"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/ai-agents-architect
 anchors:
 - agents

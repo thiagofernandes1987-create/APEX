@@ -4,7 +4,7 @@ name: content-production
 description: "Use — Full content production pipeline — takes a topic from blank page to published-ready piece. Use when you need"
   to execute content: write a blog post, article, or guide end-to-end. Triggers: ''write a pos'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - content

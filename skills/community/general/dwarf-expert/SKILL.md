@@ -4,7 +4,7 @@ name: dwarf-expert
 description: "Use — Provides expertise for analyzing DWARF debug files and understanding the DWARF debug format/standard (v3-v5)."
   Triggers when understanding DWARF information, interacting with DWARF files, answering DWA
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/dwarf-expert
 anchors:
 - dwarf

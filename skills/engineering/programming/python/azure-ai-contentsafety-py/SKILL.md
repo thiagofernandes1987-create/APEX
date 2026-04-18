@@ -4,7 +4,7 @@ name: azure-ai-contentsafety-py
 description: "Implement — Azure AI Content Safety SDK for Python. Use for detecting harmful content in text and images with multi-severity"
   classification.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-ai-contentsafety-py
 anchors:
 - azure

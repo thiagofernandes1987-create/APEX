@@ -3,7 +3,7 @@ skill_id: business.personas.marketing.cs_content_creator
 name: "cs-content-creator"
 description: "Manage — AI-powered content creation specialist for brand voice consistency, SEO optimization, and multi-platform content strategy"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.marketing/cs-content-creator

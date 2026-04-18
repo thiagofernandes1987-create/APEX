@@ -4,7 +4,7 @@ name: azure-keyvault-secrets-ts
 description: "Implement — "
   and retrieving application secrets or configuration values.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/javascript/azure-keyvault-secrets-ts
 anchors:
 - azure

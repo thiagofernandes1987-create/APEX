@@ -3,10 +3,20 @@ name: "senior-computer-vision"
 description: "Implement — Computer vision engineering skill for object detection, image segmentation, and visual AI systems. Covers CNN and Vision Transformer architectures, YOLO/Faster R-CNN/DETR detection"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-computer-vision
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from senior computer vision"
 ---
 
 # Senior Computer Vision Engineer

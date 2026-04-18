@@ -3,7 +3,7 @@ skill_id: engineering.cloud.gcp.gcp_cloud_run
 name: gcp-cloud-run
 description: "Implement — Specialized skill for building production-ready serverless"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/gcp/gcp-cloud-run
 anchors:
 - cloud

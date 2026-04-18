@@ -4,7 +4,7 @@ name: finishing-a-development-branch
 description: "Use — "
   completion of development work by presenting structured options for merge, PR, or cleanu'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/finishing-a-development-branch
 anchors:
 - finishing

@@ -4,7 +4,7 @@ name: openapi-spec-generation
 description: "Implement — "
   when creating API documentation, generating SDKs, or ensuring API contract compliance.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/openapi-spec-generation
 anchors:
 - openapi

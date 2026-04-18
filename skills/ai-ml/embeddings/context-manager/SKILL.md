@@ -4,7 +4,7 @@ name: context-manager
 description: "Apply — Elite AI context engineering specialist mastering dynamic context management, vector databases, knowledge graphs,"
   and intelligent memory systems.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/embeddings/context-manager
 anchors:
 - context

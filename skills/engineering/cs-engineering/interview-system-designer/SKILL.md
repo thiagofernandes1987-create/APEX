@@ -3,11 +3,24 @@ name: "interview-system-designer"
 description: "Implement — This skill should be used when the user asks to 'design interview processes', 'create hiring pipelines', 'calibrate interview loops', 'generate interview questions', 'design compet"
 executor: HYBRID
 skill_id: engineering.cs-engineering.interview-system-designer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # Interview System Designer

@@ -3,7 +3,7 @@ skill_id: community.general.apify_brand_reputation_monitoring
 name: apify-brand-reputation-monitoring
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/apify-brand-reputation-monitoring
 anchors:
 - apify

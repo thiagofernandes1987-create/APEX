@@ -3,7 +3,7 @@ skill_id: engineering_devops.data_engineering
 name: data-engineering
 description: "Use — Data engineering patterns for ETL pipelines, data warehousing, Apache Spark, and data quality validation"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - data

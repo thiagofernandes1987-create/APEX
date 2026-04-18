@@ -4,7 +4,7 @@ name: coo-advisor
 description: "Design — Operations leadership for scaling companies. Process design, OKR execution, operational cadence, and scaling"
   playbooks. Use when designing operations, setting up OKRs, building processes, scaling team
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - advisor

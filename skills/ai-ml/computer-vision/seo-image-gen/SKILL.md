@@ -4,7 +4,7 @@ name: seo-image-gen
 description: "Apply — "
   Use when image generation is part of an SEO workflow or content publishing task.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/computer-vision/seo-image-gen
 anchors:
 - image

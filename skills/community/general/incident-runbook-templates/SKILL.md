@@ -4,7 +4,7 @@ name: incident-runbook-templates
 description: "Use — "
   and communication.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/incident-runbook-templates
 anchors:
 - incident

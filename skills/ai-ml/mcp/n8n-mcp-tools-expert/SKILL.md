@@ -4,7 +4,7 @@ name: n8n-mcp-tools-expert
 description: "Apply — Expert guide for using n8n-mcp MCP tools effectively. Use when searching for nodes, validating configurations,"
   accessing templates, managing workflows, or using any n8n-mcp tool. Provides tool selecti
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/n8n-mcp-tools-expert
 anchors:
 - tools

@@ -3,7 +3,7 @@ skill_id: community.general.jobs_to_be_done_analyst
 name: jobs-to-be-done-analyst
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/jobs-to-be-done-analyst
 anchors:
 - jobs

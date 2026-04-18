@@ -4,12 +4,22 @@ description: "Implement — Show experiment dashboard with results, active loops
 command: /ar:status
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering.autoresearch_agent.status
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - visualization
   - research
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from status"
 ---
 
 # /ar:status — Experiment Dashboard

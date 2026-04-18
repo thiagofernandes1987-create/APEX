@@ -4,7 +4,7 @@ name: odoo-inventory-optimizer
 description: "Analyze — "
   and multi-warehouse configuration.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-inventory-optimizer
 anchors:
 - odoo

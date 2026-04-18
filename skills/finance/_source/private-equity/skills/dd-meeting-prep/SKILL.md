@@ -1,11 +1,28 @@
 ---
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.dd_meeting_prep_3
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: true, approval_required: true}
 anchors:
   - finance
   - customer_success
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 # Diligence Meeting Prep
 

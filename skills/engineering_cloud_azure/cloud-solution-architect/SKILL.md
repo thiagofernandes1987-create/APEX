@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.cloud_solution_architect
 name: cloud-solution-architect
 description: "Use — >-"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - cloud

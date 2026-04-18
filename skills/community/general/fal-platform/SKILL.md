@@ -3,7 +3,7 @@ skill_id: community.general.fal_platform
 name: fal-platform
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fal-platform
 anchors:
 - platform

@@ -3,11 +3,25 @@ name: "stress-test"
 description: "Manage — /em -stress-test — Business Assumption Stress Testing"
 executor: LLM_BEHAVIOR
 skill_id: business.c_level_advisor.executive_mentor.stress_test
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - testing
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from stress test"
 ---
 
 # /em:stress-test — Business Assumption Stress Testing

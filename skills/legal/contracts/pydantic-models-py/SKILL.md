@@ -3,7 +3,7 @@ skill_id: legal.contracts.pydantic_models_py
 name: pydantic-models-py
 description: "Review — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal/contracts/pydantic-models-py
 anchors:
 - pydantic

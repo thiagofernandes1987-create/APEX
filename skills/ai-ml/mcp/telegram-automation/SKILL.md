@@ -4,7 +4,7 @@ name: telegram-automation
 description: "Apply — "
   handle bot commands. Always search tools first for current schemas.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/telegram-automation
 anchors:
 - telegram

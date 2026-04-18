@@ -3,7 +3,7 @@ skill_id: ai_ml.ml.hugging_face_vision_trainer
 name: hugging-face-vision-trainer
 description: "Apply — Train or fine-tune vision models on Hugging Face Jobs for detection, classification, and SAM or SAM2 segmentation."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/hugging-face-vision-trainer
 anchors:
 - hugging

@@ -3,7 +3,7 @@ skill_id: engineering.devops.deployment.istio_traffic_management
 name: istio-traffic-management
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/istio-traffic-management
 anchors:
 - istio

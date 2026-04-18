@@ -4,7 +4,7 @@ name: wiki-qa
 description: "Deploy — "
   the codebase, user wants to understand a specific file, function, or component, or user asks'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/defi/wiki-qa
 anchors:
 - wiki

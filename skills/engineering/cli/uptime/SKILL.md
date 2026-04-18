@@ -3,7 +3,7 @@ skill_id: engineering_cli.uptime
 name: x-uptime
 description: "Implement — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cli
 anchors:
 - uptime

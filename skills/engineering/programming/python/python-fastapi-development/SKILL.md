@@ -4,7 +4,7 @@ name: python-fastapi-development
 description: "Implement — "
   API patterns.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/python-fastapi-development
 anchors:
 - python

@@ -4,7 +4,7 @@ name: network-101
 description: "Audit — "
   Enable hands-on practice with service enumeration, log analysis, and security testing aga'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/network-101
 anchors:
 - network

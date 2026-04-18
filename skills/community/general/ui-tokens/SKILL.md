@@ -4,7 +4,7 @@ name: ui-tokens
 description: "Use — "
   in sync.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/ui-tokens
 anchors:
 - tokens

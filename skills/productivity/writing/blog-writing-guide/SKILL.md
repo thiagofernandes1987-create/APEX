@@ -4,7 +4,7 @@ name: blog-writing-guide
 description: "Automate — "
   write their first blog post or a marketer draft a product announcement.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: productivity/writing/blog-writing-guide
 anchors:
 - blog

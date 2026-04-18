@@ -3,7 +3,7 @@ skill_id: business.analysis.startup_business_analyst_business_case
 name: startup-business-analyst-business-case
 description: "Manage — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/analysis/startup-business-analyst-business-case
 anchors:
 - startup

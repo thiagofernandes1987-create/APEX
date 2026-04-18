@@ -4,7 +4,7 @@ name: sales-enablement
 description: "Create — When the user wants to create sales collateral, pitch decks, one-pagers, objection handling docs, or demo scripts."
   Also use when the user mentions 'sales deck,' 'pitch deck,' 'one-pager,' 'leave-behin
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - sales

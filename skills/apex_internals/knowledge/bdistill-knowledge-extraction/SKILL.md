@@ -4,7 +4,7 @@ name: bdistill-knowledge-extraction
 description: "Use — "
   No API key needed.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: apex_internals/knowledge/bdistill-knowledge-extraction
 anchors:
 - bdistill

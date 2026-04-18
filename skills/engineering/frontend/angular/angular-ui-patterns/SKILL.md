@@ -4,7 +4,7 @@ name: angular-ui-patterns
 description: "Implement — "
   handling async data, or managing component states.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/angular/angular-ui-patterns
 anchors:
 - angular

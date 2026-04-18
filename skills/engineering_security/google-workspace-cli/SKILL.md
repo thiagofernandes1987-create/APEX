@@ -4,7 +4,7 @@ name: google-workspace-cli
 description: "Automate — Google Workspace administration via the gws CLI. Install, authenticate, and automate Gmail, Drive, Sheets, Calendar,"
   Docs, Chat, and Tasks. Run security audits, execute 43 built-in recipes, and use 10
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - google

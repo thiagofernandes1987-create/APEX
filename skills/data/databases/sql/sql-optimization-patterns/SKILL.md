@@ -4,7 +4,7 @@ name: sql-optimization-patterns
 description: "Analyze — "
   and query plan analysis.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/sql-optimization-patterns
 anchors:
 - optimization

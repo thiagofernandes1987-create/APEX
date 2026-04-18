@@ -4,7 +4,7 @@ name: hugging-face-paper-publisher
 description: "Apply — Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets,"
   claiming authorship, and generating professional markdown-based research artic
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/hugging-face-paper-publisher
 anchors:
 - hugging

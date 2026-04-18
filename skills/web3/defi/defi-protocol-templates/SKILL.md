@@ -4,7 +4,7 @@ name: defi-protocol-templates
 description: "Deploy — "
   Use when building decentralized finance applications or smart contract protocols.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/defi/defi-protocol-templates
 anchors:
 - defi

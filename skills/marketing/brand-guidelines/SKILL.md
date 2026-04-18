@@ -4,7 +4,7 @@ name: brand-guidelines
 description: "Create — Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having"
   Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - brand

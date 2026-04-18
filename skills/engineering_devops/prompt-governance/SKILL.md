@@ -4,7 +4,7 @@ name: prompt-governance
 description: "Build — Use when managing prompts in production at scale: versioning prompts, running A/B tests on prompts, building"
   prompt registries, preventing prompt regressions, or creating eval pipelines for production'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - prompt

@@ -3,7 +3,7 @@ skill_id: healthcare.oral_health_analyzer
 name: oral-health-analyzer
 description: "Analyze — 分析口腔健康数据、识别口腔问题模式、评估口腔健康状况、提供个性化口腔健康建议。支持与营养、慢性病、用药等其他健康数据的关联分析。"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: healthcare/oral-health-analyzer
 anchors:
 - oral

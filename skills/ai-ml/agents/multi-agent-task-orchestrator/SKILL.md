@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.multi_agent_task_orchestrator
 name: multi-agent-task-orchestrator
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/multi-agent-task-orchestrator
 anchors:
 - multi

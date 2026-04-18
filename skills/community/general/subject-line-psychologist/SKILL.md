@@ -3,7 +3,7 @@ skill_id: community.general.subject_line_psychologist
 name: subject-line-psychologist
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/subject-line-psychologist
 anchors:
 - subject

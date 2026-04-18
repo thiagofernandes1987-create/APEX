@@ -3,7 +3,7 @@ skill_id: community.general.devops_troubleshooter
 name: devops-troubleshooter
 description: "Use — Expert DevOps troubleshooter specializing in rapid incident response, advanced debugging, and modern observability."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/devops-troubleshooter
 anchors:
 - devops

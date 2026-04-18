@@ -3,7 +3,7 @@ skill_id: productivity.writing.writing_plans
 name: writing-plans
 description: "Automate — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: productivity/writing/writing-plans
 anchors:
 - writing

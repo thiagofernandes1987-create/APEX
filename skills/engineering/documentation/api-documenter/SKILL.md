@@ -4,7 +4,7 @@ name: api-documenter
 description: "Implement — Master API documentation with OpenAPI 3.1, AI-powered tools, and modern developer experience practices. Create"
   interactive docs, generate SDKs, and build comprehensive developer portals.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/api-documenter
 anchors:
 - documenter

@@ -4,7 +4,7 @@ name: tdd-guide
 description: Test-driven development skill for writing unit tests, generating test fixtures and mocks, analyzing coverage
   gaps, and guiding red-green-refactor workflows across Jest, Pytest, JUnit, Vitest, and Moch
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - guide

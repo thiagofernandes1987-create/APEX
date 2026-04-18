@@ -4,7 +4,7 @@ name: agent-memory-mcp
 description: "Apply — "
   Patterns, Decisions).'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/agent-memory-mcp
 anchors:
 - agent

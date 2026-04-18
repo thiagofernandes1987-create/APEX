@@ -112,7 +112,7 @@ apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: LLM_BEHAVIOR
 skill_id: finance.partner_built.spglobal.tear_sheet
-status: CANDIDATE
+status: ADOPTED
 ---
 # Financial Tear Sheet Generator
 

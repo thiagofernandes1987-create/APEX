@@ -4,7 +4,7 @@ name: saas-multi-tenant
 description: "Implement — "
   isolation, and safe cross-tenant admin patterns in PostgreSQL and TypeScript.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/saas-multi-tenant
 anchors:
 - saas

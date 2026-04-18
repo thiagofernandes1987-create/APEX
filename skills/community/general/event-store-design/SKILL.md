@@ -4,7 +4,7 @@ name: event-store-design
 description: "Use — "
   choosing event store technologies, or implementing event persistence patterns.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/event-store-design
 anchors:
 - event

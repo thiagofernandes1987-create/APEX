@@ -4,7 +4,7 @@ name: competitor-alternatives
 description: "Create — When the user wants to create competitor comparison or alternative pages for SEO and sales enablement. Also use"
   when the user mentions 'alternative page,' 'vs page,' 'competitor comparison,' 'comparis
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - competitor

@@ -4,7 +4,7 @@ name: prepare-release
 description: "Use — Prepare a new release by collecting commits, generating bilingual release notes, updating version files, and"
   creating a release branch with PR. Use when asked to prepare/create a release, bump version
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/productivity
 anchors:
 - prepare

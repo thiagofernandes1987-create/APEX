@@ -4,7 +4,7 @@ name: zod-validation-expert
 description: "Implement — "
   and integration with React Hook Form, Next.js, and tRPC.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/zod-validation-expert
 anchors:
 - validation

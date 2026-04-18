@@ -4,7 +4,7 @@ name: business-investment-advisor
 description: "Design — Business investment analysis and capital allocation advisor. Use when evaluating whether to invest in equipment,"
   real estate, a new business, hiring, technology, or any capital expenditure. Also use f
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - business

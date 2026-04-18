@@ -3,7 +3,7 @@ skill_id: engineering_frontend.code_to_prd
 name: code-to-prd
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend
 anchors:
 - code

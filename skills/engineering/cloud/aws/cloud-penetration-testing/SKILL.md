@@ -4,7 +4,7 @@ name: cloud-penetration-testing
 description: "Implement — "
   (AWS), and Google Cloud Platform (GCP).'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/cloud-penetration-testing
 anchors:
 - cloud

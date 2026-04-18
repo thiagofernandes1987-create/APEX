@@ -3,7 +3,7 @@ skill_id: healthcare.travel_health_analyzer
 name: travel-health-analyzer
 description: "Analyze — 分析旅行健康数据、评估目的地健康风险、提供疫苗接种建议、生成多语言紧急医疗信息卡片。支持WHO/CDC数据集成的专业级旅行健康风险评估。"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: healthcare/travel-health-analyzer
 anchors:
 - travel

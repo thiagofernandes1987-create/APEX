@@ -4,7 +4,7 @@ name: playwright-skill
 description: "Use — "
   global, or project-specific). Before executing any commands, determine the skill d'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/playwright-skill
 anchors:
 - playwright

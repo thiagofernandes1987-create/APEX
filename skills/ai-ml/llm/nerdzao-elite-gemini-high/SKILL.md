@@ -4,7 +4,7 @@ name: nerdzao-elite-gemini-high
 description: "Apply — "
   com foco em qualidade máxima e eficiência de tokens.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/nerdzao-elite-gemini-high
 anchors:
 - nerdzao

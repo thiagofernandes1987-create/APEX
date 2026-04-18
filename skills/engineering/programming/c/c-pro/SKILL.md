@@ -3,7 +3,7 @@ skill_id: engineering.programming.c.c_pro
 name: c-pro
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/c/c-pro
 anchors:
 - write

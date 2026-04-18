@@ -4,7 +4,7 @@ name: senior-prompt-engineer
 description: "Use — This skill should be used when the user asks to 'optimize prompts', 'design prompt templates', 'evaluate LLM"
   outputs', 'build agentic systems', 'implement RAG', 'create few-shot examples', 'analyze to
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm
 anchors:
 - senior

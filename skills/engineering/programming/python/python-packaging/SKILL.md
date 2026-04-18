@@ -4,7 +4,7 @@ name: python-packaging
 description: "Implement — "
   pyproject.toml, and publishing to PyPI.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/python-packaging
 anchors:
 - python

@@ -4,7 +4,7 @@ name: senior-fullstack
 description: "Use — Fullstack development toolkit with project scaffolding for Next.js, FastAPI, MERN, and Django stacks, code quality"
   analysis with security and complexity scoring, and stack selection guidance. Use when
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - senior

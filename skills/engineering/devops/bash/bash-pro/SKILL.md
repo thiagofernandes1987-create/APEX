@@ -3,7 +3,7 @@ skill_id: engineering.devops.bash.bash_pro
 name: bash-pro
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/bash/bash-pro
 anchors:
 - bash

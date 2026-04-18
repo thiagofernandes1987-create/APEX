@@ -3,11 +3,21 @@ name: "pr-review-expert"
 description: "Implement — Use when the user asks to review pull requests, analyze code changes, check for security issues in PRs, or assess code quality of diffs."
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.pr-review-expert
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - engineering
   - security
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from pr review expert"
 ---
 
 # PR Review Expert

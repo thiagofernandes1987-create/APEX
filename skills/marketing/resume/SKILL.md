@@ -3,7 +3,7 @@ skill_id: marketing.resume
 name: resume
 description: "Create — Resume a paused experiment. Checkout the experiment branch, read results history, continue iterating."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - resume

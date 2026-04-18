@@ -4,7 +4,7 @@ name: theme-factory
 description: "Use — "
   selected color palettes and font pairings. Once a theme is chosen, it can be applied to any '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/theme-factory
 anchors:
 - theme

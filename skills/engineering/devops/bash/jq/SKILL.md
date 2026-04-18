@@ -4,7 +4,7 @@ name: jq
 description: "Implement — "
   for real shell workflows.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/bash/jq
 anchors:
 - expert

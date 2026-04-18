@@ -4,7 +4,7 @@ name: setup
 description: Set up a new autoresearch experiment interactively. Collects domain, target file, eval command, metric, direction,
   and evaluator.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - setup

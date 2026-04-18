@@ -4,7 +4,7 @@ name: startup-analyst
 description: "Manage — Expert startup business analyst specializing in market sizing, financial modeling, competitive analysis, and"
   strategic planning for early-stage companies.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/startup/startup-analyst
 anchors:
 - startup

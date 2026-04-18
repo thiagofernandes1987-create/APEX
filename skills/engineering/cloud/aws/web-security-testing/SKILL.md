@@ -4,7 +4,7 @@ name: web-security-testing
 description: "Implement — "
   flaws, and access control issues.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/web-security-testing
 anchors:
 - security

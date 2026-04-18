@@ -3,7 +3,7 @@ skill_id: ai_ml_agents.spawn
 name: spawn
 description: "Use — Launch N parallel subagents in isolated git worktrees to compete on the session task."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - spawn

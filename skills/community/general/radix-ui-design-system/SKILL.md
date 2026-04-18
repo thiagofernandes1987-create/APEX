@@ -4,7 +4,7 @@ name: radix-ui-design-system
 description: "Use — "
   and compound component patterns for production-grade UI libraries.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/radix-ui-design-system
 anchors:
 - radix

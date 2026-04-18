@@ -3,7 +3,7 @@ skill_id: community.general.impress
 name: impress
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/impress
 anchors:
 - impress

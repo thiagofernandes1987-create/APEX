@@ -3,7 +3,7 @@ skill_id: engineering.devops.deployment.expo_deployment
 name: expo-deployment
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/expo-deployment
 anchors:
 - expo

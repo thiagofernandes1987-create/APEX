@@ -4,7 +4,7 @@ name: agent-designer
 description: "Create — Use when the user asks to design multi-agent systems, create agent architectures, define agent communication"
   patterns, or build autonomous agent workflows.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - agent

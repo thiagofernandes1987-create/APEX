@@ -3,12 +3,22 @@ name: "demo-video"
 description: "Implement — Use when the user asks to create a demo video, product walkthrough, feature showcase, animated presentation, marketing video, or GIF from screenshots or scene descriptions. Orchest"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.demo-video
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - marketing
   - management
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from demo video"
 ---
 
 # Demo Video

@@ -3,7 +3,7 @@ skill_id: community.general.nanobanana_ppt_skills
 name: nanobanana-ppt-skills
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/nanobanana-ppt-skills
 anchors:
 - nanobanana

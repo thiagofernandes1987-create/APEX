@@ -4,7 +4,7 @@ name: fp-errors
 description: "Use — Stop throwing everywhere - handle errors as values using Either and TaskEither for cleaner, more predictable"
   code
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fp-errors
 anchors:
 - errors

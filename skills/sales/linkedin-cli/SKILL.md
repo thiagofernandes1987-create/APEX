@@ -4,7 +4,7 @@ name: linkedin-cli
 description: "Track — "
   create posts, and Sales Navigator.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: sales/linkedin-cli
 anchors:
 - linkedin

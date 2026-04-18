@@ -3,13 +3,26 @@ name: "fda-consultant-specialist"
 description: "Manage — FDA regulatory consultant for medical device companies. Provides 510(k)/PMA/De Novo pathway guidance, QSR (21 CFR 820) compliance, HIPAA assessments, and device cybersecurity. Use "
 executor: HYBRID
 skill_id: business.ra-qm-team.fda-consultant-specialist
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
   - compliance
   - security
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # FDA Consultant Specialist

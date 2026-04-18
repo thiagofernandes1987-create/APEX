@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.error_debugging_multi_agent_review
 name: error-debugging-multi-agent-review
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/error-debugging-multi-agent-review
 anchors:
 - error

@@ -4,7 +4,7 @@ name: design-orchestration
 description: "Apply — Orchestrates design workflows by routing work through brainstorming, multi-agent review, and execution readiness"
   in the correct order.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/design-orchestration
 anchors:
 - design

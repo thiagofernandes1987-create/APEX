@@ -3,7 +3,7 @@ skill_id: engineering.programming.go.go_playwright
 name: go-playwright
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/go/go-playwright
 anchors:
 - playwright

@@ -4,7 +4,7 @@ name: web-scraper
 description: "Use — Web scraping inteligente multi-estrategia. Extrai dados estruturados de paginas web (tabelas, listas, precos)."
   Paginacao, monitoramento e export CSV/JSON.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/web-scraper
 anchors:
 - scraper

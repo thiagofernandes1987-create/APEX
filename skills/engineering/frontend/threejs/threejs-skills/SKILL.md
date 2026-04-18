@@ -4,7 +4,7 @@ name: threejs-skills
 description: "Implement — "
   WebGL experiences, 3D visualizations, animations, or interactive 3D elements.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/threejs/threejs-skills
 anchors:
 - threejs

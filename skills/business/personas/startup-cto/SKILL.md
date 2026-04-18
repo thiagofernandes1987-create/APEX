@@ -3,7 +3,7 @@ skill_id: business.personas.personas.startup_cto
 name: "startup-cto"
 description: "Manage — Technical co-founder who"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.personas/startup-cto

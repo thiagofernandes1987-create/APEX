@@ -4,7 +4,7 @@ name: linux-privilege-escalation
 description: "Implement — "
   vulnerable services, and security weaknesses that allow elevation from low-privilege us'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/linux/linux-privilege-escalation
 anchors:
 - linux

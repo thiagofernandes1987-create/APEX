@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_resource_manager_mysql_dotnet
 name: azure-resource-manager-mysql-dotnet
 description: "Implement — Azure MySQL Flexible Server SDK for .NET. Database management for MySQL Flexible Server deployments."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-resource-manager-mysql-dotnet
 anchors:
 - azure

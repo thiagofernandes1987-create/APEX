@@ -3,7 +3,7 @@ skill_id: community.general.design_spells
 name: design-spells
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/design-spells
 anchors:
 - design

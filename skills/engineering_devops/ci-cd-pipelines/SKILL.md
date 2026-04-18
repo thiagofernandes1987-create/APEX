@@ -3,7 +3,7 @@ skill_id: engineering_devops.ci_cd_pipelines
 name: ci-cd-pipelines
 description: "Deploy — CI/CD pipeline patterns for GitHub Actions, GitLab CI, testing strategies, and deployment automation"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - pipelines

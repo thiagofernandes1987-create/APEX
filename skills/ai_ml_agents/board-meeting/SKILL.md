@@ -4,7 +4,7 @@ name: board-meeting
 description: "Use — Multi-agent board meeting protocol for strategic decisions. Runs a structured 6-phase deliberation: context"
   loading, independent C-suite contributions (isolated, no cross-pollination), critic analysis'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - board

@@ -4,7 +4,7 @@ name: wiki-qa
 description: "Use — Answers questions about a code repository using source file analysis. Use when the user asks a question about"
   how something works, wants to understand a component, or needs help navigating the codebas
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - wiki

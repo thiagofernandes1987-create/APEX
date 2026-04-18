@@ -4,7 +4,7 @@ name: uniprot-database
 description: "Apply — Direct REST API access to UniProt. Protein searches, FASTA retrieval, ID mapping, Swiss-Prot/TrEMBL. For Python"
   workflows with multiple databases, prefer bioservices (unified interface to 40+ services
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/uniprot-database
 anchors:
 - uniprot

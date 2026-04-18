@@ -4,7 +4,7 @@ name: mobile-security-coder
 description: "Audit — Expert in secure mobile coding practices specializing in input validation, WebView security, and mobile-specific"
   security patterns.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/mobile-security-coder
 anchors:
 - mobile

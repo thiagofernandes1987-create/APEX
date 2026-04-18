@@ -4,7 +4,7 @@ name: dbos-golang
 description: "Implement — "
   to existing Go code, creating workflows and steps, or using queues for concurrency contro'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/go/dbos-golang
 anchors:
 - dbos

@@ -4,7 +4,7 @@ name: gh-create-issue
 description: "Create — Use when user wants to create a GitHub issue for the current repository. Must read and follow the repository's"
   issue template format.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/productivity
 anchors:
 - create

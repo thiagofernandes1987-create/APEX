@@ -3,7 +3,7 @@ skill_id: community.general.social_proof_architect
 name: social-proof-architect
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/social-proof-architect
 anchors:
 - social

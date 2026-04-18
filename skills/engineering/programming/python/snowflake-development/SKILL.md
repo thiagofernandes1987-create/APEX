@@ -4,7 +4,7 @@ name: snowflake-development
 description: "Implement — "
   Streams, Tasks, Snowpipe), Cortex AI functions, Cortex Agents, Snowpark Python, dbt in'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/snowflake-development
 anchors:
 - snowflake

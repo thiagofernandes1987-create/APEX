@@ -4,7 +4,7 @@ name: slack-gif-creator
 description: "Use — Toolkit for creating animated GIFs optimized for Slack, with validators for size constraints and composable animation"
   primitives. This skill applies when users request animated GIFs or emoji animation
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - slack

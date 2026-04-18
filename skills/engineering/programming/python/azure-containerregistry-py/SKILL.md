@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.azure_containerregistry_py
 name: azure-containerregistry-py
 description: "Implement — Azure Container Registry SDK for Python. Use for managing container images, artifacts, and repositories."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-containerregistry-py
 anchors:
 - azure

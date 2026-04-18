@@ -3,7 +3,7 @@ skill_id: community.general.voice_ai_development
 name: voice-ai-development
 description: "Use — Expert in building voice AI applications - from real-time voice"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/voice-ai-development
 anchors:
 - voice

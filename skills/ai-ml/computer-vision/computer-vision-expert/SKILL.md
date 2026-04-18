@@ -4,7 +4,7 @@ name: computer-vision-expert
 description: "Apply — "
   and real-time spatial analysis.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/computer-vision/computer-vision-expert
 anchors:
 - computer

@@ -3,7 +3,7 @@ skill_id: ai_ml.ml.hugging_face_community_evals
 name: hugging-face-community-evals
 description: Run local evaluations for Hugging Face Hub models with inspect-ai or lighteval.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/hugging-face-community-evals
 anchors:
 - hugging

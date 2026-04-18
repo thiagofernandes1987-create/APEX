@@ -4,7 +4,7 @@ name: avalonia-layout-zafiro
 description: "Implement — "
   and avoiding XAML redundancy.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/avalonia-layout-zafiro
 anchors:
 - avalonia

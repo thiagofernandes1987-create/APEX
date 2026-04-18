@@ -3,10 +3,23 @@ name: "senior-prompt-engineer"
 description: "Implement — This skill should be used when the user asks to 'optimize prompts', 'design prompt templates', 'evaluate LLM outputs', 'build agentic systems', 'implement RAG', 'create few-shot ex"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-prompt-engineer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # Senior Prompt Engineer

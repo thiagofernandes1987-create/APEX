@@ -4,12 +4,22 @@ description: "Implement — Launch N parallel subagents in isolated git worktree
 command: /hub:spawn
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering.agenthub.spawn
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - git
   - agent
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from spawn"
 ---
 
 # /hub:spawn — Launch Parallel Agents

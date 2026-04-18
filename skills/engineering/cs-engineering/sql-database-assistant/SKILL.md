@@ -3,7 +3,7 @@ name: "sql-database-assistant"
 description: "Implement — Use when the user asks to write SQL queries, optimize database performance, generate migrations, explore database schemas, or work with ORMs like Prisma, Drizzle, TypeORM, or SQLAl"
 executor: HYBRID
 skill_id: engineering.cs-engineering.sql-database-assistant
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
@@ -11,6 +11,19 @@ anchors:
   - data
   - performance
   - documentation
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # SQL Database Assistant - POWERFUL Tier Skill

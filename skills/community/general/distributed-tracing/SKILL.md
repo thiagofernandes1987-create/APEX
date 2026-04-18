@@ -3,7 +3,7 @@ skill_id: community.general.distributed_tracing
 name: distributed-tracing
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/distributed-tracing
 anchors:
 - distributed

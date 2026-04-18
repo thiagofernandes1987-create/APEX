@@ -4,7 +4,7 @@ name: azure-cosmos-ts
 description: "Implement — Azure Cosmos DB JavaScript/TypeScript SDK (@azure/cosmos) for data plane operations. Use for CRUD operations"
   on documents, queries, bulk operations, and container management.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/azure-cosmos-ts
 anchors:
 - azure

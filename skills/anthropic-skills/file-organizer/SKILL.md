@@ -3,11 +3,25 @@ name: file-organizer
 description: "Apply — Intelligently organizes your files and folders across your computer by understanding context, finding duplicates, suggesting better structures, and automating cleanup tasks. Reduce"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.file-organizer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - automation
   - apply
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from file organizer"
 ---
 
 # File Organizer

@@ -3,7 +3,7 @@ skill_id: engineering.devops.deployment.ml_pipeline_workflow
 name: ml-pipeline-workflow
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/ml-pipeline-workflow
 anchors:
 - pipeline

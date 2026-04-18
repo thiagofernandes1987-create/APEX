@@ -4,7 +4,7 @@ name: rag-architect
 description: "Use — Use when the user asks to design RAG pipelines, optimize retrieval strategies, choose embedding models, implement"
   vector search, or build knowledge retrieval systems.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - architect

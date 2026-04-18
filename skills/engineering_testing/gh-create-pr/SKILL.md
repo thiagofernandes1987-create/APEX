@@ -4,7 +4,7 @@ name: gh-create-pr
 description: Create or update GitHub pull requests using the repository-required workflow and template compliance. Use when
   asked to create/open/update a PR so the assistant reads `.github/pull_request_template.md
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - create

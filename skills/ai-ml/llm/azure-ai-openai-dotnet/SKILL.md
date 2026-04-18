@@ -4,7 +4,7 @@ name: azure-ai-openai-dotnet
 description: "Apply — Azure OpenAI SDK for .NET. Client library for Azure OpenAI and OpenAI services. Use for chat completions, embeddings,"
   image generation, audio transcription, and assistants.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/azure-ai-openai-dotnet
 anchors:
 - azure

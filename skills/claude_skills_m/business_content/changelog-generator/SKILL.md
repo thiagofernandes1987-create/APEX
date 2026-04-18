@@ -3,7 +3,7 @@ skill_id: claude_skills_m.business_content.changelog_generator
 name: changelog-generator
 description: "Use — Changelog Generator"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/content
 anchors:
 - changelog

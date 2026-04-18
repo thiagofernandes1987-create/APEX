@@ -4,7 +4,7 @@ name: attack-tree-construction
 description: "Audit — "
   defense gaps, or communicating security risks to stakeholders.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/attack-tree-construction
 anchors:
 - attack

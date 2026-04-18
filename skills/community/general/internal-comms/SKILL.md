@@ -4,7 +4,7 @@ name: internal-comms
 description: "Use — "
   reports, and project updates using repeatable internal formats.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/internal-comms
 anchors:
 - internal

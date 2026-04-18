@@ -4,7 +4,7 @@ name: tutorial-engineer
 description: "Use — Creates step-by-step tutorials and educational content from code. Transforms complex concepts into progressive"
   learning experiences with hands-on examples.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/tutorial-engineer
 anchors:
 - tutorial

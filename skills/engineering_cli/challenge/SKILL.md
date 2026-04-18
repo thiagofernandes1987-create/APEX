@@ -3,7 +3,7 @@ skill_id: engineering_cli.challenge
 name: challenge
 description: "Use — /em -challenge — Pre-Mortem Plan Analysis"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cli
 anchors:
 - challenge

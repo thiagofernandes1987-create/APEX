@@ -3,13 +3,26 @@ name: "api-test-suite-builder"
 description: "Implement — Use when the user asks to generate API tests, create integration test suites, test REST endpoints, or build contract tests."
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.api-test-suite-builder
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - testing
   - api
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # API Test Suite Builder

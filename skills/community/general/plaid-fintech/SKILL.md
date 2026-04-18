@@ -3,7 +3,7 @@ skill_id: community.general.plaid_fintech
 name: plaid-fintech
 description: "Use — Expert patterns for Plaid API integration including Link token"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/plaid-fintech
 anchors:
 - plaid

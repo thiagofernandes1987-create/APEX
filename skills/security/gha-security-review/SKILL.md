@@ -4,7 +4,7 @@ name: gha-security-review
 description: "Audit — "
   scenario — if you can''t build the attack, don''t report it.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/gha-security-review
 anchors:
 - security

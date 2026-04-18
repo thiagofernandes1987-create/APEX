@@ -3,7 +3,7 @@ skill_id: engineering.devops.bash.windows_shell_reliability
 name: windows-shell-reliability
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/bash/windows-shell-reliability
 anchors:
 - windows

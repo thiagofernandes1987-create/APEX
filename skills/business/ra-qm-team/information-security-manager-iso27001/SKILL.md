@@ -3,12 +3,25 @@ name: "information-security-manager-iso27001"
 description: "Manage — ISO 27001 ISMS implementation and cybersecurity governance for HealthTech and MedTech companies. Use for ISMS design, security risk assessment, control implementation, ISO 27001 ce"
 executor: HYBRID
 skill_id: business.ra-qm-team.information-security-manager-iso27001
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
   - security
   - design
+tier: 1
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # Information Security Manager - ISO 27001

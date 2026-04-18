@@ -3,7 +3,7 @@ skill_id: community.general.brand_perception_psychologist
 name: brand-perception-psychologist
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/brand-perception-psychologist
 anchors:
 - brand

@@ -4,7 +4,7 @@ name: seo-aeo-schema-generator
 description: "Create — "
   script blocks. Activate when the user wants to generate schema markup, JSO'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-aeo-schema-generator
 anchors:
 - schema

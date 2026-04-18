@@ -3,7 +3,7 @@ skill_id: ai_ml_agents.status
 name: status
 description: "Use — Show DAG state, agent progress, and branch status for an AgentHub session."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - status

@@ -4,7 +4,7 @@ name: odoo-shopify-integration
 description: "Analyze — "
   external API or connector modules.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-shopify-integration
 anchors:
 - odoo

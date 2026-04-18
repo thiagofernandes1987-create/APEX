@@ -3,7 +3,7 @@ skill_id: web3.nft.nft_standards
 name: nft-standards
 description: "Deploy — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/nft/nft-standards
 anchors:
 - standards

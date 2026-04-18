@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.hosted_agents_v2_py
 name: "hosted-agents-v2-py"
 description: "Build hosted agents using Azure AI Projects SDK with ImageBasedHostedAgentDefinition.\nUse when creating container-based agents that run custom code in Azure AI Foundry.\nTriggers: \'ImageBasedHostedA"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
   - hosted
@@ -19,6 +19,23 @@ llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
 apex_version: v00.33.0
 executor: LLM_BEHAVIOR
 security: {level: standard, pii: false, approval_required: false}
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # Azure AI Hosted Agents (Python)

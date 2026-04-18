@@ -4,7 +4,7 @@ name: playwright-java
 description: "Use — "
   JUnit 5, Allure reporting, and parallel execution.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/playwright-java
 anchors:
 - playwright

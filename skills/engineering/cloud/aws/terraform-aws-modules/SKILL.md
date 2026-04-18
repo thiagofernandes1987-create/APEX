@@ -4,7 +4,7 @@ name: terraform-aws-modules
 description: "Implement — "
   or reviewing Terraform AWS infrastructure.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/terraform-aws-modules
 anchors:
 - terraform

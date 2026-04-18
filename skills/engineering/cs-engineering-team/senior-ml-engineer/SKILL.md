@@ -14,7 +14,7 @@ triggers:
   - automated retraining
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-ml-engineer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
@@ -22,6 +22,19 @@ anchors:
   - ai_ml
   - monitoring
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 # Senior ML Engineer

@@ -3,7 +3,7 @@ skill_id: community.general.food_database_query
 name: food-database-query
 description: "Use — Food Database Query"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/food-database-query
 anchors:
 - food

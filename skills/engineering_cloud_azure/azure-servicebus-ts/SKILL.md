@@ -4,7 +4,7 @@ name: azure-servicebus-ts
 description: 'Build messaging applications using Azure Service Bus SDK for JavaScript (@azure/service-bus). Use when implementing
   queues, topics/subscriptions, message sessions, dead-letter handling, or enterprise '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

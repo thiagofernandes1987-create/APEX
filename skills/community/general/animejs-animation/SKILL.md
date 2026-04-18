@@ -3,7 +3,7 @@ skill_id: community.general.animejs_animation
 name: animejs-animation
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/animejs-animation
 anchors:
 - animejs

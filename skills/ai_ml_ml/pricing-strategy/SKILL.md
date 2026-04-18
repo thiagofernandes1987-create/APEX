@@ -4,7 +4,7 @@ name: pricing-strategy
 description: Design, optimize, and communicate SaaS pricing — tier structure, value metrics, pricing pages, and price increase
   strategy. Use when building a pricing model from scratch, redesigning existing pricing
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - pricing

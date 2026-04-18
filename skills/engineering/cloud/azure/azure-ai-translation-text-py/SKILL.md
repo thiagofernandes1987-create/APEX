@@ -4,7 +4,7 @@ name: azure-ai-translation-text-py
 description: "Implement — Azure AI Text Translation SDK for real-time text translation, transliteration, language detection, and dictionary"
   lookup. Use for translating text content in applications.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-translation-text-py
 anchors:
 - azure

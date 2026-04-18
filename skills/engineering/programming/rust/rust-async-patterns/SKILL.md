@@ -4,7 +4,7 @@ name: rust-async-patterns
 description: "Implement — "
   building async Rust applications, implementing concurrent systems, or debugging async code.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/rust-async-patterns
 anchors:
 - rust

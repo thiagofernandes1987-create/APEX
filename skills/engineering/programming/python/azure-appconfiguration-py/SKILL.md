@@ -4,7 +4,7 @@ name: azure-appconfiguration-py
 description: "Implement — Azure App Configuration SDK for Python. Use for centralized configuration management, feature flags, and dynamic"
   settings.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-appconfiguration-py
 anchors:
 - azure

@@ -4,7 +4,7 @@ name: azure-ai-anomalydetector-java
 description: "Implement — "
   anomaly detection, time-series analysis, or AI-powered monitoring.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-anomalydetector-java
 anchors:
 - azure

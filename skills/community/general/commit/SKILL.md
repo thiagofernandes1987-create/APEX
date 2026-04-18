@@ -4,7 +4,7 @@ name: commit
 description: "Use — ALWAYS use this skill when committing code changes — never commit directly without it. Creates commits following"
   Sentry conventions with proper conventional commit format and issue references. Trigger
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/commit
 anchors:
 - commit

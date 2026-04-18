@@ -4,7 +4,7 @@ name: hono
 description: "Implement — "
   and any WinterCG-compatible runtime.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/nodejs/hono
 anchors:
 - hono

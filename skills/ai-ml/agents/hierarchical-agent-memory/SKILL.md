@@ -4,7 +4,7 @@ name: hierarchical-agent-memory
 description: "Apply — "
   savings via dashboard, and routes agents to the right sub-context.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/hierarchical-agent-memory
 anchors:
 - hierarchical

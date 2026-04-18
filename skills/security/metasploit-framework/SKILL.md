@@ -4,7 +4,7 @@ name: metasploit-framework
 description: "Audit — "
   You must have explicit, written permission from the system owner before using this tool. > M'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/metasploit-framework
 anchors:
 - metasploit

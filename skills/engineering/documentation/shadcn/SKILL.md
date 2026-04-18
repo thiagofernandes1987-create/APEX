@@ -4,7 +4,7 @@ name: shadcn
 description: "Implement — Manages shadcn/ui components and projects, providing context, documentation, and usage patterns for building"
   modern design systems.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/shadcn
 anchors:
 - shadcn

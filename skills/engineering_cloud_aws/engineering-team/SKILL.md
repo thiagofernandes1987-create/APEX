@@ -4,7 +4,7 @@ name: engineering-skills
 description: "Use — 23 engineering agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw, and 6 more tools."
   Architecture, frontend, backend, QA, DevOps, security, AI/ML, data engineering, Playwrig
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws
 anchors:
 - engineering

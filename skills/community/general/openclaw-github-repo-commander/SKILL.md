@@ -3,7 +3,7 @@ skill_id: community.general.openclaw_github_repo_commander
 name: openclaw-github-repo-commander
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/openclaw-github-repo-commander
 anchors:
 - openclaw

@@ -3,7 +3,7 @@ skill_id: marketing.seo.content_creator
 name: content-creator
 description: "Create — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/content-creator
 anchors:
 - content

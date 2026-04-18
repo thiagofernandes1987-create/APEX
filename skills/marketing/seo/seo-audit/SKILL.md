@@ -3,7 +3,7 @@ skill_id: marketing.seo.seo_audit
 name: seo-audit
 description: "Create — Diagnose and audit SEO issues affecting crawlability, indexation, rankings, and organic performance."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-audit
 anchors:
 - audit

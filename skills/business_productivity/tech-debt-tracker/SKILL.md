@@ -4,7 +4,7 @@ name: tech-debt-tracker
 description: "Generate — Scan codebases for technical debt, score severity, track trends, and generate prioritized remediation plans."
   Use when users mention tech debt, code quality, refactoring priority, debt scoring, cleanup
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/productivity
 anchors:
 - tech

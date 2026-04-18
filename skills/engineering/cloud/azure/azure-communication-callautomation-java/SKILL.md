@@ -4,7 +4,7 @@ name: azure-communication-callautomation-java
 description: "Implement — "
   interactions.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-communication-callautomation-java
 anchors:
 - azure

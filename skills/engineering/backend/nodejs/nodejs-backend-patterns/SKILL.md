@@ -4,7 +4,7 @@ name: nodejs-backend-patterns
 description: "Implement — "
   with modern frameworks, architectural patterns, and best practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/nodejs/nodejs-backend-patterns
 anchors:
 - nodejs

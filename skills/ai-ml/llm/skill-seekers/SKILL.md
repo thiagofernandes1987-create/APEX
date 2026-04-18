@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.skill_seekers
 name: skill-seekers
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/skill-seekers
 anchors:
 - skill

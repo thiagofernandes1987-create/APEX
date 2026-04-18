@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.azure_ai_agents_persistent_java
 name: azure-ai-agents-persistent-java
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

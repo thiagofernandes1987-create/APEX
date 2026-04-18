@@ -4,7 +4,7 @@ name: bats-testing-patterns
 description: "Implement — "
   for shell scripts, CI/CD pipelines, or requiring test-driven development of shell utilities.'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/bash/bats-testing-patterns
 anchors:
 - bats

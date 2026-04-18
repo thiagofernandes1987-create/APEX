@@ -3,7 +3,7 @@ skill_id: engineering.cloud.aws.terraform_module_library
 name: terraform-module-library
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/terraform-module-library
 anchors:
 - terraform

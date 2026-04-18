@@ -4,7 +4,7 @@ name: azure-mgmt-arizeaiobservabilityeval-dotnet
 description: "Use — Azure Resource Manager SDK for Arize AI Observability and Evaluation (.NET). Use when managing Arize AI organizations\"
   \ \non Azure via Azure Marketplace, creating/updating/deleting Arize resources, or i"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

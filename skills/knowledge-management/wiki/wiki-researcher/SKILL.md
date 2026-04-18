@@ -3,7 +3,7 @@ skill_id: knowledge_management.wiki.wiki_researcher
 name: "wiki-researcher"
 description: "Use — You are an expert software engineer and systems analyst. Use when user asks \"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: knowledge-management/wiki/wiki-researcher
 anchors:
   - wiki
@@ -23,6 +23,16 @@ llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
 apex_version: v00.33.0
 executor: LLM_BEHAVIOR
 security: {level: standard, pii: false, approval_required: false}
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from wiki researcher"
 ---
 
 # Wiki Researcher

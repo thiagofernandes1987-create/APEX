@@ -4,7 +4,7 @@ name: elixir-pro
 description: Write idiomatic Elixir code with OTP patterns, supervision trees, and Phoenix LiveView. Masters concurrency,
   fault tolerance, and distributed systems.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/elixir-pro
 anchors:
 - elixir

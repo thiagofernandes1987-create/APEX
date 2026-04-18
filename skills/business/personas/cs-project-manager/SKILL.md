@@ -3,7 +3,7 @@ skill_id: business.personas.project-management.cs_project_manager
 name: "cs-project-manager"
 description: "Manage — Project Manager agent for sprint planning, Jira/Confluence workflows, Scrum ceremonies, and stakeholder reporting. Orchestrates project-management skills."
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.project-management/cs-project-manager

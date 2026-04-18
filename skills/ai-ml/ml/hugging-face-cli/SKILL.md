@@ -3,7 +3,7 @@ skill_id: ai_ml.ml.hugging_face_cli
 name: hugging-face-cli
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/hugging-face-cli
 anchors:
 - hugging

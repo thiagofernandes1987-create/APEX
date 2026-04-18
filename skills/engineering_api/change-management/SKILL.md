@@ -4,7 +4,7 @@ name: change-management
 description: "Use — Framework for rolling out organizational changes without chaos. Covers the ADKAR model adapted for startups,"
   communication templates, resistance patterns, and change fatigue management. Handles proces
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - change

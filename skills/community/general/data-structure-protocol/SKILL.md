@@ -4,7 +4,7 @@ name: data-structure-protocol
 description: "Use — "
   why connections exist without re-reading the whole repo.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/data-structure-protocol
 anchors:
 - data

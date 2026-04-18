@@ -1,13 +1,23 @@
 ---
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.returns_analysis_3
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: true, approval_required: true}
 anchors:
   - finance
   - testing
   - ai_ml
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from returns analysis"
 ---
 # Returns Analysis
 

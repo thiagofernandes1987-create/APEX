@@ -4,7 +4,7 @@ name: tavily-web
 description: "Automate — "
   search the web for current information, extracting content from URLs, or crawling websites.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: integrations/tavily/tavily-web
 anchors:
 - tavily

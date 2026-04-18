@@ -5,7 +5,7 @@ requires:
   mcp: [rube]
 executor: HYBRID
 skill_id: integrations.composio.fillout_forms-automation
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 extends: integrations.composio.meta
 toolkit: fillout_forms-automation
@@ -15,6 +15,19 @@ anchors:
   - integration
   - api
   - workflow
+tier: 3
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
+what_if_fails: >
+  FALLBACK: If Fillout_Forms Automation cannot complete, provide partial results with
+  explicit gaps noted. Never block workflow silently.
+  ESCALATE: If core capability is unavailable, suggest nearest alternative skill.
+  RULE: Always explain what failed and what manual steps can substitute.
 ---
 
 # Fillout Automation via Rube MCP

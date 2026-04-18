@@ -4,7 +4,7 @@ name: azure-kubernetes
 description: Plan, create, and configure production-ready Azure Kubernetes Service (AKS) clusters. Covers Day-0 checklist,
   SKU selection (Automatic vs Standard), networking options (private API server, Azure CNI O
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

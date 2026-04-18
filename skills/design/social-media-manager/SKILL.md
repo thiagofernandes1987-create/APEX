@@ -4,7 +4,7 @@ name: social-media-manager
 description: "Design — When the user wants to develop social media strategy, plan content calendars, manage community engagement, or"
   grow their social presence across platforms. Also use when the user mentions 'social media
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - social

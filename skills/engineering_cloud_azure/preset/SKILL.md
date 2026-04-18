@@ -4,7 +4,7 @@ name: preset
 description: "Deploy — Intelligently deploys Azure OpenAI models to optimal regions by analyzing capacity across all available regions."
   Automatically checks current region first and shows alternatives if needed. USE FOR: qu'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - preset

@@ -3,11 +3,21 @@ name: "risk-management-specialist"
 description: "Manage — Medical device risk management specialist implementing ISO 14971 throughout product lifecycle. Provides risk analysis, risk evaluation, risk control, and post-production informatio"
 executor: HYBRID
 skill_id: business.ra-qm-team.risk-management-specialist
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - management
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from risk management specialist"
 ---
 
 # Risk Management Specialist

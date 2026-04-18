@@ -4,7 +4,7 @@ name: google-drive-automation
 description: "Apply — "
   access.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/google-drive-automation
 anchors:
 - google

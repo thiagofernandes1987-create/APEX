@@ -3,7 +3,7 @@ skill_id: community.general.inngest
 name: inngest
 description: "Use — Inngest expert for serverless-first background jobs, event-driven"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/inngest
 anchors:
 - inngest

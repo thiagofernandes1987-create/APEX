@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_ai_formrecognizer_java
 name: azure-ai-formrecognizer-java
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-formrecognizer-java
 anchors:
 - azure

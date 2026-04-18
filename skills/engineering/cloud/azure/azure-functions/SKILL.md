@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_functions
 name: azure-functions
 description: "Implement — Expert patterns for Azure Functions development including isolated"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-functions
 anchors:
 - azure

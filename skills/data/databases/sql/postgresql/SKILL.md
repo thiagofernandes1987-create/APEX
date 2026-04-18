@@ -4,7 +4,7 @@ name: postgresql
 description: "Analyze — "
   patterns, and advanced features'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/postgresql
 anchors:
 - postgresql

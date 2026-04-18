@@ -3,7 +3,7 @@ skill_id: ai_ml.ml.hugging_face_model_trainer
 name: hugging-face-model-trainer
 description: "Apply — Train or fine-tune TRL language models on Hugging Face Jobs, including SFT, DPO, GRPO, and GGUF export."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/hugging-face-model-trainer
 anchors:
 - hugging

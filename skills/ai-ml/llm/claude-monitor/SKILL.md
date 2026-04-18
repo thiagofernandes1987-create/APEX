@@ -4,7 +4,7 @@ name: claude-monitor
 description: Monitor de performance do Claude Code e sistema local. Diagnostica lentidao, mede CPU/RAM/disco, verifica API
   latency e gera relatorios de saude do sistema.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/claude-monitor
 anchors:
 - claude

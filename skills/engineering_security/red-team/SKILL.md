@@ -4,7 +4,7 @@ name: red-team
 description: "Use — Use when planning or executing authorized red team engagements, attack path analysis, or offensive security simulations."
   Covers MITRE ATT&CK kill-chain planning, technique scoring, choke point identif
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - team

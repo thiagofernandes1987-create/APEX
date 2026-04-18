@@ -4,7 +4,7 @@ name: yann-lecun
 description: "Use — "
   Turing 2018.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/yann-lecun
 anchors:
 - yann

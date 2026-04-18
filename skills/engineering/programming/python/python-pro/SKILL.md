@@ -4,7 +4,7 @@ name: python-pro
 description: "Implement — Master Python 3.12+ with modern features, async programming, performance optimization, and production-ready practices."
   Expert in the latest Python ecosystem including uv, ruff, pydantic, and FastAPI.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/python-pro
 anchors:
 - python

@@ -3,7 +3,7 @@ skill_id: engineering.cloud.aws.aws_cost_optimizer
 name: aws-cost-optimizer
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/aws-cost-optimizer
 anchors:
 - cost

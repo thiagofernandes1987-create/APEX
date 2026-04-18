@@ -4,7 +4,7 @@ name: performance-optimizer
 description: "Use — "
   improvements.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/performance-optimizer
 anchors:
 - performance

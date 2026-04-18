@@ -4,7 +4,7 @@ name: os-scripting
 description: "Implement — "
   system administration, debugging, and automation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/bash/os-scripting
 anchors:
 - scripting

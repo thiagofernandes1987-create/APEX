@@ -4,7 +4,7 @@ name: wiki-architect
 description: "Design — Analyzes code repositories and generates hierarchical documentation structures with onboarding guides. Use when"
   the user wants to create a wiki, generate documentation, map a codebase structure, or un
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - wiki

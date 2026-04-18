@@ -4,7 +4,7 @@ name: seo-aeo-landing-page-writer
 description: "Create — "
   Activate when the user wants to write or generate a landing page for a product, service, or '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-aeo-landing-page-writer
 anchors:
 - landing

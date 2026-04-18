@@ -3,7 +3,7 @@ skill_id: engineering.testing.tdd_workflows_tdd_cycle
 name: tdd-workflows-tdd-cycle
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/tdd-workflows-tdd-cycle
 anchors:
 - workflows

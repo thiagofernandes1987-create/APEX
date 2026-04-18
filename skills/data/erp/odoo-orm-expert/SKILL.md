@@ -4,7 +4,7 @@ name: odoo-orm-expert
 description: "Analyze — "
   query techniques.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-orm-expert
 anchors:
 - odoo

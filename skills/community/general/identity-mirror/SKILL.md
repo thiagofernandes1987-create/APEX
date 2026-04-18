@@ -3,7 +3,7 @@ skill_id: community.general.identity_mirror
 name: identity-mirror
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/identity-mirror
 anchors:
 - identity

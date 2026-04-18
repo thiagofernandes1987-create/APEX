@@ -4,7 +4,7 @@ name: threejs-loaders
 description: "Implement — Three.js asset loading - GLTF, textures, images, models, async patterns. Use when loading 3D models, textures,"
   HDR environments, or managing loading progress.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/threejs/threejs-loaders
 anchors:
 - threejs

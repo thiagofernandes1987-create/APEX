@@ -4,7 +4,7 @@ name: azure-ai-agents-persistent-dotnet
 description: "Apply — Azure AI Agents Persistent SDK for .NET. Low-level SDK for creating and managing AI agents with threads, messages,"
   runs, and tools.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/azure-ai-agents-persistent-dotnet
 anchors:
 - azure

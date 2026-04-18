@@ -3,7 +3,7 @@ skill_id: engineering.testing.ui_visual_validator
 name: ui-visual-validator
 description: "Implement — Rigorous visual validation expert specializing in UI testing, design system compliance, and accessibility verification."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/ui-visual-validator
 anchors:
 - visual

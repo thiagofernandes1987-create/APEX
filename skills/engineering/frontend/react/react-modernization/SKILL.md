@@ -4,7 +4,7 @@ name: react-modernization
 description: "Implement — "
   transformation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/react-modernization
 anchors:
 - react

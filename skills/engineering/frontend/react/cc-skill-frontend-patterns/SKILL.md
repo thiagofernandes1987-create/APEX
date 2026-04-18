@@ -4,7 +4,7 @@ name: cc-skill-frontend-patterns
 description: "Implement — "
   practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/cc-skill-frontend-patterns
 anchors:
 - skill

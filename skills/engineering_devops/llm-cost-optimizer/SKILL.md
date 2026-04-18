@@ -4,7 +4,7 @@ name: llm-cost-optimizer
 description: "Use — Use when you need to reduce LLM API spend, control token usage, route between models by cost/quality, implement"
   prompt caching, or build cost observability for AI features. Triggers: ''my AI costs are '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - cost

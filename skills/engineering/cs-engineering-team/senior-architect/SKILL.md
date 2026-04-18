@@ -3,10 +3,24 @@ name: "senior-architect"
 description: "Implement — This skill should be used when the user asks to 'design system architecture', 'evaluate microservices vs monolith', 'create architecture diagrams', 'analyze dependencies', 'choose "
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-architect
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from senior architect"
 ---
 
 # Senior Architect

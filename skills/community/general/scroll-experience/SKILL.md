@@ -3,7 +3,7 @@ skill_id: community.general.scroll_experience
 name: scroll-experience
 description: "Use — Expert in building immersive scroll-driven experiences - parallax"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/scroll-experience
 anchors:
 - scroll

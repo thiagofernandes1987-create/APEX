@@ -4,7 +4,7 @@ name: wellally-tech
 description: "Analyze — "
   base, providing data import and knowledge reference for personal health management sys'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: healthcare/wellally-tech
 anchors:
 - wellally

@@ -4,7 +4,7 @@ name: sast-configuration
 description: "Audit — "
   security scanning across multiple programming languages.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/sast-configuration
 anchors:
 - sast

@@ -4,7 +4,7 @@ name: seo-content-auditor
 description: "Create — Analyzes provided content for quality, E-E-A-T signals, and SEO best practices. Scores content and provides improvement"
   recommendations based on established guidelines.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-content-auditor
 anchors:
 - content

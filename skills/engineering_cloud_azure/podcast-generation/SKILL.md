@@ -4,7 +4,7 @@ name: podcast-generation
 description: Generate AI-powered podcast-style audio narratives using Azure OpenAI's GPT Realtime Mini model via WebSocket.
   Use when building text-to-speech features, audio narrative generation, podcast creation f
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - podcast

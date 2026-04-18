@@ -8,12 +8,34 @@ metadata:
   version: "2.1.0"
 skill_id: design.design
 executor: HYBRID
-status: CANDIDATE
+status: ADOPTED
 security: { level: standard, pii: false, approval_required: false }
 anchors:
   - design
   - frontend
   - engineering
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
+what_if_fails: >
+  FALLBACK: If Ckm:Design cannot complete, provide partial results with
+  explicit gaps noted. Never block workflow silently.
+  ESCALATE: If core capability is unavailable, suggest nearest alternative skill.
+  RULE: Always explain what failed and what manual steps can substitute.
 ---
 
 # Design

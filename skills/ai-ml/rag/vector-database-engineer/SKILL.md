@@ -4,7 +4,7 @@ name: vector-database-engineer
 description: "Apply — "
   Qdrant, Milvus, and pgvector for RAG applications, recommendation systems, and simila'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/vector-database-engineer
 anchors:
 - vector

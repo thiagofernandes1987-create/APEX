@@ -4,7 +4,7 @@ name: competitive-teardown
 description: "Analyze — Analyzes competitor products and companies by synthesizing data from pricing pages, app store reviews, job postings,"
   SEO signals, and social media into structured competitive intelligence. Produces fe
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - competitive

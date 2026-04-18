@@ -4,7 +4,7 @@ name: azure-rbac
 description: "Generate — Helps users find the right Azure RBAC role for an identity with least privilege access, then generate CLI commands"
   and Bicep code to assign it. Also provides guidance on permissions required to grant '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

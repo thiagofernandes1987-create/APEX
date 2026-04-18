@@ -4,7 +4,7 @@ name: deployment-engineer
 description: "Implement — Expert deployment engineer specializing in modern CI/CD pipelines, GitOps workflows, and advanced deployment"
   automation.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/deployment-engineer
 anchors:
 - deployment

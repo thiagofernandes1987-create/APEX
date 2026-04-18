@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.claude_speed_reader
 name: claude-speed-reader
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/claude-speed-reader
 anchors:
 - claude

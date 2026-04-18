@@ -3,7 +3,7 @@ skill_id: community.general.orchestrate_batch_refactor
 name: '''orchestrate-batch-refactor'''
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/orchestrate-batch-refactor
 anchors:
 - orchestrate

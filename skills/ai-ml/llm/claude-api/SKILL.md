@@ -4,7 +4,7 @@ name: claude-api
 description: "Apply — "
   or user asks to use Claude API, Anthropic SDKs, or Agent SDK. DO NOT TR'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/claude-api
 anchors:
 - claude

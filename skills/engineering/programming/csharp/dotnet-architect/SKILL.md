@@ -4,7 +4,7 @@ name: dotnet-architect
 description: "Implement — Expert .NET backend architect specializing in C#, ASP.NET Core, Entity Framework, Dapper, and enterprise application"
   patterns.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/dotnet-architect
 anchors:
 - dotnet

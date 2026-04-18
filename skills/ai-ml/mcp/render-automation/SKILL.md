@@ -4,7 +4,7 @@ name: render-automation
 description: "Apply — "
   for current schemas.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/render-automation
 anchors:
 - render

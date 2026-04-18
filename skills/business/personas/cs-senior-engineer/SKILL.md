@@ -3,7 +3,7 @@ skill_id: business.personas.engineering.cs_senior_engineer
 name: "cs-senior-engineer"
 description: "Manage — Senior Engineer agent for architecture decisions, code review, DevOps, and API design. Orchestrates engineering and engineering-team skills for technical implementation work. Spawn"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.engineering/cs-senior-engineer

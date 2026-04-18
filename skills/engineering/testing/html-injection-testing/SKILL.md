@@ -4,7 +4,7 @@ name: html-injection-testing
 description: "Implement — "
   into web applications. This vulnerability enables attackers to modify page appearance, create'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/html-injection-testing
 anchors:
 - html

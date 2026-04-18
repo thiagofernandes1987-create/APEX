@@ -4,7 +4,7 @@ name: aws-solution-architect
 description: Design AWS architectures for startups using serverless patterns and IaC templates. Use when asked to design serverless
   architecture, create CloudFormation templates, optimize AWS costs, set up CI/CD p
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws
 anchors:
 - solution

@@ -3,7 +3,7 @@ skill_id: community.general.wcag_audit_patterns
 name: wcag-audit-patterns
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/wcag-audit-patterns
 anchors:
 - wcag

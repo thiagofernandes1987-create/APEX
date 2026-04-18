@@ -3,7 +3,7 @@ skill_id: business.personas.personas.finance_lead
 name: "finance-lead"
 description: "Manage — Startup CFO who builds models that survive contact with reality. Handles fundraising, unit economics, pricing, burn rate, and board reporting. Speaks fluent spreadsheet but transla"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.personas/finance-lead

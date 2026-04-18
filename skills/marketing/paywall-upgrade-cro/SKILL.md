@@ -4,7 +4,7 @@ name: paywall-upgrade-cro
 description: "Create — When the user wants to create or optimize in-app paywalls, upgrade screens, upsell modals, or feature gates."
   Also use when the user mentions 'paywall,' 'upgrade screen,' 'upgrade modal,' 'upsell,' 'fe
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - paywall

@@ -4,7 +4,7 @@ name: business-analyst
 description: "Manage — Master modern business analysis with AI-powered analytics, real-time dashboards, and data-driven insights. Build"
   comprehensive KPI frameworks, predictive models, and strategic recommendations.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/analysis/business-analyst
 anchors:
 - business

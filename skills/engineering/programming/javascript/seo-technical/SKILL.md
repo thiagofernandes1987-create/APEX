@@ -4,7 +4,7 @@ name: seo-technical
 description: "Implement — "
   data, JavaScript rendering, and related platform signals like robots.txt and AI crawler acce'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/javascript/seo-technical
 anchors:
 - technical

@@ -4,11 +4,24 @@ description: "Create a new AgentHub collaboration session with task, agent count
 command: /hub:init
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering.agenthub.init
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - agent
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # /hub:init — Create New Session

@@ -4,7 +4,7 @@ name: error-diagnostics-error-trace
 description: "Use — "
   solutions. Set up error tracking systems, configure alerts, implement structured logging'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/error-diagnostics-error-trace
 anchors:
 - error

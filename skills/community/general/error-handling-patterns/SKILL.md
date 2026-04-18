@@ -4,7 +4,7 @@ name: error-handling-patterns
 description: "Use — "
   excellent debugging experiences.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/error-handling-patterns
 anchors:
 - error

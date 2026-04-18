@@ -4,7 +4,7 @@ name: saas-scaffolder
 description: "Generate — Generates complete, production-ready SaaS project boilerplate including authentication, database schemas, billing"
   integration, API routes, and a working dashboard using Next.js 14+ App Router, TypeScr
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/database
 anchors:
 - saas

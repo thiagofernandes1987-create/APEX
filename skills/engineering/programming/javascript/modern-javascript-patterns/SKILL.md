@@ -4,7 +4,7 @@ name: modern-javascript-patterns
 description: "Implement — "
   best practices for writing clean, maintainable, and performant code.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/javascript/modern-javascript-patterns
 anchors:
 - modern

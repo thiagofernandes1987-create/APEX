@@ -4,7 +4,7 @@ name: ms365-tenant-manager
 description: "Automate — Microsoft 365 tenant administration for Global Administrators. Automate M365 tenant setup, Office 365 admin tasks,"
   Azure AD user management, Exchange Online configuration, Teams administration, and se
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - ms365

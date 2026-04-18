@@ -4,7 +4,7 @@ name: azure-security-keyvault-keys-java
 description: "Implement — "
   keys, performing encrypt/decrypt/sign/verify operations, or working with HSM-backed keys.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-security-keyvault-keys-java
 anchors:
 - azure

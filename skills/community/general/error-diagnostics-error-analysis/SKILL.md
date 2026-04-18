@@ -4,7 +4,7 @@ name: error-diagnostics-error-analysis
 description: "Use — "
   production incidents, and implementing comprehensive observability solutions.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/error-diagnostics-error-analysis
 anchors:
 - error

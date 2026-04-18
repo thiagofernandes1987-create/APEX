@@ -4,7 +4,7 @@ name: obsidian-markdown
 description: Create and edit Obsidian Flavored Markdown with wikilinks, embeds, callouts, properties, and other Obsidian-specific
   syntax. Use when working with .md files in Obsidian, or when the user mentions wiki
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/obsidian-markdown
 anchors:
 - obsidian

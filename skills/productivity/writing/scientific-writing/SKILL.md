@@ -4,7 +4,7 @@ name: scientific-writing
 description: "Automate — "
   written outputs. Every document produced is backed by comprehensive literature sear'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: productivity/writing/scientific-writing
 anchors:
 - scientific

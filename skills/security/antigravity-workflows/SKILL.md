@@ -4,7 +4,7 @@ name: antigravity-workflows
 description: "Audit — "
   agent builds, and browser QA.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/antigravity-workflows
 anchors:
 - antigravity

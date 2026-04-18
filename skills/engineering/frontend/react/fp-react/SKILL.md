@@ -4,7 +4,7 @@ name: fp-react
 description: "Implement — Practical patterns for using fp-ts with React - hooks, state, forms, data fetching. Works with React 18/19, Next.js"
   14/15.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/fp-react
 anchors:
 - react

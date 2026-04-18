@@ -4,7 +4,7 @@ name: closed-loop-delivery
 description: "Implement — Use when a coding task must be completed against explicit acceptance criteria with minimal user re-intervention"
   across implementation, review feedback, deployment, and runtime verification.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/closed-loop-delivery
 anchors:
 - closed

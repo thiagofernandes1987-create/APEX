@@ -4,7 +4,7 @@ name: quant-analyst
 description: Build financial models, backtest trading strategies, and analyze market data. Implements risk metrics, portfolio
   optimization, and statistical arbitrage.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/quant-analyst
 anchors:
 - quant

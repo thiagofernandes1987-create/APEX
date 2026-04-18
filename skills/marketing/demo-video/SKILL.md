@@ -4,7 +4,7 @@ name: demo-video
 description: "Create — Use when the user asks to create a demo video, product walkthrough, feature showcase, animated presentation,"
   marketing video, or GIF from screenshots or scene descriptions. Orchestrates playwright, ff
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - demo

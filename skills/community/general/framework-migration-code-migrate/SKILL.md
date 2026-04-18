@@ -4,7 +4,7 @@ name: framework-migration-code-migrate
 description: "Use — "
   and platforms. Generate comprehensive migration plans, automated migration scripts, an'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/framework-migration-code-migrate
 anchors:
 - framework

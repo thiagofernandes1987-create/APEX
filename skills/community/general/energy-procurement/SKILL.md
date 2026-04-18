@@ -4,7 +4,7 @@ name: energy-procurement
 description: "Use — Codified expertise for electricity and gas procurement, tariff optimisation, demand charge management, renewable"
   PPA evaluation, and multi-facility energy cost management.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/energy-procurement
 anchors:
 - energy

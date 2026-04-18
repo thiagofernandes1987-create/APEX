@@ -4,7 +4,7 @@ name: codex-review
 description: "Use — "
   code review before commits, you need automatic CHANGELOG generation, or reviewing lar'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/codex-review
 anchors:
 - codex

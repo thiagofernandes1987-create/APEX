@@ -3,7 +3,7 @@ skill_id: security.network_engineer
 name: network-engineer
 description: "Audit — Expert network engineer specializing in modern cloud networking, security architectures, and performance optimization."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/network-engineer
 anchors:
 - network

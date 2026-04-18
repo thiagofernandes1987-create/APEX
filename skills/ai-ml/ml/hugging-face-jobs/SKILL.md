@@ -3,7 +3,7 @@ skill_id: ai_ml.ml.hugging_face_jobs
 name: hugging-face-jobs
 description: Run workloads on Hugging Face Jobs with managed CPUs, GPUs, TPUs, secrets, and Hub persistence.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/hugging-face-jobs
 anchors:
 - hugging

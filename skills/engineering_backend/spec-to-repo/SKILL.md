@@ -4,7 +4,7 @@ name: spec-to-repo
 description: "Generate — Use when the user says 'build me an app', 'create a project from this spec', 'scaffold a new repo', 'generate"
   a starter', 'turn this idea into code', 'bootstrap a project', 'I have requirements and ne
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend
 anchors:
 - spec

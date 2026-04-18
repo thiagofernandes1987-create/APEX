@@ -4,7 +4,7 @@ name: pm-skills
 description: "Use — 6 project management agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. Senior PM,"
   scrum master, Jira expert (JQL), Confluence expert, Atlassian admin, template creator. MC
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - project

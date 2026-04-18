@@ -3,7 +3,7 @@ skill_id: ai_ml.ml.hugging_face_dataset_viewer
 name: hugging-face-dataset-viewer
 description: "Apply — Query Hugging Face datasets through the Dataset Viewer API for splits, rows, search, filters, and parquet links."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/hugging-face-dataset-viewer
 anchors:
 - hugging

@@ -4,7 +4,7 @@ name: cloud-devops
 description: "Implement — "
   and cloud-native development.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/cloud-devops
 anchors:
 - cloud

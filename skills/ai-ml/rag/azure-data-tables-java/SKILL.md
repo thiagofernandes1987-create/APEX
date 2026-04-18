@@ -4,7 +4,7 @@ name: azure-data-tables-java
 description: "Apply — "
   and Cosmos DB Table API.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-data-tables-java
 anchors:
 - azure

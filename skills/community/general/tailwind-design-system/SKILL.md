@@ -4,7 +4,7 @@ name: tailwind-design-system
 description: "Use — "
   patterns, and accessibility.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/tailwind-design-system
 anchors:
 - tailwind

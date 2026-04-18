@@ -3,7 +3,7 @@ skill_id: engineering_security.dependency_auditor
 name: dependency-auditor
 description: "Use — Dependency Auditor"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - dependency

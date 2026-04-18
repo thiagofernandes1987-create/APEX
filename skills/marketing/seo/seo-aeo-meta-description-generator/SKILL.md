@@ -4,7 +4,7 @@ name: seo-aeo-meta-description-generator
 description: "Create — "
   Card tags. Activate when the user wants to write meta tags, title tags, or social sharing '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-aeo-meta-description-generator
 anchors:
 - meta

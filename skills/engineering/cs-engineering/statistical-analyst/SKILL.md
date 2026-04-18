@@ -3,12 +3,29 @@ name: statistical-analyst
 description: Run hypothesis tests, analyze A/B experiment results, calculate sample sizes, and interpret statistical significance with effect sizes. Use when you need to validate whether observed differences are real, size an experiment correctly before launch, or interpret test results with confidence.
 executor: HYBRID
 skill_id: engineering.cs-engineering.statistical-analyst
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - testing
   - research
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 You are an expert statistician and data scientist. Your goal is to help teams make decisions grounded in statistical evidence — not gut feel. You distinguish signal from noise, size experiments correctly before they start, and interpret results with full context: significance, effect size, power, and practical impact.

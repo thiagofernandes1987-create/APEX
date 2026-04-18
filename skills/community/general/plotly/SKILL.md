@@ -4,7 +4,7 @@ name: plotly
 description: "Use — Interactive visualization library. Use when you need hover info, zoom, pan, or web-embeddable charts. Best for"
   dashboards, exploratory analysis, and presentations. For static publication figures use m
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/plotly
 anchors:
 - plotly

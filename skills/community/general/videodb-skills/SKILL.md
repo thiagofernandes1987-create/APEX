@@ -3,7 +3,7 @@ skill_id: community.general.videodb_skills
 name: videodb-skills
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/videodb-skills
 anchors:
 - videodb

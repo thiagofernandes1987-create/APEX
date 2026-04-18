@@ -4,7 +4,7 @@ name: dbt-transformation-patterns
 description: "Implement — "
   and incremental processing.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/dbt-transformation-patterns
 anchors:
 - transformation

@@ -3,7 +3,7 @@ skill_id: community.general.ai_product
 name: ai-product
 description: "Use — Every product will be AI-powered. The question is whether you'll"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/ai-product
 anchors:
 - product

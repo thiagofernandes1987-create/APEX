@@ -4,7 +4,7 @@ name: aegisops-ai
 description: "Apply — "
   cost drifts, and K8s compliance.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/aegisops-ai
 anchors:
 - aegisops

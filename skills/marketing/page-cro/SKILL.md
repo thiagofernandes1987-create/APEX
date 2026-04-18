@@ -4,7 +4,7 @@ name: page-cro
 description: "Create — When the user wants to optimize, improve, or increase conversions on any marketing page — including homepage,"
   landing pages, pricing pages, feature pages, or blog posts. Also use when the user says 'C
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - page

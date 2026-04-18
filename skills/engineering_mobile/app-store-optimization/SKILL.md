@@ -4,7 +4,7 @@ name: app-store-optimization
 description: "Use — App Store Optimization (ASO) toolkit for researching keywords, analyzing competitor rankings, generating metadata"
   suggestions, and improving app visibility on Apple App Store and Google Play Store. Us
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/mobile
 anchors:
 - store

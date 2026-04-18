@@ -3,7 +3,7 @@ skill_id: awesome_claude.ai_ml_agents.composio_skills
 name: agentql-automation
 description: Automate Agentql tasks via Rube MCP (Composio). Always search tools first for current schemas.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - composio

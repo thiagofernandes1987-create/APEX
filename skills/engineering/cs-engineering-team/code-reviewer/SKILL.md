@@ -3,12 +3,22 @@ name: "code-reviewer"
 description: "Implement — Code review automation for TypeScript, JavaScript, Python, Go, Swift, Kotlin. Analyzes PRs for complexity and risk, checks code quality for SOLID violations and code smells, genera"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.code-reviewer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - code
   - automation
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from code reviewer"
 ---
 
 # Code Reviewer

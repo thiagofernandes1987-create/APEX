@@ -3,7 +3,7 @@ skill_id: security.security_scanning_security_sast
 name: security-scanning-security-sast
 description: "Audit — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/security-scanning-security-sast
 anchors:
 - security

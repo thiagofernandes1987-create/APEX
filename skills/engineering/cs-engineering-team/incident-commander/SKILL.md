@@ -3,11 +3,21 @@ name: "incident-commander"
 description: "Implement — Incident Commander Skill"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.incident-commander
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - reliability
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from incident commander"
 ---
 
 # Incident Commander Skill

@@ -4,7 +4,7 @@ name: godot-4-migration
 description: "Use — "
   and exports.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/godot-4-migration
 anchors:
 - godot

@@ -4,7 +4,7 @@ name: django-perf-review
 description: "Implement — Django performance code review. Use when asked to 'review Django performance', 'find N+1 queries', 'optimize"
   Django', 'check queryset performance', 'database performance', 'Django ORM issues', or audi
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/go/django-perf-review
 anchors:
 - django

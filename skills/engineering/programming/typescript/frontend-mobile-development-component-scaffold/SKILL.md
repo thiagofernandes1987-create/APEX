@@ -4,7 +4,7 @@ name: frontend-mobile-development-component-scaffold
 description: "Implement — "
   performant components. Generate complete component implementations with TypeScript, tests, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/frontend-mobile-development-component-scaffold
 anchors:
 - frontend

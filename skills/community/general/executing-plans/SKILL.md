@@ -3,7 +3,7 @@ skill_id: community.general.executing_plans
 name: executing-plans
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/executing-plans
 anchors:
 - executing

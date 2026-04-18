@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.azure_validate
 name: azure-validate
 description: "Deploy — Pre-deployment validation for Azure readiness. Run deep checks on configuration, infrastructure (Bicep or Terraform), RBAC role assignments, managed identity permissions, and prere"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

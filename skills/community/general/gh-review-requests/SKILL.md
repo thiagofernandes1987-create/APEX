@@ -4,7 +4,7 @@ name: gh-review-requests
 description: Fetch unread GitHub notifications for open PRs where review is requested from a specified team or opened by a
   team member. Use when asked to 'find PRs I need to review', 'show my review requests', 'wh
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/gh-review-requests
 anchors:
 - review

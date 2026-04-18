@@ -3,7 +3,7 @@ skill_id: productivity.writing.avoid_ai_writing
 name: avoid-ai-writing
 description: "Automate — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: productivity/writing/avoid-ai-writing
 anchors:
 - avoid

@@ -4,7 +4,7 @@ name: uxui-principles
 description: "Use — "
   into AI coding sessions.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/uxui-principles
 anchors:
 - uxui

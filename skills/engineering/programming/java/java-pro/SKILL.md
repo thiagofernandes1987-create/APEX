@@ -4,7 +4,7 @@ name: java-pro
 description: "Implement — Master Java 21+ with modern features like virtual threads, pattern matching, and Spring Boot 3.x. Expert in the"
   latest Java ecosystem including GraalVM, Project Loom, and cloud-native patterns.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/java/java-pro
 anchors:
 - java

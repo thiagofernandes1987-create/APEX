@@ -3,7 +3,7 @@ skill_id: engineering_frontend.epic_design
 name: epic-design
 description: "Use — >"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend
 anchors:
 - epic

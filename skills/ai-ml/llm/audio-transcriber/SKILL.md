@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.audio_transcriber
 name: audio-transcriber
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/audio-transcriber
 anchors:
 - audio

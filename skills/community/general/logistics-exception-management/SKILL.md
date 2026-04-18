@@ -4,7 +4,7 @@ name: logistics-exception-management
 description: "Use — Codified expertise for handling freight exceptions, shipment delays, damages, losses, and carrier disputes. Informed"
   by logistics professionals with 15+ years operational experience.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/logistics-exception-management
 anchors:
 - logistics

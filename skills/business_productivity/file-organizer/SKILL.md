@@ -4,7 +4,7 @@ name: file-organizer
 description: "Use — Intelligently organizes your files and folders across your computer by understanding context, finding duplicates,"
   suggesting better structures, and automating cleanup tasks. Reduces cognitive load and
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/productivity
 anchors:
 - file

@@ -4,7 +4,7 @@ name: observability-monitoring-slo-implement
 description: "Use — "
   budget-based engineering practices. Design comprehensive SLO frameworks, establish meaning'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/observability-monitoring-slo-implement
 anchors:
 - observability

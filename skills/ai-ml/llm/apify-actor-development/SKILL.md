@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.apify_actor_development
 name: "apify-actor-development"
 description: "Apply — Important: Before you begin, fill in the generatedBy property in the meta section of .actor/actor.json. Replace it with the tool and model you"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/apify-actor-development
 anchors:
   - apify
@@ -23,6 +23,7 @@ llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
 apex_version: v00.33.0
 executor: LLM_BEHAVIOR
 security: {level: standard, pii: false, approval_required: false}
+tier: 2
 ---
 
 <!-- security-allowlist: curl-pipe-bash, irm-pipe-iex -->

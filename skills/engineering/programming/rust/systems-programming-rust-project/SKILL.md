@@ -4,7 +4,7 @@ name: systems-programming-rust-project
 description: "Implement — "
   Generate complete project structures with cargo tooling, proper module organization, testing'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/systems-programming-rust-project
 anchors:
 - systems

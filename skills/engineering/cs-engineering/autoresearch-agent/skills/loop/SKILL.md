@@ -4,11 +4,24 @@ description: "Implement — Start an autonomous experiment loop with user-select
 command: /ar:loop
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering.autoresearch_agent.loop
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - research
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 # /ar:loop — Autonomous Experiment Loop

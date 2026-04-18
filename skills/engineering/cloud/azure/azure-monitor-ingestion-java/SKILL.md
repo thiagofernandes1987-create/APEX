@@ -4,7 +4,7 @@ name: azure-monitor-ingestion-java
 description: "Implement — Azure Monitor Ingestion SDK for Java. Send custom logs to Azure Monitor via Data Collection Rules (DCR) and Data"
   Collection Endpoints (DCE).
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-monitor-ingestion-java
 anchors:
 - azure

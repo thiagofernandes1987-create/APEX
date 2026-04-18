@@ -3,7 +3,7 @@ name: "senior-data-scientist"
 description: "Implement — World-class senior data scientist skill specialising in statistical modeling, experiment design, causal inference, and predictive analytics. Covers A/B testing (sample sizing, two-"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-data-scientist
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
@@ -12,6 +12,19 @@ anchors:
   - data
   - data_science
   - research
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # Senior Data Scientist

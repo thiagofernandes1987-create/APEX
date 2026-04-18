@@ -3,7 +3,7 @@ name: "gdpr-dsgvo-expert"
 description: "Manage — GDPR and German DSGVO compliance automation. Scans codebases for privacy risks, generates DPIA documentation, tracks data subject rights requests. Use for GDPR compliance assessmen"
 executor: HYBRID
 skill_id: business.ra-qm-team.gdpr-dsgvo-expert
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
@@ -11,6 +11,19 @@ anchors:
   - compliance
   - data
   - documentation
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # GDPR/DSGVO Expert

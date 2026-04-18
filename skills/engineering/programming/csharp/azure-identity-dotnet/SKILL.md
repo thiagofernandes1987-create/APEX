@@ -4,7 +4,7 @@ name: azure-identity-dotnet
 description: "Implement — Azure Identity SDK for .NET. Authentication library for Azure SDK clients using Microsoft Entra ID. Use for DefaultAzureCredential,"
   managed identity, service principals, and developer credentials.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-identity-dotnet
 anchors:
 - azure

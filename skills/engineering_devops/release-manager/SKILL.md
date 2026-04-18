@@ -4,7 +4,7 @@ name: release-manager
 description: "Deploy — Use when the user asks to plan releases, manage changelogs, coordinate deployments, create release branches,"
   or automate versioning.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - release

@@ -3,7 +3,7 @@ name: business-investment-advisor
 description: "Manage — Business investment analysis and capital allocation advisor. Use when evaluating whether to invest in equipment, real estate, a new business, hiring, technology, or any capital exp"
 executor: LLM_BEHAVIOR
 skill_id: business.finance.business-investment-advisor
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
@@ -11,6 +11,16 @@ anchors:
   - management
   - observability
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from business investment advisor"
 ---
 
 # Business Investment Advisor

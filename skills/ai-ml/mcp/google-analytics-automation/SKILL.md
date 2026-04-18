@@ -4,7 +4,7 @@ name: google-analytics-automation
 description: "Apply — "
   key events. Always search tools first for current schemas.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/google-analytics-automation
 anchors:
 - google

@@ -3,7 +3,7 @@ skill_id: engineering.programming.swift.expo_ui_swift_ui
 name: expo-ui-swift-ui
 description: "Implement — expo-ui-swift-ui"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/swift/expo-ui-swift-ui
 anchors:
 - expo

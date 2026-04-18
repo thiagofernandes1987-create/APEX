@@ -6,11 +6,28 @@ description: "Implement — Sync tests with TestRail. Use when user mentions 'te
   or "import from testrail".
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering_team.playwright_pro.testrail
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - testing
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 # TestRail Integration

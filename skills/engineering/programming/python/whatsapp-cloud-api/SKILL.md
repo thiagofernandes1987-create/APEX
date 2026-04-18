@@ -4,7 +4,7 @@ name: whatsapp-cloud-api
 description: "Implement — Integracao com WhatsApp Business Cloud API (Meta). Mensagens, templates, webhooks HMAC-SHA256, automacao de atendimento."
   Boilerplates Node.js e Python.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/whatsapp-cloud-api
 anchors:
 - whatsapp

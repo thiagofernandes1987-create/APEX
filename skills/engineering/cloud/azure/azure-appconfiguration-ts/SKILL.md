@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_appconfiguration_ts
 name: azure-appconfiguration-ts
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-appconfiguration-ts
 anchors:
 - azure

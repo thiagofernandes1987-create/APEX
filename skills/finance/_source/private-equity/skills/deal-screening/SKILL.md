@@ -1,11 +1,24 @@
 ---
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.deal_screening_3
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: true, approval_required: true}
 anchors:
   - finance
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 # Deal Screening
 

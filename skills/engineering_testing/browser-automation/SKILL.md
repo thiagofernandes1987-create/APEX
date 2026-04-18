@@ -4,7 +4,7 @@ name: browser-automation
 description: "Automate — Use when the user asks to automate browser tasks, scrape websites, fill forms, capture screenshots, extract structured"
   data from web pages, or build web automation workflows. NOT for testing — use pla
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - browser

@@ -3,7 +3,7 @@ skill_id: knowledge_management.wiki.wiki_vitepress
 name: "wiki-vitepress"
 description: "'Transform generated wiki Markdown files into a polished VitePress static site with dark theme and interactive Mermaid diagrams. Use when user asks to \'build a site\' or \'package as VitePress\', use"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: knowledge-management/wiki/wiki-vitepress
 anchors:
   - wiki
@@ -23,6 +23,19 @@ llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
 apex_version: v00.33.0
 executor: LLM_BEHAVIOR
 security: {level: standard, pii: false, approval_required: false}
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # Wiki VitePress Packager

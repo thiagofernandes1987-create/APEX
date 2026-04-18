@@ -4,7 +4,7 @@ name: data-quality-frameworks
 description: "Review — "
   data quality pipelines, implementing validation rules, or establishing data contracts.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal/contracts/data-quality-frameworks
 anchors:
 - data

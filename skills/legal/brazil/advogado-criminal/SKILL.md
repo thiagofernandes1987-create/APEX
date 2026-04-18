@@ -4,7 +4,7 @@ name: advogado-criminal
 description: "Review — Advogado criminalista especializado em Maria da Penha, violencia domestica, feminicidio, direito penal brasileiro,"
   medidas protetivas, inquerito policial e acao penal.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal/brazil/advogado-criminal
 anchors:
 - advogado

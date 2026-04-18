@@ -3,7 +3,7 @@ skill_id: engineering.testing.screen_reader_testing
 name: screen-reader-testing
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/screen-reader-testing
 anchors:
 - screen

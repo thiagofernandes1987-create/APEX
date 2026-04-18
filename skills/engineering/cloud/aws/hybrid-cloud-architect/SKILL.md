@@ -4,7 +4,7 @@ name: hybrid-cloud-architect
 description: "Implement — Expert hybrid cloud architect specializing in complex multi-cloud solutions across AWS/Azure/GCP and private"
   clouds (OpenStack/VMware).
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/hybrid-cloud-architect
 anchors:
 - hybrid

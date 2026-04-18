@@ -3,7 +3,7 @@ skill_id: engineering_security.skill_tester
 name: skill-tester
 description: "Use — Skill Tester"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - skill

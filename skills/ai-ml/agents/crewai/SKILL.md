@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.crewai
 name: crewai
 description: "Apply — Expert in CrewAI - the leading role-based multi-agent framework"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/crewai
 anchors:
 - crewai

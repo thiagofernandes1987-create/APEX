@@ -4,7 +4,7 @@ name: react-state-management
 description: "Implement — "
   up global state, managing server state, or choosing between state management solutions.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/react-state-management
 anchors:
 - react

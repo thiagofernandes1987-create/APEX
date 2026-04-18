@@ -3,7 +3,7 @@ skill_id: security.security_auditor
 name: security-auditor
 description: "Audit — Expert security auditor specializing in DevSecOps, comprehensive cybersecurity, and compliance frameworks."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/security-auditor
 anchors:
 - security

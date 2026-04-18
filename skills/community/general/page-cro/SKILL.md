@@ -3,7 +3,7 @@ skill_id: community.general.page_cro
 name: page-cro
 description: Analyze and optimize individual pages for conversion performance.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/page-cro
 anchors:
 - page

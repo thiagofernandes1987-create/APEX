@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.slack_bot_builder
 name: slack-bot-builder
 description: Build Slack apps using the Bolt framework across Python,
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/slack-bot-builder
 anchors:
 - slack

@@ -4,7 +4,7 @@ name: agent-protocol
 description: "Use — Inter-agent communication protocol for C-suite agent teams. Defines invocation syntax, loop prevention, isolation"
   rules, and response formats. Use when C-suite agents need to query each other, coordin
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - agent

@@ -4,7 +4,7 @@ name: skill-improver
 description: "Apply — "
   when improving a skill with multiple quality issues, iterating on a new skill until it mee'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/skill-improver
 anchors:
 - skill

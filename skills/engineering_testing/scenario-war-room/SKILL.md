@@ -4,7 +4,7 @@ name: scenario-war-room
 description: "Use — Cross-functional what-if modeling for cascading multi-variable scenarios. Unlike single-assumption stress testing,"
   this models compound adversity across all business functions simultaneously. Use when
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - scenario

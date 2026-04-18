@@ -3,7 +3,7 @@ skill_id: community.general.address_github_comments
 name: address-github-comments
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/address-github-comments
 anchors:
 - address

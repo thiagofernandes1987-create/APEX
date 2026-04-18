@@ -4,7 +4,7 @@ name: azure-cosmos-java
 description: "Implement — Azure Cosmos DB SDK for Java. NoSQL database operations with global distribution, multi-model support, and reactive"
   patterns.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/azure-cosmos-java
 anchors:
 - azure

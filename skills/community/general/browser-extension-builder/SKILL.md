@@ -3,7 +3,7 @@ skill_id: community.general.browser_extension_builder
 name: browser-extension-builder
 description: "Use — Expert in building browser extensions that solve real problems -"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/browser-extension-builder
 anchors:
 - browser

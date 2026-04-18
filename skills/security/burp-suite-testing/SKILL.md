@@ -4,7 +4,7 @@ name: burp-suite-testing
 description: "Audit — "
   traffic interception and modification, request analysis and replay, automated vulnerabilit'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/burp-suite-testing
 anchors:
 - burp

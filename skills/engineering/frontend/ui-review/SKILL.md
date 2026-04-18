@@ -4,7 +4,7 @@ name: ui-review
 description: "Implement — "
   and implementation quality.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/ui-review
 anchors:
 - review

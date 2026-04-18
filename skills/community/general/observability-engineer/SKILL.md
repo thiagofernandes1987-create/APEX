@@ -4,7 +4,7 @@ name: observability-engineer
 description: Build production-ready monitoring, logging, and tracing systems. Implements comprehensive observability strategies,
   SLI/SLO management, and incident response workflows.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/observability-engineer
 anchors:
 - observability

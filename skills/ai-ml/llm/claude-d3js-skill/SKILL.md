@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.claude_d3js_skill
 name: claude-d3js-skill
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/claude-d3js-skill
 anchors:
 - claude

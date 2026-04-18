@@ -4,7 +4,7 @@ name: competitive-ads-extractor
 description: "Create — Extracts and analyzes competitors' ads from ad libraries (Facebook, LinkedIn, etc.) to understand what messaging,"
   problems, and creative approaches are working. Helps inspire and improve your own ad c
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - competitive

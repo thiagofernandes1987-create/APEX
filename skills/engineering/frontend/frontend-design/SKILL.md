@@ -3,7 +3,7 @@ skill_id: engineering.frontend.frontend_design
 name: frontend-design
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/frontend-design
 anchors:
 - frontend

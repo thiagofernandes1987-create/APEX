@@ -4,7 +4,7 @@ name: odoo-performance-tuner
 description: "Analyze — "
   limits, PostgreSQL tuning, and profiling tools.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/odoo-performance-tuner
 anchors:
 - odoo

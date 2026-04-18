@@ -4,7 +4,7 @@ name: production-scheduling
 description: "Use — Codified expertise for production scheduling, job sequencing, line balancing, changeover optimisation, and bottleneck"
   resolution in discrete and batch manufacturing.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/production-scheduling
 anchors:
 - production

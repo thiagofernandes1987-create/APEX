@@ -3,7 +3,7 @@ skill_id: design.ios_hig.hig_components_content
 name: hig-components-content
 description: "Design — Apple Human Interface Guidelines for content display components."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ios-hig/hig-components-content
 anchors:
 - components

@@ -11,11 +11,21 @@ metadata:
   frameworks: deck-frameworks, board-deck-template
 executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.board-deck-builder
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from board deck builder"
 ---
 
 # Board Deck Builder

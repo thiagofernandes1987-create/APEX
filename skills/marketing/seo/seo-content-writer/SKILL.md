@@ -4,7 +4,7 @@ name: seo-content-writer
 description: "Create — Writes SEO-optimized content based on provided keywords and topic briefs. Creates engaging, comprehensive content"
   following best practices. Use PROACTIVELY for content creation tasks.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-content-writer
 anchors:
 - content

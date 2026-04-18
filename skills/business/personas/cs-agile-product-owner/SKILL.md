@@ -3,7 +3,7 @@ skill_id: business.personas.product.cs_agile_product_owner
 name: "cs-agile-product-owner"
 description: "Manage — Agile product owner agent for epic breakdown, sprint planning, backlog refinement, and INVEST-compliant user story generation"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.product/cs-agile-product-owner

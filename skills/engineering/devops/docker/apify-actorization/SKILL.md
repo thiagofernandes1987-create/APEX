@@ -4,7 +4,7 @@ name: apify-actorization
 description: "Implement — "
   Actors are programs packaged as Docker images that accept well-defined JSON input, pe'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/docker/apify-actorization
 anchors:
 - apify

@@ -4,11 +4,25 @@ description: "Implement — Memory health dashboard showing line counts, topic f
 command: /si:status
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering_team.self_improving_agent.status
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - visualization
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from status"
 ---
 
 # /si:status — Memory Health Dashboard

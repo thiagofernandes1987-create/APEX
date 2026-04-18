@@ -4,7 +4,7 @@ name: prompt-engineering
 description: "Use — Prompt engineering patterns including structured prompts, chain-of-thought, few-shot learning, and system prompt"
   design
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm
 anchors:
 - prompt

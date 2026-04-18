@@ -3,7 +3,7 @@ skill_id: engineering.frontend.react.shopify_apps
 name: shopify-apps
 description: "Implement — Expert patterns for Shopify app development including Remix/React"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/shopify-apps
 anchors:
 - shopify

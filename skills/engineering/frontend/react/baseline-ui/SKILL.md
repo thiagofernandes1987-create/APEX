@@ -4,7 +4,7 @@ name: baseline-ui
 description: "Implement — Validates animation durations, enforces typography scale, checks component accessibility, and prevents layout"
   anti-patterns in Tailwind CSS projects. Use when building UI components, reviewing CSS uti
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/baseline-ui
 anchors:
 - baseline

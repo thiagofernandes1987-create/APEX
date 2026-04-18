@@ -4,7 +4,7 @@ name: Attio Automation
 description: Automate Attio CRM operations -- search records, query contacts and companies with advanced filters, manage notes,
   list attributes, and navigate your relationship data -- using natural language throug
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/sales
 anchors:
 - composio

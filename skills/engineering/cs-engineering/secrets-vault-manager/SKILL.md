@@ -3,11 +3,21 @@ name: "secrets-vault-manager"
 description: "Implement — Use when the user asks to set up secret management infrastructure, integrate HashiCorp Vault, configure cloud secret stores (AWS Secrets Manager, Azure Key Vault, GCP Secret Manage"
 executor: HYBRID
 skill_id: engineering.cs-engineering.secrets-vault-manager
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - engineering
   - cloud
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from secrets vault manager"
 ---
 
 # Secrets Vault Manager

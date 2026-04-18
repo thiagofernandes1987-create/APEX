@@ -4,7 +4,7 @@ name: aws-penetration-testing
 description: "Implement — "
   escalation, SSRF to metadata endpoint, S3 bucket exploitation, Lambda code extractio'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/aws-penetration-testing
 anchors:
 - penetration

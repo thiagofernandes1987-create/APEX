@@ -4,7 +4,7 @@ name: using-superpowers
 description: "Use — "
   before ANY response including clarifying questions'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/using-superpowers
 anchors:
 - superpowers

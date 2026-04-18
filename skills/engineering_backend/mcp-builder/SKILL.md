@@ -4,7 +4,7 @@ name: mcp-builder
 description: "Use — Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external"
   services through well-designed tools. Use when building MCP servers to integrate externa
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend
 anchors:
 - builder

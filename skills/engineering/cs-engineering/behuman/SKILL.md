@@ -3,11 +3,24 @@ name: "behuman"
 description: "Implement — Use when the user wants more human-like AI responses — less robotic, less listy, more authentic. Triggers:"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.behuman
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - authentication
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 # BeHuman — Self-Mirror Consciousness Loop

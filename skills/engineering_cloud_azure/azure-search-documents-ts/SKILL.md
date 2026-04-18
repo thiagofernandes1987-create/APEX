@@ -4,7 +4,7 @@ name: azure-search-documents-ts
 description: Build search applications using Azure AI Search SDK for JavaScript (@azure/search-documents). Use when creating/managing
   indexes, implementing vector/hybrid search, semantic ranking, or building agent
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

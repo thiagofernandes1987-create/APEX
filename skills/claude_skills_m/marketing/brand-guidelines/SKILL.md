@@ -4,7 +4,7 @@ name: brand-guidelines
 description: "Use — When the user wants to apply, document, or enforce brand guidelines for any product or company. Also use when"
   the user mentions 'brand guidelines,' 'brand colors,' 'typography,' 'logo usage,' 'brand v
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - brand

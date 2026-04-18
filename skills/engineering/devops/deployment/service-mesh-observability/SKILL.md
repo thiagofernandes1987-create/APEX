@@ -3,7 +3,7 @@ skill_id: engineering.devops.deployment.service_mesh_observability
 name: service-mesh-observability
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/service-mesh-observability
 anchors:
 - service

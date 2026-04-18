@@ -4,7 +4,7 @@ name: database-design
 description: "Use — "
   databases.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/database-design
 anchors:
 - database

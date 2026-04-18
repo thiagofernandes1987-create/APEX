@@ -4,7 +4,7 @@ name: odoo-rpc-api
 description: "Implement — "
   real-world integration examples in Python, JavaScript, and curl.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/odoo-rpc-api
 anchors:
 - odoo

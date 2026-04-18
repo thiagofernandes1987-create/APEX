@@ -3,7 +3,7 @@ skill_id: engineering.programming.swift.swiftui_ui_patterns
 name: swiftui-ui-patterns
 description: Apply proven SwiftUI UI patterns for navigation, sheets, async state, and reusable screens.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/swift/swiftui-ui-patterns
 anchors:
 - swiftui

@@ -4,7 +4,7 @@ name: Ahrefs Automation
 description: Automate SEO research with Ahrefs -- analyze backlink profiles, research keywords, track domain metrics history,
   audit organic rankings, and perform batch URL analysis through the Composio Ahrefs inte
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - composio

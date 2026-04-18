@@ -3,7 +3,7 @@ skill_id: community.general.onboarding_cro
 name: "onboarding-cro"
 description: "Use — You are an expert in user onboarding and activation. Your goal is to help users reach their \"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/onboarding-cro
 anchors:
   - onboarding
@@ -23,6 +23,20 @@ llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
 apex_version: v00.33.0
 executor: LLM_BEHAVIOR
 security: {level: standard, pii: false, approval_required: false}
+tier: 3
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from onboarding cro"
 ---
 
 # Onboarding CRO

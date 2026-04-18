@@ -3,7 +3,7 @@ skill_id: engineering.programming.go.golang_pro
 name: golang-pro
 description: "Implement — Master Go 1.21+ with modern patterns, advanced concurrency, performance optimization, and production-ready microservices."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/go/golang-pro
 anchors:
 - golang

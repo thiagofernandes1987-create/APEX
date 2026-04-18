@@ -9,12 +9,21 @@ metadata:
   updated: 2026-03-13
 executor: HYBRID
 skill_id: engineering.cs-engineering.autoresearch-agent
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - agent
   - research
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from autoresearch agent"
 ---
 
 # Autoresearch Agent

@@ -4,7 +4,7 @@ name: local-legal-seo-audit
 description: "Create — "
   with local presence, focusing on GBP, directories, E-E-A-T and practice/location pages.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/local-legal-seo-audit
 anchors:
 - local

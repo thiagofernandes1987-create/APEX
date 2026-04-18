@@ -4,7 +4,7 @@ name: postgres-best-practices
 description: "Analyze — "
   or optimizing Postgres queries, schema designs, or database configurations.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/postgres-best-practices
 anchors:
 - postgres

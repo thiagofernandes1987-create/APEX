@@ -4,7 +4,7 @@ name: tool-design
 description: "Use — "
   new tools for agent systems, debugging tool-related failures or misuse, or optimizing existi'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/tool-design
 anchors:
 - tool

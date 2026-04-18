@@ -4,7 +4,7 @@ name: azure-security-keyvault-keys-dotnet
 description: "Implement — Azure Key Vault Keys SDK for .NET. Client library for managing cryptographic keys in Azure Key Vault and Managed"
   HSM. Use for key creation, rotation, encryption, decryption, signing, and verification.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-security-keyvault-keys-dotnet
 anchors:
 - azure

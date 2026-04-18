@@ -4,7 +4,7 @@ name: testing-strategies
 description: "Use — Testing strategies including contract testing, snapshot testing, mutation testing, property-based testing, and"
   test organization
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - testing

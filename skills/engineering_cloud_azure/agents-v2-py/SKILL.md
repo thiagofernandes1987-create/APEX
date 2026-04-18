@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.agents_v2_py
 name: agents-v2-py
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - agents

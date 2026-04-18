@@ -4,10 +4,23 @@ description: "Implement — One-shot lifecycle command that chains init → base
 command: /hub:run
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering.agenthub.run
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 # /hub:run — One-Shot Lifecycle

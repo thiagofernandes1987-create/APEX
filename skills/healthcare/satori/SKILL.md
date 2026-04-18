@@ -3,7 +3,7 @@ skill_id: healthcare.satori
 name: satori
 description: "Analyze — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: healthcare/satori
 anchors:
 - satori

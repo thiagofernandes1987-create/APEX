@@ -4,7 +4,7 @@ name: seo-audit
 description: "Create — When the user wants to audit, review, or diagnose SEO issues on their site. Also use when the user mentions 'SEO"
   audit,' 'technical SEO,' 'why am I not ranking,' 'SEO issues,' 'on-page SEO,' 'meta tag
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - audit

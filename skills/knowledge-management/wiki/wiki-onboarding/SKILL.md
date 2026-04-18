@@ -4,7 +4,7 @@ name: wiki-onboarding
 description: "Use — "
   — a complete understanding of a codebase. Use when user asks for onboarding docs or gettin'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: knowledge-management/wiki/wiki-onboarding
 anchors:
 - wiki

@@ -4,7 +4,7 @@ name: skill-share
 description: "Create — A skill that creates new Claude skills and automatically shares them on Slack using Rube for seamless team collaboration"
   and skill discovery.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - skill

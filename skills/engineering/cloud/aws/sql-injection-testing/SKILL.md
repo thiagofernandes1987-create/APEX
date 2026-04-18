@@ -4,7 +4,7 @@ name: sql-injection-testing
 description: "Implement — "
   flaws, demonstrate exploitation techniques, and validate input sanitization mechanisms.'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/sql-injection-testing
 anchors:
 - injection

@@ -3,7 +3,7 @@ skill_id: community.general.analytics_tracking
 name: analytics-tracking
 description: Design, audit, and improve analytics tracking systems that produce reliable, decision-ready data.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/analytics-tracking
 anchors:
 - analytics

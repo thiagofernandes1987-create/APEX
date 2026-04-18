@@ -4,7 +4,7 @@ name: ux-flow
 description: "Design — "
   navigation, and information pyramids.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ux/ux-flow
 anchors:
 - flow

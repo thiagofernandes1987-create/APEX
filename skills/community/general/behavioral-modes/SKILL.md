@@ -4,7 +4,7 @@ name: behavioral-modes
 description: "Use — "
   based on task type.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/behavioral-modes
 anchors:
 - behavioral

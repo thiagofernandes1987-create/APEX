@@ -3,13 +3,23 @@ name: "playwright-pro"
 description: "Implement — Production-grade Playwright testing toolkit. Use when the user mentions Playwright tests, end-to-end testing, browser automation, fixing flaky tests, test migration, CI/CD testing,"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.playwright-pro
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - deployment
   - testing
   - automation
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from playwright pro"
 ---
 
 # Playwright Pro

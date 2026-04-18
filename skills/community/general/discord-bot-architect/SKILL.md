@@ -3,7 +3,7 @@ skill_id: community.general.discord_bot_architect
 name: discord-bot-architect
 description: "Use — Specialized skill for building production-ready Discord bots."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/discord-bot-architect
 anchors:
 - discord

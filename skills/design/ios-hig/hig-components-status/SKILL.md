@@ -4,7 +4,7 @@ name: hig-components-status
 description: "Design — Apple HIG guidance for status and progress UI components including progress indicators, status bars, and activity"
   rings.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ios-hig/hig-components-status
 anchors:
 - components

@@ -3,7 +3,7 @@ skill_id: engineering.documentation.sred_project_organizer
 name: sred-project-organizer
 description: "Implement — Take a list of projects and their related documentation, and organize them into the SRED format for submission."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/sred-project-organizer
 anchors:
 - sred

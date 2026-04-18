@@ -4,7 +4,7 @@ name: meeting-analyzer
 description: "Create — Analyzes meeting transcripts and recordings to surface behavioral patterns, communication anti-patterns, and"
   actionable coaching feedback. Use this skill whenever the user uploads or points to meeting
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - meeting

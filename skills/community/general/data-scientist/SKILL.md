@@ -4,7 +4,7 @@ name: data-scientist
 description: "Use — Expert data scientist for advanced analytics, machine learning, and statistical modeling. Handles complex data"
   analysis, predictive modeling, and business intelligence.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/data-scientist
 anchors:
 - data

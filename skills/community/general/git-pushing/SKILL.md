@@ -3,7 +3,7 @@ skill_id: community.general.git_pushing
 name: "git-pushing"
 description: "Use — Stage all changes, create a conventional commit, and push to the remote branch. Use when explicitly asks to push changes (\"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/git-pushing
 anchors:
   - pushing
@@ -23,6 +23,16 @@ llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
 apex_version: v00.33.0
 executor: LLM_BEHAVIOR
 security: {level: standard, pii: false, approval_required: false}
+tier: 3
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from git pushing"
 ---
 
 # Git Push Workflow

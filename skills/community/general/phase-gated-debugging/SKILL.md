@@ -4,7 +4,7 @@ name: phase-gated-debugging
 description: "Use — "
   Prevents premature fix attempts.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/phase-gated-debugging
 anchors:
 - phase

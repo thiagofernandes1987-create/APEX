@@ -4,7 +4,7 @@ name: local-llm-expert
 description: "Apply — Master local LLM inference, model selection, VRAM optimization, and local deployment using Ollama, llama.cpp,"
   vLLM, and LM Studio. Expert in quantization formats (GGUF, EXL2) and local AI privacy.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/local-llm-expert
 anchors:
 - local

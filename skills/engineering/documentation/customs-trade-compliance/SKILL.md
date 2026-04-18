@@ -4,7 +4,7 @@ name: customs-trade-compliance
 description: "Implement — Codified expertise for customs documentation, tariff classification, duty optimisation, restricted party screening,"
   and regulatory compliance across multiple jurisdictions.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/customs-trade-compliance
 anchors:
 - customs

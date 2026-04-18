@@ -4,7 +4,7 @@ name: popup-cro
 description: "Create — When the user wants to create or optimize popups, modals, overlays, slide-ins, or banners for conversion purposes."
   Also use when the user mentions 'exit intent,' 'popup conversions,' 'modal optimizati
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - popup

@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.conversation_memory
 name: conversation-memory
 description: "Apply — Persistent memory systems for LLM conversations including"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/conversation-memory
 anchors:
 - conversation

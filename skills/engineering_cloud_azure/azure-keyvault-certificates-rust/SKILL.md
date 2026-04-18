@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.azure_keyvault_certificates_rust
 name: azure-keyvault-certificates-rust
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

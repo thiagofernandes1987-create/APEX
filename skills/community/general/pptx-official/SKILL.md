@@ -4,7 +4,7 @@ name: pptx-official
 description: "Use — "
   ZIP archive containing XML files and other resources that you can read or edit. You have dif'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/pptx-official
 anchors:
 - pptx

@@ -4,7 +4,7 @@ name: docx
 description: "Use — Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting"
   preservation, and text extraction. When Claude needs to work with professional documents (
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - document

@@ -4,7 +4,7 @@ name: tailored-resume-generator
 description: "Generate — Analyzes job descriptions and generates tailored resumes that highlight relevant experience, skills, and achievements"
   to maximize interview chances
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - tailored

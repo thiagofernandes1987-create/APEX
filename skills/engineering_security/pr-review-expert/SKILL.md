@@ -4,7 +4,7 @@ name: pr-review-expert
 description: "Analyze — Use when the user asks to review pull requests, analyze code changes, check for security issues in PRs, or assess"
   code quality of diffs.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - review

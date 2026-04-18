@@ -4,7 +4,7 @@ name: security-bluebook-builder
 description: "Audit — "
   using MUST/SHOULD/CAN language, with explicit assumptions, scope, and security gates.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/security-bluebook-builder
 anchors:
 - security

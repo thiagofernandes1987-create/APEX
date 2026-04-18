@@ -4,7 +4,7 @@ name: observability-monitoring-monitor-setup
 description: "Use — "
   Set up metrics collection, distributed tracing, log aggregation, and create insightful d'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/observability-monitoring-monitor-setup
 anchors:
 - observability

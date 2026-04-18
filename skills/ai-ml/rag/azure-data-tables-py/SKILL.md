@@ -4,7 +4,7 @@ name: azure-data-tables-py
 description: "Apply — Azure Tables SDK for Python (Storage and Cosmos DB). Use for NoSQL key-value storage, entity CRUD, and batch"
   operations.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-data-tables-py
 anchors:
 - azure

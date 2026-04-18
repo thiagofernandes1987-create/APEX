@@ -16,12 +16,25 @@ triggers:
   - app conversion rate
 executor: HYBRID
 skill_id: business.marketing-skill.app-store-optimization
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - data
   - research
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 # App Store Optimization (ASO)

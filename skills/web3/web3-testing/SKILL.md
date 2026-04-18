@@ -3,7 +3,7 @@ skill_id: web3.web3_testing
 name: web3-testing
 description: "Deploy — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/web3-testing
 anchors:
 - web3

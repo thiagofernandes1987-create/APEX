@@ -3,7 +3,7 @@ name: product-analytics
 description: "Manage — Use when defining product KPIs, building metric dashboards, running cohort or retention analysis, or interpreting feature adoption trends across product stages."
 executor: HYBRID
 skill_id: business.product-team.product-analytics
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
@@ -11,6 +11,15 @@ anchors:
   - visualization
   - design
   - web3
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from product analytics"
 ---
 
 # Product Analytics

@@ -4,7 +4,7 @@ name: mcp-builder
 description: "Apply — "
   tools. The quality of an MCP server is measured by how well it enables LLMs to ac'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/mcp-builder
 anchors:
 - builder

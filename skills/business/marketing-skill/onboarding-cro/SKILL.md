@@ -9,10 +9,27 @@ metadata:
   updated: 2026-03-06
 executor: HYBRID
 skill_id: business.marketing-skill.onboarding-cro
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: true, approval_required: false}
 anchors:
   - business
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 # Onboarding CRO

@@ -4,7 +4,7 @@ name: Braintree Automation
 description: "Use — Braintree Automation: manage payment processing via Stripe-compatible tools for customers, subscriptions, payment"
   methods, and transactions'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/productivity
 anchors:
 - composio

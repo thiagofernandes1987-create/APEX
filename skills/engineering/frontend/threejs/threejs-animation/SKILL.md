@@ -4,7 +4,7 @@ name: threejs-animation
 description: "Implement — Three.js animation - keyframe animation, skeletal animation, morph targets, animation mixing. Use when animating"
   objects, playing GLTF animations, creating procedural motion, or blending animations.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/threejs/threejs-animation
 anchors:
 - threejs

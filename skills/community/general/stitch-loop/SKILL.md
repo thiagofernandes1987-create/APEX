@@ -3,7 +3,7 @@ skill_id: community.general.stitch_loop
 name: stitch-loop
 description: "Use — Teaches agents to iteratively build websites using Stitch with an autonomous baton-passing loop pattern"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/stitch-loop
 anchors:
 - stitch

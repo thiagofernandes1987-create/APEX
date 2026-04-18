@@ -4,7 +4,7 @@ name: nx-workspace-patterns
 description: "Use — "
   build caching, or implementing affected commands.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/nx-workspace-patterns
 anchors:
 - workspace

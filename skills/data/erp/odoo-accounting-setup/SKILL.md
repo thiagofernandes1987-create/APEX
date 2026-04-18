@@ -4,7 +4,7 @@ name: odoo-accounting-setup
 description: "Analyze — "
   terms, and bank reconciliation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-accounting-setup
 anchors:
 - odoo

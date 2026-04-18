@@ -4,7 +4,7 @@ name: prompt-engineer-toolkit
 description: "Analyze — Analyzes and rewrites prompts for better AI output, creates reusable prompt templates for marketing use cases"
   (ad copy, email campaigns, social media), and structures end-to-end AI content workflows. '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - prompt

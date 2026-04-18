@@ -3,7 +3,7 @@ skill_id: engineering.devops.deployment.makepad_deployment
 name: makepad-deployment
 description: "Implement — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/makepad-deployment
 anchors:
 - makepad

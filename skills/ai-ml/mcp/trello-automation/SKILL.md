@@ -4,7 +4,7 @@ name: trello-automation
 description: "Apply — "
   and search across boards programmatically.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/trello-automation
 anchors:
 - trello

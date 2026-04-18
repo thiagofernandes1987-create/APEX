@@ -4,7 +4,7 @@ name: ios-developer
 description: "Implement — Develop native iOS applications with Swift/SwiftUI. Masters iOS 18, SwiftUI, UIKit integration, Core Data, networking,"
   and App Store optimization.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/swift/ios-developer
 anchors:
 - developer

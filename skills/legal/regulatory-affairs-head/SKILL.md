@@ -4,7 +4,7 @@ name: regulatory-affairs-head
 description: "Review — Senior Regulatory Affairs Manager for HealthTech and MedTech companies. Prepares FDA 510(k), De Novo, and PMA"
   submission packages; analyzes regulatory pathways for new medical devices; drafts response
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal
 anchors:
 - regulatory

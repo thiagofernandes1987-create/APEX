@@ -4,7 +4,7 @@ name: twitter-algorithm-optimizer
 description: Analyze and optimize tweets for maximum reach using Twitter's open-source algorithm insights. Rewrite and edit
   user tweets to improve engagement and visibility based on how the recommendation system r
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/content
 anchors:
 - twitter

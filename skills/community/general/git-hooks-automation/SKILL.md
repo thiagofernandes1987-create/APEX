@@ -4,7 +4,7 @@ name: git-hooks-automation
 description: "Use — "
   gates, formatting, linting, and commit message enforcement before code reaches CI.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/git-hooks-automation
 anchors:
 - hooks

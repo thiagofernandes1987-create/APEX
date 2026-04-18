@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_resource_manager_playwright_dotne
 name: azure-resource-manager-playwright-dotnet
 description: "Implement — Azure Resource Manager SDK for Microsoft Playwright Testing in .NET."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-resource-manager-playwright-dotnet
 anchors:
 - azure

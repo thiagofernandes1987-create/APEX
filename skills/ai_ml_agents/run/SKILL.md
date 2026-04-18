@@ -3,7 +3,7 @@ skill_id: ai_ml_agents.run
 name: run
 description: "Use — One-shot lifecycle command that chains init → baseline → spawn → eval → merge in a single invocation."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - shot

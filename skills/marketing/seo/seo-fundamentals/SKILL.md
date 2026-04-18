@@ -4,7 +4,7 @@ name: seo-fundamentals
 description: "Create — Core principles of SEO including E-E-A-T, Core Web Vitals, technical foundations, content quality, and how modern"
   search engines evaluate pages.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-fundamentals
 anchors:
 - fundamentals

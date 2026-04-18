@@ -4,7 +4,7 @@ name: helm-chart-builder
 description: "Use — Helm chart development agent skill and plugin for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw — chart scaffolding,"
   values design, template patterns, dependency management, security hardening, and
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - helm

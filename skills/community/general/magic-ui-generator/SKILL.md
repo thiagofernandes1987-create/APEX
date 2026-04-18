@@ -3,7 +3,7 @@ skill_id: community.general.magic_ui_generator
 name: magic-ui-generator
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/magic-ui-generator
 anchors:
 - magic

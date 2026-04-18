@@ -4,7 +4,7 @@ name: bash-defensive-patterns
 description: "Implement — "
   CI/CD pipelines, or system utilities requiring fault tolerance and safety.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/bash/bash-defensive-patterns
 anchors:
 - bash

@@ -4,7 +4,7 @@ name: product-marketing-context
 description: "Create — When the user wants to create or update their product marketing context document. Also use when the user mentions"
   'product context,' 'marketing context,' 'set up context,' 'positioning,' 'who is my ta
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - product

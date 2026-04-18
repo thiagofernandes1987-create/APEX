@@ -4,11 +4,25 @@ description: "Run a single experiment iteration. Edit the target file, evaluate,
 command: /ar:run
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering.autoresearch_agent.run
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - research
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from run"
 ---
 
 # /ar:run — Single Experiment Iteration

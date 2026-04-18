@@ -4,7 +4,7 @@ name: claimable-postgres
 description: Provision instant temporary Postgres databases via Claimable Postgres by Neon (pg.new). No login or credit card
   required. Use for quick Postgres environments and throwaway DATABASE_URL for prototyping
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/claimable-postgres
 anchors:
 - claimable

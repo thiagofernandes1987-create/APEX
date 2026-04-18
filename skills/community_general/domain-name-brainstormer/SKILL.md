@@ -4,7 +4,7 @@ name: domain-name-brainstormer
 description: "Generate — Generates creative domain name ideas for your project and checks availability across multiple TLDs (.com, .io,"
   .dev, .ai, etc.). Saves hours of brainstorming and manual checking.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - domain

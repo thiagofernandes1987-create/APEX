@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.prompt_caching
 name: prompt-caching
 description: "Apply — Caching strategies for LLM prompts including Anthropic prompt"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/prompt-caching
 anchors:
 - prompt

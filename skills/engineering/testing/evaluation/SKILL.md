@@ -4,7 +4,7 @@ name: evaluation
 description: "Implement — "
   context engineering choices, or measuring improvements over time.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/evaluation
 anchors:
 - evaluation

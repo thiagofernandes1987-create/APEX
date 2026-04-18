@@ -4,7 +4,7 @@ name: c4-component
 description: "Deploy — Expert C4 Component-level documentation specialist. Synthesizes C4 Code-level documentation into Component-level"
   architecture, defining component boundaries, interfaces, and relationships.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/defi/c4-component
 anchors:
 - component

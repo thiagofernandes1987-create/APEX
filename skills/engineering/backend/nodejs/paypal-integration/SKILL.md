@@ -4,7 +4,7 @@ name: paypal-integration
 description: "Implement — "
   workflows.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/nodejs/paypal-integration
 anchors:
 - paypal

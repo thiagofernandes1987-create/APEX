@@ -3,7 +3,7 @@ skill_id: engineering.documentation.daily
 name: daily
 description: "Implement — Documentation and capabilities reference for Daily"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/daily
 anchors:
 - daily

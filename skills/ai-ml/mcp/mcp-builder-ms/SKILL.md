@@ -4,7 +4,7 @@ name: mcp-builder-ms
 description: "Apply — "
   or Node/TypeScript (MCP SDK).'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/mcp-builder-ms
 anchors:
 - builder

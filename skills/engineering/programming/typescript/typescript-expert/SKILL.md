@@ -4,7 +4,7 @@ name: typescript-expert
 description: "Implement — TypeScript and JavaScript expert with deep knowledge of type-level programming, performance optimization, monorepo"
   management, migration strategies, and modern tooling.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/typescript-expert
 anchors:
 - typescript

@@ -3,11 +3,21 @@ name: competitive-ads-extractor
 description: "Apply — Extracts and analyzes competitors' ads from ad libraries (Facebook, LinkedIn, etc.) to understand what messaging, problems, and creative approaches are working. Helps inspire and i"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.competitive-ads-extractor
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - automation
   - apply
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from competitive ads extractor"
 ---
 
 # Competitive Ads Extractor

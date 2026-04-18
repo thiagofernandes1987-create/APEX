@@ -4,7 +4,7 @@ name: agents-v2-py
 description: "Implement — "
   creating hosted agents with custom container images in Azure AI Foundry.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/agents-v2-py
 anchors:
 - agents

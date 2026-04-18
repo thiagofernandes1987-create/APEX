@@ -4,7 +4,7 @@ name: quality-nonconformance
 description: "Use — Codified expertise for quality control, non-conformance investigation, root cause analysis, corrective action,"
   and supplier quality management in regulated manufacturing.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/quality-nonconformance
 anchors:
 - quality

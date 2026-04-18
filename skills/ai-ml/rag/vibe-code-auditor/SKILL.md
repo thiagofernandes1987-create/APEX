@@ -3,7 +3,7 @@ skill_id: ai_ml.rag.vibe_code_auditor
 name: vibe-code-auditor
 description: Audit rapidly generated or AI-produced code for structural flaws, fragility, and production risks.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/vibe-code-auditor
 anchors:
 - vibe

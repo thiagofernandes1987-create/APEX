@@ -3,7 +3,7 @@ skill_id: engineering.programming.rust.azure_eventhub_rust
 name: azure-eventhub-rust
 description: "Implement — Azure Event Hubs SDK for Rust. Use for sending and receiving events, streaming data ingestion."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/azure-eventhub-rust
 anchors:
 - azure

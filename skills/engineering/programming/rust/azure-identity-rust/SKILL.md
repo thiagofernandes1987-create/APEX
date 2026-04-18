@@ -4,7 +4,7 @@ name: azure-identity-rust
 description: "Implement — Azure Identity SDK for Rust authentication. Use for DeveloperToolsCredential, ManagedIdentityCredential, ClientSecretCredential,"
   and token-based authentication.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/azure-identity-rust
 anchors:
 - azure

@@ -3,7 +3,7 @@ skill_id: community.general.loss_aversion_designer
 name: loss-aversion-designer
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/loss-aversion-designer
 anchors:
 - loss

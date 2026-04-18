@@ -4,7 +4,7 @@ name: campaign-analytics
 description: "Analyze — Analyzes campaign performance with multi-touch attribution, funnel conversion analysis, and ROI calculation for"
   marketing optimization. Use when analyzing marketing campaigns, ad performance, attribut
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - campaign

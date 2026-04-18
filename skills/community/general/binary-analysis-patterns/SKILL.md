@@ -4,7 +4,7 @@ name: binary-analysis-patterns
 description: "Use — "
   program logic.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/binary-analysis-patterns
 anchors:
 - binary

@@ -3,7 +3,7 @@ skill_id: community.general.algolia_search
 name: algolia-search
 description: "Use — Expert patterns for Algolia search implementation, indexing"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/algolia-search
 anchors:
 - algolia

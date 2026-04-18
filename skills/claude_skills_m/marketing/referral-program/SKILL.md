@@ -4,7 +4,7 @@ name: referral-program
 description: "Use — When the user wants to design, launch, or optimize a referral or affiliate program. Use when they mention 'referral"
   program,' 'affiliate program,' 'word of mouth,' 'refer a friend,' 'incentive program
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - referral

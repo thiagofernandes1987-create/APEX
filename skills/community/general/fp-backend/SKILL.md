@@ -4,7 +4,7 @@ name: fp-backend
 description: "Use — Functional programming patterns for Node.js/Deno backend development using fp-ts, ReaderTaskEither, and functional"
   dependency injection
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fp-backend
 anchors:
 - backend

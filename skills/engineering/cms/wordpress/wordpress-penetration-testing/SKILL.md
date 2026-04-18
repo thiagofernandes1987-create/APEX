@@ -3,7 +3,7 @@ skill_id: engineering.cms.wordpress.wordpress_penetration_testing
 name: wordpress-penetration-testing
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cms/wordpress/wordpress-penetration-testing
 anchors:
 - wordpress

@@ -4,7 +4,7 @@ name: production-code-audit
 description: "Implement — "
   transform it to production-grade, corporate-level professional quality with optimization'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/production-code-audit
 anchors:
 - production

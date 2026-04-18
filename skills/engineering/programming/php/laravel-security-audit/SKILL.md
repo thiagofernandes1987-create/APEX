@@ -4,7 +4,7 @@ name: laravel-security-audit
 description: "Implement — "
   practices using OWASP standards and Laravel security best practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/php/laravel-security-audit
 anchors:
 - laravel

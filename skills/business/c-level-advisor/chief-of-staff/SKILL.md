@@ -11,11 +11,28 @@ metadata:
   frameworks: routing-matrix, synthesis-framework, decision-log, board-protocol
 executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.chief-of-staff
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 # Chief of Staff

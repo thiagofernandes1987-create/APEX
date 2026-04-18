@@ -3,7 +3,7 @@ skill_id: security.differential_review
 name: differential-review
 description: "Audit — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/differential-review
 anchors:
 - differential

@@ -3,7 +3,7 @@ skill_id: engineering.documentation.wiki_architect
 name: wiki-architect
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/wiki-architect
 anchors:
 - wiki

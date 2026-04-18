@@ -4,7 +4,7 @@ name: ml-engineer
 description: Build production ML systems with PyTorch 2.x, TensorFlow, and modern ML frameworks. Implements model serving,
   feature engineering, A/B testing, and monitoring.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/ml-engineer
 anchors:
 - engineer

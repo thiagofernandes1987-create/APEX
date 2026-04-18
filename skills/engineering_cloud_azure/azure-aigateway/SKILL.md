@@ -4,7 +4,7 @@ name: azure-aigateway
 description: 'Configure Azure API Management as an AI Gateway for AI models, MCP tools, and agents. WHEN: semantic caching,
   token limit, content safety, load balancing, AI model governance, MCP rate limiting, jailb'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

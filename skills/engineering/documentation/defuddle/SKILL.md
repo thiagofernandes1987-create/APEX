@@ -4,7 +4,7 @@ name: defuddle
 description: Extract clean markdown content from web pages using Defuddle CLI, removing clutter and navigation to save tokens.
   Use instead of WebFetch when the user provides a URL to read or analyze, for online do
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/defuddle
 anchors:
 - defuddle

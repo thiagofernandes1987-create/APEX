@@ -4,7 +4,7 @@ name: startup-financial-modeling
 description: "Manage — "
   and scenario planning for early-stage startups.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/startup/startup-financial-modeling
 anchors:
 - startup

@@ -4,7 +4,7 @@ name: sveltekit
 description: "Implement — "
   in one framework.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/svelte/sveltekit
 anchors:
 - sveltekit

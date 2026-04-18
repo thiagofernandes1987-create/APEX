@@ -4,7 +4,7 @@ name: cc-skill-clickhouse-io
 description: "Use — "
   analytical workloads.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/cc-skill-clickhouse-io
 anchors:
 - skill

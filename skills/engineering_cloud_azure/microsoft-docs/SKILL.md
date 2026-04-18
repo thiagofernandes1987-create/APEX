@@ -4,7 +4,7 @@ name: microsoft-docs
 description: "Use — Understand Microsoft technologies by querying official documentation. Use whenever the user asks how something"
   works, wants tutorials, needs configuration options, limits, quotas, or best practices fo
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - microsoft

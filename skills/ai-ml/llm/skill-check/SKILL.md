@@ -4,7 +4,7 @@ name: skill-check
 description: "Apply — "
   issues before users do.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/skill-check
 anchors:
 - skill

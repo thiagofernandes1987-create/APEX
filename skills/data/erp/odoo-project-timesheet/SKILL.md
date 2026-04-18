@@ -4,7 +4,7 @@ name: odoo-project-timesheet
 description: "Analyze — "
   alerts, and invoicing from timesheets.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-project-timesheet
 anchors:
 - odoo

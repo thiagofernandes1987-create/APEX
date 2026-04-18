@@ -4,7 +4,7 @@ name: verification-before-completion
 description: "Implement — "
   claims, ANY expression of satisfaction, or ANY positive statement about work'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/nodejs/verification-before-completion
 anchors:
 - verification

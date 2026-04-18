@@ -4,7 +4,7 @@ name: deploy-model
 description: "Deploy — Unified Azure OpenAI model deployment skill with intelligent intent-based routing. Handles quick preset deployments,"
   fully customized deployments (version/SKU/capacity/RAI policy), and capacity discov
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - deploy

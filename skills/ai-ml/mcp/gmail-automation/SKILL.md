@@ -3,7 +3,7 @@ skill_id: ai_ml.mcp.gmail_automation
 name: gmail-automation
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/gmail-automation
 anchors:
 - gmail

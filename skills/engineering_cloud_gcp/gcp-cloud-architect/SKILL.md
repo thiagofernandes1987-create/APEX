@@ -4,7 +4,7 @@ name: gcp-cloud-architect
 description: Design GCP architectures for startups and enterprises. Use when asked to design Google Cloud infrastructure,
   deploy to GKE or Cloud Run, configure BigQuery pipelines, optimize GCP costs, or migrate to
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/gcp
 anchors:
 - cloud

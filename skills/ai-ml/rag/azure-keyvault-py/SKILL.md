@@ -3,7 +3,7 @@ skill_id: ai_ml.rag.azure_keyvault_py
 name: azure-keyvault-py
 description: "Apply — Azure Key Vault SDK for Python. Use for secrets, keys, and certificates management with secure storage."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-keyvault-py
 anchors:
 - azure

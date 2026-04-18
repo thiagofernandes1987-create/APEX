@@ -4,7 +4,7 @@ name: on-call-handoff-patterns
 description: "Use — "
   response across shifts.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/on-call-handoff-patterns
 anchors:
 - call

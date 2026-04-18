@@ -3,7 +3,7 @@ skill_id: engineering.testing.browser_automation
 name: browser-automation
 description: "Implement — Browser automation powers web testing, scraping, and AI agent"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/browser-automation
 anchors:
 - browser

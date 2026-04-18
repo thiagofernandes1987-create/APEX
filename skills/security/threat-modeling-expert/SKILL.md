@@ -4,7 +4,7 @@ name: threat-modeling-expert
 description: "Audit — "
   PASTA, attack trees, and security requirement extraction. Use PROACTIVELY for security arch'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/threat-modeling-expert
 anchors:
 - threat

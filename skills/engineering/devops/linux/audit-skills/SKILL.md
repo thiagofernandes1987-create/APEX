@@ -4,7 +4,7 @@ name: audit-skills
 description: "Implement — "
   patterns, data leaks, system stability risks, and obfuscated payloads across Windows, m'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/linux/audit-skills
 anchors:
 - audit

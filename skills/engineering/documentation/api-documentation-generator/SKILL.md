@@ -4,7 +4,7 @@ name: api-documentation-generator
 description: "Implement — "
   and best practices'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/api-documentation-generator
 anchors:
 - documentation

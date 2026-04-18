@@ -4,7 +4,7 @@ name: protect-mcp-governance
 description: "Apply — "
   receipt verification.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/protect-mcp-governance
 anchors:
 - protect

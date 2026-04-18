@@ -4,7 +4,7 @@ name: seo-aeo-blog-writer
 description: "Deploy — "
   SEO ranking and AEO citation. Activate when the user wants to write a blog post, article, o'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/defi/seo-aeo-blog-writer
 anchors:
 - blog

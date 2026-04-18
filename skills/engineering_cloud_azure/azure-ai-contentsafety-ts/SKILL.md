@@ -4,7 +4,7 @@ name: azure-ai-contentsafety-ts
 description: 'Analyze text and images for harmful content using Azure AI Content Safety (@azure-rest/ai-content-safety). Use
   when moderating user-generated content, detecting hate speech, violence, sexual content, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

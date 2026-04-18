@@ -4,7 +4,7 @@ name: android-jetpack-compose-expert
 description: "Use — "
   performance, and Material Design 3.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/android-jetpack-compose-expert
 anchors:
 - android

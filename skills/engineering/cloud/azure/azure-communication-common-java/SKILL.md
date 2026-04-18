@@ -4,7 +4,7 @@ name: azure-communication-common-java
 description: "Implement — "
   user identifiers, token refresh, or shared authentication across ACS services.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-communication-common-java
 anchors:
 - azure

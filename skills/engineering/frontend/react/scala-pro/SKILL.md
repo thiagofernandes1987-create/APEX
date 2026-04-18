@@ -4,7 +4,7 @@ name: scala-pro
 description: "Implement — Master enterprise-grade Scala development with functional programming, distributed systems, and big data processing."
   Expert in Apache Pekko, Akka, Spark, ZIO/Cats Effect, and reactive architectures.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/scala-pro
 anchors:
 - scala

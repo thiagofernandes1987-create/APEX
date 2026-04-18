@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.podcast_generation
 name: podcast-generation
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/podcast-generation
 anchors:
 - podcast

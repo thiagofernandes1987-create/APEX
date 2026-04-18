@@ -4,7 +4,7 @@ name: churn-prevention
 description: "Create — When the user wants to reduce churn, build cancellation flows, set up save offers, recover failed payments, or"
   implement retention strategies. Also use when the user mentions 'churn,' 'cancel flow,' '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - churn

@@ -4,7 +4,7 @@ name: pci-compliance
 description: "Audit — "
   handling of cardholder data.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/pci-compliance
 anchors:
 - compliance

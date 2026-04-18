@@ -3,7 +3,7 @@ skill_id: productivity.writing.citation_management
 name: citation-management
 description: "Automate — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: productivity/writing/citation-management
 anchors:
 - citation

@@ -3,7 +3,7 @@ skill_id: community.general.awareness_stage_mapper
 name: awareness-stage-mapper
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/awareness-stage-mapper
 anchors:
 - awareness

@@ -4,7 +4,7 @@ name: bug-hunter
 description: "Use — "
   implements fixes, and prevents regression.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/bug-hunter
 anchors:
 - hunter

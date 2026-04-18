@@ -4,7 +4,7 @@ name: slo-implementation
 description: "Deploy — "
   and error budgets.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/defi/slo-implementation
 anchors:
 - implementation

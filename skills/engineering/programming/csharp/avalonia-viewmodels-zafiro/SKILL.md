@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.avalonia_viewmodels_zafiro
 name: avalonia-viewmodels-zafiro
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/avalonia-viewmodels-zafiro
 anchors:
 - avalonia

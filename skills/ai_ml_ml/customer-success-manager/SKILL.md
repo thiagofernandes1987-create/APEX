@@ -4,7 +4,7 @@ name: customer-success-manager
 description: "Monitor — Monitors customer health, predicts churn risk, and identifies expansion opportunities using weighted scoring"
   models for SaaS customer success. Use when analyzing customer accounts, reviewing retention
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - customer

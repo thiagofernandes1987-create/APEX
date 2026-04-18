@@ -4,7 +4,7 @@ name: data-engineer
 description: Build scalable data pipelines, modern data warehouses, and real-time streaming architectures. Implements Apache
   Spark, dbt, Airflow, and cloud-native data platforms.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/data-engineer
 anchors:
 - data

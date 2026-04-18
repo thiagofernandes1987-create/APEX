@@ -4,7 +4,7 @@ name: azure-appconfiguration-java
 description: "Implement — Azure App Configuration SDK for Java. Centralized application configuration management with key-value settings,"
   feature flags, and snapshots.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-appconfiguration-java
 anchors:
 - azure

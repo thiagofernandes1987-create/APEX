@@ -4,7 +4,7 @@ name: product-manager-toolkit
 description: "Design — Comprehensive toolkit for product managers including RICE prioritization, customer interview analysis, PRD templates,"
   discovery frameworks, and go-to-market strategies. Use for feature prioritization,
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - product

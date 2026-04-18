@@ -4,7 +4,7 @@ name: code-reviewer
 description: "Analyze — Code review automation for TypeScript, JavaScript, Python, Go, Swift, Kotlin. Analyzes PRs for complexity and"
   risk, checks code quality for SOLID violations and code smells, generates review reports. '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/mobile
 anchors:
 - code

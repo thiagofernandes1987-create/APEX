@@ -4,7 +4,7 @@ name: notebooklm
 description: "Apply — "
   opens a fresh browser session, retrieves the answer exclusively from your uploaded document'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/notebooklm
 anchors:
 - notebooklm

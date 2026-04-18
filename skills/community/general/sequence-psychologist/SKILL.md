@@ -3,7 +3,7 @@ skill_id: community.general.sequence_psychologist
 name: sequence-psychologist
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/sequence-psychologist
 anchors:
 - sequence

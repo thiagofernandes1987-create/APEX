@@ -4,7 +4,7 @@ name: wiki-changelog
 description: "Generate — Analyzes git commit history and generates structured changelogs categorized by change type. Use when the user"
   asks about recent changes, wants a changelog, or needs to understand what changed in the r
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/git
 anchors:
 - wiki

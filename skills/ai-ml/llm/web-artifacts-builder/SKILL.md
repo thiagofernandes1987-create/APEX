@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.web_artifacts_builder
 name: web-artifacts-builder
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/web-artifacts-builder
 anchors:
 - artifacts

@@ -4,7 +4,7 @@ name: senior-backend
 description: "Use — Designs and implements backend systems including REST APIs, microservices, database architectures, authentication"
   flows, and security hardening. Use when the user asks to 'design REST APIs', 'optimize
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - senior

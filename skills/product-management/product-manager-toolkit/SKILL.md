@@ -3,7 +3,7 @@ skill_id: product_management.product_manager_toolkit
 name: product-manager-toolkit
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: product-management/product-manager-toolkit
 anchors:
 - product

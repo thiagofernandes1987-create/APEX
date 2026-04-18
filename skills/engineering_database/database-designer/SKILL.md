@@ -4,7 +4,7 @@ name: database-designer
 description: "Use — Use when the user asks to design database schemas, plan data migrations, optimize queries, choose between SQL"
   and NoSQL, or model data relationships.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/database
 anchors:
 - database

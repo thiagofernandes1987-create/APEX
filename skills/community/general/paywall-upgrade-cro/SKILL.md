@@ -4,7 +4,7 @@ name: paywall-upgrade-cro
 description: "Use — "
   users to higher tiers, at moments when they''ve experienced enough value to justify the c'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/paywall-upgrade-cro
 anchors:
 - paywall

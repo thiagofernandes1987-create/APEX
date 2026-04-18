@@ -3,7 +3,7 @@ skill_id: community.general.vizcom
 name: vizcom
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/vizcom
 anchors:
 - vizcom

@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.azure_messaging_webpubsubservice_py
 name: azure-messaging-webpubsubservice-py
 description: "Implement — Azure Web PubSub Service SDK for Python. Use for real-time messaging, WebSocket connections, and pub/sub patterns."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-messaging-webpubsubservice-py
 anchors:
 - azure

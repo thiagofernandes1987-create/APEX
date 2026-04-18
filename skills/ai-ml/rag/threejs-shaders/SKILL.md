@@ -4,7 +4,7 @@ name: threejs-shaders
 description: "Apply — Three.js shaders - GLSL, ShaderMaterial, uniforms, custom effects. Use when creating custom visual effects, modifying"
   vertices, writing fragment shaders, or extending built-in materials.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/threejs-shaders
 anchors:
 - threejs

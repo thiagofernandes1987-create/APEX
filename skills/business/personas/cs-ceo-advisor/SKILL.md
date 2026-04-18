@@ -3,7 +3,7 @@ skill_id: business.personas.c-level.cs_ceo_advisor
 name: "cs-ceo-advisor"
 description: "Manage — Strategic leadership advisor for CEOs covering vision, strategy, board management, investor relations, and organizational culture"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.c-level/cs-ceo-advisor

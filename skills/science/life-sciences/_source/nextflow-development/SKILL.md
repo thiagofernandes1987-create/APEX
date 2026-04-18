@@ -100,7 +100,7 @@ apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: HYBRID
 skill_id: science.life-sciences._source.nextflow-development
-status: CANDIDATE
+status: ADOPTED
 ---
 # nf-core Pipeline Deployment
 

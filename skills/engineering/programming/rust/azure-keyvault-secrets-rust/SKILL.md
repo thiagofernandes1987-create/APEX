@@ -4,7 +4,7 @@ name: azure-keyvault-secrets-rust
 description: "Implement — "
   ''keyvault secrets rust'', ''SecretClient rust'', ''get secret rust'', ''set secret rust''.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/azure-keyvault-secrets-rust
 anchors:
 - azure

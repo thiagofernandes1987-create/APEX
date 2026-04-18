@@ -4,7 +4,7 @@ name: Ramp Automation
 description: "Use — Ramp Automation: manage corporate card transactions, reimbursements, users, and expense tracking via the Ramp"
   platform'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: finance
 anchors:
 - composio

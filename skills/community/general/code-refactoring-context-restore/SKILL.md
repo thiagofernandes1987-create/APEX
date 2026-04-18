@@ -3,7 +3,7 @@ skill_id: community.general.code_refactoring_context_restore
 name: code-refactoring-context-restore
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/code-refactoring-context-restore
 anchors:
 - code

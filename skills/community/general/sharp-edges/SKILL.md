@@ -3,7 +3,7 @@ skill_id: community.general.sharp_edges
 name: sharp-edges
 description: "Use — Identifies error-prone APIs, dangerous configurations, and footgun designs that enable security mistakes. Use when reviewing API designs, configuration schemas, cryptographic libra"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/sharp-edges
 anchors:
 - sharp

@@ -4,7 +4,7 @@ name: typescript-pro
 description: "Implement — Master TypeScript with advanced types, generics, and strict type safety. Handles complex type systems, decorators,"
   and enterprise-grade patterns.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/typescript-pro
 anchors:
 - typescript

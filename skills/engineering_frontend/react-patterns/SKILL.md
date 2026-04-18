@@ -3,7 +3,7 @@ skill_id: engineering_frontend.react_patterns
 name: react-patterns
 description: "Use — React 19 patterns including Server Components, Actions, Suspense, hooks, and component composition"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend
 anchors:
 - react

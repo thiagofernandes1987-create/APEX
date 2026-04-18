@@ -4,7 +4,7 @@ name: exa-search
 description: "Apply — "
   search, finding similar content, or searching by category (company, peop'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/embeddings/exa-search
 anchors:
 - search

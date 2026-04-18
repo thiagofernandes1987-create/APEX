@@ -1,10 +1,20 @@
 ---
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.ai_readiness_2
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: true, approval_required: true}
 anchors:
   - finance
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from ai readiness"
 ---
 # Portfolio AI Readiness
 

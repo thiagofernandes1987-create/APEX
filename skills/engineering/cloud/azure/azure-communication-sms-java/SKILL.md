@@ -4,7 +4,7 @@ name: azure-communication-sms-java
 description: "Implement — "
   alerts, OTP delivery, bulk messaging, or delivery reports.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-communication-sms-java
 anchors:
 - azure

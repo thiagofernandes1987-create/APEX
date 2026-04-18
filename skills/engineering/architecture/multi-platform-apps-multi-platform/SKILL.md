@@ -4,7 +4,7 @@ name: multi-platform-apps-multi-platform
 description: "Implement — "
   and parallel implementation strategies.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/multi-platform-apps-multi-platform
 anchors:
 - multi

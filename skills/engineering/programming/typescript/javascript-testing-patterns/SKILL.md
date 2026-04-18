@@ -4,7 +4,7 @@ name: javascript-testing-patterns
 description: "Implement — "
   modern testing frameworks and best practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/javascript-testing-patterns
 anchors:
 - javascript

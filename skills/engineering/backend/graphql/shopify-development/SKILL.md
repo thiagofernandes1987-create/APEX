@@ -3,7 +3,7 @@ skill_id: engineering.backend.graphql.shopify_development
 name: shopify-development
 description: Build Shopify apps, extensions, themes using GraphQL Admin API, Shopify CLI, Polaris UI, and Liquid.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/graphql/shopify-development
 anchors:
 - shopify

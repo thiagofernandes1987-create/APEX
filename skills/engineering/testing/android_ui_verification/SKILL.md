@@ -3,7 +3,7 @@ skill_id: engineering.testing.android_ui_verification
 name: android_ui_verification
 description: "Implement — Automated end-to-end UI testing and verification on an Android Emulator using ADB."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/android_ui_verification
 anchors:
 - android

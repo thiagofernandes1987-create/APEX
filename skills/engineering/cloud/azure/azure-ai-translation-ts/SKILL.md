@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_ai_translation_ts
 name: azure-ai-translation-ts
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-translation-ts
 anchors:
 - azure

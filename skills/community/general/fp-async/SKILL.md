@@ -3,7 +3,7 @@ skill_id: community.general.fp_async
 name: fp-async
 description: "Use — Practical async patterns using TaskEither - clean pipelines instead of try/catch hell, with real API examples"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fp-async
 anchors:
 - async

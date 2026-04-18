@@ -3,7 +3,7 @@ skill_id: engineering.frontend.react.expo_tailwind_setup
 name: expo-tailwind-setup
 description: Set up Tailwind CSS v4 in Expo with react-native-css and NativeWind v5 for universal styling
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/expo-tailwind-setup
 anchors:
 - expo

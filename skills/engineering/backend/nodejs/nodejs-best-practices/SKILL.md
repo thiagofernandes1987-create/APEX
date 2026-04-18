@@ -4,7 +4,7 @@ name: nodejs-best-practices
 description: "Implement — "
   Teaches thinking, not copying.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/nodejs/nodejs-best-practices
 anchors:
 - nodejs

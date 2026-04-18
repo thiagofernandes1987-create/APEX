@@ -4,7 +4,7 @@ name: azure-kusto
 description: "Analyze — Query and analyze data in Azure Data Explorer (Kusto/ADX) using KQL for log analytics, telemetry, and time series"
   analysis. WHEN: KQL queries, Kusto database queries, Azure Data Explorer, ADX clusters'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

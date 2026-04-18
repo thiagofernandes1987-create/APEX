@@ -4,7 +4,7 @@ name: employment-contract-templates
 description: "Implement — "
   and HR policies.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/employment-contract-templates
 anchors:
 - employment

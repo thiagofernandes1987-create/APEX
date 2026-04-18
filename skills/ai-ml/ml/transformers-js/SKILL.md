@@ -3,7 +3,7 @@ skill_id: ai_ml.ml.transformers_js
 name: transformers-js
 description: Run Hugging Face models in JavaScript or TypeScript with Transformers.js in Node.js or the browser.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/transformers-js
 anchors:
 - transformers

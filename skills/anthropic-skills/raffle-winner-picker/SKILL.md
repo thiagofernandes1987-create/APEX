@@ -3,10 +3,20 @@ name: raffle-winner-picker
 description: "Apply — Picks random winners from lists, spreadsheets, or Google Sheets for giveaways, raffles, and contests. Ensures fair, unbiased selection with transparency."
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.raffle-winner-picker
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - testing
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from raffle winner picker"
 ---
 
 # Raffle Winner Picker

@@ -5,13 +5,25 @@ metadata:
   version: 1.0.0
 executor: LLM_BEHAVIOR
 skill_id: marketing._source_marketingskills.skills.community-marketing
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - marketing
   - customer_success
   - management
   - design
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # Community Marketing

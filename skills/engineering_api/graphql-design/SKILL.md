@@ -3,7 +3,7 @@ skill_id: engineering_api.graphql_design
 name: graphql-design
 description: "Use — GraphQL schema design, resolver patterns, subscriptions, DataLoader for N+1 prevention, and error handling"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - graphql

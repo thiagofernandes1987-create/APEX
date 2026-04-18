@@ -3,7 +3,7 @@ skill_id: engineering_testing.tdd_mastery
 name: tdd-mastery
 description: Test-driven development workflow with Red-Green-Refactor cycle across languages
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - mastery

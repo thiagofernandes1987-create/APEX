@@ -3,7 +3,7 @@ skill_id: community.general.seek_and_analyze_video
 name: seek-and-analyze-video
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/seek-and-analyze-video
 anchors:
 - seek

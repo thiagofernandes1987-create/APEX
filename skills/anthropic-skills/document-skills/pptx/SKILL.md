@@ -4,10 +4,20 @@ description: "Apply — Presentation creation, editing, and analysis. When Claud
 license: Proprietary. LICENSE.txt has complete terms
 executor: HYBRID
 skill_id: anthropic-skills.document-skills.pptx
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - llm
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from pptx"
 ---
 
 # PPTX creation, editing, and analysis

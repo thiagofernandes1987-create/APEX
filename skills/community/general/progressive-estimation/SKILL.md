@@ -4,7 +4,7 @@ name: progressive-estimation
 description: "Use — "
   feedback loops'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/progressive-estimation
 anchors:
 - progressive

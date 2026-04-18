@@ -4,7 +4,7 @@ name: seo-aeo-keyword-research
 description: "Create — "
   and a content map. Activate when the user wants to find keywords, research search terms, o'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-aeo-keyword-research
 anchors:
 - keyword

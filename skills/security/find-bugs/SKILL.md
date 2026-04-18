@@ -4,7 +4,7 @@ name: find-bugs
 description: Find bugs, security vulnerabilities, and code quality issues in local branch changes. Use when asked to review
   changes, find bugs, security review, or audit code on the current branch.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/find-bugs
 anchors:
 - find

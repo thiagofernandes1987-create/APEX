@@ -3,7 +3,7 @@ skill_id: community.general.clarity_gate
 name: clarity-gate
 description: "Use — >"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/clarity-gate
 anchors:
 - clarity

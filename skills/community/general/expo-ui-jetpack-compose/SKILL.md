@@ -3,7 +3,7 @@ skill_id: community.general.expo_ui_jetpack_compose
 name: expo-ui-jetpack-compose
 description: "Use — expo-ui-jetpack-compose"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/expo-ui-jetpack-compose
 anchors:
 - expo

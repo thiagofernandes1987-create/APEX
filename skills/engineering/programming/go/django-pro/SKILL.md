@@ -4,7 +4,7 @@ name: django-pro
 description: "Implement — Master Django 5.x with async views, DRF, Celery, and Django Channels. Build scalable web applications with proper"
   architecture, testing, and deployment.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/go/django-pro
 anchors:
 - django

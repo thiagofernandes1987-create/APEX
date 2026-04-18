@@ -3,7 +3,7 @@ skill_id: community.general.headline_psychologist
 name: headline-psychologist
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/headline-psychologist
 anchors:
 - headline

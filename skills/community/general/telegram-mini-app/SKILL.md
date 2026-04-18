@@ -3,7 +3,7 @@ skill_id: community.general.telegram_mini_app
 name: telegram-mini-app
 description: "Use — Expert in building Telegram Mini Apps (TWA) - web apps that run"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/telegram-mini-app
 anchors:
 - telegram

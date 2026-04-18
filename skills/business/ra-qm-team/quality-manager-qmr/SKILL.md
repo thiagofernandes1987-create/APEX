@@ -16,12 +16,22 @@ triggers:
   - quality governance
 executor: HYBRID
 skill_id: business.ra-qm-team.quality-manager-qmr
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
   - sales
   - compliance
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from quality manager qmr"
 ---
 
 # Senior Quality Manager Responsible Person (QMR)

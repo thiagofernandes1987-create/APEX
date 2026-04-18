@@ -3,7 +3,7 @@ skill_id: ai_ml.embeddings.azure_search_documents_py
 name: azure-search-documents-py
 description: "Apply — Azure AI Search SDK for Python. Use for vector search, hybrid search, semantic ranking, indexing, and skillsets."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/embeddings/azure-search-documents-py
 anchors:
 - azure

@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.microsoft_azure_webjobs_extensions_auth
 name: microsoft-azure-webjobs-extensions-authentication-events-dotnet
 description: "Implement — Microsoft Entra Authentication Events SDK for .NET. Azure Functions triggers for custom authentication extensions."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/microsoft-azure-webjobs-extensions-authentication-events-dotnet
 anchors:
 - microsoft

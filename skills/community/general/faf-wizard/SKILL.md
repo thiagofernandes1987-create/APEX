@@ -4,7 +4,7 @@ name: faf-wizard
 description: "Use — "
   scores readiness, works everywhere.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/faf-wizard
 anchors:
 - wizard

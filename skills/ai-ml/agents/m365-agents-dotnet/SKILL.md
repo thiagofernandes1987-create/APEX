@@ -4,7 +4,7 @@ name: m365-agents-dotnet
 description: "Apply — Microsoft 365 Agents SDK for .NET. Build multichannel agents for Teams/M365/Copilot Studio with ASP.NET Core"
   hosting, AgentApplication routing, and MSAL-based auth.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/m365-agents-dotnet
 anchors:
 - m365

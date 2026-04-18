@@ -4,7 +4,7 @@ name: variant-analysis
 description: Find similar vulnerabilities and bugs across codebases using pattern-based analysis. Use when hunting bug variants,
   building CodeQL/Semgrep queries, analyzing security vulnerabilities, or performing s
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/variant-analysis
 anchors:
 - variant

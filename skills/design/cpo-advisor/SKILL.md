@@ -4,7 +4,7 @@ name: cpo-advisor
 description: "Design — Product leadership for scaling companies. Product vision, portfolio strategy, product-market fit, and product"
   org design. Use when setting product vision, managing a product portfolio, measuring PMF, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - advisor

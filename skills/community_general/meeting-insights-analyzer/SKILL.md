@@ -4,7 +4,7 @@ name: meeting-insights-analyzer
 description: "Analyze — Analyzes meeting transcripts and recordings to uncover behavioral patterns, communication insights, and actionable"
   feedback. Identifies when you avoid conflict, use filler words, dominate conversation
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - meeting

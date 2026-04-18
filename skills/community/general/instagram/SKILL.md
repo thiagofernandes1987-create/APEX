@@ -4,7 +4,7 @@ name: instagram
 description: "Use — Integracao completa com Instagram via Graph API. Publicacao, analytics, comentarios, DMs, hashtags, agendamento,"
   templates e gestao de contas Business/Creator.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/instagram
 anchors:
 - instagram

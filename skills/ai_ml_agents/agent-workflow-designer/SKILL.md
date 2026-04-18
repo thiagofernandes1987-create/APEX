@@ -3,7 +3,7 @@ skill_id: ai_ml_agents.agent_workflow_designer
 name: agent-workflow-designer
 description: "Use — Agent Workflow Designer"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - agent

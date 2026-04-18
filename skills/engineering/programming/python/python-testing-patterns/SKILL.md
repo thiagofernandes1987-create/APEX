@@ -4,7 +4,7 @@ name: python-testing-patterns
 description: "Implement — "
   when writing Python tests, setting up test suites, or implementing testing best practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/python-testing-patterns
 anchors:
 - python

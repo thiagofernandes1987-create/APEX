@@ -4,7 +4,7 @@ name: track-management
 description: "Use — Use this skill when creating, managing, or working with Conductor tracks - the logical work units for features,"
   bugs, and refactors. Applies to spec.md, plan.md, and track lifecycle operations.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/track-management
 anchors:
 - track

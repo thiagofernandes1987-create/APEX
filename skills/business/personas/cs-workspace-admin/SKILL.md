@@ -3,7 +3,7 @@ skill_id: business.personas.engineering-team.cs_workspace_admin
 name: "cs-workspace-admin"
 description: "Manage — Google Workspace administration agent using the gws CLI. Orchestrates workspace setup, Gmail/Drive/Sheets/Calendar automation, security audits, and recipe execution. Spawn when use"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.engineering-team/cs-workspace-admin

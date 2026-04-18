@@ -4,7 +4,7 @@ name: wordpress-theme-development
 description: "Implement — "
   editor support, responsive design, and WordPress 7.0 features: DataViews, Pattern Editin'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cms/wordpress/wordpress-theme-development
 anchors:
 - wordpress

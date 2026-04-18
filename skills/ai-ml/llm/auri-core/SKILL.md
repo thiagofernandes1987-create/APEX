@@ -4,7 +4,7 @@ name: auri-core
 description: "Apply — "
   Neural, stack AWS, modelo Free/Pro/Business/Enterprise, roadmap 4 fases, GTM, north star'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/auri-core
 anchors:
 - auri

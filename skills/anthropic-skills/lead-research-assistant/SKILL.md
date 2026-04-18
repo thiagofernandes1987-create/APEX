@@ -3,11 +3,21 @@ name: lead-research-assistant
 description: "Apply — Identifies high-quality leads for your product or service by analyzing your business, searching for target companies, and providing actionable contact strategies. Perfect for sales"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.lead-research-assistant
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - sales
   - research
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from lead research assistant"
 ---
 
 # Lead Research Assistant

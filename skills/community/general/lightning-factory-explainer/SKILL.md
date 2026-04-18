@@ -4,7 +4,7 @@ name: lightning-factory-explainer
 description: "Use — Explain Bitcoin Lightning channel factories and the SuperScalar protocol — scalable Lightning onboarding using"
   shared UTXOs, Decker-Wattenhofer trees, timeout-signature trees, MuSig2, and Taproot. No '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/lightning-factory-explainer
 anchors:
 - lightning

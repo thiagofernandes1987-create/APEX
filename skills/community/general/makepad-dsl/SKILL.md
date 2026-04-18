@@ -3,7 +3,7 @@ skill_id: community.general.makepad_dsl
 name: makepad-dsl
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/makepad-dsl
 anchors:
 - makepad

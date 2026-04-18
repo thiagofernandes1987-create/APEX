@@ -3,7 +3,7 @@ skill_id: engineering.architecture.multiplayer
 name: multiplayer
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/multiplayer
 anchors:
 - multiplayer

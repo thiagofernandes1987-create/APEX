@@ -3,10 +3,20 @@ name: "hard-call"
 description: "Manage — /em -hard-call — Framework for Decisions With No Good Options"
 executor: LLM_BEHAVIOR
 skill_id: business.c_level_advisor.executive_mentor.hard_call
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from hard call"
 ---
 
 # /em:hard-call — Framework for Decisions With No Good Options

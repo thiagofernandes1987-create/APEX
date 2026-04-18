@@ -4,7 +4,7 @@ name: hugging-face-datasets
 description: Create and manage datasets on Hugging Face Hub. Supports initializing repos, defining configs/system prompts,
   streaming row updates, and SQL-based dataset querying/transformation. Designed to work alo
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/hugging-face-datasets
 anchors:
 - hugging

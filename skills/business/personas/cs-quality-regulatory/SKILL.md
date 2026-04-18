@@ -3,7 +3,7 @@ skill_id: business.personas.ra-qm-team.cs_quality_regulatory
 name: "cs-quality-regulatory"
 description: "Manage — Quality & Regulatory agent for ISO 13485 QMS, MDR compliance, FDA submissions, GDPR/DSGVO, and ISMS audits. Orchestrates ra-qm-team skills. Spawn when users need regulatory strateg"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.ra-qm-team/cs-quality-regulatory

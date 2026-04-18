@@ -4,7 +4,7 @@ name: skill-scanner
 description: "Audit — "
   permissions, secret exposure, and supply chain risks.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/skill-scanner
 anchors:
 - skill

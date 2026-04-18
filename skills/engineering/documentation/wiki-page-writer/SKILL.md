@@ -4,7 +4,7 @@ name: wiki-page-writer
 description: "Implement — "
   depth.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/wiki-page-writer
 anchors:
 - wiki

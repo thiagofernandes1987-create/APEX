@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_resource_manager_durabletask_dotn
 name: azure-resource-manager-durabletask-dotnet
 description: "Implement — Azure Resource Manager SDK for Durable Task Scheduler in .NET."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-resource-manager-durabletask-dotnet
 anchors:
 - azure

@@ -4,7 +4,7 @@ name: senior-security
 description: "Use — Security engineering toolkit for threat modeling, vulnerability analysis, secure architecture, and penetration"
   testing. Includes STRIDE analysis, OWASP guidance, cryptography patterns, and security sc
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - senior

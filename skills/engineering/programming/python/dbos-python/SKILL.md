@@ -4,7 +4,7 @@ name: dbos-python
 description: "Implement — "
   DBOS to existing Python code, creating workflows and steps, or using queues for concurrenc'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/dbos-python
 anchors:
 - dbos

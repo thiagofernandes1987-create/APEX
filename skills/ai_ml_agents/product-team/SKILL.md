@@ -4,7 +4,7 @@ name: product-skills
 description: "Use — 10 product agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. PM toolkit (RICE),"
   agile PO, product strategist (OKR), UX researcher, UI design system, competitive teardown, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - product

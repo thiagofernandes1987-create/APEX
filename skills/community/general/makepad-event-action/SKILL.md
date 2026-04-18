@@ -3,7 +3,7 @@ skill_id: community.general.makepad_event_action
 name: makepad-event-action
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/makepad-event-action
 anchors:
 - makepad

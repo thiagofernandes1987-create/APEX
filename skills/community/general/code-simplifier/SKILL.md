@@ -4,7 +4,7 @@ name: code-simplifier
 description: "Use — Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality."
   Use when asked to 'simplify code', 'clean up code', 'refactor for clarity', 'improve reada
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/code-simplifier
 anchors:
 - code

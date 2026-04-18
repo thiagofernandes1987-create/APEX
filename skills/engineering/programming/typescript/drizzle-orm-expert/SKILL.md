@@ -4,7 +4,7 @@ name: drizzle-orm-expert
 description: "Implement — "
   integration. Use when building type-safe database layers with Drizzle.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/drizzle-orm-expert
 anchors:
 - drizzle

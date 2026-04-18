@@ -4,7 +4,7 @@ name: skin-health-analyzer
 description: Analyze skin health data, identify skin problem patterns, assess skin health status. Supports correlation analysis
   with nutrition, chronic diseases, and medication data.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: healthcare/skin-health-analyzer
 anchors:
 - skin

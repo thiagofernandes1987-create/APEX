@@ -4,7 +4,7 @@ name: executive-mentor
 description: "Design — Adversarial thinking partner for founders and executives. Stress-tests plans, prepares for brutal board meetings,"
   dissects decisions with no good options, and forces honest post-mortems. Use when you '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - executive

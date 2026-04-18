@@ -4,7 +4,7 @@ name: smtp-penetration-testing
 description: "Audit — "
   including open relays, user enumeration, weak authentication, and misconfigurati'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/smtp-penetration-testing
 anchors:
 - smtp

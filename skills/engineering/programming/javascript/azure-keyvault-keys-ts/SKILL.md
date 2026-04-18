@@ -4,7 +4,7 @@ name: azure-keyvault-keys-ts
 description: "Implement — "
   encrypting/decrypting, signing, or rotating keys.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/javascript/azure-keyvault-keys-ts
 anchors:
 - azure

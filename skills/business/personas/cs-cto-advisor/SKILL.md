@@ -3,7 +3,7 @@ skill_id: business.personas.c-level.cs_cto_advisor
 name: "cs-cto-advisor"
 description: "Manage — Technical leadership advisor for CTOs covering technology strategy, team scaling, architecture decisions, and engineering excellence"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.c-level/cs-cto-advisor

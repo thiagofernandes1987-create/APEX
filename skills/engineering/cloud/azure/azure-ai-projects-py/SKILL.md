@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_ai_projects_py
 name: azure-ai-projects-py
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-projects-py
 anchors:
 - azure

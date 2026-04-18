@@ -4,7 +4,7 @@ name: docker-expert
 description: "Implement — "
   security hardening, multi-stage builds, orchestration patterns, and production de'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/docker/docker-expert
 anchors:
 - docker

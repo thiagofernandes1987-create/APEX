@@ -4,7 +4,7 @@ name: monorepo-architect
 description: "Implement — "
   Bazel, and Lerna for efficient multi-project development. Use PROACTIVELY for monorepo setup'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/build/monorepo-architect
 anchors:
 - monorepo

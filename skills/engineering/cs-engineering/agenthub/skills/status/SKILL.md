@@ -4,11 +4,20 @@ description: "Implement — Show DAG state, agent progress, and branch status fo
 command: /hub:status
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering.agenthub.status
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - agent
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from status"
 ---
 
 # /hub:status — Session Status

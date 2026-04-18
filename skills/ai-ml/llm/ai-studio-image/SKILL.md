@@ -4,7 +4,7 @@ name: ai-studio-image
 description: "Apply — Geracao de imagens humanizadas via Google AI Studio (Gemini). Fotos realistas estilo influencer ou educacional"
   com iluminacao natural e imperfeicoes sutis.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/ai-studio-image
 anchors:
 - studio

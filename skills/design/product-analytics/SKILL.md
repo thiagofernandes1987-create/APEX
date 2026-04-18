@@ -4,7 +4,7 @@ name: product-analytics
 description: "Design — Use when defining product KPIs, building metric dashboards, running cohort or retention analysis, or interpreting"
   feature adoption trends across product stages.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - product

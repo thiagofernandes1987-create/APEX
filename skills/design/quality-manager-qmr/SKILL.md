@@ -4,7 +4,7 @@ name: quality-manager-qmr
 description: "Design — Senior Quality Manager Responsible Person (QMR) for HealthTech and MedTech companies. Provides quality system"
   governance, management review leadership, regulatory compliance oversight, and quality per
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - quality

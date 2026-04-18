@@ -4,7 +4,7 @@ name: codebase-cleanup-deps-audit
 description: "Audit — "
   chain security. Analyze project dependencies for known vulnerabilities, licensing issues, o'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/codebase-cleanup-deps-audit
 anchors:
 - codebase

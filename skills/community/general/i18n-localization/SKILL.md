@@ -4,7 +4,7 @@ name: i18n-localization
 description: "Use — "
   files, RTL support.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/i18n-localization
 anchors:
 - i18n

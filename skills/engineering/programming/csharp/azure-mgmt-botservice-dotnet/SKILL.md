@@ -4,7 +4,7 @@ name: azure-mgmt-botservice-dotnet
 description: "Implement — Azure Resource Manager SDK for Bot Service in .NET. Management plane operations for creating and managing Azure"
   Bot resources, channels (Teams, DirectLine, Slack), and connection settings.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-mgmt-botservice-dotnet
 anchors:
 - azure

@@ -4,7 +4,7 @@ name: dbos-typescript
 description: "Implement — "
   adding DBOS to existing TypeScript code, creating workflows and steps, or using queues for co'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/dbos-typescript
 anchors:
 - dbos

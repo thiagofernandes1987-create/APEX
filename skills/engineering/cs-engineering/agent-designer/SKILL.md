@@ -3,7 +3,7 @@ name: "agent-designer"
 description: "Implement — Use when the user asks to design multi-agent systems, create agent architectures, define agent communication patterns, or build autonomous agent workflows."
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.agent-designer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
@@ -11,6 +11,19 @@ anchors:
   - workflow
   - design
   - web3
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # Agent Designer - Multi-Agent System Architecture

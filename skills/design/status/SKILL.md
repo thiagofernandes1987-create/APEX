@@ -3,7 +3,7 @@ skill_id: design.status
 name: status
 description: "Design — Memory health dashboard showing line counts, topic files, capacity, stale entries, and recommendations."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - status

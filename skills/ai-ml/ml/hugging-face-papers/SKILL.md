@@ -3,7 +3,7 @@ skill_id: ai_ml.ml.hugging_face_papers
 name: hugging-face-papers
 description: "Apply — Read and analyze Hugging Face paper pages or arXiv papers with markdown and papers API metadata."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/hugging-face-papers
 anchors:
 - hugging

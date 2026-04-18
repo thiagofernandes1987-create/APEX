@@ -4,7 +4,7 @@ name: brainstorming
 description: "Implement — "
   designs through disciplined reasoning and collaboration.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/brainstorming
 anchors:
 - brainstorming

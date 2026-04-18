@@ -4,7 +4,7 @@ name: fastapi-templates
 description: "Implement — "
   handling. Use when building new FastAPI applications or setting up backend API projects.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/fastapi/fastapi-templates
 anchors:
 - fastapi

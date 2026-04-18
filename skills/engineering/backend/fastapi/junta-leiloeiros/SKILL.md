@@ -4,7 +4,7 @@ name: junta-leiloeiros
 description: "Implement — Coleta e consulta dados de leiloeiros oficiais de todas as 27 Juntas Comerciais do Brasil. Scraper multi-UF,"
   banco SQLite, API FastAPI e exportacao CSV/JSON.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/fastapi/junta-leiloeiros
 anchors:
 - junta

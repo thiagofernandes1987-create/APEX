@@ -4,7 +4,7 @@ name: culture-architect
 description: Build, measure, and evolve company culture as operational behavior — not wall posters. Covers mission/vision/values
   workshops, values-to-behaviors translation, culture code creation, culture health as
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - culture

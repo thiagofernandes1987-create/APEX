@@ -4,7 +4,7 @@ name: humanize-chinese
 description: Detect and rewrite AI-like Chinese text with a practical workflow for scoring, humanization, academic AIGC reduction,
   and style conversion. Use when the user asks to 去AI味, 降AIGC, 去除AI痕迹, 论文降重, 知网检测, 维
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/humanize-chinese
 anchors:
 - humanize

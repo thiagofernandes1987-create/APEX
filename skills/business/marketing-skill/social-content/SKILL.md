@@ -9,10 +9,24 @@ metadata:
   updated: 2026-03-06
 executor: LLM_BEHAVIOR
 skill_id: business.marketing-skill.social-content
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from social content"
 ---
 
 # Social Content

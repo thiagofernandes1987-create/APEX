@@ -4,7 +4,7 @@ name: coda-automation
 description: "Apply — "
   publishing. Always search tools first for current schemas.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/coda-automation
 anchors:
 - coda

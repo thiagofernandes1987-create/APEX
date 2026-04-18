@@ -3,7 +3,7 @@ skill_id: engineering_database.postgres_optimization
 name: postgres-optimization
 description: "Use — PostgreSQL optimization including indexes, query plans, partitioning, JSONB operations, and connection pooling"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/database
 anchors:
 - postgres

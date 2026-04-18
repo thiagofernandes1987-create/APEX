@@ -8,12 +8,30 @@ metadata:
   version: "1.0.0"
 skill_id: design.design_system
 executor: HYBRID
-status: CANDIDATE
+status: ADOPTED
 security: { level: standard, pii: false, approval_required: false }
 anchors:
   - design
   - frontend
   - engineering
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
+what_if_fails: >
+  FALLBACK: If Ckm:Design System cannot complete, provide partial results with
+  explicit gaps noted. Never block workflow silently.
+  ESCALATE: If core capability is unavailable, suggest nearest alternative skill.
+  RULE: Always explain what failed and what manual steps can substitute.
 ---
 
 # Design System

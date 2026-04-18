@@ -4,7 +4,7 @@ name: onboarding-cro
 description: "Create — When the user wants to optimize post-signup onboarding, user activation, first-run experience, or time-to-value."
   Also use when the user mentions 'onboarding flow,' 'activation rate,' 'user activation,
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - onboarding

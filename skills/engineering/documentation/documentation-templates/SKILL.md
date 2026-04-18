@@ -3,7 +3,7 @@ skill_id: engineering.documentation.documentation_templates
 name: documentation-templates
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/documentation-templates
 anchors:
 - documentation

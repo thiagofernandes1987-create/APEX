@@ -4,7 +4,7 @@ name: skill-developer
 description: "Apply — "
   Anthropic''s official best practices including the 500-line rule and progressive disclosure p'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/skill-developer
 anchors:
 - skill

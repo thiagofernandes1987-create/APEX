@@ -4,7 +4,7 @@ name: dotnet-backend-patterns
 description: "Apply — "
   best practices (2024/2025).'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/dotnet-backend-patterns
 anchors:
 - dotnet

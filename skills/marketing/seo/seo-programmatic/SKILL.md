@@ -4,7 +4,7 @@ name: seo-programmatic
 description: "Create — "
   URL systems, internal linking, quality gates, and index-bloat safeguards for pages at scal'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-programmatic
 anchors:
 - programmatic

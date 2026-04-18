@@ -4,7 +4,7 @@ name: soc2-compliance
 description: "Design — Use when the user asks to prepare for SOC 2 audits, map Trust Service Criteria, build control matrices, collect"
   audit evidence, perform gap analysis, or assess SOC 2 Type I vs Type II readiness.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - soc2

@@ -4,7 +4,7 @@ name: mtls-configuration
 description: "Implement — "
   networking, certificate management, or securing internal service communication.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/mtls-configuration
 anchors:
 - mtls

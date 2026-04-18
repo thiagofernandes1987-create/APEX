@@ -3,7 +3,7 @@ skill_id: community.general.comprehensive_review_pr_enhance
 name: comprehensive-review-pr-enhance
 description: "Use — >"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/comprehensive-review-pr-enhance
 anchors:
 - comprehensive

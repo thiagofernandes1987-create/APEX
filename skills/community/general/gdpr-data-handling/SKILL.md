@@ -3,7 +3,7 @@ skill_id: community.general.gdpr_data_handling
 name: gdpr-data-handling
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/gdpr-data-handling
 anchors:
 - gdpr

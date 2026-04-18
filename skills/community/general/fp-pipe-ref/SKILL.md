@@ -4,7 +4,7 @@ name: fp-pipe-ref
 description: "Use — Quick reference for pipe and flow. Use when user needs to chain functions, compose operations, or build data"
   pipelines in fp-ts.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fp-pipe-ref
 anchors:
 - pipe

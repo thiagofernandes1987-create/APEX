@@ -3,7 +3,7 @@ skill_id: engineering.architecture.robius_app_architecture
 name: robius-app-architecture
 description: "Implement — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/robius-app-architecture
 anchors:
 - robius

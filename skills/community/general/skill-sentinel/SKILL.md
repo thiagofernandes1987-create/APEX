@@ -4,7 +4,7 @@ name: skill-sentinel
 description: "Use — Auditoria e evolucao do ecossistema de skills. Qualidade de codigo, seguranca, custos, gaps, duplicacoes, dependencias"
   e relatorios de saude.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/skill-sentinel
 anchors:
 - skill

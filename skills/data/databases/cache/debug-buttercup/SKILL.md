@@ -4,7 +4,7 @@ name: debug-buttercup
 description: "Analyze — "
   multiple services restart simultaneously (cascade failure), or redis is unresponsi'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/cache/debug-buttercup
 anchors:
 - debug

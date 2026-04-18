@@ -93,7 +93,7 @@ apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: HYBRID
 skill_id: knowledge_work.bio_research.scvi_tools
-status: CANDIDATE
+status: ADOPTED
 ---
 # scvi-tools Deep Learning Skill
 

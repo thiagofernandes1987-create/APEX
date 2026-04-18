@@ -4,7 +4,7 @@ name: social-content
 description: "Use — "
   major social networks. Your goal is to help create engaging content that builds audience, d'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/social-content
 anchors:
 - social

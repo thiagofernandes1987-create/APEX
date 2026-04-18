@@ -3,7 +3,7 @@ skill_id: community.general.personal_tool_builder
 name: personal-tool-builder
 description: "Use — Expert in building custom tools that solve your own problems first."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/personal-tool-builder
 anchors:
 - personal

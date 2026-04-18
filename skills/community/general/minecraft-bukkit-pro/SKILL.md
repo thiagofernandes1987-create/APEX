@@ -3,7 +3,7 @@ skill_id: community.general.minecraft_bukkit_pro
 name: minecraft-bukkit-pro
 description: "Use — Master Minecraft server plugin development with Bukkit, Spigot, and Paper APIs."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/minecraft-bukkit-pro
 anchors:
 - minecraft

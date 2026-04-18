@@ -3,7 +3,7 @@ skill_id: engineering_security.authentication_patterns
 name: authentication-patterns
 description: "Use — Authentication and authorization patterns including OAuth2, JWT, RBAC, session management, and PKCE flows"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - authentication

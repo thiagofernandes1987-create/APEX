@@ -12,13 +12,26 @@ metadata:
   frameworks: financial-planning, fundraising-playbook, cash-management
 executor: HYBRID
 skill_id: business.c-level-advisor.cfo-advisor
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - ai_ml
   - sales
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # CFO Advisor

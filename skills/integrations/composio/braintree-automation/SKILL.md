@@ -5,7 +5,7 @@ requires:
   mcp: [rube]
 executor: HYBRID
 skill_id: integrations.composio.braintree-automation
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 extends: integrations.composio.meta
 toolkit: braintree-automation
@@ -15,6 +15,21 @@ anchors:
   - integration
   - api
   - workflow
+tier: 3
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from Braintree"
+what_if_fails: >
+  FALLBACK: If Braintree cannot complete, provide partial results with
+  explicit gaps noted. Never block workflow silently.
+  ESCALATE: If core capability is unavailable, suggest nearest alternative skill.
+  RULE: Always explain what failed and what manual steps can substitute.
 ---
 
 # Braintree Automation

@@ -3,7 +3,7 @@ skill_id: design.ios_hig.hig_project_context
 name: hig-project-context
 description: Create or update a shared Apple design context document that other HIG skills use to tailor guidance.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ios-hig/hig-project-context
 anchors:
 - project

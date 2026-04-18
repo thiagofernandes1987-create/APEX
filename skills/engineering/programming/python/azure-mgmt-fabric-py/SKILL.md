@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.azure_mgmt_fabric_py
 name: azure-mgmt-fabric-py
 description: "Implement — Azure Fabric Management SDK for Python. Use for managing Microsoft Fabric capacities and resources."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-mgmt-fabric-py
 anchors:
 - azure

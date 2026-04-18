@@ -4,7 +4,7 @@ name: ui-setup
 description: "Use — "
   screen scaffold.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/ui-setup
 anchors:
 - setup

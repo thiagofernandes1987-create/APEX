@@ -4,7 +4,7 @@ name: product-discovery
 description: "Use — Use when validating product opportunities, mapping assumptions, planning discovery sprints, or testing problem-solution"
   fit before committing delivery resources.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - product

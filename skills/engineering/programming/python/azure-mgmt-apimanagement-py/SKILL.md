@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.azure_mgmt_apimanagement_py
 name: azure-mgmt-apimanagement-py
 description: "Implement — Azure API Management SDK for Python. Use for managing APIM services, APIs, products, subscriptions, and policies."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-mgmt-apimanagement-py
 anchors:
 - azure

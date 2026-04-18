@@ -4,7 +4,7 @@ name: revops
 description: "Create — When the user wants help with revenue operations, lead lifecycle management, or marketing-to-sales handoff processes."
   Also use when the user mentions 'RevOps,' 'revenue operations,' 'lead scoring,' 'l
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - revops

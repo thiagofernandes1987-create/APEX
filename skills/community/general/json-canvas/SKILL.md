@@ -4,7 +4,7 @@ name: json-canvas
 description: 'Create and edit JSON Canvas files (.canvas) with nodes, edges, groups, and connections. Use when working with
   .canvas files, creating visual canvases, mind maps, flowcharts, or when the user mentions '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/json-canvas
 anchors:
 - json

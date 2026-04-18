@@ -3,7 +3,7 @@ skill_id: community.general.remotion
 name: remotion
 description: Generate walkthrough videos from Stitch projects using Remotion with smooth transitions, zooming, and text overlays
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/remotion
 anchors:
 - remotion

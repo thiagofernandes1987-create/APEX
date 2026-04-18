@@ -4,7 +4,7 @@ name: carrier-relationship-management
 description: "Use — Codified expertise for managing carrier portfolios, negotiating freight rates, tracking carrier performance,"
   allocating freight, and maintaining strategic carrier relationships.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/carrier-relationship-management
 anchors:
 - carrier

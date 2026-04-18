@@ -3,7 +3,7 @@ skill_id: engineering_devops.docker_best_practices
 name: docker-best-practices
 description: "Build — Docker best practices including multi-stage builds, compose patterns, image optimization, and security"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - docker

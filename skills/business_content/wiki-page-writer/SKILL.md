@@ -4,7 +4,7 @@ name: wiki-page-writer
 description: "Use — One-line description"
   depth. Use when writing documentation, generating wiki pages, creating technic
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/content
 anchors:
 - wiki

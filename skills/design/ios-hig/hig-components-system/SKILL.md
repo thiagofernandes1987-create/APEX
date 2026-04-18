@@ -4,7 +4,7 @@ name: hig-components-system
 description: "Design — "
   home screen quick actions, top shelf, watch faces, app clips, and app shortcuts.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ios-hig/hig-components-system
 anchors:
 - components

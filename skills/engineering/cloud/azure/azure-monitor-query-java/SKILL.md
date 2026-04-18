@@ -4,7 +4,7 @@ name: azure-monitor-query-java
 description: "Implement — Azure Monitor Query SDK for Java. Execute Kusto queries against Log Analytics workspaces and query metrics from"
   Azure resources.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-monitor-query-java
 anchors:
 - azure

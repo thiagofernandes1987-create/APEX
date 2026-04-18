@@ -4,7 +4,7 @@ name: free-tool-strategy
 description: "Build — When the user wants to build a free tool for marketing — lead generation, SEO value, or brand awareness. Use"
   when they mention 'engineering as marketing,' 'free tool,' 'calculator,' 'generator,' 'chec
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - free

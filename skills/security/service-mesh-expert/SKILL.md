@@ -4,7 +4,7 @@ name: service-mesh-expert
 description: "Audit — "
   traffic management, security policies, observability integration, and multi-cluster mesh co'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/service-mesh-expert
 anchors:
 - service

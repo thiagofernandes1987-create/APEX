@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_eventhub_ts
 name: azure-eventhub-ts
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-eventhub-ts
 anchors:
 - azure

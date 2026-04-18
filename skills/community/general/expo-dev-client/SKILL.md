@@ -3,7 +3,7 @@ skill_id: community.general.expo_dev_client
 name: expo-dev-client
 description: Build and distribute Expo development clients locally or via TestFlight
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/expo-dev-client
 anchors:
 - expo

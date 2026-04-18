@@ -4,7 +4,7 @@ name: spark-optimization
 description: "Use — "
   Spark performance, debugging slow jobs, or scaling data processing pipelines.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/spark-optimization
 anchors:
 - spark

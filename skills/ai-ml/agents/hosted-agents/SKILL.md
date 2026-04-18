@@ -4,7 +4,7 @@ name: hosted-agents
 description: Build background agents in sandboxed environments. Use for hosted coding agents, sandboxed VMs, Modal sandboxes,
   and remote coding environments.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/hosted-agents
 anchors:
 - hosted

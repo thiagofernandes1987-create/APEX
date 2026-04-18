@@ -3,7 +3,7 @@ skill_id: community_general.nextjs_mastery
 name: nextjs-mastery
 description: "Use — Next.js 14+ App Router patterns including RSC, ISR, middleware, parallel routes, and data fetching"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - nextjs

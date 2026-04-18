@@ -3,7 +3,7 @@ skill_id: business.personas.product.cs_product_manager
 name: "cs-product-manager"
 description: "Manage — Product management agent for feature prioritization, customer discovery, PRD development, and roadmap planning using RICE framework"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.product/cs-product-manager

@@ -4,7 +4,7 @@ name: azure-monitor-ingestion-py
 description: "Implement — Azure Monitor Ingestion SDK for Python. Use for sending custom logs to Log Analytics workspace via Logs Ingestion"
   API.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-monitor-ingestion-py
 anchors:
 - azure

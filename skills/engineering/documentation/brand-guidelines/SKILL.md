@@ -4,7 +4,7 @@ name: brand-guidelines
 description: Write copy following Sentry brand guidelines. Use when writing UI text, error messages, empty states, onboarding
   flows, 404 pages, documentation, marketing copy, or any user-facing content. Covers bot
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/brand-guidelines
 anchors:
 - brand

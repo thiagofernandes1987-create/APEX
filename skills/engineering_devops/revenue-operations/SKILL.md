@@ -4,7 +4,7 @@ name: revenue-operations
 description: "Analyze — Analyzes sales pipeline health, revenue forecasting accuracy, and go-to-market efficiency metrics for SaaS revenue"
   optimization. Use when analyzing sales pipeline coverage, forecasting revenue, evalua
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - revenue

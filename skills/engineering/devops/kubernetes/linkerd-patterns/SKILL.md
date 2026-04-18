@@ -3,7 +3,7 @@ skill_id: engineering.devops.kubernetes.linkerd_patterns
 name: linkerd-patterns
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/kubernetes/linkerd-patterns
 anchors:
 - linkerd

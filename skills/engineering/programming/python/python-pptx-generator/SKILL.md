@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.python_pptx_generator
 name: python-pptx-generator
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/python-pptx-generator
 anchors:
 - python

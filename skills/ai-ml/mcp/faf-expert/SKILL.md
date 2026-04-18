@@ -4,7 +4,7 @@ name: faf-expert
 description: "Apply — "
   scoring, bi-directional sync.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/faf-expert
 anchors:
 - expert

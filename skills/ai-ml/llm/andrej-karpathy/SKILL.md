@@ -4,7 +4,7 @@ name: andrej-karpathy
 description: "Apply — "
   Labs, e o maior educador de deep learning do mundo.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/andrej-karpathy
 anchors:
 - andrej

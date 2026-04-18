@@ -4,11 +4,21 @@ description: "Apply — Toolkit for creating animated GIFs optimized for Slack, 
 license: Complete terms in LICENSE.txt
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.slack-gif-creator
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - automation
   - apply
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from slack gif creator"
 ---
 
 # Slack GIF Creator - Flexible Toolkit

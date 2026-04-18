@@ -3,7 +3,7 @@ skill_id: community.general.app_store_changelog
 name: app-store-changelog
 description: Generate user-facing App Store release notes from git history since the last tag.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/app-store-changelog
 anchors:
 - store

@@ -4,7 +4,7 @@ name: parallel-agents
 description: "Apply — "
   or when comprehensive analysis requires multiple perspectives.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/parallel-agents
 anchors:
 - parallel

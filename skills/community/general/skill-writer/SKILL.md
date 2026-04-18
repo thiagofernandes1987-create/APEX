@@ -4,7 +4,7 @@ name: skill-writer
 description: Create and improve agent skills following the Agent Skills specification. Use when asked to create, write, or
   update skills.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/skill-writer
 anchors:
 - skill

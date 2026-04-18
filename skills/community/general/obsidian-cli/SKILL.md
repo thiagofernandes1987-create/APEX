@@ -4,7 +4,7 @@ name: obsidian-cli
 description: "Use — "
   and themes from the command line.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/obsidian-cli
 anchors:
 - obsidian

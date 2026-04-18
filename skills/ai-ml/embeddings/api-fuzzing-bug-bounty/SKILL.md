@@ -4,7 +4,7 @@ name: api-fuzzing-bug-bounty
 description: "Apply — "
   testing engagements. Covers vulnerability discovery, authentication bypass, IDOR ex'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/embeddings/api-fuzzing-bug-bounty
 anchors:
 - fuzzing

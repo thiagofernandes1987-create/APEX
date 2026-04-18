@@ -4,7 +4,7 @@ name: data-quality-auditor
 description: Audit datasets for completeness, consistency, accuracy, and validity. Profile data distributions, detect anomalies
   and outliers, surface structural issues, and produce an actionable remediation plan.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - data

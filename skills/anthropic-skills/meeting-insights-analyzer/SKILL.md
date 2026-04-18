@@ -3,11 +3,21 @@ name: meeting-insights-analyzer
 description: "Apply — Analyzes meeting transcripts and recordings to uncover behavioral patterns, communication insights, and actionable feedback. Identifies when you avoid conflict, use filler words, d"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.meeting-insights-analyzer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - automation
   - apply
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from meeting insights analyzer"
 ---
 
 # Meeting Insights Analyzer

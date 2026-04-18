@@ -4,7 +4,7 @@ name: landing-page-generator
 description: "Generate — Generates high-converting landing pages as complete Next.js/React (TSX) components with Tailwind CSS. Creates"
   hero sections, feature grids, pricing tables, FAQ accordions, testimonial blocks, and CTA '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend
 anchors:
 - landing

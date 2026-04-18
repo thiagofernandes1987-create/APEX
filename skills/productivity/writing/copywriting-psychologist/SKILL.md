@@ -3,7 +3,7 @@ skill_id: productivity.writing.copywriting_psychologist
 name: copywriting-psychologist
 description: "Automate — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: productivity/writing/copywriting-psychologist
 anchors:
 - copywriting

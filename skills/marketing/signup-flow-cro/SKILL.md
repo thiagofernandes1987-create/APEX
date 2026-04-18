@@ -4,7 +4,7 @@ name: signup-flow-cro
 description: "Create — When the user wants to optimize signup, registration, account creation, or trial activation flows. Also use when"
   the user mentions 'signup conversions,' 'registration friction,' 'signup form optimizat
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - signup

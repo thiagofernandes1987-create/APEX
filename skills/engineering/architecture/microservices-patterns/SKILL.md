@@ -4,7 +4,7 @@ name: microservices-patterns
 description: "Implement — "
   management, and resilience patterns for building distributed systems.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/microservices-patterns
 anchors:
 - microservices

@@ -3,7 +3,7 @@ skill_id: community_general.promote
 name: promote
 description: "Use — Graduate a proven pattern from auto-memory (MEMORY.md) to CLAUDE.md or .claude/rules/ for permanent enforcement."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - promote

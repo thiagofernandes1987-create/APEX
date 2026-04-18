@@ -3,7 +3,7 @@ skill_id: community_general.stripe_integration_expert
 name: stripe-integration-expert
 description: "Use — Stripe Integration Expert"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - stripe

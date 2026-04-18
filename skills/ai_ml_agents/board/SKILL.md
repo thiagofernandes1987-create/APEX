@@ -3,7 +3,7 @@ skill_id: ai_ml_agents.board
 name: board
 description: "Use — Read, write, and browse the AgentHub message board for agent coordination."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - board

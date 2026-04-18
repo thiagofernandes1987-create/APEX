@@ -4,7 +4,7 @@ name: beautiful-prose
 description: "Automate — A hard-edged writing style contract for timeless, forceful English prose without modern AI tics. Use when users"
   ask for prose or rewrites that must be clean, exact, concrete, and free of AI cadence, f
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: productivity/writing/beautiful-prose
 anchors:
 - beautiful

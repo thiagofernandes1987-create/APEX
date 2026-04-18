@@ -4,7 +4,7 @@ name: fp-option-ref
 description: "Use — Quick reference for Option type. Use when user needs to handle nullable values, optional data, or wants to avoid"
   null checks.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fp-option-ref
 anchors:
 - option

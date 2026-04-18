@@ -4,7 +4,7 @@ name: azure-diagnostics
 description: 'Debug Azure production issues on Azure using AppLens, Azure Monitor, resource health, and safe triage. WHEN:
   debug production issues, troubleshoot container apps, troubleshoot functions, troubleshoot '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

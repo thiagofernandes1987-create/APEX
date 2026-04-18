@@ -4,7 +4,7 @@ name: fp-either-ref
 description: "Use — Quick reference for Either type. Use when user needs error handling, validation, or operations that can fail"
   with typed errors.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fp-either-ref
 anchors:
 - either

@@ -4,7 +4,7 @@ name: mobile-development
 description: "Use — Mobile development patterns for React Native and Flutter including navigation, state management, and responsive"
   design
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend
 anchors:
 - mobile

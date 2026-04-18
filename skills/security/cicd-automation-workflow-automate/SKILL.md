@@ -4,7 +4,7 @@ name: cicd-automation-workflow-automate
 description: "Audit — "
   and automated development processes. Design and implement automation that reduces ma'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/cicd-automation-workflow-automate
 anchors:
 - cicd

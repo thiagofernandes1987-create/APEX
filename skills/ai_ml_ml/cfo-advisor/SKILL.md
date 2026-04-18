@@ -4,7 +4,7 @@ name: cfo-advisor
 description: "Use — Financial leadership for startups and scaling companies. Financial modeling, unit economics, fundraising strategy,"
   cash management, and board financial packages. Use when building financial models, an
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - advisor

@@ -4,7 +4,7 @@ name: wordpress
 description: "Implement — "
   performance optimization, and security hardening. Includes WordPress 7.0 features: Real-T'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/php/wordpress
 anchors:
 - wordpress

@@ -3,7 +3,7 @@ skill_id: community.general.busybox_on_windows
 name: busybox-on-windows
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/busybox-on-windows
 anchors:
 - busybox

@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.azure_eventgrid_py
 name: azure-eventgrid-py
 description: "Implement — Azure Event Grid SDK for Python. Use for publishing events, handling CloudEvents, and event-driven architectures."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-eventgrid-py
 anchors:
 - azure

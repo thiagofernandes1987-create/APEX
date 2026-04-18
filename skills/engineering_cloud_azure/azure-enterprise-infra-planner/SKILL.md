@@ -4,7 +4,7 @@ name: azure-enterprise-infra-planner
 description: "Use — Architect and provision enterprise Azure infrastructure from workload descriptions. For cloud architects and"
   platform engineers planning networking, identity, security, compliance, and multi-resource '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

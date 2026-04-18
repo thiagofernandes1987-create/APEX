@@ -4,7 +4,7 @@ name: global-chat-agent-discovery
 description: "Apply — "
   directory and MCP server.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/global-chat-agent-discovery
 anchors:
 - global

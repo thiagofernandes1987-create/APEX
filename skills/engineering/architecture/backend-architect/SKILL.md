@@ -3,7 +3,7 @@ skill_id: engineering.architecture.backend_architect
 name: backend-architect
 description: "Implement — Expert backend architect specializing in scalable API design, microservices architecture, and distributed systems."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/backend-architect
 anchors:
 - backend

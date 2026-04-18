@@ -3,7 +3,7 @@ skill_id: sales.salesforce_development
 name: salesforce-development
 description: "Track — Expert patterns for Salesforce platform development including"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: sales/salesforce-development
 anchors:
 - salesforce

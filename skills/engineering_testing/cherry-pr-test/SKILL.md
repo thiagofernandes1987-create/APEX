@@ -4,7 +4,7 @@ name: cherry-pr-test
 description: Test Cherry Studio PRs by checking out the branch, launching the Electron app in debug mode, and running interactive
   UI tests via CDP.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - cherry

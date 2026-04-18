@@ -3,7 +3,7 @@ skill_id: engineering.cloud.aws.aws_secrets_rotation
 name: aws-secrets-rotation
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/aws-secrets-rotation
 anchors:
 - secrets

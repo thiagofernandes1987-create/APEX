@@ -4,7 +4,7 @@ name: azure-monitor-opentelemetry-ts
 description: "Monitor — Instrument applications with Azure Monitor and OpenTelemetry for JavaScript (@azure/monitor-opentelemetry). Use"
   when adding distributed tracing, metrics, and logs to Node.js applications with Applicat
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.claude_ally_health
 name: claude-ally-health
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/claude-ally-health
 anchors:
 - claude

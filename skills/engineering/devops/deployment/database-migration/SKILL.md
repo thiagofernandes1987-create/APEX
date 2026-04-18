@@ -4,7 +4,7 @@ name: database-migration
 description: "Implement — "
   and zero-downtime deployments.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/database-migration
 anchors:
 - database

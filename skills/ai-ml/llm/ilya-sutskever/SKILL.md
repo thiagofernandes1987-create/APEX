@@ -4,7 +4,7 @@ name: ilya-sutskever
 description: "Apply — "
   quiser perspectivas sobre: AGI safety-first, consciência de IA, scaling laws, deep learning p'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/ilya-sutskever
 anchors:
 - ilya

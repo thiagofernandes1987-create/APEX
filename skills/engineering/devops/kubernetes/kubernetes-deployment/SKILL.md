@@ -4,7 +4,7 @@ name: kubernetes-deployment
 description: "Implement — "
   K8s configurations.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/kubernetes/kubernetes-deployment
 anchors:
 - kubernetes

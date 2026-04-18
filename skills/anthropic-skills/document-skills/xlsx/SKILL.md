@@ -4,12 +4,26 @@ description: "Apply — Comprehensive spreadsheet creation, editing, and analysi
 license: Proprietary. LICENSE.txt has complete terms
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.document-skills.xlsx
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - llm
   - customer_success
   - data
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from xlsx"
 ---
 
 # Requirements for Outputs

@@ -3,7 +3,7 @@ skill_id: community.general.internal_comms_anthropic
 name: internal-comms-anthropic
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/internal-comms-anthropic
 anchors:
 - internal

@@ -4,7 +4,7 @@ name: laravel-expert
 description: "Implement — "
   on clean architecture, security, performance, and modern standards (Laravel 10/11+).'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/php/laravel-expert
 anchors:
 - laravel

@@ -4,7 +4,7 @@ name: marketing-psychology
 description: "Apply — "
   and feasibility scoring system.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/marketing-psychology
 anchors:
 - marketing

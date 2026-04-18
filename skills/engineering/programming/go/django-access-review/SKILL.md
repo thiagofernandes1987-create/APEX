@@ -3,7 +3,7 @@ skill_id: engineering.programming.go.django_access_review
 name: django-access-review
 description: "Implement — django-access-review"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/go/django-access-review
 anchors:
 - django

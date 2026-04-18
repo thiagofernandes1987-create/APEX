@@ -3,11 +3,21 @@ name: "product-manager-toolkit"
 description: "Manage — Comprehensive toolkit for product managers including RICE prioritization, customer interview analysis, PRD templates, discovery frameworks, and go-to-market strategies. Use for fea"
 executor: HYBRID
 skill_id: business.product-team.product-manager-toolkit
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - customer_success
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from product manager toolkit"
 ---
 
 # Product Manager Toolkit

@@ -3,7 +3,7 @@ skill_id: community.general.unsplash_integration
 name: unsplash-integration
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/unsplash-integration
 anchors:
 - unsplash

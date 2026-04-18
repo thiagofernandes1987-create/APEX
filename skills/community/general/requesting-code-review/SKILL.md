@@ -3,7 +3,7 @@ skill_id: community.general.requesting_code_review
 name: requesting-code-review
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/requesting-code-review
 anchors:
 - requesting

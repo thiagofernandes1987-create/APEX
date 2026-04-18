@@ -4,7 +4,7 @@ name: ai-md
 description: "Apply — "
   rules, fewer tokens, higher compliance.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/ai-md
 anchors:
 - convert

@@ -3,7 +3,7 @@ skill_id: engineering.programming.swift.swift_concurrency_expert
 name: swift-concurrency-expert
 description: Review and fix Swift concurrency issues such as actor isolation and Sendable violations.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/swift/swift-concurrency-expert
 anchors:
 - swift

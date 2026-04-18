@@ -4,7 +4,7 @@ name: azure-storage
 description: "Use — Azure Storage Services including Blob Storage, File Shares, Queue Storage, Table Storage, and Data Lake. Provides"
   object storage, SMB file shares, async messaging, NoSQL key-value, and big data analyt
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_mgmt_applicationinsights_dotnet
 name: azure-mgmt-applicationinsights-dotnet
 description: "Implement — Azure Application Insights SDK for .NET. Application performance monitoring and observability resource management."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-mgmt-applicationinsights-dotnet
 anchors:
 - azure

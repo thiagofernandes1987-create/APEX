@@ -4,7 +4,7 @@ name: threejs-postprocessing
 description: "Implement — Three.js post-processing - EffectComposer, bloom, DOF, screen effects. Use when adding visual effects, color"
   grading, blur, glow, or creating custom screen-space shaders.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/threejs/threejs-postprocessing
 anchors:
 - threejs

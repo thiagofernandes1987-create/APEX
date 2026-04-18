@@ -4,7 +4,7 @@ name: cs-onboard
 description: "Design — Founder onboarding interview that captures company context across 7 dimensions. Invoke with /cs:setup for initial"
   interview or /cs:update for quarterly refresh. Generates ~/.claude/company-context.md '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - onboard

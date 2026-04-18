@@ -4,7 +4,7 @@ name: azure-eventhub-java
 description: "Implement — "
   high-throughput data ingestion, or building event-driven architectures.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-eventhub-java
 anchors:
 - azure

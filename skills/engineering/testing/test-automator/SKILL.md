@@ -4,7 +4,7 @@ name: test-automator
 description: "Implement — Master AI-powered test automation with modern frameworks, self-healing tests, and comprehensive quality engineering."
   Build scalable testing strategies with advanced CI/CD integration.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/test-automator
 anchors:
 - test

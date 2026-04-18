@@ -3,7 +3,7 @@ name: "spec-driven-workflow"
 description: "Implement — Use when the user asks to write specs before code, define acceptance criteria, plan features before implementation, generate tests from specifications, or follow spec-first develop"
 executor: HYBRID
 skill_id: engineering.cs-engineering.spec-driven-workflow
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
@@ -11,6 +11,19 @@ anchors:
   - workflow
   - documentation
   - web3
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # Spec-Driven Workflow — POWERFUL

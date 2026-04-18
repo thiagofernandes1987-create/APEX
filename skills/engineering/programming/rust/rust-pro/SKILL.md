@@ -3,7 +3,7 @@ skill_id: engineering.programming.rust.rust_pro
 name: rust-pro
 description: "Implement — Master Rust 1.75+ with modern async patterns, advanced type system features, and production-ready systems programming."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/rust-pro
 anchors:
 - rust

@@ -3,7 +3,7 @@ skill_id: community.general.makepad_layout
 name: makepad-layout
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/makepad-layout
 anchors:
 - makepad

@@ -3,7 +3,7 @@ skill_id: healthcare.family_health_analyzer
 name: family-health-analyzer
 description: "Analyze — 分析家族病史、评估遗传风险、识别家庭健康模式、提供个性化预防建议"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: healthcare/family-health-analyzer
 anchors:
 - family

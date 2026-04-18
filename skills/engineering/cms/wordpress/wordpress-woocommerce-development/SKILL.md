@@ -4,7 +4,7 @@ name: wordpress-woocommerce-development
 description: "Implement — "
   customization, and WordPress 7.0 features: AI connectors, DataViews, and collaboration tools.'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cms/wordpress/wordpress-woocommerce-development
 anchors:
 - wordpress

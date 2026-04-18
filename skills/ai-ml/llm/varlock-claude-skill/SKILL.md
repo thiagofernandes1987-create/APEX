@@ -4,7 +4,7 @@ name: varlock-claude-skill
 description: "Apply — "
   or git commits'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/varlock-claude-skill
 anchors:
 - varlock

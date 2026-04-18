@@ -3,7 +3,7 @@ skill_id: community.general.makepad_widgets
 name: makepad-widgets
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/makepad-widgets
 anchors:
 - makepad

@@ -4,7 +4,7 @@ name: top-web-vulnerabilities
 description: "Audit — "
   by category. This skill enables systematic vulnerability identification, impact asses'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/top-web-vulnerabilities
 anchors:
 - vulnerabilities

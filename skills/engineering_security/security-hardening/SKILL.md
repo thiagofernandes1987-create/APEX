@@ -3,7 +3,7 @@ skill_id: engineering_security.security_hardening
 name: security-hardening
 description: "Use — Application security covering input validation, auth, headers, secrets management, and dependency auditing"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - security

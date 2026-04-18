@@ -4,7 +4,7 @@ name: fda-consultant-specialist
 description: "Use — FDA regulatory consultant for medical device companies. Provides 510(k)/PMA/De Novo pathway guidance, QSR (21"
   CFR 820) compliance, HIPAA assessments, and device cybersecurity. Use when user mentions F
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - consultant

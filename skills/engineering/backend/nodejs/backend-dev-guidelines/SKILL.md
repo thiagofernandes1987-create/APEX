@@ -4,7 +4,7 @@ name: backend-dev-guidelines
 description: "Implement — "
   constraints. Use when routes, controllers, services, repositories, express middleware,'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/nodejs/backend-dev-guidelines
 anchors:
 - backend

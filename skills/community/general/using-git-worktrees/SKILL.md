@@ -4,7 +4,7 @@ name: using-git-worktrees
 description: "Use — "
   without switching.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/using-git-worktrees
 anchors:
 - worktrees

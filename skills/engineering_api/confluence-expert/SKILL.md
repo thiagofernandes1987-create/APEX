@@ -4,7 +4,7 @@ name: confluence-expert
 description: "Use — Atlassian Confluence expert for creating and managing spaces, knowledge bases, and documentation. Configures"
   space permissions and hierarchies, creates page templates with macros, sets up documentatio
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - confluence

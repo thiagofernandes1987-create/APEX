@@ -4,7 +4,7 @@ name: programmatic-seo
 description: "Create — When the user wants to create SEO-driven pages at scale using templates and data. Also use when the user mentions"
   'programmatic SEO,' 'template pages,' 'pages at scale,' 'directory pages,' 'location p
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - programmatic

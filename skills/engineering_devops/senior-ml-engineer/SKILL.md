@@ -4,7 +4,7 @@ name: senior-ml-engineer
 description: "Build — ML engineering skill for productionizing models, building MLOps pipelines, and integrating LLMs. Covers model"
   deployment, feature stores, drift monitoring, RAG systems, and cost optimization. Use when
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - senior

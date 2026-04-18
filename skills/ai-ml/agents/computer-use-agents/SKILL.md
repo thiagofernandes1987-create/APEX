@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.computer_use_agents
 name: computer-use-agents
 description: Build AI agents that interact with computers like humans do -
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/computer-use-agents
 anchors:
 - computer

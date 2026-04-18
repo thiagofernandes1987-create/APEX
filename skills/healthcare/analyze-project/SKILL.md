@@ -4,7 +4,7 @@ name: analyze-project
 description: "Analyze — Forensic root cause analyzer for Antigravity sessions. Classifies scope deltas, rework patterns, root causes,"
   hotspots, and auto-improves prompts/health.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: healthcare/analyze-project
 anchors:
 - analyze

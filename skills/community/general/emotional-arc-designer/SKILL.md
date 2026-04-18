@@ -3,7 +3,7 @@ skill_id: community.general.emotional_arc_designer
 name: emotional-arc-designer
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/emotional-arc-designer
 anchors:
 - emotional

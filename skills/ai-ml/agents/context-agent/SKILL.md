@@ -4,7 +4,7 @@ name: context-agent
 description: "Apply — Agente de contexto para continuidade entre sessoes. Salva resumos, decisoes, tarefas pendentes e carrega briefing"
   automatico na sessao seguinte.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/context-agent
 anchors:
 - context

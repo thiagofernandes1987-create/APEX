@@ -5,7 +5,7 @@ requires:
   mcp: [rube]
 executor: HYBRID
 skill_id: integrations.composio.junglescout-automation
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 extends: integrations.composio.meta
 toolkit: junglescout-automation
@@ -15,6 +15,24 @@ anchors:
   - integration
   - api
   - workflow
+tier: 3
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
+what_if_fails: >
+  FALLBACK: If Junglescout Automation cannot complete, provide partial results with
+  explicit gaps noted. Never block workflow silently.
+  ESCALATE: If core capability is unavailable, suggest nearest alternative skill.
+  RULE: Always explain what failed and what manual steps can substitute.
 ---
 
 # Junglescout Automation via Rube MCP

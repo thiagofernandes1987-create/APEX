@@ -4,7 +4,7 @@ name: azure-storage-blob-py
 description: "Apply — Azure Blob Storage SDK for Python. Use for uploading, downloading, listing blobs, managing containers, and blob"
   lifecycle.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-storage-blob-py
 anchors:
 - azure

@@ -4,7 +4,7 @@ name: seo-geo
 description: "Apply — "
   AI citations, llms.txt readiness, crawler accessibility, and passage-level citability.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/seo-geo
 anchors:
 - optimize

@@ -3,7 +3,7 @@ skill_id: engineering.programming.typescript.fp_refactor
 name: fp-refactor
 description: "Implement — Comprehensive guide for refactoring imperative TypeScript code to fp-ts functional patterns"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/fp-refactor
 anchors:
 - refactor

@@ -4,7 +4,7 @@ name: unity-ecs-patterns
 description: "Use — "
   Job System, and Burst Compiler.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/unity-ecs-patterns
 anchors:
 - unity

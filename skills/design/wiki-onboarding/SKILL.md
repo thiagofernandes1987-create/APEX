@@ -4,7 +4,7 @@ name: wiki-onboarding
 description: "Design — Generates four audience-tailored onboarding guides in an onboarding/ folder — Contributor, Staff Engineer, Executive,"
   and Product Manager. Use when the user wants onboarding documentation for a codeba
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - wiki

@@ -3,7 +3,7 @@ skill_id: engineering_cli.kev
 name: x-kev
 description: "Implement — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cli
 anchors:
 - x-kev

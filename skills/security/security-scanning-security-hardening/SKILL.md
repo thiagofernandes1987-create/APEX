@@ -4,7 +4,7 @@ name: security-scanning-security-hardening
 description: "Audit — "
   controls.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/security-scanning-security-hardening
 anchors:
 - security

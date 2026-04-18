@@ -3,7 +3,7 @@ skill_id: community.general.database_migrations_migration_observability
 name: database-migrations-migration-observability
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/database-migrations-migration-observability
 anchors:
 - database

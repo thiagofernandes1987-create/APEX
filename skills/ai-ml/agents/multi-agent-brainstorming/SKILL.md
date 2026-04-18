@@ -4,7 +4,7 @@ name: multi-agent-brainstorming
 description: "Apply — "
   assumptions, and identify failure modes before implementation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/multi-agent-brainstorming
 anchors:
 - multi

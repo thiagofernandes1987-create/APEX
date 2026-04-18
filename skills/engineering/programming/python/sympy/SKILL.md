@@ -4,7 +4,7 @@ name: sympy
 description: "Implement — "
   rather than numerical approximations.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/sympy
 anchors:
 - sympy

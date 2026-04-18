@@ -4,7 +4,7 @@ name: azure-ai-document-intelligence-ts
 description: Extract text, tables, and structured data from documents using Azure Document Intelligence (@azure-rest/ai-document-intelligence).
   Use when processing invoices, receipts, IDs, forms, or building custo
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

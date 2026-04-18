@@ -11,12 +11,22 @@ metadata:
   frameworks: narrative-frameworks, all-hands-template
 executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.internal-narrative
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - customer_success
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from internal narrative"
 ---
 
 # Internal Narrative Builder

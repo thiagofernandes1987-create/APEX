@@ -3,7 +3,7 @@ skill_id: community.general.skill_rails_upgrade
 name: skill-rails-upgrade
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/skill-rails-upgrade
 anchors:
 - skill

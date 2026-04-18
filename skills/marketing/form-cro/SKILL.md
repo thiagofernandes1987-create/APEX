@@ -4,7 +4,7 @@ name: form-cro
 description: "Create — When the user wants to optimize any form that is NOT signup/registration — including lead capture forms, contact"
   forms, demo request forms, application forms, survey forms, or checkout forms. Also use
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - form

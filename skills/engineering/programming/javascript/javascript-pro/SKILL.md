@@ -4,7 +4,7 @@ name: javascript-pro
 description: "Implement — Master modern JavaScript with ES6+, async patterns, and Node.js APIs. Handles promises, event loops, and browser/Node"
   compatibility.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/javascript/javascript-pro
 anchors:
 - javascript

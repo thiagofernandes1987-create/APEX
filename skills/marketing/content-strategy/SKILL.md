@@ -4,7 +4,7 @@ name: content-strategy
 description: "Create — When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover."
   Also use when the user mentions 'content strategy,' 'what should I write about,' 'con
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - content

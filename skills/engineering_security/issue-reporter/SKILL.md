@@ -4,7 +4,7 @@ name: issue-reporter
 description: "Use — 帮助用户提交 Bug Report 或 Feature Request。支持 GitHub Issue（有账户）和本地存档（无账户）两种模式。当诊断发现是代码 Bug 时主动提议，或当用户说'帮我提 issue'、'这是个"
   bug'、'我想要这个功能'、'submit a bug'、'feature request'时触发。
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - issue

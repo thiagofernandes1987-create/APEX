@@ -3,7 +3,7 @@ skill_id: security.cryptography.constant_time_analysis
 name: constant-time-analysis
 description: "Audit — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/cryptography/constant-time-analysis
 anchors:
 - constant

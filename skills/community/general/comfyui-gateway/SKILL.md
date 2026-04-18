@@ -4,7 +4,7 @@ name: comfyui-gateway
 description: "Use — REST API gateway for ComfyUI servers. Workflow management, job queuing, webhooks, caching, auth, rate limiting,"
   and image delivery (URL + base64).
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/comfyui-gateway
 anchors:
 - comfyui

@@ -4,7 +4,7 @@ name: azure-ai-textanalytics-py
 description: "Implement — Azure AI Text Analytics SDK for sentiment analysis, entity recognition, key phrases, language detection, PII,"
   and healthcare NLP. Use for natural language processing on text.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-textanalytics-py
 anchors:
 - azure

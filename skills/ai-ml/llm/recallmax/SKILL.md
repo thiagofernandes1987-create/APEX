@@ -4,7 +4,7 @@ name: recallmax
 description: "Apply — "
   preservation, compresses 14-turn history into 800 tokens.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/recallmax
 anchors:
 - recallmax

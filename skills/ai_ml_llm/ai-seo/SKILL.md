@@ -4,7 +4,7 @@ name: ai-seo
 description: Optimize content to get cited by AI search engines — ChatGPT, Perplexity, Google AI Overviews, Claude, Gemini,
   Copilot. Use when you want your content to appear in AI-generated answers, not just ranke
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm
 anchors:
 - optimize

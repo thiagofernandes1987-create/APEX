@@ -4,7 +4,7 @@ name: database-architect
 description: "Implement — Expert database architect specializing in data layer design from scratch, technology selection, schema modeling,"
   and scalable database architectures.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/database-architect
 anchors:
 - database

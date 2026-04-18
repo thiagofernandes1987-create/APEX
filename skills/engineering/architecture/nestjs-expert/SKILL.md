@@ -4,7 +4,7 @@ name: nestjs-expert
 description: "Implement — "
   injection patterns, decorators, middleware, guards, interceptors, pipes, testing stra'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/nestjs-expert
 anchors:
 - nestjs

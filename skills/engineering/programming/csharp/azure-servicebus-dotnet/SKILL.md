@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_servicebus_dotnet
 name: azure-servicebus-dotnet
 description: "Implement — Azure Service Bus SDK for .NET. Enterprise messaging with queues, topics, subscriptions, and sessions."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-servicebus-dotnet
 anchors:
 - azure

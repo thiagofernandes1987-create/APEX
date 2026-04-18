@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.cc_skill_strategic_compact
 name: cc-skill-strategic-compact
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/cc-skill-strategic-compact
 anchors:
 - skill

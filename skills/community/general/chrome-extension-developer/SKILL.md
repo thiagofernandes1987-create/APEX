@@ -4,7 +4,7 @@ name: chrome-extension-developer
 description: "Use — "
   scripts, and cross-context communication.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/chrome-extension-developer
 anchors:
 - chrome

@@ -3,7 +3,7 @@ skill_id: community.general.robius_widget_patterns
 name: robius-widget-patterns
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/robius-widget-patterns
 anchors:
 - robius

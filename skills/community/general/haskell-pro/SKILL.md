@@ -3,7 +3,7 @@ skill_id: community.general.haskell_pro
 name: haskell-pro
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/haskell-pro
 anchors:
 - haskell

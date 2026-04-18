@@ -3,7 +3,7 @@ skill_id: community_general.websocket_realtime
 name: websocket-realtime
 description: "Use — Real-time communication patterns with WebSocket, Socket.io, Server-Sent Events, and scaling strategies"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - websocket

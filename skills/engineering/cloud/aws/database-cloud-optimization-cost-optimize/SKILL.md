@@ -4,7 +4,7 @@ name: database-cloud-optimization-cost-optimize
 description: "Implement — "
   performance and reliability. Analyze cloud spending, identify savings opportunities, and im'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/database-cloud-optimization-cost-optimize
 anchors:
 - database

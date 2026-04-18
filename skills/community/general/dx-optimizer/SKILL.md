@@ -4,7 +4,7 @@ name: dx-optimizer
 description: "Use — Developer Experience specialist. Improves tooling, setup, and workflows. Use PROACTIVELY when setting up new"
   projects, after team feedback, or when development friction is noticed.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/dx-optimizer
 anchors:
 - optimizer

@@ -4,7 +4,7 @@ name: image-enhancer
 description: "Use — Improves the quality of images, especially screenshots, by enhancing resolution, sharpness, and clarity. Perfect"
   for preparing images for presentations, documentation, or social media posts.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/content
 anchors:
 - image

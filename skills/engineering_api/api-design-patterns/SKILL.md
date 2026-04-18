@@ -3,7 +3,7 @@ skill_id: engineering_api.api_design_patterns
 name: api-design-patterns
 description: "Use — REST API design with resource naming, pagination, versioning, and OpenAPI spec generation"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - design

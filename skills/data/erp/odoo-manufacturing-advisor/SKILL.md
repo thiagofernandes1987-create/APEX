@@ -4,7 +4,7 @@ name: odoo-manufacturing-advisor
 description: "Analyze — "
   order workflows.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-manufacturing-advisor
 anchors:
 - odoo

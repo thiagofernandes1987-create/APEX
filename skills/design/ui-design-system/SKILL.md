@@ -4,7 +4,7 @@ name: ui-design-system
 description: "Design — UI design system toolkit for Senior UI Designer including design token generation, component documentation, responsive"
   design calculations, and developer handoff tools. Use for creating design systems
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - design

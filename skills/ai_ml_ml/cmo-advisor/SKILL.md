@@ -4,7 +4,7 @@ name: cmo-advisor
 description: "Use — Marketing leadership for scaling companies. Brand positioning, growth model design, marketing budget allocation,"
   and marketing org design. Use when designing brand strategy, selecting growth models (P
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - advisor

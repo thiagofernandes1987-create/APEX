@@ -4,7 +4,7 @@ name: ui-pattern
 description: "Use — "
   Toss primitives.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/ui-pattern
 anchors:
 - pattern

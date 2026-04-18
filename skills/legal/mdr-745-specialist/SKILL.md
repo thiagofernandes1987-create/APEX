@@ -4,7 +4,7 @@ name: mdr-745-specialist
 description: "Review — EU MDR 2017/745 compliance specialist for medical device classification, technical documentation, clinical evidence,"
   and post-market surveillance. Covers Annex VIII classification rules, Annex II/III '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal
 anchors:
 - specialist

@@ -4,7 +4,7 @@ name: go-rod-master
 description: "Implement — "
   stealth anti-bot-detection patterns.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/go/go-rod-master
 anchors:
 - master

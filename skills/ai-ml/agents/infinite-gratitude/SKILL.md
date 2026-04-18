@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.infinite_gratitude
 name: infinite-gratitude
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/infinite-gratitude
 anchors:
 - infinite

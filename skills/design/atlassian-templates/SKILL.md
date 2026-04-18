@@ -4,7 +4,7 @@ name: atlassian-templates
 description: "Design — Atlassian Template and Files Creator/Modifier expert for creating, modifying, and managing Jira and Confluence"
   templates, blueprints, custom layouts, reusable components, and standardized content stru
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - atlassian

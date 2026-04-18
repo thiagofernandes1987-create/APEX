@@ -3,7 +3,7 @@ skill_id: engineering.devops.terraform.terraform_skill
 name: terraform-skill
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/terraform/terraform-skill
 anchors:
 - terraform

@@ -3,7 +3,7 @@ skill_id: engineering.programming.typescript.react_flow_node_ts
 name: react-flow-node-ts
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/react-flow-node-ts
 anchors:
 - react

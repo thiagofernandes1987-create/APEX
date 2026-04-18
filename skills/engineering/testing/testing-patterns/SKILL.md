@@ -4,7 +4,7 @@ name: testing-patterns
 description: "Implement — "
   creating test factories, or following TDD red-green-refactor cycle.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/testing-patterns
 anchors:
 - testing

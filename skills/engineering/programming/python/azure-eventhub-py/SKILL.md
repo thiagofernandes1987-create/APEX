@@ -4,7 +4,7 @@ name: azure-eventhub-py
 description: "Implement — Azure Event Hubs SDK for Python streaming. Use for high-throughput event ingestion, producers, consumers, and"
   checkpointing.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-eventhub-py
 anchors:
 - azure

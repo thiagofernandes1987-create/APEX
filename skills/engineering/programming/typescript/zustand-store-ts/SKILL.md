@@ -3,7 +3,7 @@ skill_id: engineering.programming.typescript.zustand_store_ts
 name: zustand-store-ts
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/zustand-store-ts
 anchors:
 - zustand

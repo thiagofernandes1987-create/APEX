@@ -3,7 +3,7 @@ skill_id: engineering_security.git_advanced
 name: git-advanced
 description: "Use — Advanced git workflows including worktrees, bisect, interactive rebase, hooks, and recovery techniques"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - advanced

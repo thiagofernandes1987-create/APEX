@@ -4,7 +4,7 @@ name: continual-learning
 description: "Use — Guide for implementing continual learning in AI coding agents — hooks, memory scoping, reflection patterns. Use"
   when setting up learning infrastructure for agents.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - continual

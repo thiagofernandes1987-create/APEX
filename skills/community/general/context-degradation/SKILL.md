@@ -4,7 +4,7 @@ name: context-degradation
 description: "Use — "
   patterns is essential for diagnosing failures and designing resilient systems.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/context-degradation
 anchors:
 - context

@@ -4,7 +4,7 @@ name: videodb
 description: "Use — Video and audio perception, indexing, and editing. Ingest files/URLs/live streams, build visual/spoken indexes,"
   search with timestamps, edit timelines, add overlays/subtitles, generate media, and crea
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/videodb
 anchors:
 - videodb

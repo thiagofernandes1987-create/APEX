@@ -3,7 +3,7 @@ skill_id: community.general.telegram_bot_builder
 name: telegram-bot-builder
 description: "Use — Expert in building Telegram bots that solve real problems - from"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/telegram-bot-builder
 anchors:
 - telegram

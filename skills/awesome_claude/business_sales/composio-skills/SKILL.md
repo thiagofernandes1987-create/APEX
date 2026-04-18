@@ -4,7 +4,7 @@ name: Capsule CRM Automation
 description: Automate Capsule CRM operations -- manage contacts (parties), run structured filter queries, track tasks and
   projects, log entries, and handle organizations -- using natural language through the Compo
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/sales
 anchors:
 - composio

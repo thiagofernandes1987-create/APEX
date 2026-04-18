@@ -96,7 +96,7 @@ apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: LLM_BEHAVIOR
 skill_id: anthropic-official._source.skills.algorithmic-art
-status: CANDIDATE
+status: ADOPTED
 ---
 Algorithmic philosophies are computational aesthetic movements that are then expressed through code. Output .md files (philosophy), .html files (interactive viewer), and .js files (generative algorithms).
 

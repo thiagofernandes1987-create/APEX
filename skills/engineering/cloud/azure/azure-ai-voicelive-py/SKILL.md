@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_ai_voicelive_py
 name: azure-ai-voicelive-py
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-voicelive-py
 anchors:
 - azure

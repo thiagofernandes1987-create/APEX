@@ -4,7 +4,7 @@ name: git-pr-workflows-git-workflow
 description: "Apply — "
   for quality assurance, testing, and deployment readiness. This workflow implements modern '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/git-pr-workflows-git-workflow
 anchors:
 - workflows

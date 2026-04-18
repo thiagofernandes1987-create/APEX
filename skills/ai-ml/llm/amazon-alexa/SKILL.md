@@ -4,7 +4,7 @@ name: amazon-alexa
 description: "Apply — "
   com Claude como cerebro (projeto Auri) e integrar com AWS ecosystem (Lambda, DynamoDB, Poll'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/amazon-alexa
 anchors:
 - amazon

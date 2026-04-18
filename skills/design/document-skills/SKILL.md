@@ -4,7 +4,7 @@ name: pdf
 description: "Design — Comprehensive PDF manipulation toolkit for extracting text and tables, creating new PDFs, merging/splitting documents,"
   and handling forms. When Claude needs to fill in a PDF form or programmatically p
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - document

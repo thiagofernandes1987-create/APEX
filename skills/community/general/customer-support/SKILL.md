@@ -4,7 +4,7 @@ name: customer-support
 description: "Use — Elite AI-powered customer support specialist mastering conversational AI, automated ticketing, sentiment analysis,"
   and omnichannel support experiences.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/customer-support
 anchors:
 - customer

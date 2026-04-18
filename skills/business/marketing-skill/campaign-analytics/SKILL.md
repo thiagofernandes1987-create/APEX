@@ -12,13 +12,23 @@ metadata:
   tech-stack: marketing-analytics, attribution-modeling
 executor: HYBRID
 skill_id: business.marketing-skill.campaign-analytics
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - marketing
   - data_science
   - performance
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from campaign analytics"
 ---
 
 # Campaign Analytics

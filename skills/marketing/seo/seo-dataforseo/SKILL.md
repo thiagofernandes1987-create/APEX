@@ -4,7 +4,7 @@ name: seo-dataforseo
 description: "Create — "
   data. Trigger when the user needs real SEO data rather than static guidance.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-dataforseo
 anchors:
 - dataforseo

@@ -4,7 +4,7 @@ name: raffle-winner-picker
 description: "Use — Picks random winners from lists, spreadsheets, or Google Sheets for giveaways, raffles, and contests. Ensures"
   fair, unbiased selection with transparency.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - raffle

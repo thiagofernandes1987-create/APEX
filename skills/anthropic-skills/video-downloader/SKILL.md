@@ -3,10 +3,20 @@ name: youtube-downloader
 description: "Apply — Download YouTube videos with customizable quality and format options. Use this skill when the user asks to download, save, or grab YouTube videos. Supports various quality settings"
 executor: HYBRID
 skill_id: anthropic-skills.video-downloader
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - customer_success
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from youtube downloader"
 ---
 
 # YouTube Video Downloader

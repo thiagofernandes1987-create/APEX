@@ -4,7 +4,7 @@ name: cdk-patterns
 description: "Implement — "
   Use when designing reusable CDK stacks and L3 constructs.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/cdk-patterns
 anchors:
 - patterns

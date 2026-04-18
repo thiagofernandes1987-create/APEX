@@ -4,7 +4,7 @@ name: code-documentation-code-explain
 description: "Implement — "
   and step-by-step breakdowns. Transform difficult concepts into understandable explan'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/code-documentation-code-explain
 anchors:
 - code

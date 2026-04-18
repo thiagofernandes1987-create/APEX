@@ -4,7 +4,7 @@ name: security-compliance-compliance-check
 description: "Audit — "
   SOC2, PCI-DSS, and other industry standards. Perform comprehensive compliance audits an'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/security-compliance-compliance-check
 anchors:
 - security

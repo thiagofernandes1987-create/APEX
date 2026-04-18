@@ -4,7 +4,7 @@ name: file-path-traversal
 description: "Use — "
   arbitrary files on the server, potentially including sensitive configuration files, credent'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/file-path-traversal
 anchors:
 - file

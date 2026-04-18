@@ -4,7 +4,7 @@ name: vexor-cli
 description: "Deploy — Semantic file discovery via `vexor`. Use whenever locating where something is implemented/loaded/defined in a"
   medium or large repo, or when the file location is unclear. Prefer this over manual browsi
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/defi/vexor-cli
 anchors:
 - vexor

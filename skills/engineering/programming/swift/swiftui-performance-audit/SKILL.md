@@ -3,7 +3,7 @@ skill_id: engineering.programming.swift.swiftui_performance_audit
 name: swiftui-performance-audit
 description: Audit SwiftUI performance issues from code review and profiling evidence.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/swift/swiftui-performance-audit
 anchors:
 - swiftui

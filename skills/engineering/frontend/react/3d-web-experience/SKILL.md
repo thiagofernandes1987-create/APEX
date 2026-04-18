@@ -3,7 +3,7 @@ skill_id: engineering.frontend.react.3d_web_experience
 name: 3d-web-experience
 description: "Implement — Expert in building 3D experiences for the web - Three.js, React"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/3d-web-experience
 anchors:
 - experience

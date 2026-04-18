@@ -4,7 +4,7 @@ name: application-performance-performance-optimization
 description: "Implement — "
   when coordinating performance optimization across the stack.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/application-performance-performance-optimization
 anchors:
 - application

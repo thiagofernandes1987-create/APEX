@@ -3,7 +3,7 @@ skill_id: engineering_frontend.frontend_design_review
 name: frontend-design-review
 description: "Use — >"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend
 anchors:
 - frontend

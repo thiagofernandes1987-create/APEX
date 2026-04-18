@@ -4,7 +4,7 @@ name: context-driven-development
 description: "Implement — "
   interactions and team alignment through structured project documentation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/context-driven-development
 anchors:
 - context

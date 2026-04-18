@@ -4,7 +4,7 @@ name: saas-mvp-launcher
 description: "Implement — "
   architecture, auth, payments, and launch checklist.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/saas-mvp-launcher
 anchors:
 - saas

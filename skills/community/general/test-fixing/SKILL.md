@@ -3,7 +3,7 @@ skill_id: community.general.test_fixing
 name: "test-fixing"
 description: "Use — Systematically identify and fix all failing tests using smart grouping strategies. Use when explicitly asks to fix tests (\"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/test-fixing
 anchors:
   - test
@@ -23,6 +23,16 @@ llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
 apex_version: v00.33.0
 executor: LLM_BEHAVIOR
 security: {level: standard, pii: false, approval_required: false}
+tier: 3
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from test fixing"
 ---
 
 # Test Fixing

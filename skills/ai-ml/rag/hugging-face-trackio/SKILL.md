@@ -3,7 +3,7 @@ skill_id: ai_ml.rag.hugging_face_trackio
 name: hugging-face-trackio
 description: Track ML experiments with Trackio using Python logging, alerts, and CLI metric retrieval.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/hugging-face-trackio
 anchors:
 - hugging

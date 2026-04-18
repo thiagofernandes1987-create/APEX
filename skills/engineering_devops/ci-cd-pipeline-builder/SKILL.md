@@ -3,7 +3,7 @@ skill_id: engineering_devops.ci_cd_pipeline_builder
 name: ci-cd-pipeline-builder
 description: "Build — CI/CD Pipeline Builder"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - pipeline

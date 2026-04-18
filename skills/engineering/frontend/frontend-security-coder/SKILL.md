@@ -4,7 +4,7 @@ name: frontend-security-coder
 description: "Implement — Expert in secure frontend coding practices specializing in XSS prevention, output sanitization, and client-side"
   security patterns.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/frontend-security-coder
 anchors:
 - frontend

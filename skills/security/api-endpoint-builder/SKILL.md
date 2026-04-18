@@ -4,7 +4,7 @@ name: api-endpoint-builder
 description: "Audit — "
   Follows best practices for security and scalability.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/api-endpoint-builder
 anchors:
 - endpoint

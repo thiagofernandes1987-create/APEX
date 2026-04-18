@@ -4,7 +4,7 @@ name: marketing-ops
 description: "Create — Central router for the marketing skill ecosystem. Use when unsure which marketing skill to use, when orchestrating"
   a multi-skill campaign, or when coordinating across content, SEO, CRO, channels, and '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - marketing

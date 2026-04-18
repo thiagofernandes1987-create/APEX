@@ -4,7 +4,7 @@ name: product-manager
 description: "Use — "
   Pure Markdown, zero scripts.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: product-management/product-manager
 anchors:
 - product

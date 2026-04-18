@@ -4,7 +4,7 @@ name: leiloeiro-ia
 description: "Use — Especialista em leiloes judiciais e extrajudiciais de imoveis. Analise juridica, pericial e de mercado integrada."
   Orquestra os 5 modulos especializados.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/leiloeiro-ia
 anchors:
 - leiloeiro

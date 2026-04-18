@@ -4,7 +4,7 @@ name: async-python-patterns
 description: "Implement — "
   patterns, and async/await for building high-performance, non-blocking systems.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/async-python-patterns
 anchors:
 - async

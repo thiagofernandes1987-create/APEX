@@ -3,7 +3,7 @@ skill_id: engineering.testing.github_actions_templates
 name: github-actions-templates
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/github-actions-templates
 anchors:
 - github

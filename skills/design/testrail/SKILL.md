@@ -3,7 +3,7 @@ skill_id: design.testrail
 name: testrail
 description: "Design — >-"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - testrail

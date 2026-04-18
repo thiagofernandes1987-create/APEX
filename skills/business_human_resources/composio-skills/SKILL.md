@@ -3,7 +3,7 @@ skill_id: business_human_resources.composio_skills
 name: -21risk-automation
 description: Automate 21risk tasks via Rube MCP (Composio). Always search tools first for current schemas.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/human-resources
 anchors:
 - composio

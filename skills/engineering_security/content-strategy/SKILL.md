@@ -3,7 +3,7 @@ skill_id: engineering_security.content_strategy
 name: "content-strategy"
 description: "Create — When the user wants to plan a content strategy, decide what content to create, or figure out what topics to cover. Also use when the user mentions \"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
   - content
@@ -19,6 +19,23 @@ llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
 apex_version: v00.33.0
 executor: LLM_BEHAVIOR
 security: {level: high, pii: false, approval_required: true}
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # Content Strategy

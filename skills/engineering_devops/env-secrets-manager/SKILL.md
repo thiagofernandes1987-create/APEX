@@ -3,7 +3,7 @@ skill_id: engineering_devops.env_secrets_manager
 name: env-secrets-manager
 description: "Use — Env & Secrets Manager"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - secrets

@@ -4,7 +4,7 @@ name: copilot-sdk
 description: 'Build applications powered by GitHub Copilot using the Copilot SDK. Use when creating programmatic integrations
   with Copilot across Node.js/TypeScript, Python, Go, or .NET. Covers session management, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - copilot

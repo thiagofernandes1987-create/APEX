@@ -4,7 +4,7 @@ name: lightning-architecture-review
 description: Review Bitcoin Lightning Network protocol designs, compare channel factory approaches, and analyze Layer 2 scaling
   tradeoffs. Covers trust models, on-chain footprint, consensus requirements, HTLC/PTLC
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/lightning-architecture-review
 anchors:
 - lightning

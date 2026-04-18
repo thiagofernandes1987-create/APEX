@@ -4,7 +4,7 @@ name: senior-pm
 description: "Use — Senior Project Manager for enterprise software, SaaS, and digital transformation projects. Specializes in portfolio"
   management, quantitative risk analysis, resource optimization, stakeholder alignment
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/git
 anchors:
 - senior

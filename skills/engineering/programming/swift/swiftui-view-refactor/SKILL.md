@@ -3,7 +3,7 @@ skill_id: engineering.programming.swift.swiftui_view_refactor
 name: swiftui-view-refactor
 description: Refactor SwiftUI views into smaller components with stable, explicit data flow.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/swift/swiftui-view-refactor
 anchors:
 - swiftui

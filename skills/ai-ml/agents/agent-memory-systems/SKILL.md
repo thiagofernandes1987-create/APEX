@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.agent_memory_systems
 name: agent-memory-systems
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/agent-memory-systems
 anchors:
 - agent

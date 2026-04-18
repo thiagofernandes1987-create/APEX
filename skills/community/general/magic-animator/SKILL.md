@@ -3,7 +3,7 @@ skill_id: community.general.magic_animator
 name: magic-animator
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/magic-animator
 anchors:
 - magic

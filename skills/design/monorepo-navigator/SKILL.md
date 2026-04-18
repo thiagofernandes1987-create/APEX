@@ -3,7 +3,7 @@ skill_id: design.monorepo_navigator
 name: monorepo-navigator
 description: "Design — Monorepo Navigator"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - monorepo

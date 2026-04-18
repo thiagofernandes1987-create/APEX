@@ -4,7 +4,7 @@ name: api-documentation
 description: "Implement — "
   API documentation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/api-documentation
 anchors:
 - documentation

@@ -3,7 +3,7 @@ skill_id: community.general.workflow_automation
 name: workflow-automation
 description: "Use — Workflow automation is the infrastructure that makes AI agents"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/workflow-automation
 anchors:
 - workflow

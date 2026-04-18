@@ -4,7 +4,7 @@ name: scanning-tools
 description: "Audit — "
   testing, wireless security, and compliance validation. This skill covers tool selection, conf'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/scanning-tools
 anchors:
 - scanning

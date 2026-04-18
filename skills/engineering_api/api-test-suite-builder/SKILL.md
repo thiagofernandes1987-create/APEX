@@ -4,7 +4,7 @@ name: api-test-suite-builder
 description: "Generate — Use when the user asks to generate API tests, create integration test suites, test REST endpoints, or build contract"
   tests.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - test

@@ -4,7 +4,7 @@ name: cto-advisor
 description: "Design — Technical leadership guidance for engineering teams, architecture decisions, and technology strategy. Use when"
   assessing technical debt, scaling engineering teams, evaluating technologies, making arch
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - advisor

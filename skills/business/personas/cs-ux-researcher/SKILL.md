@@ -3,7 +3,7 @@ skill_id: business.personas.product.cs_ux_researcher
 name: "cs-ux-researcher"
 description: "Manage — UX research agent for research planning, persona generation, journey mapping, and usability test analysis"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.product/cs-ux-researcher

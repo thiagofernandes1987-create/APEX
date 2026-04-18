@@ -4,7 +4,7 @@ name: agentflow
 description: "Apply — "
   Manages multi-worker Claude Code dispatch, deterministic quality gates, adversarial review,'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/agentflow
 anchors:
 - agentflow

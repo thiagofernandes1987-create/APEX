@@ -4,7 +4,7 @@ name: klaviyo-automation
 description: "Apply — "
   tags, and monitor send jobs. Always search tools first for current schemas.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/klaviyo-automation
 anchors:
 - klaviyo

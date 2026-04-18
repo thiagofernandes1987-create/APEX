@@ -4,7 +4,7 @@ name: llm-ops
 description: "Apply — "
   evals de qualidade e arquiteturas de IA para producao.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/llm-ops
 anchors:
 - operations

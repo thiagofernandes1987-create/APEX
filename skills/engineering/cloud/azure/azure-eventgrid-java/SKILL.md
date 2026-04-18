@@ -4,7 +4,7 @@ name: azure-eventgrid-java
 description: "Implement — "
   pub/sub patterns, or integrating with Azure services via events.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-eventgrid-java
 anchors:
 - azure

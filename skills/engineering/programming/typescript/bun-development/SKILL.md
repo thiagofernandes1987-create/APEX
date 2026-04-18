@@ -3,7 +3,7 @@ skill_id: engineering.programming.typescript.bun_development
 name: bun-development
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/bun-development
 anchors:
 - development

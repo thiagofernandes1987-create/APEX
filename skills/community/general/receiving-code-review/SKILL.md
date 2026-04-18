@@ -3,7 +3,7 @@ skill_id: community.general.receiving_code_review
 name: receiving-code-review
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/receiving-code-review
 anchors:
 - receiving

@@ -4,7 +4,7 @@ name: azure-identity-java
 description: "Use — Azure Identity library for Java authentication with Azure services. Use when implementing DefaultAzureCredential,"
   managed identity, service principal, or any Azure authentication pattern in Java appli
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

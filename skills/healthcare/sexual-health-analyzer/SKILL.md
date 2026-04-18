@@ -3,7 +3,7 @@ skill_id: healthcare.sexual_health_analyzer
 name: sexual-health-analyzer
 description: "Analyze — Sexual Health Analyzer"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: healthcare/sexual-health-analyzer
 anchors:
 - sexual

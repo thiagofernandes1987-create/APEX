@@ -4,7 +4,7 @@ name: expo-cicd-workflows
 description: "Implement — Helps understand and write EAS workflow YAML files for Expo projects. Use this skill when the user asks about"
   CI/CD or workflows in an Expo or EAS context, mentions .eas/workflows/, or wants help with
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/expo-cicd-workflows
 anchors:
 - expo

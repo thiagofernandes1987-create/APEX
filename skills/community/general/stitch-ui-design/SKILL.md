@@ -4,7 +4,7 @@ name: stitch-ui-design
 description: "Use — "
   This skill helps create precise, actionable prompts that generate high-quality UI design'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/stitch-ui-design
 anchors:
 - stitch

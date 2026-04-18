@@ -4,7 +4,7 @@ name: privilege-escalation-methods
 description: "Implement — "
   access on compromised Linux and Windows systems. Essential for penetration testing post-exp'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/linux/privilege-escalation-methods
 anchors:
 - privilege

@@ -3,7 +3,7 @@ skill_id: business.personas.marketing.cs_demand_gen_specialist
 name: "cs-demand-gen-specialist"
 description: "Manage — Demand generation and customer acquisition specialist for lead generation, conversion optimization, and multi-channel acquisition campaigns"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.marketing/cs-demand-gen-specialist

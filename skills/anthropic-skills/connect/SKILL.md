@@ -3,12 +3,22 @@ name: connect
 description: "Apply — Connect Claude to any app. Send emails, create issues, post messages, update databases - take real actions across Gmail, Slack, GitHub, Notion, and 1000+ services."
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.connect
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: true, approval_required: false}
 anchors:
   - git
   - llm
   - data
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from connect"
 ---
 
 # Connect

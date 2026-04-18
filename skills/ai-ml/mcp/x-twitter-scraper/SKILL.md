@@ -4,7 +4,7 @@ name: x-twitter-scraper
 description: "Apply — "
   draws, monitoring, webhooks, 19 extraction tools, MCP server.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/x-twitter-scraper
 anchors:
 - twitter

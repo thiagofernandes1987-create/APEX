@@ -4,7 +4,7 @@ name: hubspot-automation
 description: "Apply — "
   integration.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/hubspot-automation
 anchors:
 - hubspot

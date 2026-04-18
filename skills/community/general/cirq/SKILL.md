@@ -4,7 +4,7 @@ name: cirq
 description: "Use — "
   on quantum computers and simulators.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/cirq
 anchors:
 - cirq

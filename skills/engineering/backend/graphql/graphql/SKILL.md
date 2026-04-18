@@ -3,7 +3,7 @@ skill_id: engineering.backend.graphql.graphql
 name: graphql
 description: "Implement — GraphQL gives clients exactly the data they need - no more, no"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/graphql/graphql
 anchors:
 - graphql

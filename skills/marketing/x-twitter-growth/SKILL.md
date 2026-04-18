@@ -4,7 +4,7 @@ name: x-twitter-growth
 description: "Create — X/Twitter growth engine for building audience, crafting viral content, and analyzing engagement. Use when the"
   user wants to grow on X/Twitter, write tweets or threads, analyze their X profile, researc
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - twitter

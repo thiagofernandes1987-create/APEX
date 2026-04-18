@@ -4,7 +4,7 @@ name: ai-agent-development
 description: "Apply — "
   with CrewAI, LangGraph, and custom agents.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/ai-agent-development
 anchors:
 - agent

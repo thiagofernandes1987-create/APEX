@@ -4,7 +4,7 @@ name: lead-magnets
 description: "Use — "
   templates, downloadable resources, or other offers that convert visitors into subsc'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/lead-magnets
 anchors:
 - lead

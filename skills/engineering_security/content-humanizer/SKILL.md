@@ -4,7 +4,7 @@ name: content-humanizer
 description: "Generate — Makes AI-generated content sound genuinely human — not just cleaned up, but alive. Use when content feels robotic,"
   uses too many AI clichés, lacks personality, or reads like it was written by committe
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - content

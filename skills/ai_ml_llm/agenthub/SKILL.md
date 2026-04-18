@@ -4,7 +4,7 @@ name: agenthub
 description: "Use — Multi-agent collaboration plugin that spawns N parallel subagents competing on the same task via git worktree"
   isolation. Agents work independently, results are evaluated by metric or LLM judge, and th
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm
 anchors:
 - agenthub

@@ -3,7 +3,7 @@ skill_id: design.ios_hig.hig_components_layout
 name: hig-components-layout
 description: "Design — Apple Human Interface Guidelines for layout and navigation components."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ios-hig/hig-components-layout
 anchors:
 - components

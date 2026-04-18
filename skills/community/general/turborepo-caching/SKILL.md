@@ -4,7 +4,7 @@ name: turborepo-caching
 description: "Use — "
   optimizing build pipelines, or implementing distributed caching.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/turborepo-caching
 anchors:
 - turborepo

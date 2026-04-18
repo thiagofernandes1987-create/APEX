@@ -4,7 +4,7 @@ name: fastapi-router-py
 description: "Implement — "
   status codes.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/fastapi/fastapi-router-py
 anchors:
 - fastapi

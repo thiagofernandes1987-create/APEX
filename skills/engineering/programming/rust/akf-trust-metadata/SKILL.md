@@ -4,7 +4,7 @@ name: akf-trust-metadata
 description: "Implement — "
   metadata. Embeds into 20+ formats (DOCX, PDF, images, code). EU AI Act, SOX, HIPAA audi'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/akf-trust-metadata
 anchors:
 - trust

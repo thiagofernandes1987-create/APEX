@@ -3,7 +3,7 @@ skill_id: community.general.ask_questions_if_underspecified
 name: ask-questions-if-underspecified
 description: "Use — Clarify requirements before implementing. Use when serious doubts arise."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/ask-questions-if-underspecified
 anchors:
 - questions

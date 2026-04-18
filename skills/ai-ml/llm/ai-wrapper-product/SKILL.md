@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.ai_wrapper_product
 name: ai-wrapper-product
 description: "Apply — Expert in building products that wrap AI APIs (OpenAI, Anthropic,"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/ai-wrapper-product
 anchors:
 - wrapper

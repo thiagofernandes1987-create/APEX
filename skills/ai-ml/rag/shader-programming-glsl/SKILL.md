@@ -4,7 +4,7 @@ name: shader-programming-glsl
 description: "Apply — "
   uniforms, and common effects.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/shader-programming-glsl
 anchors:
 - shader

@@ -4,7 +4,7 @@ name: temporal-golang-pro
 description: "Implement — "
   worker configs, and advanced patterns.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/go/temporal-golang-pro
 anchors:
 - temporal

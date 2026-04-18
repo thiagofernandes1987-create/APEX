@@ -4,7 +4,7 @@ name: odoo-ecommerce-configurator
 description: "Apply — "
   order-to-fulfillment workflow.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/odoo-ecommerce-configurator
 anchors:
 - odoo

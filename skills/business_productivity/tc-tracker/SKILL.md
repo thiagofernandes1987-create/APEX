@@ -4,7 +4,7 @@ name: tc-tracker
 description: "Create — Use when the user asks to track technical changes, create change records, manage TC lifecycles, or hand off work"
   between AI sessions. Covers init/create/update/status/resume/close/export workflows for
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/productivity
 anchors:
 - tracker

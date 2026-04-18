@@ -4,7 +4,7 @@ name: burpsuite-project-parser
 description: "Audit — Searches and explores Burp Suite project files (.burp) from the command line. Use when searching response headers"
   or bodies with regex patterns, extracting security audit findings, dumping proxy histo
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/burpsuite-project-parser
 anchors:
 - burpsuite

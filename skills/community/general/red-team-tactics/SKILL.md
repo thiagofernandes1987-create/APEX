@@ -3,7 +3,7 @@ skill_id: community.general.red_team_tactics
 name: red-team-tactics
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/red-team-tactics
 anchors:
 - team

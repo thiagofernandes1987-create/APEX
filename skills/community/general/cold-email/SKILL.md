@@ -4,7 +4,7 @@ name: cold-email
 description: "Use — "
   SDR outreach, personalized opening lines, subject lines, CTAs, and multi-touch follow-u'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/cold-email
 anchors:
 - cold

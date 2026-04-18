@@ -4,7 +4,7 @@ name: azure-keyvault-keys-rust
 description: "Implement — "
   keys rust'', ''KeyClient rust'', ''create key rust'', ''encrypt rust'', ''sign rust''.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/azure-keyvault-keys-rust
 anchors:
 - azure

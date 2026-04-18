@@ -4,7 +4,7 @@ name: free-tool-strategy
 description: "Create — When the user wants to plan, evaluate, or build a free tool for marketing purposes — lead generation, SEO value,"
   or brand awareness. Also use when the user mentions 'engineering as marketing,' 'free t
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - free

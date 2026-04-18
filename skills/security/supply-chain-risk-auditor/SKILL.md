@@ -4,7 +4,7 @@ name: supply-chain-risk-auditor
 description: "Audit — "
   surface, evaluating dependency health, or scoping security engagements.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/supply-chain-risk-auditor
 anchors:
 - supply

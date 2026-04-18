@@ -4,7 +4,7 @@ name: n8n-expression-syntax
 description: Validate n8n expression syntax and fix common errors. Use when writing n8n expressions, using {{}} syntax, accessing
   $json/$node variables, troubleshooting expression errors, or working with webhook d
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/nodejs/n8n-expression-syntax
 anchors:
 - expression

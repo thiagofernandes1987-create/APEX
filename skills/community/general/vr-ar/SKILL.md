@@ -3,7 +3,7 @@ skill_id: community.general.vr_ar
 name: vr-ar
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/vr-ar
 anchors:
 - development

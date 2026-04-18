@@ -3,12 +3,22 @@ name: "incident-response"
 description: "Implement — Use when a security incident has been detected or declared and needs classification, triage, escalation path determination, and forensic evidence collection. Covers SEV1-SEV4 class"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.incident-response
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - engineering
   - security
   - reliability
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from incident response"
 ---
 
 # Incident Response

@@ -3,7 +3,7 @@ skill_id: community.general.zapier_make_patterns
 name: zapier-make-patterns
 description: "Use — No-code automation democratizes workflow building. Zapier and Make"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/zapier-make-patterns
 anchors:
 - zapier

@@ -4,7 +4,7 @@ name: uv-package-manager
 description: "Implement — "
   for modern Python project management and dependency workflows.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/uv-package-manager
 anchors:
 - package

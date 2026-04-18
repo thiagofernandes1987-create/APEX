@@ -3,11 +3,20 @@ name: "cloud-security"
 description: "Implement — Use when assessing cloud infrastructure for security misconfigurations, IAM privilege escalation paths, S3 public exposure, open security group rules, or IaC security gaps. Covers "
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.cloud-security
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - engineering
   - security
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from cloud security"
 ---
 
 # Cloud Security

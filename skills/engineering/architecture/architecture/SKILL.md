@@ -4,7 +4,7 @@ name: architecture
 description: "Implement — "
   when making architecture decisions or analyzing system design.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/architecture
 anchors:
 - architecture

@@ -4,7 +4,7 @@ name: threejs-lighting
 description: "Implement — Three.js lighting - light types, shadows, environment lighting. Use when adding lights, configuring shadows,"
   setting up IBL, or optimizing lighting performance.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/threejs/threejs-lighting
 anchors:
 - threejs

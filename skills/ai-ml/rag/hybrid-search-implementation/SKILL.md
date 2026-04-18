@@ -4,7 +4,7 @@ name: hybrid-search-implementation
 description: "Apply — "
   engines, or when neither approach alone provides sufficient recall.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/hybrid-search-implementation
 anchors:
 - hybrid

@@ -3,7 +3,7 @@ skill_id: engineering_testing.browserstack
 name: browserstack
 description: "Use — >-"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - browserstack

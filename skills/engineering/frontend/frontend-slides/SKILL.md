@@ -3,7 +3,7 @@ skill_id: engineering.frontend.frontend_slides
 name: frontend-slides
 description: Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/frontend-slides
 anchors:
 - frontend

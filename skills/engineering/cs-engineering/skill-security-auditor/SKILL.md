@@ -12,12 +12,25 @@ description: "Implement — Security audit and vulnerability scanner for AI agen
   "check skill before install", "skill security check", "skill vulnerability scan".
 executor: HYBRID
 skill_id: engineering.cs-engineering.skill-security-auditor
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - engineering
   - agent
   - security
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # Skill Security Auditor

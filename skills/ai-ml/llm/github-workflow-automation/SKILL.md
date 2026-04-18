@@ -4,7 +4,7 @@ name: github-workflow-automation
 description: "Apply — "
   and modern DevOps practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/github-workflow-automation
 anchors:
 - github

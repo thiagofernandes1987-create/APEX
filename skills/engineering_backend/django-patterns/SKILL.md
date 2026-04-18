@@ -3,7 +3,7 @@ skill_id: engineering_backend.django_patterns
 name: django-patterns
 description: "Use — Django architecture patterns including DRF, ORM optimization, signals, middleware, and project structure"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend
 anchors:
 - django

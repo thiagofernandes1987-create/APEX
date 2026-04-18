@@ -4,7 +4,7 @@ name: ethical-hacking-methodology
 description: "Audit — "
   the five stages of ethical hacking methodology, essential tools, attack techniques, and prof'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/ethical-hacking-methodology
 anchors:
 - ethical

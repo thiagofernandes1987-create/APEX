@@ -4,7 +4,7 @@ name: c4-architecture-c4-architecture
 description: "Implement — "
   analysis approach.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/c4-architecture-c4-architecture
 anchors:
 - architecture

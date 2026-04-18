@@ -4,7 +4,7 @@ name: azure-cloud-migrate
 description: 'Assess and migrate cross-cloud workloads to Azure with migration reports and code conversion. Supports AWS Lambda→Functions
   and GCP Cloud Run→Container Apps. WHEN: migrate Lambda to Azure Functions, m'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

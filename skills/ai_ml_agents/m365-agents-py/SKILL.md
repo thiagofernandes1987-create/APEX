@@ -3,7 +3,7 @@ skill_id: ai_ml_agents.m365_agents_py
 name: m365-agents-py
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - m365

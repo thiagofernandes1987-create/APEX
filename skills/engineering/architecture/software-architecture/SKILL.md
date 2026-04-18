@@ -4,7 +4,7 @@ name: software-architecture
 description: "Implement — "
   design architecture, analyze code, in any case that relates to software development.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/software-architecture
 anchors:
 - software

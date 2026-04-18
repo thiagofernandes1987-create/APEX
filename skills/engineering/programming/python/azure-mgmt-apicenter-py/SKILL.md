@@ -4,7 +4,7 @@ name: azure-mgmt-apicenter-py
 description: "Implement — Azure API Center Management SDK for Python. Use for managing API inventory, metadata, and governance across your"
   organization.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-mgmt-apicenter-py
 anchors:
 - azure

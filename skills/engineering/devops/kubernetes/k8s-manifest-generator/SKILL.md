@@ -4,7 +4,7 @@ name: k8s-manifest-generator
 description: "Implement — "
   ConfigMaps, Secrets, and PersistentVolumeClaims.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/kubernetes/k8s-manifest-generator
 anchors:
 - manifest

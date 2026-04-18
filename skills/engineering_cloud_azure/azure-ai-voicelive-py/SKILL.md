@@ -4,7 +4,7 @@ name: azure-ai-voicelive-py
 description: Build real-time voice AI applications using Azure AI Voice Live SDK (azure-ai-voicelive). Use this skill when
   creating Python applications that need real-time bidirectional audio communication with Az
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

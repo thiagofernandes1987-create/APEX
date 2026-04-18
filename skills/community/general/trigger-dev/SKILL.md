@@ -3,7 +3,7 @@ skill_id: community.general.trigger_dev
 name: trigger-dev
 description: "Use — Trigger.dev expert for background jobs, AI workflows, and reliable"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/trigger-dev
 anchors:
 - expert

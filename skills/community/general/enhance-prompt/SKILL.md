@@ -4,7 +4,7 @@ name: enhance-prompt
 description: "Use — Transforms vague UI ideas into polished, Stitch-optimized prompts. Enhances specificity, adds UI/UX keywords,"
   injects design system context, and structures output for better generation results.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/enhance-prompt
 anchors:
 - enhance

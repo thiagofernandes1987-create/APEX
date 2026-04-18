@@ -3,7 +3,7 @@ skill_id: community.general.fitness_analyzer
 name: fitness-analyzer
 description: "Use — 分析运动数据、识别运动模式、评估健身进展，并提供个性化训练建议。支持与慢性病数据的关联分析。"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fitness-analyzer
 anchors:
 - fitness

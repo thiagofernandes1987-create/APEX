@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.ios_debugger_agent
 name: ios-debugger-agent
 description: Debug the current iOS project on a booted simulator with XcodeBuildMCP.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/ios-debugger-agent
 anchors:
 - debugger

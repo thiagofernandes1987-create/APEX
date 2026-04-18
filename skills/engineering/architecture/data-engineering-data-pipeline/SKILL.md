@@ -4,7 +4,7 @@ name: data-engineering-data-pipeline
 description: "Implement — "
   for batch and streaming data processing.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/data-engineering-data-pipeline
 anchors:
 - data

@@ -3,7 +3,7 @@ skill_id: engineering.frontend.react.remotion_best_practices
 name: remotion-best-practices
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/remotion-best-practices
 anchors:
 - remotion

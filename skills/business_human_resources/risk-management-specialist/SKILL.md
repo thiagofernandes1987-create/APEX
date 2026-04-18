@@ -4,7 +4,7 @@ name: risk-management-specialist
 description: "Use — Medical device risk management specialist implementing ISO 14971 throughout product lifecycle. Provides risk"
   analysis, risk evaluation, risk control, and post-production information analysis. Use when
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/human-resources
 anchors:
 - risk

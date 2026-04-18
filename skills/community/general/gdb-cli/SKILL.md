@@ -4,7 +4,7 @@ name: gdb-cli
 description: "Use — "
   deadlocks with source code correlation'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/gdb-cli
 anchors:
 - debugging

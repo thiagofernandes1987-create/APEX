@@ -4,7 +4,7 @@ name: odoo-docker-deployment
 description: "Implement — "
   configuration, and Nginx reverse proxy.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/docker/odoo-docker-deployment
 anchors:
 - odoo

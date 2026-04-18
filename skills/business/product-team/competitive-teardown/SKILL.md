@@ -3,12 +3,21 @@ name: "competitive-teardown"
 description: "Manage — Analyzes competitor products and companies by synthesizing data from pricing pages, app store reviews, job postings, SEO signals, and social media into structured competitive intel"
 executor: HYBRID
 skill_id: business.product-team.competitive-teardown
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - marketing
   - data
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from competitive teardown"
 ---
 
 # Competitive Teardown

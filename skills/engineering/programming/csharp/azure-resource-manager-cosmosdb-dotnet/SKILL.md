@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_resource_manager_cosmosdb_dotnet
 name: azure-resource-manager-cosmosdb-dotnet
 description: "Implement — Azure Resource Manager SDK for Cosmos DB in .NET."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-resource-manager-cosmosdb-dotnet
 anchors:
 - azure

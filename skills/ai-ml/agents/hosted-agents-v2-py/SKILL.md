@@ -4,7 +4,7 @@ name: hosted-agents-v2-py
 description: "Apply — "
   agents in Azure AI Foundry.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/hosted-agents-v2-py
 anchors:
 - hosted

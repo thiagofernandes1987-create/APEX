@@ -4,7 +4,7 @@ name: behuman
 description: "Use — Use when the user wants more human-like AI responses — less robotic, less listy, more authentic. Triggers:"
   ''be real'', ''like a human'', ''more human'', ''less AI'', ''talk like a person'', ''mirror '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - behuman

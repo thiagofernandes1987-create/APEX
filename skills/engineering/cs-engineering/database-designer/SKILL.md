@@ -3,7 +3,7 @@ name: "database-designer"
 description: "Implement — Use when the user asks to design database schemas, plan data migrations, optimize queries, choose between SQL and NoSQL, or model data relationships."
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.database-designer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
@@ -11,6 +11,19 @@ anchors:
   - ai_ml
   - data
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # Database Designer - POWERFUL Tier Skill

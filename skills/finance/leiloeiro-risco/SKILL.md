@@ -4,7 +4,7 @@ name: leiloeiro-risco
 description: "Analyze — Analise de risco em leiloes de imoveis. Score 36 pontos, riscos juridicos/financeiros/operacionais, stress test"
   4 cenarios e ROI ponderado por risco.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: finance/leiloeiro-risco
 anchors:
 - leiloeiro

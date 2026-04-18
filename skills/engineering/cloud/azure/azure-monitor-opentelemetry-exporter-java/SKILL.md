@@ -4,7 +4,7 @@ name: azure-monitor-opentelemetry-exporter-java
 description: "Implement — Azure Monitor OpenTelemetry Exporter for Java. Export OpenTelemetry traces, metrics, and logs to Azure Monitor/Application"
   Insights.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-monitor-opentelemetry-exporter-java
 anchors:
 - azure

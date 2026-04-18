@@ -4,7 +4,7 @@ name: pakistan-payments-stack
 description: "Analyze — "
   optional Raast) for SaaS with PKR billing, webhook reliability, and reconciliation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: finance/payments/pakistan-payments-stack
 anchors:
 - pakistan

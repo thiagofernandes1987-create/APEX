@@ -4,7 +4,7 @@ name: xvary-stock-research
 description: "Apply — "
   with bundled Python tools (Claude Code, Cursor, Codex).'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/xvary-stock-research
 anchors:
 - xvary

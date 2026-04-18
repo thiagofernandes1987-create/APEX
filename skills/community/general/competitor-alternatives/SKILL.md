@@ -4,7 +4,7 @@ name: competitor-alternatives
 description: "Use — "
   rank for competitive search terms, provide genuine value to evaluators, and position your p'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/competitor-alternatives
 anchors:
 - competitor

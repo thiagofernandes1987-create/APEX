@@ -3,7 +3,7 @@ skill_id: community.general.database_admin
 name: database-admin
 description: "Use — Expert database administrator specializing in modern cloud databases, automation, and reliability engineering."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/database-admin
 anchors:
 - database

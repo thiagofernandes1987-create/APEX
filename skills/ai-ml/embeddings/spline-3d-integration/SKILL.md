@@ -4,7 +4,7 @@ name: spline-3d-integration
 description: "Apply — "
   control API.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/embeddings/spline-3d-integration
 anchors:
 - spline

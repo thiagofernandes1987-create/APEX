@@ -4,7 +4,7 @@ name: multi-agent-patterns
 description: "Apply — This skill should be used when the user asks to 'design multi-agent system', 'implement supervisor pattern',"
   'create swarm architecture', 'coordinate multiple agents', or mentions multi-agent patterns
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/multi-agent-patterns
 anchors:
 - multi

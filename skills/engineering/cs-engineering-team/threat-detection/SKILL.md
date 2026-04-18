@@ -3,12 +3,22 @@ name: "threat-detection"
 description: "Implement — Use when hunting for threats in an environment, analyzing IOCs, or detecting behavioral anomalies in telemetry. Covers hypothesis-driven threat hunting, IOC sweep generation, z-sco"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.threat-detection
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - management
   - research
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from threat detection"
 ---
 
 # Threat Detection

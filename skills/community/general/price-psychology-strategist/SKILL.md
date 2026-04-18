@@ -3,7 +3,7 @@ skill_id: community.general.price_psychology_strategist
 name: price-psychology-strategist
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/price-psychology-strategist
 anchors:
 - price

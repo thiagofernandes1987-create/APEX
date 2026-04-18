@@ -4,7 +4,7 @@ name: statistical-analyst
 description: Run hypothesis tests, analyze A/B experiment results, calculate sample sizes, and interpret statistical significance
   with effect sizes. Use when you need to validate whether observed differences are r
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - statistical

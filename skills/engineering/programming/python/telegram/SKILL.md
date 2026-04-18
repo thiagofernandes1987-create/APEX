@@ -4,7 +4,7 @@ name: telegram
 description: "Implement — Integracao completa com Telegram Bot API. Setup com BotFather, mensagens, webhooks, inline keyboards, grupos,"
   canais. Boilerplates Node.js e Python.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/telegram
 anchors:
 - telegram

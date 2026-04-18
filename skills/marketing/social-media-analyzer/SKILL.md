@@ -4,7 +4,7 @@ name: social-media-analyzer
 description: "Create — Social media campaign analysis and performance tracking. Calculates engagement rates, ROI, and benchmarks across"
   platforms. Use for analyzing social media performance, calculating engagement rate, mea
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - social

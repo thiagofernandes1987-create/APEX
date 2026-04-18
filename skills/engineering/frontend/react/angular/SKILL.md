@@ -4,7 +4,7 @@ name: angular
 description: "Implement — Modern Angular (v20+) expert with deep knowledge of Signals, Standalone Components, Zoneless applications, SSR/Hydration,"
   and reactive patterns.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/angular
 anchors:
 - angular

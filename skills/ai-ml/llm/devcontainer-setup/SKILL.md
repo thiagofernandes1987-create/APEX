@@ -4,7 +4,7 @@ name: devcontainer-setup
 description: "Apply — Creates devcontainers with Claude Code, language-specific tooling (Python/Node/Rust/Go), and persistent volumes."
   Use when adding devcontainer support to a project, setting up isolated development envi
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/devcontainer-setup
 anchors:
 - devcontainer

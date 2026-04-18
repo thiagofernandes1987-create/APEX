@@ -4,7 +4,7 @@ name: wiki-researcher
 description: "Use — Conducts multi-turn iterative deep research on specific topics within a codebase with zero tolerance for shallow"
   analysis. Use when the user wants an in-depth investigation, needs to understand how so
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: science/research
 anchors:
 - wiki

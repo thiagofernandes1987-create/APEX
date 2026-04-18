@@ -4,7 +4,7 @@ name: javascript-typescript-typescript-scaffold
 description: "Implement — "
   frontend applications. Generate complete project structures with modern tooling (pnpm, Vite, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/javascript-typescript-typescript-scaffold
 anchors:
 - javascript

@@ -4,7 +4,7 @@ name: experiment-designer
 description: "Design — Use when planning product experiments, writing testable hypotheses, estimating sample size, prioritizing tests,"
   or interpreting A/B outcomes with practical statistical rigor.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - experiment

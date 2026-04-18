@@ -4,7 +4,7 @@ name: prompt-engineering
 description: "Use — "
   to improve prompts, learn prompting strategies, or debug agent behavior.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/prompt-engineering
 anchors:
 - prompt

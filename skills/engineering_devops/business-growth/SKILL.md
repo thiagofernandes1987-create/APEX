@@ -4,7 +4,7 @@ name: business-growth-skills
 description: "Use — 4 business growth agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. Customer success"
   (health scoring, churn), sales engineer (RFP), revenue operations (pipeline, GTM), con
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - business

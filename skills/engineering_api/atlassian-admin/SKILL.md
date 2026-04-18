@@ -4,7 +4,7 @@ name: atlassian-admin
 description: "Use — Atlassian Administrator for managing and organizing Atlassian products (Jira, Confluence, Bitbucket, Trello),"
   users, permissions, security, integrations, system configuration, and org-wide governance.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - atlassian

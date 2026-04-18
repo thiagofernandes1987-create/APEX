@@ -4,7 +4,7 @@ name: seo-snippet-hunter
 description: "Create — Formats content to be eligible for featured snippets and SERP features. Creates snippet-optimized content blocks"
   based on best practices. Use PROACTIVELY for question-based content.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-snippet-hunter
 anchors:
 - snippet

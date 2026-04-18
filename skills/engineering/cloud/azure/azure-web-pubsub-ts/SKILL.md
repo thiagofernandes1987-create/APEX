@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_web_pubsub_ts
 name: azure-web-pubsub-ts
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-web-pubsub-ts
 anchors:
 - azure

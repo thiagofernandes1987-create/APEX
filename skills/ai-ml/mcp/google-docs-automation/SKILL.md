@@ -3,7 +3,7 @@ skill_id: ai_ml.mcp.google_docs_automation
 name: google-docs-automation
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/google-docs-automation
 anchors:
 - google

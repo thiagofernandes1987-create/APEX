@@ -4,7 +4,7 @@ name: content-strategy
 description: "Use — "
   generation. Use when deciding what to publish, what topics to prioritize, or how to struct'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/content-strategy
 anchors:
 - content

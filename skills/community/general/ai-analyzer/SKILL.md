@@ -3,7 +3,7 @@ skill_id: community.general.ai_analyzer
 name: ai-analyzer
 description: "Use — AI驱动的综合健康分析系统，整合多维度健康数据、识别异常模式、预测健康风险、提供个性化建议。支持智能问答和AI健康报告生成。"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/ai-analyzer
 anchors:
 - analyzer

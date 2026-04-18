@@ -3,7 +3,7 @@ skill_id: ai_ml.rag.file_uploads
 name: file-uploads
 description: "Apply — Expert at handling file uploads and cloud storage. Covers S3,"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/file-uploads
 anchors:
 - file

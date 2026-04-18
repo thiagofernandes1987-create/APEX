@@ -3,11 +3,21 @@ name: "financial-analyst"
 description: "Manage — Performs financial ratio analysis, DCF valuation, budget variance analysis, and rolling forecast construction for strategic decision-making. Use when analyzing financial statements"
 executor: HYBRID
 skill_id: business.finance.financial-analyst
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
   - finance
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from financial analyst"
 ---
 
 # Financial Analyst Skill

@@ -3,7 +3,7 @@ skill_id: web3.defi.ddd_context_mapping
 name: ddd-context-mapping
 description: "Deploy — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/defi/ddd-context-mapping
 anchors:
 - context

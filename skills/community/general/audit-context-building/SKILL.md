@@ -4,7 +4,7 @@ name: audit-context-building
 description: "Use — Enables ultra-granular, line-by-line code analysis to build deep architectural context before vulnerability or"
   bug finding.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/audit-context-building
 anchors:
 - audit

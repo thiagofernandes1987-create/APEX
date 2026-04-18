@@ -4,7 +4,7 @@ name: code-review-excellence
 description: "Use — "
   and collaborative improvement.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/code-review-excellence
 anchors:
 - code

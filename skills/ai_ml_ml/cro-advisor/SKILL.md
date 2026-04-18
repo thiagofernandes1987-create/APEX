@@ -4,7 +4,7 @@ name: cro-advisor
 description: "Use — Revenue leadership for B2B SaaS companies. Revenue forecasting, sales model design, pricing strategy, net revenue"
   retention, and sales team scaling. Use when designing the revenue engine, setting quot
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - advisor

@@ -4,7 +4,7 @@ name: react-flow-architect
 description: "Implement — "
   advanced state management.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/react-flow-architect
 anchors:
 - react

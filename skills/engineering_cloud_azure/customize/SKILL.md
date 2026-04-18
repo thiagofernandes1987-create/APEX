@@ -4,7 +4,7 @@ name: customize
 description: "Deploy — Interactive guided deployment flow for Azure OpenAI models with full customization control. Step-by-step selection"
   of model version, SKU (GlobalStandard/Standard/ProvisionedManaged), capacity, RAI pol
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - customize

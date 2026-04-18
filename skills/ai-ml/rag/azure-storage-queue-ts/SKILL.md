@@ -4,7 +4,7 @@ name: azure-storage-queue-ts
 description: "Apply — Azure Queue Storage JavaScript/TypeScript SDK (@azure/storage-queue) for message queue operations. Use for sending,"
   receiving, peeking, and deleting messages in queues.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-storage-queue-ts
 anchors:
 - azure

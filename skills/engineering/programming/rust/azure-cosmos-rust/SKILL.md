@@ -4,7 +4,7 @@ name: azure-cosmos-rust
 description: "Implement — Azure Cosmos DB SDK for Rust (NoSQL API). Use for document CRUD, queries, containers, and globally distributed"
   data.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/azure-cosmos-rust
 anchors:
 - azure

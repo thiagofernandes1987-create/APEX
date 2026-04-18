@@ -3,7 +3,7 @@ skill_id: ai_ml.rag.rag_engineer
 name: rag-engineer
 description: "Apply — Expert in building Retrieval-Augmented Generation systems. Masters"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/rag-engineer
 anchors:
 - engineer

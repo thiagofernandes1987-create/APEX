@@ -4,7 +4,7 @@ name: code-review-ai-ai-review
 description: "Apply — "
   recognition, and modern DevOps practices. Leverage AI tools (GitHub Copilot, Qodo, GPT-5, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/code-review-ai-ai-review
 anchors:
 - code

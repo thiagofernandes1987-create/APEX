@@ -4,7 +4,7 @@ name: interview-system-designer
 description: "Create — This skill should be used when the user asks to 'design interview processes', 'create hiring pipelines', 'calibrate"
   interview loops', 'generate interview questions', 'design competency matrices', 'ana
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - interview

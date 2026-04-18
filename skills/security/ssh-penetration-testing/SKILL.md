@@ -4,7 +4,7 @@ name: ssh-penetration-testing
 description: "Audit — "
   tunneling techniques, and post-exploitation activities. This skill covers the com'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/ssh-penetration-testing
 anchors:
 - penetration

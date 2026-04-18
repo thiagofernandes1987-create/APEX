@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.agent_tool_builder
 name: agent-tool-builder
 description: "Apply — Tools are how AI agents interact with the world. A well-designed"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/agent-tool-builder
 anchors:
 - agent

@@ -4,7 +4,7 @@ name: wiki-llms-txt
 description: "Generate — Generates llms.txt and llms-full.txt files for LLM-friendly project documentation following the llms.txt specification."
   Use when the user wants to create LLM-readable summaries, llms.txt files, or mak
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm
 anchors:
 - wiki

@@ -4,7 +4,7 @@ name: cc-skill-security-review
 description: "Audit — "
   when implementing authentication or authorization, handling user input or file uploads, or cr'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/cc-skill-security-review
 anchors:
 - skill

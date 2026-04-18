@@ -4,7 +4,7 @@ name: azure-speech-to-text-rest-py
 description: "Implement — Azure Speech to Text REST API for short audio (Python). Use for simple speech recognition of audio files up to"
   60 seconds without the Speech SDK.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-speech-to-text-rest-py
 anchors:
 - azure

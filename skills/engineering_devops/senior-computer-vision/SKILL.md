@@ -4,7 +4,7 @@ name: senior-computer-vision
 description: "Use — Computer vision engineering skill for object detection, image segmentation, and visual AI systems. Covers CNN"
   and Vision Transformer architectures, YOLO/Faster R-CNN/DETR detection, Mask R-CNN/SAM seg
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - senior

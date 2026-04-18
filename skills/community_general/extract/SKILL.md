@@ -4,7 +4,7 @@ name: extract
 description: "Debug skill name — Transforms a recurring pattern or debugging solution into a standalone, portable skill that can be installed in any proj"
   examples.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - extract

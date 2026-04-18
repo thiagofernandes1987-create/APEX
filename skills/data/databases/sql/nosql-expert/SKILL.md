@@ -4,7 +4,7 @@ name: nosql-expert
 description: "Analyze — "
   modeling, single-table design, and avoiding hot partitions in high-scale systems.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/nosql-expert
 anchors:
 - nosql

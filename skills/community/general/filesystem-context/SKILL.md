@@ -4,7 +4,7 @@ name: filesystem-context
 description: "Use — Use for file-based context management, dynamic context discovery, and reducing context window bloat. Offload"
   context to files for just-in-time loading.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/filesystem-context
 anchors:
 - filesystem

@@ -4,11 +4,21 @@ description: "Apply — Comprehensive PDF manipulation toolkit for extracting te
 license: Proprietary. LICENSE.txt has complete terms
 executor: HYBRID
 skill_id: anthropic-skills.document-skills.pdf
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - llm
   - documentation
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from pdf"
 ---
 
 # PDF Processing Guide

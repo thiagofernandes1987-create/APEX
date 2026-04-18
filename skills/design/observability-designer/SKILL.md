@@ -3,7 +3,7 @@ skill_id: design.observability_designer
 name: observability-designer
 description: "Design — Observability Designer (POWERFUL)"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - observability

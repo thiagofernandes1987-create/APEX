@@ -4,7 +4,7 @@ name: azure-cosmos-db-py
 description: "Implement — "
   principles.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-cosmos-db-py
 anchors:
 - azure

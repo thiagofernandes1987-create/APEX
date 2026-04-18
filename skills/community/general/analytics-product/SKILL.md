@@ -4,7 +4,7 @@ name: analytics-product
 description: "Use — "
   de produto.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/analytics-product
 anchors:
 - analytics

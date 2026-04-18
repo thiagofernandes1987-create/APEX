@@ -4,7 +4,7 @@ name: azure-search-documents-dotnet
 description: "Apply — Azure AI Search SDK for .NET (Azure.Search.Documents). Use for building search applications with full-text, vector,"
   semantic, and hybrid search.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/embeddings/azure-search-documents-dotnet
 anchors:
 - azure

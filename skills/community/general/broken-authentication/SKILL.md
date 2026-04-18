@@ -4,7 +4,7 @@ name: broken-authentication
 description: "Use — "
   consistently ranks in the OWASP Top 10 and can lead to account takeover, identity'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/broken-authentication
 anchors:
 - broken

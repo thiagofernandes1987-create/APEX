@@ -3,7 +3,7 @@ skill_id: community.general.data_storytelling
 name: data-storytelling
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/data-storytelling
 anchors:
 - data

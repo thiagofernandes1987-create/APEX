@@ -3,7 +3,7 @@ skill_id: engineering_cli.font
 name: font
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cli
 anchors:
 - font

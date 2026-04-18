@@ -4,7 +4,7 @@ name: monorepo-management
 description: "Use — "
   multiple packages and applications.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/monorepo-management
 anchors:
 - monorepo

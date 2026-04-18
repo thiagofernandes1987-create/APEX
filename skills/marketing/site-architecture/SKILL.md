@@ -4,7 +4,7 @@ name: site-architecture
 description: "Create — When the user wants to plan, map, or restructure their website's page hierarchy, navigation, URL structure, or"
   internal linking. Also use when the user mentions 'sitemap,' 'site map,' 'visual sitemap,
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - site

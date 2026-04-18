@@ -4,7 +4,7 @@ name: architecture-patterns
 description: "Implement — "
   Design to build maintainable, testable, and scalable systems.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/architecture-patterns
 anchors:
 - architecture

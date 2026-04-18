@@ -4,7 +4,7 @@ name: growth-engine
 description: "Create — "
   referral programs e aquisicao organica.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/growth-engine
 anchors:
 - growth

@@ -3,7 +3,7 @@ skill_id: business.personas.engineering-team.cs_engineering_lead
 name: "cs-engineering-lead"
 description: "Manage — Engineering Team Lead agent for coordinating QA, security, data engineering, ML, and frontend/backend teams. Orchestrates engineering-team skills for team-level technical decisions"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.engineering-team/cs-engineering-lead

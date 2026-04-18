@@ -4,7 +4,7 @@ name: api-testing-observability-api-mock
 description: "Implement — "
   Design mocks that simulate real API behavior and enable parallel development.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/api-testing-observability-api-mock
 anchors:
 - testing

@@ -3,7 +3,7 @@ skill_id: community.general.segment_cdp
 name: segment-cdp
 description: "Use — Expert patterns for Segment Customer Data Platform including"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/segment-cdp
 anchors:
 - segment

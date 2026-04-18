@@ -4,7 +4,7 @@ name: marketing-psychology
 description: "Use — When the user wants to apply psychological principles, mental models, or behavioral science to marketing. Also"
   use when the user mentions 'psychology,' 'mental models,' 'cognitive bias,' 'persuasion,'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - marketing

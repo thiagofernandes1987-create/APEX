@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.azure_cost
 name: "azure-cost"
 description: "Use — Unified Azure cost management: query historical costs, forecast future spending, and optimize to reduce waste. WHEN: \"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
   - azure
@@ -19,6 +19,15 @@ llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
 apex_version: v00.33.0
 executor: LLM_BEHAVIOR
 security: {level: standard, pii: false, approval_required: false}
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from azure cost"
 ---
 
 # Azure Cost Management Skill

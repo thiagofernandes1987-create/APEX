@@ -4,7 +4,7 @@ name: context-engine
 description: "Create — Loads and manages company context for all C-suite advisor skills. Reads ~/.claude/company-context.md, detects"
   stale context (>90 days), enriches context during conversations, and enforces privacy/anon
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - context

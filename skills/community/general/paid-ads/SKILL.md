@@ -4,7 +4,7 @@ name: paid-ads
 description: "Use — "
   optimize, and scale paid advertising campaigns that drive efficient customer acquisitio'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/paid-ads
 anchors:
 - paid

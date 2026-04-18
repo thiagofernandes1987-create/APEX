@@ -3,11 +3,20 @@ name: "skill-tester"
 description: "Implement — Skill Tester"
 executor: HYBRID
 skill_id: engineering.cs-engineering.skill-tester
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - testing
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from skill tester"
 ---
 
 # Skill Tester

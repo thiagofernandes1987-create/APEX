@@ -4,7 +4,7 @@ name: security-scanning-security-dependencies
 description: "Audit — "
   security. Scan project dependencies across multiple ecosystems to identify vulnerabiliti'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/security-scanning-security-dependencies
 anchors:
 - security

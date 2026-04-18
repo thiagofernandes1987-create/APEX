@@ -4,7 +4,7 @@ name: skill-router
 description: "Use — "
   and recommends the best skill(s) from the installed library for their goal.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/skill-router
 anchors:
 - skill

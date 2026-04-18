@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.azure_monitor_opentelemetry_py
 name: azure-monitor-opentelemetry-py
 description: "Implement — Azure Monitor OpenTelemetry Distro for Python. Use for one-line Application Insights setup with auto-instrumentation."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-monitor-opentelemetry-py
 anchors:
 - azure

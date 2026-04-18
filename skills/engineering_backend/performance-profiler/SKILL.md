@@ -3,7 +3,7 @@ skill_id: engineering_backend.performance_profiler
 name: performance-profiler
 description: "Use — Performance Profiler"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend
 anchors:
 - performance

@@ -4,7 +4,7 @@ name: finance-skills
 description: "Use — Financial analyst agent skill and plugin for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. Ratio analysis,"
   DCF valuation, budget variance, rolling forecasts. 4 Python tools (stdlib-only).
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - finance

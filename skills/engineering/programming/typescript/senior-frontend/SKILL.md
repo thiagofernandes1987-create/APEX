@@ -4,7 +4,7 @@ name: senior-frontend
 description: "Implement — Frontend development skill for React, Next.js, TypeScript, and Tailwind CSS applications. Use when building React"
   components, optimizing Next.js performance, analyzing bundle sizes, scaffolding fronte
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/senior-frontend
 anchors:
 - senior

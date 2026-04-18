@@ -3,7 +3,7 @@ skill_id: ai_ml.rag.azure_storage_queue_py
 name: azure-storage-queue-py
 description: "Apply — Azure Queue Storage SDK for Python. Use for reliable message queuing, task distribution, and asynchronous processing."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-storage-queue-py
 anchors:
 - azure

@@ -3,7 +3,7 @@ skill_id: engineering_mobile.mcp_development
 name: mcp-development
 description: "Use — MCP server development including tool design, resource endpoints, prompt templates, and transport configuration"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/mobile
 anchors:
 - development

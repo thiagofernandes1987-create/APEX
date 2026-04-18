@@ -4,7 +4,7 @@ name: react-best-practices
 description: "Implement — "
   when writing new React components or Next.js pages, implementing data fetching (client or se'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/react-best-practices
 anchors:
 - react

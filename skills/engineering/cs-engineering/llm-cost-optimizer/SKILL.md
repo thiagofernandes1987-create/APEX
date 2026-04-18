@@ -3,7 +3,7 @@ name: llm-cost-optimizer
 description: "Implement — Use when you need to reduce LLM API spend, control token usage, route between models by cost/quality, implement prompt caching, or build cost observability for AI features. Trigger"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.llm-cost-optimizer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
@@ -11,6 +11,18 @@ anchors:
   - llm
   - ai_ml
   - design
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # LLM Cost Optimizer

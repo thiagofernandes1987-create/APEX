@@ -4,7 +4,7 @@ name: c4-context
 description: "Implement — Expert C4 Context-level documentation specialist. Creates high-level system context diagrams, documents personas,"
   user journeys, system features, and external dependencies.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/c4-context
 anchors:
 - context

@@ -4,7 +4,7 @@ name: testing-qa
 description: "Implement — "
   and quality assurance.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/testing-qa
 anchors:
 - testing

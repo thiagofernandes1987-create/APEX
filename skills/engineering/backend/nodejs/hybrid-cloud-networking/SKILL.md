@@ -4,7 +4,7 @@ name: hybrid-cloud-networking
 description: "Implement — "
   Connect, and ExpressRoute.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/nodejs/hybrid-cloud-networking
 anchors:
 - hybrid

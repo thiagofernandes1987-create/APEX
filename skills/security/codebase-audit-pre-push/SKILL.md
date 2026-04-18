@@ -4,7 +4,7 @@ name: codebase-audit-pre-push
 description: "Audit — "
   every file line-by-line for production readiness.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/codebase-audit-pre-push
 anchors:
 - codebase

@@ -4,7 +4,7 @@ name: threat-mitigation-mapping
 description: "Audit — "
   creating remediation plans, or validating control effectiveness.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/threat-mitigation-mapping
 anchors:
 - threat

@@ -4,7 +4,7 @@ name: nerdzao-elite
 description: "Implement — "
   TDD, clean code, and pixel-perfect UX validation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/nerdzao-elite
 anchors:
 - nerdzao

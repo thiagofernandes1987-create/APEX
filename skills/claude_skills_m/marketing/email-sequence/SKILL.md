@@ -4,7 +4,7 @@ name: email-sequence
 description: "Automate — When the user wants to create or optimize an email sequence, drip campaign, automated email flow, or lifecycle"
   email program. Also use when the user mentions 'email sequence,' 'drip campaign,' 'nurtur
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - email

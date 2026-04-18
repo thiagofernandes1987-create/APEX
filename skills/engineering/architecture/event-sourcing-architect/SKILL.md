@@ -4,7 +4,7 @@ name: event-sourcing-architect
 description: "Implement — "
   building, saga orchestration, and eventual consistency patterns. Use PROACTIVELY for eve'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/event-sourcing-architect
 anchors:
 - event

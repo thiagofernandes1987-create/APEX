@@ -3,7 +3,7 @@ skill_id: web3.defi.tdd_workflows_tdd_red
 name: tdd-workflows-tdd-red
 description: "Deploy — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/defi/tdd-workflows-tdd-red
 anchors:
 - workflows

@@ -4,7 +4,7 @@ name: seo-keyword-strategist
 description: "Create — Analyzes keyword usage in provided content, calculates density, suggests semantic variations and LSI keywords"
   based on the topic. Prevents over-optimization. Use PROACTIVELY for content optimization.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-keyword-strategist
 anchors:
 - keyword

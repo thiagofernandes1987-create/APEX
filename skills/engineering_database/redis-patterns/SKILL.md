@@ -3,7 +3,7 @@ skill_id: engineering_database.redis_patterns
 name: redis-patterns
 description: "Use — Redis patterns including caching strategies, pub/sub, streams for event processing, Lua scripts, and data structures"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/database
 anchors:
 - redis

@@ -4,7 +4,7 @@ name: angular-best-practices
 description: "Implement — "
   code for optimal performance, bundle size, and rendering efficiency.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/angular/angular-best-practices
 anchors:
 - angular

@@ -3,7 +3,7 @@ skill_id: engineering_devops.devops_automation
 name: devops-automation
 description: "Use — CI/CD pipeline design with GitHub Actions, Docker, Kubernetes, Helm, and GitOps patterns"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - devops

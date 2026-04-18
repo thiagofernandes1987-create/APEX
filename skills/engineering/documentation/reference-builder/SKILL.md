@@ -4,7 +4,7 @@ name: reference-builder
 description: "Implement — Creates exhaustive technical references and API documentation. Generates comprehensive parameter listings, configuration"
   guides, and searchable reference materials.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/reference-builder
 anchors:
 - reference

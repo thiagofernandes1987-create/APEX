@@ -4,7 +4,7 @@ name: context-optimization
 description: "Use — "
   masking, caching, and partitioning. The goal is not to magically increase context windows'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/context-optimization
 anchors:
 - context

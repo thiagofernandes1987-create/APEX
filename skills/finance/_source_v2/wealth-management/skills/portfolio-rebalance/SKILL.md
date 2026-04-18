@@ -1,10 +1,23 @@
 ---
 executor: LLM_BEHAVIOR
 skill_id: finance.wealth_management.portfolio_rebalance_2
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - finance
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 # Portfolio Rebalance
 

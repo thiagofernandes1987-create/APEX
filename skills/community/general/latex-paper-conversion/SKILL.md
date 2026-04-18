@@ -4,7 +4,7 @@ name: latex-paper-conversion
 description: "Use — "
   Springer, IPOL) to another format (e.g., MDPI, IEEE, Nature). It automates extraction, inject'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/latex-paper-conversion
 anchors:
 - latex

@@ -4,7 +4,7 @@ name: m365-agents-py
 description: "Apply — Microsoft 365 Agents SDK for Python. Build multichannel agents for Teams/M365/Copilot Studio with aiohttp hosting,"
   AgentApplication routing, streaming responses, and MSAL-based auth.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/m365-agents-py
 anchors:
 - m365

@@ -4,7 +4,7 @@ name: azure-ai-voicelive-ts
 description: "Implement — Azure AI Voice Live SDK for JavaScript/TypeScript. Build real-time voice AI applications with bidirectional WebSocket"
   communication.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/azure-ai-voicelive-ts
 anchors:
 - azure

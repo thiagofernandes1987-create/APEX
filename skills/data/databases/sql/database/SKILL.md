@@ -4,7 +4,7 @@ name: database
 description: "Analyze — "
   and data engineering.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/database
 anchors:
 - database

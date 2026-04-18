@@ -4,7 +4,7 @@ name: content-creator
 description: "Create — Deprecated redirect skill that routes legacy"
   a user invokes ''content creator'', asks to write a blog post, article, guide, or brand voice '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - content

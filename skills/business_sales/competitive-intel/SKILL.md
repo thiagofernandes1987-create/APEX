@@ -4,7 +4,7 @@ name: competitive-intel
 description: "Use — Systematic competitor tracking that feeds CMO positioning, CRO battlecards, and CPO roadmap decisions. Use when"
   analyzing competitors, building sales battlecards, tracking market moves, positioning ag
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/sales
 anchors:
 - competitive

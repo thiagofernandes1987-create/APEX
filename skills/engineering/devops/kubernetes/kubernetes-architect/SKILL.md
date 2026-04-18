@@ -4,7 +4,7 @@ name: kubernetes-architect
 description: "Implement — Expert Kubernetes architect specializing in cloud-native infrastructure, advanced GitOps workflows (ArgoCD/Flux),"
   and enterprise container orchestration.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/kubernetes/kubernetes-architect
 anchors:
 - kubernetes

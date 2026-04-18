@@ -4,7 +4,7 @@ name: framework-migration-deps-upgrade
 description: "Implement — "
   Plan and execute dependency updates with minimal risk, proper testing, and clear migration p'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/framework-migration-deps-upgrade
 anchors:
 - framework

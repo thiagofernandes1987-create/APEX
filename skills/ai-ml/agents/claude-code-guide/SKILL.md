@@ -4,7 +4,7 @@ name: claude-code-guide
 description: "Apply — "
   full potential. This skill synthesizes best practices, configuration templates, and advance'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/claude-code-guide
 anchors:
 - claude

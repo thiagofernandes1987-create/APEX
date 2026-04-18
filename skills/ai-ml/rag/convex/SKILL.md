@@ -4,7 +4,7 @@ name: convex
 description: "Apply — "
   scheduling, and deployment.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/convex
 anchors:
 - convex

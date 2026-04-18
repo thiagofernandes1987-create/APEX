@@ -4,7 +4,7 @@ name: security-requirement-extraction
 description: "Audit — "
   requirements, creating security user stories, or building security test cases.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/security-requirement-extraction
 anchors:
 - security

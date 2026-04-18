@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.agent_manager_skill
 name: agent-manager-skill
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/agent-manager-skill
 anchors:
 - agent

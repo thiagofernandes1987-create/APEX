@@ -3,7 +3,7 @@ skill_id: engineering.devops.deployment.vercel_deployment
 name: vercel-deployment
 description: "Implement — Expert knowledge for deploying to Vercel with Next.js"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/vercel-deployment
 anchors:
 - vercel

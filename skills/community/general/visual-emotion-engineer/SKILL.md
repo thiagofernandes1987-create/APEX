@@ -3,7 +3,7 @@ skill_id: community.general.visual_emotion_engineer
 name: visual-emotion-engineer
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/visual-emotion-engineer
 anchors:
 - visual

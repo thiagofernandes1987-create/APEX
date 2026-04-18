@@ -15,11 +15,20 @@ triggers:
   - win loss analysis
 executor: LLM_BEHAVIOR
 skill_id: business.marketing-skill.marketing-strategy-pmm
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - marketing
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from marketing strategy pmm"
 ---
 
 # Marketing Strategy & PMM

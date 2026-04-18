@@ -4,7 +4,7 @@ name: site-architecture
 description: "Implement — "
   mapping pages, sections, and site structure, but not for XML sitemap auditing or schema ma'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/site-architecture
 anchors:
 - site

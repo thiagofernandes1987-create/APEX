@@ -3,7 +3,7 @@ skill_id: engineering.cloud.aws.aws_iam_best_practices
 name: aws-iam-best-practices
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/aws-iam-best-practices
 anchors:
 - best

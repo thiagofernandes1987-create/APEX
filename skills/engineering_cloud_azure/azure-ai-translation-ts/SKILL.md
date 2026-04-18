@@ -4,7 +4,7 @@ name: azure-ai-translation-ts
 description: Build translation applications using Azure Translation SDKs for JavaScript (@azure-rest/ai-translation-text,
   @azure-rest/ai-translation-document). Use when implementing text translation, transliterati
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

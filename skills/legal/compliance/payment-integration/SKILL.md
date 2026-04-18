@@ -4,7 +4,7 @@ name: payment-integration
 description: Integrate Stripe, PayPal, and payment processors. Handles checkout flows, subscriptions, webhooks, and PCI compliance.
   Use PROACTIVELY when implementing payments, billing, or subscription features.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal/compliance/payment-integration
 anchors:
 - payment

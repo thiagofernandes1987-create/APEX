@@ -4,7 +4,7 @@ name: hugging-face-tool-builder
 description: "Apply — "
   allowing chaining, piping and intermediate processing where helpful. You can access the AP'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/hugging-face-tool-builder
 anchors:
 - hugging

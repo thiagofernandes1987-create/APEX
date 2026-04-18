@@ -4,7 +4,7 @@ name: odoo-purchase-workflow
 description: "Analyze — "
   lists, and 3-way matching.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-purchase-workflow
 anchors:
 - odoo

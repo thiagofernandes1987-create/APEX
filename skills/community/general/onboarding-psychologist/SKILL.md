@@ -3,7 +3,7 @@ skill_id: community.general.onboarding_psychologist
 name: onboarding-psychologist
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/onboarding-psychologist
 anchors:
 - onboarding

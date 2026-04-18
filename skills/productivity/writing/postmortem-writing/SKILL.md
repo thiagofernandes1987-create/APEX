@@ -4,7 +4,7 @@ name: postmortem-writing
 description: "Automate — "
   incident recurrence.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: productivity/writing/postmortem-writing
 anchors:
 - postmortem

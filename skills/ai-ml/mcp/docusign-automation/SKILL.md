@@ -4,7 +4,7 @@ name: docusign-automation
 description: "Apply — "
   search tools first for current schemas.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/docusign-automation
 anchors:
 - docusign

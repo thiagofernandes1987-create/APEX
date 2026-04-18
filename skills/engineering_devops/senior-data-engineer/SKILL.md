@@ -4,7 +4,7 @@ name: senior-data-engineer
 description: "Build — Data engineering skill for building scalable data pipelines, ETL/ELT systems, and data infrastructure. Expertise"
   in Python, SQL, Spark, Airflow, dbt, Kafka, and modern data stack. Includes data modeli
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - senior

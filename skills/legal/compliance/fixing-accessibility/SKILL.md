@@ -4,7 +4,7 @@ name: fixing-accessibility
 description: Audit and fix HTML accessibility issues including ARIA labels, keyboard navigation, focus management, color contrast,
   and form errors. Use when adding interactive controls, forms, dialogs, or reviewin
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal/compliance/fixing-accessibility
 anchors:
 - fixing

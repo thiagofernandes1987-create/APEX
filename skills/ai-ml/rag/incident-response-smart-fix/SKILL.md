@@ -4,7 +4,7 @@ name: incident-response-smart-fix
 description: "Apply — "
   AI-assisted debugging tools and observability platforms to systematically diagnose and re'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/incident-response-smart-fix
 anchors:
 - incident

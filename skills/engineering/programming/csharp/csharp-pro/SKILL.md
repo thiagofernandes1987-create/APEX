@@ -4,7 +4,7 @@ name: csharp-pro
 description: Write modern C# code with advanced features like records, pattern matching, and async/await. Optimizes .NET applications,
   implements enterprise patterns, and ensures comprehensive testing.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/csharp-pro
 anchors:
 - csharp

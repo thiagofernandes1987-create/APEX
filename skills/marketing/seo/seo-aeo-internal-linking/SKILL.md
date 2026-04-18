@@ -4,7 +4,7 @@ name: seo-aeo-internal-linking
 description: "Create — "
   and cannibalization checks. Activate when the user wants to build an internal linking s'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-aeo-internal-linking
 anchors:
 - internal

@@ -4,7 +4,7 @@ name: last30days
 description: "Use — "
   for the user''s target tool.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/last30days
 anchors:
 - last30days

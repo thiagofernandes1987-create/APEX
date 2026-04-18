@@ -4,7 +4,7 @@ name: azure-communication-callingserver-java
 description: "Implement — "
   instead. This skill is for maintaining legacy code only.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-communication-callingserver-java
 anchors:
 - azure

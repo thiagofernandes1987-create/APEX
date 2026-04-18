@@ -4,7 +4,7 @@ name: typescript-advanced-types
 description: "Implement — "
   mapped types, template literal types, and utility types for building robust, type-safe ap'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/typescript-advanced-types
 anchors:
 - typescript

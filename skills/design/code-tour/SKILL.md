@@ -4,7 +4,7 @@ name: code-tour
 description: "Design — Use when the user asks to create a CodeTour .tour file — persona-targeted, step-by-step walkthroughs that link"
   to real files and line numbers. Trigger for: create a tour, onboarding tour, architecture'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - code

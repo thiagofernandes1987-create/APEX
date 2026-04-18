@@ -3,7 +3,7 @@ skill_id: business.personas.personas.devops_engineer
 name: "devops-engineer"
 description: "Manage — Builds infrastructure that scales without babysitting. Automates everything worth automating. Monitors before it breaks. Treats clicking in consoles as a production incident waitin"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.personas/devops-engineer

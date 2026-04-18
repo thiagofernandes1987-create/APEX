@@ -13,13 +13,26 @@ triggers:
   - nonconformity
 executor: HYBRID
 skill_id: business.ra-qm-team.isms-audit-expert
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
   - customer_success
   - compliance
   - security
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 # ISMS Audit Expert

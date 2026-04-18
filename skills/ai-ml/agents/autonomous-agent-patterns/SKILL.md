@@ -4,7 +4,7 @@ name: autonomous-agent-patterns
 description: "Apply — "
   and [OpenAI Codex](https://github.com/openai/codex).'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/autonomous-agent-patterns
 anchors:
 - autonomous

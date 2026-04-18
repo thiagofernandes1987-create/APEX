@@ -3,7 +3,7 @@ skill_id: community.general.upstash_qstash
 name: upstash-qstash
 description: "Use — Upstash QStash expert for serverless message queues, scheduled"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/upstash-qstash
 anchors:
 - upstash

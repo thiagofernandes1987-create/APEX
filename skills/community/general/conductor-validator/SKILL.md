@@ -3,7 +3,7 @@ skill_id: community.general.conductor_validator
 name: conductor-validator
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/conductor-validator
 anchors:
 - conductor

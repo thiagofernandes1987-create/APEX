@@ -4,7 +4,7 @@ name: git-pr-workflows-onboard
 description: "Use — "
   organizations, technical team integration, and accelerated learning methodologies. Yo'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/git-pr-workflows-onboard
 anchors:
 - workflows

@@ -18,13 +18,26 @@ agents:
   - openclaw
 executor: LLM_BEHAVIOR
 skill_id: business.ra-qm-team
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
   - llm
   - agent
   - compliance
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # Regulatory Affairs & Quality Management Skills

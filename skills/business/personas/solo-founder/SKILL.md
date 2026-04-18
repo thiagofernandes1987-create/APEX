@@ -3,7 +3,7 @@ skill_id: business.personas.personas.solo_founder
 name: "solo-founder"
 description: "Manage — Your co-founder who doesn"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.personas/solo-founder

@@ -4,7 +4,7 @@ name: changelog-generator
 description: "Create — Automatically creates user-facing changelogs from git commits by analyzing commit history, categorizing changes,"
   and transforming technical commits into clear, customer-friendly release notes. Turns h
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/content
 anchors:
 - changelog

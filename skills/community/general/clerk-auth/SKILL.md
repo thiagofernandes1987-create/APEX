@@ -3,7 +3,7 @@ skill_id: community.general.clerk_auth
 name: clerk-auth
 description: "Use — Expert patterns for Clerk auth implementation, middleware,"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/clerk-auth
 anchors:
 - clerk

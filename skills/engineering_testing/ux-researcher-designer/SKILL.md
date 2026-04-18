@@ -4,7 +4,7 @@ name: ux-researcher-designer
 description: "Use — UX research and design toolkit for Senior UX Designer/Researcher including data-driven persona generation, journey"
   mapping, usability testing frameworks, and research synthesis. Use for user research,
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - researcher

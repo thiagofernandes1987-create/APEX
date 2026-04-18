@@ -3,7 +3,7 @@ skill_id: community.general.code_reviewer
 name: code-reviewer
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/code-reviewer
 anchors:
 - code

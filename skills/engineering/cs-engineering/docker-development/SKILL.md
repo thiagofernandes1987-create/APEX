@@ -9,7 +9,7 @@ metadata:
   updated: 2026-03-16
 executor: HYBRID
 skill_id: engineering.cs-engineering.docker-development
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - engineering
@@ -17,6 +17,16 @@ anchors:
   - agent
   - security
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from docker development"
 ---
 
 # Docker Development

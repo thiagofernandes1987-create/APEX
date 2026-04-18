@@ -3,7 +3,7 @@ skill_id: engineering_backend.monitoring_observability
 name: monitoring-observability
 description: "Monitor — Monitoring and observability with OpenTelemetry, Prometheus, Grafana dashboards, and structured logging"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend
 anchors:
 - monitoring

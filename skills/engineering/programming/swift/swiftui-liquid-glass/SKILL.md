@@ -3,7 +3,7 @@ skill_id: engineering.programming.swift.swiftui_liquid_glass
 name: swiftui-liquid-glass
 description: Implement or review SwiftUI Liquid Glass APIs with correct fallbacks and modifier order.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/swift/swiftui-liquid-glass
 anchors:
 - swiftui

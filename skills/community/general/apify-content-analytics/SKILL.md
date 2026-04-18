@@ -4,7 +4,7 @@ name: apify-content-analytics
 description: Track engagement metrics, measure campaign ROI, and analyze content performance across Instagram, Facebook, YouTube,
   and TikTok.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/apify-content-analytics
 anchors:
 - apify

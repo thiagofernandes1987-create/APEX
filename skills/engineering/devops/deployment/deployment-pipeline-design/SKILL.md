@@ -3,7 +3,7 @@ skill_id: engineering.devops.deployment.deployment_pipeline_design
 name: deployment-pipeline-design
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/deployment-pipeline-design
 anchors:
 - deployment

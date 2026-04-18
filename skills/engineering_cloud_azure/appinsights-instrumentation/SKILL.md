@@ -4,7 +4,7 @@ name: appinsights-instrumentation
 description: "Use — Guidance for instrumenting webapps with Azure Application Insights. Provides telemetry patterns, SDK setup,"
   and configuration references. WHEN: how to instrument app, App Insights SDK, telemetry patte'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - appinsights

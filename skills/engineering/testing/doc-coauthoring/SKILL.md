@@ -4,7 +4,7 @@ name: doc-coauthoring
 description: "Implement — "
   an active guide, walking users through three stages: Context Gathering, Refinement & Struct'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/doc-coauthoring
 anchors:
 - coauthoring

@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.azure_servicebus_py
 name: azure-servicebus-py
 description: "Implement — Azure Service Bus SDK for Python messaging. Use for queues, topics, subscriptions, and enterprise messaging patterns."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-servicebus-py
 anchors:
 - azure

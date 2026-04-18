@@ -4,7 +4,7 @@ name: unreal-engine-cpp-pro
 description: "Implement — "
   practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/cpp/unreal-engine-cpp-pro
 anchors:
 - unreal

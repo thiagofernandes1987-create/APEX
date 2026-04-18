@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.claude_win11_speckit_update_skill
 name: claude-win11-speckit-update-skill
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/claude-win11-speckit-update-skill
 anchors:
 - claude

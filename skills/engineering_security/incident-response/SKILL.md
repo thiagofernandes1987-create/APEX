@@ -4,7 +4,7 @@ name: incident-response
 description: "Use — Use when a security incident has been detected or declared and needs classification, triage, escalation path"
   determination, and forensic evidence collection. Covers SEV1-SEV4 classification, false pos
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - incident

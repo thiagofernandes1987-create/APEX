@@ -4,7 +4,7 @@ name: docs-architect
 description: "Implement — Creates comprehensive technical documentation from existing codebases. Analyzes architecture, design patterns,"
   and implementation details to produce long-form technical manuals and ebooks.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/docs-architect
 anchors:
 - docs

@@ -4,7 +4,7 @@ name: fda-medtech-compliance-auditor
 description: "Analyze — "
   files, and software validation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: healthcare/fda-medtech-compliance-auditor
 anchors:
 - medtech

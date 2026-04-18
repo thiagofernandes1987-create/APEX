@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.azure_monitor_query_py
 name: azure-monitor-query-py
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

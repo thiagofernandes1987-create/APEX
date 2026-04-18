@@ -3,7 +3,7 @@ skill_id: engineering.devops.deployment.gitlab_ci_patterns
 name: gitlab-ci-patterns
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/gitlab-ci-patterns
 anchors:
 - gitlab

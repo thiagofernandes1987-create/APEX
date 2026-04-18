@@ -3,7 +3,7 @@ skill_id: community.general.prometheus_configuration
 name: prometheus-configuration
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/prometheus-configuration
 anchors:
 - prometheus

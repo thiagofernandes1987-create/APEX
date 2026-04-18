@@ -4,7 +4,7 @@ name: ceo-advisor
 description: "Design — Executive leadership guidance for strategic decision-making, organizational development, and stakeholder management."
   Use when planning strategy, preparing board presentations, managing investors, deve
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - advisor

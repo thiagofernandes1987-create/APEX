@@ -4,7 +4,7 @@ name: autoresearch-agent
 description: "Use — Autonomous experiment loop that optimizes any file by a measurable metric. Inspired by Karpathy's autoresearch."
   The agent edits a target file, runs a fixed evaluation, keeps improvements (git commit),
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm
 anchors:
 - autoresearch

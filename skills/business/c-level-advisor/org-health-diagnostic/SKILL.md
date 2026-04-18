@@ -12,12 +12,22 @@ metadata:
   frameworks: health-benchmarks
 executor: HYBRID
 skill_id: business.c-level-advisor.org-health-diagnostic
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
   - scalability
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from org health diagnostic"
 ---
 
 # Org Health Diagnostic

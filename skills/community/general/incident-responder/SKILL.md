@@ -4,7 +4,7 @@ name: incident-responder
 description: "Use — Expert SRE incident responder specializing in rapid problem resolution, modern observability, and comprehensive"
   incident management.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/incident-responder
 anchors:
 - incident

@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.prompt_engineering_patterns
 name: prompt-engineering-patterns
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/prompt-engineering-patterns
 anchors:
 - prompt

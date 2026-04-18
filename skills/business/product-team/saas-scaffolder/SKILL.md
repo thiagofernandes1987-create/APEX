@@ -3,7 +3,7 @@ name: "saas-scaffolder"
 description: "Manage — Generates complete, production-ready SaaS project boilerplate including authentication, database schemas, billing integration, API routes, and a working dashboard using Next.js 14+"
 executor: HYBRID
 skill_id: business.product-team.saas-scaffolder
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
@@ -11,6 +11,22 @@ anchors:
   - authentication
   - data
   - visualization
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
 ---
 
 # SaaS Scaffolder

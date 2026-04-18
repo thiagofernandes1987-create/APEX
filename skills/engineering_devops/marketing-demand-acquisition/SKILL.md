@@ -4,7 +4,7 @@ name: marketing-demand-acquisition
 description: "Create — Creates demand generation campaigns, optimizes paid ad spend across LinkedIn, Google, and Meta, develops SEO"
   strategies, and structures partnership programs for Series A+ startups scaling internationa
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - marketing

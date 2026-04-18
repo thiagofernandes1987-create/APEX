@@ -4,7 +4,7 @@ name: capacity
 description: "Analyze — Discovers available Azure OpenAI model capacity across regions and projects. Analyzes quota limits, compares"
   availability, and recommends optimal deployment locations based on capacity requirements. U
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - capacity

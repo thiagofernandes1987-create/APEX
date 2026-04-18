@@ -4,7 +4,7 @@ name: context-compression
 description: "Use — "
   naive approach is aggressive compression to minimize tokens per request.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/context-compression
 anchors:
 - context

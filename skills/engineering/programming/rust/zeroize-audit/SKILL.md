@@ -4,7 +4,7 @@ name: zeroize-audit
 description: "Implement — "
   optimizations, with assembly-level analysis, and control-flow verification. Use for auditin'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/zeroize-audit
 anchors:
 - zeroize

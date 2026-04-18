@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.azure_monitor_query_py
 name: azure-monitor-query-py
 description: "Implement — Azure Monitor Query SDK for Python. Use for querying Log Analytics workspaces and Azure Monitor metrics."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-monitor-query-py
 anchors:
 - azure

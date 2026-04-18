@@ -4,7 +4,7 @@ name: ruby-pro
 description: Write idiomatic Ruby code with metaprogramming, Rails patterns, and performance optimization. Specializes in
   Ruby on Rails, gem development, and testing frameworks.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/ruby/ruby-pro
 anchors:
 - ruby

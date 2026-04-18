@@ -4,7 +4,7 @@ name: chief-of-staff
 description: "Create — C-suite orchestration layer. Routes founder questions to the right advisor role(s), triggers multi-role board"
   meetings for complex decisions, synthesizes outputs, and tracks decisions. Every C-suite i
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - chief

@@ -3,7 +3,7 @@ skill_id: community_general.migration_architect
 name: migration-architect
 description: "Use — Migration Architect"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - migration

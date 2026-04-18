@@ -4,7 +4,7 @@ name: frontend-ui-dark-ts
 description: "Implement — "
   panels, and data-rich applications with glassmorphism effects and tasteful animations.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/frontend-ui-dark-ts
 anchors:
 - frontend

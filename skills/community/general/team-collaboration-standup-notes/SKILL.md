@@ -4,7 +4,7 @@ name: team-collaboration-standup-notes
 description: "Use — "
   generation from commit history, and effective remote team coordination patterns.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/team-collaboration-standup-notes
 anchors:
 - team

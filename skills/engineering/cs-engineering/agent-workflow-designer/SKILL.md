@@ -3,13 +3,30 @@ name: "agent-workflow-designer"
 description: "Implement — Agent Workflow Designer"
 executor: HYBRID
 skill_id: engineering.cs-engineering.agent-workflow-designer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - agent
   - workflow
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # Agent Workflow Designer

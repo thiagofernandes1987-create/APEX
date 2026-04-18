@@ -4,7 +4,7 @@ name: api-security-best-practices
 description: "Audit — "
   and protection against common API vulnerabilities'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/api-security-best-practices
 anchors:
 - security

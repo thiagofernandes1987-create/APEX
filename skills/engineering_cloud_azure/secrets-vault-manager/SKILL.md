@@ -4,7 +4,7 @@ name: secrets-vault-manager
 description: "Use — Use when the user asks to set up secret management infrastructure, integrate HashiCorp Vault, configure cloud"
   secret stores (AWS Secrets Manager, Azure Key Vault, GCP Secret Manager), implement secret
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - secrets

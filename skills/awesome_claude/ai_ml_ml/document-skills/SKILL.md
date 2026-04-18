@@ -4,7 +4,7 @@ name: pptx
 description: "Use — Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for:"
   (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - document

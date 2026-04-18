@@ -4,7 +4,7 @@ name: pdf-official
 description: "Implement — "
   features, JavaScript libraries, and detailed examples, see reference.md. If you need '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/pdf-official
 anchors:
 - official

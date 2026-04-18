@@ -4,7 +4,7 @@ name: odoo-hr-payroll-setup
 description: "Analyze — "
   and payroll journal entries.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-hr-payroll-setup
 anchors:
 - odoo

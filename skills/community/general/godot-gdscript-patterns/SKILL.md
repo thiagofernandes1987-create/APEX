@@ -4,7 +4,7 @@ name: godot-gdscript-patterns
 description: "Use — "
   Godot games, implementing game systems, or learning GDScript best practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/godot-gdscript-patterns
 anchors:
 - godot

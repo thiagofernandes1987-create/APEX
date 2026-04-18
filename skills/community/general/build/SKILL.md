@@ -3,7 +3,7 @@ skill_id: community.general.build
 name: build
 description: build
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/build
 anchors:
 - build

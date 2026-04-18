@@ -4,7 +4,7 @@ name: create-issue-gate
 description: "Use — Use when starting a new implementation task and an issue must be created with strict acceptance criteria gating"
   before execution.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/create-issue-gate
 anchors:
 - create

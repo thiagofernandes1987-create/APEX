@@ -4,7 +4,7 @@ name: biopython
 description: "Implement — "
   functionality for sequence manipulation, file I/O, database access, structural bioinformatics'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/biopython
 anchors:
 - biopython

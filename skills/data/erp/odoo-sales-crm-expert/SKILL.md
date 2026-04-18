@@ -4,7 +4,7 @@ name: odoo-sales-crm-expert
 description: "Analyze — "
   and forecasting.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-sales-crm-expert
 anchors:
 - odoo

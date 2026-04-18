@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_mgmt_mongodbatlas_dotnet
 name: azure-mgmt-mongodbatlas-dotnet
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-mgmt-mongodbatlas-dotnet
 anchors:
 - azure

@@ -4,7 +4,7 @@ name: gh-pr-review
 description: "Automate — Automated code review for local branches, PRs, commits, and files. Supports single-agent review with interactive"
   fix selection, or multi-agent deep review with reviewer-verifier adversarial mechanism '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - review

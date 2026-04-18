@@ -4,7 +4,7 @@ name: terraform-infrastructure
 description: "Implement — "
   managing infrastructure at scale.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/terraform/terraform-infrastructure
 anchors:
 - terraform

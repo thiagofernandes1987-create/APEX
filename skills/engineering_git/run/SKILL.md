@@ -3,7 +3,7 @@ skill_id: engineering_git.run
 name: run
 description: Run a single experiment iteration. Edit the target file, evaluate, keep or discard.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/git
 anchors:
 - single

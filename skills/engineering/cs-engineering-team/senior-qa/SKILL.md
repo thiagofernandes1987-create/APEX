@@ -3,12 +3,22 @@ name: "senior-qa"
 description: "Implement — Generates unit tests, integration tests, and E2E tests for React/Next.js applications. Scans components to create Jest + React Testing Library test stubs, analyzes Istanbul/LCOV co"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-qa
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - frontend
   - testing
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from senior qa"
 ---
 
 # Senior QA Engineer

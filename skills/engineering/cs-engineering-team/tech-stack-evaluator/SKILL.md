@@ -3,12 +3,22 @@ name: "tech-stack-evaluator"
 description: "Implement — Technology stack evaluation and comparison with TCO analysis, security assessment, and ecosystem health scoring. Use when comparing frameworks, evaluating technology stacks, calcul"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.tech-stack-evaluator
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - engineering
   - security
   - observability
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from tech stack evaluator"
 ---
 
 # Technology Stack Evaluator

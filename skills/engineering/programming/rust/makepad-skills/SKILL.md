@@ -3,7 +3,7 @@ skill_id: engineering.programming.rust.makepad_skills
 name: makepad-skills
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/makepad-skills
 anchors:
 - makepad

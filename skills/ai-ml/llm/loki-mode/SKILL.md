@@ -4,7 +4,7 @@ name: loki-mode
 description: "Apply — "
   AWS Bedrock, Agent SDK, HN Production (2025)'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/loki-mode
 anchors:
 - loki

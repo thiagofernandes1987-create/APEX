@@ -4,7 +4,7 @@ name: api-design-principles
 description: "Implement — "
   developers and stand the test of time.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/graphql/api-design-principles
 anchors:
 - design

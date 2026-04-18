@@ -9,12 +9,21 @@ version: "1.0.0"
 license: "MIT"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.adversarial-reviewer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - llm
   - design
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from adversarial reviewer"
 ---
 
 # Adversarial Code Reviewer

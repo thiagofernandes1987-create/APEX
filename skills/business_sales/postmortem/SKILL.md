@@ -3,7 +3,7 @@ skill_id: business_sales.postmortem
 name: postmortem
 description: "Use — /em -postmortem — Honest Analysis of What Went Wrong"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/sales
 anchors:
 - postmortem

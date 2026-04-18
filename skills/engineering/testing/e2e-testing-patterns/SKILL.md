@@ -4,7 +4,7 @@ name: e2e-testing-patterns
 description: "Implement — "
   and catch regressions before users do.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/e2e-testing-patterns
 anchors:
 - testing

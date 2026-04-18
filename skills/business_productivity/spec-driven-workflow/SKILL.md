@@ -4,7 +4,7 @@ name: spec-driven-workflow
 description: "Use — Use when the user asks to write specs before code, define acceptance criteria, plan features before implementation,"
   generate tests from specifications, or follow spec-first development practices.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/productivity
 anchors:
 - spec

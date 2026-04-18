@@ -4,7 +4,7 @@ name: appdeploy
 description: "Apply — "
   a website or web app and wants a public URL. Uses HTTP API via curl.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/appdeploy
 anchors:
 - appdeploy

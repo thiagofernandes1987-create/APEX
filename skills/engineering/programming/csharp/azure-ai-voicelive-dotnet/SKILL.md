@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_ai_voicelive_dotnet
 name: azure-ai-voicelive-dotnet
 description: "Implement — Azure AI Voice Live SDK for .NET. Build real-time voice AI applications with bidirectional WebSocket communication."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-ai-voicelive-dotnet
 anchors:
 - azure

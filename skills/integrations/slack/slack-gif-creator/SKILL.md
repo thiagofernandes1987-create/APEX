@@ -3,7 +3,7 @@ skill_id: integrations.slack.slack_gif_creator
 name: slack-gif-creator
 description: "Automate — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: integrations/slack/slack-gif-creator
 anchors:
 - slack

@@ -4,7 +4,7 @@ name: threejs-geometry
 description: "Implement — Three.js geometry creation - built-in shapes, BufferGeometry, custom geometry, instancing. Use when creating"
   3D shapes, working with vertices, building custom meshes, or optimizing with instanced rend
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/threejs/threejs-geometry
 anchors:
 - threejs

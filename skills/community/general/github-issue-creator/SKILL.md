@@ -4,7 +4,7 @@ name: github-issue-creator
 description: "Use — "
   with repro steps, impact, and evidence.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/github-issue-creator
 anchors:
 - github

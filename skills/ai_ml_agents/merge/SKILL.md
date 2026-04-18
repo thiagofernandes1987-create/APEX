@@ -3,7 +3,7 @@ skill_id: ai_ml_agents.merge
 name: merge
 description: "Use — Merge the winning agent's branch into base, archive losers, and clean up worktrees."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - merge

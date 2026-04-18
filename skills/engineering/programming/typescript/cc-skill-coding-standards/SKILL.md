@@ -3,7 +3,7 @@ skill_id: engineering.programming.typescript.cc_skill_coding_standards
 name: cc-skill-coding-standards
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/cc-skill-coding-standards
 anchors:
 - skill

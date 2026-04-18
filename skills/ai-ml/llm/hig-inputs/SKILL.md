@@ -4,7 +4,7 @@ name: hig-inputs
 description: "Apply — "
   not already covered.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/hig-inputs
 anchors:
 - inputs

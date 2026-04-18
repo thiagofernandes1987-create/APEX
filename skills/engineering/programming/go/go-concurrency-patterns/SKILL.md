@@ -4,7 +4,7 @@ name: go-concurrency-patterns
 description: "Implement — "
   Go applications, implementing worker pools, or debugging race conditions.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/go/go-concurrency-patterns
 anchors:
 - concurrency

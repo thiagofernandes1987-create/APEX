@@ -4,7 +4,7 @@ name: startup-metrics-framework
 description: "Manage — "
   business models from seed through Series A.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/startup/startup-metrics-framework
 anchors:
 - startup

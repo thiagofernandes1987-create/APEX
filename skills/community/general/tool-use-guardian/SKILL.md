@@ -4,7 +4,7 @@ name: tool-use-guardian
 description: "Use — "
   Auto-recovers from truncated JSON, timeouts, rate limits, and mid-chain failures.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/tool-use-guardian
 anchors:
 - tool

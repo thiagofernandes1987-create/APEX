@@ -4,7 +4,7 @@ name: deployment-validation-config-validate
 description: "Implement — "
   of application configurations. Create comprehensive validation schemas, implement configura'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/deployment-validation-config-validate
 anchors:
 - deployment

@@ -4,7 +4,7 @@ name: risk-metrics-calculation
 description: "Use — "
   portfolio risk, implementing risk limits, or building risk monitoring systems.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/risk-metrics-calculation
 anchors:
 - risk

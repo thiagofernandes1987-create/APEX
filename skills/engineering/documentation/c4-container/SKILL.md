@@ -3,7 +3,7 @@ skill_id: engineering.documentation.c4_container
 name: c4-container
 description: "Implement — Expert C4 Container-level documentation specialist."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/c4-container
 anchors:
 - container

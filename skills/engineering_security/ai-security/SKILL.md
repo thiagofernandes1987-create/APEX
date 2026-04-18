@@ -4,7 +4,7 @@ name: ai-security
 description: "Use — Use when assessing AI/ML systems for prompt injection, jailbreak vulnerabilities, model inversion risk, data"
   poisoning exposure, or agent tool abuse. Covers MITRE ATLAS technique mapping, injection si
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - security

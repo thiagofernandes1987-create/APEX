@@ -4,7 +4,7 @@ name: native-data-fetching
 description: "Implement — Use when implementing or debugging ANY network request, API call, or data fetching. Covers fetch API, React Query,"
   SWR, error handling, caching, offline support, and Expo Router data loaders (useLoade
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/native-data-fetching
 anchors:
 - native

@@ -83,7 +83,7 @@ apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: LLM_BEHAVIOR
 skill_id: anthropic-official._source.skills.canvas-design
-status: CANDIDATE
+status: ADOPTED
 ---
 These are instructions for creating design philosophies - aesthetic movements that are then EXPRESSED VISUALLY. Output only .md files, .pdf files, and .png files.
 

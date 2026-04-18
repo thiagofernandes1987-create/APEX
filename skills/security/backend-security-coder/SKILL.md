@@ -4,7 +4,7 @@ name: backend-security-coder
 description: "Audit — Expert in secure backend coding practices specializing in input validation, authentication, and API security."
   Use PROACTIVELY for backend security implementations or security code reviews.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/backend-security-coder
 anchors:
 - backend

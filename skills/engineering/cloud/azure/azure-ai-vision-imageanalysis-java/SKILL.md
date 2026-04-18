@@ -4,7 +4,7 @@ name: azure-ai-vision-imageanalysis-java
 description: "Implement — "
   OCR text extraction, object detection, tagging, or smart cropping.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-vision-imageanalysis-java
 anchors:
 - azure

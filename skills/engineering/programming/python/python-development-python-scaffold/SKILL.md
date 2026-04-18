@@ -4,7 +4,7 @@ name: python-development-python-scaffold
 description: "Implement — "
   Generate complete project structures with modern tooling (uv, FastAPI, Django), type hin'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/python-development-python-scaffold
 anchors:
 - python

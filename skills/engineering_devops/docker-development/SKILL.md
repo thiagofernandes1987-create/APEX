@@ -4,7 +4,7 @@ name: docker-development
 description: "Use — Docker and container development agent skill and plugin for Dockerfile optimization, docker-compose orchestration,"
   multi-stage builds, and container security hardening. Use when: user wants to optimiz'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - docker

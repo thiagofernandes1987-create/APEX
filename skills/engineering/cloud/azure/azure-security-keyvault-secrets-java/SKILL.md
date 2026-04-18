@@ -4,7 +4,7 @@ name: azure-security-keyvault-secrets-java
 description: "Implement — "
   API keys, connection strings, or other sensitive configuration data.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-security-keyvault-secrets-java
 anchors:
 - azure

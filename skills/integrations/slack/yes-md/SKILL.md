@@ -4,7 +4,7 @@ name: '''yes-md'''
 description: "Automate — "
   hooks. Makes AI safe, thorough, and honest.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: integrations/slack/yes-md
 anchors:
 - layer

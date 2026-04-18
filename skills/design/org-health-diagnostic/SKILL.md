@@ -4,7 +4,7 @@ name: org-health-diagnostic
 description: "Design — Cross-functional organizational health check combining signals from all C-suite roles. Scores 8 dimensions on"
   a traffic-light scale with drill-down recommendations. Use when assessing overall company '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - health

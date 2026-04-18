@@ -4,7 +4,7 @@ name: paid-ads
 description: "Create — When the user wants help with paid advertising campaigns on Google Ads, Meta (Facebook/Instagram), LinkedIn,"
   Twitter/X, or other ad platforms. Also use when the user mentions 'PPC,' 'paid media,' 'ROA
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - paid

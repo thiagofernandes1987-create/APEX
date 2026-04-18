@@ -3,7 +3,7 @@ skill_id: ai_ml.rag.unit_testing_test_generate
 name: unit-testing-test-generate
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/unit-testing-test-generate
 anchors:
 - unit

@@ -3,7 +3,7 @@ skill_id: engineering_devops.kubernetes_operations
 name: kubernetes-operations
 description: "Use — Kubernetes operations including manifests, Helm charts, operators, troubleshooting, and resource management"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - kubernetes

@@ -4,7 +4,7 @@ name: cloud-architect
 description: "Implement — Expert cloud architect specializing in AWS/Azure/GCP multi-cloud infrastructure design, advanced IaC (Terraform/OpenTofu/CDK),"
   FinOps cost optimization, and modern architectural patterns.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/cloud-architect
 anchors:
 - cloud

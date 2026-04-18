@@ -4,7 +4,7 @@ name: development
 description: "Implement — "
   development skills for end-to-end application delivery.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/development
 anchors:
 - development

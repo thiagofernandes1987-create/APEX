@@ -4,7 +4,7 @@ name: helm-chart-scaffolding
 description: "Implement — "
   applications.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/kubernetes/helm-chart-scaffolding
 anchors:
 - helm

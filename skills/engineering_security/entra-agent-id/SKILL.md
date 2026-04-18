@@ -3,7 +3,7 @@ skill_id: engineering_security.entra_agent_id
 name: entra-agent-id
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - entra

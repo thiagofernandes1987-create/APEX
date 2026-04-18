@@ -4,7 +4,7 @@ name: ai-native-cli
 description: "Review — "
   error handling, input contracts, safety guardrails, exit codes, and agent self-descripti'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal/contracts/ai-native-cli
 anchors:
 - native

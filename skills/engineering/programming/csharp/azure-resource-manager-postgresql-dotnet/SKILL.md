@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_resource_manager_postgresql_dotne
 name: azure-resource-manager-postgresql-dotnet
 description: "Implement — Azure PostgreSQL Flexible Server SDK for .NET. Database management for PostgreSQL Flexible Server deployments."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-resource-manager-postgresql-dotnet
 anchors:
 - azure

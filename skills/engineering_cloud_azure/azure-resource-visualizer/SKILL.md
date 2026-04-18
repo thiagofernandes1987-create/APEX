@@ -4,7 +4,7 @@ name: azure-resource-visualizer
 description: 'Analyze Azure resource groups and generate detailed Mermaid architecture diagrams showing the relationships
   between individual resources. WHEN: create architecture diagram, visualize Azure resources, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

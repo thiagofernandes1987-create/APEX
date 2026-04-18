@@ -4,7 +4,7 @@ name: leiloeiro-mercado
 description: "Use — Analise de mercado imobiliario para leiloes. Liquidez, desagio tipico, ROI, estrategias de saida (flip/reforma/renda),"
   Selic 2025 e benchmark CDI/FII.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/leiloeiro-mercado
 anchors:
 - leiloeiro

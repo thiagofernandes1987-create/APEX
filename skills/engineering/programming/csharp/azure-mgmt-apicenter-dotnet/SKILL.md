@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_mgmt_apicenter_dotnet
 name: azure-mgmt-apicenter-dotnet
 description: "Implement — Azure API Center SDK for .NET. Centralized API inventory management with governance, versioning, and discovery."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-mgmt-apicenter-dotnet
 anchors:
 - azure

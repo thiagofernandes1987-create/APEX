@@ -4,7 +4,7 @@ name: image-studio
 description: "Use — "
   e stability-ai (arte/ ilustracao/edicao). Detecta o tipo de imagem solicitada e e'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/image-studio
 anchors:
 - image

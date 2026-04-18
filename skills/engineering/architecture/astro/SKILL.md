@@ -4,7 +4,7 @@ name: astro
 description: "Implement — "
   and Markdown/MDX support.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/astro
 anchors:
 - astro

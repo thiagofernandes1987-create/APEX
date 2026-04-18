@@ -4,7 +4,7 @@ name: canvas-design
 description: "Implement — "
   Output only .md files, .pdf files, and .png files.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/nodejs/canvas-design
 anchors:
 - canvas

@@ -4,7 +4,7 @@ name: launch-strategy
 description: "Use — When the user wants to plan a product launch, feature announcement, or release strategy. Also use when the user"
   mentions 'launch,' 'Product Hunt,' 'feature release,' 'announcement,' 'go-to-market,' 'b
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - launch

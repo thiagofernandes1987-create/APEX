@@ -4,7 +4,7 @@ name: documentation-generation-doc-generate
 description: "Implement — "
   Generate API docs, architecture diagrams, user guides, and technical references using AI-p'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/documentation-generation-doc-generate
 anchors:
 - documentation

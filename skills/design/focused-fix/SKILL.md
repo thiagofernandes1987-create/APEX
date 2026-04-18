@@ -4,7 +4,7 @@ name: focused-fix
 description: "Design — Use when the user asks to fix, debug, or make a specific feature/module/area work end-to-end. Triggers:"
   X work'', ''fix the Y feature'', ''the Z module is broken'', ''focus on [area]''. Not for quick s'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - focused

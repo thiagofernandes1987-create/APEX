@@ -4,7 +4,7 @@ name: workflow-patterns
 description: "Implement — Use this skill when implementing tasks according to Conductor's TDD workflow, handling phase checkpoints, managing"
   git commits for tasks, or understanding the verification protocol.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/workflow-patterns
 anchors:
 - workflow

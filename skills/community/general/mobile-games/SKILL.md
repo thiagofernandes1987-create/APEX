@@ -3,7 +3,7 @@ skill_id: community.general.mobile_games
 name: mobile-games
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/mobile-games
 anchors:
 - mobile

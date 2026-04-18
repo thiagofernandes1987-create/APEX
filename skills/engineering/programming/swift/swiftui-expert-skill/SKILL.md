@@ -4,7 +4,7 @@ name: swiftui-expert-skill
 description: Write, review, or improve SwiftUI code following best practices for state management, view composition, performance,
   and iOS 26+ Liquid Glass adoption. Use when building new SwiftUI features, refactor
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/swift/swiftui-expert-skill
 anchors:
 - swiftui

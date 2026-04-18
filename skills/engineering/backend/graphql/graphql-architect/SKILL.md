@@ -4,7 +4,7 @@ name: graphql-architect
 description: "Implement — Master modern GraphQL with federation, performance optimization, and enterprise security. Build scalable schemas,"
   implement advanced caching, and design real-time systems.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/graphql/graphql-architect
 anchors:
 - graphql

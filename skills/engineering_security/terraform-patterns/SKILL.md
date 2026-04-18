@@ -4,7 +4,7 @@ name: terraform-patterns
 description: "Use — Terraform infrastructure-as-code agent skill and plugin for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw."
   Covers module design patterns, state management strategies, provider configuration, securi
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - terraform

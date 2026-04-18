@@ -4,7 +4,7 @@ name: yann-lecun-tecnico
 description: "Apply — "
   Machinery of Intelligence), Self-Supervised Learning (SimCLR, MAE, BYOL), Energy-Bas'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/yann-lecun-tecnico
 anchors:
 - yann

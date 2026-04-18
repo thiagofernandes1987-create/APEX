@@ -4,7 +4,7 @@ name: threejs-materials
 description: "Implement — Three.js materials - PBR, basic, phong, shader materials, material properties. Use when styling meshes, working"
   with textures, creating custom shaders, or optimizing material performance.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/threejs/threejs-materials
 anchors:
 - threejs

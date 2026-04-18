@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.sam_altman
 name: sam-altman
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/sam-altman
 anchors:
 - altman

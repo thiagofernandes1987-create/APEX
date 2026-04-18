@@ -4,7 +4,7 @@ name: qiskit
 description: "Use — "
   circuits, optimize for hardware, execute on simulators or real quantum computers, and ana'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/qiskit
 anchors:
 - qiskit

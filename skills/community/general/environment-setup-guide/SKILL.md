@@ -3,7 +3,7 @@ skill_id: community.general.environment_setup_guide
 name: environment-setup-guide
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/environment-setup-guide
 anchors:
 - environment

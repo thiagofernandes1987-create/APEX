@@ -4,7 +4,7 @@ name: auth-implementation-patterns
 description: "Use — "
   best practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/auth-implementation-patterns
 anchors:
 - auth

@@ -4,7 +4,7 @@ name: legacy-modernizer
 description: Refactor legacy codebases, migrate outdated frameworks, and implement gradual modernization. Handles technical
   debt, dependency updates, and backward compatibility.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/legacy-modernizer
 anchors:
 - legacy

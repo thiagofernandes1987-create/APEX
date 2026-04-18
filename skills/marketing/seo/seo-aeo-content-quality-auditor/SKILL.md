@@ -4,7 +4,7 @@ name: seo-aeo-content-quality-auditor
 description: "Create — "
   after fixes. Activate when the user wants to audit, review, or score content for SEO or'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-aeo-content-quality-auditor
 anchors:
 - content

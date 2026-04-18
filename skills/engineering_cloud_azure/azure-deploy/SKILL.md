@@ -4,7 +4,7 @@ name: azure-deploy
 description: 'Execute Azure deployments for ALREADY-PREPARED applications that have existing .azure/deployment-plan.md and
   infrastructure files. DO NOT use this skill when the user asks to CREATE a new application '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

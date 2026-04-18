@@ -4,7 +4,7 @@ name: seo-meta-optimizer
 description: "Create — Creates optimized meta titles, descriptions, and URL suggestions based on character limits and best practices."
   Generates compelling, keyword-rich metadata. Use PROACTIVELY for new content.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-meta-optimizer
 anchors:
 - meta

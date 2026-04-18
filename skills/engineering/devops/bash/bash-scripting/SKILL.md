@@ -4,7 +4,7 @@ name: bash-scripting
 description: "Implement — "
   and testing.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/bash/bash-scripting
 anchors:
 - bash

@@ -4,7 +4,7 @@ name: leiloeiro-edital
 description: "Use — Analise e auditoria de editais de leilao judicial e extrajudicial. Riscos ocultos, clausulas perigosas, debitos,"
   ocupante e classificacao da oportunidade.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/leiloeiro-edital
 anchors:
 - leiloeiro

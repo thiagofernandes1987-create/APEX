@@ -4,7 +4,7 @@ name: odoo-migration-helper
 description: "Analyze — "
   deprecated methods, and view migration.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-migration-helper
 anchors:
 - odoo

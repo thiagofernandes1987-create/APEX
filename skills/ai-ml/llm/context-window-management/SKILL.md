@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.context_window_management
 name: context-window-management
 description: "Apply — Strategies for managing LLM context windows including"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/context-window-management
 anchors:
 - context

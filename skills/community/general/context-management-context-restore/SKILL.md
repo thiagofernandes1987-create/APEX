@@ -3,7 +3,7 @@ skill_id: community.general.context_management_context_restore
 name: context-management-context-restore
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/context-management-context-restore
 anchors:
 - context

@@ -4,10 +4,20 @@ description: "Implement — Honestly evaluate AI work quality using a two-axis s
 license: "MIT"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering.self-eval
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from self eval"
 ---
 
 # Self-Eval: Honest Work Evaluation

@@ -4,7 +4,7 @@ name: sales-engineer
 description: "Analyze — Analyzes RFP/RFI responses for coverage gaps, builds competitive feature comparison matrices, and plans proof-of-concept"
   (POC) engagements for pre-sales engineering. Use when responding to RFPs, bids,
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm
 anchors:
 - sales

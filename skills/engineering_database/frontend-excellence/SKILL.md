@@ -3,7 +3,7 @@ skill_id: engineering_database.frontend_excellence
 name: frontend-excellence
 description: "Use — Modern frontend patterns for React Server Components, performance optimization, and Core Web Vitals"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/database
 anchors:
 - frontend

@@ -3,7 +3,7 @@ skill_id: community_general.review
 name: review
 description: Analyze auto-memory for promotion candidates, stale entries, consolidation opportunities, and health metrics.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - review

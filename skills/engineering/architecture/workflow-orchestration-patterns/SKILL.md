@@ -4,7 +4,7 @@ name: workflow-orchestration-patterns
 description: "Implement — "
   patterns, and best practices for building reliable distributed systems.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/workflow-orchestration-patterns
 anchors:
 - workflow

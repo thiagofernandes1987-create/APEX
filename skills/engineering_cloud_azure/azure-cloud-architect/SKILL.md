@@ -4,7 +4,7 @@ name: azure-cloud-architect
 description: Design Azure architectures for startups and enterprises. Use when asked to design Azure infrastructure, create
   Bicep/ARM templates, optimize Azure costs, set up Azure DevOps pipelines, or migrate to A
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

@@ -4,7 +4,7 @@ name: azure-ai
 description: "Use — Use for Azure AI: Search, Speech, OpenAI, Document Intelligence. Helps with search, vector/hybrid search, speech-to-text,"
   text-to-speech, transcription, OCR. WHEN: AI Search, query search, vector sear'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

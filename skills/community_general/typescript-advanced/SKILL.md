@@ -4,7 +4,7 @@ name: typescript-advanced
 description: "Use — Advanced TypeScript patterns including generics, conditional types, mapped types, template literals, and type"
   guards
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - typescript

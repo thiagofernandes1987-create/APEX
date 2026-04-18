@@ -4,7 +4,7 @@ name: theme-factory
 description: "Use — Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages,"
   etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact t
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - theme

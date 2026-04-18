@@ -3,11 +3,21 @@ name: invoice-organizer
 description: "Apply — Automatically organizes invoices and receipts for tax preparation by reading messy files, extracting key information, renaming them consistently, and sorting them into logical fold"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.invoice-organizer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - finance
   - observability
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from invoice organizer"
 ---
 
 # Invoice Organizer

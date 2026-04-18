@@ -4,7 +4,7 @@ name: team-composition-analysis
 description: "Manage — "
   startups from pre-seed through Series A.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/startup/team-composition-analysis
 anchors:
 - team

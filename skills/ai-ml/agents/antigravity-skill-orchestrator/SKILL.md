@@ -4,7 +4,7 @@ name: antigravity-skill-orchestrator
 description: "Apply — "
   skill combinations using agent-memory-mcp, and prevents skill overuse for simple tasks.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/antigravity-skill-orchestrator
 anchors:
 - antigravity

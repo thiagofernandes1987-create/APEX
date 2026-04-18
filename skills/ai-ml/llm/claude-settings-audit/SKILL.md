@@ -4,7 +4,7 @@ name: claude-settings-audit
 description: Analyze a repository to generate recommended Claude Code settings.json permissions. Use when setting up a new
   project, auditing existing settings, or determining which read-only bash commands to allow
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/claude-settings-audit
 anchors:
 - claude

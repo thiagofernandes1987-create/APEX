@@ -4,7 +4,7 @@ name: financial-analyst
 description: "Use — Performs financial ratio analysis, DCF valuation, budget variance analysis, and rolling forecast construction"
   for strategic decision-making. Use when analyzing financial statements, building valuation
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml
 anchors:
 - financial

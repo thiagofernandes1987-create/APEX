@@ -4,7 +4,7 @@ name: api-security-testing
 description: "Implement — "
   input validation, and security best practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/graphql/api-security-testing
 anchors:
 - security

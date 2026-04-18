@@ -3,7 +3,7 @@ skill_id: engineering.cloud.aws.multi_cloud_architecture
 name: multi-cloud-architecture
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/multi-cloud-architecture
 anchors:
 - multi

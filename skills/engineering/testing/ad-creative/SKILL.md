@@ -4,7 +4,7 @@ name: ad-creative
 description: "Implement — "
   Use when generating headlines, descriptions, primary text, or large sets of ad variations fo'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/ad-creative
 anchors:
 - creative

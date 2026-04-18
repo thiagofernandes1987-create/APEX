@@ -3,7 +3,7 @@ skill_id: community.general.apify_lead_generation
 name: apify-lead-generation
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/apify-lead-generation
 anchors:
 - apify

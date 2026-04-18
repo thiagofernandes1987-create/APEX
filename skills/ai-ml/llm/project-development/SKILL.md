@@ -4,7 +4,7 @@ name: project-development
 description: "Apply — "
   architectures, and iterating rapidly using agent-assisted development.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/project-development
 anchors:
 - project

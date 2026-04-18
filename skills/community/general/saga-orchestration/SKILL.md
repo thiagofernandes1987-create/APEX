@@ -3,7 +3,7 @@ skill_id: community.general.saga_orchestration
 name: saga-orchestration
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/saga-orchestration
 anchors:
 - saga

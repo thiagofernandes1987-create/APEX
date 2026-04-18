@@ -3,7 +3,7 @@ skill_id: healthcare.wellness.sleep_analyzer
 name: sleep-analyzer
 description: "Analyze — 分析睡眠数据、识别睡眠模式、评估睡眠质量，并提供个性化睡眠改善建议。支持与其他健康数据的关联分析。"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: healthcare/wellness/sleep-analyzer
 anchors:
 - sleep

@@ -3,7 +3,7 @@ skill_id: design.ios_hig.hig_platforms
 name: hig-platforms
 description: "Design — Apple Human Interface Guidelines for platform-specific design."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ios-hig/hig-platforms
 anchors:
 - platforms

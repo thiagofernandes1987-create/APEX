@@ -4,7 +4,7 @@ name: senior-data-scientist
 description: "Use — World-class senior data scientist skill specialising in statistical modeling, experiment design, causal inference,"
   and predictive analytics. Covers A/B testing (sample sizing, two-proportion z-tests, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - senior

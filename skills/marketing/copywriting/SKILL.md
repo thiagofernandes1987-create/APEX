@@ -4,7 +4,7 @@ name: copywriting
 description: "Create — When the user wants to write, rewrite, or improve marketing copy for any page — including homepage, landing pages,"
   pricing pages, feature pages, about pages, or product pages. Also use when the user s
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - copywriting

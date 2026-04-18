@@ -3,7 +3,7 @@ skill_id: engineering_frontend.accessibility_wcag
 name: accessibility-wcag
 description: "Use — Web accessibility patterns for WCAG 2.2 compliance including ARIA, keyboard navigation, screen readers, and testing"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend
 anchors:
 - accessibility

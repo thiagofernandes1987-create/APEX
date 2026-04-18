@@ -4,7 +4,7 @@ name: algorithmic-art
 description: "Implement — "
   .md files (philosophy), .html files (interactive viewer), and .js files (generative algorit'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend/nodejs/algorithmic-art
 anchors:
 - algorithmic

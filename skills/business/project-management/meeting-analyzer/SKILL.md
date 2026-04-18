@@ -3,10 +3,24 @@ name: meeting-analyzer
 description: "Manage — Analyzes meeting transcripts and recordings to surface behavioral patterns, communication anti-patterns, and actionable coaching feedback. Use this skill whenever the user uploads "
 executor: LLM_BEHAVIOR
 skill_id: business.project-management.meeting-analyzer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from meeting analyzer"
 ---
 
 # Meeting Insights Analyzer

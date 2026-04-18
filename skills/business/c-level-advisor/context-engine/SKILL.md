@@ -11,12 +11,26 @@ metadata:
   frameworks: context-loading, anonymization, context-enrichment
 executor: LLM_BEHAVIOR
 skill_id: business.c-level-advisor.context-engine
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
   - llm
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from context engine"
 ---
 
 # Company Context Engine

@@ -4,7 +4,7 @@ name: agent-orchestration-improve-agent
 description: "Apply — "
   iteration.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/agent-orchestration-improve-agent
 anchors:
 - agent

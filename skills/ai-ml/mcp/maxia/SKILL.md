@@ -4,7 +4,7 @@ name: maxia
 description: "Apply — Connect to MAXIA AI-to-AI marketplace on Solana. Discover, buy, sell AI services. Earn USDC. 13 MCP tools, A2A"
   protocol, DeFi yields, sentiment analysis, rug detection.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/maxia
 anchors:
 - maxia

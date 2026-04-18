@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_ai_voicelive_java
 name: azure-ai-voicelive-java
 description: "Implement — Azure AI VoiceLive SDK for Java. Real-time bidirectional voice conversations with AI assistants using WebSocket."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-voicelive-java
 anchors:
 - azure

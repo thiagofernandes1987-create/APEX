@@ -4,7 +4,7 @@ name: accessibility-compliance-accessibility-audit
 description: "Review — "
   compatibility. Conduct audits, identify barriers, and provide remediation guidance.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal/compliance/accessibility-compliance-accessibility-audit
 anchors:
 - accessibility

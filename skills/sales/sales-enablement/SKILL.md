@@ -4,7 +4,7 @@ name: sales-enablement
 description: "Track — "
   Use when a sales team needs assets that help reps move deals forward and close.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: sales/sales-enablement
 anchors:
 - sales

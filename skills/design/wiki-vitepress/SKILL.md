@@ -4,7 +4,7 @@ name: wiki-vitepress
 description: "Design — Packages generated wiki Markdown into a VitePress static site with dark theme, dark-mode Mermaid diagrams with"
   click-to-zoom, and production build output. Use when the user wants to create a browsable
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - wiki

@@ -3,7 +3,7 @@ skill_id: engineering_backend.m365_agents_ts
 name: m365-agents-ts
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/backend
 anchors:
 - m365

@@ -4,7 +4,7 @@ name: quality-documentation-manager
 description: Document control system management for medical device QMS. Covers document numbering, version control, change
   management, and 21 CFR Part 11 compliance. Use for document control procedures, change con
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - quality

@@ -4,7 +4,7 @@ name: devops-deploy
 description: "Implement — "
   como codigo e monitoramento.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/devops-deploy
 anchors:
 - devops

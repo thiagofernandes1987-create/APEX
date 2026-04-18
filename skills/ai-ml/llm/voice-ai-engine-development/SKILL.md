@@ -4,7 +4,7 @@ name: voice-ai-engine-development
 description: "Apply — "
   agents, and TTS synthesis with interrupt handling and multi-provider support'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/voice-ai-engine-development
 anchors:
 - voice

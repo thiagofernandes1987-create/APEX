@@ -3,7 +3,7 @@ skill_id: engineering_cloud_aws.aws_cloud_patterns
 name: aws-cloud-patterns
 description: "Use — AWS cloud patterns for Lambda, ECS, S3, DynamoDB, and Infrastructure as Code with CDK/Terraform"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws
 anchors:
 - cloud

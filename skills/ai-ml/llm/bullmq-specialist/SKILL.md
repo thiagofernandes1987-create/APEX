@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.bullmq_specialist
 name: bullmq-specialist
 description: "Apply — BullMQ expert for Redis-backed job queues, background processing,"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/bullmq-specialist
 anchors:
 - bullmq

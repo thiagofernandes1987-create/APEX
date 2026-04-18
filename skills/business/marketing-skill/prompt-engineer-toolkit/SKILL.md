@@ -9,12 +9,22 @@ metadata:
   updated: 2026-03-06
 executor: HYBRID
 skill_id: business.marketing-skill.prompt-engineer-toolkit
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: true, approval_required: false}
 anchors:
   - business
   - marketing
   - documentation
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from prompt engineer toolkit"
 ---
 
 # Prompt Engineer Toolkit

@@ -4,7 +4,7 @@ name: prisma-expert
 description: "Analyze — "
   modeling, and database operations across PostgreSQL, MySQL, and SQLite.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/prisma-expert
 anchors:
 - prisma

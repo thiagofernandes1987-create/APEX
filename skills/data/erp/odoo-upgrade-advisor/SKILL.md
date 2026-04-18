@@ -4,7 +4,7 @@ name: odoo-upgrade-advisor
 description: "Analyze — "
   module compatibility, and post-upgrade validation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-upgrade-advisor
 anchors:
 - odoo

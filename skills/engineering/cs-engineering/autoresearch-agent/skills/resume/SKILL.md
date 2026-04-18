@@ -4,11 +4,25 @@ description: "Implement — Resume a paused experiment. Checkout the experiment 
 command: /ar:resume
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering.autoresearch_agent.resume
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - research
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from resume"
 ---
 
 # /ar:resume — Resume Experiment

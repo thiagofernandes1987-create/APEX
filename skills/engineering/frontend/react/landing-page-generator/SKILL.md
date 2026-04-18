@@ -4,7 +4,7 @@ name: '''landing-page-generator'''
 description: "Implement — "
   for optimized copy/components (Heroes, Features, Pricing). Focuses on Core Web Vitals/SEO.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/landing-page-generator
 anchors:
 - landing

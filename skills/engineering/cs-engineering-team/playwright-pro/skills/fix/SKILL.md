@@ -6,11 +6,21 @@ description: >-
   sometimes", or "intermittent failure".
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering_team.playwright_pro.fix
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - testing
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from fix"
 ---
 
 # Fix Failing or Flaky Tests

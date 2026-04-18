@@ -3,7 +3,7 @@ skill_id: engineering_database.database_optimization
 name: database-optimization
 description: "Use — Query optimization, indexing strategies, and database performance tuning for PostgreSQL and MySQL"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/database
 anchors:
 - database

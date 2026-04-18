@@ -1,6 +1,6 @@
 # APEX Index — Hub de Navegação
 
-**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-18 02:11 UTC
+**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-18 09:35 UTC
 **Versão APEX**: v00.36.0 | **Skills**: 3784 | **Domínios**: 52 | **Erros de parse**: 0
 
 > Este arquivo é gerado automaticamente. Não editar manualmente.
@@ -96,23 +96,23 @@ domain_map:
         skills:
           - skill: ai_ml.agents.agent_evaluation
             path: skills/ai-ml/agents/agent-evaluation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agent, evaluation, testing, benchmarking, agents]
           - skill: ai_ml.agents.agent_framework_azure_ai_py
             path: skills/ai-ml/agents/agent-framework-azure-ai-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agent, framework, azure, build, persistent]
           - skill: ai_ml.agents.agent_manager_skill
             path: skills/ai-ml/agents/agent-manager-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agent, manager, skill, manage, multiple]
           - skill: ai_ml.agents.agent_memory_mcp
             path: skills/ai-ml/agents/agent-memory-mcp/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agent, memory, hybrid, system, provides]
           - skill: ai_ml.agents.agent_memory_systems
             path: skills/ai-ml/agents/agent-memory-systems/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agent, memory, systems, cornerstone, intelligent]
           # ... +42 skills adicionais
       computer-vision:
@@ -121,15 +121,15 @@ domain_map:
         skills:
           - skill: ai_ml.computer_vision.computer_vision_expert
             path: skills/ai-ml/computer-vision/computer-vision-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [computer, vision, expert, sota, specialized]
           - skill: ai_ml.computer_vision.fal_image_edit
             path: skills/ai-ml/computer-vision/fal-image-edit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [image, edit, powered, editing, style]
           - skill: ai_ml.computer_vision.seo_image_gen
             path: skills/ai-ml/computer-vision/seo-image-gen/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [image, generate, focused, images, cards]
       embeddings:
         path: skills/ai-ml/embeddings/
@@ -137,23 +137,23 @@ domain_map:
         skills:
           - skill: ai_ml.embeddings.api_fuzzing_bug_bounty
             path: skills/ai-ml/embeddings/api-fuzzing-bug-bounty/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [fuzzing, bounty, provide, comprehensive, techniques]
           - skill: ai_ml.embeddings.azure_search_documents_dotnet
             path: skills/ai-ml/embeddings/azure-search-documents-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, search, documents, dotnet, building]
           - skill: ai_ml.embeddings.azure_search_documents_py
             path: skills/ai-ml/embeddings/azure-search-documents-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, search, documents, python, vector]
           - skill: ai_ml.embeddings.azure_search_documents_ts
             path: skills/ai-ml/embeddings/azure-search-documents-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, search, documents, build, applications]
           - skill: ai_ml.embeddings.context_manager
             path: skills/ai-ml/embeddings/context-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [context, manager, elite, engineering, specialist]
           # ... +5 skills adicionais
       frameworks:
@@ -162,7 +162,7 @@ domain_map:
         skills:
           - skill: ai_ml.frameworks.langgraph
             path: skills/ai-ml/frameworks/langgraph/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [langgraph, expert, production, grade, framework]
       llm:
         path: skills/ai-ml/llm/
@@ -170,23 +170,23 @@ domain_map:
         skills:
           - skill: ai_ml.llm.activecampaign_automation
             path: skills/ai-ml/llm/activecampaign-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [activecampaign, automation, automate, tasks, rube]
           - skill: ai_ml.llm.adhx
             path: skills/ai-ml/llm/adhx/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [adhx, fetch, twitter, post, clean]
           - skill: ai_ml.llm.advanced_evaluation
             path: skills/ai-ml/llm/advanced-evaluation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [advanced, evaluation, skill, user, asks]
           - skill: ai_ml.llm.aegisops_ai
             path: skills/ai-ml/llm/aegisops-ai/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [aegisops, autonomous, devsecops, finops, guardrails]
           - skill: ai_ml.llm.agents_md
             path: skills/ai-ml/llm/agents-md/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agents, skill, user, asks, create]
           # ... +77 skills adicionais
       mcp:
@@ -195,23 +195,23 @@ domain_map:
         skills:
           - skill: ai_ml.mcp.airtable_automation
             path: skills/ai-ml/mcp/airtable-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [airtable, automation, automate, tasks, rube]
           - skill: ai_ml.mcp.amplitude_automation
             path: skills/ai-ml/mcp/amplitude-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [amplitude, automation, automate, tasks, rube]
           - skill: ai_ml.mcp.asana_automation
             path: skills/ai-ml/mcp/asana-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [asana, automation, automate, tasks, rube]
           - skill: ai_ml.mcp.bamboohr_automation
             path: skills/ai-ml/mcp/bamboohr-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [bamboohr, automation, automate, tasks, rube]
           - skill: ai_ml.mcp.basecamp_automation
             path: skills/ai-ml/mcp/basecamp-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [basecamp, automation, automate, project, management]
           # ... +82 skills adicionais
       ml:
@@ -220,23 +220,23 @@ domain_map:
         skills:
           - skill: ai_ml.ml.hugging_face_cli
             path: skills/ai-ml/ml/hugging-face-cli/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [hugging, face, download, upload, manage]
           - skill: ai_ml.ml.hugging_face_community_evals
             path: skills/ai-ml/ml/hugging-face-community-evals/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [hugging, face, community, evals, local]
           - skill: ai_ml.ml.hugging_face_dataset_viewer
             path: skills/ai-ml/ml/hugging-face-dataset-viewer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [hugging, face, dataset, viewer, query]
           - skill: ai_ml.ml.hugging_face_gradio
             path: skills/ai-ml/ml/hugging-face-gradio/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [hugging, face, gradio, build, edit]
           - skill: ai_ml.ml.hugging_face_jobs
             path: skills/ai-ml/ml/hugging-face-jobs/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [hugging, face, jobs, workloads, managed]
           # ... +10 skills adicionais
       rag:
@@ -245,23 +245,23 @@ domain_map:
         skills:
           - skill: ai_ml.rag.ai_engineering_toolkit
             path: skills/ai-ml/rag/ai-engineering-toolkit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [engineering, toolkit, production, ready, workflows]
           - skill: ai_ml.rag.appdeploy
             path: skills/ai-ml/rag/appdeploy/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [appdeploy, deploy, apps, backend, apis]
           - skill: ai_ml.rag.azure_data_tables_java
             path: skills/ai-ml/rag/azure-data-tables-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, data, tables, java, build]
           - skill: ai_ml.rag.azure_data_tables_py
             path: skills/ai-ml/rag/azure-data-tables-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, data, tables, python, storage]
           - skill: ai_ml.rag.azure_keyvault_py
             path: skills/ai-ml/rag/azure-keyvault-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, keyvault, vault, python, secrets]
           # ... +36 skills adicionais
 
@@ -277,7 +277,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.agent_designer
             path: skills/ai_ml_agents/agent-designer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agent, designer, when, design, agent-designer]
       agent-protocol:
         path: skills/ai_ml_agents/agent-protocol/
@@ -285,7 +285,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.agent_protocol
             path: skills/ai_ml_agents/agent-protocol/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agent, protocol, inter, communication, suite]
       agent-workflow-designer:
         path: skills/ai_ml_agents/agent-workflow-designer/
@@ -293,7 +293,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.agent_workflow_designer
             path: skills/ai_ml_agents/agent-workflow-designer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agent, workflow, designer, agent-workflow-designer, generate]
       board:
         path: skills/ai_ml_agents/board/
@@ -301,7 +301,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.board
             path: skills/ai_ml_agents/board/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [board, read, write, browse, agenthub]
       board-meeting:
         path: skills/ai_ml_agents/board-meeting/
@@ -309,7 +309,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.board_meeting
             path: skills/ai_ml_agents/board-meeting/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [board, meeting, multi, agent, protocol]
       c-level-advisor:
         path: skills/ai_ml_agents/c-level-advisor/
@@ -317,7 +317,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.c_level_advisor
             path: skills/ai_ml_agents/c-level-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [level, advisor, advisory, agent, skills]
       cherry-assistant-guide:
         path: skills/ai_ml_agents/cherry-assistant-guide/
@@ -325,7 +325,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.cherry_assistant_guide
             path: skills/ai_ml_agents/cherry-assistant-guide/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cherry, assistant, guide, studio, provider]
       composio-skills:
         path: skills/ai_ml_agents/composio-skills/
@@ -333,7 +333,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.composio_skills
             path: skills/ai_ml_agents/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, agent, mail]
       continual-learning:
         path: skills/ai_ml_agents/continual-learning/
@@ -341,7 +341,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.continual_learning
             path: skills/ai_ml_agents/continual-learning/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [continual, learning, guide, implementing, coding]
       create-skill:
         path: skills/ai_ml_agents/create-skill/
@@ -349,7 +349,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.create_skill
             path: skills/ai_ml_agents/create-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [create, skill, current, repository, when]
       finance:
         path: skills/ai_ml_agents/finance/
@@ -357,7 +357,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.finance
             path: skills/ai_ml_agents/finance/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [finance, financial, analyst, agent, skill]
       gh-pr-review:
         path: skills/ai_ml_agents/gh-pr-review/
@@ -365,7 +365,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.gh_pr_review
             path: skills/ai_ml_agents/gh-pr-review/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [review, automated, code, local, branches]
       init:
         path: skills/ai_ml_agents/init/
@@ -373,7 +373,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.init
             path: skills/ai_ml_agents/init/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [init, create, agenthub, collaboration, session]
       intelligent-agent-factory:
         path: skills/ai_ml_agents/intelligent-agent-factory/
@@ -388,7 +388,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.langsmith_fetch
             path: skills/ai_ml_agents/langsmith-fetch/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [langsmith, fetch, debug, langchain, langgraph]
       m365-agents-py:
         path: skills/ai_ml_agents/m365-agents-py/
@@ -396,7 +396,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.m365_agents_py
             path: skills/ai_ml_agents/m365-agents-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [m365, agents, agents-py, adapter, agent_app]
       marketing-skill:
         path: skills/ai_ml_agents/marketing-skill/
@@ -404,7 +404,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.marketing_skill
             path: skills/ai_ml_agents/marketing-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [marketing, skill, agent, skills, plugins]
       merge:
         path: skills/ai_ml_agents/merge/
@@ -412,7 +412,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.merge
             path: skills/ai_ml_agents/merge/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [merge, winning, agent, branch, into]
       product-team:
         path: skills/ai_ml_agents/product-team/
@@ -420,7 +420,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.product_team
             path: skills/ai_ml_agents/product-team/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [product, team, agent, skills, plugins]
       project-management:
         path: skills/ai_ml_agents/project-management/
@@ -428,7 +428,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.project_management
             path: skills/ai_ml_agents/project-management/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [project, management, agent, skills, plugins]
       ra-qm-team:
         path: skills/ai_ml_agents/ra-qm-team/
@@ -436,7 +436,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.ra_qm_team
             path: skills/ai_ml_agents/ra-qm-team/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [team, regulatory, agent, skills, plugins]
       research-summarizer:
         path: skills/ai_ml_agents/research-summarizer/
@@ -444,7 +444,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.research_summarizer
             path: skills/ai_ml_agents/research-summarizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [research, summarizer, structured, summarization, agent]
       run:
         path: skills/ai_ml_agents/run/
@@ -452,7 +452,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.run
             path: skills/ai_ml_agents/run/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [shot, lifecycle, command, that, chains]
       self-improving-agent:
         path: skills/ai_ml_agents/self-improving-agent/
@@ -460,7 +460,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.self_improving_agent
             path: skills/ai_ml_agents/self-improving-agent/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [self, improving, agent, curate, claude]
       spawn:
         path: skills/ai_ml_agents/spawn/
@@ -468,7 +468,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.spawn
             path: skills/ai_ml_agents/spawn/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [spawn, launch, parallel, subagents, isolated]
       status:
         path: skills/ai_ml_agents/status/
@@ -476,7 +476,7 @@ domain_map:
         skills:
           - skill: ai_ml_agents.status
             path: skills/ai_ml_agents/status/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [status, show, state, agent, progress]
 
   AI_ML_LLM:
@@ -491,7 +491,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.agenthub
             path: skills/ai_ml_llm/agenthub/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agenthub, multi, agent, collaboration, plugin]
       ai-seo:
         path: skills/ai_ml_llm/ai-seo/
@@ -499,7 +499,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.ai_seo
             path: skills/ai_ml_llm/ai-seo/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [optimize, content, cited, search, engines]
       autoresearch-agent:
         path: skills/ai_ml_llm/autoresearch-agent/
@@ -507,7 +507,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.autoresearch_agent
             path: skills/ai_ml_llm/autoresearch-agent/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [autoresearch, agent, autonomous, experiment, loop]
       composio-skills:
         path: skills/ai_ml_llm/composio-skills/
@@ -515,7 +515,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.composio_skills
             path: skills/ai_ml_llm/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, appdrag, tasks]
       coverage:
         path: skills/ai_ml_llm/coverage/
@@ -523,7 +523,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.coverage
             path: skills/ai_ml_llm/coverage/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [coverage, test, gaps, map, matrix]
       eval:
         path: skills/ai_ml_llm/eval/
@@ -531,7 +531,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.eval
             path: skills/ai_ml_llm/eval/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [eval, evaluate, rank, agent, results]
       loop:
         path: skills/ai_ml_llm/loop/
@@ -539,7 +539,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.loop
             path: skills/ai_ml_llm/loop/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [loop, start, autonomous, experiment, user-selected]
       paywall-upgrade-cro:
         path: skills/ai_ml_llm/paywall-upgrade-cro/
@@ -547,7 +547,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.paywall_upgrade_cro
             path: skills/ai_ml_llm/paywall-upgrade-cro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [paywall, upgrade, when, create, paywall-upgrade-cro]
       prompt-engineering:
         path: skills/ai_ml_llm/prompt-engineering/
@@ -555,7 +555,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.prompt_engineering
             path: skills/ai_ml_llm/prompt-engineering/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [prompt, engineering, patterns, including, structured]
       review:
         path: skills/ai_ml_llm/review/
@@ -563,7 +563,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.review
             path: skills/ai_ml_llm/review/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [review, file, score, critical, warning]
       sales-engineer:
         path: skills/ai_ml_llm/sales-engineer/
@@ -571,7 +571,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.sales_engineer
             path: skills/ai_ml_llm/sales-engineer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [sales, engineer, analyzes, responses, coverage]
       self-eval:
         path: skills/ai_ml_llm/self-eval/
@@ -579,7 +579,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.self_eval
             path: skills/ai_ml_llm/self-eval/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [self, eval, honestly, evaluate, work]
       senior-prompt-engineer:
         path: skills/ai_ml_llm/senior-prompt-engineer/
@@ -587,7 +587,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.senior_prompt_engineer
             path: skills/ai_ml_llm/senior-prompt-engineer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, prompt, engineer, this, skill]
       wiki-llms-txt:
         path: skills/ai_ml_llm/wiki-llms-txt/
@@ -595,7 +595,7 @@ domain_map:
         skills:
           - skill: ai_ml_llm.wiki_llms_txt
             path: skills/ai_ml_llm/wiki-llms-txt/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wiki, llms, generates, full, files]
 
   AI_ML_ML:
@@ -610,7 +610,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.campaign_analytics
             path: skills/ai_ml_ml/campaign-analytics/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [campaign, analytics, analyzes, performance, multi]
       cfo-advisor:
         path: skills/ai_ml_ml/cfo-advisor/
@@ -618,7 +618,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.cfo_advisor
             path: skills/ai_ml_ml/cfo-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [advisor, financial, leadership, startups, scaling]
       cmo-advisor:
         path: skills/ai_ml_ml/cmo-advisor/
@@ -626,7 +626,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.cmo_advisor
             path: skills/ai_ml_ml/cmo-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [advisor, marketing, leadership, scaling, companies]
       competitive-teardown:
         path: skills/ai_ml_ml/competitive-teardown/
@@ -634,7 +634,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.competitive_teardown
             path: skills/ai_ml_ml/competitive-teardown/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [competitive, teardown, analyzes, competitor, products]
       composio-skills:
         path: skills/ai_ml_ml/composio-skills/
@@ -642,7 +642,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.composio_skills
             path: skills/ai_ml_ml/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, tasks, rube]
       cro-advisor:
         path: skills/ai_ml_ml/cro-advisor/
@@ -650,7 +650,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.cro_advisor
             path: skills/ai_ml_ml/cro-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [advisor, revenue, leadership, saas, companies]
       customer-success-manager:
         path: skills/ai_ml_ml/customer-success-manager/
@@ -658,7 +658,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.customer_success_manager
             path: skills/ai_ml_ml/customer-success-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [customer, success, manager, monitors, health]
       document-skills:
         path: skills/ai_ml_ml/document-skills/
@@ -666,7 +666,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.document_skills
             path: skills/ai_ml_ml/document-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [document, skills, comprehensive, creation, editing]
       financial-analyst:
         path: skills/ai_ml_ml/financial-analyst/
@@ -674,7 +674,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.financial_analyst
             path: skills/ai_ml_ml/financial-analyst/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [financial, analyst, performs, ratio, analysis]
       marketing-psychology:
         path: skills/ai_ml_ml/marketing-psychology/
@@ -682,7 +682,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.marketing_psychology
             path: skills/ai_ml_ml/marketing-psychology/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [marketing, psychology, when, apply, marketing-psychology]
       mlops-deployment-pipeline:
         path: skills/ai_ml_ml/mlops-deployment-pipeline/
@@ -697,7 +697,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.pricing_strategy
             path: skills/ai_ml_ml/pricing-strategy/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [pricing, strategy, design, optimize, communicate]
       raffle-winner-picker:
         path: skills/ai_ml_ml/raffle-winner-picker/
@@ -705,7 +705,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.raffle_winner_picker
             path: skills/ai_ml_ml/raffle-winner-picker/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [raffle, winner, picker, picks, random]
       skill-share:
         path: skills/ai_ml_ml/skill-share/
@@ -713,7 +713,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.skill_share
             path: skills/ai_ml_ml/skill-share/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [skill, share, that, creates, claude]
       theme-factory:
         path: skills/ai_ml_ml/theme-factory/
@@ -721,7 +721,7 @@ domain_map:
         skills:
           - skill: ai_ml_ml.theme_factory
             path: skills/ai_ml_ml/theme-factory/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [theme, factory, toolkit, styling, artifacts]
 
   ANTHROPIC_OFFICIAL:
@@ -736,22 +736,22 @@ domain_map:
         skills:
           - skill: anthropic-official._source.skills.algorithmic-art
             path: skills/anthropic-official/_source/skills/algorithmic-art/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [algorithmic-art, creating, algorithmic, art, seeded]
           - skill: anthropic-official._source.skills.brand-guidelines
             path: skills/anthropic-official/_source/skills/brand-guidelines/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [brand-guidelines, applies, anthropic, official, brand]
           - skill: anthropic-official._source.skills.canvas-design
             path: skills/anthropic-official/_source/skills/canvas-design/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [canvas-design, create, beautiful, visual, art]
           - skill: anthropic-official._source.skills.claude-api
             path: skills/anthropic-official/_source/skills/claude-api/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: anthropic-official._source.skills.doc-coauthoring
             path: skills/anthropic-official/_source/skills/doc-coauthoring/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [doc-coauthoring, guide, through, structured, workflow]
           # ... +13 skills adicionais
       algorithmic-art:
@@ -902,212 +902,212 @@ domain_map:
         skills:
           - skill: anthropic-skills.artifacts-builder
             path: skills/anthropic-skills/artifacts-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       brand-guidelines:
         path: skills/anthropic-skills/brand-guidelines/
         skill_count: 1
         skills:
           - skill: anthropic-skills.brand-guidelines
             path: skills/anthropic-skills/brand-guidelines/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       canvas-design:
         path: skills/anthropic-skills/canvas-design/
         skill_count: 1
         skills:
           - skill: anthropic-skills.canvas-design
             path: skills/anthropic-skills/canvas-design/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       changelog-generator:
         path: skills/anthropic-skills/changelog-generator/
         skill_count: 1
         skills:
           - skill: anthropic-skills.changelog-generator
             path: skills/anthropic-skills/changelog-generator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       competitive-ads-extractor:
         path: skills/anthropic-skills/competitive-ads-extractor/
         skill_count: 1
         skills:
           - skill: anthropic-skills.competitive-ads-extractor
             path: skills/anthropic-skills/competitive-ads-extractor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       connect:
         path: skills/anthropic-skills/connect/
         skill_count: 1
         skills:
           - skill: anthropic-skills.connect
             path: skills/anthropic-skills/connect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       connect-apps:
         path: skills/anthropic-skills/connect-apps/
         skill_count: 1
         skills:
           - skill: anthropic-skills.connect-apps
             path: skills/anthropic-skills/connect-apps/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       content-research-writer:
         path: skills/anthropic-skills/content-research-writer/
         skill_count: 1
         skills:
           - skill: anthropic-skills.content-research-writer
             path: skills/anthropic-skills/content-research-writer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       developer-growth-analysis:
         path: skills/anthropic-skills/developer-growth-analysis/
         skill_count: 1
         skills:
           - skill: anthropic-skills.developer-growth-analysis
             path: skills/anthropic-skills/developer-growth-analysis/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       document-skills:
         path: skills/anthropic-skills/document-skills/
         skill_count: 4
         skills:
           - skill: anthropic-skills.document-skills.docx
             path: skills/anthropic-skills/document-skills/docx/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: anthropic-skills.document-skills.pdf
             path: skills/anthropic-skills/document-skills/pdf/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: anthropic-skills.document-skills.pptx
             path: skills/anthropic-skills/document-skills/pptx/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: anthropic-skills.document-skills.xlsx
             path: skills/anthropic-skills/document-skills/xlsx/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       domain-name-brainstormer:
         path: skills/anthropic-skills/domain-name-brainstormer/
         skill_count: 1
         skills:
           - skill: anthropic-skills.domain-name-brainstormer
             path: skills/anthropic-skills/domain-name-brainstormer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       file-organizer:
         path: skills/anthropic-skills/file-organizer/
         skill_count: 1
         skills:
           - skill: anthropic-skills.file-organizer
             path: skills/anthropic-skills/file-organizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       image-enhancer:
         path: skills/anthropic-skills/image-enhancer/
         skill_count: 1
         skills:
           - skill: anthropic-skills.image-enhancer
             path: skills/anthropic-skills/image-enhancer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       internal-comms:
         path: skills/anthropic-skills/internal-comms/
         skill_count: 1
         skills:
           - skill: anthropic-skills.internal-comms
             path: skills/anthropic-skills/internal-comms/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       invoice-organizer:
         path: skills/anthropic-skills/invoice-organizer/
         skill_count: 1
         skills:
           - skill: anthropic-skills.invoice-organizer
             path: skills/anthropic-skills/invoice-organizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       langsmith-fetch:
         path: skills/anthropic-skills/langsmith-fetch/
         skill_count: 1
         skills:
           - skill: anthropic-skills.langsmith-fetch
             path: skills/anthropic-skills/langsmith-fetch/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       lead-research-assistant:
         path: skills/anthropic-skills/lead-research-assistant/
         skill_count: 1
         skills:
           - skill: anthropic-skills.lead-research-assistant
             path: skills/anthropic-skills/lead-research-assistant/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       mcp-builder:
         path: skills/anthropic-skills/mcp-builder/
         skill_count: 1
         skills:
           - skill: anthropic-skills.mcp-builder
             path: skills/anthropic-skills/mcp-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       meeting-insights-analyzer:
         path: skills/anthropic-skills/meeting-insights-analyzer/
         skill_count: 1
         skills:
           - skill: anthropic-skills.meeting-insights-analyzer
             path: skills/anthropic-skills/meeting-insights-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       raffle-winner-picker:
         path: skills/anthropic-skills/raffle-winner-picker/
         skill_count: 1
         skills:
           - skill: anthropic-skills.raffle-winner-picker
             path: skills/anthropic-skills/raffle-winner-picker/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       skill-creator:
         path: skills/anthropic-skills/skill-creator/
         skill_count: 1
         skills:
           - skill: anthropic-skills.skill-creator
             path: skills/anthropic-skills/skill-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       skill-share:
         path: skills/anthropic-skills/skill-share/
         skill_count: 1
         skills:
           - skill: anthropic-skills.skill-share
             path: skills/anthropic-skills/skill-share/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       slack-gif-creator:
         path: skills/anthropic-skills/slack-gif-creator/
         skill_count: 1
         skills:
           - skill: anthropic-skills.slack-gif-creator
             path: skills/anthropic-skills/slack-gif-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       tailored-resume-generator:
         path: skills/anthropic-skills/tailored-resume-generator/
         skill_count: 1
         skills:
           - skill: anthropic-skills.tailored-resume-generator
             path: skills/anthropic-skills/tailored-resume-generator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       template-skill:
         path: skills/anthropic-skills/template-skill/
         skill_count: 1
         skills:
           - skill: anthropic-skills.template-skill
             path: skills/anthropic-skills/template-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       theme-factory:
         path: skills/anthropic-skills/theme-factory/
         skill_count: 1
         skills:
           - skill: anthropic-skills.theme-factory
             path: skills/anthropic-skills/theme-factory/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       twitter-algorithm-optimizer:
         path: skills/anthropic-skills/twitter-algorithm-optimizer/
         skill_count: 1
         skills:
           - skill: anthropic-skills.twitter-algorithm-optimizer
             path: skills/anthropic-skills/twitter-algorithm-optimizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       video-downloader:
         path: skills/anthropic-skills/video-downloader/
         skill_count: 1
         skills:
           - skill: anthropic-skills.video-downloader
             path: skills/anthropic-skills/video-downloader/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       webapp-testing:
         path: skills/anthropic-skills/webapp-testing/
         skill_count: 1
         skills:
           - skill: anthropic-skills.webapp-testing
             path: skills/anthropic-skills/webapp-testing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
 
   APEX_INTERNALS:
     path: skills/apex_internals/
@@ -1121,7 +1121,7 @@ domain_map:
         skills:
           - skill: apex_internals.cognitive.context_guardian
             path: skills/apex_internals/cognitive/context-guardian/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [context, guardian, guardiao, contexto, preserva]
       cognitive-modes:
         path: skills/apex_internals/cognitive-modes/
@@ -1145,11 +1145,11 @@ domain_map:
         skills:
           - skill: apex_internals.knowledge.bdistill_behavioral_xray
             path: skills/apex_internals/knowledge/bdistill-behavioral-xray/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [bdistill, behavioral, xray, model, patterns]
           - skill: apex_internals.knowledge.bdistill_knowledge_extraction
             path: skills/apex_internals/knowledge/bdistill-knowledge-extraction/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [bdistill, knowledge, extraction, extract, structured]
       plugins:
         path: skills/apex_internals/plugins/
@@ -1180,7 +1180,7 @@ domain_map:
         skills:
           - skill: awesome_claude.ai_ml_agents.composio_skills
             path: skills/awesome_claude/ai_ml_agents/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, agentql, tasks]
       ai_ml_llm:
         path: skills/awesome_claude/ai_ml_llm/
@@ -1188,7 +1188,7 @@ domain_map:
         skills:
           - skill: awesome_claude.ai_ml_llm.composio_skills
             path: skills/awesome_claude/ai_ml_llm/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, customgpt, tasks]
       ai_ml_ml:
         path: skills/awesome_claude/ai_ml_ml/
@@ -1196,11 +1196,11 @@ domain_map:
         skills:
           - skill: awesome_claude.ai_ml_ml.composio_skills
             path: skills/awesome_claude/ai_ml_ml/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, bigml, tasks]
           - skill: awesome_claude.ai_ml_ml.document_skills
             path: skills/awesome_claude/ai_ml_ml/document-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [document, skills, presentation, creation, editing]
       business_human_resources:
         path: skills/awesome_claude/business_human_resources/
@@ -1208,7 +1208,7 @@ domain_map:
         skills:
           - skill: awesome_claude.business_human_resources.composio_skills
             path: skills/awesome_claude/business_human_resources/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, chat, tasks]
       business_productivity:
         path: skills/awesome_claude/business_productivity/
@@ -1216,7 +1216,7 @@ domain_map:
         skills:
           - skill: awesome_claude.business_productivity.composio_skills
             path: skills/awesome_claude/business_productivity/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, google, workspace]
       business_sales:
         path: skills/awesome_claude/business_sales/
@@ -1224,7 +1224,7 @@ domain_map:
         skills:
           - skill: awesome_claude.business_sales.composio_skills
             path: skills/awesome_claude/business_sales/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, capsule, operations]
       design:
         path: skills/awesome_claude/design/
@@ -1232,7 +1232,7 @@ domain_map:
         skills:
           - skill: awesome_claude.design.composio_skills
             path: skills/awesome_claude/design/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, aryn, tasks]
       engineering_api:
         path: skills/awesome_claude/engineering_api/
@@ -1240,7 +1240,7 @@ domain_map:
         skills:
           - skill: awesome_claude.engineering_api.composio_skills
             path: skills/awesome_claude/engineering_api/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, onesignal, tasks]
       engineering_database:
         path: skills/awesome_claude/engineering_database/
@@ -1248,7 +1248,7 @@ domain_map:
         skills:
           - skill: awesome_claude.engineering_database.composio_skills
             path: skills/awesome_claude/engineering_database/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, snowflake, data]
       engineering_devops:
         path: skills/awesome_claude/engineering_devops/
@@ -1256,7 +1256,7 @@ domain_map:
         skills:
           - skill: awesome_claude.engineering_devops.composio_skills
             path: skills/awesome_claude/engineering_devops/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, capsule, tasks]
       engineering_security:
         path: skills/awesome_claude/engineering_security/
@@ -1264,7 +1264,7 @@ domain_map:
         skills:
           - skill: awesome_claude.engineering_security.composio_skills
             path: skills/awesome_claude/engineering_security/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, auth0, tasks]
       finance:
         path: skills/awesome_claude/finance/
@@ -1272,7 +1272,7 @@ domain_map:
         skills:
           - skill: awesome_claude.finance.composio_skills
             path: skills/awesome_claude/finance/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, ramp, automation, manage]
       marketing:
         path: skills/awesome_claude/marketing/
@@ -1280,7 +1280,7 @@ domain_map:
         skills:
           - skill: awesome_claude.marketing.composio_skills
             path: skills/awesome_claude/marketing/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, aeroleads, tasks]
 
   BUSINESS:
@@ -1295,58 +1295,58 @@ domain_map:
         skills:
           - skill: business.analysis.business_analyst
             path: skills/business/analysis/business-analyst/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [business, analyst, master, modern, analysis]
           - skill: business.analysis.startup_business_analyst_business_case
             path: skills/business/analysis/startup-business-analyst-business-case/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [startup, business, analyst, case, generate]
           - skill: business.analysis.startup_business_analyst_financial_projections
             path: skills/business/analysis/startup-business-analyst-financial-projections/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [startup, business, analyst, financial, projections]
           - skill: business.analysis.startup_business_analyst_market_opportunity
             path: skills/business/analysis/startup-business-analyst-market-opportunity/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [startup, business, analyst, market, opportunity]
       business-growth:
         path: skills/business/business-growth/
         skill_count: 5
         skills:
-          - skill: business.business-growth
-            path: skills/business/business-growth/SKILL.md
-            status: CANDIDATE
           - skill: business.business-growth.contract-and-proposal-writer
             path: skills/business/business-growth/contract-and-proposal-writer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.business-growth.customer-success-manager
             path: skills/business/business-growth/customer-success-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.business-growth.revenue-operations
             path: skills/business/business-growth/revenue-operations/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.business-growth.sales-engineer
             path: skills/business/business-growth/sales-engineer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
+          - skill: business.business-growth
+            path: skills/business/business-growth/SKILL.md
+            status: ADOPTED
       c-level-advisor:
         path: skills/business/c-level-advisor/
         skill_count: 34
         skills:
-          - skill: business.c-level-advisor
-            path: skills/business/c-level-advisor/SKILL.md
-            status: CANDIDATE
           - skill: business.c-level-advisor.agent-protocol
             path: skills/business/c-level-advisor/agent-protocol/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.c-level-advisor.board-deck-builder
             path: skills/business/c-level-advisor/board-deck-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.c-level-advisor.board-meeting
             path: skills/business/c-level-advisor/board-meeting/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.c-level-advisor.ceo-advisor
             path: skills/business/c-level-advisor/ceo-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
+          - skill: business.c-level-advisor.cfo-advisor
+            path: skills/business/c-level-advisor/cfo-advisor/SKILL.md
+            status: ADOPTED
           # ... +29 skills adicionais
       deal-due-diligence:
         path: skills/business/deal-due-diligence/
@@ -1359,37 +1359,37 @@ domain_map:
         path: skills/business/finance/
         skill_count: 4
         skills:
-          - skill: business.finance
-            path: skills/business/finance/SKILL.md
-            status: CANDIDATE
           - skill: business.finance.business-investment-advisor
             path: skills/business/finance/business-investment-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.finance.financial-analyst
             path: skills/business/finance/financial-analyst/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.finance.saas-metrics-coach
             path: skills/business/finance/saas-metrics-coach/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
+          - skill: business.finance
+            path: skills/business/finance/SKILL.md
+            status: ADOPTED
       marketing-skill:
         path: skills/business/marketing-skill/
         skill_count: 45
         skills:
-          - skill: business.marketing-skill
-            path: skills/business/marketing-skill/SKILL.md
-            status: CANDIDATE
           - skill: business.marketing-skill.ab-test-setup
             path: skills/business/marketing-skill/ab-test-setup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.marketing-skill.ad-creative
             path: skills/business/marketing-skill/ad-creative/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.marketing-skill.ai-seo
             path: skills/business/marketing-skill/ai-seo/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.marketing-skill.analytics-tracking
             path: skills/business/marketing-skill/analytics-tracking/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
+          - skill: business.marketing-skill.app-store-optimization
+            path: skills/business/marketing-skill/app-store-optimization/SKILL.md
+            status: ADOPTED
           # ... +40 skills adicionais
       personas:
         path: skills/business/personas/
@@ -1397,79 +1397,79 @@ domain_map:
         skills:
           - skill: business.personas.personas.content_strategist
             path: skills/business/personas/content-strategist/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.personas.product.cs_agile_product_owner
             path: skills/business/personas/cs-agile-product-owner/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.personas.c-level.cs_ceo_advisor
             path: skills/business/personas/cs-ceo-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.personas.marketing.cs_content_creator
             path: skills/business/personas/cs-content-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.personas.c-level.cs_cto_advisor
             path: skills/business/personas/cs-cto-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           # ... +18 skills adicionais
       product-team:
         path: skills/business/product-team/
         skill_count: 16
         skills:
-          - skill: business.product-team
-            path: skills/business/product-team/SKILL.md
-            status: CANDIDATE
           - skill: business.product-team.agile-product-owner
             path: skills/business/product-team/agile-product-owner/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.product-team.code-to-prd
             path: skills/business/product-team/code-to-prd/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.product-team.competitive-teardown
             path: skills/business/product-team/competitive-teardown/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.product-team.experiment-designer
             path: skills/business/product-team/experiment-designer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
+          - skill: business.product-team.landing-page-generator
+            path: skills/business/product-team/landing-page-generator/SKILL.md
+            status: ADOPTED
           # ... +11 skills adicionais
       project-management:
         path: skills/business/project-management/
         skill_count: 9
         skills:
-          - skill: business.project-management
-            path: skills/business/project-management/SKILL.md
-            status: CANDIDATE
           - skill: business.project-management.atlassian-admin
             path: skills/business/project-management/atlassian-admin/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.project-management.atlassian-templates
             path: skills/business/project-management/atlassian-templates/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.project-management.confluence-expert
             path: skills/business/project-management/confluence-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.project-management.jira-expert
             path: skills/business/project-management/jira-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
+          - skill: business.project-management.meeting-analyzer
+            path: skills/business/project-management/meeting-analyzer/SKILL.md
+            status: ADOPTED
           # ... +4 skills adicionais
       ra-qm-team:
         path: skills/business/ra-qm-team/
         skill_count: 14
         skills:
-          - skill: business.ra-qm-team
-            path: skills/business/ra-qm-team/SKILL.md
-            status: CANDIDATE
           - skill: business.ra-qm-team.capa-officer
             path: skills/business/ra-qm-team/capa-officer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.ra-qm-team.fda-consultant-specialist
             path: skills/business/ra-qm-team/fda-consultant-specialist/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.ra-qm-team.gdpr-dsgvo-expert
             path: skills/business/ra-qm-team/gdpr-dsgvo-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: business.ra-qm-team.information-security-manager-iso27001
             path: skills/business/ra-qm-team/information-security-manager-iso27001/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
+          - skill: business.ra-qm-team.isms-audit-expert
+            path: skills/business/ra-qm-team/isms-audit-expert/SKILL.md
+            status: ADOPTED
           # ... +9 skills adicionais
       startup:
         path: skills/business/startup/
@@ -1477,23 +1477,23 @@ domain_map:
         skills:
           - skill: business.startup.market_sizing_analysis
             path: skills/business/startup/market-sizing-analysis/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [market, sizing, analysis, comprehensive, methodologies]
           - skill: business.startup.startup_analyst
             path: skills/business/startup/startup-analyst/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [startup, analyst, expert, business, specializing]
           - skill: business.startup.startup_financial_modeling
             path: skills/business/startup/startup-financial-modeling/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [startup, financial, modeling, build, comprehensive]
           - skill: business.startup.startup_metrics_framework
             path: skills/business/startup/startup-metrics-framework/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [startup, metrics, framework, comprehensive, guide]
           - skill: business.startup.team_composition_analysis
             path: skills/business/startup/team-composition-analysis/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [team, composition, analysis, design, optimal]
 
   BUSINESS_CONTENT:
@@ -1508,7 +1508,7 @@ domain_map:
         skills:
           - skill: business_content.agile_product_owner
             path: skills/business_content/agile-product-owner/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agile, product, owner, ownership, backlog]
       changelog-generator:
         path: skills/business_content/changelog-generator/
@@ -1516,7 +1516,7 @@ domain_map:
         skills:
           - skill: business_content.changelog_generator
             path: skills/business_content/changelog-generator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [changelog, generator, automatically, creates, facing]
       content-research-writer:
         path: skills/business_content/content-research-writer/
@@ -1524,7 +1524,7 @@ domain_map:
         skills:
           - skill: business_content.content_research_writer
             path: skills/business_content/content-research-writer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [content, research, writer, assists, writing]
       image-enhancer:
         path: skills/business_content/image-enhancer/
@@ -1532,7 +1532,7 @@ domain_map:
         skills:
           - skill: business_content.image_enhancer
             path: skills/business_content/image-enhancer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [image, enhancer, improves, quality, images]
       twitter-algorithm-optimizer:
         path: skills/business_content/twitter-algorithm-optimizer/
@@ -1540,7 +1540,7 @@ domain_map:
         skills:
           - skill: business_content.twitter_algorithm_optimizer
             path: skills/business_content/twitter-algorithm-optimizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [twitter, algorithm, optimizer, analyze, optimize]
       wiki-page-writer:
         path: skills/business_content/wiki-page-writer/
@@ -1548,7 +1548,7 @@ domain_map:
         skills:
           - skill: business_content.wiki_page_writer
             path: skills/business_content/wiki-page-writer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wiki, page, writer, generates, rich]
 
   BUSINESS_HUMAN_RESOURCES:
@@ -1563,7 +1563,7 @@ domain_map:
         skills:
           - skill: business_human_resources.codebase_onboarding
             path: skills/business_human_resources/codebase-onboarding/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [codebase, onboarding, codebase-onboarding, template, overview]
       composio-skills:
         path: skills/business_human_resources/composio-skills/
@@ -1571,7 +1571,7 @@ domain_map:
         skills:
           - skill: business_human_resources.composio_skills
             path: skills/business_human_resources/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, risk, tasks]
       risk-management-specialist:
         path: skills/business_human_resources/risk-management-specialist/
@@ -1579,7 +1579,7 @@ domain_map:
         skills:
           - skill: business_human_resources.risk_management_specialist
             path: skills/business_human_resources/risk-management-specialist/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [risk, management, specialist, medical, device]
       scrum-master:
         path: skills/business_human_resources/scrum-master/
@@ -1587,7 +1587,7 @@ domain_map:
         skills:
           - skill: business_human_resources.scrum_master
             path: skills/business_human_resources/scrum-master/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [scrum, master, advanced, skill, data]
       signup-flow-cro:
         path: skills/business_human_resources/signup-flow-cro/
@@ -1595,7 +1595,7 @@ domain_map:
         skills:
           - skill: business_human_resources.signup_flow_cro
             path: skills/business_human_resources/signup-flow-cro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [signup, flow, when, optimize, signup-flow-cro]
       threat-detection:
         path: skills/business_human_resources/threat-detection/
@@ -1603,7 +1603,7 @@ domain_map:
         skills:
           - skill: business_human_resources.threat_detection
             path: skills/business_human_resources/threat-detection/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [threat, detection, when, hunting, threats]
 
   BUSINESS_PRODUCTIVITY:
@@ -1618,7 +1618,7 @@ domain_map:
         skills:
           - skill: business_productivity.composio_skills
             path: skills/business_productivity/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, braintree, automation, manage]
       file-organizer:
         path: skills/business_productivity/file-organizer/
@@ -1626,7 +1626,7 @@ domain_map:
         skills:
           - skill: business_productivity.file_organizer
             path: skills/business_productivity/file-organizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [file, organizer, intelligently, organizes, your]
       gh-create-issue:
         path: skills/business_productivity/gh-create-issue/
@@ -1634,7 +1634,7 @@ domain_map:
         skills:
           - skill: business_productivity.gh_create_issue
             path: skills/business_productivity/gh-create-issue/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [create, issue, when, github, gh-create-issue]
       prepare-release:
         path: skills/business_productivity/prepare-release/
@@ -1642,7 +1642,7 @@ domain_map:
         skills:
           - skill: business_productivity.prepare_release
             path: skills/business_productivity/prepare-release/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [prepare, release, collecting, commits, generating]
       qms-audit-expert:
         path: skills/business_productivity/qms-audit-expert/
@@ -1650,7 +1650,7 @@ domain_map:
         skills:
           - skill: business_productivity.qms_audit_expert
             path: skills/business_productivity/qms-audit-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [audit, expert, internal, expertise, medical]
       report:
         path: skills/business_productivity/report/
@@ -1658,7 +1658,7 @@ domain_map:
         skills:
           - skill: business_productivity.report
             path: skills/business_productivity/report/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [report, tests, test, run, results]
       spec-driven-workflow:
         path: skills/business_productivity/spec-driven-workflow/
@@ -1666,7 +1666,7 @@ domain_map:
         skills:
           - skill: business_productivity.spec_driven_workflow
             path: skills/business_productivity/spec-driven-workflow/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [spec, driven, workflow, when, spec-driven-workflow]
       tc-tracker:
         path: skills/business_productivity/tc-tracker/
@@ -1674,7 +1674,7 @@ domain_map:
         skills:
           - skill: business_productivity.tc_tracker
             path: skills/business_productivity/tc-tracker/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [tracker, when, track, technical, tc-tracker]
       tech-debt-tracker:
         path: skills/business_productivity/tech-debt-tracker/
@@ -1682,7 +1682,7 @@ domain_map:
         skills:
           - skill: business_productivity.tech_debt_tracker
             path: skills/business_productivity/tech-debt-tracker/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [tech, debt, tracker, scan, codebases]
 
   BUSINESS_SALES:
@@ -1697,7 +1697,7 @@ domain_map:
         skills:
           - skill: business_sales.competitive_intel
             path: skills/business_sales/competitive-intel/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [competitive, intel, systematic, competitor, tracking]
       composio-skills:
         path: skills/business_sales/composio-skills/
@@ -1705,7 +1705,7 @@ domain_map:
         skills:
           - skill: business_sales.composio_skills
             path: skills/business_sales/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, attio, operations]
       ma-playbook:
         path: skills/business_sales/ma-playbook/
@@ -1713,7 +1713,7 @@ domain_map:
         skills:
           - skill: business_sales.ma_playbook
             path: skills/business_sales/ma-playbook/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [playbook, strategy, acquiring, companies, being]
       postmortem:
         path: skills/business_sales/postmortem/
@@ -1721,7 +1721,7 @@ domain_map:
         skills:
           - skill: business_sales.postmortem
             path: skills/business_sales/postmortem/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [postmortem, honest, analysis, what, went]
 
   CLAUDE_SKILLS_M:
@@ -1736,7 +1736,7 @@ domain_map:
         skills:
           - skill: claude_skills_m.business_content.changelog_generator
             path: skills/claude_skills_m/business_content/changelog-generator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [changelog, generator, changelog-generator, generate, entry]
       marketing:
         path: skills/claude_skills_m/marketing/
@@ -1744,23 +1744,23 @@ domain_map:
         skills:
           - skill: claude_skills_m.marketing.brand_guidelines
             path: skills/claude_skills_m/marketing/brand-guidelines/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [brand, guidelines, when, apply, brand-guidelines]
           - skill: claude_skills_m.marketing.copy_editing
             path: skills/claude_skills_m/marketing/copy-editing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [copy, editing, when, edit, copy-editing]
           - skill: claude_skills_m.marketing.copywriting
             path: skills/claude_skills_m/marketing/copywriting/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [copywriting, when, write, rewrite, the]
           - skill: claude_skills_m.marketing.email_sequence
             path: skills/claude_skills_m/marketing/email-sequence/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [email, sequence, when, create, email-sequence]
           - skill: claude_skills_m.marketing.free_tool_strategy
             path: skills/claude_skills_m/marketing/free-tool-strategy/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [free, tool, strategy, when, free-tool-strategy]
           # ... +3 skills adicionais
 
@@ -1776,23 +1776,23 @@ domain_map:
         skills:
           - skill: community.general.00_andruia_consultant
             path: skills/community/general/00-andruia-consultant/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [andruia, consultant, arquitecto, soluciones, principal]
           - skill: community.general.10_andruia_skill_smith
             path: skills/community/general/10-andruia-skill-smith/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [andruia, skill, smith, ingeniero, sistemas]
           - skill: community.general.2d_games
             path: skills/community/general/2d-games/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [games, game, development, principles, sprites]
           - skill: community.general.3d_games
             path: skills/community/general/3d-games/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [games, game, development, principles, rendering]
           - skill: community.general.ab_test_setup
             path: skills/community/general/ab-test-setup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [test, setup, structured, guide, setting]
           # ... +409 skills adicionais
 
@@ -1808,7 +1808,7 @@ domain_map:
         skills:
           - skill: community_general.capa_officer
             path: skills/community_general/capa-officer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [capa, officer, system, management, medical]
       data-quality-auditor:
         path: skills/community_general/data-quality-auditor/
@@ -1816,7 +1816,7 @@ domain_map:
         skills:
           - skill: community_general.data_quality_auditor
             path: skills/community_general/data-quality-auditor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [data, quality, auditor, audit, datasets]
       decision-logger:
         path: skills/community_general/decision-logger/
@@ -1824,7 +1824,7 @@ domain_map:
         skills:
           - skill: community_general.decision_logger
             path: skills/community_general/decision-logger/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [decision, logger, layer, memory, architecture]
       developer-growth-analysis:
         path: skills/community_general/developer-growth-analysis/
@@ -1832,7 +1832,7 @@ domain_map:
         skills:
           - skill: community_general.developer_growth_analysis
             path: skills/community_general/developer-growth-analysis/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [developer, growth, analysis, analyzes, your]
       domain-name-brainstormer:
         path: skills/community_general/domain-name-brainstormer/
@@ -1840,7 +1840,7 @@ domain_map:
         skills:
           - skill: community_general.domain_name_brainstormer
             path: skills/community_general/domain-name-brainstormer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [domain, name, brainstormer, generates, creative]
       extract:
         path: skills/community_general/extract/
@@ -1848,7 +1848,7 @@ domain_map:
         skills:
           - skill: community_general.extract
             path: skills/community_general/extract/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [extract, turn, proven, pattern, debugging]
       faq-collector:
         path: skills/community_general/faq-collector/
@@ -1856,7 +1856,7 @@ domain_map:
         skills:
           - skill: community_general.faq_collector
             path: skills/community_general/faq-collector/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [collector, faq-collector, faq, add, issue]
       fix:
         path: skills/community_general/fix/
@@ -1864,7 +1864,7 @@ domain_map:
         skills:
           - skill: community_general.fix
             path: skills/community_general/fix/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [fix, failure, timing, async, test]
       founder-coach:
         path: skills/community_general/founder-coach/
@@ -1872,7 +1872,7 @@ domain_map:
         skills:
           - skill: community_general.founder_coach
             path: skills/community_general/founder-coach/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [founder, coach, personal, leadership, development]
       generate:
         path: skills/community_general/generate/
@@ -1880,7 +1880,7 @@ domain_map:
         skills:
           - skill: community_general.generate
             path: skills/community_general/generate/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [generate, explore, test, page, $arguments]
       internal-comms:
         path: skills/community_general/internal-comms/
@@ -1888,7 +1888,7 @@ domain_map:
         skills:
           - skill: community_general.internal_comms
             path: skills/community_general/internal-comms/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [internal, comms, resources, write, kinds]
       meeting-insights-analyzer:
         path: skills/community_general/meeting-insights-analyzer/
@@ -1896,7 +1896,7 @@ domain_map:
         skills:
           - skill: community_general.meeting_insights_analyzer
             path: skills/community_general/meeting-insights-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [meeting, insights, analyzer, analyzes, transcripts]
       migration-architect:
         path: skills/community_general/migration-architect/
@@ -1904,7 +1904,7 @@ domain_map:
         skills:
           - skill: community_general.migration_architect
             path: skills/community_general/migration-architect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [migration, architect, migration-architect, rollback, validation]
       nextjs-mastery:
         path: skills/community_general/nextjs-mastery/
@@ -1912,7 +1912,7 @@ domain_map:
         skills:
           - skill: community_general.nextjs_mastery
             path: skills/community_general/nextjs-mastery/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [nextjs, mastery, next, router, patterns]
       performance-optimization:
         path: skills/community_general/performance-optimization/
@@ -1920,7 +1920,7 @@ domain_map:
         skills:
           - skill: community_general.performance_optimization
             path: skills/community_general/performance-optimization/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [performance, optimization, including, bundle, analysis]
       promote:
         path: skills/community_general/promote/
@@ -1928,7 +1928,7 @@ domain_map:
         skills:
           - skill: community_general.promote
             path: skills/community_general/promote/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [promote, graduate, proven, pattern, auto]
       remember:
         path: skills/community_general/remember/
@@ -1936,7 +1936,7 @@ domain_map:
         skills:
           - skill: community_general.remember
             path: skills/community_general/remember/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [remember, explicitly, save, important, knowledge]
       review:
         path: skills/community_general/review/
@@ -1944,7 +1944,7 @@ domain_map:
         skills:
           - skill: community_general.review
             path: skills/community_general/review/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [review, analyze, auto, memory, promotion]
       skill-creator:
         path: skills/community_general/skill-creator/
@@ -1952,7 +1952,7 @@ domain_map:
         skills:
           - skill: community_general.skill_creator
             path: skills/community_general/skill-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [skill, creator, create, skills, modify]
       slack-gif-creator:
         path: skills/community_general/slack-gif-creator/
@@ -1960,7 +1960,7 @@ domain_map:
         skills:
           - skill: community_general.slack_gif_creator
             path: skills/community_general/slack-gif-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [slack, creator, toolkit, creating, animated]
       soultrace:
         path: skills/community_general/soultrace/
@@ -1975,7 +1975,7 @@ domain_map:
         skills:
           - skill: community_general.status
             path: skills/community_general/status/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [status, show, experiment, dashboard, results]
       stripe-integration-expert:
         path: skills/community_general/stripe-integration-expert/
@@ -1983,7 +1983,7 @@ domain_map:
         skills:
           - skill: community_general.stripe_integration_expert
             path: skills/community_general/stripe-integration-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [stripe, integration, expert, stripe-integration-expert, subscription]
       tailored-resume-generator:
         path: skills/community_general/tailored-resume-generator/
@@ -1991,7 +1991,7 @@ domain_map:
         skills:
           - skill: community_general.tailored_resume_generator
             path: skills/community_general/tailored-resume-generator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [tailored, resume, generator, analyzes, descriptions]
       template-skill:
         path: skills/community_general/template-skill/
@@ -1999,7 +1999,7 @@ domain_map:
         skills:
           - skill: community_general.template_skill
             path: skills/community_general/template-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [template, skill, replace, description, when]
       typescript-advanced:
         path: skills/community_general/typescript-advanced/
@@ -2007,7 +2007,7 @@ domain_map:
         skills:
           - skill: community_general.typescript_advanced
             path: skills/community_general/typescript-advanced/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [typescript, advanced, patterns, including, generics]
       websocket-realtime:
         path: skills/community_general/websocket-realtime/
@@ -2015,7 +2015,7 @@ domain_map:
         skills:
           - skill: community_general.websocket_realtime
             path: skills/community_general/websocket-realtime/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [websocket, realtime, real, time, communication]
       wiki-qa:
         path: skills/community_general/wiki-qa/
@@ -2023,7 +2023,7 @@ domain_map:
         skills:
           - skill: community_general.wiki_qa
             path: skills/community_general/wiki-qa/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wiki, answers, questions, about, code]
 
   CUSTOMER_SUPPORT:
@@ -2093,23 +2093,23 @@ domain_map:
         skills:
           - skill: data.databases.cache.debug_buttercup
             path: skills/data/databases/cache/debug-buttercup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [debug, buttercup, pods, namespace, crashloopbackoff]
           - skill: data.databases.sql.claimable_postgres
             path: skills/data/databases/sql/claimable-postgres/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [claimable, postgres, provision, instant, temporary]
           - skill: data.databases.sql.database
             path: skills/data/databases/sql/database/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [database, development, operations, workflow, covering]
           - skill: data.databases.sql.database_migrations_sql_migrations
             path: skills/data/databases/sql/database-migrations-sql-migrations/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [database, migrations, zero, downtime, strategies]
           - skill: data.databases.sql.neon_postgres
             path: skills/data/databases/sql/neon-postgres/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [neon, postgres, expert, patterns, serverless]
           # ... +10 skills adicionais
       erp:
@@ -2118,23 +2118,23 @@ domain_map:
         skills:
           - skill: data.erp.odoo_accounting_setup
             path: skills/data/erp/odoo-accounting-setup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [odoo, accounting, setup, expert, guide]
           - skill: data.erp.odoo_automated_tests
             path: skills/data/erp/odoo-automated-tests/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [odoo, automated, tests, write, transactioncase]
           - skill: data.erp.odoo_edi_connector
             path: skills/data/erp/odoo-edi-connector/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [odoo, connector, guide, implementing, electronic]
           - skill: data.erp.odoo_hr_payroll_setup
             path: skills/data/erp/odoo-hr-payroll-setup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [odoo, payroll, setup, expert, guide]
           - skill: data.erp.odoo_inventory_optimizer
             path: skills/data/erp/odoo-inventory-optimizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [odoo, inventory, optimizer, expert, guide]
           # ... +14 skills adicionais
 
@@ -2182,7 +2182,7 @@ domain_map:
         skills:
           - skill: design.atlassian_templates
             path: skills/design/atlassian-templates/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [atlassian, templates, template, files, creator]
       banner-design:
         path: skills/design/banner-design/
@@ -2190,14 +2190,14 @@ domain_map:
         skills:
           - skill: design.banner_design
             path: skills/design/banner-design/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       board-deck-builder:
         path: skills/design/board-deck-builder/
         skill_count: 1
         skills:
           - skill: design.board_deck_builder
             path: skills/design/board-deck-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [board, deck, builder, assembles, comprehensive]
       brand:
         path: skills/design/brand/
@@ -2205,14 +2205,14 @@ domain_map:
         skills:
           - skill: design.brand
             path: skills/design/brand/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       business-investment-advisor:
         path: skills/design/business-investment-advisor/
         skill_count: 1
         skills:
           - skill: design.business_investment_advisor
             path: skills/design/business-investment-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [business, investment, advisor, analysis, capital]
       ceo-advisor:
         path: skills/design/ceo-advisor/
@@ -2220,7 +2220,7 @@ domain_map:
         skills:
           - skill: design.ceo_advisor
             path: skills/design/ceo-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [advisor, executive, leadership, guidance, strategic]
       churn-prevention:
         path: skills/design/churn-prevention/
@@ -2228,7 +2228,7 @@ domain_map:
         skills:
           - skill: design.churn_prevention
             path: skills/design/churn-prevention/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [churn, prevention, reduce, voluntary, involuntary]
       code-tour:
         path: skills/design/code-tour/
@@ -2236,7 +2236,7 @@ domain_map:
         skills:
           - skill: design.code_tour
             path: skills/design/code-tour/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [code, tour, when, create, code-tour]
       company-os:
         path: skills/design/company-os/
@@ -2244,7 +2244,7 @@ domain_map:
         skills:
           - skill: design.company_os
             path: skills/design/company-os/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [company, meta, framework, runs, connective]
       composio-skills:
         path: skills/design/composio-skills/
@@ -2252,7 +2252,7 @@ domain_map:
         skills:
           - skill: design.composio_skills
             path: skills/design/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, ably, tasks]
       connect-apps:
         path: skills/design/connect-apps/
@@ -2260,7 +2260,7 @@ domain_map:
         skills:
           - skill: design.connect_apps
             path: skills/design/connect-apps/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [apps, claude, external, like, gmail]
       continuous-learning:
         path: skills/design/continuous-learning/
@@ -2268,7 +2268,7 @@ domain_map:
         skills:
           - skill: design.continuous_learning
             path: skills/design/continuous-learning/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [continuous, learning, auto, extract, patterns]
       coo-advisor:
         path: skills/design/coo-advisor/
@@ -2276,7 +2276,7 @@ domain_map:
         skills:
           - skill: design.coo_advisor
             path: skills/design/coo-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [advisor, operations, leadership, scaling, companies]
       cpo-advisor:
         path: skills/design/cpo-advisor/
@@ -2284,7 +2284,7 @@ domain_map:
         skills:
           - skill: design.cpo_advisor
             path: skills/design/cpo-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [advisor, product, leadership, scaling, companies]
       cs-onboard:
         path: skills/design/cs-onboard/
@@ -2292,7 +2292,7 @@ domain_map:
         skills:
           - skill: design.cs_onboard
             path: skills/design/cs-onboard/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [onboard, founder, onboarding, interview, that]
       cto-advisor:
         path: skills/design/cto-advisor/
@@ -2300,7 +2300,7 @@ domain_map:
         skills:
           - skill: design.cto_advisor
             path: skills/design/cto-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [advisor, technical, leadership, guidance, engineering]
       culture-architect:
         path: skills/design/culture-architect/
@@ -2308,7 +2308,7 @@ domain_map:
         skills:
           - skill: design.culture_architect
             path: skills/design/culture-architect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [culture, architect, build, measure, evolve]
       design:
         path: skills/design/design/
@@ -2316,21 +2316,21 @@ domain_map:
         skills:
           - skill: design.design
             path: skills/design/design/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       design-system:
         path: skills/design/design-system/
         skill_count: 1
         skills:
           - skill: design.design_system
             path: skills/design/design-system/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       document-skills:
         path: skills/design/document-skills/
         skill_count: 1
         skills:
           - skill: design.document_skills
             path: skills/design/document-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [document, skills, comprehensive, manipulation, toolkit]
       email-template-builder:
         path: skills/design/email-template-builder/
@@ -2338,7 +2338,7 @@ domain_map:
         skills:
           - skill: design.email_template_builder
             path: skills/design/email-template-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [email, template, builder, email-template-builder, overview]
       executive-mentor:
         path: skills/design/executive-mentor/
@@ -2346,7 +2346,7 @@ domain_map:
         skills:
           - skill: design.executive_mentor
             path: skills/design/executive-mentor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [executive, mentor, adversarial, thinking, partner]
       experiment-designer:
         path: skills/design/experiment-designer/
@@ -2354,7 +2354,7 @@ domain_map:
         skills:
           - skill: design.experiment_designer
             path: skills/design/experiment-designer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [experiment, designer, when, planning, product]
       focused-fix:
         path: skills/design/focused-fix/
@@ -2362,7 +2362,7 @@ domain_map:
         skills:
           - skill: design.focused_fix
             path: skills/design/focused-fix/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [focused, when, debug, make, focused-fix]
       gdpr-dsgvo-expert:
         path: skills/design/gdpr-dsgvo-expert/
@@ -2370,7 +2370,7 @@ domain_map:
         skills:
           - skill: design.gdpr_dsgvo_expert
             path: skills/design/gdpr-dsgvo-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [gdpr, dsgvo, expert, german, compliance]
       internal-narrative:
         path: skills/design/internal-narrative/
@@ -2378,7 +2378,7 @@ domain_map:
         skills:
           - skill: design.internal_narrative
             path: skills/design/internal-narrative/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [internal, narrative, build, maintain, coherent]
       intl-expansion:
         path: skills/design/intl-expansion/
@@ -2386,7 +2386,7 @@ domain_map:
         skills:
           - skill: design.intl_expansion
             path: skills/design/intl-expansion/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [intl, expansion, international, market, strategy]
       ios-hig:
         path: skills/design/ios-hig/
@@ -2394,23 +2394,23 @@ domain_map:
         skills:
           - skill: design.ios_hig.hig_components_content
             path: skills/design/ios-hig/hig-components-content/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [components, content, apple, human, interface]
           - skill: design.ios_hig.hig_components_dialogs
             path: skills/design/ios-hig/hig-components-dialogs/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [components, dialogs, apple, guidance, presentation]
           - skill: design.ios_hig.hig_components_layout
             path: skills/design/ios-hig/hig-components-layout/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [components, layout, apple, human, interface]
           - skill: design.ios_hig.hig_components_search
             path: skills/design/ios-hig/hig-components-search/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [components, search, apple, guidance, navigation]
           - skill: design.ios_hig.hig_components_status
             path: skills/design/ios-hig/hig-components-status/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [components, status, apple, guidance, progress]
           # ... +5 skills adicionais
       jira-expert:
@@ -2419,7 +2419,7 @@ domain_map:
         skills:
           - skill: design.jira_expert
             path: skills/design/jira-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [jira, expert, atlassian, creating, managing]
       mcp-server-builder:
         path: skills/design/mcp-server-builder/
@@ -2427,7 +2427,7 @@ domain_map:
         skills:
           - skill: design.mcp_server_builder
             path: skills/design/mcp-server-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [server, builder, mcp-server-builder, mcp, strategy]
       microservices-design:
         path: skills/design/microservices-design/
@@ -2435,7 +2435,7 @@ domain_map:
         skills:
           - skill: design.microservices_design
             path: skills/design/microservices-design/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [microservices, design, patterns, including, service]
       migrate:
         path: skills/design/migrate/
@@ -2443,7 +2443,7 @@ domain_map:
         skills:
           - skill: design.migrate
             path: skills/design/migrate/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [migrate, playwright, convert, custom, commands]
       monorepo-navigator:
         path: skills/design/monorepo-navigator/
@@ -2451,7 +2451,7 @@ domain_map:
         skills:
           - skill: design.monorepo_navigator
             path: skills/design/monorepo-navigator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [monorepo, navigator, monorepo-navigator, turborepo, claude]
       observability-designer:
         path: skills/design/observability-designer/
@@ -2459,7 +2459,7 @@ domain_map:
         skills:
           - skill: design.observability_designer
             path: skills/design/observability-designer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [observability, designer, powerful, observability-designer, metrics]
       onboarding-cro:
         path: skills/design/onboarding-cro/
@@ -2467,7 +2467,7 @@ domain_map:
         skills:
           - skill: design.onboarding_cro
             path: skills/design/onboarding-cro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [onboarding, when, optimize, post, onboarding-cro]
       org-health-diagnostic:
         path: skills/design/org-health-diagnostic/
@@ -2475,7 +2475,7 @@ domain_map:
         skills:
           - skill: design.org_health_diagnostic
             path: skills/design/org-health-diagnostic/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [health, diagnostic, cross, functional, organizational]
       product-analytics:
         path: skills/design/product-analytics/
@@ -2483,7 +2483,7 @@ domain_map:
         skills:
           - skill: design.product_analytics
             path: skills/design/product-analytics/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [product, analytics, when, defining, kpis]
       product-manager-toolkit:
         path: skills/design/product-manager-toolkit/
@@ -2491,7 +2491,7 @@ domain_map:
         skills:
           - skill: design.product_manager_toolkit
             path: skills/design/product-manager-toolkit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [product, manager, toolkit, comprehensive, managers]
       product-strategist:
         path: skills/design/product-strategist/
@@ -2499,7 +2499,7 @@ domain_map:
         skills:
           - skill: design.product_strategist
             path: skills/design/product-strategist/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [product, strategist, strategic, leadership, toolkit]
       quality-documentation-manager:
         path: skills/design/quality-documentation-manager/
@@ -2507,7 +2507,7 @@ domain_map:
         skills:
           - skill: design.quality_documentation_manager
             path: skills/design/quality-documentation-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [quality, documentation, manager, document, control]
       quality-manager-qmr:
         path: skills/design/quality-manager-qmr/
@@ -2515,7 +2515,7 @@ domain_map:
         skills:
           - skill: design.quality_manager_qmr
             path: skills/design/quality-manager-qmr/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [quality, manager, senior, responsible, person]
       quality-manager-qms-iso13485:
         path: skills/design/quality-manager-qms-iso13485/
@@ -2523,7 +2523,7 @@ domain_map:
         skills:
           - skill: design.quality_manager_qms_iso13485
             path: skills/design/quality-manager-qms-iso13485/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [quality, manager, iso13485, management, system]
       roadmap-communicator:
         path: skills/design/roadmap-communicator/
@@ -2531,7 +2531,7 @@ domain_map:
         skills:
           - skill: design.roadmap_communicator
             path: skills/design/roadmap-communicator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [roadmap, communicator, when, preparing, narratives]
       rust-systems:
         path: skills/design/rust-systems/
@@ -2539,7 +2539,7 @@ domain_map:
         skills:
           - skill: design.rust_systems
             path: skills/design/rust-systems/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [rust, systems, programming, patterns, including]
       setup:
         path: skills/design/setup/
@@ -2547,7 +2547,7 @@ domain_map:
         skills:
           - skill: design.setup
             path: skills/design/setup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [setup, autoresearch, experiment, interactively, collects]
       skill-creator:
         path: skills/design/skill-creator/
@@ -2555,7 +2555,7 @@ domain_map:
         skills:
           - skill: design.skill_creator
             path: skills/design/skill-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [skill, creator, guide, creating, effective]
       slides:
         path: skills/design/slides/
@@ -2563,14 +2563,14 @@ domain_map:
         skills:
           - skill: design.slides
             path: skills/design/slides/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       soc2-compliance:
         path: skills/design/soc2-compliance/
         skill_count: 1
         skills:
           - skill: design.soc2_compliance
             path: skills/design/soc2-compliance/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [soc2, compliance, when, prepare, the]
       social-content:
         path: skills/design/social-content/
@@ -2578,7 +2578,7 @@ domain_map:
         skills:
           - skill: design.social_content
             path: skills/design/social-content/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [social, content, when, social-content, the]
       social-media-manager:
         path: skills/design/social-media-manager/
@@ -2586,7 +2586,7 @@ domain_map:
         skills:
           - skill: design.social_media_manager
             path: skills/design/social-media-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [social, media, manager, when, social-media-manager]
       statistical-analyst:
         path: skills/design/statistical-analyst/
@@ -2594,7 +2594,7 @@ domain_map:
         skills:
           - skill: design.statistical_analyst
             path: skills/design/statistical-analyst/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [statistical, analyst, hypothesis, tests, analyze]
       status:
         path: skills/design/status/
@@ -2602,7 +2602,7 @@ domain_map:
         skills:
           - skill: design.status
             path: skills/design/status/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [status, memory, health, dashboard, showing]
       strategic-alignment:
         path: skills/design/strategic-alignment/
@@ -2610,7 +2610,7 @@ domain_map:
         skills:
           - skill: design.strategic_alignment
             path: skills/design/strategic-alignment/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [strategic, alignment, cascades, strategy, boardroom]
       testrail:
         path: skills/design/testrail/
@@ -2618,7 +2618,7 @@ domain_map:
         skills:
           - skill: design.testrail
             path: skills/design/testrail/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [testrail, test, cases, integration, prerequisites]
       ui-design-system:
         path: skills/design/ui-design-system/
@@ -2626,7 +2626,7 @@ domain_map:
         skills:
           - skill: design.ui_design_system
             path: skills/design/ui-design-system/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [design, system, toolkit, senior, designer]
       ui-styling:
         path: skills/design/ui-styling/
@@ -2673,7 +2673,7 @@ domain_map:
         skills:
           - skill: design.wiki_architect
             path: skills/design/wiki-architect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wiki, architect, analyzes, code, repositories]
       wiki-onboarding:
         path: skills/design/wiki-onboarding/
@@ -2681,7 +2681,7 @@ domain_map:
         skills:
           - skill: design.wiki_onboarding
             path: skills/design/wiki-onboarding/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wiki, onboarding, generates, four, audience]
       wiki-vitepress:
         path: skills/design/wiki-vitepress/
@@ -2689,7 +2689,7 @@ domain_map:
         skills:
           - skill: design.wiki_vitepress
             path: skills/design/wiki-vitepress/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wiki, vitepress, packages, generated, markdown]
 
   ENGINEERING:
@@ -2704,23 +2704,23 @@ domain_map:
         skills:
           - skill: engineering.architecture.architect_review
             path: skills/engineering/architecture/architect-review/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [architect, review, master, software, specializing]
           - skill: engineering.architecture.architecture
             path: skills/engineering/architecture/architecture/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [architecture, architectural, decision, making, framework]
           - skill: engineering.architecture.architecture_decision_records
             path: skills/engineering/architecture/architecture-decision-records/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [architecture, decision, records, comprehensive, patterns]
           - skill: engineering.architecture.architecture_patterns
             path: skills/engineering/architecture/architecture-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [architecture, patterns, master, proven, backend]
           - skill: engineering.architecture.astro
             path: skills/engineering/architecture/astro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [astro, build, content, focused, websites]
           # ... +32 skills adicionais
       backend:
@@ -2729,23 +2729,23 @@ domain_map:
         skills:
           - skill: engineering.backend.fastapi.fastapi_router_py
             path: skills/engineering/backend/fastapi/fastapi-router-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [fastapi, router, create, routers, following]
           - skill: engineering.backend.fastapi.fastapi_templates
             path: skills/engineering/backend/fastapi/fastapi-templates/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [fastapi, templates, create, production, ready]
           - skill: engineering.backend.fastapi.junta_leiloeiros
             path: skills/engineering/backend/fastapi/junta-leiloeiros/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [junta, leiloeiros, coleta, consulta, dados]
           - skill: engineering.backend.graphql.api_design_principles
             path: skills/engineering/backend/graphql/api-design-principles/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [design, principles, master, rest, graphql]
           - skill: engineering.backend.graphql.api_patterns
             path: skills/engineering/backend/graphql/api-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [patterns, design, principles, decision, making]
           # ... +15 skills adicionais
       cli:
@@ -2754,23 +2754,23 @@ domain_map:
         skills:
           - skill: engineering_cli.arp
             path: skills/engineering/cli/arp/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [x-arp, arp, output, entries, format]
           - skill: engineering_cli.ccal
             path: skills/engineering/cli/ccal/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [ccal, chinese, calendar, lunar, solar]
           - skill: engineering_cli.cpu
             path: skills/engineering/cli/cpu/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [x-cpu, cpu, endianness, information, output]
           - skill: engineering_cli.df
             path: skills/engineering/cli/df/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [x-df, usage, disk, format, output]
           - skill: engineering_cli.dns
             path: skills/engineering/cli/dns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [x-dns, dns, list, refresh, configuration]
           # ... +20 skills adicionais
       cloud:
@@ -2779,23 +2779,23 @@ domain_map:
         skills:
           - skill: engineering.cloud.aws.aws_compliance_checker
             path: skills/engineering/cloud/aws/aws-compliance-checker/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [compliance, checker, automated, checking, against]
           - skill: engineering.cloud.aws.aws_cost_cleanup
             path: skills/engineering/cloud/aws/aws-cost-cleanup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cost, cleanup, automated, unused, resources]
           - skill: engineering.cloud.aws.aws_cost_optimizer
             path: skills/engineering/cloud/aws/aws-cost-optimizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cost, optimizer, comprehensive, analysis, optimization]
           - skill: engineering.cloud.aws.aws_iam_best_practices
             path: skills/engineering/cloud/aws/aws-iam-best-practices/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [best, practices, policy, review, hardening]
           - skill: engineering.cloud.aws.aws_penetration_testing
             path: skills/engineering/cloud/aws/aws-penetration-testing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [penetration, testing, provide, comprehensive, techniques]
           # ... +62 skills adicionais
       cms:
@@ -2804,55 +2804,55 @@ domain_map:
         skills:
           - skill: engineering.cms.wordpress.wordpress_penetration_testing
             path: skills/engineering/cms/wordpress/wordpress-penetration-testing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wordpress, penetration, testing, assess, installations]
           - skill: engineering.cms.wordpress.wordpress_theme_development
             path: skills/engineering/cms/wordpress/wordpress-theme-development/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wordpress, theme, development, workflow, covering]
           - skill: engineering.cms.wordpress.wordpress_woocommerce_development
             path: skills/engineering/cms/wordpress/wordpress-woocommerce-development/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wordpress, woocommerce, development, store, workflow]
       cs-engineering:
         path: skills/engineering/cs-engineering/
         skill_count: 58
         skills:
-          - skill: engineering.cs-engineering
-            path: skills/engineering/cs-engineering/SKILL.md
-            status: CANDIDATE
           - skill: engineering.cs-engineering.agent-designer
             path: skills/engineering/cs-engineering/agent-designer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: engineering.cs-engineering.agent-workflow-designer
             path: skills/engineering/cs-engineering/agent-workflow-designer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: engineering.cs-engineering.agenthub
             path: skills/engineering/cs-engineering/agenthub/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: engineering.cs_engineering.agenthub.board
             path: skills/engineering/cs-engineering/agenthub/skills/board/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
+          - skill: engineering.cs_engineering.agenthub.eval
+            path: skills/engineering/cs-engineering/agenthub/skills/eval/SKILL.md
+            status: ADOPTED
           # ... +53 skills adicionais
       cs-engineering-team:
         path: skills/engineering/cs-engineering-team/
         skill_count: 51
         skills:
-          - skill: engineering.cs-engineering-team
-            path: skills/engineering/cs-engineering-team/SKILL.md
-            status: CANDIDATE
           - skill: engineering.cs-engineering-team.a11y-audit
             path: skills/engineering/cs-engineering-team/a11y-audit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: engineering.cs-engineering-team.adversarial-reviewer
             path: skills/engineering/cs-engineering-team/adversarial-reviewer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: engineering.cs-engineering-team.ai-security
             path: skills/engineering/cs-engineering-team/ai-security/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: engineering.cs-engineering-team.aws-solution-architect
             path: skills/engineering/cs-engineering-team/aws-solution-architect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
+          - skill: engineering.cs-engineering-team.azure-cloud-architect
+            path: skills/engineering/cs-engineering-team/azure-cloud-architect/SKILL.md
+            status: ADOPTED
           # ... +46 skills adicionais
       devops:
         path: skills/engineering/devops/
@@ -2860,23 +2860,23 @@ domain_map:
         skills:
           - skill: engineering.devops.bash.bash_defensive_patterns
             path: skills/engineering/devops/bash/bash-defensive-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [bash, defensive, patterns, master, programming]
           - skill: engineering.devops.bash.bash_linux
             path: skills/engineering/devops/bash/bash-linux/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [bash, linux, terminal, patterns, critical]
           - skill: engineering.devops.bash.bash_pro
             path: skills/engineering/devops/bash/bash-pro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [bash, master, defensive, scripting, production]
           - skill: engineering.devops.bash.bash_scripting
             path: skills/engineering/devops/bash/bash-scripting/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [bash, scripting, workflow, creating, production]
           - skill: engineering.devops.bash.bats_testing_patterns
             path: skills/engineering/devops/bash/bats-testing-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [bats, testing, patterns, master, bash]
           # ... +48 skills adicionais
       documentation:
@@ -2885,23 +2885,23 @@ domain_map:
         skills:
           - skill: engineering.documentation.api_documentation
             path: skills/engineering/documentation/api-documentation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [documentation, workflow, generating, openapi, specs]
           - skill: engineering.documentation.api_documentation_generator
             path: skills/engineering/documentation/api-documentation-generator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [documentation, generator, generate, comprehensive, developer]
           - skill: engineering.documentation.api_documenter
             path: skills/engineering/documentation/api-documenter/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [documenter, master, documentation, openapi, powered]
           - skill: engineering.documentation.brand_guidelines
             path: skills/engineering/documentation/brand-guidelines/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [brand, guidelines, write, copy, following]
           - skill: engineering.documentation.c4_code
             path: skills/engineering/documentation/c4-code/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [code, expert, level, documentation, specialist]
           # ... +17 skills adicionais
       frontend:
@@ -2910,23 +2910,23 @@ domain_map:
         skills:
           - skill: engineering.frontend.angular.angular_best_practices
             path: skills/engineering/frontend/angular/angular-best-practices/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [angular, best, practices, performance, optimization]
           - skill: engineering.frontend.angular.angular_migration
             path: skills/engineering/frontend/angular/angular-migration/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [angular, migration, master, angularjs, hybrid]
           - skill: engineering.frontend.angular.angular_state_management
             path: skills/engineering/frontend/angular/angular-state-management/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [angular, state, management, master, modern]
           - skill: engineering.frontend.angular.angular_ui_patterns
             path: skills/engineering/frontend/angular/angular-ui-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [angular, patterns, modern, loading, states]
           - skill: engineering.frontend.application_performance_performance_optimization
             path: skills/engineering/frontend/application-performance-performance-optimization/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [application, performance, optimization, optimize, profiling]
           # ... +47 skills adicionais
       programming:
@@ -2935,23 +2935,23 @@ domain_map:
         skills:
           - skill: engineering.programming.c.c_pro
             path: skills/engineering/programming/c/c-pro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [write, efficient, code, proper, memory]
           - skill: engineering.programming.c.customer_psychographic_profiler
             path: skills/engineering/programming/c/customer-psychographic-profiler/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [customer, psychographic, profiler, sentence, skill]
           - skill: engineering.programming.cpp.cpp_pro
             path: skills/engineering/programming/cpp/cpp-pro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [write, idiomatic, code, modern, features]
           - skill: engineering.programming.cpp.unreal_engine_cpp_pro
             path: skills/engineering/programming/cpp/unreal-engine-cpp-pro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [unreal, engine, expert, guide, development]
           - skill: engineering.programming.csharp.avalonia_layout_zafiro
             path: skills/engineering/programming/csharp/avalonia-layout-zafiro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [avalonia, layout, zafiro, guidelines, modern]
           # ... +163 skills adicionais
       software:
@@ -2985,23 +2985,23 @@ domain_map:
         skills:
           - skill: engineering.testing.ad_creative
             path: skills/engineering/testing/ad-creative/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [creative, create, iterate, scale, paid]
           - skill: engineering.testing.android_ui_verification
             path: skills/engineering/testing/android_ui_verification/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [android, verification, automated, testing, emulator]
           - skill: engineering.testing.api_testing_observability_api_mock
             path: skills/engineering/testing/api-testing-observability-api-mock/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [testing, observability, mock, mocking, expert]
           - skill: engineering.testing.backtesting_frameworks
             path: skills/engineering/testing/backtesting-frameworks/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [backtesting, frameworks, build, robust, production]
           - skill: engineering.testing.browser_automation
             path: skills/engineering/testing/browser-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [browser, automation, powers, testing, scraping]
           # ... +24 skills adicionais
 
@@ -3023,7 +3023,7 @@ domain_map:
         skills:
           - skill: engineering_agentops.composition_patterns
             path: skills/engineering_agentops/composition-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       deploy-to-vercel:
         path: skills/engineering_agentops/deploy-to-vercel/
         skill_count: 1
@@ -3065,21 +3065,21 @@ domain_map:
         skills:
           - skill: engineering_agentops.react_best_practices
             path: skills/engineering_agentops/react-best-practices/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       react-native-skills:
         path: skills/engineering_agentops/react-native-skills/
         skill_count: 1
         skills:
           - skill: engineering_agentops.react_native_skills
             path: skills/engineering_agentops/react-native-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       react-view-transitions:
         path: skills/engineering_agentops/react-view-transitions/
         skill_count: 1
         skills:
           - skill: engineering_agentops.react_view_transitions
             path: skills/engineering_agentops/react-view-transitions/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       receiving-code-review:
         path: skills/engineering_agentops/receiving-code-review/
         skill_count: 1
@@ -3149,7 +3149,7 @@ domain_map:
         skills:
           - skill: engineering_agentops.web_design_guidelines
             path: skills/engineering_agentops/web-design-guidelines/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       writing-plans:
         path: skills/engineering_agentops/writing-plans/
         skill_count: 1
@@ -3177,7 +3177,7 @@ domain_map:
         skills:
           - skill: engineering_api.api_design_patterns
             path: skills/engineering_api/api-design-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [design, patterns, rest, resource, naming]
       api-design-reviewer:
         path: skills/engineering_api/api-design-reviewer/
@@ -3185,7 +3185,7 @@ domain_map:
         skills:
           - skill: engineering_api.api_design_reviewer
             path: skills/engineering_api/api-design-reviewer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [design, reviewer, api-design-reviewer, api, versioning]
       api-test-suite-builder:
         path: skills/engineering_api/api-test-suite-builder/
@@ -3193,7 +3193,7 @@ domain_map:
         skills:
           - skill: engineering_api.api_test_suite_builder
             path: skills/engineering_api/api-test-suite-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [test, suite, builder, when, api-test-suite-builder]
       atlassian-admin:
         path: skills/engineering_api/atlassian-admin/
@@ -3201,7 +3201,7 @@ domain_map:
         skills:
           - skill: engineering_api.atlassian_admin
             path: skills/engineering_api/atlassian-admin/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [atlassian, admin, administrator, managing, organizing]
       change-management:
         path: skills/engineering_api/change-management/
@@ -3209,7 +3209,7 @@ domain_map:
         skills:
           - skill: engineering_api.change_management
             path: skills/engineering_api/change-management/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [change, management, framework, rolling, organizational]
       chro-advisor:
         path: skills/engineering_api/chro-advisor/
@@ -3217,7 +3217,7 @@ domain_map:
         skills:
           - skill: engineering_api.chro_advisor
             path: skills/engineering_api/chro-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [chro, advisor, people, leadership, scaling]
       composio-skills:
         path: skills/engineering_api/composio-skills/
@@ -3225,7 +3225,7 @@ domain_map:
         skills:
           - skill: engineering_api.composio_skills
             path: skills/engineering_api/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, contentful, graphql]
       confluence-expert:
         path: skills/engineering_api/confluence-expert/
@@ -3233,7 +3233,7 @@ domain_map:
         skills:
           - skill: engineering_api.confluence_expert
             path: skills/engineering_api/confluence-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [confluence, expert, atlassian, creating, managing]
       fastapi-router-py:
         path: skills/engineering_api/fastapi-router-py/
@@ -3241,7 +3241,7 @@ domain_map:
         skills:
           - skill: engineering_api.fastapi_router_py
             path: skills/engineering_api/fastapi-router-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [fastapi, router, create, routers, crud]
       find-skills:
         path: skills/engineering_api/find-skills/
@@ -3249,7 +3249,7 @@ domain_map:
         skills:
           - skill: engineering_api.find_skills
             path: skills/engineering_api/find-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [find, skills, helps, discover, install]
       graphql-design:
         path: skills/engineering_api/graphql-design/
@@ -3257,7 +3257,7 @@ domain_map:
         skills:
           - skill: engineering_api.graphql_design
             path: skills/engineering_api/graphql-design/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [graphql, design, schema, resolver, patterns]
       launch-strategy:
         path: skills/engineering_api/launch-strategy/
@@ -3265,7 +3265,7 @@ domain_map:
         skills:
           - skill: engineering_api.launch_strategy
             path: skills/engineering_api/launch-strategy/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [launch, strategy, when, plan, launch-strategy]
       senior-backend:
         path: skills/engineering_api/senior-backend/
@@ -3273,7 +3273,7 @@ domain_map:
         skills:
           - skill: engineering_api.senior_backend
             path: skills/engineering_api/senior-backend/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, backend, designs, implements, systems]
       springboot-patterns:
         path: skills/engineering_api/springboot-patterns/
@@ -3281,7 +3281,7 @@ domain_map:
         skills:
           - skill: engineering_api.springboot_patterns
             path: skills/engineering_api/springboot-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [springboot, patterns, spring, boot, including]
 
   ENGINEERING_BACKEND:
@@ -3296,7 +3296,7 @@ domain_map:
         skills:
           - skill: engineering_backend.canvas_design
             path: skills/engineering_backend/canvas-design/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [canvas, design, create, beautiful, visual]
       composio-skills:
         path: skills/engineering_backend/composio-skills/
@@ -3304,7 +3304,7 @@ domain_map:
         skills:
           - skill: engineering_backend.composio_skills
             path: skills/engineering_backend/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, hashnode, tasks]
       django-patterns:
         path: skills/engineering_backend/django-patterns/
@@ -3312,7 +3312,7 @@ domain_map:
         skills:
           - skill: engineering_backend.django_patterns
             path: skills/engineering_backend/django-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [django, patterns, architecture, including, optimization]
       m365-agents-ts:
         path: skills/engineering_backend/m365-agents-ts/
@@ -3320,7 +3320,7 @@ domain_map:
         skills:
           - skill: engineering_backend.m365_agents_ts
             path: skills/engineering_backend/m365-agents-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [m365, agents, agents-ts, copilot, studio]
       mcp-builder:
         path: skills/engineering_backend/mcp-builder/
@@ -3328,7 +3328,7 @@ domain_map:
         skills:
           - skill: engineering_backend.mcp_builder
             path: skills/engineering_backend/mcp-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [builder, guide, creating, high, quality]
       monitoring-observability:
         path: skills/engineering_backend/monitoring-observability/
@@ -3336,7 +3336,7 @@ domain_map:
         skills:
           - skill: engineering_backend.monitoring_observability
             path: skills/engineering_backend/monitoring-observability/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [monitoring, observability, opentelemetry, prometheus, grafana]
       performance-profiler:
         path: skills/engineering_backend/performance-profiler/
@@ -3344,7 +3344,7 @@ domain_map:
         skills:
           - skill: engineering_backend.performance_profiler
             path: skills/engineering_backend/performance-profiler/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [performance, profiler, performance-profiler, optimization, first]
       skills-manager:
         path: skills/engineering_backend/skills-manager/
@@ -3352,7 +3352,7 @@ domain_map:
         skills:
           - skill: engineering_backend.skills_manager
             path: skills/engineering_backend/skills-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [skills, manager, claude, code, agent]
       spec-to-repo:
         path: skills/engineering_backend/spec-to-repo/
@@ -3360,7 +3360,7 @@ domain_map:
         skills:
           - skill: engineering_backend.spec_to_repo
             path: skills/engineering_backend/spec-to-repo/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [spec, repo, when, says, build]
 
   ENGINEERING_CLI:
@@ -3375,7 +3375,7 @@ domain_map:
         skills:
           - skill: engineering_cli.board_prep
             path: skills/engineering_cli/board-prep/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [board, prep, meeting, preparation, board-prep]
       challenge:
         path: skills/engineering_cli/challenge/
@@ -3383,7 +3383,7 @@ domain_map:
         skills:
           - skill: engineering_cli.challenge
             path: skills/engineering_cli/challenge/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [challenge, mortem, plan, analysis, pre-mortem]
       hard-call:
         path: skills/engineering_cli/hard-call/
@@ -3391,7 +3391,7 @@ domain_map:
         skills:
           - skill: engineering_cli.hard_call
             path: skills/engineering_cli/hard-call/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [hard, call, framework, decisions, good]
 
   ENGINEERING_CLOUD_AWS:
@@ -3406,7 +3406,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_aws.aws_cloud_patterns
             path: skills/engineering_cloud_aws/aws-cloud-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cloud, patterns, lambda, dynamodb, infrastructure]
       aws-solution-architect:
         path: skills/engineering_cloud_aws/aws-solution-architect/
@@ -3414,7 +3414,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_aws.aws_solution_architect
             path: skills/engineering_cloud_aws/aws-solution-architect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [solution, architect, design, architectures, startups]
       composio-skills:
         path: skills/engineering_cloud_aws/composio-skills/
@@ -3422,7 +3422,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_aws.composio_skills
             path: skills/engineering_cloud_aws/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, jigsawstack, tasks]
       engineering-team:
         path: skills/engineering_cloud_aws/engineering-team/
@@ -3430,7 +3430,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_aws.engineering_team
             path: skills/engineering_cloud_aws/engineering-team/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [engineering, team, agent, skills, plugins]
 
   ENGINEERING_CLOUD_AZURE:
@@ -3445,7 +3445,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.agent_framework_azure_ai_py
             path: skills/engineering_cloud_azure/agent-framework-azure-ai-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agent, framework, azure, build, foundry]
       agents-v2-py:
         path: skills/engineering_cloud_azure/agents-v2-py/
@@ -3453,7 +3453,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.agents_v2_py
             path: skills/engineering_cloud_azure/agents-v2-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [agents, agents-, agent, version, environment]
       appinsights-instrumentation:
         path: skills/engineering_cloud_azure/appinsights-instrumentation/
@@ -3461,7 +3461,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.appinsights_instrumentation
             path: skills/engineering_cloud_azure/appinsights-instrumentation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [appinsights, instrumentation, guidance, instrumenting, webapps]
       azure-ai:
         path: skills/engineering_cloud_azure/azure-ai/
@@ -3469,7 +3469,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai
             path: skills/engineering_cloud_azure/azure-ai/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, search, speech, openai, document]
       azure-ai-agents-persistent-dotnet:
         path: skills/engineering_cloud_azure/azure-ai-agents-persistent-dotnet/
@@ -3477,7 +3477,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_agents_persistent_dotnet
             path: skills/engineering_cloud_azure/azure-ai-agents-persistent-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, agents, persistent, dotnet, azure-ai-agents-persistent-dotnet]
       azure-ai-agents-persistent-java:
         path: skills/engineering_cloud_azure/azure-ai-agents-persistent-java/
@@ -3485,7 +3485,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_agents_persistent_java
             path: skills/engineering_cloud_azure/azure-ai-agents-persistent-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, agents, persistent, java, azure-ai-agents-persistent-java]
       azure-ai-anomalydetector-java:
         path: skills/engineering_cloud_azure/azure-ai-anomalydetector-java/
@@ -3493,7 +3493,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_anomalydetector_java
             path: skills/engineering_cloud_azure/azure-ai-anomalydetector-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, anomalydetector, java, build, anomaly]
       azure-ai-contentsafety-java:
         path: skills/engineering_cloud_azure/azure-ai-contentsafety-java/
@@ -3501,7 +3501,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_contentsafety_java
             path: skills/engineering_cloud_azure/azure-ai-contentsafety-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, contentsafety, java, build, content]
       azure-ai-contentsafety-py:
         path: skills/engineering_cloud_azure/azure-ai-contentsafety-py/
@@ -3509,7 +3509,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_contentsafety_py
             path: skills/engineering_cloud_azure/azure-ai-contentsafety-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, contentsafety, azure-ai-contentsafety-py, severity, analyze]
       azure-ai-contentsafety-ts:
         path: skills/engineering_cloud_azure/azure-ai-contentsafety-ts/
@@ -3517,7 +3517,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_contentsafety_ts
             path: skills/engineering_cloud_azure/azure-ai-contentsafety-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, contentsafety, analyze, text, images]
       azure-ai-contentunderstanding-py:
         path: skills/engineering_cloud_azure/azure-ai-contentunderstanding-py/
@@ -3525,7 +3525,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_contentunderstanding_py
             path: skills/engineering_cloud_azure/azure-ai-contentunderstanding-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, contentunderstanding, azure-ai-contentunderstanding-py, access, content]
       azure-ai-document-intelligence-dotnet:
         path: skills/engineering_cloud_azure/azure-ai-document-intelligence-dotnet/
@@ -3533,7 +3533,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_document_intelligence_dotnet
             path: skills/engineering_cloud_azure/azure-ai-document-intelligence-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, document, intelligence, dotnet, azure-ai-document-intelligence-dotnet]
       azure-ai-document-intelligence-ts:
         path: skills/engineering_cloud_azure/azure-ai-document-intelligence-ts/
@@ -3541,7 +3541,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_document_intelligence_ts
             path: skills/engineering_cloud_azure/azure-ai-document-intelligence-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, document, intelligence, extract, text]
       azure-ai-formrecognizer-java:
         path: skills/engineering_cloud_azure/azure-ai-formrecognizer-java/
@@ -3549,7 +3549,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_formrecognizer_java
             path: skills/engineering_cloud_azure/azure-ai-formrecognizer-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, formrecognizer, java, build, document]
       azure-ai-language-conversations-py:
         path: skills/engineering_cloud_azure/azure-ai-language-conversations-py/
@@ -3557,7 +3557,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_language_conversations_py
             path: skills/engineering_cloud_azure/azure-ai-language-conversations-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, language, conversations, implement, conversational]
       azure-ai-ml-py:
         path: skills/engineering_cloud_azure/azure-ai-ml-py/
@@ -3565,7 +3565,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_ml_py
             path: skills/engineering_cloud_azure/azure-ai-ml-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, azure-ai-ml-py, register, list, create]
       azure-ai-openai-dotnet:
         path: skills/engineering_cloud_azure/azure-ai-openai-dotnet/
@@ -3573,7 +3573,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_openai_dotnet
             path: skills/engineering_cloud_azure/azure-ai-openai-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, openai, dotnet, azure-ai-openai-dotnet, chat]
       azure-ai-projects-dotnet:
         path: skills/engineering_cloud_azure/azure-ai-projects-dotnet/
@@ -3581,7 +3581,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_projects_dotnet
             path: skills/engineering_cloud_azure/azure-ai-projects-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, projects, dotnet, azure-ai-projects-dotnet, agents]
       azure-ai-projects-java:
         path: skills/engineering_cloud_azure/azure-ai-projects-java/
@@ -3589,7 +3589,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_projects_java
             path: skills/engineering_cloud_azure/azure-ai-projects-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, projects, java, azure-ai-projects-java, environment]
       azure-ai-projects-py:
         path: skills/engineering_cloud_azure/azure-ai-projects-py/
@@ -3597,7 +3597,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_projects_py
             path: skills/engineering_cloud_azure/azure-ai-projects-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, projects, build, applications, python]
       azure-ai-projects-ts:
         path: skills/engineering_cloud_azure/azure-ai-projects-ts/
@@ -3605,7 +3605,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_projects_ts
             path: skills/engineering_cloud_azure/azure-ai-projects-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, projects, build, applications, javascript]
       azure-ai-textanalytics-py:
         path: skills/engineering_cloud_azure/azure-ai-textanalytics-py/
@@ -3613,7 +3613,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_textanalytics_py
             path: skills/engineering_cloud_azure/azure-ai-textanalytics-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, textanalytics, azure-ai-textanalytics-py, client, text]
       azure-ai-transcription-py:
         path: skills/engineering_cloud_azure/azure-ai-transcription-py/
@@ -3621,7 +3621,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_transcription_py
             path: skills/engineering_cloud_azure/azure-ai-transcription-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, transcription, azure-ai-transcription-py, batch, sdk]
       azure-ai-translation-document-py:
         path: skills/engineering_cloud_azure/azure-ai-translation-document-py/
@@ -3629,7 +3629,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_translation_document_py
             path: skills/engineering_cloud_azure/azure-ai-translation-document-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, translation, document, azure-ai-translation-document-py, supported]
       azure-ai-translation-text-py:
         path: skills/engineering_cloud_azure/azure-ai-translation-text-py/
@@ -3637,7 +3637,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_translation_text_py
             path: skills/engineering_cloud_azure/azure-ai-translation-text-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, translation, text, azure-ai-translation-text-py, languages]
       azure-ai-translation-ts:
         path: skills/engineering_cloud_azure/azure-ai-translation-ts/
@@ -3645,7 +3645,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_translation_ts
             path: skills/engineering_cloud_azure/azure-ai-translation-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, translation, build, applications, sdks]
       azure-ai-vision-imageanalysis-java:
         path: skills/engineering_cloud_azure/azure-ai-vision-imageanalysis-java/
@@ -3653,7 +3653,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_vision_imageanalysis_java
             path: skills/engineering_cloud_azure/azure-ai-vision-imageanalysis-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, vision, imageanalysis, java, build]
       azure-ai-vision-imageanalysis-py:
         path: skills/engineering_cloud_azure/azure-ai-vision-imageanalysis-py/
@@ -3661,7 +3661,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_vision_imageanalysis_py
             path: skills/engineering_cloud_azure/azure-ai-vision-imageanalysis-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, vision, imageanalysis, azure-ai-vision-imageanalysis-py, image]
       azure-ai-voicelive-dotnet:
         path: skills/engineering_cloud_azure/azure-ai-voicelive-dotnet/
@@ -3669,7 +3669,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_voicelive_dotnet
             path: skills/engineering_cloud_azure/azure-ai-voicelive-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, voicelive, dotnet, azure-ai-voicelive-dotnet, key]
       azure-ai-voicelive-java:
         path: skills/engineering_cloud_azure/azure-ai-voicelive-java/
@@ -3677,7 +3677,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_voicelive_java
             path: skills/engineering_cloud_azure/azure-ai-voicelive-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, voicelive, java, azure-ai-voicelive-java, key]
       azure-ai-voicelive-py:
         path: skills/engineering_cloud_azure/azure-ai-voicelive-py/
@@ -3685,7 +3685,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_voicelive_py
             path: skills/engineering_cloud_azure/azure-ai-voicelive-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, voicelive, build, real, time]
       azure-ai-voicelive-ts:
         path: skills/engineering_cloud_azure/azure-ai-voicelive-ts/
@@ -3693,7 +3693,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_ai_voicelive_ts
             path: skills/engineering_cloud_azure/azure-ai-voicelive-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, voicelive, azure-ai-voicelive-ts, key, typescript]
       azure-aigateway:
         path: skills/engineering_cloud_azure/azure-aigateway/
@@ -3701,7 +3701,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_aigateway
             path: skills/engineering_cloud_azure/azure-aigateway/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, aigateway, configure, management, gateway]
       azure-appconfiguration-java:
         path: skills/engineering_cloud_azure/azure-appconfiguration-java/
@@ -3709,7 +3709,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_appconfiguration_java
             path: skills/engineering_cloud_azure/azure-appconfiguration-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, appconfiguration, java, azure-appconfiguration-java, list]
       azure-appconfiguration-py:
         path: skills/engineering_cloud_azure/azure-appconfiguration-py/
@@ -3717,7 +3717,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_appconfiguration_py
             path: skills/engineering_cloud_azure/azure-appconfiguration-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, appconfiguration, azure-appconfiguration-py, settings, feature]
       azure-appconfiguration-ts:
         path: skills/engineering_cloud_azure/azure-appconfiguration-ts/
@@ -3725,7 +3725,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_appconfiguration_ts
             path: skills/engineering_cloud_azure/azure-appconfiguration-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, appconfiguration, build, applications, configuration]
       azure-cloud-architect:
         path: skills/engineering_cloud_azure/azure-cloud-architect/
@@ -3733,7 +3733,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_cloud_architect
             path: skills/engineering_cloud_azure/azure-cloud-architect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, cloud, architect, design, architectures]
       azure-cloud-migrate:
         path: skills/engineering_cloud_azure/azure-cloud-migrate/
@@ -3741,7 +3741,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_cloud_migrate
             path: skills/engineering_cloud_azure/azure-cloud-migrate/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, cloud, migrate, assess, cross]
       azure-communication-callautomation-java:
         path: skills/engineering_cloud_azure/azure-communication-callautomation-java/
@@ -3749,7 +3749,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_communication_callautomation_java
             path: skills/engineering_cloud_azure/azure-communication-callautomation-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, communication, callautomation, java, build]
       azure-communication-callingserver-java:
         path: skills/engineering_cloud_azure/azure-communication-callingserver-java/
@@ -3757,7 +3757,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_communication_callingserver_java
             path: skills/engineering_cloud_azure/azure-communication-callingserver-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, communication, callingserver, java, services]
       azure-communication-chat-java:
         path: skills/engineering_cloud_azure/azure-communication-chat-java/
@@ -3765,7 +3765,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_communication_chat_java
             path: skills/engineering_cloud_azure/azure-communication-chat-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, communication, chat, java, build]
       azure-communication-common-java:
         path: skills/engineering_cloud_azure/azure-communication-common-java/
@@ -3773,7 +3773,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_communication_common_java
             path: skills/engineering_cloud_azure/azure-communication-common-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, communication, common, java, services]
       azure-communication-sms-java:
         path: skills/engineering_cloud_azure/azure-communication-sms-java/
@@ -3781,7 +3781,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_communication_sms_java
             path: skills/engineering_cloud_azure/azure-communication-sms-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, communication, java, send, messages]
       azure-compliance:
         path: skills/engineering_cloud_azure/azure-compliance/
@@ -3789,7 +3789,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_compliance
             path: skills/engineering_cloud_azure/azure-compliance/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, compliance, security, audits, azqr]
       azure-compute:
         path: skills/engineering_cloud_azure/azure-compute/
@@ -3797,7 +3797,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_compute
             path: skills/engineering_cloud_azure/azure-compute/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, compute, vmss, router, recommendations]
       azure-compute-batch-java:
         path: skills/engineering_cloud_azure/azure-compute-batch-java/
@@ -3805,7 +3805,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_compute_batch_java
             path: skills/engineering_cloud_azure/azure-compute-batch-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, compute, batch, java, azure-compute-batch-java]
       azure-containerregistry-py:
         path: skills/engineering_cloud_azure/azure-containerregistry-py/
@@ -3813,7 +3813,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_containerregistry_py
             path: skills/engineering_cloud_azure/azure-containerregistry-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, containerregistry, azure-containerregistry-py, delete, manifest]
       azure-cosmos-db-py:
         path: skills/engineering_cloud_azure/azure-cosmos-db-py/
@@ -3821,7 +3821,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_cosmos_db_py
             path: skills/engineering_cloud_azure/azure-cosmos-db-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, cosmos, build, nosql, services]
       azure-cosmos-java:
         path: skills/engineering_cloud_azure/azure-cosmos-java/
@@ -3829,7 +3829,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_cosmos_java
             path: skills/engineering_cloud_azure/azure-cosmos-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, cosmos, java, azure-cosmos-java, client]
       azure-cosmos-py:
         path: skills/engineering_cloud_azure/azure-cosmos-py/
@@ -3837,7 +3837,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_cosmos_py
             path: skills/engineering_cloud_azure/azure-cosmos-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, cosmos, azure-cosmos-py, partition, key]
       azure-cosmos-rust:
         path: skills/engineering_cloud_azure/azure-cosmos-rust/
@@ -3845,7 +3845,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_cosmos_rust
             path: skills/engineering_cloud_azure/azure-cosmos-rust/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, cosmos, rust, azure-cosmos-rust, item]
       azure-cosmos-ts:
         path: skills/engineering_cloud_azure/azure-cosmos-ts/
@@ -3853,7 +3853,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_cosmos_ts
             path: skills/engineering_cloud_azure/azure-cosmos-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, cosmos, azure-cosmos-ts, document, operations]
       azure-cost:
         path: skills/engineering_cloud_azure/azure-cost/
@@ -3861,14 +3861,14 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_cost
             path: skills/engineering_cloud_azure/azure-cost/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       azure-data-tables-java:
         path: skills/engineering_cloud_azure/azure-data-tables-java/
         skill_count: 1
         skills:
           - skill: engineering_cloud_azure.azure_data_tables_java
             path: skills/engineering_cloud_azure/azure-data-tables-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, data, tables, java, build]
       azure-data-tables-py:
         path: skills/engineering_cloud_azure/azure-data-tables-py/
@@ -3876,7 +3876,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_data_tables_py
             path: skills/engineering_cloud_azure/azure-data-tables-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, data, tables, azure-data-tables-py, table]
       azure-deploy:
         path: skills/engineering_cloud_azure/azure-deploy/
@@ -3884,7 +3884,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_deploy
             path: skills/engineering_cloud_azure/azure-deploy/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, deploy, execute, deployments, already]
       azure-diagnostics:
         path: skills/engineering_cloud_azure/azure-diagnostics/
@@ -3892,7 +3892,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_diagnostics
             path: skills/engineering_cloud_azure/azure-diagnostics/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, diagnostics, debug, production, issues]
       azure-enterprise-infra-planner:
         path: skills/engineering_cloud_azure/azure-enterprise-infra-planner/
@@ -3900,7 +3900,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_enterprise_infra_planner
             path: skills/engineering_cloud_azure/azure-enterprise-infra-planner/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, enterprise, infra, planner, architect]
       azure-eventgrid-dotnet:
         path: skills/engineering_cloud_azure/azure-eventgrid-dotnet/
@@ -3908,7 +3908,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_eventgrid_dotnet
             path: skills/engineering_cloud_azure/azure-eventgrid-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, eventgrid, dotnet, azure-eventgrid-dotnet, events]
       azure-eventgrid-java:
         path: skills/engineering_cloud_azure/azure-eventgrid-java/
@@ -3916,7 +3916,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_eventgrid_java
             path: skills/engineering_cloud_azure/azure-eventgrid-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, eventgrid, java, build, event]
       azure-eventgrid-py:
         path: skills/engineering_cloud_azure/azure-eventgrid-py/
@@ -3924,7 +3924,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_eventgrid_py
             path: skills/engineering_cloud_azure/azure-eventgrid-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, eventgrid, azure-eventgrid-py, event, properties]
       azure-eventhub-dotnet:
         path: skills/engineering_cloud_azure/azure-eventhub-dotnet/
@@ -3932,7 +3932,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_eventhub_dotnet
             path: skills/engineering_cloud_azure/azure-eventhub-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, eventhub, dotnet, azure-eventhub-dotnet, receiving]
       azure-eventhub-java:
         path: skills/engineering_cloud_azure/azure-eventhub-java/
@@ -3940,7 +3940,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_eventhub_java
             path: skills/engineering_cloud_azure/azure-eventhub-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, eventhub, java, build, real]
       azure-eventhub-py:
         path: skills/engineering_cloud_azure/azure-eventhub-py/
@@ -3948,7 +3948,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_eventhub_py
             path: skills/engineering_cloud_azure/azure-eventhub-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, eventhub, azure-eventhub-py, partition, event]
       azure-eventhub-rust:
         path: skills/engineering_cloud_azure/azure-eventhub-rust/
@@ -3956,7 +3956,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_eventhub_rust
             path: skills/engineering_cloud_azure/azure-eventhub-rust/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, eventhub, rust, azure-eventhub-rust, event]
       azure-eventhub-ts:
         path: skills/engineering_cloud_azure/azure-eventhub-ts/
@@ -3964,7 +3964,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_eventhub_ts
             path: skills/engineering_cloud_azure/azure-eventhub-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, eventhub, build, event, streaming]
       azure-hosted-copilot-sdk:
         path: skills/engineering_cloud_azure/azure-hosted-copilot-sdk/
@@ -3972,7 +3972,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_hosted_copilot_sdk
             path: skills/engineering_cloud_azure/azure-hosted-copilot-sdk/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, hosted, copilot, build, deploy]
       azure-identity-dotnet:
         path: skills/engineering_cloud_azure/azure-identity-dotnet/
@@ -3980,7 +3980,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_identity_dotnet
             path: skills/engineering_cloud_azure/azure-identity-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, identity, dotnet, azure-identity-dotnet, credential]
       azure-identity-java:
         path: skills/engineering_cloud_azure/azure-identity-java/
@@ -3988,7 +3988,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_identity_java
             path: skills/engineering_cloud_azure/azure-identity-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, identity, java, library, authentication]
       azure-identity-py:
         path: skills/engineering_cloud_azure/azure-identity-py/
@@ -3996,7 +3996,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_identity_py
             path: skills/engineering_cloud_azure/azure-identity-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, identity, azure-identity-py, credential, credentials]
       azure-identity-rust:
         path: skills/engineering_cloud_azure/azure-identity-rust/
@@ -4004,7 +4004,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_identity_rust
             path: skills/engineering_cloud_azure/azure-identity-rust/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, identity, rust, azure-identity-rust, credential]
       azure-identity-ts:
         path: skills/engineering_cloud_azure/azure-identity-ts/
@@ -4012,7 +4012,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_identity_ts
             path: skills/engineering_cloud_azure/azure-identity-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, identity, authenticate, services, library]
       azure-keyvault-certificates-rust:
         path: skills/engineering_cloud_azure/azure-keyvault-certificates-rust/
@@ -4020,7 +4020,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_keyvault_certificates_rust
             path: skills/engineering_cloud_azure/azure-keyvault-certificates-rust/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, keyvault, certificates, rust, azure-keyvault-certificates-rust]
       azure-keyvault-keys-rust:
         path: skills/engineering_cloud_azure/azure-keyvault-keys-rust/
@@ -4028,7 +4028,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_keyvault_keys_rust
             path: skills/engineering_cloud_azure/azure-keyvault-keys-rust/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, keyvault, keys, rust, azure-keyvault-keys-rust]
       azure-keyvault-keys-ts:
         path: skills/engineering_cloud_azure/azure-keyvault-keys-ts/
@@ -4036,7 +4036,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_keyvault_keys_ts
             path: skills/engineering_cloud_azure/azure-keyvault-keys-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, keyvault, keys, manage, cryptographic]
       azure-keyvault-py:
         path: skills/engineering_cloud_azure/azure-keyvault-py/
@@ -4044,7 +4044,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_keyvault_py
             path: skills/engineering_cloud_azure/azure-keyvault-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, keyvault, azure-keyvault-py, key, secret]
       azure-keyvault-secrets-rust:
         path: skills/engineering_cloud_azure/azure-keyvault-secrets-rust/
@@ -4052,7 +4052,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_keyvault_secrets_rust
             path: skills/engineering_cloud_azure/azure-keyvault-secrets-rust/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, keyvault, secrets, rust, azure-keyvault-secrets-rust]
       azure-keyvault-secrets-ts:
         path: skills/engineering_cloud_azure/azure-keyvault-secrets-ts/
@@ -4060,7 +4060,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_keyvault_secrets_ts
             path: skills/engineering_cloud_azure/azure-keyvault-secrets-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, keyvault, secrets, manage, vault]
       azure-kubernetes:
         path: skills/engineering_cloud_azure/azure-kubernetes/
@@ -4068,7 +4068,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_kubernetes
             path: skills/engineering_cloud_azure/azure-kubernetes/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, kubernetes, plan, create, configure]
       azure-kusto:
         path: skills/engineering_cloud_azure/azure-kusto/
@@ -4076,7 +4076,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_kusto
             path: skills/engineering_cloud_azure/azure-kusto/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, kusto, query, analyze, data]
       azure-maps-search-dotnet:
         path: skills/engineering_cloud_azure/azure-maps-search-dotnet/
@@ -4084,7 +4084,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_maps_search_dotnet
             path: skills/engineering_cloud_azure/azure-maps-search-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, maps, search, dotnet, azure-maps-search-dotnet]
       azure-messaging:
         path: skills/engineering_cloud_azure/azure-messaging/
@@ -4092,7 +4092,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_messaging
             path: skills/engineering_cloud_azure/azure-messaging/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, messaging, troubleshoot, resolve, issues]
       azure-messaging-webpubsub-java:
         path: skills/engineering_cloud_azure/azure-messaging-webpubsub-java/
@@ -4100,7 +4100,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_messaging_webpubsub_java
             path: skills/engineering_cloud_azure/azure-messaging-webpubsub-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, messaging, webpubsub, java, build]
       azure-messaging-webpubsubservice-py:
         path: skills/engineering_cloud_azure/azure-messaging-webpubsubservice-py/
@@ -4108,7 +4108,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_messaging_webpubsubservice_py
             path: skills/engineering_cloud_azure/azure-messaging-webpubsubservice-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, messaging, webpubsubservice, azure-messaging-webpubsubservice-py, client]
       azure-mgmt-apicenter-dotnet:
         path: skills/engineering_cloud_azure/azure-mgmt-apicenter-dotnet/
@@ -4116,7 +4116,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_apicenter_dotnet
             path: skills/engineering_cloud_azure/azure-mgmt-apicenter-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, apicenter, dotnet, azure-mgmt-apicenter-dotnet]
       azure-mgmt-apicenter-py:
         path: skills/engineering_cloud_azure/azure-mgmt-apicenter-py/
@@ -4124,7 +4124,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_apicenter_py
             path: skills/engineering_cloud_azure/azure-mgmt-apicenter-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, apicenter, azure-mgmt-apicenter-py, api]
       azure-mgmt-apimanagement-dotnet:
         path: skills/engineering_cloud_azure/azure-mgmt-apimanagement-dotnet/
@@ -4132,7 +4132,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_apimanagement_dotnet
             path: skills/engineering_cloud_azure/azure-mgmt-apimanagement-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, apimanagement, dotnet, azure-mgmt-apimanagement-dotnet]
       azure-mgmt-apimanagement-py:
         path: skills/engineering_cloud_azure/azure-mgmt-apimanagement-py/
@@ -4140,7 +4140,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_apimanagement_py
             path: skills/engineering_cloud_azure/azure-mgmt-apimanagement-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, apimanagement, azure-mgmt-apimanagement-py, create]
       azure-mgmt-applicationinsights-dotnet:
         path: skills/engineering_cloud_azure/azure-mgmt-applicationinsights-dotnet/
@@ -4148,7 +4148,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_applicationinsights_dotnet
             path: skills/engineering_cloud_azure/azure-mgmt-applicationinsights-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, applicationinsights, dotnet, azure-mgmt-applicationinsights-dotnet]
       azure-mgmt-arizeaiobservabilityeval-dotnet:
         path: skills/engineering_cloud_azure/azure-mgmt-arizeaiobservabilityeval-dotnet/
@@ -4156,7 +4156,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_arizeaiobservabilityeval_dotnet
             path: skills/engineering_cloud_azure/azure-mgmt-arizeaiobservabilityeval-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, arizeaiobservabilityeval, dotnet, resource]
       azure-mgmt-botservice-dotnet:
         path: skills/engineering_cloud_azure/azure-mgmt-botservice-dotnet/
@@ -4164,7 +4164,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_botservice_dotnet
             path: skills/engineering_cloud_azure/azure-mgmt-botservice-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, botservice, dotnet, azure-mgmt-botservice-dotnet]
       azure-mgmt-botservice-py:
         path: skills/engineering_cloud_azure/azure-mgmt-botservice-py/
@@ -4172,7 +4172,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_botservice_py
             path: skills/engineering_cloud_azure/azure-mgmt-botservice-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, botservice, azure-mgmt-botservice-py, bot]
       azure-mgmt-fabric-dotnet:
         path: skills/engineering_cloud_azure/azure-mgmt-fabric-dotnet/
@@ -4180,7 +4180,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_fabric_dotnet
             path: skills/engineering_cloud_azure/azure-mgmt-fabric-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, fabric, dotnet, azure-mgmt-fabric-dotnet]
       azure-mgmt-fabric-py:
         path: skills/engineering_cloud_azure/azure-mgmt-fabric-py/
@@ -4188,7 +4188,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_fabric_py
             path: skills/engineering_cloud_azure/azure-mgmt-fabric-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, fabric, azure-mgmt-fabric-py, capacity]
       azure-mgmt-mongodbatlas-dotnet:
         path: skills/engineering_cloud_azure/azure-mgmt-mongodbatlas-dotnet/
@@ -4196,7 +4196,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_mongodbatlas_dotnet
             path: skills/engineering_cloud_azure/azure-mgmt-mongodbatlas-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, mongodbatlas, dotnet, manage]
       azure-mgmt-weightsandbiases-dotnet:
         path: skills/engineering_cloud_azure/azure-mgmt-weightsandbiases-dotnet/
@@ -4204,7 +4204,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_mgmt_weightsandbiases_dotnet
             path: skills/engineering_cloud_azure/azure-mgmt-weightsandbiases-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, mgmt, weightsandbiases, dotnet, azure-mgmt-weightsandbiases-dotnet]
       azure-microsoft-playwright-testing-ts:
         path: skills/engineering_cloud_azure/azure-microsoft-playwright-testing-ts/
@@ -4212,7 +4212,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_microsoft_playwright_testing_ts
             path: skills/engineering_cloud_azure/azure-microsoft-playwright-testing-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, microsoft, playwright, testing, tests]
       azure-monitor-ingestion-java:
         path: skills/engineering_cloud_azure/azure-monitor-ingestion-java/
@@ -4220,7 +4220,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_monitor_ingestion_java
             path: skills/engineering_cloud_azure/azure-monitor-ingestion-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, monitor, ingestion, java, azure-monitor-ingestion-java]
       azure-monitor-ingestion-py:
         path: skills/engineering_cloud_azure/azure-monitor-ingestion-py/
@@ -4228,7 +4228,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_monitor_ingestion_py
             path: skills/engineering_cloud_azure/azure-monitor-ingestion-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, monitor, ingestion, azure-monitor-ingestion-py, dcr]
       azure-monitor-opentelemetry-exporter-java:
         path: skills/engineering_cloud_azure/azure-monitor-opentelemetry-exporter-java/
@@ -4236,7 +4236,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_monitor_opentelemetry_exporter_java
             path: skills/engineering_cloud_azure/azure-monitor-opentelemetry-exporter-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, monitor, opentelemetry, exporter, java]
       azure-monitor-opentelemetry-exporter-py:
         path: skills/engineering_cloud_azure/azure-monitor-opentelemetry-exporter-py/
@@ -4244,7 +4244,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_monitor_opentelemetry_exporter_py
             path: skills/engineering_cloud_azure/azure-monitor-opentelemetry-exporter-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, monitor, opentelemetry, exporter, azure-monitor-opentelemetry-exporter-py]
       azure-monitor-opentelemetry-py:
         path: skills/engineering_cloud_azure/azure-monitor-opentelemetry-py/
@@ -4252,7 +4252,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_monitor_opentelemetry_py
             path: skills/engineering_cloud_azure/azure-monitor-opentelemetry-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, monitor, opentelemetry, azure-monitor-opentelemetry-py, custom]
       azure-monitor-opentelemetry-ts:
         path: skills/engineering_cloud_azure/azure-monitor-opentelemetry-ts/
@@ -4260,7 +4260,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_monitor_opentelemetry_ts
             path: skills/engineering_cloud_azure/azure-monitor-opentelemetry-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, monitor, opentelemetry, instrument, applications]
       azure-monitor-query-java:
         path: skills/engineering_cloud_azure/azure-monitor-query-java/
@@ -4268,7 +4268,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_monitor_query_java
             path: skills/engineering_cloud_azure/azure-monitor-query-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, monitor, query, java, azure-monitor-query-java]
       azure-monitor-query-py:
         path: skills/engineering_cloud_azure/azure-monitor-query-py/
@@ -4276,7 +4276,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_monitor_query_py
             path: skills/engineering_cloud_azure/azure-monitor-query-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, monitor, query, azure-monitor-query-py, metrics]
       azure-postgres-ts:
         path: skills/engineering_cloud_azure/azure-postgres-ts/
@@ -4284,7 +4284,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_postgres_ts
             path: skills/engineering_cloud_azure/azure-postgres-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, postgres, azure-postgres-ts, connection, pool]
       azure-prepare:
         path: skills/engineering_cloud_azure/azure-prepare/
@@ -4292,21 +4292,21 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_prepare
             path: skills/engineering_cloud_azure/azure-prepare/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       azure-quotas:
         path: skills/engineering_cloud_azure/azure-quotas/
         skill_count: 1
         skills:
           - skill: engineering_cloud_azure.azure_quotas
             path: skills/engineering_cloud_azure/azure-quotas/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       azure-rbac:
         path: skills/engineering_cloud_azure/azure-rbac/
         skill_count: 1
         skills:
           - skill: engineering_cloud_azure.azure_rbac
             path: skills/engineering_cloud_azure/azure-rbac/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, rbac, helps, find, right]
       azure-resource-lookup:
         path: skills/engineering_cloud_azure/azure-resource-lookup/
@@ -4314,7 +4314,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_resource_lookup
             path: skills/engineering_cloud_azure/azure-resource-lookup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, resource, lookup, azure-resource-lookup, resources]
       azure-resource-manager-cosmosdb-dotnet:
         path: skills/engineering_cloud_azure/azure-resource-manager-cosmosdb-dotnet/
@@ -4322,7 +4322,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_resource_manager_cosmosdb_dotnet
             path: skills/engineering_cloud_azure/azure-resource-manager-cosmosdb-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, resource, manager, cosmosdb, dotnet]
       azure-resource-manager-durabletask-dotnet:
         path: skills/engineering_cloud_azure/azure-resource-manager-durabletask-dotnet/
@@ -4330,7 +4330,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_resource_manager_durabletask_dotnet
             path: skills/engineering_cloud_azure/azure-resource-manager-durabletask-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, resource, manager, durabletask, dotnet]
       azure-resource-manager-mysql-dotnet:
         path: skills/engineering_cloud_azure/azure-resource-manager-mysql-dotnet/
@@ -4338,7 +4338,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_resource_manager_mysql_dotnet
             path: skills/engineering_cloud_azure/azure-resource-manager-mysql-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, resource, manager, mysql, dotnet]
       azure-resource-manager-playwright-dotnet:
         path: skills/engineering_cloud_azure/azure-resource-manager-playwright-dotnet/
@@ -4346,7 +4346,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_resource_manager_playwright_dotnet
             path: skills/engineering_cloud_azure/azure-resource-manager-playwright-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, resource, manager, playwright, dotnet]
       azure-resource-manager-postgresql-dotnet:
         path: skills/engineering_cloud_azure/azure-resource-manager-postgresql-dotnet/
@@ -4354,7 +4354,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_resource_manager_postgresql_dotnet
             path: skills/engineering_cloud_azure/azure-resource-manager-postgresql-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, resource, manager, postgresql, dotnet]
       azure-resource-manager-redis-dotnet:
         path: skills/engineering_cloud_azure/azure-resource-manager-redis-dotnet/
@@ -4362,7 +4362,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_resource_manager_redis_dotnet
             path: skills/engineering_cloud_azure/azure-resource-manager-redis-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, resource, manager, redis, dotnet]
       azure-resource-manager-sql-dotnet:
         path: skills/engineering_cloud_azure/azure-resource-manager-sql-dotnet/
@@ -4370,7 +4370,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_resource_manager_sql_dotnet
             path: skills/engineering_cloud_azure/azure-resource-manager-sql-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, resource, manager, dotnet, azure-resource-manager-sql-dotnet]
       azure-resource-visualizer:
         path: skills/engineering_cloud_azure/azure-resource-visualizer/
@@ -4378,7 +4378,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_resource_visualizer
             path: skills/engineering_cloud_azure/azure-resource-visualizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, resource, visualizer, analyze, groups]
       azure-search-documents-dotnet:
         path: skills/engineering_cloud_azure/azure-search-documents-dotnet/
@@ -4386,7 +4386,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_search_documents_dotnet
             path: skills/engineering_cloud_azure/azure-search-documents-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, search, documents, dotnet, azure-search-documents-dotnet]
       azure-search-documents-py:
         path: skills/engineering_cloud_azure/azure-search-documents-py/
@@ -4394,7 +4394,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_search_documents_py
             path: skills/engineering_cloud_azure/azure-search-documents-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, search, documents, azure-search-documents-py, vector]
       azure-search-documents-ts:
         path: skills/engineering_cloud_azure/azure-search-documents-ts/
@@ -4402,7 +4402,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_search_documents_ts
             path: skills/engineering_cloud_azure/azure-search-documents-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, search, documents, build, applications]
       azure-security-keyvault-keys-dotnet:
         path: skills/engineering_cloud_azure/azure-security-keyvault-keys-dotnet/
@@ -4410,7 +4410,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_security_keyvault_keys_dotnet
             path: skills/engineering_cloud_azure/azure-security-keyvault-keys-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, security, keyvault, keys, dotnet]
       azure-security-keyvault-keys-java:
         path: skills/engineering_cloud_azure/azure-security-keyvault-keys-java/
@@ -4418,7 +4418,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_security_keyvault_keys_java
             path: skills/engineering_cloud_azure/azure-security-keyvault-keys-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, security, keyvault, keys, java]
       azure-security-keyvault-secrets-java:
         path: skills/engineering_cloud_azure/azure-security-keyvault-secrets-java/
@@ -4426,7 +4426,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_security_keyvault_secrets_java
             path: skills/engineering_cloud_azure/azure-security-keyvault-secrets-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, security, keyvault, secrets, java]
       azure-servicebus-dotnet:
         path: skills/engineering_cloud_azure/azure-servicebus-dotnet/
@@ -4434,7 +4434,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_servicebus_dotnet
             path: skills/engineering_cloud_azure/azure-servicebus-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, servicebus, dotnet, azure-servicebus-dotnet, net]
       azure-servicebus-py:
         path: skills/engineering_cloud_azure/azure-servicebus-py/
@@ -4442,7 +4442,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_servicebus_py
             path: skills/engineering_cloud_azure/azure-servicebus-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, servicebus, azure-servicebus-py, receive, messages]
       azure-servicebus-ts:
         path: skills/engineering_cloud_azure/azure-servicebus-ts/
@@ -4450,7 +4450,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_servicebus_ts
             path: skills/engineering_cloud_azure/azure-servicebus-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, servicebus, build, messaging, applications]
       azure-speech-to-text-rest-py:
         path: skills/engineering_cloud_azure/azure-speech-to-text-rest-py/
@@ -4458,7 +4458,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_speech_to_text_rest_py
             path: skills/engineering_cloud_azure/azure-speech-to-text-rest-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, speech, text, rest, azure-speech-to-text-rest-py]
       azure-storage:
         path: skills/engineering_cloud_azure/azure-storage/
@@ -4466,7 +4466,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_storage
             path: skills/engineering_cloud_azure/azure-storage/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, storage, services, including, blob]
       azure-storage-blob-java:
         path: skills/engineering_cloud_azure/azure-storage-blob-java/
@@ -4474,7 +4474,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_storage_blob_java
             path: skills/engineering_cloud_azure/azure-storage-blob-java/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, storage, blob, java, build]
       azure-storage-blob-py:
         path: skills/engineering_cloud_azure/azure-storage-blob-py/
@@ -4482,7 +4482,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_storage_blob_py
             path: skills/engineering_cloud_azure/azure-storage-blob-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, storage, blob, azure-storage-blob-py, download]
       azure-storage-blob-rust:
         path: skills/engineering_cloud_azure/azure-storage-blob-rust/
@@ -4490,7 +4490,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_storage_blob_rust
             path: skills/engineering_cloud_azure/azure-storage-blob-rust/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, storage, blob, rust, azure-storage-blob-rust]
       azure-storage-blob-ts:
         path: skills/engineering_cloud_azure/azure-storage-blob-ts/
@@ -4498,7 +4498,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_storage_blob_ts
             path: skills/engineering_cloud_azure/azure-storage-blob-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, storage, blob, azure-storage-blob-ts, node]
       azure-storage-file-datalake-py:
         path: skills/engineering_cloud_azure/azure-storage-file-datalake-py/
@@ -4506,7 +4506,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_storage_file_datalake_py
             path: skills/engineering_cloud_azure/azure-storage-file-datalake-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, storage, file, datalake, azure-storage-file-datalake-py]
       azure-storage-file-share-py:
         path: skills/engineering_cloud_azure/azure-storage-file-share-py/
@@ -4514,7 +4514,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_storage_file_share_py
             path: skills/engineering_cloud_azure/azure-storage-file-share-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, storage, file, share, azure-storage-file-share-py]
       azure-storage-file-share-ts:
         path: skills/engineering_cloud_azure/azure-storage-file-share-ts/
@@ -4522,7 +4522,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_storage_file_share_ts
             path: skills/engineering_cloud_azure/azure-storage-file-share-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, storage, file, share, azure-storage-file-share-ts]
       azure-storage-queue-py:
         path: skills/engineering_cloud_azure/azure-storage-queue-py/
@@ -4530,7 +4530,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_storage_queue_py
             path: skills/engineering_cloud_azure/azure-storage-queue-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, storage, queue, azure-storage-queue-py, messages]
       azure-storage-queue-ts:
         path: skills/engineering_cloud_azure/azure-storage-queue-ts/
@@ -4538,7 +4538,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_storage_queue_ts
             path: skills/engineering_cloud_azure/azure-storage-queue-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, storage, queue, azure-storage-queue-ts, message]
       azure-upgrade:
         path: skills/engineering_cloud_azure/azure-upgrade/
@@ -4546,7 +4546,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_upgrade
             path: skills/engineering_cloud_azure/azure-upgrade/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, upgrade, assess, workloads, between]
       azure-validate:
         path: skills/engineering_cloud_azure/azure-validate/
@@ -4554,7 +4554,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_validate
             path: skills/engineering_cloud_azure/azure-validate/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, validate, azure-validate, .azure/deployment-plan.md, validation]
       azure-web-pubsub-ts:
         path: skills/engineering_cloud_azure/azure-web-pubsub-ts/
@@ -4562,7 +4562,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.azure_web_pubsub_ts
             path: skills/engineering_cloud_azure/azure-web-pubsub-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [azure, pubsub, build, real, time]
       capacity:
         path: skills/engineering_cloud_azure/capacity/
@@ -4570,7 +4570,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.capacity
             path: skills/engineering_cloud_azure/capacity/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [capacity, discovers, available, azure, openai]
       cloud-security:
         path: skills/engineering_cloud_azure/cloud-security/
@@ -4578,7 +4578,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.cloud_security
             path: skills/engineering_cloud_azure/cloud-security/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cloud, security, when, assessing, infrastructure]
       cloud-solution-architect:
         path: skills/engineering_cloud_azure/cloud-solution-architect/
@@ -4586,7 +4586,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.cloud_solution_architect
             path: skills/engineering_cloud_azure/cloud-solution-architect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cloud, solution, architect, cloud-solution-architect, design]
       copilot-sdk:
         path: skills/engineering_cloud_azure/copilot-sdk/
@@ -4594,7 +4594,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.copilot_sdk
             path: skills/engineering_cloud_azure/copilot-sdk/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [copilot, build, applications, powered, github]
       customize:
         path: skills/engineering_cloud_azure/customize/
@@ -4602,7 +4602,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.customize
             path: skills/engineering_cloud_azure/customize/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [customize, interactive, guided, deployment, flow]
       deploy-model:
         path: skills/engineering_cloud_azure/deploy-model/
@@ -4610,7 +4610,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.deploy_model
             path: skills/engineering_cloud_azure/deploy-model/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [deploy, model, unified, azure, openai]
       entra-app-registration:
         path: skills/engineering_cloud_azure/entra-app-registration/
@@ -4618,7 +4618,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.entra_app_registration
             path: skills/engineering_cloud_azure/entra-app-registration/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [entra, registration, guides, microsoft, oauth]
       hosted-agents-v2-py:
         path: skills/engineering_cloud_azure/hosted-agents-v2-py/
@@ -4626,14 +4626,14 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.hosted_agents_v2_py
             path: skills/engineering_cloud_azure/hosted-agents-v2-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       m365-agents-dotnet:
         path: skills/engineering_cloud_azure/m365-agents-dotnet/
         skill_count: 1
         skills:
           - skill: engineering_cloud_azure.m365_agents_dotnet
             path: skills/engineering_cloud_azure/m365-agents-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [m365, agents, dotnet, agents-dotnet, net]
       mcp-builder:
         path: skills/engineering_cloud_azure/mcp-builder/
@@ -4641,7 +4641,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.mcp_builder
             path: skills/engineering_cloud_azure/mcp-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [builder, guide, creating, high, quality]
       microsoft-azure-webjobs-extensions-authentication-events-dotnet:
         path: skills/engineering_cloud_azure/microsoft-azure-webjobs-extensions-authentication-events-dotnet/
@@ -4649,7 +4649,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.microsoft_azure_webjobs_extensions_authentication_events_dotnet
             path: skills/engineering_cloud_azure/microsoft-azure-webjobs-extensions-authentication-events-dotnet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [microsoft, azure, webjobs, extensions, authentication]
       microsoft-docs:
         path: skills/engineering_cloud_azure/microsoft-docs/
@@ -4657,7 +4657,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.microsoft_docs
             path: skills/engineering_cloud_azure/microsoft-docs/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [microsoft, docs, understand, technologies, querying]
       microsoft-foundry:
         path: skills/engineering_cloud_azure/microsoft-foundry/
@@ -4665,7 +4665,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.microsoft_foundry
             path: skills/engineering_cloud_azure/microsoft-foundry/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [microsoft, foundry, deploy, evaluate, manage]
       ms365-tenant-manager:
         path: skills/engineering_cloud_azure/ms365-tenant-manager/
@@ -4673,7 +4673,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.ms365_tenant_manager
             path: skills/engineering_cloud_azure/ms365-tenant-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [ms365, tenant, manager, microsoft, administration]
       podcast-generation:
         path: skills/engineering_cloud_azure/podcast-generation/
@@ -4681,7 +4681,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.podcast_generation
             path: skills/engineering_cloud_azure/podcast-generation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [podcast, generation, generate, powered, style]
       preset:
         path: skills/engineering_cloud_azure/preset/
@@ -4689,7 +4689,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.preset
             path: skills/engineering_cloud_azure/preset/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [preset, intelligently, deploys, azure, openai]
       secrets-vault-manager:
         path: skills/engineering_cloud_azure/secrets-vault-manager/
@@ -4697,7 +4697,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.secrets_vault_manager
             path: skills/engineering_cloud_azure/secrets-vault-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [secrets, vault, manager, when, secrets-vault-manager]
       senior-devops:
         path: skills/engineering_cloud_azure/senior-devops/
@@ -4705,7 +4705,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.senior_devops
             path: skills/engineering_cloud_azure/senior-devops/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, devops, comprehensive, skill, infrastructure]
       skill-creator:
         path: skills/engineering_cloud_azure/skill-creator/
@@ -4713,7 +4713,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.skill_creator
             path: skills/engineering_cloud_azure/skill-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [skill, creator, guide, creating, effective]
       wiki-ado-convert:
         path: skills/engineering_cloud_azure/wiki-ado-convert/
@@ -4721,7 +4721,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_azure.wiki_ado_convert
             path: skills/engineering_cloud_azure/wiki-ado-convert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wiki, convert, converts, vitepress, markdown]
 
   ENGINEERING_CLOUD_GCP:
@@ -4736,7 +4736,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_gcp.composio_skills
             path: skills/engineering_cloud_gcp/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, google, bigquery]
       gcp-cloud-architect:
         path: skills/engineering_cloud_gcp/gcp-cloud-architect/
@@ -4744,7 +4744,7 @@ domain_map:
         skills:
           - skill: engineering_cloud_gcp.gcp_cloud_architect
             path: skills/engineering_cloud_gcp/gcp-cloud-architect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cloud, architect, design, architectures, startups]
 
   ENGINEERING_DATABASE:
@@ -4759,7 +4759,7 @@ domain_map:
         skills:
           - skill: engineering_database.composio_skills
             path: skills/engineering_database/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, neon, serverless]
       connect:
         path: skills/engineering_database/connect/
@@ -4767,7 +4767,7 @@ domain_map:
         skills:
           - skill: engineering_database.connect
             path: skills/engineering_database/connect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [claude, send, emails, create, issues]
       database-designer:
         path: skills/engineering_database/database-designer/
@@ -4775,7 +4775,7 @@ domain_map:
         skills:
           - skill: engineering_database.database_designer
             path: skills/engineering_database/database-designer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [database, designer, when, design, database-designer]
       database-optimization:
         path: skills/engineering_database/database-optimization/
@@ -4783,7 +4783,7 @@ domain_map:
         skills:
           - skill: engineering_database.database_optimization
             path: skills/engineering_database/database-optimization/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [database, optimization, query, indexing, strategies]
       database-schema-designer:
         path: skills/engineering_database/database-schema-designer/
@@ -4791,7 +4791,7 @@ domain_map:
         skills:
           - skill: engineering_database.database_schema_designer
             path: skills/engineering_database/database-schema-designer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [database, schema, designer, when, database-schema-designer]
       engineering:
         path: skills/engineering_database/engineering/
@@ -4799,7 +4799,7 @@ domain_map:
         skills:
           - skill: engineering_database.engineering
             path: skills/engineering_database/engineering/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [engineering, advanced, agent, skills, plugins]
       frontend-excellence:
         path: skills/engineering_database/frontend-excellence/
@@ -4807,7 +4807,7 @@ domain_map:
         skills:
           - skill: engineering_database.frontend_excellence
             path: skills/engineering_database/frontend-excellence/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [frontend, excellence, modern, patterns, react]
       postgres-optimization:
         path: skills/engineering_database/postgres-optimization/
@@ -4815,7 +4815,7 @@ domain_map:
         skills:
           - skill: engineering_database.postgres_optimization
             path: skills/engineering_database/postgres-optimization/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [postgres, optimization, postgresql, including, indexes]
       pydantic-models-py:
         path: skills/engineering_database/pydantic-models-py/
@@ -4823,7 +4823,7 @@ domain_map:
         skills:
           - skill: engineering_database.pydantic_models_py
             path: skills/engineering_database/pydantic-models-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [pydantic, models, create, following, multi]
       redis-patterns:
         path: skills/engineering_database/redis-patterns/
@@ -4831,7 +4831,7 @@ domain_map:
         skills:
           - skill: engineering_database.redis_patterns
             path: skills/engineering_database/redis-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [redis, patterns, including, caching, strategies]
       saas-scaffolder:
         path: skills/engineering_database/saas-scaffolder/
@@ -4839,7 +4839,7 @@ domain_map:
         skills:
           - skill: engineering_database.saas_scaffolder
             path: skills/engineering_database/saas-scaffolder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [saas, scaffolder, generates, complete, production]
       senior-architect:
         path: skills/engineering_database/senior-architect/
@@ -4847,7 +4847,7 @@ domain_map:
         skills:
           - skill: engineering_database.senior_architect
             path: skills/engineering_database/senior-architect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, architect, this, skill, should]
       sql-database-assistant:
         path: skills/engineering_database/sql-database-assistant/
@@ -4855,7 +4855,7 @@ domain_map:
         skills:
           - skill: engineering_database.sql_database_assistant
             path: skills/engineering_database/sql-database-assistant/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [database, assistant, when, write, sql-database-assistant]
 
   ENGINEERING_DEVOPS:
@@ -4870,7 +4870,7 @@ domain_map:
         skills:
           - skill: engineering_devops.a11y_audit
             path: skills/engineering_devops/a11y-audit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [a11y, audit, accessibility, skill, scanning]
       business-growth:
         path: skills/engineering_devops/business-growth/
@@ -4878,7 +4878,7 @@ domain_map:
         skills:
           - skill: engineering_devops.business_growth
             path: skills/engineering_devops/business-growth/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [business, growth, agent, skills, plugins]
       ci-cd-pipeline-builder:
         path: skills/engineering_devops/ci-cd-pipeline-builder/
@@ -4886,7 +4886,7 @@ domain_map:
         skills:
           - skill: engineering_devops.ci_cd_pipeline_builder
             path: skills/engineering_devops/ci-cd-pipeline-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [pipeline, builder, ci-cd-pipeline-builder, detection, overview]
       ci-cd-pipelines:
         path: skills/engineering_devops/ci-cd-pipelines/
@@ -4894,7 +4894,7 @@ domain_map:
         skills:
           - skill: engineering_devops.ci_cd_pipelines
             path: skills/engineering_devops/ci-cd-pipelines/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [pipelines, pipeline, patterns, github, actions]
       composio-skills:
         path: skills/engineering_devops/composio-skills/
@@ -4902,7 +4902,7 @@ domain_map:
         skills:
           - skill: engineering_devops.composio_skills
             path: skills/engineering_devops/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, apollo, lead]
       content-production:
         path: skills/engineering_devops/content-production/
@@ -4910,7 +4910,7 @@ domain_map:
         skills:
           - skill: engineering_devops.content_production
             path: skills/engineering_devops/content-production/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [content, production, full, pipeline, takes]
       data-engineering:
         path: skills/engineering_devops/data-engineering/
@@ -4918,7 +4918,7 @@ domain_map:
         skills:
           - skill: engineering_devops.data_engineering
             path: skills/engineering_devops/data-engineering/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [data, engineering, patterns, pipelines, warehousing]
       devops-automation:
         path: skills/engineering_devops/devops-automation/
@@ -4926,7 +4926,7 @@ domain_map:
         skills:
           - skill: engineering_devops.devops_automation
             path: skills/engineering_devops/devops-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [devops, automation, pipeline, design, github]
       docker-best-practices:
         path: skills/engineering_devops/docker-best-practices/
@@ -4934,7 +4934,7 @@ domain_map:
         skills:
           - skill: engineering_devops.docker_best_practices
             path: skills/engineering_devops/docker-best-practices/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [docker, best, practices, including, multi]
       docker-development:
         path: skills/engineering_devops/docker-development/
@@ -4942,7 +4942,7 @@ domain_map:
         skills:
           - skill: engineering_devops.docker_development
             path: skills/engineering_devops/docker-development/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [docker, development, container, agent, skill]
       env-secrets-manager:
         path: skills/engineering_devops/env-secrets-manager/
@@ -4950,7 +4950,7 @@ domain_map:
         skills:
           - skill: engineering_devops.env_secrets_manager
             path: skills/engineering_devops/env-secrets-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [secrets, manager, env-secrets-manager, env, secret]
       helm-chart-builder:
         path: skills/engineering_devops/helm-chart-builder/
@@ -4958,7 +4958,7 @@ domain_map:
         skills:
           - skill: engineering_devops.helm_chart_builder
             path: skills/engineering_devops/helm-chart-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [helm, chart, builder, development, agent]
       interview-system-designer:
         path: skills/engineering_devops/interview-system-designer/
@@ -4966,7 +4966,7 @@ domain_map:
         skills:
           - skill: engineering_devops.interview_system_designer
             path: skills/engineering_devops/interview-system-designer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [interview, system, designer, this, skill]
       kubernetes-operations:
         path: skills/engineering_devops/kubernetes-operations/
@@ -4974,7 +4974,7 @@ domain_map:
         skills:
           - skill: engineering_devops.kubernetes_operations
             path: skills/engineering_devops/kubernetes-operations/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [kubernetes, operations, including, manifests, helm]
       llm-cost-optimizer:
         path: skills/engineering_devops/llm-cost-optimizer/
@@ -4982,7 +4982,7 @@ domain_map:
         skills:
           - skill: engineering_devops.llm_cost_optimizer
             path: skills/engineering_devops/llm-cost-optimizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cost, optimizer, when, need, reduce]
       llm-integration:
         path: skills/engineering_devops/llm-integration/
@@ -4990,7 +4990,7 @@ domain_map:
         skills:
           - skill: engineering_devops.llm_integration
             path: skills/engineering_devops/llm-integration/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [integration, patterns, including, usage, streaming]
       marketing-demand-acquisition:
         path: skills/engineering_devops/marketing-demand-acquisition/
@@ -4998,7 +4998,7 @@ domain_map:
         skills:
           - skill: engineering_devops.marketing_demand_acquisition
             path: skills/engineering_devops/marketing-demand-acquisition/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [marketing, demand, acquisition, creates, generation]
       prompt-governance:
         path: skills/engineering_devops/prompt-governance/
@@ -5006,7 +5006,7 @@ domain_map:
         skills:
           - skill: engineering_devops.prompt_governance
             path: skills/engineering_devops/prompt-governance/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [prompt, governance, when, managing, prompts]
       rag-architect:
         path: skills/engineering_devops/rag-architect/
@@ -5014,7 +5014,7 @@ domain_map:
         skills:
           - skill: engineering_devops.rag_architect
             path: skills/engineering_devops/rag-architect/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [architect, when, design, pipelines, rag-architect]
       release-manager:
         path: skills/engineering_devops/release-manager/
@@ -5022,7 +5022,7 @@ domain_map:
         skills:
           - skill: engineering_devops.release_manager
             path: skills/engineering_devops/release-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [release, manager, when, plan, release-manager]
       revenue-operations:
         path: skills/engineering_devops/revenue-operations/
@@ -5030,7 +5030,7 @@ domain_map:
         skills:
           - skill: engineering_devops.revenue_operations
             path: skills/engineering_devops/revenue-operations/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [revenue, operations, analyzes, sales, pipeline]
       runbook-generator:
         path: skills/engineering_devops/runbook-generator/
@@ -5038,7 +5038,7 @@ domain_map:
         skills:
           - skill: engineering_devops.runbook_generator
             path: skills/engineering_devops/runbook-generator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [runbook, generator, runbook-generator, overview, core]
       security-gate-injector:
         path: skills/engineering_devops/security-gate-injector/
@@ -5053,7 +5053,7 @@ domain_map:
         skills:
           - skill: engineering_devops.senior_computer_vision
             path: skills/engineering_devops/senior-computer-vision/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, computer, vision, engineering, skill]
       senior-data-engineer:
         path: skills/engineering_devops/senior-data-engineer/
@@ -5061,7 +5061,7 @@ domain_map:
         skills:
           - skill: engineering_devops.senior_data_engineer
             path: skills/engineering_devops/senior-data-engineer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, data, engineer, engineering, skill]
       senior-data-scientist:
         path: skills/engineering_devops/senior-data-scientist/
@@ -5069,7 +5069,7 @@ domain_map:
         skills:
           - skill: engineering_devops.senior_data_scientist
             path: skills/engineering_devops/senior-data-scientist/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, data, scientist, world, class]
       senior-ml-engineer:
         path: skills/engineering_devops/senior-ml-engineer/
@@ -5077,7 +5077,7 @@ domain_map:
         skills:
           - skill: engineering_devops.senior_ml_engineer
             path: skills/engineering_devops/senior-ml-engineer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, engineer, engineering, skill, productionizing]
       senior-secops:
         path: skills/engineering_devops/senior-secops/
@@ -5085,7 +5085,7 @@ domain_map:
         skills:
           - skill: engineering_devops.senior_secops
             path: skills/engineering_devops/senior-secops/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, secops, engineer, skill, application]
       snowflake-development:
         path: skills/engineering_devops/snowflake-development/
@@ -5093,7 +5093,7 @@ domain_map:
         skills:
           - skill: engineering_devops.snowflake_development
             path: skills/engineering_devops/snowflake-development/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [snowflake, development, when, writing, building]
       video-content-strategist:
         path: skills/engineering_devops/video-content-strategist/
@@ -5101,7 +5101,7 @@ domain_map:
         skills:
           - skill: engineering_devops.video_content_strategist
             path: skills/engineering_devops/video-content-strategist/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [video, content, strategist, when, planning]
 
   ENGINEERING_FRONTEND:
@@ -5116,7 +5116,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.accessibility_wcag
             path: skills/engineering_frontend/accessibility-wcag/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [accessibility, wcag, patterns, compliance, including]
       artifacts-builder:
         path: skills/engineering_frontend/artifacts-builder/
@@ -5124,7 +5124,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.artifacts_builder
             path: skills/engineering_frontend/artifacts-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [artifacts, builder, suite, tools, creating]
       code-to-prd:
         path: skills/engineering_frontend/code-to-prd/
@@ -5132,7 +5132,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.code_to_prd
             path: skills/engineering_frontend/code-to-prd/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [code, code-to-prd, api, page, prd]
       epic-design:
         path: skills/engineering_frontend/epic-design/
@@ -5140,7 +5140,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.epic_design
             path: skills/engineering_frontend/epic-design/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [epic, design, epic-design, step, skill]
       frontend-design-review:
         path: skills/engineering_frontend/frontend-design-review/
@@ -5148,7 +5148,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.frontend_design_review
             path: skills/engineering_frontend/frontend-design-review/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [frontend, design, review, frontend-design-review, mode]
       frontend-ui-dark-ts:
         path: skills/engineering_frontend/frontend-ui-dark-ts/
@@ -5156,7 +5156,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.frontend_ui_dark_ts
             path: skills/engineering_frontend/frontend-ui-dark-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [frontend, dark, build, themed, react]
       landing-page-generator:
         path: skills/engineering_frontend/landing-page-generator/
@@ -5164,7 +5164,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.landing_page_generator
             path: skills/engineering_frontend/landing-page-generator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [landing, page, generator, generates, high]
       mobile-development:
         path: skills/engineering_frontend/mobile-development/
@@ -5172,7 +5172,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.mobile_development
             path: skills/engineering_frontend/mobile-development/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [mobile, development, patterns, react, native]
       react-flow-node-ts:
         path: skills/engineering_frontend/react-flow-node-ts/
@@ -5180,7 +5180,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.react_flow_node_ts
             path: skills/engineering_frontend/react-flow-node-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [react, flow, node, create, components]
       react-patterns:
         path: skills/engineering_frontend/react-patterns/
@@ -5188,7 +5188,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.react_patterns
             path: skills/engineering_frontend/react-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [react, patterns, including, server, components]
       senior-frontend:
         path: skills/engineering_frontend/senior-frontend/
@@ -5196,7 +5196,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.senior_frontend
             path: skills/engineering_frontend/senior-frontend/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, frontend, development, skill, react]
       senior-qa:
         path: skills/engineering_frontend/senior-qa/
@@ -5204,7 +5204,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.senior_qa
             path: skills/engineering_frontend/senior-qa/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, generates, unit, tests, integration]
       vercel-react-best-practices:
         path: skills/engineering_frontend/vercel-react-best-practices/
@@ -5212,7 +5212,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.vercel_react_best_practices
             path: skills/engineering_frontend/vercel-react-best-practices/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [vercel, react, best, practices, next]
       webapp-testing:
         path: skills/engineering_frontend/webapp-testing/
@@ -5220,7 +5220,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.webapp_testing
             path: skills/engineering_frontend/webapp-testing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [webapp, testing, toolkit, interacting, local]
       zustand-store-ts:
         path: skills/engineering_frontend/zustand-store-ts/
@@ -5228,7 +5228,7 @@ domain_map:
         skills:
           - skill: engineering_frontend.zustand_store_ts
             path: skills/engineering_frontend/zustand-store-ts/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [zustand, store, create, stores, typescript]
 
   ENGINEERING_GIT:
@@ -5243,7 +5243,7 @@ domain_map:
         skills:
           - skill: engineering_git.git_worktree_manager
             path: skills/engineering_git/git-worktree-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [worktree, manager, git-worktree-manager, git, checklist]
       github-issue-creator:
         path: skills/engineering_git/github-issue-creator/
@@ -5251,7 +5251,7 @@ domain_map:
         skills:
           - skill: engineering_git.github_issue_creator
             path: skills/engineering_git/github-issue-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [github, issue, creator, convert, notes]
       run:
         path: skills/engineering_git/run/
@@ -5259,7 +5259,7 @@ domain_map:
         skills:
           - skill: engineering_git.run
             path: skills/engineering_git/run/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [single, experiment, iteration, edit, target]
       senior-pm:
         path: skills/engineering_git/senior-pm/
@@ -5267,7 +5267,7 @@ domain_map:
         skills:
           - skill: engineering_git.senior_pm
             path: skills/engineering_git/senior-pm/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, project, manager, enterprise, software]
       team-communications:
         path: skills/engineering_git/team-communications/
@@ -5275,7 +5275,7 @@ domain_map:
         skills:
           - skill: engineering_git.team_communications
             path: skills/engineering_git/team-communications/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [team, communications, write, internal, company]
       wiki-changelog:
         path: skills/engineering_git/wiki-changelog/
@@ -5283,7 +5283,7 @@ domain_map:
         skills:
           - skill: engineering_git.wiki_changelog
             path: skills/engineering_git/wiki-changelog/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wiki, changelog, analyzes, commit, history]
 
   ENGINEERING_MOBILE:
@@ -5298,7 +5298,7 @@ domain_map:
         skills:
           - skill: engineering_mobile.app_store_optimization
             path: skills/engineering_mobile/app-store-optimization/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [store, optimization, toolkit, researching, keywords]
       code-reviewer:
         path: skills/engineering_mobile/code-reviewer/
@@ -5306,7 +5306,7 @@ domain_map:
         skills:
           - skill: engineering_mobile.code_reviewer
             path: skills/engineering_mobile/code-reviewer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [code, reviewer, review, automation, typescript]
       mcp-development:
         path: skills/engineering_mobile/mcp-development/
@@ -5314,7 +5314,7 @@ domain_map:
         skills:
           - skill: engineering_mobile.mcp_development
             path: skills/engineering_mobile/mcp-development/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [development, server, including, tool, design]
 
   ENGINEERING_SECURITY:
@@ -5329,7 +5329,7 @@ domain_map:
         skills:
           - skill: engineering_security.adversarial_reviewer
             path: skills/engineering_security/adversarial-reviewer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [adversarial, reviewer, code, review, that]
       ai-security:
         path: skills/engineering_security/ai-security/
@@ -5337,7 +5337,7 @@ domain_map:
         skills:
           - skill: engineering_security.ai_security
             path: skills/engineering_security/ai-security/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, when, assessing, systems, prompt]
       authentication-patterns:
         path: skills/engineering_security/authentication-patterns/
@@ -5345,7 +5345,7 @@ domain_map:
         skills:
           - skill: engineering_security.authentication_patterns
             path: skills/engineering_security/authentication-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [authentication, patterns, authorization, including, oauth2]
       behuman:
         path: skills/engineering_security/behuman/
@@ -5353,7 +5353,7 @@ domain_map:
         skills:
           - skill: engineering_security.behuman
             path: skills/engineering_security/behuman/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [behuman, when, more, human, the]
       ciso-advisor:
         path: skills/engineering_security/ciso-advisor/
@@ -5361,7 +5361,7 @@ domain_map:
         skills:
           - skill: engineering_security.ciso_advisor
             path: skills/engineering_security/ciso-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [ciso, advisor, security, leadership, growth]
       composio-skills:
         path: skills/engineering_security/composio-skills/
@@ -5369,7 +5369,7 @@ domain_map:
         skills:
           - skill: engineering_security.composio_skills
             path: skills/engineering_security/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, research, ahrefs]
       content-humanizer:
         path: skills/engineering_security/content-humanizer/
@@ -5377,7 +5377,7 @@ domain_map:
         skills:
           - skill: engineering_security.content_humanizer
             path: skills/engineering_security/content-humanizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [content, humanizer, makes, generated, sound]
       content-strategy:
         path: skills/engineering_security/content-strategy/
@@ -5385,14 +5385,14 @@ domain_map:
         skills:
           - skill: engineering_security.content_strategy
             path: skills/engineering_security/content-strategy/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
       dependency-auditor:
         path: skills/engineering_security/dependency-auditor/
         skill_count: 1
         skills:
           - skill: engineering_security.dependency_auditor
             path: skills/engineering_security/dependency-auditor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [dependency, auditor, dependency-auditor, security, metrics]
       entra-agent-id:
         path: skills/engineering_security/entra-agent-id/
@@ -5400,7 +5400,7 @@ domain_map:
         skills:
           - skill: engineering_security.entra_agent_id
             path: skills/engineering_security/entra-agent-id/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [entra, agent, entra-agent-id, identity, step]
       fda-consultant-specialist:
         path: skills/engineering_security/fda-consultant-specialist/
@@ -5408,7 +5408,7 @@ domain_map:
         skills:
           - skill: engineering_security.fda_consultant_specialist
             path: skills/engineering_security/fda-consultant-specialist/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [consultant, specialist, regulatory, medical, device]
       git-advanced:
         path: skills/engineering_security/git-advanced/
@@ -5416,7 +5416,7 @@ domain_map:
         skills:
           - skill: engineering_security.git_advanced
             path: skills/engineering_security/git-advanced/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [advanced, workflows, including, worktrees, bisect]
       google-workspace-cli:
         path: skills/engineering_security/google-workspace-cli/
@@ -5424,7 +5424,7 @@ domain_map:
         skills:
           - skill: engineering_security.google_workspace_cli
             path: skills/engineering_security/google-workspace-cli/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [google, workspace, administration, install, authenticate]
       incident-commander:
         path: skills/engineering_security/incident-commander/
@@ -5432,7 +5432,7 @@ domain_map:
         skills:
           - skill: engineering_security.incident_commander
             path: skills/engineering_security/incident-commander/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [incident, commander, skill, incident-commander, response]
       incident-response:
         path: skills/engineering_security/incident-response/
@@ -5440,7 +5440,7 @@ domain_map:
         skills:
           - skill: engineering_security.incident_response
             path: skills/engineering_security/incident-response/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [incident, response, when, security, been]
       information-security-manager-iso27001:
         path: skills/engineering_security/information-security-manager-iso27001/
@@ -5448,7 +5448,7 @@ domain_map:
         skills:
           - skill: engineering_security.information_security_manager_iso27001
             path: skills/engineering_security/information-security-manager-iso27001/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [information, security, manager, iso27001, isms]
       isms-audit-expert:
         path: skills/engineering_security/isms-audit-expert/
@@ -5456,7 +5456,7 @@ domain_map:
         skills:
           - skill: engineering_security.isms_audit_expert
             path: skills/engineering_security/isms-audit-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [isms, audit, expert, information, security]
       issue-reporter:
         path: skills/engineering_security/issue-reporter/
@@ -5464,7 +5464,7 @@ domain_map:
         skills:
           - skill: engineering_security.issue_reporter
             path: skills/engineering_security/issue-reporter/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [issue, reporter, report, feature, request]
       pr-review-expert:
         path: skills/engineering_security/pr-review-expert/
@@ -5472,7 +5472,7 @@ domain_map:
         skills:
           - skill: engineering_security.pr_review_expert
             path: skills/engineering_security/pr-review-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [review, expert, when, pull, pr-review-expert]
       red-team:
         path: skills/engineering_security/red-team/
@@ -5480,7 +5480,7 @@ domain_map:
         skills:
           - skill: engineering_security.red_team
             path: skills/engineering_security/red-team/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [team, when, planning, executing, authorized]
       sample-skill:
         path: skills/engineering_security/sample-skill/
@@ -5488,7 +5488,7 @@ domain_map:
         skills:
           - skill: engineering_security.sample_skill
             path: skills/engineering_security/sample-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [sample, skill, sample-skill, text, example]
       secure-delivery-pipeline:
         path: skills/engineering_security/secure-delivery-pipeline/
@@ -5503,7 +5503,7 @@ domain_map:
         skills:
           - skill: engineering_security.security_hardening
             path: skills/engineering_security/security-hardening/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, hardening, application, covering, input]
       security-pen-testing:
         path: skills/engineering_security/security-pen-testing/
@@ -5511,7 +5511,7 @@ domain_map:
         skills:
           - skill: engineering_security.security_pen_testing
             path: skills/engineering_security/security-pen-testing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, testing, when, perform, security-pen-testing]
       senior-fullstack:
         path: skills/engineering_security/senior-fullstack/
@@ -5519,7 +5519,7 @@ domain_map:
         skills:
           - skill: engineering_security.senior_fullstack
             path: skills/engineering_security/senior-fullstack/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, fullstack, development, toolkit, project]
       senior-security:
         path: skills/engineering_security/senior-security/
@@ -5527,7 +5527,7 @@ domain_map:
         skills:
           - skill: engineering_security.senior_security
             path: skills/engineering_security/senior-security/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [senior, security, engineering, toolkit, threat]
       skill-security-auditor:
         path: skills/engineering_security/skill-security-auditor/
@@ -5535,7 +5535,7 @@ domain_map:
         skills:
           - skill: engineering_security.skill_security_auditor
             path: skills/engineering_security/skill-security-auditor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [skill, security, auditor, skill-security-auditor, audit]
       skill-tester:
         path: skills/engineering_security/skill-tester/
@@ -5543,7 +5543,7 @@ domain_map:
         skills:
           - skill: engineering_security.skill_tester
             path: skills/engineering_security/skill-tester/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [skill, tester, skill-tester, quality, testing]
       tech-stack-evaluator:
         path: skills/engineering_security/tech-stack-evaluator/
@@ -5551,7 +5551,7 @@ domain_map:
         skills:
           - skill: engineering_security.tech_stack_evaluator
             path: skills/engineering_security/tech-stack-evaluator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [tech, stack, evaluator, technology, evaluation]
       terraform-patterns:
         path: skills/engineering_security/terraform-patterns/
@@ -5559,7 +5559,7 @@ domain_map:
         skills:
           - skill: engineering_security.terraform_patterns
             path: skills/engineering_security/terraform-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [terraform, patterns, infrastructure, code, agent]
 
   ENGINEERING_TESTING:
@@ -5574,7 +5574,7 @@ domain_map:
         skills:
           - skill: engineering_testing.ab_test_setup
             path: skills/engineering_testing/ab-test-setup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [test, setup, when, plan, ab-test-setup]
       ad-creative:
         path: skills/engineering_testing/ad-creative/
@@ -5582,7 +5582,7 @@ domain_map:
         skills:
           - skill: engineering_testing.ad_creative
             path: skills/engineering_testing/ad-creative/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [creative, when, generate, iterate, ad-creative]
       browser-automation:
         path: skills/engineering_testing/browser-automation/
@@ -5590,7 +5590,7 @@ domain_map:
         skills:
           - skill: engineering_testing.browser_automation
             path: skills/engineering_testing/browser-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [browser, automation, when, automate, browser-automation]
       browserstack:
         path: skills/engineering_testing/browserstack/
@@ -5598,7 +5598,7 @@ domain_map:
         skills:
           - skill: engineering_testing.browserstack
             path: skills/engineering_testing/browserstack/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [browserstack, integration, prerequisites, capabilities, configure]
       cherry-pr-test:
         path: skills/engineering_testing/cherry-pr-test/
@@ -5606,7 +5606,7 @@ domain_map:
         skills:
           - skill: engineering_testing.cherry_pr_test
             path: skills/engineering_testing/cherry-pr-test/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cherry, test, studio, checking, branch]
       gh-create-pr:
         path: skills/engineering_testing/gh-create-pr/
@@ -5614,7 +5614,7 @@ domain_map:
         skills:
           - skill: engineering_testing.gh_create_pr
             path: skills/engineering_testing/gh-create-pr/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [create, update, github, pull, requests]
       golang-idioms:
         path: skills/engineering_testing/golang-idioms/
@@ -5622,7 +5622,7 @@ domain_map:
         skills:
           - skill: engineering_testing.golang_idioms
             path: skills/engineering_testing/golang-idioms/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [golang, idioms, idiomatic, patterns, error]
       init:
         path: skills/engineering_testing/init/
@@ -5630,7 +5630,7 @@ domain_map:
         skills:
           - skill: engineering_testing.init
             path: skills/engineering_testing/init/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [init, playwright, generate, project, initialize]
       playwright-pro:
         path: skills/engineering_testing/playwright-pro/
@@ -5638,7 +5638,7 @@ domain_map:
         skills:
           - skill: engineering_testing.playwright_pro
             path: skills/engineering_testing/playwright-pro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [playwright, production, grade, testing, toolkit]
       product-discovery:
         path: skills/engineering_testing/product-discovery/
@@ -5646,7 +5646,7 @@ domain_map:
         skills:
           - skill: engineering_testing.product_discovery
             path: skills/engineering_testing/product-discovery/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [product, discovery, when, validating, opportunities]
       prompt-engineer-toolkit:
         path: skills/engineering_testing/prompt-engineer-toolkit/
@@ -5654,7 +5654,7 @@ domain_map:
         skills:
           - skill: engineering_testing.prompt_engineer_toolkit
             path: skills/engineering_testing/prompt-engineer-toolkit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [prompt, engineer, toolkit, analyzes, rewrites]
       python-best-practices:
         path: skills/engineering_testing/python-best-practices/
@@ -5662,7 +5662,7 @@ domain_map:
         skills:
           - skill: engineering_testing.python_best_practices
             path: skills/engineering_testing/python-best-practices/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [python, best, practices, pythonic, code]
       scenario-war-room:
         path: skills/engineering_testing/scenario-war-room/
@@ -5670,7 +5670,7 @@ domain_map:
         skills:
           - skill: engineering_testing.scenario_war_room
             path: skills/engineering_testing/scenario-war-room/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [scenario, room, cross, functional, what]
       stress-test:
         path: skills/engineering_testing/stress-test/
@@ -5678,7 +5678,7 @@ domain_map:
         skills:
           - skill: engineering_testing.stress_test
             path: skills/engineering_testing/stress-test/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [stress, test, business, assumption, testing]
       tdd-guide:
         path: skills/engineering_testing/tdd-guide/
@@ -5686,7 +5686,7 @@ domain_map:
         skills:
           - skill: engineering_testing.tdd_guide
             path: skills/engineering_testing/tdd-guide/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [guide, test, driven, development, skill]
       tdd-mastery:
         path: skills/engineering_testing/tdd-mastery/
@@ -5694,7 +5694,7 @@ domain_map:
         skills:
           - skill: engineering_testing.tdd_mastery
             path: skills/engineering_testing/tdd-mastery/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [mastery, test, driven, development, workflow]
       testing-strategies:
         path: skills/engineering_testing/testing-strategies/
@@ -5702,7 +5702,7 @@ domain_map:
         skills:
           - skill: engineering_testing.testing_strategies
             path: skills/engineering_testing/testing-strategies/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [testing, strategies, including, contract, snapshot]
       ux-researcher-designer:
         path: skills/engineering_testing/ux-researcher-designer/
@@ -5710,7 +5710,7 @@ domain_map:
         skills:
           - skill: engineering_testing.ux_researcher_designer
             path: skills/engineering_testing/ux-researcher-designer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [researcher, designer, research, design, toolkit]
       wiki-agents-md:
         path: skills/engineering_testing/wiki-agents-md/
@@ -5718,7 +5718,7 @@ domain_map:
         skills:
           - skill: engineering_testing.wiki_agents_md
             path: skills/engineering_testing/wiki-agents-md/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wiki, agents, generates, files, repository]
 
   FINANCE:
@@ -5733,20 +5733,20 @@ domain_map:
         skills:
           - skill: finance.equity_research.catalyst_calendar_3
             path: skills/finance/_source/equity-research/skills/catalyst-calendar/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: finance.equity_research.earnings_analysis_3
             path: skills/finance/_source/equity-research/skills/earnings-analysis/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [earnings-analysis, create, professional, equity, research]
           - skill: finance.equity_research.earnings_preview_3
             path: skills/finance/_source/equity-research/skills/earnings-preview/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: finance.equity_research.idea_generation_3
             path: skills/finance/_source/equity-research/skills/idea-generation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: finance.equity_research.initiating_coverage_3
             path: skills/finance/_source/equity-research/skills/initiating-coverage/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [initiating-coverage, create, institutional-quality, equity, research]
           # ... +51 skills adicionais
       _source_v2:
@@ -5755,20 +5755,20 @@ domain_map:
         skills:
           - skill: finance.equity_research.catalyst_calendar_2
             path: skills/finance/_source_v2/equity-research/skills/catalyst-calendar/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: finance.equity_research.earnings_analysis_2
             path: skills/finance/_source_v2/equity-research/skills/earnings-analysis/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [earnings-analysis, create, professional, equity, research]
           - skill: finance.equity_research.earnings_preview_2
             path: skills/finance/_source_v2/equity-research/skills/earnings-preview/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: finance.equity_research.idea_generation_2
             path: skills/finance/_source_v2/equity-research/skills/idea-generation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: finance.equity_research.initiating_coverage_2
             path: skills/finance/_source_v2/equity-research/skills/initiating-coverage/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [initiating-coverage, create, institutional-quality, equity, research]
           # ... +51 skills adicionais
       accounting:
@@ -5802,7 +5802,7 @@ domain_map:
         skills:
           - skill: finance.composio_skills
             path: skills/finance/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, freshbooks, automation, manage]
       equity-research:
         path: skills/finance/equity-research/
@@ -5910,7 +5910,7 @@ domain_map:
         skills:
           - skill: finance.invoice_organizer
             path: skills/finance/invoice-organizer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [invoice, organizer, automatically, organizes, invoices]
       leiloeiro-risco:
         path: skills/finance/leiloeiro-risco/
@@ -5918,7 +5918,7 @@ domain_map:
         skills:
           - skill: finance.leiloeiro_risco
             path: skills/finance/leiloeiro-risco/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [leiloeiro, risco, analise, leiloes, imoveis]
       market-data:
         path: skills/finance/market-data/
@@ -5946,15 +5946,15 @@ domain_map:
         skills:
           - skill: finance.payments.churn_prevention
             path: skills/finance/payments/churn-prevention/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [churn, prevention, reduce, voluntary, involuntary]
           - skill: finance.payments.pakistan_payments_stack
             path: skills/finance/payments/pakistan-payments-stack/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [pakistan, payments, stack, design, implement]
           - skill: finance.payments.stripe_integration
             path: skills/finance/payments/stripe-integration/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [stripe, integration, master, payment, processing]
       private-equity:
         path: skills/finance/private-equity/
@@ -5987,7 +5987,7 @@ domain_map:
         skills:
           - skill: finance.saas_metrics_coach
             path: skills/finance/saas-metrics-coach/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [saas, metrics, coach, financial, health]
       wealth-management:
         path: skills/finance/wealth-management/
@@ -6027,15 +6027,15 @@ domain_map:
         skills:
           - skill: healthcare._source.clinical-trial-protocol-skill
             path: skills/healthcare/_source/clinical-trial-protocol-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [clinical-trial-protocol-skill, generate, clinical, trial, protocols]
           - skill: healthcare._source.fhir-developer-skill
             path: skills/healthcare/_source/fhir-developer-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [fhir-developer-skill, fhir, api, development, guide]
           - skill: healthcare._source.prior-auth-review-skill
             path: skills/healthcare/_source/prior-auth-review-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [prior-auth-review-skill, automate, payer, review, prior]
       _source_v2:
         path: skills/healthcare/_source_v2/
@@ -6043,15 +6043,15 @@ domain_map:
         skills:
           - skill: healthcare._source_v2.clinical-trial-protocol-skill
             path: skills/healthcare/_source_v2/clinical-trial-protocol-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [clinical-trial-protocol-skill, generate, clinical, trial, protocols]
           - skill: healthcare._source_v2.fhir-developer-skill
             path: skills/healthcare/_source_v2/fhir-developer-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [fhir-developer-skill, fhir, api, development, guide]
           - skill: healthcare._source_v2.prior-auth-review-skill
             path: skills/healthcare/_source_v2/prior-auth-review-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [prior-auth-review-skill, automate, payer, review, prior]
       analyze-project:
         path: skills/healthcare/analyze-project/
@@ -6059,7 +6059,7 @@ domain_map:
         skills:
           - skill: healthcare.analyze_project
             path: skills/healthcare/analyze-project/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [analyze, project, forensic, root, cause]
       clinical-trial-protocol-skill:
         path: skills/healthcare/clinical-trial-protocol-skill/
@@ -6075,7 +6075,7 @@ domain_map:
         skills:
           - skill: healthcare.family_health_analyzer
             path: skills/healthcare/family-health-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [family, health, analyzer, family-health-analyzer, diff]
       fda-medtech-compliance-auditor:
         path: skills/healthcare/fda-medtech-compliance-auditor/
@@ -6083,7 +6083,7 @@ domain_map:
         skills:
           - skill: healthcare.fda_medtech_compliance_auditor
             path: skills/healthcare/fda-medtech-compliance-auditor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [medtech, compliance, auditor, expert, medical]
       fhir-developer-skill:
         path: skills/healthcare/fhir-developer-skill/
@@ -6099,7 +6099,7 @@ domain_map:
         skills:
           - skill: healthcare.health_trend_analyzer
             path: skills/healthcare/health-trend-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [health, trend, analyzer, html, echarts]
       mental-health-analyzer:
         path: skills/healthcare/mental-health-analyzer/
@@ -6107,7 +6107,7 @@ domain_map:
         skills:
           - skill: healthcare.mental_health_analyzer
             path: skills/healthcare/mental-health-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [mental, health, analyzer, mental-health-analyzer, top]
       occupational-health-analyzer:
         path: skills/healthcare/occupational-health-analyzer/
@@ -6115,7 +6115,7 @@ domain_map:
         skills:
           - skill: healthcare.occupational_health_analyzer
             path: skills/healthcare/occupational-health-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [occupational, health, analyzer, occupational-health-analyzer, diff]
       oral-health-analyzer:
         path: skills/healthcare/oral-health-analyzer/
@@ -6123,7 +6123,7 @@ domain_map:
         skills:
           - skill: healthcare.oral_health_analyzer
             path: skills/healthcare/oral-health-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [oral, health, analyzer, oral-health-analyzer, diff]
       prior-auth-review-skill:
         path: skills/healthcare/prior-auth-review-skill/
@@ -6139,7 +6139,7 @@ domain_map:
         skills:
           - skill: healthcare.satori
             path: skills/healthcare/satori/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [satori, clinically, informed, wisdom, companion]
       sexual-health-analyzer:
         path: skills/healthcare/sexual-health-analyzer/
@@ -6147,7 +6147,7 @@ domain_map:
         skills:
           - skill: healthcare.sexual_health_analyzer
             path: skills/healthcare/sexual-health-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [sexual, health, analyzer, sexual-health-analyzer, iief-]
       skin-health-analyzer:
         path: skills/healthcare/skin-health-analyzer/
@@ -6155,7 +6155,7 @@ domain_map:
         skills:
           - skill: healthcare.skin_health_analyzer
             path: skills/healthcare/skin-health-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [skin, health, analyzer, analyze, data]
       travel-health-analyzer:
         path: skills/healthcare/travel-health-analyzer/
@@ -6163,7 +6163,7 @@ domain_map:
         skills:
           - skill: healthcare.travel_health_analyzer
             path: skills/healthcare/travel-health-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [travel, health, analyzer, travel-health-analyzer, thailand]
       wellally-tech:
         path: skills/healthcare/wellally-tech/
@@ -6171,7 +6171,7 @@ domain_map:
         skills:
           - skill: healthcare.wellally_tech
             path: skills/healthcare/wellally-tech/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wellally, tech, integrate, multiple, digital]
       wellness:
         path: skills/healthcare/wellness/
@@ -6179,11 +6179,11 @@ domain_map:
         skills:
           - skill: healthcare.wellness.sleep_analyzer
             path: skills/healthcare/wellness/sleep-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [sleep, analyzer, sleep-analyzer, psqi, stop-bang]
           - skill: healthcare.wellness.weightloss_analyzer
             path: skills/healthcare/wellness/weightloss-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [weightloss, analyzer, weightloss-analyzer, bmi, diff]
 
   HUMAN_RESOURCES:
@@ -6285,19 +6285,19 @@ domain_map:
         skills:
           - skill: integrations.composio.-21risk-automation
             path: skills/integrations/composio/-21risk-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: integrations.composio.-2chat-automation
             path: skills/integrations/composio/-2chat-automation/SKILL.md
-            status: CANDIDATE
-          - skill: integrations.composio.meta
-            path: skills/integrations/composio/SKILL.md
             status: ADOPTED
           - skill: integrations.composio.ably-automation
             path: skills/integrations/composio/ably-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: integrations.composio.abstract-automation
             path: skills/integrations/composio/abstract-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
+          - skill: integrations.composio.abuselpdb-automation
+            path: skills/integrations/composio/abuselpdb-automation/SKILL.md
+            status: ADOPTED
           # ... +828 skills adicionais
       n8n:
         path: skills/integrations/n8n/
@@ -6305,15 +6305,15 @@ domain_map:
         skills:
           - skill: integrations.n8n.n8n_node_configuration
             path: skills/integrations/n8n/n8n-node-configuration/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [node, configuration, operation, aware, guidance]
           - skill: integrations.n8n.n8n_validation_expert
             path: skills/integrations/n8n/n8n-validation-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [validation, expert, guide, interpreting, fixing]
           - skill: integrations.n8n.n8n_workflow_patterns
             path: skills/integrations/n8n/n8n-workflow-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [workflow, patterns, proven, architectural, building]
       slack:
         path: skills/integrations/slack/
@@ -6325,7 +6325,7 @@ domain_map:
             anchors: [slack, search, guidance, effectively, searching]
           - skill: integrations.slack.slack_gif_creator
             path: skills/integrations/slack/slack-gif-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [slack, creator, toolkit, providing, utilities]
           - skill: integrations.slack.slack_messaging
             path: skills/integrations/slack/slack-messaging/SKILL.md
@@ -6337,7 +6337,7 @@ domain_map:
             anchors: [slack, search, guidance, effectively, searching]
           - skill: integrations.slack.yes_md
             path: skills/integrations/slack/yes-md/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [layer, governance, safety, gates, evidence]
       tavily:
         path: skills/integrations/tavily/
@@ -6345,7 +6345,7 @@ domain_map:
         skills:
           - skill: integrations.tavily.tavily_web
             path: skills/integrations/tavily/tavily-web/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [tavily, search, content, extraction, crawling]
 
   KNOWLEDGE_MANAGEMENT:
@@ -6385,17 +6385,17 @@ domain_map:
         skills:
           - skill: knowledge_management.wiki.wiki_changelog
             path: skills/knowledge-management/wiki/wiki-changelog/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: knowledge_management.wiki.wiki_onboarding
             path: skills/knowledge-management/wiki/wiki-onboarding/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wiki, onboarding, generate, complementary, documents]
           - skill: knowledge_management.wiki.wiki_researcher
             path: skills/knowledge-management/wiki/wiki-researcher/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
           - skill: knowledge_management.wiki.wiki_vitepress
             path: skills/knowledge-management/wiki/wiki-vitepress/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
 
   KNOWLEDGE_WORK:
     path: skills/knowledge-work/
@@ -6409,23 +6409,23 @@ domain_map:
         skills:
           - skill: knowledge_work.bio_research.instrument_data_to_allotrope_2
             path: skills/knowledge-work/_source/bio-research/skills/instrument-data-to-allotrope/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [instrument-data-to-allotrope, convert, laboratory, instrument, output]
           - skill: knowledge_work.bio_research.nextflow_development_2
             path: skills/knowledge-work/_source/bio-research/skills/nextflow-development/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [nextflow-development, run, nf-core, bioinformatics, pipelines]
           - skill: knowledge_work.bio_research.scientific_problem_selection_2
             path: skills/knowledge-work/_source/bio-research/skills/scientific-problem-selection/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [scientific-problem-selection, this, skill, should, when]
           - skill: knowledge_work.bio_research.scvi_tools_2
             path: skills/knowledge-work/_source/bio-research/skills/scvi-tools/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [scvi-tools, deep, learning, for, single-cell]
           - skill: knowledge_work.bio_research.single_cell_rna_qc_2
             path: skills/knowledge-work/_source/bio-research/skills/single-cell-rna-qc/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [single-cell-rna-qc, performs, quality, control, single-cell]
           # ... +119 skills adicionais
       _source_v2:
@@ -6434,23 +6434,23 @@ domain_map:
         skills:
           - skill: knowledge_work.bio_research.instrument_data_to_allotrope
             path: skills/knowledge-work/_source_v2/bio-research/skills/instrument-data-to-allotrope/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [instrument-data-to-allotrope, convert, laboratory, instrument, output]
           - skill: knowledge_work.bio_research.nextflow_development
             path: skills/knowledge-work/_source_v2/bio-research/skills/nextflow-development/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [nextflow-development, run, nf-core, bioinformatics, pipelines]
           - skill: knowledge_work.bio_research.scientific_problem_selection
             path: skills/knowledge-work/_source_v2/bio-research/skills/scientific-problem-selection/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [scientific-problem-selection, this, skill, should, when]
           - skill: knowledge_work.bio_research.scvi_tools
             path: skills/knowledge-work/_source_v2/bio-research/skills/scvi-tools/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [scvi-tools, deep, learning, for, single-cell]
           - skill: knowledge_work.bio_research.single_cell_rna_qc
             path: skills/knowledge-work/_source_v2/bio-research/skills/single-cell-rna-qc/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [single-cell-rna-qc, performs, quality, control, single-cell]
           # ... +119 skills adicionais
 
@@ -6466,11 +6466,11 @@ domain_map:
         skills:
           - skill: legal.brazil.advogado_criminal
             path: skills/legal/brazil/advogado-criminal/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [advogado, criminal, criminalista, especializado, maria]
           - skill: legal.brazil.advogado_especialista
             path: skills/legal/brazil/advogado-especialista/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [advogado, especialista, todas, areas, direito]
       civil-law:
         path: skills/legal/civil-law/
@@ -6490,23 +6490,23 @@ domain_map:
         skills:
           - skill: legal.compliance.accessibility_compliance_accessibility_audit
             path: skills/legal/compliance/accessibility-compliance-accessibility-audit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [accessibility, compliance, audit, expert, specializing]
           - skill: legal.compliance.fda_food_safety_auditor
             path: skills/legal/compliance/fda-food-safety-auditor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [food, safety, auditor, expert, fsma]
           - skill: legal.compliance.fixing_accessibility
             path: skills/legal/compliance/fixing-accessibility/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [fixing, accessibility, audit, html, issues]
           - skill: legal.compliance.payment_integration
             path: skills/legal/compliance/payment-integration/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [payment, integration, integrate, stripe, paypal]
           - skill: legal.compliance.web_design_guidelines
             path: skills/legal/compliance/web-design-guidelines/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [design, guidelines, review, files, compliance]
       contract-and-proposal-writer:
         path: skills/legal/contract-and-proposal-writer/
@@ -6514,7 +6514,7 @@ domain_map:
         skills:
           - skill: legal.contract_and_proposal_writer
             path: skills/legal/contract-and-proposal-writer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [contract, proposal, writer, contract-and-proposal-writer, data]
       contracts:
         path: skills/legal/contracts/
@@ -6522,15 +6522,15 @@ domain_map:
         skills:
           - skill: legal.contracts.ai_native_cli
             path: skills/legal/contracts/ai-native-cli/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [native, design, spec, rules, building]
           - skill: legal.contracts.data_quality_frameworks
             path: skills/legal/contracts/data-quality-frameworks/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [data, quality, frameworks, implement, validation]
           - skill: legal.contracts.pydantic_models_py
             path: skills/legal/contracts/pydantic-models-py/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [pydantic, models, create, following, multi]
       knowledge-work:
         path: skills/legal/knowledge-work/
@@ -6563,7 +6563,7 @@ domain_map:
         skills:
           - skill: legal.legal_advisor
             path: skills/legal/legal-advisor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [legal, advisor, draft, privacy, policies]
       lex:
         path: skills/legal/lex/
@@ -6571,7 +6571,7 @@ domain_map:
         skills:
           - skill: legal.lex
             path: skills/legal/lex/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [centralized, truth, engine, cross, jurisdictional]
       mdr-745-specialist:
         path: skills/legal/mdr-745-specialist/
@@ -6579,7 +6579,7 @@ domain_map:
         skills:
           - skill: legal.mdr_745_specialist
             path: skills/legal/mdr-745-specialist/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [specialist, compliance, medical, device, classification]
       regulatory-affairs-head:
         path: skills/legal/regulatory-affairs-head/
@@ -6587,7 +6587,7 @@ domain_map:
         skills:
           - skill: legal.regulatory_affairs_head
             path: skills/legal/regulatory-affairs-head/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [regulatory, affairs, head, senior, manager]
 
   MARKETING:
@@ -6602,23 +6602,23 @@ domain_map:
         skills:
           - skill: marketing._source_marketingskills.skills.ab-test-setup
             path: skills/marketing/_source_marketingskills/skills/ab-test-setup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [ab-test-setup, when, the, plan, design]
           - skill: marketing._source_marketingskills.skills.ad-creative
             path: skills/marketing/_source_marketingskills/skills/ad-creative/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [ad-creative, when, the, generate, iterate]
           - skill: marketing._source_marketingskills.skills.ai-seo
             path: skills/marketing/_source_marketingskills/skills/ai-seo/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [ai-seo, when, the, optimize, content]
           - skill: marketing._source_marketingskills.skills.analytics-tracking
             path: skills/marketing/_source_marketingskills/skills/analytics-tracking/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [analytics-tracking, when, the, set, improve]
           - skill: marketing._source_marketingskills.skills.churn-prevention
             path: skills/marketing/_source_marketingskills/skills/churn-prevention/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [churn-prevention, when, the, reduce, churn]
           # ... +30 skills adicionais
       ab-test-setup:
@@ -6627,7 +6627,7 @@ domain_map:
         skills:
           - skill: marketing.ab_test_setup
             path: skills/marketing/ab-test-setup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [test, setup, when, plan, ab-test-setup]
       ad-creative:
         path: skills/marketing/ad-creative/
@@ -6635,7 +6635,7 @@ domain_map:
         skills:
           - skill: marketing.ad_creative
             path: skills/marketing/ad-creative/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [creative, when, generate, iterate, ad-creative]
       ai-seo:
         path: skills/marketing/ai-seo/
@@ -6643,7 +6643,7 @@ domain_map:
         skills:
           - skill: marketing.ai_seo
             path: skills/marketing/ai-seo/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [when, optimize, content, search, ai-seo]
       analytics-tracking:
         path: skills/marketing/analytics-tracking/
@@ -6651,7 +6651,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.analytics_tracking
             path: skills/marketing/analytics-tracking/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [analytics, tracking, when, improve, analytics-tracking]
       brand-guidelines:
         path: skills/marketing/brand-guidelines/
@@ -6659,7 +6659,7 @@ domain_map:
         skills:
           - skill: marketing.brand_guidelines
             path: skills/marketing/brand-guidelines/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [brand, guidelines, applies, anthropic, official]
       brand-review:
         path: skills/marketing/brand-review/
@@ -6703,7 +6703,7 @@ domain_map:
         skills:
           - skill: marketing.chief_of_staff
             path: skills/marketing/chief-of-staff/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [chief, staff, suite, orchestration, layer]
       churn-prevention:
         path: skills/marketing/churn-prevention/
@@ -6711,7 +6711,7 @@ domain_map:
         skills:
           - skill: marketing.churn_prevention
             path: skills/marketing/churn-prevention/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [churn, prevention, when, reduce, churn-prevention]
       cold-email:
         path: skills/marketing/cold-email/
@@ -6719,7 +6719,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.cold_email
             path: skills/marketing/cold-email/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cold, email, write, emails, follow]
       community-marketing:
         path: skills/marketing/community-marketing/
@@ -6727,7 +6727,7 @@ domain_map:
         skills:
           - skill: marketing.community_marketing
             path: skills/marketing/community-marketing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [community, marketing, build, leverage, online]
       competitive-ads-extractor:
         path: skills/marketing/competitive-ads-extractor/
@@ -6735,7 +6735,7 @@ domain_map:
         skills:
           - skill: marketing.competitive_ads_extractor
             path: skills/marketing/competitive-ads-extractor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [competitive, extractor, extracts, analyzes, competitors]
       competitive-brief:
         path: skills/marketing/competitive-brief/
@@ -6751,7 +6751,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.competitor_alternatives
             path: skills/marketing/competitor-alternatives/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [competitor, alternatives, when, create, competitor-alternatives]
       composio-skills:
         path: skills/marketing/composio-skills/
@@ -6759,7 +6759,7 @@ domain_map:
         skills:
           - skill: marketing.composio_skills
             path: skills/marketing/composio-skills/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [composio, skills, automate, activecampaign, tasks]
       content-creation:
         path: skills/marketing/content-creation/
@@ -6775,7 +6775,7 @@ domain_map:
         skills:
           - skill: marketing.content_creator
             path: skills/marketing/content-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [content, creator, deprecated, redirect, skill]
       content-marketer:
         path: skills/marketing/content-marketer/
@@ -6783,7 +6783,7 @@ domain_map:
         skills:
           - skill: marketing.content_marketer
             path: skills/marketing/content-marketer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [content, marketer, elite, marketing, strategist]
       content-strategy:
         path: skills/marketing/content-strategy/
@@ -6791,7 +6791,7 @@ domain_map:
         skills:
           - skill: marketing.content_strategy
             path: skills/marketing/content-strategy/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [content, strategy, when, plan, content-strategy]
       context-engine:
         path: skills/marketing/context-engine/
@@ -6799,7 +6799,7 @@ domain_map:
         skills:
           - skill: marketing.context_engine
             path: skills/marketing/context-engine/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [context, engine, loads, manages, company]
       copy-editing:
         path: skills/marketing/copy-editing/
@@ -6807,7 +6807,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.copy_editing
             path: skills/marketing/copy-editing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [copy, editing, when, edit, copy-editing]
       copywriting:
         path: skills/marketing/copywriting/
@@ -6815,7 +6815,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.copywriting
             path: skills/marketing/copywriting/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [copywriting, when, write, rewrite, the]
       customer-research:
         path: skills/marketing/customer-research/
@@ -6823,7 +6823,7 @@ domain_map:
         skills:
           - skill: marketing.customer_research
             path: skills/marketing/customer-research/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [customer, research, when, conduct, customer-research]
       demo-video:
         path: skills/marketing/demo-video/
@@ -6831,7 +6831,7 @@ domain_map:
         skills:
           - skill: marketing.demo_video
             path: skills/marketing/demo-video/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [demo, video, when, create, demo-video]
       draft-content:
         path: skills/marketing/draft-content/
@@ -6847,7 +6847,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.email_sequence
             path: skills/marketing/email-sequence/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [email, sequence, when, create, email-sequence]
       email-systems:
         path: skills/marketing/email-systems/
@@ -6855,7 +6855,7 @@ domain_map:
         skills:
           - skill: marketing.email_systems
             path: skills/marketing/email-systems/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [email, systems, highest, marketing, channel]
       form-cro:
         path: skills/marketing/form-cro/
@@ -6863,7 +6863,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.form_cro
             path: skills/marketing/form-cro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [form, when, optimize, that, form-cro]
       free-tool-strategy:
         path: skills/marketing/free-tool-strategy/
@@ -6871,7 +6871,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.free_tool_strategy
             path: skills/marketing/free-tool-strategy/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [free, tool, strategy, when, free-tool-strategy]
       full-funnel-optimizer:
         path: skills/marketing/full-funnel-optimizer/
@@ -6886,7 +6886,7 @@ domain_map:
         skills:
           - skill: marketing.growth_engine
             path: skills/marketing/growth-engine/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [growth, engine, motor, crescimento, para]
       launch-strategy:
         path: skills/marketing/launch-strategy/
@@ -6894,7 +6894,7 @@ domain_map:
         skills:
           - skill: marketing.launch_strategy
             path: skills/marketing/launch-strategy/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [launch, strategy, when, plan, launch-strategy]
       lead-magnets:
         path: skills/marketing/lead-magnets/
@@ -6902,7 +6902,7 @@ domain_map:
         skills:
           - skill: marketing.lead_magnets
             path: skills/marketing/lead-magnets/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [lead, magnets, when, create, lead-magnets]
       lead-research-assistant:
         path: skills/marketing/lead-research-assistant/
@@ -6910,7 +6910,7 @@ domain_map:
         skills:
           - skill: marketing.lead_research_assistant
             path: skills/marketing/lead-research-assistant/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [lead, research, assistant, identifies, high]
       marketing-context:
         path: skills/marketing/marketing-context/
@@ -6918,7 +6918,7 @@ domain_map:
         skills:
           - skill: marketing.marketing_context
             path: skills/marketing/marketing-context/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [marketing, context, create, maintain, document]
       marketing-ideas:
         path: skills/marketing/marketing-ideas/
@@ -6926,7 +6926,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.marketing_ideas
             path: skills/marketing/marketing-ideas/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [marketing, ideas, when, inspiration, marketing-ideas]
       marketing-ops:
         path: skills/marketing/marketing-ops/
@@ -6934,7 +6934,7 @@ domain_map:
         skills:
           - skill: marketing.marketing_ops
             path: skills/marketing/marketing-ops/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [marketing, central, router, skill, ecosystem]
       marketing-psychology:
         path: skills/marketing/marketing-psychology/
@@ -6942,7 +6942,7 @@ domain_map:
         skills:
           - skill: marketing.marketing_psychology
             path: skills/marketing/marketing-psychology/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [marketing, psychology, when, apply, marketing-psychology]
       marketing-strategy-pmm:
         path: skills/marketing/marketing-strategy-pmm/
@@ -6950,7 +6950,7 @@ domain_map:
         skills:
           - skill: marketing.marketing_strategy_pmm
             path: skills/marketing/marketing-strategy-pmm/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [marketing, strategy, product, skill, positioning]
       meeting-analyzer:
         path: skills/marketing/meeting-analyzer/
@@ -6958,7 +6958,7 @@ domain_map:
         skills:
           - skill: marketing.meeting_analyzer
             path: skills/marketing/meeting-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [meeting, analyzer, analyzes, transcripts, recordings]
       onboarding-cro:
         path: skills/marketing/onboarding-cro/
@@ -6966,7 +6966,7 @@ domain_map:
         skills:
           - skill: marketing.onboarding_cro
             path: skills/marketing/onboarding-cro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [onboarding, when, optimize, post, onboarding-cro]
       page-cro:
         path: skills/marketing/page-cro/
@@ -6974,7 +6974,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.page_cro
             path: skills/marketing/page-cro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [page, when, optimize, improve, page-cro]
       paid-ads:
         path: skills/marketing/paid-ads/
@@ -6982,7 +6982,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.paid_ads
             path: skills/marketing/paid-ads/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [paid, when, paid-ads, the, advertising]
       paywall-upgrade-cro:
         path: skills/marketing/paywall-upgrade-cro/
@@ -6990,7 +6990,7 @@ domain_map:
         skills:
           - skill: marketing.paywall_upgrade_cro
             path: skills/marketing/paywall-upgrade-cro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [paywall, upgrade, when, create, paywall-upgrade-cro]
       performance-report:
         path: skills/marketing/performance-report/
@@ -7006,7 +7006,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.popup_cro
             path: skills/marketing/popup-cro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [popup, when, create, optimize, popup-cro]
       pricing-strategy:
         path: skills/marketing/pricing-strategy/
@@ -7014,7 +7014,7 @@ domain_map:
         skills:
           - skill: marketing.pricing_strategy
             path: skills/marketing/pricing-strategy/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [pricing, strategy, when, pricing-strategy, the]
       product-marketing-context:
         path: skills/marketing/product-marketing-context/
@@ -7022,7 +7022,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.product_marketing_context
             path: skills/marketing/product-marketing-context/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [product, marketing, context, when, product-marketing-context]
       programmatic-seo:
         path: skills/marketing/programmatic-seo/
@@ -7030,7 +7030,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.programmatic_seo
             path: skills/marketing/programmatic-seo/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [programmatic, when, create, driven, programmatic-seo]
       referral-program:
         path: skills/marketing/referral-program/
@@ -7038,7 +7038,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.referral_program
             path: skills/marketing/referral-program/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [referral, program, when, create, referral-program]
       resume:
         path: skills/marketing/resume/
@@ -7046,7 +7046,7 @@ domain_map:
         skills:
           - skill: marketing.resume
             path: skills/marketing/resume/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [resume, paused, experiment, checkout, branch]
       revops:
         path: skills/marketing/revops/
@@ -7054,7 +7054,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.revops
             path: skills/marketing/revops/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [revops, when, the, revenue, operations]
       sales-enablement:
         path: skills/marketing/sales-enablement/
@@ -7062,7 +7062,7 @@ domain_map:
         skills:
           - skill: marketing.sales_enablement
             path: skills/marketing/sales-enablement/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [sales, enablement, when, create, sales-enablement]
       schema-markup:
         path: skills/marketing/schema-markup/
@@ -7070,7 +7070,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.schema_markup
             path: skills/marketing/schema-markup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [schema, markup, when, optimize, schema-markup]
       sendgrid-automation:
         path: skills/marketing/sendgrid-automation/
@@ -7078,7 +7078,7 @@ domain_map:
         skills:
           - skill: marketing.sendgrid_automation
             path: skills/marketing/sendgrid-automation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [sendgrid, automation, automate, email, delivery]
       seo:
         path: skills/marketing/seo/
@@ -7086,23 +7086,23 @@ domain_map:
         skills:
           - skill: marketing.seo.content_creator
             path: skills/marketing/seo/content-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [content, creator, professional, grade, brand]
           - skill: marketing.seo.fixing_metadata
             path: skills/marketing/seo/fixing-metadata/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [fixing, metadata, audit, html, page]
           - skill: marketing.seo.local_legal_seo_audit
             path: skills/marketing/seo/local-legal-seo-audit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [local, legal, audit, improve, firms]
           - skill: marketing.seo.programmatic_seo
             path: skills/marketing/seo/programmatic-seo/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [programmatic, design, evaluate, strategies, creating]
           - skill: marketing.seo.schema_markup
             path: skills/marketing/seo/schema-markup/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [schema, markup, design, validate, optimize]
           # ... +31 skills adicionais
       seo-audit:
@@ -7111,7 +7111,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.seo_audit
             path: skills/marketing/seo-audit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [audit, when, review, diagnose, seo-audit]
       signup-flow-cro:
         path: skills/marketing/signup-flow-cro/
@@ -7119,7 +7119,7 @@ domain_map:
         skills:
           - skill: marketing.signup_flow_cro
             path: skills/marketing/signup-flow-cro/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [signup, flow, when, optimize, signup-flow-cro]
       site-architecture:
         path: skills/marketing/site-architecture/
@@ -7127,7 +7127,7 @@ domain_map:
         skills:
           - skill: marketingskills.marketing.site_architecture
             path: skills/marketing/site-architecture/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [site, architecture, when, plan, site-architecture]
       skills:
         path: skills/marketing/skills/
@@ -7143,7 +7143,7 @@ domain_map:
         skills:
           - skill: marketing.social_content
             path: skills/marketing/social-content/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [social, content, when, social-content, the]
       social-media-analyzer:
         path: skills/marketing/social-media-analyzer/
@@ -7151,7 +7151,7 @@ domain_map:
         skills:
           - skill: marketing.social_media_analyzer
             path: skills/marketing/social-media-analyzer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [social, media, analyzer, campaign, analysis]
       video-downloader:
         path: skills/marketing/video-downloader/
@@ -7159,7 +7159,7 @@ domain_map:
         skills:
           - skill: marketing.video_downloader
             path: skills/marketing/video-downloader/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [video, downloader, download, youtube, videos]
       x-twitter-growth:
         path: skills/marketing/x-twitter-growth/
@@ -7167,7 +7167,7 @@ domain_map:
         skills:
           - skill: marketing.x_twitter_growth
             path: skills/marketing/x-twitter-growth/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [twitter, growth, engine, building, audience]
 
   MATHEMATICS:
@@ -7312,7 +7312,7 @@ domain_map:
         skills:
           - skill: product_management.product_manager
             path: skills/product-management/product-manager/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [product, manager, senior, agent, knowledge]
       product-manager-toolkit:
         path: skills/product-management/product-manager-toolkit/
@@ -7320,7 +7320,7 @@ domain_map:
         skills:
           - skill: product_management.product_manager_toolkit
             path: skills/product-management/product-manager-toolkit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [product, manager, toolkit, essential, tools]
       roadmap-update:
         path: skills/product-management/roadmap-update/
@@ -7383,7 +7383,7 @@ domain_map:
         skills:
           - skill: productivity.concise_planning
             path: skills/productivity/concise-planning/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [concise, planning, user, asks, plan]
       documents:
         path: skills/productivity/documents/
@@ -7411,7 +7411,7 @@ domain_map:
         skills:
           - skill: productivity.office_productivity
             path: skills/productivity/office-productivity/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [office, productivity, workflow, covering, document]
       skills:
         path: skills/productivity/skills/
@@ -7451,23 +7451,23 @@ domain_map:
         skills:
           - skill: productivity.writing.avoid_ai_writing
             path: skills/productivity/writing/avoid-ai-writing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [avoid, writing, audit, rewrite, content]
           - skill: productivity.writing.beautiful_prose
             path: skills/productivity/writing/beautiful-prose/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [beautiful, prose, hard, edged, writing]
           - skill: productivity.writing.blog_writing_guide
             path: skills/productivity/writing/blog-writing-guide/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [blog, writing, guide, skill, enforces]
           - skill: productivity.writing.citation_management
             path: skills/productivity/writing/citation-management/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [citation, management, manage, citations, systematically]
           - skill: productivity.writing.cloudformation_best_practices
             path: skills/productivity/writing/cloudformation-best-practices/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cloudformation, best, practices, template, optimization]
           # ... +8 skills adicionais
 
@@ -7568,7 +7568,7 @@ domain_map:
         skills:
           - skill: sales.crm.hubspot_integration
             path: skills/sales/crm/hubspot-integration/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [hubspot, integration, expert, patterns, oauth]
       daily-briefing:
         path: skills/sales/daily-briefing/
@@ -7600,7 +7600,7 @@ domain_map:
         skills:
           - skill: sales.linkedin_cli
             path: skills/sales/linkedin-cli/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [linkedin, automating, fetch, profiles, search]
       pipeline-review:
         path: skills/sales/pipeline-review/
@@ -7616,7 +7616,7 @@ domain_map:
         skills:
           - skill: sales.sales_automator
             path: skills/sales/sales-automator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [sales, automator, draft, cold, emails]
       sales-enablement:
         path: skills/sales/sales-enablement/
@@ -7624,7 +7624,7 @@ domain_map:
         skills:
           - skill: sales.sales_enablement
             path: skills/sales/sales-enablement/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [sales, enablement, create, collateral, decks]
       salesforce-development:
         path: skills/sales/salesforce-development/
@@ -7632,7 +7632,7 @@ domain_map:
         skills:
           - skill: sales.salesforce_development
             path: skills/sales/salesforce-development/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [salesforce, development, expert, patterns, platform]
       skills:
         path: skills/sales/skills/
@@ -7680,23 +7680,23 @@ domain_map:
         skills:
           - skill: science.life-sciences._source.clinical-trial-protocol-skill
             path: skills/science/life-sciences/_source/clinical-trial-protocol-skill/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [clinical-trial-protocol-skill, generate, clinical, trial, protocols]
           - skill: science.life-sciences._source.instrument-data-to-allotrope
             path: skills/science/life-sciences/_source/instrument-data-to-allotrope/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [instrument-data-to-allotrope, convert, laboratory, instrument, output]
           - skill: science.life-sciences._source.nextflow-development
             path: skills/science/life-sciences/_source/nextflow-development/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [nextflow-development, run, nf-core, bioinformatics, pipelines]
           - skill: science.life-sciences._source.scientific-problem-selection
             path: skills/science/life-sciences/_source/scientific-problem-selection/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [scientific-problem-selection, this, skill, should, when]
           - skill: science.life-sciences._source.scvi-tools
             path: skills/science/life-sciences/_source/scvi-tools/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [scvi-tools, deep, learning, for, single-cell]
           # ... +13 skills adicionais
 
@@ -7712,7 +7712,7 @@ domain_map:
         skills:
           - skill: science_research.wiki_researcher
             path: skills/science_research/wiki-researcher/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wiki, researcher, conducts, multi, turn]
 
   SECURITY:
@@ -7727,7 +7727,7 @@ domain_map:
         skills:
           - skill: security.007
             path: skills/security/007/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, audit, hardening, threat, modeling]
       anti-reversing-techniques:
         path: skills/security/anti-reversing-techniques/
@@ -7735,7 +7735,7 @@ domain_map:
         skills:
           - skill: security.anti_reversing_techniques
             path: skills/security/anti-reversing-techniques/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [anti, reversing, techniques, authorized, only]
       antigravity-workflows:
         path: skills/security/antigravity-workflows/
@@ -7743,7 +7743,7 @@ domain_map:
         skills:
           - skill: security.antigravity_workflows
             path: skills/security/antigravity-workflows/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [antigravity, workflows, orchestrate, multiple, skills]
       api-endpoint-builder:
         path: skills/security/api-endpoint-builder/
@@ -7751,7 +7751,7 @@ domain_map:
         skills:
           - skill: security.api_endpoint_builder
             path: skills/security/api-endpoint-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [endpoint, builder, builds, production, ready]
       api-security-best-practices:
         path: skills/security/api-security-best-practices/
@@ -7759,7 +7759,7 @@ domain_map:
         skills:
           - skill: security.api_security_best_practices
             path: skills/security/api-security-best-practices/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, best, practices, implement, secure]
       attack-tree-construction:
         path: skills/security/attack-tree-construction/
@@ -7767,7 +7767,7 @@ domain_map:
         skills:
           - skill: security.attack_tree_construction
             path: skills/security/attack-tree-construction/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [attack, tree, construction, build, comprehensive]
       backend-security-coder:
         path: skills/security/backend-security-coder/
@@ -7775,7 +7775,7 @@ domain_map:
         skills:
           - skill: security.backend_security_coder
             path: skills/security/backend-security-coder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [backend, security, coder, expert, secure]
       burp-suite-testing:
         path: skills/security/burp-suite-testing/
@@ -7783,7 +7783,7 @@ domain_map:
         skills:
           - skill: security.burp_suite_testing
             path: skills/security/burp-suite-testing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [burp, suite, testing, execute, comprehensive]
       burpsuite-project-parser:
         path: skills/security/burpsuite-project-parser/
@@ -7791,7 +7791,7 @@ domain_map:
         skills:
           - skill: security.burpsuite_project_parser
             path: skills/security/burpsuite-project-parser/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [burpsuite, project, parser, searches, explores]
       cc-skill-security-review:
         path: skills/security/cc-skill-security-review/
@@ -7799,7 +7799,7 @@ domain_map:
         skills:
           - skill: security.cc_skill_security_review
             path: skills/security/cc-skill-security-review/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [skill, security, review, ensures, code]
       cicd-automation-workflow-automate:
         path: skills/security/cicd-automation-workflow-automate/
@@ -7807,7 +7807,7 @@ domain_map:
         skills:
           - skill: security.cicd_automation_workflow_automate
             path: skills/security/cicd-automation-workflow-automate/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [cicd, automation, workflow, automate, expert]
       code-review-checklist:
         path: skills/security/code-review-checklist/
@@ -7815,7 +7815,7 @@ domain_map:
         skills:
           - skill: security.code_review_checklist
             path: skills/security/code-review-checklist/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [code, review, checklist, comprehensive, conducting]
       codebase-audit-pre-push:
         path: skills/security/codebase-audit-pre-push/
@@ -7823,7 +7823,7 @@ domain_map:
         skills:
           - skill: security.codebase_audit_pre_push
             path: skills/security/codebase-audit-pre-push/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [codebase, audit, push, deep, before]
       codebase-cleanup-deps-audit:
         path: skills/security/codebase-cleanup-deps-audit/
@@ -7831,7 +7831,7 @@ domain_map:
         skills:
           - skill: security.codebase_cleanup_deps_audit
             path: skills/security/codebase-cleanup-deps-audit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [codebase, cleanup, deps, audit, dependency]
       cryptography:
         path: skills/security/cryptography/
@@ -7839,15 +7839,15 @@ domain_map:
         skills:
           - skill: security.cryptography.alpha_vantage
             path: skills/security/cryptography/alpha-vantage/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [alpha, vantage, access, years, global]
           - skill: security.cryptography.constant_time_analysis
             path: skills/security/cryptography/constant-time-analysis/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [constant, time, analysis, analyze, cryptographic]
           - skill: security.cryptography.emblemai_crypto_wallet
             path: skills/security/cryptography/emblemai-crypto-wallet/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [emblemai, crypto, wallet, management, across]
       dependency-management-deps-audit:
         path: skills/security/dependency-management-deps-audit/
@@ -7855,7 +7855,7 @@ domain_map:
         skills:
           - skill: security.dependency_management_deps_audit
             path: skills/security/dependency-management-deps-audit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [dependency, management, deps, audit, security]
       differential-review:
         path: skills/security/differential-review/
@@ -7863,7 +7863,7 @@ domain_map:
         skills:
           - skill: security.differential_review
             path: skills/security/differential-review/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [differential, review, security, focused, code]
       ethical-hacking-methodology:
         path: skills/security/ethical-hacking-methodology/
@@ -7871,7 +7871,7 @@ domain_map:
         skills:
           - skill: security.ethical_hacking_methodology
             path: skills/security/ethical-hacking-methodology/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [ethical, hacking, methodology, master, complete]
       find-bugs:
         path: skills/security/find-bugs/
@@ -7879,7 +7879,7 @@ domain_map:
         skills:
           - skill: security.find_bugs
             path: skills/security/find-bugs/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [find, bugs, security, vulnerabilities, code]
       firmware-analyst:
         path: skills/security/firmware-analyst/
@@ -7887,7 +7887,7 @@ domain_map:
         skills:
           - skill: security.firmware_analyst
             path: skills/security/firmware-analyst/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [firmware, analyst, expert, specializing, embedded]
       gha-security-review:
         path: skills/security/gha-security-review/
@@ -7895,7 +7895,7 @@ domain_map:
         skills:
           - skill: security.gha_security_review
             path: skills/security/gha-security-review/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, review, find, exploitable, vulnerabilities]
       metasploit-framework:
         path: skills/security/metasploit-framework/
@@ -7903,7 +7903,7 @@ domain_map:
         skills:
           - skill: security.metasploit_framework
             path: skills/security/metasploit-framework/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [metasploit, framework, authorized, only, skill]
       mobile-security-coder:
         path: skills/security/mobile-security-coder/
@@ -7911,7 +7911,7 @@ domain_map:
         skills:
           - skill: security.mobile_security_coder
             path: skills/security/mobile-security-coder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [mobile, security, coder, expert, secure]
       network-101:
         path: skills/security/network-101/
@@ -7919,7 +7919,7 @@ domain_map:
         skills:
           - skill: security.network_101
             path: skills/security/network-101/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [network, configure, test, common, services]
       network-engineer:
         path: skills/security/network-engineer/
@@ -7927,7 +7927,7 @@ domain_map:
         skills:
           - skill: security.network_engineer
             path: skills/security/network-engineer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [network, engineer, expert, specializing, modern]
       pci-compliance:
         path: skills/security/pci-compliance/
@@ -7935,7 +7935,7 @@ domain_map:
         skills:
           - skill: security.pci_compliance
             path: skills/security/pci-compliance/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [compliance, master, payment, card, industry]
       pentest-commands:
         path: skills/security/pentest-commands/
@@ -7943,7 +7943,7 @@ domain_map:
         skills:
           - skill: security.pentest_commands
             path: skills/security/pentest-commands/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [pentest, commands, provide, comprehensive, command]
       pentesting:
         path: skills/security/pentesting/
@@ -7951,19 +7951,19 @@ domain_map:
         skills:
           - skill: security.pentesting.active_directory_attacks
             path: skills/security/pentesting/active-directory-attacks/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [active, directory, attacks, provide, comprehensive]
           - skill: security.pentesting.ffuf_web_fuzzing
             path: skills/security/pentesting/ffuf-web-fuzzing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [ffuf, fuzzing, expert, guidance, during]
           - skill: security.pentesting.pentest_checklist
             path: skills/security/pentesting/pentest-checklist/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [pentest, checklist, provide, comprehensive, planning]
           - skill: security.pentesting.windows_privilege_escalation
             path: skills/security/pentesting/windows-privilege-escalation/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [windows, privilege, escalation, provide, systematic]
       protocol-reverse-engineering:
         path: skills/security/protocol-reverse-engineering/
@@ -7971,7 +7971,7 @@ domain_map:
         skills:
           - skill: security.protocol_reverse_engineering
             path: skills/security/protocol-reverse-engineering/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [protocol, reverse, engineering, comprehensive, techniques]
       reverse-engineering:
         path: skills/security/reverse-engineering/
@@ -7979,7 +7979,7 @@ domain_map:
         skills:
           - skill: security.reverse_engineering.reverse_engineer
             path: skills/security/reverse-engineering/reverse-engineer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [reverse, engineer, expert, specializing, binary]
       sast-configuration:
         path: skills/security/sast-configuration/
@@ -7987,7 +7987,7 @@ domain_map:
         skills:
           - skill: security.sast_configuration
             path: skills/security/sast-configuration/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [sast, configuration, static, application, security]
       scanning-tools:
         path: skills/security/scanning-tools/
@@ -7995,7 +7995,7 @@ domain_map:
         skills:
           - skill: security.scanning_tools
             path: skills/security/scanning-tools/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [scanning, tools, master, essential, security]
       security-audit:
         path: skills/security/security-audit/
@@ -8003,7 +8003,7 @@ domain_map:
         skills:
           - skill: security.security_audit
             path: skills/security/security-audit/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, audit, comprehensive, auditing, workflow]
       security-auditor:
         path: skills/security/security-auditor/
@@ -8011,7 +8011,7 @@ domain_map:
         skills:
           - skill: security.security_auditor
             path: skills/security/security-auditor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, auditor, expert, specializing, devsecops]
       security-bluebook-builder:
         path: skills/security/security-bluebook-builder/
@@ -8019,7 +8019,7 @@ domain_map:
         skills:
           - skill: security.security_bluebook_builder
             path: skills/security/security-bluebook-builder/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, bluebook, builder, build, minimal]
       security-compliance-compliance-check:
         path: skills/security/security-compliance-compliance-check/
@@ -8027,7 +8027,7 @@ domain_map:
         skills:
           - skill: security.security_compliance_compliance_check
             path: skills/security/security-compliance-compliance-check/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, compliance, check, expert, specializing]
       security-requirement-extraction:
         path: skills/security/security-requirement-extraction/
@@ -8035,7 +8035,7 @@ domain_map:
         skills:
           - skill: security.security_requirement_extraction
             path: skills/security/security-requirement-extraction/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, requirement, extraction, derive, requirements]
       security-scanning-security-dependencies:
         path: skills/security/security-scanning-security-dependencies/
@@ -8043,7 +8043,7 @@ domain_map:
         skills:
           - skill: security.security_scanning_security_dependencies
             path: skills/security/security-scanning-security-dependencies/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, scanning, dependencies, expert, specializing]
       security-scanning-security-hardening:
         path: skills/security/security-scanning-security-hardening/
@@ -8051,7 +8051,7 @@ domain_map:
         skills:
           - skill: security.security_scanning_security_hardening
             path: skills/security/security-scanning-security-hardening/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, scanning, hardening, coordinate, multi]
       security-scanning-security-sast:
         path: skills/security/security-scanning-security-sast/
@@ -8059,7 +8059,7 @@ domain_map:
         skills:
           - skill: security.security_scanning_security_sast
             path: skills/security/security-scanning-security-sast/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [security, scanning, sast, static, application]
       semgrep-rule-creator:
         path: skills/security/semgrep-rule-creator/
@@ -8067,7 +8067,7 @@ domain_map:
         skills:
           - skill: security.semgrep_rule_creator
             path: skills/security/semgrep-rule-creator/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [semgrep, rule, creator, creates, custom]
       service-mesh-expert:
         path: skills/security/service-mesh-expert/
@@ -8075,7 +8075,7 @@ domain_map:
         skills:
           - skill: security.service_mesh_expert
             path: skills/security/service-mesh-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [service, mesh, expert, architect, specializing]
       skill-scanner:
         path: skills/security/skill-scanner/
@@ -8083,7 +8083,7 @@ domain_map:
         skills:
           - skill: security.skill_scanner
             path: skills/security/skill-scanner/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [skill, scanner, scan, agent, skills]
       smtp-penetration-testing:
         path: skills/security/smtp-penetration-testing/
@@ -8091,7 +8091,7 @@ domain_map:
         skills:
           - skill: security.smtp_penetration_testing
             path: skills/security/smtp-penetration-testing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [smtp, penetration, testing, conduct, comprehensive]
       solidity-security:
         path: skills/security/solidity-security/
@@ -8099,7 +8099,7 @@ domain_map:
         skills:
           - skill: security.solidity_security
             path: skills/security/solidity-security/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [solidity, security, master, smart, contract]
       ssh-penetration-testing:
         path: skills/security/ssh-penetration-testing/
@@ -8107,7 +8107,7 @@ domain_map:
         skills:
           - skill: security.ssh_penetration_testing
             path: skills/security/ssh-penetration-testing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [penetration, testing, conduct, comprehensive, security]
       stride-analysis-patterns:
         path: skills/security/stride-analysis-patterns/
@@ -8115,7 +8115,7 @@ domain_map:
         skills:
           - skill: security.stride_analysis_patterns
             path: skills/security/stride-analysis-patterns/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [stride, analysis, patterns, apply, methodology]
       supply-chain-risk-auditor:
         path: skills/security/supply-chain-risk-auditor/
@@ -8123,7 +8123,7 @@ domain_map:
         skills:
           - skill: security.supply_chain_risk_auditor
             path: skills/security/supply-chain-risk-auditor/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [supply, chain, risk, auditor, identifies]
       threat-mitigation-mapping:
         path: skills/security/threat-mitigation-mapping/
@@ -8131,7 +8131,7 @@ domain_map:
         skills:
           - skill: security.threat_mitigation_mapping
             path: skills/security/threat-mitigation-mapping/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [threat, mitigation, mapping, identified, threats]
       threat-modeling-expert:
         path: skills/security/threat-modeling-expert/
@@ -8139,7 +8139,7 @@ domain_map:
         skills:
           - skill: security.threat_modeling_expert
             path: skills/security/threat-modeling-expert/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [threat, modeling, expert, methodologies, security]
       top-web-vulnerabilities:
         path: skills/security/top-web-vulnerabilities/
@@ -8147,7 +8147,7 @@ domain_map:
         skills:
           - skill: security.top_web_vulnerabilities
             path: skills/security/top-web-vulnerabilities/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [vulnerabilities, provide, comprehensive, structured, reference]
       variant-analysis:
         path: skills/security/variant-analysis/
@@ -8155,7 +8155,7 @@ domain_map:
         skills:
           - skill: security.variant_analysis
             path: skills/security/variant-analysis/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [variant, analysis, find, similar, vulnerabilities]
       vibers-code-review:
         path: skills/security/vibers-code-review/
@@ -8163,7 +8163,7 @@ domain_map:
         skills:
           - skill: security.vibers_code_review
             path: skills/security/vibers-code-review/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [vibers, code, review, human, workflow]
       vulnerability-scanner:
         path: skills/security/vulnerability-scanner/
@@ -8171,7 +8171,7 @@ domain_map:
         skills:
           - skill: security.vulnerability_scanner
             path: skills/security/vulnerability-scanner/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [vulnerability, scanner, advanced, analysis, principles]
       wireshark-analysis:
         path: skills/security/wireshark-analysis/
@@ -8179,7 +8179,7 @@ domain_map:
         skills:
           - skill: security.wireshark_analysis
             path: skills/security/wireshark-analysis/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [wireshark, analysis, execute, comprehensive, network]
 
   WEB3:
@@ -8194,11 +8194,11 @@ domain_map:
         skills:
           - skill: web3.blockchain.blockchain_developer
             path: skills/web3/blockchain/blockchain-developer/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [blockchain, developer, build, production, ready]
           - skill: web3.blockchain.spec_to_code_compliance
             path: skills/web3/blockchain/spec-to-code-compliance/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [spec, code, compliance, verifies, implements]
       defi:
         path: skills/web3/defi/
@@ -8206,23 +8206,23 @@ domain_map:
         skills:
           - skill: web3.defi.20_andruia_niche_intelligence
             path: skills/web3/defi/20-andruia-niche-intelligence/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [andruia, niche, intelligence, estratega, inteligencia]
           - skill: web3.defi.c4_component
             path: skills/web3/defi/c4-component/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [component, expert, level, documentation, specialist]
           - skill: web3.defi.context_fundamentals
             path: skills/web3/defi/context-fundamentals/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [context, fundamentals, complete, state, available]
           - skill: web3.defi.ddd_context_mapping
             path: skills/web3/defi/ddd-context-mapping/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [context, mapping, relationships, between, bounded]
           - skill: web3.defi.defi_protocol_templates
             path: skills/web3/defi/defi-protocol-templates/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [defi, protocol, templates, implement, protocols]
           # ... +5 skills adicionais
       nft:
@@ -8231,7 +8231,7 @@ domain_map:
         skills:
           - skill: web3.nft.nft_standards
             path: skills/web3/nft/nft-standards/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [standards, master, metadata, best, practices]
       web3-testing:
         path: skills/web3/web3-testing/
@@ -8239,7 +8239,7 @@ domain_map:
         skills:
           - skill: web3.web3_testing
             path: skills/web3/web3-testing/SKILL.md
-            status: CANDIDATE
+            status: ADOPTED
             anchors: [web3, testing, master, comprehensive, strategies]
 
 ```
@@ -8249,15 +8249,17 @@ domain_map:
 ## Estatísticas de Geração
 
 **Por Status:**
-- CANDIDATE: 3520 (93.0%)
-- ADOPTED: 259 (6.8%)
+- ADOPTED: 3778 (99.8%)
 - UNKNOWN: 5 (0.1%)
+- CANDIDATE: 1 (0.0%)
 
 **Por Tier:**
 - ADAPTED: 2526 (66.8%)
-- IMPORTED: 1189 (31.4%)
+- 3: 835 (22.1%)
+- 2: 326 (8.6%)
+- IMPORTED: 48 (1.3%)
 - COMMUNITY: 37 (1.0%)
-- 2: 26 (0.7%)
+- 1: 6 (0.2%)
 - SUPER: 5 (0.1%)
 - STANDARD: 1 (0.0%)
 
@@ -8275,4 +8277,4 @@ domain_map:
 
 ---
 
-*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-18 02:11 UTC*
+*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-18 09:35 UTC*

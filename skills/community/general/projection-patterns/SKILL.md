@@ -4,7 +4,7 @@ name: projection-patterns
 description: "Use — "
   views, or optimizing query performance in event-sourced systems.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/projection-patterns
 anchors:
 - projection

@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.autonomous_agents
 name: autonomous-agents
 description: "Apply — Autonomous agents are AI systems that can independently decompose"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/autonomous-agents
 anchors:
 - autonomous

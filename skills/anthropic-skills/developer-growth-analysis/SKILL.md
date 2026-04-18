@@ -3,10 +3,20 @@ name: developer-growth-analysis
 description: "Apply — Analyzes your recent Claude Code chat history to identify coding patterns, development gaps, and areas for improvement, curates relevant learning resources from HackerNews, and aut"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.developer-growth-analysis
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: true, approval_required: false}
 anchors:
   - llm
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from developer growth analysis"
 ---
 
 # Developer Growth Analysis

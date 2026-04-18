@@ -4,7 +4,7 @@ name: reddit-automation
 description: "Apply — "
   top content. Always search tools first for current schemas.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/reddit-automation
 anchors:
 - reddit

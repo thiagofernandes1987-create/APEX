@@ -3,7 +3,7 @@ skill_id: marketing.seo.seo_hreflang
 name: seo-hreflang
 description: "Create — >"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-hreflang
 anchors:
 - hreflang

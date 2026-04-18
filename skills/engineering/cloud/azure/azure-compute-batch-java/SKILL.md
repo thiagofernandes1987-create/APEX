@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_compute_batch_java
 name: azure-compute-batch-java
 description: "Implement — Azure Batch SDK for Java. Run large-scale parallel and HPC batch jobs with pools, jobs, tasks, and compute nodes."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-compute-batch-java
 anchors:
 - azure

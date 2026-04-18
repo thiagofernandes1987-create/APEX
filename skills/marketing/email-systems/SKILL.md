@@ -3,7 +3,7 @@ skill_id: marketing.email_systems
 name: email-systems
 description: "Create — Email has the highest ROI of any marketing channel. $36 for every"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/email-systems
 anchors:
 - email

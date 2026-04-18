@@ -4,7 +4,7 @@ name: bazel-build-optimization
 description: "Implement — "
   or optimizing build performance for enterprise codebases.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/build/bazel-build-optimization
 anchors:
 - bazel

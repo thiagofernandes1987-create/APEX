@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.agent_framework_azure_ai_py
 name: agent-framework-azure-ai-py
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/agent-framework-azure-ai-py
 anchors:
 - agent

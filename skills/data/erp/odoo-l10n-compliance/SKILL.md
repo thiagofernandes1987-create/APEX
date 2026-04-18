@@ -4,7 +4,7 @@ name: odoo-l10n-compliance
 description: "Analyze — "
   and country chart of accounts setup.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-l10n-compliance
 anchors:
 - odoo

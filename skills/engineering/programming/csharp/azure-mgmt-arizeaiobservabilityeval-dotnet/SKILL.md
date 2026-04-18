@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_mgmt_arizeaiobservabilityeval_dot
 name: azure-mgmt-arizeaiobservabilityeval-dotnet
 description: "Implement — Azure Resource Manager SDK for Arize AI Observability and Evaluation (.NET)."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-mgmt-arizeaiobservabilityeval-dotnet
 anchors:
 - azure

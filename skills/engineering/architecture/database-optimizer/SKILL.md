@@ -3,7 +3,7 @@ skill_id: engineering.architecture.database_optimizer
 name: database-optimizer
 description: "Implement — Expert database optimizer specializing in modern performance tuning, query optimization, and scalable architectures."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/database-optimizer
 anchors:
 - database

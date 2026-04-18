@@ -4,7 +4,7 @@ name: churn-prevention
 description: "Design — Reduce voluntary and involuntary churn through cancel flow design, save offers, exit surveys, and dunning sequences."
   Use when designing or optimizing a cancel flow, building save offers, setting up du
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - churn

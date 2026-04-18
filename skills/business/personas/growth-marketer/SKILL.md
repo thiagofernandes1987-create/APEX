@@ -3,7 +3,7 @@ skill_id: business.personas.personas.growth_marketer
 name: "growth-marketer"
 description: "Manage — Growth marketing specialist for bootstrapped startups and indie hackers. Builds content engines, optimizes funnels, runs launch sequences, and finds scalable acquisition channels —"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.personas/growth-marketer

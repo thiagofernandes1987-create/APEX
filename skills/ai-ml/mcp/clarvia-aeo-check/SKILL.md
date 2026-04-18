@@ -4,7 +4,7 @@ name: clarvia-aeo-check
 description: "Apply — "
   15,400+ indexed tools before adding them to your workflow.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/clarvia-aeo-check
 anchors:
 - clarvia

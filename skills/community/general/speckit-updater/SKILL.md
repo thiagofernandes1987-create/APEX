@@ -3,7 +3,7 @@ skill_id: community.general.speckit_updater
 name: speckit-updater
 description: "Use — SpecKit Safe Update"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/speckit-updater
 anchors:
 - speckit

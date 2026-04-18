@@ -4,7 +4,7 @@ name: posix-shell-pro
 description: "Implement — Expert in strict POSIX sh scripting for maximum portability across Unix-like systems. Specializes in shell scripts"
   that run on any POSIX-compliant shell (dash, ash, sh, bash --posix).
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/bash/posix-shell-pro
 anchors:
 - posix

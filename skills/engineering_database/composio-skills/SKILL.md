@@ -4,7 +4,7 @@ name: Neon Automation
 description: Automate Neon serverless Postgres operations -- manage projects, branches, databases, roles, and connection URIs
   via the Composio MCP integration.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/database
 anchors:
 - composio

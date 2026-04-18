@@ -4,7 +4,7 @@ name: readme
 description: "Implement — "
   that is absurdly thorough—the kind of documentation you wish every project had.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/readme
 anchors:
 - readme

@@ -4,7 +4,7 @@ name: strategic-alignment
 description: "Design — Cascades strategy from boardroom to individual contributor. Detects and fixes misalignment between company goals"
   and team execution. Covers strategy articulation, cascade mapping, orphan goal detectio
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - strategic

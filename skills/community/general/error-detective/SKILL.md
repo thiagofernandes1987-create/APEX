@@ -4,7 +4,7 @@ name: error-detective
 description: Search logs and codebases for error patterns, stack traces, and anomalies. Correlates errors across systems and
   identifies root causes.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/error-detective
 anchors:
 - error

@@ -4,7 +4,7 @@ name: stride-analysis-patterns
 description: "Audit — "
   threat modeling sessions, or creating security documentation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/stride-analysis-patterns
 anchors:
 - stride

@@ -4,7 +4,7 @@ name: billing-automation
 description: "Use — "
   and tax calculation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/billing-automation
 anchors:
 - billing

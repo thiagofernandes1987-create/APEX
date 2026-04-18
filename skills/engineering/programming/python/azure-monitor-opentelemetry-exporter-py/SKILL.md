@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.azure_monitor_opentelemetry_exporter_py
 name: azure-monitor-opentelemetry-exporter-py
 description: "Implement — Azure Monitor OpenTelemetry Exporter for Python. Use for low-level OpenTelemetry export to Application Insights."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-monitor-opentelemetry-exporter-py
 anchors:
 - azure

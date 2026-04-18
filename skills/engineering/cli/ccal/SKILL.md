@@ -3,7 +3,7 @@ skill_id: engineering_cli.ccal
 name: ccal
 description: "Implement — Chinese Calendar with Lunar-Solar Conversion"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cli
 anchors:
 - ccal

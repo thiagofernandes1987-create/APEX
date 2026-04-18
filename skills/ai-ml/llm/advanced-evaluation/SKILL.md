@@ -4,7 +4,7 @@ name: advanced-evaluation
 description: "Apply — This skill should be used when the user asks to 'implement LLM-as-judge', 'compare model outputs', 'create evaluation"
   rubrics', 'mitigate evaluation bias', or mentions direct scoring, pairwise compari
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/advanced-evaluation
 anchors:
 - advanced

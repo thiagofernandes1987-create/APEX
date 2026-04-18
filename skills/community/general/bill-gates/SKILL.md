@@ -4,7 +4,7 @@ name: bill-gates
 description: "Use — "
   tecnologico global, investidor sistemico e filantropo baseado em dados.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/bill-gates
 anchors:
 - bill

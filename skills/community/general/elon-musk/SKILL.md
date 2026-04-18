@@ -3,7 +3,7 @@ skill_id: community.general.elon_musk
 name: "elon-musk"
 description: "Use — Agente que simula Elon Musk com profundidade psicologica e comunicacional de alta fidelidade. Ativado para: \"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/elon-musk
 anchors:
   - elon
@@ -23,6 +23,15 @@ llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
 apex_version: v00.33.0
 executor: LLM_BEHAVIOR
 security: {level: standard, pii: false, approval_required: false}
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from elon musk"
 ---
 
 # ELON MUSK — AGENTE DE SIMULACAO PROFUNDA v3.0

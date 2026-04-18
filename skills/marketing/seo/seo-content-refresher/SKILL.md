@@ -4,7 +4,7 @@ name: seo-content-refresher
 description: "Create — Identifies outdated elements in provided content and suggests updates to maintain freshness. Finds statistics,"
   dates, and examples that need updating. Use PROACTIVELY for older content.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-content-refresher
 anchors:
 - content

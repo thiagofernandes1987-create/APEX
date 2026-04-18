@@ -4,7 +4,7 @@ name: skill-installer
 description: "Use — Instala, valida, registra e verifica novas skills no ecossistema. 10 checks de seguranca, copia, registro no"
   orchestrator e verificacao pos-instalacao.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/skill-installer
 anchors:
 - skill

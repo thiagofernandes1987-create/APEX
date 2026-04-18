@@ -3,7 +3,7 @@ skill_id: engineering.programming.rust.azure_keyvault_certificates_rust
 name: azure-keyvault-certificates-rust
 description: "Implement — Azure Key Vault Certificates SDK for Rust. Use for creating, importing, and managing certificates."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/rust/azure-keyvault-certificates-rust
 anchors:
 - azure

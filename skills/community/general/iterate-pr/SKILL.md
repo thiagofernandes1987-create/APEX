@@ -4,7 +4,7 @@ name: iterate-pr
 description: "Use — Iterate on a PR until CI passes. Use when you need to fix CI failures, address review feedback, or continuously"
   push fixes until all checks are green. Automates the feedback-fix-push-wait cycle.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/iterate-pr
 anchors:
 - iterate

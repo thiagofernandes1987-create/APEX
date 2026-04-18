@@ -4,7 +4,7 @@ name: documentation
 description: "Implement — "
   writing.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/documentation
 anchors:
 - documentation

@@ -4,7 +4,7 @@ name: pydantic-ai
 description: "Use — "
   and multi-model support.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/pydantic-ai
 anchors:
 - pydantic

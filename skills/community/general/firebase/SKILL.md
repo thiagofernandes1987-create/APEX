@@ -3,7 +3,7 @@ skill_id: community.general.firebase
 name: firebase
 description: "Use — Firebase gives you a complete backend in minutes - auth, database,"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/firebase
 anchors:
 - firebase

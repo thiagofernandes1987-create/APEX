@@ -4,7 +4,7 @@ name: linux-troubleshooting
 description: "Implement — "
   service failures.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/linux/linux-troubleshooting
 anchors:
 - linux

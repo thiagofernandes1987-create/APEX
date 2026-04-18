@@ -4,7 +4,7 @@ name: wiki-agents-md
 description: "Generate — Generates AGENTS.md files for repository folders — coding agent context files with build commands, testing instructions,"
   code style, project structure, and boundaries. Only generates where AGENTS.md i
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - wiki

@@ -4,7 +4,7 @@ name: lead-research-assistant
 description: "Create — Identifies high-quality leads for your product or service by analyzing your business, searching for target companies,"
   and providing actionable contact strategies. Perfect for sales, business developme
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - lead

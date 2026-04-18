@@ -4,7 +4,7 @@ name: '''007'''
 description: "Audit — Security audit, hardening, threat modeling (STRIDE/PASTA), Red/Blue Team, OWASP checks, code review, incident"
   response, and infrastructure security for any project.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/007
 anchors:
 - security

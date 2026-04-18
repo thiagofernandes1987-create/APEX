@@ -3,7 +3,7 @@ skill_id: engineering.frontend.nextjs.nextjs_supabase_auth
 name: nextjs-supabase-auth
 description: "Implement — Expert integration of Supabase Auth with Next.js App Router"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/nextjs/nextjs-supabase-auth
 anchors:
 - nextjs

@@ -3,7 +3,7 @@ skill_id: sales.sales_automator
 name: sales-automator
 description: "Track — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: sales/sales-automator
 anchors:
 - sales

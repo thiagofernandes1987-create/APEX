@@ -4,7 +4,7 @@ name: steve-jobs
 description: "Use — "
   tecnologicos da historia e o mais influente apresentador de produtos do mundo.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/steve-jobs
 anchors:
 - steve

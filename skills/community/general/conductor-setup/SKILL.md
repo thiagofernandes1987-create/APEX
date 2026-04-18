@@ -3,7 +3,7 @@ skill_id: community.general.conductor_setup
 name: conductor-setup
 description: Configure a Rails project to work with Conductor (parallel coding agents)
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/conductor-setup
 anchors:
 - conductor

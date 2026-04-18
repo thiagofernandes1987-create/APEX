@@ -4,7 +4,7 @@ name: grpc-golang
 description: "Implement — "
   contracts with Buf or implementing secure service-to-service transport.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/go/grpc-golang
 anchors:
 - grpc

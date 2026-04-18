@@ -4,7 +4,7 @@ name: chro-advisor
 description: "Use — People leadership for scaling companies. Hiring strategy, compensation design, org structure, culture, and retention."
   Use when building hiring plans, designing comp frameworks, restructuring teams, ma
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - chro

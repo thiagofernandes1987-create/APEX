@@ -4,7 +4,7 @@ name: playwright-cli
 description: "Apply — Automates browser interactions for web testing, form filling, screenshots, and data extraction. Use when the"
   user needs to navigate websites, interact with web pages, fill forms, take screenshots, tes
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - playwright

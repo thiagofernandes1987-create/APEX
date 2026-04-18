@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.gemini_api_dev
 name: gemini-api-dev
 description: "Apply — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/gemini-api-dev
 anchors:
 - gemini

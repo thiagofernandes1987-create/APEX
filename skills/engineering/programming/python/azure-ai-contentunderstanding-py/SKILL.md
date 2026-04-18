@@ -4,7 +4,7 @@ name: azure-ai-contentunderstanding-py
 description: "Implement — Azure AI Content Understanding SDK for Python. Use for multimodal content extraction from documents, images,"
   audio, and video.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-ai-contentunderstanding-py
 anchors:
 - azure

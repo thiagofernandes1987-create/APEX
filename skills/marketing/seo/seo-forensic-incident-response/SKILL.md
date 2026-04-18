@@ -4,7 +4,7 @@ name: seo-forensic-incident-response
 description: "Create — "
   with triage, root-cause analysis and recovery plan.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-forensic-incident-response
 anchors:
 - forensic

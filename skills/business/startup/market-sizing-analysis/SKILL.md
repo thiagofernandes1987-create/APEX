@@ -4,7 +4,7 @@ name: market-sizing-analysis
 description: "Manage — "
   Market (SAM), and Serviceable Obtainable Market (SOM) for startup opportunities.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/startup/market-sizing-analysis
 anchors:
 - market

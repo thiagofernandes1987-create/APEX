@@ -16,13 +16,23 @@ triggers:
   - record retention
 executor: HYBRID
 skill_id: business.ra-qm-team.quality-documentation-manager
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
   - workflow
   - compliance
   - documentation
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from quality documentation manager"
 ---
 
 # Quality Documentation Manager

@@ -4,7 +4,7 @@ name: hugging-face-evaluation
 description: "Apply — Add and manage evaluation results in Hugging Face model cards. Supports extracting eval tables from README content,"
   importing scores from Artificial Analysis API, and running custom model evaluations '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/hugging-face-evaluation
 anchors:
 - hugging

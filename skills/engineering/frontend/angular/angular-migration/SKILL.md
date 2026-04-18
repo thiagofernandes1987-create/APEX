@@ -4,7 +4,7 @@ name: angular-migration
 description: "Implement — "
   and routing migration.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/angular/angular-migration
 anchors:
 - angular

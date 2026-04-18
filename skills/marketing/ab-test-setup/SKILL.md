@@ -4,7 +4,7 @@ name: ab-test-setup
 description: "Create — When the user wants to plan, design, or implement an A/B test or experiment, or build a growth experimentation"
   program. Also use when the user mentions 'A/B test,' 'split test,' 'experiment,' 'test th
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - test

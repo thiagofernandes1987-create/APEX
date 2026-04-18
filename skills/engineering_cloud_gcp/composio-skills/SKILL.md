@@ -4,7 +4,7 @@ name: googlebigquery-automation
 description: 'Automate Google BigQuery tasks via Rube MCP (Composio): run SQL queries, explore datasets and metadata, execute
   MBQL queries via Metabase integration. Always search tools first for current schemas.'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/gcp
 anchors:
 - composio

@@ -3,7 +3,7 @@ skill_id: community.general.conductor_new_track
 name: conductor-new-track
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/conductor-new-track
 anchors:
 - conductor

@@ -3,7 +3,7 @@ skill_id: engineering.programming.typescript.react_patterns
 name: react-patterns
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/react-patterns
 anchors:
 - react

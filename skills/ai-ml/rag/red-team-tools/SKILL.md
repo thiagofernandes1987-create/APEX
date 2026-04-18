@@ -4,7 +4,7 @@ name: red-team-tools
 description: "Apply — "
   vulnerability discovery, and bug bounty hunting. Automate common tasks while maintaining '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/red-team-tools
 anchors:
 - team

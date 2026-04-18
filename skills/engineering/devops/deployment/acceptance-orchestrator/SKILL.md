@@ -4,7 +4,7 @@ name: acceptance-orchestrator
 description: "Implement — Use when a coding task should be driven end-to-end from issue intake through implementation, review, deployment,"
   and acceptance verification with minimal human re-intervention.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/deployment/acceptance-orchestrator
 anchors:
 - acceptance

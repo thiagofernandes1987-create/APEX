@@ -4,7 +4,7 @@ name: azure-messaging
 description: "Use — Troubleshoot and resolve issues with Azure Messaging SDKs for Event Hubs and Service Bus. Covers connection"
   failures, authentication errors, message processing issues, and SDK configuration problems. '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

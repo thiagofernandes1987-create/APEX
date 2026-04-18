@@ -4,7 +4,7 @@ name: memory-forensics
 description: "Use — "
   response and malware analysis.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/memory-forensics
 anchors:
 - memory

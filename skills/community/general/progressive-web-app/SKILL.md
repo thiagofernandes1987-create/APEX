@@ -4,7 +4,7 @@ name: progressive-web-app
 description: "Use — "
   the user mentions PWA, service workers, web app manifests, Workbox, ''add to home scree'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/progressive-web-app
 anchors:
 - progressive

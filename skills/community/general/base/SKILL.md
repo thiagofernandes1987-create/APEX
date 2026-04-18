@@ -3,7 +3,7 @@ skill_id: community.general.base
 name: base
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/base
 anchors:
 - base

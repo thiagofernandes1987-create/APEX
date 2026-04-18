@@ -4,7 +4,7 @@ name: error-debugging-error-analysis
 description: "Use — "
   production incidents, and implementing comprehensive observability solutions.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/error-debugging-error-analysis
 anchors:
 - error

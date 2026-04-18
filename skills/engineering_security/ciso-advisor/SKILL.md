@@ -4,7 +4,7 @@ name: ciso-advisor
 description: "Use — Security leadership for growth-stage companies. Risk quantification in dollars, compliance roadmap (SOC 2/ISO"
   27001/HIPAA/GDPR), security architecture strategy, incident response leadership, and board
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - ciso

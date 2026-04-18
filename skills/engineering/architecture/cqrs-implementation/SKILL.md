@@ -4,7 +4,7 @@ name: cqrs-implementation
 description: "Implement — "
   write models, optimizing query performance, or building event-sourced systems.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/cqrs-implementation
 anchors:
 - cqrs

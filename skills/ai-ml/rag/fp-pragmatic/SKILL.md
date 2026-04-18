@@ -4,7 +4,7 @@ name: fp-pragmatic
 description: "Apply — A practical, jargon-free guide to functional programming - the 80/20 approach that gets results without the academic"
   overhead
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/fp-pragmatic
 anchors:
 - pragmatic

@@ -3,7 +3,7 @@ skill_id: legal.compliance.web_design_guidelines
 name: web-design-guidelines
 description: "Review — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal/compliance/web-design-guidelines
 anchors:
 - design

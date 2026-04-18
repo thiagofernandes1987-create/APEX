@@ -4,7 +4,7 @@ name: product-inventor
 description: "Use — "
   Psicologia Cognitiva, Storytelling e execucao impecavel nivel Jobs/Apple.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/product-inventor
 anchors:
 - product

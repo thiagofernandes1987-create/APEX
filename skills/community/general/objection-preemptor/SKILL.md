@@ -3,7 +3,7 @@ skill_id: community.general.objection_preemptor
 name: objection-preemptor
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/objection-preemptor
 anchors:
 - objection

@@ -4,7 +4,7 @@ name: fp-taskeither-ref
 description: "Use — Quick reference for TaskEither. Use when user needs async error handling, API calls, or Promise-based operations"
   that can fail.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fp-taskeither-ref
 anchors:
 - taskeither

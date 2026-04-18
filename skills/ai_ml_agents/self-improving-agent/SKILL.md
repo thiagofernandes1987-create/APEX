@@ -4,7 +4,7 @@ name: self-improving-agent
 description: "Analyze — Curate Claude Code's auto-memory into durable project knowledge. Analyze MEMORY.md for patterns, promote proven"
   learnings to CLAUDE.md and .claude/rules/, extract recurring solutions into reusable ski
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - self

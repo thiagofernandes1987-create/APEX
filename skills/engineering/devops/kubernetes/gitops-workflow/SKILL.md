@@ -3,7 +3,7 @@ skill_id: engineering.devops.kubernetes.gitops_workflow
 name: gitops-workflow
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/kubernetes/gitops-workflow
 anchors:
 - gitops

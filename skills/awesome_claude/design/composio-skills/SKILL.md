@@ -3,7 +3,7 @@ skill_id: awesome_claude.design.composio_skills
 name: aryn-automation
 description: Automate Aryn tasks via Rube MCP (Composio). Always search tools first for current schemas.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - composio

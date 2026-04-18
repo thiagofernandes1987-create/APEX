@@ -4,7 +4,7 @@ name: ai-seo
 description: "Create — When the user wants to optimize content for AI search engines, get cited by LLMs, or appear in AI-generated answers."
   Also use when the user mentions 'AI SEO,' 'AEO,' 'GEO,' 'LLMO,' 'answer engine opti
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - when

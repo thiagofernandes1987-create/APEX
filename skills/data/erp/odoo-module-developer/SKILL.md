@@ -4,7 +4,7 @@ name: odoo-module-developer
 description: "Analyze — "
   module structure best practices.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-module-developer
 anchors:
 - odoo

@@ -3,13 +3,27 @@ name: "senior-fullstack"
 description: "Implement — Fullstack development toolkit with project scaffolding for Next.js, FastAPI, MERN, and Django stacks, code quality analysis with security and complexity scoring, and stack selectio"
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.senior-fullstack
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - engineering
   - backend
   - api
   - security
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from senior fullstack"
 ---
 
 # Senior Fullstack

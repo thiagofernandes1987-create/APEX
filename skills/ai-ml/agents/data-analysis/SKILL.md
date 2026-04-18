@@ -3,7 +3,7 @@ skill_id: ai_ml_agents.data_analysis
 name: Workspace Data Analyst
 description: Analyze CSV files in the workspace and summarize insights.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - data

@@ -16,7 +16,7 @@ agents:
   - openclaw
 executor: LLM_BEHAVIOR
 skill_id: business.finance
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
@@ -24,6 +24,16 @@ anchors:
   - llm
   - agent
   - finance
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from finance skills"
 ---
 
 # Finance Skills

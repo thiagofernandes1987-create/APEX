@@ -4,7 +4,7 @@ name: cloudflare-workers-expert
 description: "Apply — "
   R2 storage.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/cloudflare-workers-expert
 anchors:
 - cloudflare

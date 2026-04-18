@@ -4,7 +4,7 @@ name: developer-growth-analysis
 description: "Analyze — Analyzes your recent Claude Code chat history to identify coding patterns, development gaps, and areas for improvement,"
   curates relevant learning resources from HackerNews, and automatically sends a p
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - developer

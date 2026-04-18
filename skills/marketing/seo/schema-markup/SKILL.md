@@ -3,7 +3,7 @@ skill_id: marketing.seo.schema_markup
 name: schema-markup
 description: Design, validate, and optimize schema.org structured data for eligibility, correctness, and measurable SEO impact.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/schema-markup
 anchors:
 - schema

@@ -4,7 +4,7 @@ name: seo-cannibalization-detector
 description: "Create — Analyzes multiple provided pages to identify keyword overlap and potential cannibalization issues. Suggests differentiation"
   strategies. Use PROACTIVELY when reviewing similar content.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-cannibalization-detector
 anchors:
 - cannibalization

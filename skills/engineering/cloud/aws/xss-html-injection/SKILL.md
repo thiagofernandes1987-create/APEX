@@ -4,7 +4,7 @@ name: xss-html-injection
 description: "Implement — "
   and HTML injection flaws, demonstrate exploitation techniques for session hijacking and crede'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/xss-html-injection
 anchors:
 - html

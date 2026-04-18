@@ -3,7 +3,7 @@ skill_id: marketing.seo.seo_images
 name: seo-images
 description: "Create — >"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-images
 anchors:
 - images

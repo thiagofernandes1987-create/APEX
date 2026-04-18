@@ -3,7 +3,7 @@ skill_id: engineering_api.springboot_patterns
 name: springboot-patterns
 description: "Use — Spring Boot patterns including JPA repositories, REST controllers, layered services, and configuration"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - springboot

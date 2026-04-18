@@ -4,7 +4,7 @@ name: memory-systems
 description: "Implement — "
   across sessions, needing to maintain entity consistency across conversations, or impleme'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/memory-systems
 anchors:
 - memory

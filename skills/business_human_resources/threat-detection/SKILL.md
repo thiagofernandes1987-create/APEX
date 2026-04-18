@@ -4,7 +4,7 @@ name: threat-detection
 description: "Use — Use when hunting for threats in an environment, analyzing IOCs, or detecting behavioral anomalies in telemetry."
   Covers hypothesis-driven threat hunting, IOC sweep generation, z-score anomaly detection
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/human-resources
 anchors:
 - threat

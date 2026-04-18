@@ -4,7 +4,7 @@ name: trpc-fullstack
 description: "Implement — "
   integration patterns.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/trpc-fullstack
 anchors:
 - trpc

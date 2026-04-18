@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.azure_storage_file_share_ts
 name: azure-storage-file-share-ts
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

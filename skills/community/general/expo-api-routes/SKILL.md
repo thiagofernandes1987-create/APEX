@@ -3,7 +3,7 @@ skill_id: community.general.expo_api_routes
 name: expo-api-routes
 description: "Use — Guidelines for creating API routes in Expo Router with EAS Hosting"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/expo-api-routes
 anchors:
 - expo

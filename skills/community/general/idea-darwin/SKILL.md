@@ -4,7 +4,7 @@ name: idea-darwin
 description: "Use — "
   and mutate through structured rounds to surface your strongest concepts.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/idea-darwin
 anchors:
 - idea

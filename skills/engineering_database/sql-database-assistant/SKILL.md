@@ -4,7 +4,7 @@ name: sql-database-assistant
 description: "Generate — Use when the user asks to write SQL queries, optimize database performance, generate migrations, explore database"
   schemas, or work with ORMs like Prisma, Drizzle, TypeORM, or SQLAlchemy.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/database
 anchors:
 - database

@@ -3,7 +3,7 @@ skill_id: engineering_devops.llm_integration
 name: llm-integration
 description: "Use — LLM integration patterns including API usage, streaming, function calling, RAG pipelines, and cost optimization"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - integration

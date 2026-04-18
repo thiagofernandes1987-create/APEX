@@ -4,7 +4,7 @@ name: fastapi-router-py
 description: Create FastAPI routers with CRUD operations, authentication dependencies, and proper response models. Use when
   building REST API endpoints, creating new routes, implementing CRUD operations, or adding
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/api
 anchors:
 - fastapi

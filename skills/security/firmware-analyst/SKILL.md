@@ -3,7 +3,7 @@ skill_id: security.firmware_analyst
 name: firmware-analyst
 description: "Audit — Expert firmware analyst specializing in embedded systems, IoT security, and hardware reverse engineering."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/firmware-analyst
 anchors:
 - firmware

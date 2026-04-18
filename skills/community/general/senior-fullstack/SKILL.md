@@ -3,7 +3,7 @@ skill_id: community.general.senior_fullstack
 name: senior-fullstack
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/senior-fullstack
 anchors:
 - senior

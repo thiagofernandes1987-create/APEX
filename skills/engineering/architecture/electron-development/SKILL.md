@@ -4,7 +4,7 @@ name: electron-development
 description: "Implement — "
   architecture, electron-builder packaging, code signing, and auto-update.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/electron-development
 anchors:
 - electron

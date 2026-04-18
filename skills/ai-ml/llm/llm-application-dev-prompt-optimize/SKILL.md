@@ -4,7 +4,7 @@ name: llm-application-dev-prompt-optimize
 description: "Apply — "
   including constitutional AI, chain-of-thought reasoning, and model-specific optimizat'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/llm-application-dev-prompt-optimize
 anchors:
 - application

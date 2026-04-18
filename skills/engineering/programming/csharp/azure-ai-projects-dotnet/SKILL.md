@@ -4,7 +4,7 @@ name: azure-ai-projects-dotnet
 description: "Implement — Azure AI Projects SDK for .NET. High-level client for Azure AI Foundry projects including agents, connections,"
   datasets, deployments, evaluations, and indexes.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-ai-projects-dotnet
 anchors:
 - azure

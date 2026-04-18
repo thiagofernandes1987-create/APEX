@@ -4,7 +4,7 @@ name: copilot-sdk
 description: "Apply — "
   providing session management, custom tools, hooks, MCP server integration, and strea'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/copilot-sdk
 anchors:
 - copilot

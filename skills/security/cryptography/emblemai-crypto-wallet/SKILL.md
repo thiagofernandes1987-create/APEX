@@ -4,7 +4,7 @@ name: emblemai-crypto-wallet
 description: "Audit — "
   portfolio analysis, and transaction execution for Solana, Ethereum, Base, BSC, Polygon, Heder'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/cryptography/emblemai-crypto-wallet
 anchors:
 - emblemai

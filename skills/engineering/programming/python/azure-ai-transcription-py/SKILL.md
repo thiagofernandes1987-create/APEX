@@ -4,7 +4,7 @@ name: azure-ai-transcription-py
 description: "Implement — Azure AI Transcription SDK for Python. Use for real-time and batch speech-to-text transcription with timestamps"
   and diarization.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-ai-transcription-py
 anchors:
 - azure

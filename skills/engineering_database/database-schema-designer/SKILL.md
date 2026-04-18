@@ -4,7 +4,7 @@ name: database-schema-designer
 description: "Create — Use when the user asks to create ERD diagrams, normalize database schemas, design table relationships, or plan"
   schema migrations.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/database
 anchors:
 - database

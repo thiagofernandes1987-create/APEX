@@ -4,7 +4,7 @@ name: azure-storage-file-datalake-py
 description: "Apply — Azure Data Lake Storage Gen2 SDK for Python. Use for hierarchical file systems, big data analytics, and file/directory"
   operations.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-storage-file-datalake-py
 anchors:
 - azure

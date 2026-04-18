@@ -4,7 +4,7 @@ name: ux-audit
 description: "Use — "
   as the implementation context.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/ux-audit
 anchors:
 - audit

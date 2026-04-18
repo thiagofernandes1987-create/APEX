@@ -3,7 +3,7 @@ skill_id: engineering.cloud.azure.azure_communication_chat_java
 name: azure-communication-chat-java
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-communication-chat-java
 anchors:
 - azure

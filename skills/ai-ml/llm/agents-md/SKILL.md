@@ -4,7 +4,7 @@ name: agents-md
 description: "Apply — This skill should be used when the user asks to 'create AGENTS.md', 'update AGENTS.md', 'maintain agent docs',"
   'set up CLAUDE.md', or needs to keep agent instructions concise. Enforces research-backed
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/agents-md
 anchors:
 - agents

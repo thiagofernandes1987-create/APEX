@@ -4,7 +4,7 @@ name: code-refactoring-tech-debt
 description: "Use — "
   in software projects. Analyze the codebase to uncover debt, assess its impact, and create act'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/code-refactoring-tech-debt
 anchors:
 - code

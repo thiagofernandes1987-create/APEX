@@ -3,7 +3,7 @@ skill_id: engineering_git.git_worktree_manager
 name: git-worktree-manager
 description: "Use — Git Worktree Manager"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/git
 anchors:
 - worktree

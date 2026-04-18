@@ -4,7 +4,7 @@ name: company-os
 description: "Design — The meta-framework for how a company runs — the connective tissue between all C-suite roles. Covers operating"
   system selection (EOS, Scaling Up, OKR-native, hybrid), accountability charts, scorecards,
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - company

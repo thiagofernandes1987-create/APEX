@@ -4,7 +4,7 @@ name: threejs-interaction
 description: "Implement — Three.js interaction - raycasting, controls, mouse/touch input, object selection. Use when handling user input,"
   implementing click detection, adding camera controls, or creating interactive 3D experie
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/threejs/threejs-interaction
 anchors:
 - threejs

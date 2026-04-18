@@ -4,7 +4,7 @@ name: create-pr
 description: "Automate — Alias for sentry-skills:pr-writer. Use when users explicitly ask for 'create-pr' or reference the legacy skill"
   name. Redirects to the canonical PR writing workflow.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: productivity/writing/create-pr
 anchors:
 - create

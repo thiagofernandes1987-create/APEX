@@ -4,7 +4,7 @@ name: llm-application-dev-langchain-agent
 description: "Apply — "
   and LangGraph.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/llm-application-dev-langchain-agent
 anchors:
 - application

@@ -4,7 +4,7 @@ name: tanstack-query-expert
 description: "Implement — "
   mutations, optimistic updates, and Next.js App Router (SSR) integration.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/tanstack-query-expert
 anchors:
 - tanstack

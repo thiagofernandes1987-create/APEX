@@ -4,7 +4,7 @@ name: engineering-advanced-skills
 description: "Use — 25 advanced engineering agent skills and plugins for Claude Code, Codex, Gemini CLI, Cursor, OpenClaw. Agent"
   design, RAG, MCP servers, CI/CD, database design, observability, security auditing, release
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/database
 anchors:
 - engineering

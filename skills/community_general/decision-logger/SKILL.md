@@ -4,7 +4,7 @@ name: decision-logger
 description: "Use — Two-layer memory architecture for board meeting decisions. Manages raw transcripts (Layer 1) and approved decisions"
   (Layer 2). Use when logging decisions after a board meeting, reviewing past decision
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - decision

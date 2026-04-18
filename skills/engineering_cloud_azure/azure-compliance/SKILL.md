@@ -4,7 +4,7 @@ name: azure-compliance
 description: 'Run Azure compliance and security audits with azqr plus Key Vault expiration checks. Covers best-practice assessment,
   resource review, policy/compliance validation, and security posture checks. WHEN: '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

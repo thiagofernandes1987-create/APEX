@@ -3,13 +3,22 @@ name: "soc2-compliance"
 description: "Manage — Use when the user asks to prepare for SOC 2 audits, map Trust Service Criteria, build control matrices, collect audit evidence, perform gap analysis, or assess SOC 2 Type I vs Type"
 executor: HYBRID
 skill_id: business.ra-qm-team.soc2-compliance
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: false, approval_required: true}
 anchors:
   - business
   - code
   - compliance
   - design
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from soc2 compliance"
 ---
 
 # SOC 2 Compliance

@@ -4,7 +4,7 @@ name: brevo-automation
 description: "Apply — "
   MCP.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/brevo-automation
 anchors:
 - brevo

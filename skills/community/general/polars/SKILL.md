@@ -4,7 +4,7 @@ name: polars
 description: "Use — Fast in-memory DataFrame library for datasets that fit in RAM. Use when pandas is too slow but data still fits"
   in memory. Lazy evaluation, parallel execution, Apache Arrow backend. Best for 1-100GB da
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/polars
 anchors:
 - polars

@@ -3,7 +3,7 @@ skill_id: community.general.ux_persuasion_engineer
 name: ux-persuasion-engineer
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/ux-persuasion-engineer
 anchors:
 - persuasion

@@ -4,7 +4,7 @@ name: temporal-python-testing
 description: "Implement — "
   specific testing scenarios.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/temporal-python-testing
 anchors:
 - temporal

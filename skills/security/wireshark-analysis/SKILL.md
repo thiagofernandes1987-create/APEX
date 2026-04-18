@@ -4,7 +4,7 @@ name: wireshark-analysis
 description: "Audit — "
   for security investigations, performance optimization, and troubleshooting.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/wireshark-analysis
 anchors:
 - wireshark

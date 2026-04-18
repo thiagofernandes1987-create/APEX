@@ -4,7 +4,7 @@ name: tdd-orchestrator
 description: "Apply — Master TDD orchestrator specializing in red-green-refactor discipline, multi-agent workflow coordination, and"
   comprehensive test-driven development practices.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/tdd-orchestrator
 anchors:
 - orchestrator

@@ -4,7 +4,7 @@ name: c4-code
 description: "Implement — Expert C4 Code-level documentation specialist. Analyzes code directories to create comprehensive C4 code-level"
   documentation including function signatures, arguments, dependencies, and code structure.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/c4-code
 anchors:
 - code

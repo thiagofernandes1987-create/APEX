@@ -4,7 +4,7 @@ name: context7-auto-research
 description: "Apply — "
   need up-to-date documentation for libraries and frameworks or asking about React, Next.js, Pr'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/context7-auto-research
 anchors:
 - context7

@@ -3,7 +3,7 @@ skill_id: community.general.rehabilitation_analyzer
 name: rehabilitation-analyzer
 description: "Use — 分析康复训练数据、识别康复模式、评估康复进展，并提供个性化康复建议"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/rehabilitation-analyzer
 anchors:
 - rehabilitation

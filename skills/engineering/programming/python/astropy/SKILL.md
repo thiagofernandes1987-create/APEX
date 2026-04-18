@@ -4,7 +4,7 @@ name: astropy
 description: "Implement — "
   and data analysis.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/astropy
 anchors:
 - astropy

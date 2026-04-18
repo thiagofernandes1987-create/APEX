@@ -3,7 +3,7 @@ skill_id: community.general.senior_architect
 name: senior-architect
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/senior-architect
 anchors:
 - senior

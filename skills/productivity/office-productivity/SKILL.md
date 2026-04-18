@@ -4,7 +4,7 @@ name: office-productivity
 description: "Automate — "
   and integration with LibreOffice and Microsoft Office formats.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: productivity/office-productivity
 anchors:
 - office

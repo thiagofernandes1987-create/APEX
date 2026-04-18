@@ -3,7 +3,7 @@ skill_id: engineering.programming.python.webapp_testing
 name: webapp-testing
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/webapp-testing
 anchors:
 - webapp

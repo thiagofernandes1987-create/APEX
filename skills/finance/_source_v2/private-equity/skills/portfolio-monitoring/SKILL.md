@@ -1,7 +1,7 @@
 ---
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.portfolio_monitoring_2
-status: CANDIDATE
+status: ADOPTED
 security: {level: high, pii: true, approval_required: true}
 anchors:
   - finance
@@ -9,6 +9,16 @@ anchors:
   - visualization
   - monitoring
   - performance
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: report
+    type: string
+    description: "Analysis report or summary from portfolio monitoring"
 ---
 # Portfolio Monitoring
 

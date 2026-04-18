@@ -3,7 +3,7 @@ skill_id: engineering.devops.bash.powershell_windows
 name: powershell-windows
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/bash/powershell-windows
 anchors:
 - powershell

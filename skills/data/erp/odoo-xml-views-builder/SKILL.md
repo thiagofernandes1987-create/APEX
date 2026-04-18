@@ -4,7 +4,7 @@ name: odoo-xml-views-builder
 description: "Analyze — "
   for Odoo 14-17 with proper visibility syntax.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-xml-views-builder
 anchors:
 - odoo

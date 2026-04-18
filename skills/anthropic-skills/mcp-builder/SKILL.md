@@ -4,13 +4,30 @@ description: "Apply — Guide for creating high-quality MCP (Model Context Proto
 license: Complete terms in LICENSE.txt
 executor: HYBRID
 skill_id: anthropic-skills.mcp-builder
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - llm
   - ai_ml
   - management
   - design
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: plan
+    type: string
+    description: "Strategic plan or design document"
+  - name: next_steps
+    type: array
+    description: "List of recommended next steps"
 ---
 
 # MCP Server Development Guide

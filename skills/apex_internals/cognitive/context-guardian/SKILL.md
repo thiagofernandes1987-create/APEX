@@ -4,7 +4,7 @@ name: context-guardian
 description: "Use — Guardiao de contexto que preserva dados criticos antes da compactacao automatica. Snapshots, verificacao de integridade"
   e zero perda de informacao.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: apex_internals/cognitive/context-guardian
 anchors:
 - context

@@ -3,7 +3,7 @@ skill_id: community.general.file_organizer
 name: file-organizer
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/file-organizer
 anchors:
 - file

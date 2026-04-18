@@ -4,7 +4,7 @@ name: agent-orchestration-multi-agent-optimize
 description: "Apply — "
   Use when improving agent performance, throughput, or reliability.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/agent-orchestration-multi-agent-optimize
 anchors:
 - agent

@@ -4,7 +4,7 @@ name: llm-prompt-optimizer
 description: "Apply — "
   reduce hallucinations, and cut token usage.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/llm-prompt-optimizer
 anchors:
 - prompt

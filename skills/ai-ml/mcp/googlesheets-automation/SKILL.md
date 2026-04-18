@@ -4,7 +4,7 @@ name: googlesheets-automation
 description: "Apply — "
   Read/write data, manage tabs, apply formatting, and search rows programmatically.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/googlesheets-automation
 anchors:
 - googlesheets

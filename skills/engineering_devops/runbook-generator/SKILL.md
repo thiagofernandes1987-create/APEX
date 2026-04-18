@@ -3,7 +3,7 @@ skill_id: engineering_devops.runbook_generator
 name: runbook-generator
 description: "Use — Runbook Generator"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - runbook

@@ -3,11 +3,21 @@ name: content-research-writer
 description: "Apply — Assists in writing high-quality content by conducting research, adding citations, improving hooks, iterating on outlines, and providing real-time feedback on each section. Transfor"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.content-research-writer
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - research
   - documentation
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from content research writer"
 ---
 
 # Content Research Writer

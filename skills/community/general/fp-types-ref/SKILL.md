@@ -4,7 +4,7 @@ name: fp-types-ref
 description: "Use — Quick reference for fp-ts types. Use when user asks which type to use, needs Option/Either/Task decision help,"
   or wants fp-ts imports.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fp-types-ref
 anchors:
 - types

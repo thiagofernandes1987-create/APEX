@@ -4,7 +4,7 @@ name: marketing-context
 description: Create and maintain the marketing context document that all marketing skills read before starting. Use when the
   user mentions 'marketing context,' 'brand voice,' 'set up context,' 'target audience,' '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - marketing

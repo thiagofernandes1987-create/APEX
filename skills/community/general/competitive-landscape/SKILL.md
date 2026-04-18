@@ -4,7 +4,7 @@ name: competitive-landscape
 description: "Use — "
   winning market positioning strategies.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/competitive-landscape
 anchors:
 - competitive

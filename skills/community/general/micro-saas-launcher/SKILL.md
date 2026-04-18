@@ -3,7 +3,7 @@ skill_id: community.general.micro_saas_launcher
 name: micro-saas-launcher
 description: "Use — Expert in launching small, focused SaaS products fast - the indie"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/micro-saas-launcher
 anchors:
 - micro

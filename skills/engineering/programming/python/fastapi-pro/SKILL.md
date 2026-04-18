@@ -4,7 +4,7 @@ name: fastapi-pro
 description: Build high-performance async APIs with FastAPI, SQLAlchemy 2.0, and Pydantic V2. Master microservices, WebSockets,
   and modern Python async patterns.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/fastapi-pro
 anchors:
 - fastapi

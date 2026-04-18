@@ -3,7 +3,7 @@ skill_id: community.general.new_rails_project
 name: new-rails-project
 description: Create a new Rails project
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/new-rails-project
 anchors:
 - rails

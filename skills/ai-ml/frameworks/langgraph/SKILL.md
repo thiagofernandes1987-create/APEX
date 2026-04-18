@@ -3,7 +3,7 @@ skill_id: ai_ml.frameworks.langgraph
 name: langgraph
 description: "Apply — Expert in LangGraph - the production-grade framework for building"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/frameworks/langgraph
 anchors:
 - langgraph

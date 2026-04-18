@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.m365_agents_dotnet
 name: m365-agents-dotnet
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - m365

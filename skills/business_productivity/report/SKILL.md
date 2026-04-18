@@ -3,7 +3,7 @@ skill_id: business_productivity.report
 name: report
 description: "Use — >-"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/productivity
 anchors:
 - report

@@ -4,7 +4,7 @@ name: scikit-learn
 description: "Apply — Machine learning in Python with scikit-learn. Use for classification, regression, clustering, model evaluation,"
   and ML pipelines.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/ml/scikit-learn
 anchors:
 - scikit

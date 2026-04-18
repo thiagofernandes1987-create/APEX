@@ -3,7 +3,7 @@ skill_id: data.databases.sql.neon_postgres
 name: neon-postgres
 description: "Analyze — Expert patterns for Neon serverless Postgres, branching, connection"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/databases/sql/neon-postgres
 anchors:
 - neon

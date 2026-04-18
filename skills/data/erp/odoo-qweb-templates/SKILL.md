@@ -4,7 +4,7 @@ name: odoo-qweb-templates
 description: "Analyze — "
   t-field, and report actions.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: data/erp/odoo-qweb-templates
 anchors:
 - odoo

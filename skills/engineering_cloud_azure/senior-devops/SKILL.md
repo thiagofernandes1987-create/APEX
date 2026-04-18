@@ -4,7 +4,7 @@ name: senior-devops
 description: "Use — Comprehensive DevOps skill for CI/CD, infrastructure automation, containerization, and cloud platforms (AWS,"
   GCP, Azure). Includes pipeline setup, infrastructure as code, deployment automation, and mo
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - senior

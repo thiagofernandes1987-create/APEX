@@ -4,7 +4,7 @@ name: jira-expert
 description: "Design — Atlassian Jira expert for creating and managing projects, planning, product discovery, JQL queries, workflows,"
   custom fields, automation, reporting, and all Jira features. Use for Jira project setup, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - jira

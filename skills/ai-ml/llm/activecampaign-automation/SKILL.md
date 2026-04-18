@@ -4,7 +4,7 @@ name: activecampaign-automation
 description: "Apply — "
   enrollment, and tasks. Always search tools first for current schemas.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/activecampaign-automation
 anchors:
 - activecampaign

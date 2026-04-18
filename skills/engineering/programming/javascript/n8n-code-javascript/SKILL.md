@@ -4,7 +4,7 @@ name: n8n-code-javascript
 description: Write JavaScript code in n8n Code nodes. Use when writing JavaScript in n8n, using $input/$json/$node syntax,
   making HTTP requests with $helpers, working with dates using DateTime, troubleshooting Cod
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/javascript/n8n-code-javascript
 anchors:
 - code

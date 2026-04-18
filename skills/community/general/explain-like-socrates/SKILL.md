@@ -3,7 +3,7 @@ skill_id: community.general.explain_like_socrates
 name: explain-like-socrates
 description: "Use — >"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/explain-like-socrates
 anchors:
 - explain

@@ -4,7 +4,7 @@ name: apify-audience-analysis
 description: "Use — Understand audience demographics, preferences, behavior patterns, and engagement quality across Facebook, Instagram,"
   YouTube, and TikTok.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/apify-audience-analysis
 anchors:
 - apify

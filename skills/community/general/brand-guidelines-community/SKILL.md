@@ -3,7 +3,7 @@ skill_id: community.general.brand_guidelines_community
 name: brand-guidelines-community
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/brand-guidelines-community
 anchors:
 - brand

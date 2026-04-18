@@ -4,7 +4,7 @@ name: churn-prevention
 description: "Analyze — "
   strategy. Use when users are cancelling, failed payments are rising, or subscription re'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: finance/payments/churn-prevention
 anchors:
 - churn

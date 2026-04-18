@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.dotnet_backend
 name: dotnet-backend
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/dotnet-backend
 anchors:
 - dotnet

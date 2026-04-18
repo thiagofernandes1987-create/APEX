@@ -4,7 +4,7 @@ name: skill-creator
 description: "Automate — "
   skill automates brainstorming, template application, validation, and installation processes'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: productivity/writing/skill-creator
 anchors:
 - skill

@@ -4,7 +4,7 @@ name: langchain-architecture
 description: "Apply — "
   tool integration.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/langchain-architecture
 anchors:
 - langchain

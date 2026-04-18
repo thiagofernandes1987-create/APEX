@@ -4,7 +4,7 @@ name: firecrawl-scraper
 description: "Use — "
   content extraction from web pages, page interaction is required (clicking, scrolling, etc'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/firecrawl-scraper
 anchors:
 - firecrawl

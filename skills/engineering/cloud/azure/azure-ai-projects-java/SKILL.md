@@ -4,7 +4,7 @@ name: azure-ai-projects-java
 description: "Implement — Azure AI Projects SDK for Java. High-level SDK for Azure AI Foundry project management including connections,"
   datasets, indexes, and evaluations.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-projects-java
 anchors:
 - azure

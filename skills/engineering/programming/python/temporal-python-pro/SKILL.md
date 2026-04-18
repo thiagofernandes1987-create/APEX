@@ -4,7 +4,7 @@ name: temporal-python-pro
 description: "Implement — Master Temporal workflow orchestration with Python SDK. Implements durable workflows, saga patterns, and distributed"
   transactions. Covers async/await, testing strategies, and production deployment.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/temporal-python-pro
 anchors:
 - temporal

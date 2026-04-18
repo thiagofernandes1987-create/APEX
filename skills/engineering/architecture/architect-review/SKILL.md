@@ -3,7 +3,7 @@ skill_id: engineering.architecture.architect_review
 name: architect-review
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/architecture/architect-review
 anchors:
 - architect

@@ -4,7 +4,7 @@ name: manifest
 description: "Use — "
   API keys, or troubleshooting the plugin.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/manifest
 anchors:
 - manifest

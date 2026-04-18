@@ -3,12 +3,22 @@ name: changelog-generator
 description: "Apply — Automatically creates user-facing changelogs from git commits by analyzing commit history, categorizing changes, and transforming technical commits into clear, customer-friendly re"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-skills.changelog-generator
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - git
   - customer_success
   - observability
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from changelog generator"
 ---
 
 # Changelog Generator

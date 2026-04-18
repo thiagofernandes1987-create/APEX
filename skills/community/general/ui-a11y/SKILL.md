@@ -4,7 +4,7 @@ name: ui-a11y
 description: "Use — "
   the code makes them safe.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/ui-a11y
 anchors:
 - a11y

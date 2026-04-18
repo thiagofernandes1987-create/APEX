@@ -6,7 +6,7 @@ requires:
     - rube
 executor: HYBRID
 skill_id: integrations.composio.launch-darkly-automation
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 extends: integrations.composio.meta
 toolkit: launch-darkly-automation
@@ -16,6 +16,28 @@ anchors:
   - integration
   - api
   - workflow
+tier: 3
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Generated or refactored code output"
+  - name: explanation
+    type: string
+    description: "Explanation of changes or implementation decisions"
+what_if_fails: >
+  FALLBACK: If Launchdarkly cannot complete, provide partial results with
+  explicit gaps noted. Never block workflow silently.
+  ESCALATE: If core capability is unavailable, suggest nearest alternative skill.
+  RULE: Always explain what failed and what manual steps can substitute.
 ---
 
 # LaunchDarkly Automation

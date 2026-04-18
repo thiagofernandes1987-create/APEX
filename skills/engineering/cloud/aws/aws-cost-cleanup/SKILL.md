@@ -3,7 +3,7 @@ skill_id: engineering.cloud.aws.aws_cost_cleanup
 name: aws-cost-cleanup
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/aws-cost-cleanup
 anchors:
 - cost

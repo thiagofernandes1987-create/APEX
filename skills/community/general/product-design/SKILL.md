@@ -4,7 +4,7 @@ name: product-design
 description: "Use — "
   design tokens, prototipagem e handoff. Cobre Figma, design systems, tipografia, cor, espacam'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/product-design
 anchors:
 - product

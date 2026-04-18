@@ -3,7 +3,7 @@ skill_id: business_human_resources.codebase_onboarding
 name: codebase-onboarding
 description: "Use — Codebase Onboarding"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/human-resources
 anchors:
 - codebase

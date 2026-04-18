@@ -4,7 +4,7 @@ name: e2e-testing
 description: "Implement — "
   and CI/CD integration.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/e2e-testing
 anchors:
 - testing

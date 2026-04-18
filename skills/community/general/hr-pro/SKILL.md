@@ -4,7 +4,7 @@ name: hr-pro
 description: "Use — Professional, ethical HR partner for hiring, onboarding/offboarding, PTO and leave, performance, compliant policies,"
   and employee relations.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/hr-pro
 anchors:
 - professional

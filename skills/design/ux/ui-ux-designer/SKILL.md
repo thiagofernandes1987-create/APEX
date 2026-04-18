@@ -4,7 +4,7 @@ name: ui-ux-designer
 description: Create interface designs, wireframes, and design systems. Masters user research, accessibility standards, and
   modern design tools.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ux/ui-ux-designer
 anchors:
 - designer

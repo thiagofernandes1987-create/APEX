@@ -3,7 +3,7 @@ skill_id: community.general.3d_games
 name: 3d-games
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/3d-games
 anchors:
 - games

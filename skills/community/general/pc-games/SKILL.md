@@ -3,7 +3,7 @@ skill_id: community.general.pc_games
 name: pc-games
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/pc-games
 anchors:
 - games

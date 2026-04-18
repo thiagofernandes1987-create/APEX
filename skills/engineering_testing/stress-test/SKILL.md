@@ -3,7 +3,7 @@ skill_id: engineering_testing.stress_test
 name: stress-test
 description: "Use — /em -stress-test — Business Assumption Stress Testing"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - stress

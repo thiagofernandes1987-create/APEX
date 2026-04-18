@@ -4,12 +4,25 @@ description: "Evaluate and rank agent results by metric or LLM judge for an Agen
 command: /hub:eval
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering.agenthub.eval
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
   - llm
   - agent
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: object
+    description: "Result from the automated action"
+  - name: status
+    type: string
+    description: "Execution status: success | partial | failure"
 ---
 
 # /hub:eval — Evaluate Agent Results

@@ -3,7 +3,7 @@ skill_id: community.general.subagent_driven_development
 name: subagent-driven-development
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/subagent-driven-development
 anchors:
 - subagent

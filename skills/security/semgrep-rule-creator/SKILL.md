@@ -4,7 +4,7 @@ name: semgrep-rule-creator
 description: "Audit — Creates custom Semgrep rules for detecting security vulnerabilities, bug patterns, and code patterns. Use when"
   writing Semgrep rules or building custom static analysis detections.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/semgrep-rule-creator
 anchors:
 - semgrep

@@ -4,7 +4,7 @@ name: ad-creative
 description: "Create — When the user wants to generate, iterate, or scale ad creative — headlines, descriptions, primary text, or full"
   ad variations — for any paid advertising platform. Also use when the user mentions 'ad c
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - creative

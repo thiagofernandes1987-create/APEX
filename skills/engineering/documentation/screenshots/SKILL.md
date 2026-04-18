@@ -4,7 +4,7 @@ name: screenshots
 description: "Implement — "
   for Product Hunt, social media, landing pages, or documentation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/documentation/screenshots
 anchors:
 - screenshots

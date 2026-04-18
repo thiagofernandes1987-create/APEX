@@ -4,7 +4,7 @@ name: advogado-especialista
 description: "Review — "
   consumidor, imobiliario, empresarial, civil e constitucional.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: legal/brazil/advogado-especialista
 anchors:
 - advogado

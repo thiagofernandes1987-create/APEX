@@ -4,7 +4,7 @@ name: jobgpt
 description: "Apply — "
   outreach using the JobGPT MCP server.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/jobgpt
 anchors:
 - jobgpt

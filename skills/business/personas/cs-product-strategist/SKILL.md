@@ -3,7 +3,7 @@ skill_id: business.personas.product.cs_product_strategist
 name: "cs-product-strategist"
 description: "Manage — Product strategy agent for quarterly OKR planning, competitive landscape analysis, product vision development, and strategy pivot evaluation"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.product/cs-product-strategist

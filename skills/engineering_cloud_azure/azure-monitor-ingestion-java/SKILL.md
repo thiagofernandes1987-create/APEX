@@ -3,7 +3,7 @@ skill_id: engineering_cloud_azure.azure_monitor_ingestion_java
 name: azure-monitor-ingestion-java
 description: "Use — |"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

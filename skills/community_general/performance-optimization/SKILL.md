@@ -3,7 +3,7 @@ skill_id: community_general.performance_optimization
 name: performance-optimization
 description: "Use — Web performance optimization including bundle analysis, lazy loading, caching strategies, and Core Web Vitals"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - performance

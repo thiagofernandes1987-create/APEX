@@ -4,7 +4,7 @@ name: video-content-strategist
 description: "Build — Use when planning video content strategy, writing video scripts, optimizing YouTube channels, building short-form"
   video pipelines (Reels, TikTok, Shorts), or repurposing long-form content into video. '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops
 anchors:
 - video

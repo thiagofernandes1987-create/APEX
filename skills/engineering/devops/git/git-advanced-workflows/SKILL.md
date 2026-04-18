@@ -4,7 +4,7 @@ name: git-advanced-workflows
 description: "Implement — "
   with confidence.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/git/git-advanced-workflows
 anchors:
 - advanced

@@ -4,7 +4,7 @@ name: linkedin-automation
 description: "Apply — "
   image uploads. Always search tools first for current schemas.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/mcp/linkedin-automation
 anchors:
 - linkedin

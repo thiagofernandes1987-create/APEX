@@ -4,7 +4,7 @@ name: reverse-engineer
 description: "Audit — Expert reverse engineer specializing in binary analysis, disassembly, decompilation, and software analysis. Masters"
   IDA Pro, Ghidra, radare2, x64dbg, and modern RE toolchains.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/reverse-engineering/reverse-engineer
 anchors:
 - reverse

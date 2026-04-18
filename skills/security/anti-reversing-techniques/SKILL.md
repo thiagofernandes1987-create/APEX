@@ -4,7 +4,7 @@ name: anti-reversing-techniques
 description: "Audit — "
   analysis: > 1.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: security/anti-reversing-techniques
 anchors:
 - anti

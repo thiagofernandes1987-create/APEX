@@ -4,7 +4,7 @@ name: frontend-developer
 description: Build React components, implement responsive layouts, and handle client-side state management. Masters React
   19, Next.js 15, and modern frontend architecture.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/frontend-developer
 anchors:
 - frontend

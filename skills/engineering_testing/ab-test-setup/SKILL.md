@@ -4,7 +4,7 @@ name: ab-test-setup
 description: "Use — When the user wants to plan, design, or implement an A/B test or experiment. Also use when the user mentions"
   'A/B test,' 'split test,' 'experiment,' 'test this change,' 'variant copy,' 'multivariate t
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - test

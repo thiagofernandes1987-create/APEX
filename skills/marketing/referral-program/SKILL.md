@@ -4,7 +4,7 @@ name: referral-program
 description: "Create — When the user wants to create, optimize, or analyze a referral program, affiliate program, or word-of-mouth strategy."
   Also use when the user mentions 'referral,' 'affiliate,' 'ambassador,' 'word of mo
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing
 anchors:
 - referral

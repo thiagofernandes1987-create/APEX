@@ -3,7 +3,7 @@ skill_id: engineering.programming.csharp.azure_eventhub_dotnet
 name: azure-eventhub-dotnet
 description: "Implement — Azure Event Hubs SDK for .NET."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-eventhub-dotnet
 anchors:
 - azure

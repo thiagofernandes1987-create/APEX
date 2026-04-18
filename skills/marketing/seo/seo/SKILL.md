@@ -4,7 +4,7 @@ name: seo
 description: "Create — "
   and GEO. Use as the umbrella skill when the user asks for a full SEO analysis or strat'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo
 anchors:
 - broad

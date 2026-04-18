@@ -4,7 +4,7 @@ name: threejs-textures
 description: "Implement — Three.js textures - texture types, UV mapping, environment maps, texture settings. Use when working with images,"
   UV coordinates, cubemaps, HDR environments, or texture optimization.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/threejs/threejs-textures
 anchors:
 - threejs

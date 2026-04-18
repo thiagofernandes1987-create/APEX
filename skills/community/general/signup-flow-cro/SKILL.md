@@ -4,7 +4,7 @@ name: signup-flow-cro
 description: "Use — "
   rates, and set users up for successful activation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/signup-flow-cro
 anchors:
 - signup

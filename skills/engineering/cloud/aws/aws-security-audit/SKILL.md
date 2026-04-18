@@ -3,7 +3,7 @@ skill_id: engineering.cloud.aws.aws_security_audit
 name: aws-security-audit
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/aws/aws-security-audit
 anchors:
 - security

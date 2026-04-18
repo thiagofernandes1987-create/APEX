@@ -3,7 +3,7 @@ skill_id: engineering_security.skill_security_auditor
 name: skill-security-auditor
 description: "Use — >"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - skill

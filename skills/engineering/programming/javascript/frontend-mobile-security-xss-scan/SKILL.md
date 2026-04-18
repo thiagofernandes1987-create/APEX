@@ -4,7 +4,7 @@ name: frontend-mobile-security-xss-scan
 description: "Implement — "
   prevention. Analyze React, Vue, Angular, and vanilla JavaScript code to identify injection po'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/javascript/frontend-mobile-security-xss-scan
 anchors:
 - frontend

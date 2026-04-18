@@ -4,7 +4,7 @@ name: n8n-node-configuration
 description: "Automate — Operation-aware node configuration guidance. Use when configuring nodes, understanding property dependencies,"
   determining required fields, choosing between get_node detail levels, or learning common c
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: integrations/n8n/n8n-node-configuration
 anchors:
 - node

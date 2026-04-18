@@ -4,7 +4,7 @@ name: python-performance-optimization
 description: "Implement — "
   debugging slow Python code, optimizing bottlenecks, or improving application performance.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/python-performance-optimization
 anchors:
 - python

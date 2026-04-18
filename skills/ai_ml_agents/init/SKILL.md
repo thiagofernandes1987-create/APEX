@@ -3,7 +3,7 @@ skill_id: ai_ml_agents.init
 name: init
 description: Create a new AgentHub collaboration session with task, agent count, and evaluation criteria.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - init

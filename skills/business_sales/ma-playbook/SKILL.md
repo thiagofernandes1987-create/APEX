@@ -4,7 +4,7 @@ name: ma-playbook
 description: "Use — M&A strategy for acquiring companies or being acquired. Due diligence, valuation, integration, and deal structure."
   Use when evaluating acquisitions, preparing for acquisition, M&A due diligence, integ
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/sales
 anchors:
 - playbook

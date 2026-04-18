@@ -4,7 +4,7 @@ name: ddd-tactical-patterns
 description: "Use — "
   with explicit invariants.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/ddd-tactical-patterns
 anchors:
 - tactical

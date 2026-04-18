@@ -4,7 +4,7 @@ name: shellcheck-configuration
 description: "Implement — "
   infrastructure, fixing code issues, or ensuring script portability.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/bash/shellcheck-configuration
 anchors:
 - shellcheck

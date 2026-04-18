@@ -4,10 +4,24 @@ description: "Implement — Turn a proven pattern or debugging solution into a s
 command: /si:extract
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering_team.self_improving_agent.extract
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - engineering
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+  - name: context
+    type: string
+    description: "Additional context or background information"
+    required: false
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from extract"
 ---
 
 # /si:extract — Create Skills from Patterns

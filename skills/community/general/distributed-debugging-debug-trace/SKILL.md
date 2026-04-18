@@ -4,7 +4,7 @@ name: distributed-debugging-debug-trace
 description: "Use — "
   and diagnostic tools. Configure debugging workflows, implement tracing solutions, and '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/distributed-debugging-debug-trace
 anchors:
 - distributed

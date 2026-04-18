@@ -4,7 +4,7 @@ name: playwright-pro
 description: "Use — Production-grade Playwright testing toolkit. Use when the user mentions Playwright tests, end-to-end testing,"
   browser automation, fixing flaky tests, test migration, CI/CD testing, or test suites. Gen
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - playwright

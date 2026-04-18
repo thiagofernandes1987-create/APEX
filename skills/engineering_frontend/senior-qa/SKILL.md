@@ -4,7 +4,7 @@ name: senior-qa
 description: "Generate — Generates unit tests, integration tests, and E2E tests for React/Next.js applications. Scans components to create"
   Jest + React Testing Library test stubs, analyzes Istanbul/LCOV coverage reports to su
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend
 anchors:
 - senior

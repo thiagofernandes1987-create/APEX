@@ -4,7 +4,7 @@ name: azure-identity-py
 description: "Implement — Azure Identity SDK for Python authentication. Use for DefaultAzureCredential, managed identity, service principals,"
   and token caching.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/python/azure-identity-py
 anchors:
 - azure

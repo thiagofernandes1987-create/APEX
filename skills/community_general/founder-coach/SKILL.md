@@ -4,7 +4,7 @@ name: founder-coach
 description: "Use — Personal leadership development for founders and first-time CEOs. Covers founder archetype identification, delegation"
   frameworks, energy management, CEO calendar audits, leadership style evolution, bl
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - founder

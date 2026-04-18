@@ -4,7 +4,7 @@ name: fp-data-transforms
 description: "Use — Everyday data transformations using functional patterns - arrays, objects, grouping, aggregation, and null-safe"
   access
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/fp-data-transforms
 anchors:
 - data

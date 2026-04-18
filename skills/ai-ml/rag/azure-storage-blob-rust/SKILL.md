@@ -3,7 +3,7 @@ skill_id: ai_ml.rag.azure_storage_blob_rust
 name: azure-storage-blob-rust
 description: "Apply — Azure Blob Storage SDK for Rust. Use for uploading, downloading, and managing blobs and containers."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/azure-storage-blob-rust
 anchors:
 - azure

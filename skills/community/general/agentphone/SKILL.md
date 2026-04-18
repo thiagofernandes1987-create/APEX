@@ -4,7 +4,7 @@ name: agentphone
 description: 'Build AI phone agents with AgentPhone API. Use when the user wants to make phone calls, send/receive SMS, manage
   phone numbers, create voice agents, set up webhooks, or check usage — anything related '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/agentphone
 anchors:
 - agentphone

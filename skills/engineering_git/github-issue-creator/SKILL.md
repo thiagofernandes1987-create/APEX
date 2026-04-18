@@ -4,7 +4,7 @@ name: github-issue-creator
 description: 'Convert raw notes, error logs, voice dictation, or screenshots into crisp GitHub-flavored markdown issue reports.
   Use when the user pastes bug info, error messages, or informal descriptions and wants '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/git
 anchors:
 - github

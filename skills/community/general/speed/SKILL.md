@@ -3,7 +3,7 @@ skill_id: community.general.speed
 name: speed
 description: "Use — Launch RSVP speed reader for text"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/speed
 anchors:
 - speed

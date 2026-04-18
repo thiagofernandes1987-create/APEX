@@ -4,7 +4,7 @@ name: azure-ai-document-intelligence-dotnet
 description: "Implement — Azure AI Document Intelligence SDK for .NET. Extract text, tables, and structured data from documents using prebuilt"
   and custom models.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-ai-document-intelligence-dotnet
 anchors:
 - azure

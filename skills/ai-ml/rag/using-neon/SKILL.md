@@ -4,7 +4,7 @@ name: using-neon
 description: "Apply — "
   instant restore, and scale-to-zero. It''s fully compatible with Postgres and works with any l'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/using-neon
 anchors:
 - neon

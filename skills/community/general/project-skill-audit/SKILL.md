@@ -3,7 +3,7 @@ skill_id: community.general.project_skill_audit
 name: project-skill-audit
 description: Audit a project and recommend the highest-value skills to add or update.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/project-skill-audit
 anchors:
 - project

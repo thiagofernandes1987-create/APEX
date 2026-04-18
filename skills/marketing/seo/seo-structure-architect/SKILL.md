@@ -4,7 +4,7 @@ name: seo-structure-architect
 description: "Create — Analyzes and optimizes content structure including header hierarchy, suggests schema markup, and internal linking"
   opportunities. Creates search-friendly content organization.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-structure-architect
 anchors:
 - structure

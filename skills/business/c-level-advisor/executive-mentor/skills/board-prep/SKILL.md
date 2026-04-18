@@ -3,10 +3,20 @@ name: "board-prep"
 description: "Manage — /em -board-prep — Board Meeting Preparation"
 executor: LLM_BEHAVIOR
 skill_id: business.c_level_advisor.executive_mentor.board_prep
-status: CANDIDATE
+status: ADOPTED
 security: {level: standard, pii: false, approval_required: false}
 anchors:
   - business
+tier: 2
+input_schema:
+  - name: code_or_task
+    type: string
+    description: "Code snippet, script, or task description to process"
+    required: true
+output_schema:
+  - name: result
+    type: string
+    description: "Primary output from board prep"
 ---
 
 # /em:board-prep — Board Meeting Preparation

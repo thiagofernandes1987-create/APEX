@@ -4,7 +4,7 @@ name: invoice-organizer
 description: "Analyze — Automatically organizes invoices and receipts for tax preparation by reading messy files, extracting key information,"
   renaming them consistently, and sorting them into logical folders. Turns hours of '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: finance
 anchors:
 - invoice

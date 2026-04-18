@@ -4,7 +4,7 @@ name: social-content
 description: "Design — When the user wants help creating, scheduling, or optimizing social media content for LinkedIn, Twitter/X, Instagram,"
   TikTok, Facebook, or other platforms. Also use when the user mentions 'LinkedIn po
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - social

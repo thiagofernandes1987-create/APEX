@@ -4,7 +4,7 @@ name: nextjs-app-router-patterns
 description: "Implement — "
   development.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend/react/nextjs-app-router-patterns
 anchors:
 - nextjs

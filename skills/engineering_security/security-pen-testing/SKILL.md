@@ -4,7 +4,7 @@ name: security-pen-testing
 description: "Use — Use when the user asks to perform security audits, penetration testing, vulnerability scanning, OWASP Top 10"
   checks, or offensive security assessments. Covers static analysis, dependency scanning, sec
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - security

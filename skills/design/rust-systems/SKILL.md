@@ -3,7 +3,7 @@ skill_id: design.rust_systems
 name: rust-systems
 description: "Design — Rust systems programming patterns including ownership, traits, async runtime, error handling, and unsafe guidelines"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design
 anchors:
 - rust

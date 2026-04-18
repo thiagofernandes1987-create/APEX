@@ -4,7 +4,7 @@ name: data-engineering-data-driven-feature
 description: "Implement — "
   analysis, implementation, and experimentation.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/data-engineering-data-driven-feature
 anchors:
 - data

@@ -4,7 +4,7 @@ name: react-nextjs-development
 description: "Implement — "
   and modern frontend patterns.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/typescript/react-nextjs-development
 anchors:
 - react

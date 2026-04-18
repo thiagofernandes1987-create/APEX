@@ -3,7 +3,7 @@ skill_id: design.ios_hig.hig_foundations
 name: hig-foundations
 description: "Design — Apple Human Interface Guidelines design foundations."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: design/ios-hig/hig-foundations
 anchors:
 - foundations

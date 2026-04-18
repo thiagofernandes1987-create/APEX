@@ -1,0 +1,273 @@
+# APEX Canonical Schema — Master Definitions
+# ============================================
+# OPP-Phase6 | 2026-04-17
+# WHY: Single source of truth for all APEX field definitions.
+#      All tools, validators, and LLMs must reference this file
+#      before creating or validating SKILL.md / AGENT.md files.
+# WHEN: Before creating any skill, agent, or tool that uses APEX DSL.
+
+version: v00.36.0
+opp: OPP-Phase6
+
+# ═══════════════════════════════════════════════════════
+# SKILL.md FIELD DEFINITIONS
+# ═══════════════════════════════════════════════════════
+
+skill_schema:
+
+  required_by_status:
+    CANDIDATE:
+      - skill_id
+      - description
+      - anchors
+    ADOPTED:
+      - skill_id
+      - description
+      - tier
+      - executor
+      - anchors
+      - input_schema
+      - output_schema
+      - what_if_fails
+      - security
+    DEPRECATED:
+      - skill_id
+      - description
+      - deprecated_by      # skill_id of replacement
+
+  fields:
+
+    skill_id:
+      type: string
+      format: "domain.subdomain.skill_name (dot-separated, snake_case)"
+      example: "engineering_agentops.full_dev_cycle"
+      unique: true
+      notes: "Derived from file path if not explicit. Must be globally unique."
+
+    name:
+      type: string
+      format: "kebab-case"
+      example: "full-dev-cycle"
+
+    description:
+      type: string
+      max_length: 500
+      notes: "Imperative verb prefix required (Generate, Analyze, Build, etc.)"
+
+    version:
+      type: string
+      format: "v00.XX.Y (semver with leading zeros)"
+      current: "v00.36.0"
+
+    status:
+      type: enum
+      values:
+        CANDIDATE: "Functional but schema incomplete or untested"
+        ADOPTED: "Production-ready — full schema + verified behavior"
+        DEPRECATED: "Superseded — must declare deprecated_by"
+        PROPOSED: "Design only — not yet implemented"
+        ADAPTED: "External import — minimally adapted for APEX"
+
+    tier:
+      type: integer
+      values:
+        0: "APEX kernel — pmi_pm, architect, meta_reasoning"
+        1: "Core orchestration — engineer, critic, diff_governance"
+        2: "Domain skills — standard production skills"
+        3: "Community / utility — lower criticality"
+        SUPER: "Composite super-skills — orchestrates multiple tier-1/2 skills"
+      default: 2
+
+    executor:
+      type: enum
+      values:
+        LLM_BEHAVIOR: "Pure language model reasoning — no code execution"
+        SANDBOX_CODE: "Requires sandboxed code execution (Python/JS runtime)"
+        HYBRID: "Combines LLM reasoning with code or MCP tool execution"
+        DOCUMENTATION: "Static reference only — no active execution"
+      derivation_rules:
+        - "skills/integrations/composio → HYBRID (uses Rube MCP)"
+        - "skills with scripts/ subdirectory → HYBRID"
+        - "algorithms/ → SANDBOX_CODE"
+        - "default → LLM_BEHAVIOR"
+
+    anchors:
+      type: list[string]
+      min_items: 1
+      canonical_anchors:
+        - agent
+        - automation
+        - analysis
+        - security
+        - workflow
+        - code
+        - testing
+        - debugging
+        - documentation
+        - api
+        - database
+        - deployment
+        - monitoring
+        - optimization
+        - refactoring
+        - architecture
+        - review
+        - planning
+        - research
+        - data
+        - ml
+        - llm
+        - cloud
+        - frontend
+        - backend
+        - devops
+        - design
+        - writing
+        - communication
+        - finance
+        - legal
+        - marketing
+        - sales
+        - operations
+        - hr
+        - product
+        - engineering
+        - science
+        - education
+        - healthcare
+        - productivity
+        - integration
+        - pipeline
+        - orchestration
+        - reasoning
+        - generation
+        - summarization
+        - extraction
+        - classification
+        - search
+        - retrieval
+        - validation
+        - parsing
+        - transformation
+        - visualization
+        - reporting
+      notes: "Use canonical anchors where possible. Non-canonical anchors are allowed but reduce routing accuracy."
+
+    input_schema:
+      type: list[InputField]
+      min_items: 1
+      InputField:
+        name: string
+        type: "string | integer | number | boolean | array | object"
+        description: string
+        required: "true | false"
+        default: optional
+        enum: optional[list]
+
+    output_schema:
+      type: list[OutputField]
+      min_items: 1
+      OutputField:
+        name: string
+        type: "string | integer | number | boolean | array | object"
+        description: string
+        enum: optional[list]
+
+    what_if_fails:
+      type: string
+      notes: "Must describe fallback behavior and escalation path. Never leave blank."
+
+    security:
+      type: object
+      fields:
+        level: "standard | elevated | high | critical"
+        pii: boolean
+        approval_required: boolean
+        note: optional[string]
+      default: "{ level: standard, pii: false, approval_required: false }"
+
+    synergy_map:
+      type: object
+      notes: "Declares relationships with other skills for routing optimization"
+      fields:
+        complements: list[skill_id]
+        activates_with: list[skill_id]
+        cross_domain_bridges:
+          - domain: string
+            strength: "0.0–1.0"
+            note: string
+
+    opp:
+      type: string
+      notes: "OPP that created or last modified this skill"
+
+# ═══════════════════════════════════════════════════════
+# AGENT.md FIELD DEFINITIONS
+# ═══════════════════════════════════════════════════════
+
+agent_schema:
+
+  required_fields:
+    - agent_id
+    - name
+    - description
+    - tier
+    - executor
+    - capabilities
+    - what_if_fails
+    - security
+
+  fields:
+
+    agent_id:
+      format: "group.agent_name (e.g., subagent.01-core-development.backend_developer)"
+
+    activation_protocol:
+      notes: "If absent, agent relies on explicit invocation only (not auto-activated)"
+      fields:
+        trigger: string
+        activates_in: list[cognitive_mode]
+        position_in_pipeline: "STEP_N | PASSIVE_ALL_STEPS"
+        max_concurrent: integer
+
+# ═══════════════════════════════════════════════════════
+# COGNITIVE MODES & PIPELINE STEPS
+# ═══════════════════════════════════════════════════════
+
+cognitive_modes:
+  EXPRESS: "< 30s — single-turn, no deep reasoning"
+  FAST: "< 2min — standard responses"
+  DEEP: "< 10min — multi-step analysis"
+  RESEARCH: "< 30min — exhaustive investigation"
+  FOGGY: "Clarification needed — underspecified request"
+  CLARIFY: "Active disambiguation"
+  SCIENTIFIC: "Formal hypothesis + verification"
+
+pipeline_steps:
+  STEP_0: "Boot + context loading"
+  STEP_1: "Domain detection (pmi_pm)"
+  STEP_2: "Architecture design (architect)"
+  STEP_3: "Hypothesis generation (theorist)"
+  STEP_4: "Implementation (engineer)"
+  STEP_5: "Critical review (critic)"
+  STEP_6: "Verification (verification-before-completion)"
+  STEP_7: "Coordination (programme_director)"
+  STEP_8: "Security review (security-guardian)"
+  STEP_9: "Quality gate (diff_governance)"
+  STEP_10: "Output synthesis"
+  STEP_11: "Learning capture (meta_learning_agent)"
+  STEP_12: "Memory consolidation"
+  STEP_13: "Session close"
+
+# ═══════════════════════════════════════════════════════
+# INVIOLABLE RULES REFERENCE
+# ═══════════════════════════════════════════════════════
+
+inviolable_rules_quick_ref:
+  C1: "No hallucinated methods — verify against UCO_API_SURFACE.yaml before calling"
+  C2: "No shell injection — use shlex.split() + shell=False always"
+  C3: "No path traversal — use pathlib.Path.resolve() with allowed_bases check"
+  C5: "No hardcoded tokens — use environment variables or secrets manager"
+  SR_40: "Every ADOPTED skill must have Why/When/WhatIf sections (ZERO_AMBIGUITY_GUARD)"
+  H1: "Verification before claim — run and cite output, never say 'probably works'"
+  H4: "Single source of truth — this file is canonical for field definitions"

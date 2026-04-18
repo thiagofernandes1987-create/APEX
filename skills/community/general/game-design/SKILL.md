@@ -3,7 +3,7 @@ skill_id: community.general.game_design
 name: game-design
 description: "Use — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/game-design
 anchors:
 - game

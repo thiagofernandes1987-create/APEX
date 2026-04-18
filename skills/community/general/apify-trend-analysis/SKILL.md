@@ -4,7 +4,7 @@ name: apify-trend-analysis
 description: "Use — Discover and track emerging trends across Google Trends, Instagram, Facebook, YouTube, and TikTok to inform content"
   strategy.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/apify-trend-analysis
 anchors:
 - apify

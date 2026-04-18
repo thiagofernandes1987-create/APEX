@@ -3,7 +3,7 @@ skill_id: engineering.programming.c.customer_psychographic_profiler
 name: customer-psychographic-profiler
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/c/customer-psychographic-profiler
 anchors:
 - customer

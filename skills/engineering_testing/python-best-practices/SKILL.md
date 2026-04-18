@@ -3,7 +3,7 @@ skill_id: engineering_testing.python_best_practices
 name: python-best-practices
 description: "Use — Pythonic code with modern type hints, dataclasses, async patterns, packaging, and testing"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - python

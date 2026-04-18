@@ -4,7 +4,7 @@ name: tech-stack-evaluator
 description: "Use — Technology stack evaluation and comparison with TCO analysis, security assessment, and ecosystem health scoring."
   Use when comparing frameworks, evaluating technology stacks, calculating total cost of '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/security
 anchors:
 - tech

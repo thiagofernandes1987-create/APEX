@@ -3,7 +3,7 @@ skill_id: engineering_testing.golang_idioms
 name: golang-idioms
 description: "Use — Idiomatic Go patterns for error handling, interfaces, concurrency, testing, and module management"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing
 anchors:
 - golang

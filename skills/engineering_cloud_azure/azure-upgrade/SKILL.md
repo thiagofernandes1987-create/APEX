@@ -4,7 +4,7 @@ name: azure-upgrade
 description: 'Assess and upgrade Azure workloads between plans, tiers, or SKUs within Azure. Generates assessment reports
   and automates upgrade steps. WHEN: upgrade Consumption to Flex Consumption, upgrade Azure Fu'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - azure

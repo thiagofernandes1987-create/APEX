@@ -3,7 +3,7 @@ skill_id: community_general.template_skill
 name: template-skill
 description: "Use — Replace with description of the skill and when Claude should use it."
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general
 anchors:
 - template

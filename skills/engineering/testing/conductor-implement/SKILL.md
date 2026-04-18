@@ -3,7 +3,7 @@ skill_id: engineering.testing.conductor_implement
 name: conductor-implement
 description: "Implement — "
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/testing/conductor-implement
 anchors:
 - conductor

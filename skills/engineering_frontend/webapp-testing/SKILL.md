@@ -4,7 +4,7 @@ name: webapp-testing
 description: "Use — Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend"
   functionality, debugging UI behavior, capturing browser screenshots, and viewing browser l
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/frontend
 anchors:
 - webapp

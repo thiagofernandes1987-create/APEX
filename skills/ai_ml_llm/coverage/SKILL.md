@@ -3,7 +3,7 @@ skill_id: ai_ml_llm.coverage
 name: coverage
 description: "Use — >-"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm
 anchors:
 - coverage

@@ -4,7 +4,7 @@ name: llm-evaluation
 description: "Apply — "
   and A/B testing.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/llm-evaluation
 anchors:
 - evaluation

@@ -4,7 +4,7 @@ name: langsmith-fetch
 description: Debug LangChain and LangGraph agents by fetching execution traces from LangSmith Studio. Use when debugging agent
   behavior, investigating errors, analyzing tool calls, checking memory operations, or e
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents
 anchors:
 - langsmith

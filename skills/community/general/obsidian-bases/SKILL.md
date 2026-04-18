@@ -4,7 +4,7 @@ name: obsidian-bases
 description: Create and edit Obsidian Bases (.base files) with views, filters, formulas, and summaries. Use when working with
   .base files, creating database-like views of notes, or when the user mentions Bases, ta
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/obsidian-bases
 anchors:
 - obsidian

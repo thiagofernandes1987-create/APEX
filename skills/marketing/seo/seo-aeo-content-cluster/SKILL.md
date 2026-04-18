@@ -4,7 +4,7 @@ name: seo-aeo-content-cluster
 description: "Create — "
   map, and content gap analysis. Activate when the user wants to build a content cluster, t'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: marketing/seo/seo-aeo-content-cluster
 anchors:
 - content

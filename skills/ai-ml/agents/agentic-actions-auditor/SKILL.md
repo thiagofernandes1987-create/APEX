@@ -3,7 +3,7 @@ skill_id: ai_ml.agents.agentic_actions_auditor
 name: agentic-actions-auditor
 description: "Apply — >"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/agents/agentic-actions-auditor
 anchors:
 - agentic

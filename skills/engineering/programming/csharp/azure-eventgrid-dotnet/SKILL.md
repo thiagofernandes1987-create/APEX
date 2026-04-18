@@ -4,7 +4,7 @@ name: azure-eventgrid-dotnet
 description: "Implement — Azure Event Grid SDK for .NET. Client library for publishing and consuming events with Azure Event Grid. Use"
   for event-driven architectures, pub/sub messaging, CloudEvents, and EventGridEvents.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/programming/csharp/azure-eventgrid-dotnet
 anchors:
 - azure

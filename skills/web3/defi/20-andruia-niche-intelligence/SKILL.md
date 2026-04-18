@@ -4,7 +4,7 @@ name: 20-andruia-niche-intelligence
 description: "Deploy — "
   conocimientos, regulaciones y estándares únicos del sector. Actívalo tras definir el nicho.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: web3/defi/20-andruia-niche-intelligence
 anchors:
 - andruia

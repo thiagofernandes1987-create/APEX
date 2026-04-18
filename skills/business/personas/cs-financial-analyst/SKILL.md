@@ -3,7 +3,7 @@ skill_id: business.personas.finance.cs_financial_analyst
 name: "cs-financial-analyst"
 description: "Manage — Financial Analyst agent for DCF valuation, financial modeling, budgeting, forecasting, and SaaS metrics (ARR, MRR, churn, CAC, LTV, NRR). Orchestrates finance skills. Spawn when us"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.finance/cs-financial-analyst

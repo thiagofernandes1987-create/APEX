@@ -4,7 +4,7 @@ name: terraform-specialist
 description: "Implement — Expert Terraform/OpenTofu specialist mastering advanced IaC automation, state management, and enterprise infrastructure"
   patterns.
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/devops/terraform/terraform-specialist
 anchors:
 - terraform

@@ -3,7 +3,7 @@ skill_id: ai_ml.llm.llm_structured_output
 name: llm-structured-output
 description: "Apply — >"
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/llm-structured-output
 anchors:
 - structured

@@ -4,7 +4,7 @@ name: qms-audit-expert
 description: "Use — ISO 13485 internal audit expertise for medical device QMS. Covers audit planning, execution, nonconformity classification,"
   and CAPA verification. Use for internal audit planning, audit execution, find
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/productivity
 anchors:
 - audit

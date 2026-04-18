@@ -4,7 +4,7 @@ name: adhx
 description: "Apply — "
   data with full article content, author info, and engagement metrics. No scraping or'
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/llm/adhx
 anchors:
 - adhx

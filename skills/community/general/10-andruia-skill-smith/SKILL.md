@@ -4,7 +4,7 @@ name: 10-andruia-skill-smith
 description: "Use — "
   siguiendo el Estándar de Diamante.'''
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: community/general/10-andruia-skill-smith
 anchors:
 - andruia

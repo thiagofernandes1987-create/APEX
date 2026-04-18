@@ -4,7 +4,7 @@ name: cloud-security
 description: "Use — Use when assessing cloud infrastructure for security misconfigurations, IAM privilege escalation paths, S3 public"
   exposure, open security group rules, or IaC security gaps. Covers AWS, Azure, and GCP '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: engineering/cloud/azure
 anchors:
 - cloud

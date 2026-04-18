@@ -3,7 +3,7 @@ skill_id: business.personas.personas.product_manager
 name: "product-manager"
 description: "Manage — Ships outcomes, not features. Writes specs engineers actually read. Prioritizes ruthlessly. Kills darlings when the data says so. Operates at the intersection of user needs, busine"
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.personas/product-manager

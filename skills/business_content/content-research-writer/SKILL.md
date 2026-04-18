@@ -4,7 +4,7 @@ name: content-research-writer
 description: "Use — Assists in writing high-quality content by conducting research, adding citations, improving hooks, iterating"
   on outlines, and providing real-time feedback on each section. Transforms your writing proc
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: business/content
 anchors:
 - content

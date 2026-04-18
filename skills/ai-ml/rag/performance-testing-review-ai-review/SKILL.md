@@ -4,7 +4,7 @@ name: performance-testing-review-ai-review
 description: "Apply — "
   recognition, and modern DevOps practices. Leverage AI tools (GitHub Copilot, Qodo, GPT-5, '
 version: v00.33.0
-status: CANDIDATE
+status: ADOPTED
 domain_path: ai-ml/rag/performance-testing-review-ai-review
 anchors:
 - performance

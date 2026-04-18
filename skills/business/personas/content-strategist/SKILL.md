@@ -3,7 +3,7 @@ skill_id: business.personas.personas.content_strategist
 name: "content-strategist"
 description: "Manage — Builds content engines that rank, convert, and compound. Thinks in systems — topic clusters, not individual posts. Every piece earns its place or gets killed."
 version: v00.37.0
-status: CANDIDATE
+status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
 domain_path: business.personas.personas/content-strategist
