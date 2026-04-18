@@ -22,6 +22,7 @@ description: >
   Estrutura soluções de design de sistemas — propõe como organizar componentes, define ADRs, analisa trade-offs de acoplamento/coesão, e mapeia dependências estruturais.
 tier: 1
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - system_design
   - ADR_generation

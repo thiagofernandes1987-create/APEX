@@ -24,6 +24,7 @@ description: >
   Primeiro agente obrigatório do pipeline. Estrutura escopo, WBS, riscos e requisitos antes de qualquer execução. Garante que o APEX saiba exatamente o que fazer antes de fazer.
 tier: 0
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - scope_definition
   - WBS_creation

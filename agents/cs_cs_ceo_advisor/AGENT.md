@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: strategy
 source_path: "skills/business/personas/cs-ceo-advisor/SKILL.md"
 capabilities:
   - cs-ceo-advisor

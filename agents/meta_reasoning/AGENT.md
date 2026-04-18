@@ -22,6 +22,7 @@ description: >
   Monitor epistêmico contínuo do pipeline. Monitora R_acum, detecta necessidade de replanning, regula qualidade, ativa UCO_gate e emite EARLY_EXIT quando confiança insuficiente.
 tier: 0
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - pipeline_monitoring
   - R_acum_tracking

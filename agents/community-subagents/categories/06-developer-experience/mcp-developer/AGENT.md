@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: engineering
 category: "06-developer-experience"
 source_file: "agents\community-subagents\categories\06-developer-experience\mcp-developer.md"
 capabilities:

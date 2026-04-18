@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 1
 executor: LLM_BEHAVIOR
+primary_domain: orchestration
 category: "09-meta-orchestration"
 source_file: "agents\community-subagents\categories\09-meta-orchestration\it-ops-orchestrator.md"
 capabilities:

@@ -22,6 +22,7 @@ description: >
   Transforma blueprints arquiteturais em implementação concreta. Executa código em sandbox, depura, refatora e testa. Principal agente de execução técnica.
 tier: 1
 executor: "HYBRID"
+primary_domain: engineering
 capabilities:
   - code_generation
   - sandbox_execution

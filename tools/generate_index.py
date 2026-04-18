@@ -19,6 +19,7 @@ USAGE:
 import os
 import re
 import sys
+import time
 import json
 import argparse
 from pathlib import Path
@@ -389,6 +390,26 @@ def generate_index_md(domains: list, generated_at: str) -> str:
 # ═══════════════════════════════════════════════════════
 # MAIN
 # ═══════════════════════════════════════════════════════
+
+INDEX_LOCK_FILE = Path(__file__).parent.parent / ".index_lock"
+
+def acquire_index_lock(force: bool = False) -> bool:
+    """Prevent parallel INDEX.md writes. Returns True if lock acquired."""
+    if INDEX_LOCK_FILE.exists() and not force:
+        age = time.time() - INDEX_LOCK_FILE.stat().st_mtime
+        if age < 300:  # 5 min timeout
+            print(f"[generate_index] LOCK: INDEX.md locked by another process ({age:.0f}s ago). Use --force-unlock to override.")
+            return False
+    INDEX_LOCK_FILE.write_text(str(time.time()), encoding='utf-8')
+    return True
+
+def release_index_lock():
+    """Release INDEX.md write lock."""
+    try:
+        INDEX_LOCK_FILE.unlink(missing_ok=True)
+    except Exception:
+        pass
+
 
 def main():
     parser = argparse.ArgumentParser(

@@ -26,6 +26,7 @@ description: >
   por transformar observações empíricas em proposições testáveis.
 tier: 1
 executor: LLM_BEHAVIOR
+primary_domain: engineering
 capabilities:
   - hypothesis_generation
   - theoretical_modeling

@@ -8,6 +8,7 @@ source_repo: claude-cookbooks
 apex_version: v00.33.0
 tier: 2
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - financial_modeling
   - burn_rate_analysis

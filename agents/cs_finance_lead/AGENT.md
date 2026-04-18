@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: finance
 source_path: "skills/business/personas/finance-lead/SKILL.md"
 capabilities:
   - finance-lead

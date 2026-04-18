@@ -8,6 +8,7 @@ source_repo: claude-code-action
 apex_version: v00.33.0
 tier: 1
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - vulnerability_detection
   - input_validation_check

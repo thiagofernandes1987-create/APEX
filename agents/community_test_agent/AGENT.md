@@ -8,6 +8,7 @@ source_repo: claude-agent-sdk-python
 apex_version: v00.33.0
 tier: 3
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - test_execution
   - simple_qa

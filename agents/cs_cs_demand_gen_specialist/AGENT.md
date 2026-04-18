@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: marketing
 source_path: "skills/business/personas/cs-demand-gen-specialist/SKILL.md"
 capabilities:
   - cs-demand-gen-specialist

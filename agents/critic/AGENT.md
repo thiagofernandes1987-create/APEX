@@ -22,6 +22,7 @@ description: >
   Adversário interno do pipeline. Encontra falhas, não confirma sucessos. Executa pre-mortem, falsificação de hipóteses, detecção de viés e red-team de propostas.
 tier: 0
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - pre_mortem
   - falsification

@@ -25,6 +25,7 @@ description: >
   e emite alertas para meta_reasoning. É o 'sistema nervoso' do APEX runtime.
 tier: 1
 executor: LLM_BEHAVIOR
+primary_domain: engineering
 capabilities:
   - event_bus_subscription
   - mcfe_monitoring

@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: marketing
 source_path: "skills/business/personas/content-strategist/SKILL.md"
 capabilities:
   - content-strategist

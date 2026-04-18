@@ -22,6 +22,7 @@ description: >
   Preenche gaps de conhecimento com evidências. Busca literatura, valida fontes, cita referências e quantifica incerteza epistêmica antes de passar ao engineer ou architect.
 tier: 1
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - literature_search
   - evidence_synthesis

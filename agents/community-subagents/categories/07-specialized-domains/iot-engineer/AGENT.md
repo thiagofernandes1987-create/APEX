@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 3
 executor: LLM_BEHAVIOR
+primary_domain: engineering
 category: "07-specialized-domains"
 source_file: "agents\community-subagents\categories\07-specialized-domains\iot-engineer.md"
 capabilities:

@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: security
 category: "04-quality-security"
 source_file: "agents\community-subagents\categories\04-quality-security\ad-security-reviewer.md"
 capabilities:

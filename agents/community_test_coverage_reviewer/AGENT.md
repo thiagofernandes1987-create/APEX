@@ -8,6 +8,7 @@ source_repo: claude-code-action
 apex_version: v00.33.0
 tier: 2
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - test_coverage_analysis
   - missing_test_identification

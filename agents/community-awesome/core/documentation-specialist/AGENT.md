@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 1
 executor: LLM_BEHAVIOR
+primary_domain: engineering
 category: "core"
 source_file: "agents\community-awesome\core\documentation-specialist.md"
 capabilities:

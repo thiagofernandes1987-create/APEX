@@ -22,6 +22,7 @@ description: >
   Quantifica incerteza probabilisticamente. Quando o researcher traz evidências conflitantes, converte graus de crença em probabilidades, atualiza priors com evidências e produz posteriors calibrados.
 tier: 1
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - bayesian_inference
   - prior_elicitation

@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 1
 executor: LLM_BEHAVIOR
+primary_domain: engineering
 category: "orchestrators"
 source_file: "agents\community-awesome\orchestrators\tech-lead-orchestrator.md"
 capabilities:

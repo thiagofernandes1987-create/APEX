@@ -1,0 +1,123 @@
+# apex_state.yaml
+# APEX OPP-160 | 2026-04-18
+# Estado persistente legível por máquina — substituição da narrative memory
+# WHY: narrative memory depende de o LLM "lembrar" o estado. Este arquivo é
+#      consultável programaticamente e carregável no boot para STEP_0 verification.
+# FORMAT: Atualizar após cada fase/commit relevante.
+
+version: v00.37.0
+opp_current: OPP-160
+date_updated: "2026-04-18"
+boot_verified: false  # SET true somente após STEP_0 emitir hash confirmado
+
+# ─── Pipeline state ───────────────────────────────────────────────
+pipeline:
+  last_phase_completed: 7
+  last_task_completed: "7a"
+  last_commit: "d3997436"
+  next_pending: "OPP-161"
+  status: ACTIVE
+
+phases:
+  phase1: {status: DONE, tasks: [security_hardening], commit: "df87c7d5"}
+  phase2: {status: DONE, tasks: [schema_normalization], commit: "81d61e43"}
+  phase3: {status: DONE, tasks: [sr40_disambiguation], commit: "c7039923"}
+  phase4: {status: DONE, tasks: [super_skills_5], commit: "0409d8a9"}
+  phase5: {status: DONE, tasks: [5.1, 5.2, 5.3, 5.5], commit: "ff4c06c8"}
+  phase6: {status: DONE, tasks: [6.1, 6.2, 6.3], commit: "86ed8793"}
+  phase7: {status: IN_PROGRESS, tasks: [7a, 7b]}
+
+# ─── Repository metrics (post-phase6) ─────────────────────────────
+repo:
+  skills_total: 3784
+  skills_adopted: 3778
+  skills_fail: 0
+  skills_dup_ids: 0
+  agents_total: 219
+  agents_base: 15
+  agents_community: 163
+  agents_other: 41
+  sr40_compliance: "99.4%"
+  anchors_orphans: 0
+  domains: 52
+  boot_lines: 20173
+  diffs_applied: 132
+
+# ─── OPP history (recent) ─────────────────────────────────────────
+recent_opps:
+  - opp: OPP-153
+    title: "Register community subagents in roster YAML"
+    status: DONE
+  - opp: OPP-154
+    title: "Register CS persona agents in roster YAML"
+    status: DONE
+  - opp: OPP-155
+    title: "Boot DIFF — community subagents kernel integration"
+    status: DONE
+  - opp: OPP-156
+    title: "Boot DIFF — CS persona kernel integration"
+    status: DONE
+  - opp: OPP-157
+    status: DONE
+    title: "Boot DIFF — STEP_0 verification gate"
+    status: PENDING
+  - opp: OPP-158
+    status: DONE
+    title: "Boot DIFF — pmi_pm mandatory enforcement gate"
+    status: PENDING
+  - opp: OPP-159
+    status: DONE
+    title: "Boot DIFF — UCO runtime digest injection"
+    status: PENDING
+  - opp: OPP-160
+    title: "apex_state.yaml — machine-readable persistent state"
+    status: DONE
+
+# ─── Known gaps (from analysis 2026-04-18) ────────────────────────
+known_gaps:
+  - id: GAP-01
+    desc: "Boot sem verificação de carregamento real"
+    severity: HIGH
+    fix_opp: OPP-157
+    status: PENDING
+  - id: GAP-02
+    desc: "pmi_pm sem enforcement obrigatório — non-blocking"
+    severity: HIGH
+    fix_opp: OPP-158
+    status: PENDING
+  - id: GAP-03
+    desc: "UCO não influencia decisões LLM em runtime"
+    severity: MEDIUM
+    fix_opp: OPP-159
+    status: PENDING
+  - id: GAP-04
+    desc: "activates_when CS personas semanticamente vazio"
+    severity: MEDIUM
+    fix_opp: "FIX-1 phase7a"
+    status: FIXED
+  - id: GAP-05
+    desc: "primary_domain ausente em AGENT.md schema"
+    severity: MEDIUM
+    fix_opp: "FIX-2 phase7a"
+    status: FIXED
+  - id: GAP-06
+    desc: "Monólito boot 20K+ linhas vs context window"
+    severity: MEDIUM
+    fix_opp: OPP-161
+    status: BACKLOG
+  - id: GAP-07
+    desc: "INDEX.md sem lock contra escrita paralela"
+    severity: LOW
+    fix_opp: "FIX-4 phase7a"
+    status: FIXED
+
+# ─── Boot verification protocol ───────────────────────────────────
+boot_verification:
+  protocol: >
+    STEP_0 deve emitir: [BOOT_VERIFIED: {hash} | lines: {n} | version: {v}]
+    Hash = primeiros 8 chars do SHA256 do boot file carregado.
+    Se hash ausente no output do STEP_0: estado = boot_verified: false.
+    Bloquear STEP_1 até boot_verified = true.
+  expected_hash: "auto"  # computed at boot time
+  min_lines: 20000
+  required_version: "v00.37.0"

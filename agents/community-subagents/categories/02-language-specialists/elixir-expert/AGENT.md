@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: engineering
 category: "02-language-specialists"
 source_file: "agents\community-subagents\categories\02-language-specialists\elixir-expert.md"
 capabilities:

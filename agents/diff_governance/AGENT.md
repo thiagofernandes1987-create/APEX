@@ -22,6 +22,7 @@ description: >
   Garante que todas as modificações ao APEX passem pelo processo correto de aprovação. Controla versionamento, valida OPPs, monitora impacto de DIFFs e executa rollback quando necessário.
 tier: 0
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - OPP_validation
   - diff_approval

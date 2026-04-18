@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: product
 source_path: "skills/business/personas/product-manager/SKILL.md"
 capabilities:
   - product-manager

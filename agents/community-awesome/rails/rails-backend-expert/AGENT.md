@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: engineering
 category: "rails"
 source_file: "agents\community-awesome\rails\rails-backend-expert.md"
 capabilities:

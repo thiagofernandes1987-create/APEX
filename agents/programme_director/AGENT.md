@@ -27,6 +27,7 @@ description: >
   quando múltiplos domínios precisam ser orquestrados em paralelo.
 tier: 1
 executor: LLM_BEHAVIOR
+primary_domain: engineering
 capabilities:
   - cross_agent_coordination
   - dependency_sequencing

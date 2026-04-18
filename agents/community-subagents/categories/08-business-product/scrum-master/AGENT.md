@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 3
 executor: LLM_BEHAVIOR
+primary_domain: business
 category: "08-business-product"
 source_file: "agents\community-subagents\categories\08-business-product\scrum-master.md"
 capabilities:

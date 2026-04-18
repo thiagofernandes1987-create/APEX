@@ -23,6 +23,7 @@ description: >
   Ativa no modo FOGGY para destruir âncoras cognitivas falsas e recuperar contexto por primeiros princípios. Reinicia o raciocínio a partir de premissas verificadas quando CFI cai abaixo de 0.3.
 tier: 1
 executor: "LLM_BEHAVIOR"
+primary_domain: engineering
 capabilities:
   - assumption_audit
   - context_recovery

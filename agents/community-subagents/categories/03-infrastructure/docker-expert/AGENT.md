@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: devops
 category: "03-infrastructure"
 source_file: "agents\community-subagents\categories\03-infrastructure\docker-expert.md"
 capabilities:

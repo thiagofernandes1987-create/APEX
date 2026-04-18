@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: business
 source_path: "skills/business/personas/solo-founder/SKILL.md"
 capabilities:
   - solo-founder

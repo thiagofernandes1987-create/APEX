@@ -6,6 +6,7 @@ version: v00.37.0
 status: ADOPTED
 tier: 2
 executor: LLM_BEHAVIOR
+primary_domain: analysis
 category: "10-research-analysis"
 source_file: "agents\community-subagents\categories\10-research-analysis\market-researcher.md"
 capabilities:

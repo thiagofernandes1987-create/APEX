@@ -25,6 +25,7 @@ description: >
   É a camada de meta-aprendizado do APEX — garante evolução contínua baseada em evidência.
 tier: 1
 executor: LLM_BEHAVIOR
+primary_domain: engineering
 capabilities:
   - cross_session_pattern_learning
   - diff_proposal_generation
