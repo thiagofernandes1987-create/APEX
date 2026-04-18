@@ -79,7 +79,7 @@ security:
 apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: LLM_BEHAVIOR
-skill_id: knowledge-work._source.partner-built.common-room
+skill_id: knowledge_work.partner_built.common_room.account_research_2
 status: CANDIDATE
 ---
 # Account Research

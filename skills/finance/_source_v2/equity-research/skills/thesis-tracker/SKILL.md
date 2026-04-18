@@ -1,6 +1,6 @@
 ---
 executor: LLM_BEHAVIOR
-skill_id: finance._source_v2.equity-research.skills
+skill_id: finance.equity_research.thesis_tracker_2
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
 anchors:

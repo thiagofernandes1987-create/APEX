@@ -3,7 +3,7 @@ name: "merge"
 description: "Implement — Merge the winning agent"
 command: /hub:merge
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering.agenthub.skills
+skill_id: engineering.cs_engineering.agenthub.merge
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

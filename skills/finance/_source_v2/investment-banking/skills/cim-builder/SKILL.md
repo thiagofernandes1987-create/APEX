@@ -1,6 +1,6 @@
 ---
 executor: LLM_BEHAVIOR
-skill_id: finance._source_v2.investment-banking.skills
+skill_id: finance.investment_banking.cim_builder_2
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
 anchors:

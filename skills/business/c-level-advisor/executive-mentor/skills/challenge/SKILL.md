@@ -2,7 +2,7 @@
 name: "challenge"
 description: "Manage — /em -challenge — Pre-Mortem Plan Analysis"
 executor: LLM_BEHAVIOR
-skill_id: business.c-level-advisor.executive-mentor.skills
+skill_id: business.c_level_advisor.executive_mentor.challenge
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

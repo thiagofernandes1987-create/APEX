@@ -3,7 +3,7 @@ name: "status"
 description: "Implement — Memory health dashboard showing line counts, topic files, capacity, stale entries, and recommendations."
 command: /si:status
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering-team.self-improving-agent.skills
+skill_id: engineering.cs_engineering_team.self_improving_agent.status
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

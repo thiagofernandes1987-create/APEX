@@ -3,7 +3,7 @@ name: "board"
 description: "Implement — Read, write, and browse the AgentHub message board for agent coordination."
 command: /hub:board
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering.agenthub.skills
+skill_id: engineering.cs_engineering.agenthub.board
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

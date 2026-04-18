@@ -64,7 +64,8 @@ REQUIRED_ADOPTED = ["skill_id", "description", "tier", "executor", "anchors",
 # LAYER 1 — UCO Script Analysis
 # ═══════════════════════════════════════════════════════════════
 
-def analyze_scripts_uco(sample: int = 0, threshold: int = 60) -> dict:
+def analyze_scripts_uco(sample: int = 0, threshold: int = 60, use_sa: bool = True) -> dict:
+    """use_sa=True: also runs optimize_fast (SA) on worst scripts to show improvement potential."""
     """Run UCO.analyze() on Python scripts. Returns summary + failures."""
     print("\n[LAYER 1] UCO Script Analysis")
     print("  Collecting Python scripts...")
@@ -152,6 +153,39 @@ def analyze_scripts_uco(sample: int = 0, threshold: int = 60) -> dict:
         for r in worst:
             print(f"    score={r['score']:3d} bugs={r['bugs']:.3f} H={r['H']:6.1f}  {r['path']}")
 
+    # SA improvement potential on top-5 worst (read-only, diagnostic)
+    sa_gains = []
+    if use_sa and UCO_AVAILABLE and worst:
+        print(f"\n  SA improvement potential (optimize_fast, read-only):")
+        for entry in worst[:5]:
+            try:
+                code = (REPO_ROOT / entry['path']).read_text(encoding='utf-8', errors='replace')
+                sa_result = uco.optimize_fast(code, n_steps=5)
+                opt = sa_result.optimized_code if sa_result.optimized_code else code
+                # Recompute score for optimized code
+                r2 = uco.analyze(opt)
+                d2 = r2.to_dict()
+                m2 = d2.get('metrics', {})
+                h2 = m2.get('halstead', {})
+                bugs2 = h2.get('bugs_estimate', 0.0)
+                cc2 = m2.get('cyclomatic_complexity', 0)
+                dead2 = m2.get('syntactic_dead_code', 0)
+                dups2 = m2.get('duplicate_block_count', 0)
+                score2 = max(0, min(100, 100
+                            - min(40, cc2 * 3)
+                            - min(20, dead2 * 5)
+                            - min(20, dups2 * 5)
+                            - min(20, int(bugs2 * 100))))
+                delta = score2 - entry['score']
+                sa_gains.append(delta)
+                sign = "+" if delta >= 0 else ""
+                print(f"    {entry['score']:3d} → {score2:3d} ({sign}{delta:+d})  {entry['path'][:60]}")
+            except Exception:
+                pass
+        if sa_gains:
+            avg_gain = sum(sa_gains) / len(sa_gains)
+            print(f"  Avg SA gain on top-5 worst: {avg_gain:+.1f} pts")
+
     return {
         "total_scripts": total,
         "analyzed": len(results),
@@ -161,6 +195,7 @@ def analyze_scripts_uco(sample: int = 0, threshold: int = 60) -> dict:
         "threshold": threshold,
         "high_bugs": len(high_bugs),
         "worst": worst,
+        "sa_avg_gain_top5": round(sum(sa_gains) / len(sa_gains), 2) if sa_gains else None,
         "all_results": results,
     }
 
@@ -306,7 +341,8 @@ def validate_anchors() -> dict:
     no_anchors = []
     non_canonical = Counter()
     canonical_usage = Counter()
-    anchor_re = re.compile(r'^anchors\s*:\s*\n((?:\s+-[^\n]+\n?)+)', re.MULTILINE)
+    # \s*-\s+  requires space after dash → excludes --- YAML delimiters
+    anchor_re = re.compile(r'^anchors\s*:\s*\n((?:\s*-\s+[^\n]+\n?)+)', re.MULTILINE)
 
     for sk in skill_files:
         try:

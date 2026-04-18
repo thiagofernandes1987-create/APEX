@@ -5,7 +5,7 @@ description: >-
   "add e2e tests", "configure playwright", "testing setup", "init playwright",
   or "add test infrastructure".
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering-team.playwright-pro.skills
+skill_id: engineering.cs_engineering_team.playwright_pro.init
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

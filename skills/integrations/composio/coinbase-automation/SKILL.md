@@ -10,6 +10,11 @@ security: {level: standard, pii: false, approval_required: false}
 extends: integrations.composio.meta
 toolkit: coinbase-automation
 # Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
+anchors:
+  - automation
+  - integration
+  - api
+  - workflow
 ---
 
 # Coinbase Automation
@@ -115,3 +120,15 @@ Periodically list wallets to detect new additions or changes.
 ---
 
 *Powered by [Composio](https://composio.dev)*
+
+## Why This Skill Exists
+Stub for the `coinbase-automation` toolkit in the Composio integration ecosystem.
+Extends `integrations.composio.meta` — see the meta-skill for full protocol.
+
+## When to Use
+Use when automating `coinbase-automation` tasks via Rube MCP (Composio).
+For generic Composio queries, use `integrations.composio.meta` directly.
+
+## What If Fails
+See `skills/integrations/composio/SKILL.md` (meta-skill) for full fallback protocol.
+RULE: Never block workflow — always suggest manual alternative if automation fails.

@@ -1,6 +1,6 @@
 ---
 executor: LLM_BEHAVIOR
-skill_id: finance._source.investment-banking.skills
+skill_id: finance.investment_banking.merger_model_3
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
 anchors:

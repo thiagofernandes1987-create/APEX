@@ -5,7 +5,7 @@ description: >-
   "what's not tested", "coverage gaps", "missing tests", "coverage report",
   or "what needs testing".
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering-team.playwright-pro.skills
+skill_id: engineering.cs_engineering_team.playwright_pro.coverage
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

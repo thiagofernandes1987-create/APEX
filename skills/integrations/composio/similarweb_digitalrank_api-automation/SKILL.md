@@ -10,6 +10,11 @@ security: {level: standard, pii: false, approval_required: false}
 extends: integrations.composio.meta
 toolkit: similarweb_digitalrank_api-automation
 # Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
+anchors:
+  - automation
+  - integration
+  - api
+  - workflow
 ---
 
 # SimilarWeb Automation via Rube MCP
@@ -115,3 +120,15 @@ For bulk operations, use `RUBE_REMOTE_WORKBENCH` with `run_composio_tool()` in a
 | Full schema | `RUBE_GET_TOOL_SCHEMAS` for tools with `schemaRef` |
 
 > **Toolkit docs**: [composio.dev/toolkits/similarweb_digitalrank_api](https://composio.dev/toolkits/similarweb_digitalrank_api)
+
+## Why This Skill Exists
+Stub for the `similarweb_digitalrank_api-automation` toolkit in the Composio integration ecosystem.
+Extends `integrations.composio.meta` — see the meta-skill for full protocol.
+
+## When to Use
+Use when automating `similarweb_digitalrank_api-automation` tasks via Rube MCP (Composio).
+For generic Composio queries, use `integrations.composio.meta` directly.
+
+## What If Fails
+See `skills/integrations/composio/SKILL.md` (meta-skill) for full fallback protocol.
+RULE: Never block workflow — always suggest manual alternative if automation fails.

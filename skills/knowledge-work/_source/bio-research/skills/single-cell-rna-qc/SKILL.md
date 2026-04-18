@@ -81,7 +81,7 @@ security:
 apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: HYBRID
-skill_id: knowledge-work._source.bio-research.skills
+skill_id: knowledge_work.bio_research.single_cell_rna_qc_2
 status: CANDIDATE
 ---
 # Single-Cell RNA-seq Quality Control

@@ -3,7 +3,7 @@ name: "extract"
 description: "Implement — Turn a proven pattern or debugging solution into a standalone reusable skill with SKILL.md, reference docs, and examples."
 command: /si:extract
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering-team.self-improving-agent.skills
+skill_id: engineering.cs_engineering_team.self_improving_agent.extract
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

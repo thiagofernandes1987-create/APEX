@@ -3,7 +3,7 @@ name: "run"
 description: "Implement — One-shot lifecycle command that chains init → baseline → spawn → eval → merge in a single invocation."
 command: /hub:run
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering.agenthub.skills
+skill_id: engineering.cs_engineering.agenthub.run
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

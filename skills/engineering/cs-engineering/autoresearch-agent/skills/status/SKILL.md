@@ -3,7 +3,7 @@ name: "status"
 description: "Implement — Show experiment dashboard with results, active loops, and progress."
 command: /ar:status
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering.autoresearch-agent.skills
+skill_id: engineering.cs_engineering.autoresearch_agent.status
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

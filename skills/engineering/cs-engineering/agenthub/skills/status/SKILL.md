@@ -3,7 +3,7 @@ name: "status"
 description: "Implement — Show DAG state, agent progress, and branch status for an AgentHub session."
 command: /hub:status
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering.agenthub.skills
+skill_id: engineering.cs_engineering.agenthub.status
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

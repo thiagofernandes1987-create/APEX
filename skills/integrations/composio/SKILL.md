@@ -36,6 +36,26 @@ what_if_fails: >
   FALLBACK 3: If toolkit not available in Rube, use direct API calls with official SDK.
   RULE: Never block workflow — always suggest manual alternative if automation fails.
 opp: OPP-Phase3-composio-consolidation
+input_schema:
+  - name: toolkit_name
+    type: string
+    description: "Name of the Composio toolkit to automate (e.g. github, slack, notion)"
+    required: true
+  - name: task_description
+    type: string
+    description: "Description of the task to perform via the toolkit"
+    required: true
+output_schema:
+  - name: result
+    type: object
+    description: "Result returned by the Composio tool execution"
+  - name: tool_used
+    type: string
+    description: "Name of the specific Composio tool that was called"
+  - name: status
+    type: string
+    enum: [success, failure, partial]
+    description: "Execution status"
 ---
 
 # Composio Automation — Meta-Skill

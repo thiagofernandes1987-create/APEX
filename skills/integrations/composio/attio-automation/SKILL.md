@@ -12,6 +12,11 @@ security: {level: standard, pii: false, approval_required: false}
 extends: integrations.composio.meta
 toolkit: attio-automation
 # Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
+anchors:
+  - automation
+  - integration
+  - api
+  - workflow
 ---
 
 # Attio Automation
@@ -165,3 +170,15 @@ Retrieve records from a specific object type with simple pagination, returned in
 ---
 
 *Powered by [Composio](https://composio.dev)*
+
+## Why This Skill Exists
+Stub for the `attio-automation` toolkit in the Composio integration ecosystem.
+Extends `integrations.composio.meta` — see the meta-skill for full protocol.
+
+## When to Use
+Use when automating `attio-automation` tasks via Rube MCP (Composio).
+For generic Composio queries, use `integrations.composio.meta` directly.
+
+## What If Fails
+See `skills/integrations/composio/SKILL.md` (meta-skill) for full fallback protocol.
+RULE: Never block workflow — always suggest manual alternative if automation fails.

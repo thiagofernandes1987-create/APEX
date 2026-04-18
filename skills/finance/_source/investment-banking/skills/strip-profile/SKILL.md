@@ -106,7 +106,7 @@ security:
 apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: LLM_BEHAVIOR
-skill_id: finance._source.investment-banking.skills
+skill_id: finance.investment_banking.strip_profile_3
 status: CANDIDATE
 ---
 ## Workflow

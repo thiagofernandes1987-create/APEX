@@ -1,6 +1,6 @@
 ---
 executor: LLM_BEHAVIOR
-skill_id: finance._source.equity-research.skills
+skill_id: finance.equity_research.catalyst_calendar_3
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
 anchors:

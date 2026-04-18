@@ -11,6 +11,11 @@ security: {level: standard, pii: false, approval_required: false}
 extends: integrations.composio.meta
 toolkit: harvest-automation
 # Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
+anchors:
+  - automation
+  - integration
+  - api
+  - workflow
 ---
 
 # Harvest Automation
@@ -158,3 +163,15 @@ Update time entry 123456 to change the hours to 4.0 and add the note "Completed 
 ---
 
 *Powered by [Composio](https://composio.dev)*
+
+## Why This Skill Exists
+Stub for the `harvest-automation` toolkit in the Composio integration ecosystem.
+Extends `integrations.composio.meta` — see the meta-skill for full protocol.
+
+## When to Use
+Use when automating `harvest-automation` tasks via Rube MCP (Composio).
+For generic Composio queries, use `integrations.composio.meta` directly.
+
+## What If Fails
+See `skills/integrations/composio/SKILL.md` (meta-skill) for full fallback protocol.
+RULE: Never block workflow — always suggest manual alternative if automation fails.

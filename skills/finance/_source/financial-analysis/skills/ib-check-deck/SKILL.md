@@ -110,7 +110,7 @@ security:
 apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: HYBRID
-skill_id: finance._source.financial-analysis.skills
+skill_id: finance.financial_analysis.ib_check_deck_3
 status: CANDIDATE
 ---
 # IB Deck Checker

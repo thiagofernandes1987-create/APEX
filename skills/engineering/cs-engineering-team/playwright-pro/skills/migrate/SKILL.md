@@ -5,7 +5,7 @@ description: >-
   "cypress", "selenium", "migrate tests", "convert tests", "switch to
   playwright", "move from cypress", or "replace selenium".
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering-team.playwright-pro.skills
+skill_id: engineering.cs_engineering_team.playwright_pro.migrate
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

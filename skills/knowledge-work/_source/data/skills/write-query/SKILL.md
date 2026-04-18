@@ -80,7 +80,7 @@ security:
 apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: LLM_BEHAVIOR
-skill_id: knowledge-work._source.data.skills
+skill_id: knowledge_work.data.write_query_2
 status: CANDIDATE
 ---
 # /write-query - Write Optimized SQL

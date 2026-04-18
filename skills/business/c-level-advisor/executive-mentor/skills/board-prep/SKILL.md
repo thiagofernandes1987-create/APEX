@@ -2,7 +2,7 @@
 name: "board-prep"
 description: "Manage — /em -board-prep — Board Meeting Preparation"
 executor: LLM_BEHAVIOR
-skill_id: business.c-level-advisor.executive-mentor.skills
+skill_id: business.c_level_advisor.executive_mentor.board_prep
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

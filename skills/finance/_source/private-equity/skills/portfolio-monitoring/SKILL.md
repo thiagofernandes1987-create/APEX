@@ -1,6 +1,6 @@
 ---
 executor: LLM_BEHAVIOR
-skill_id: finance._source.private-equity.skills
+skill_id: finance.private_equity.portfolio_monitoring_3
 status: CANDIDATE
 security: {level: high, pii: true, approval_required: true}
 anchors:

@@ -3,7 +3,7 @@ name: "remember"
 description: "Implement — Explicitly save important knowledge to auto-memory with timestamp and context. Use when a discovery is too important to rely on auto-capture."
 command: /si:remember
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering-team.self-improving-agent.skills
+skill_id: engineering.cs_engineering_team.self_improving_agent.remember
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

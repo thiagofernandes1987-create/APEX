@@ -11,6 +11,11 @@ security: {level: standard, pii: false, approval_required: false}
 extends: integrations.composio.meta
 toolkit: omnisend-automation
 # Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
+anchors:
+  - automation
+  - integration
+  - api
+  - workflow
 ---
 
 # Omnisend Automation
@@ -130,3 +135,15 @@ Use batch operations to avoid rate limits when processing large data sets.
 ---
 
 *Powered by [Composio](https://composio.dev)*
+
+## Why This Skill Exists
+Stub for the `omnisend-automation` toolkit in the Composio integration ecosystem.
+Extends `integrations.composio.meta` — see the meta-skill for full protocol.
+
+## When to Use
+Use when automating `omnisend-automation` tasks via Rube MCP (Composio).
+For generic Composio queries, use `integrations.composio.meta` directly.
+
+## What If Fails
+See `skills/integrations/composio/SKILL.md` (meta-skill) for full fallback protocol.
+RULE: Never block workflow — always suggest manual alternative if automation fails.

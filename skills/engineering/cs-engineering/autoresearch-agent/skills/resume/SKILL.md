@@ -3,7 +3,7 @@ name: "resume"
 description: "Implement — Resume a paused experiment. Checkout the experiment branch, read results history, continue iterating."
 command: /ar:resume
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering.autoresearch-agent.skills
+skill_id: engineering.cs_engineering.autoresearch_agent.resume
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

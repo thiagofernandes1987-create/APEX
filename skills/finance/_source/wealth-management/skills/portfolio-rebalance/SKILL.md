@@ -1,6 +1,6 @@
 ---
 executor: LLM_BEHAVIOR
-skill_id: finance._source.wealth-management.skills
+skill_id: finance.wealth_management.portfolio_rebalance_3
 status: CANDIDATE
 security: {level: high, pii: false, approval_required: true}
 anchors:

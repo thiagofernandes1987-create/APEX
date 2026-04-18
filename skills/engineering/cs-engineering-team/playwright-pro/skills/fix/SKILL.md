@@ -5,7 +5,7 @@ description: >-
   "flaky test", "test failing", "debug test", "test broken", "test passes
   sometimes", or "intermittent failure".
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering-team.playwright-pro.skills
+skill_id: engineering.cs_engineering_team.playwright_pro.fix
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

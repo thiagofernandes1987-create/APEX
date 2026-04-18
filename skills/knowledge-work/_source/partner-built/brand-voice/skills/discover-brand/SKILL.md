@@ -73,7 +73,7 @@ security:
 apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: LLM_BEHAVIOR
-skill_id: knowledge-work._source.partner-built.brand-voice
+skill_id: knowledge_work.partner_built.brand_voice.discover_brand_2
 status: CANDIDATE
 ---
 # Brand Discovery

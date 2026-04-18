@@ -11,6 +11,11 @@ security: {level: high, pii: false, approval_required: true}
 extends: integrations.composio.meta
 toolkit: zoho-books-automation
 # Phase3: This stub routes to the meta-skill. See skills/integrations/composio/SKILL.md for full protocol.
+anchors:
+  - automation
+  - integration
+  - api
+  - workflow
 ---
 
 # Zoho Books Automation
@@ -205,3 +210,15 @@ Example prompt:
 ---
 
 *Powered by [Composio](https://composio.dev)*
+
+## Why This Skill Exists
+Stub for the `zoho-books-automation` toolkit in the Composio integration ecosystem.
+Extends `integrations.composio.meta` — see the meta-skill for full protocol.
+
+## When to Use
+Use when automating `zoho-books-automation` tasks via Rube MCP (Composio).
+For generic Composio queries, use `integrations.composio.meta` directly.
+
+## What If Fails
+See `skills/integrations/composio/SKILL.md` (meta-skill) for full fallback protocol.
+RULE: Never block workflow — always suggest manual alternative if automation fails.

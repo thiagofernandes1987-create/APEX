@@ -3,7 +3,7 @@ name: "promote"
 description: "Implement — Graduate a proven pattern from auto-memory (MEMORY.md) to CLAUDE.md or .claude/rules/ for permanent enforcement."
 command: /si:promote
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering-team.self-improving-agent.skills
+skill_id: engineering.cs_engineering_team.self_improving_agent.promote
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

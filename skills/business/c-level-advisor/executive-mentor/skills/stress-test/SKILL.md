@@ -2,7 +2,7 @@
 name: "stress-test"
 description: "Manage — /em -stress-test — Business Assumption Stress Testing"
 executor: LLM_BEHAVIOR
-skill_id: business.c-level-advisor.executive-mentor.skills
+skill_id: business.c_level_advisor.executive_mentor.stress_test
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

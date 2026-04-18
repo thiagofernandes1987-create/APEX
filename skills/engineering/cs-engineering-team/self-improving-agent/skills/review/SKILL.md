@@ -3,7 +3,7 @@ name: "review"
 description: "Analyze auto-memory for promotion candidates, stale entries, consolidation opportunities, and health metrics."
 command: /si:review
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering-team.self-improving-agent.skills
+skill_id: engineering.cs_engineering_team.self_improving_agent.review
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

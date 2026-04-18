@@ -99,7 +99,7 @@ security:
 apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: HYBRID
-skill_id: knowledge-work._source.data.skills
+skill_id: knowledge_work.data.data_context_extractor_2
 status: CANDIDATE
 ---
 # Data Context Extractor

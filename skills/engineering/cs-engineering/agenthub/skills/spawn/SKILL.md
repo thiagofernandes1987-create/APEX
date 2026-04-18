@@ -3,7 +3,7 @@ name: "spawn"
 description: "Implement — Launch N parallel subagents in isolated git worktrees to compete on the session task."
 command: /hub:spawn
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering.agenthub.skills
+skill_id: engineering.cs_engineering.agenthub.spawn
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:

@@ -108,7 +108,7 @@ security:
 apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
 executor: HYBRID
-skill_id: finance._source_v2.financial-analysis.skills
+skill_id: finance.financial_analysis.dcf_model_2
 status: CANDIDATE
 ---
 # DCF Model Builder

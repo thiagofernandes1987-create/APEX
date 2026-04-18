@@ -5,7 +5,7 @@ description: >-
   "check test quality", "audit tests", "improve tests", "test code review",
   or "playwright best practices check".
 executor: LLM_BEHAVIOR
-skill_id: engineering.cs-engineering-team.playwright-pro.skills
+skill_id: engineering.cs_engineering_team.playwright_pro.review
 status: CANDIDATE
 security: {level: standard, pii: false, approval_required: false}
 anchors:
