@@ -1,7 +1,7 @@
 # APEX Index — Hub de Navegação
 
-**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-18 01:45 UTC
-**Versão APEX**: v00.36.0 | **Skills**: 3769 | **Domínios**: 52 | **Erros de parse**: 0
+**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-18 02:11 UTC
+**Versão APEX**: v00.36.0 | **Skills**: 3784 | **Domínios**: 52 | **Erros de parse**: 0
 
 > Este arquivo é gerado automaticamente. Não editar manualmente.
 > Para atualizar: `python tools/generate_index.py` ou aguardar o GitHub Action.
@@ -40,13 +40,13 @@ PASSO 3: Leia o SKILL.md do skill específico
 | Business — Sales | 4 | `skills/business_sales/` | OK |
 | Claude Skills (M) | 9 | `skills/claude_skills_m/` | OK |
 | Community | 414 | `skills/community/` | OK |
-| Community — General | 27 | `skills/community_general/` | OK |
+| Community — General | 28 | `skills/community_general/` | OK |
 | Customer Support | 6 | `skills/customer-support/` | OK |
 | Data | 34 | `skills/data/` | OK |
 | Data Science | 11 | `skills/data-science/` | OK |
-| Design | 73 | `skills/design/` | OK |
+| Design | 80 | `skills/design/` | OK |
 | Engineering (Core) | 596 | `skills/engineering/` | OK |
-| Engineering Agentops | 15 | `skills/engineering_agentops/` | OK |
+| Engineering Agentops | 22 | `skills/engineering_agentops/` | OK |
 | Engineering — API | 14 | `skills/engineering_api/` | OK |
 | Engineering — Backend | 9 | `skills/engineering_backend/` | OK |
 | Engineering — CLI | 3 | `skills/engineering_cli/` | OK |
@@ -1799,7 +1799,7 @@ domain_map:
   COMMUNITY_GENERAL:
     path: skills/community_general/
     display_name: "Community — General"
-    skill_count: 27
+    skill_count: 28
     anchors: [for, memory, analyzes, and, patterns, including, auto, auto-memory, analysis, claude, generates, proven, pattern, test, infrastructure]
     sub_domains:
       capa-officer:
@@ -1962,6 +1962,13 @@ domain_map:
             path: skills/community_general/slack-gif-creator/SKILL.md
             status: CANDIDATE
             anchors: [slack, creator, toolkit, creating, animated]
+      soultrace:
+        path: skills/community_general/soultrace/
+        skill_count: 1
+        skills:
+          - skill: community_general.soultrace
+            path: skills/community_general/soultrace/SKILL.md
+            status: UNKNOWN
       status:
         path: skills/community_general/status/
         skill_count: 1
@@ -2166,7 +2173,7 @@ domain_map:
   DESIGN:
     path: skills/design/
     display_name: "Design"
-    skill_count: 73
+    skill_count: 80
     anchors: [design, for, apple, and, when, the, components, guidance, interface, advisor, leadership, patterns, product, human, guidelines]
     sub_domains:
       atlassian-templates:
@@ -2177,6 +2184,13 @@ domain_map:
             path: skills/design/atlassian-templates/SKILL.md
             status: CANDIDATE
             anchors: [atlassian, templates, template, files, creator]
+      banner-design:
+        path: skills/design/banner-design/
+        skill_count: 1
+        skills:
+          - skill: design.banner_design
+            path: skills/design/banner-design/SKILL.md
+            status: CANDIDATE
       board-deck-builder:
         path: skills/design/board-deck-builder/
         skill_count: 1
@@ -2185,6 +2199,13 @@ domain_map:
             path: skills/design/board-deck-builder/SKILL.md
             status: CANDIDATE
             anchors: [board, deck, builder, assembles, comprehensive]
+      brand:
+        path: skills/design/brand/
+        skill_count: 1
+        skills:
+          - skill: design.brand
+            path: skills/design/brand/SKILL.md
+            status: CANDIDATE
       business-investment-advisor:
         path: skills/design/business-investment-advisor/
         skill_count: 1
@@ -2289,6 +2310,20 @@ domain_map:
             path: skills/design/culture-architect/SKILL.md
             status: CANDIDATE
             anchors: [culture, architect, build, measure, evolve]
+      design:
+        path: skills/design/design/
+        skill_count: 1
+        skills:
+          - skill: design.design
+            path: skills/design/design/SKILL.md
+            status: CANDIDATE
+      design-system:
+        path: skills/design/design-system/
+        skill_count: 1
+        skills:
+          - skill: design.design_system
+            path: skills/design/design-system/SKILL.md
+            status: CANDIDATE
       document-skills:
         path: skills/design/document-skills/
         skill_count: 1
@@ -2522,6 +2557,13 @@ domain_map:
             path: skills/design/skill-creator/SKILL.md
             status: CANDIDATE
             anchors: [skill, creator, guide, creating, effective]
+      slides:
+        path: skills/design/slides/
+        skill_count: 1
+        skills:
+          - skill: design.slides
+            path: skills/design/slides/SKILL.md
+            status: CANDIDATE
       soc2-compliance:
         path: skills/design/soc2-compliance/
         skill_count: 1
@@ -2586,6 +2628,20 @@ domain_map:
             path: skills/design/ui-design-system/SKILL.md
             status: CANDIDATE
             anchors: [design, system, toolkit, senior, designer]
+      ui-styling:
+        path: skills/design/ui-styling/
+        skill_count: 1
+        skills:
+          - skill: design.ui_styling
+            path: skills/design/ui-styling/SKILL.md
+            status: UNKNOWN
+      ui-ux-pro-max:
+        path: skills/design/ui-ux-pro-max/
+        skill_count: 1
+        skills:
+          - skill: design.ui_ux_pro_max
+            path: skills/design/ui-ux-pro-max/SKILL.md
+            status: UNKNOWN
       ux:
         path: skills/design/ux/
         skill_count: 11
@@ -2774,7 +2830,7 @@ domain_map:
           - skill: engineering.cs-engineering.agenthub
             path: skills/engineering/cs-engineering/agenthub/SKILL.md
             status: CANDIDATE
-          - skill: engineering.cs-engineering.agenthub.skills
+          - skill: engineering.cs_engineering.agenthub.board
             path: skills/engineering/cs-engineering/agenthub/skills/board/SKILL.md
             status: CANDIDATE
           # ... +53 skills adicionais
@@ -2952,7 +3008,7 @@ domain_map:
   ENGINEERING_AGENTOPS:
     path: skills/engineering_agentops/
     display_name: "Engineering Agentops"
-    skill_count: 15
+    skill_count: 22
     sub_domains:
       brainstorming:
         path: skills/engineering_agentops/brainstorming/
@@ -2961,6 +3017,20 @@ domain_map:
           - skill: engineering_agentops.brainstorming
             path: skills/engineering_agentops/brainstorming/SKILL.md
             status: ADOPTED
+      composition-patterns:
+        path: skills/engineering_agentops/composition-patterns/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.composition_patterns
+            path: skills/engineering_agentops/composition-patterns/SKILL.md
+            status: CANDIDATE
+      deploy-to-vercel:
+        path: skills/engineering_agentops/deploy-to-vercel/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.deploy_to_vercel
+            path: skills/engineering_agentops/deploy-to-vercel/SKILL.md
+            status: UNKNOWN
       dispatching-parallel-agents:
         path: skills/engineering_agentops/dispatching-parallel-agents/
         skill_count: 1
@@ -2989,6 +3059,27 @@ domain_map:
           - skill: engineering_agentops.full_dev_cycle
             path: skills/engineering_agentops/full-dev-cycle/SKILL.md
             status: ADOPTED
+      react-best-practices:
+        path: skills/engineering_agentops/react-best-practices/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.react_best_practices
+            path: skills/engineering_agentops/react-best-practices/SKILL.md
+            status: CANDIDATE
+      react-native-skills:
+        path: skills/engineering_agentops/react-native-skills/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.react_native_skills
+            path: skills/engineering_agentops/react-native-skills/SKILL.md
+            status: CANDIDATE
+      react-view-transitions:
+        path: skills/engineering_agentops/react-view-transitions/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.react_view_transitions
+            path: skills/engineering_agentops/react-view-transitions/SKILL.md
+            status: CANDIDATE
       receiving-code-review:
         path: skills/engineering_agentops/receiving-code-review/
         skill_count: 1
@@ -3038,6 +3129,13 @@ domain_map:
           - skill: engineering_agentops.using-superpowers
             path: skills/engineering_agentops/using-superpowers/SKILL.md
             status: ADOPTED
+      vercel-cli-with-tokens:
+        path: skills/engineering_agentops/vercel-cli-with-tokens/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.vercel_cli_with_tokens
+            path: skills/engineering_agentops/vercel-cli-with-tokens/SKILL.md
+            status: UNKNOWN
       verification-before-completion:
         path: skills/engineering_agentops/verification-before-completion/
         skill_count: 1
@@ -3045,6 +3143,13 @@ domain_map:
           - skill: engineering_agentops.verification-before-completion
             path: skills/engineering_agentops/verification-before-completion/SKILL.md
             status: ADOPTED
+      web-design-guidelines:
+        path: skills/engineering_agentops/web-design-guidelines/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.web_design_guidelines
+            path: skills/engineering_agentops/web-design-guidelines/SKILL.md
+            status: CANDIDATE
       writing-plans:
         path: skills/engineering_agentops/writing-plans/
         skill_count: 1
@@ -5626,20 +5731,20 @@ domain_map:
         path: skills/finance/_source/
         skill_count: 56
         skills:
-          - skill: finance._source.equity-research.skills
+          - skill: finance.equity_research.catalyst_calendar_3
             path: skills/finance/_source/equity-research/skills/catalyst-calendar/SKILL.md
             status: CANDIDATE
-          - skill: finance._source.equity-research.skills
+          - skill: finance.equity_research.earnings_analysis_3
             path: skills/finance/_source/equity-research/skills/earnings-analysis/SKILL.md
             status: CANDIDATE
             anchors: [earnings-analysis, create, professional, equity, research]
-          - skill: finance._source.equity-research.skills
+          - skill: finance.equity_research.earnings_preview_3
             path: skills/finance/_source/equity-research/skills/earnings-preview/SKILL.md
             status: CANDIDATE
-          - skill: finance._source.equity-research.skills
+          - skill: finance.equity_research.idea_generation_3
             path: skills/finance/_source/equity-research/skills/idea-generation/SKILL.md
             status: CANDIDATE
-          - skill: finance._source.equity-research.skills
+          - skill: finance.equity_research.initiating_coverage_3
             path: skills/finance/_source/equity-research/skills/initiating-coverage/SKILL.md
             status: CANDIDATE
             anchors: [initiating-coverage, create, institutional-quality, equity, research]
@@ -5648,20 +5753,20 @@ domain_map:
         path: skills/finance/_source_v2/
         skill_count: 56
         skills:
-          - skill: finance._source_v2.equity-research.skills
+          - skill: finance.equity_research.catalyst_calendar_2
             path: skills/finance/_source_v2/equity-research/skills/catalyst-calendar/SKILL.md
             status: CANDIDATE
-          - skill: finance._source_v2.equity-research.skills
+          - skill: finance.equity_research.earnings_analysis_2
             path: skills/finance/_source_v2/equity-research/skills/earnings-analysis/SKILL.md
             status: CANDIDATE
             anchors: [earnings-analysis, create, professional, equity, research]
-          - skill: finance._source_v2.equity-research.skills
+          - skill: finance.equity_research.earnings_preview_2
             path: skills/finance/_source_v2/equity-research/skills/earnings-preview/SKILL.md
             status: CANDIDATE
-          - skill: finance._source_v2.equity-research.skills
+          - skill: finance.equity_research.idea_generation_2
             path: skills/finance/_source_v2/equity-research/skills/idea-generation/SKILL.md
             status: CANDIDATE
-          - skill: finance._source_v2.equity-research.skills
+          - skill: finance.equity_research.initiating_coverage_2
             path: skills/finance/_source_v2/equity-research/skills/initiating-coverage/SKILL.md
             status: CANDIDATE
             anchors: [initiating-coverage, create, institutional-quality, equity, research]
@@ -6302,23 +6407,23 @@ domain_map:
         path: skills/knowledge-work/_source/
         skill_count: 124
         skills:
-          - skill: knowledge-work._source.bio-research.skills
+          - skill: knowledge_work.bio_research.instrument_data_to_allotrope_2
             path: skills/knowledge-work/_source/bio-research/skills/instrument-data-to-allotrope/SKILL.md
             status: CANDIDATE
             anchors: [instrument-data-to-allotrope, convert, laboratory, instrument, output]
-          - skill: knowledge-work._source.bio-research.skills
+          - skill: knowledge_work.bio_research.nextflow_development_2
             path: skills/knowledge-work/_source/bio-research/skills/nextflow-development/SKILL.md
             status: CANDIDATE
             anchors: [nextflow-development, run, nf-core, bioinformatics, pipelines]
-          - skill: knowledge-work._source.bio-research.skills
+          - skill: knowledge_work.bio_research.scientific_problem_selection_2
             path: skills/knowledge-work/_source/bio-research/skills/scientific-problem-selection/SKILL.md
             status: CANDIDATE
             anchors: [scientific-problem-selection, this, skill, should, when]
-          - skill: knowledge-work._source.bio-research.skills
+          - skill: knowledge_work.bio_research.scvi_tools_2
             path: skills/knowledge-work/_source/bio-research/skills/scvi-tools/SKILL.md
             status: CANDIDATE
             anchors: [scvi-tools, deep, learning, for, single-cell]
-          - skill: knowledge-work._source.bio-research.skills
+          - skill: knowledge_work.bio_research.single_cell_rna_qc_2
             path: skills/knowledge-work/_source/bio-research/skills/single-cell-rna-qc/SKILL.md
             status: CANDIDATE
             anchors: [single-cell-rna-qc, performs, quality, control, single-cell]
@@ -6327,23 +6432,23 @@ domain_map:
         path: skills/knowledge-work/_source_v2/
         skill_count: 124
         skills:
-          - skill: knowledge-work._source_v2.bio-research.skills
+          - skill: knowledge_work.bio_research.instrument_data_to_allotrope
             path: skills/knowledge-work/_source_v2/bio-research/skills/instrument-data-to-allotrope/SKILL.md
             status: CANDIDATE
             anchors: [instrument-data-to-allotrope, convert, laboratory, instrument, output]
-          - skill: knowledge-work._source_v2.bio-research.skills
+          - skill: knowledge_work.bio_research.nextflow_development
             path: skills/knowledge-work/_source_v2/bio-research/skills/nextflow-development/SKILL.md
             status: CANDIDATE
             anchors: [nextflow-development, run, nf-core, bioinformatics, pipelines]
-          - skill: knowledge-work._source_v2.bio-research.skills
+          - skill: knowledge_work.bio_research.scientific_problem_selection
             path: skills/knowledge-work/_source_v2/bio-research/skills/scientific-problem-selection/SKILL.md
             status: CANDIDATE
             anchors: [scientific-problem-selection, this, skill, should, when]
-          - skill: knowledge-work._source_v2.bio-research.skills
+          - skill: knowledge_work.bio_research.scvi_tools
             path: skills/knowledge-work/_source_v2/bio-research/skills/scvi-tools/SKILL.md
             status: CANDIDATE
             anchors: [scvi-tools, deep, learning, for, single-cell]
-          - skill: knowledge-work._source_v2.bio-research.skills
+          - skill: knowledge_work.bio_research.single_cell_rna_qc
             path: skills/knowledge-work/_source_v2/bio-research/skills/single-cell-rna-qc/SKILL.md
             status: CANDIDATE
             anchors: [single-cell-rna-qc, performs, quality, control, single-cell]
@@ -8144,12 +8249,13 @@ domain_map:
 ## Estatísticas de Geração
 
 **Por Status:**
-- CANDIDATE: 3510 (93.1%)
-- ADOPTED: 259 (6.9%)
+- CANDIDATE: 3520 (93.0%)
+- ADOPTED: 259 (6.8%)
+- UNKNOWN: 5 (0.1%)
 
 **Por Tier:**
-- ADAPTED: 2526 (67.0%)
-- IMPORTED: 1174 (31.1%)
+- ADAPTED: 2526 (66.8%)
+- IMPORTED: 1189 (31.4%)
 - COMMUNITY: 37 (1.0%)
 - 2: 26 (0.7%)
 - SUPER: 5 (0.1%)
@@ -8165,8 +8271,8 @@ domain_map:
 7. Engineering — Cloud Azure: 161 skills
 8. Business: 160 skills
 9. Marketing: 138 skills
-10. Design: 73 skills
+10. Design: 80 skills
 
 ---
 
-*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-18 01:45 UTC*
+*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-18 02:11 UTC*
