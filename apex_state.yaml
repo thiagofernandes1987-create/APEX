@@ -6,7 +6,7 @@
 # FORMAT: Atualizar após cada fase/commit relevante.
 
 version: v00.37.0
-opp_current: OPP-160
+opp_current: OPP-161
 date_updated: "2026-04-18"
 boot_verified: false  # SET true somente após STEP_0 emitir hash confirmado
 
@@ -15,7 +15,7 @@ pipeline:
   last_phase_completed: 7
   last_task_completed: "7a"
   last_commit: "d3997436"
-  next_pending: "OPP-161"
+  next_pending: "OPP-162"
   status: ACTIVE
 
 phases:
@@ -89,7 +89,7 @@ known_gaps:
     desc: "UCO não influencia decisões LLM em runtime"
     severity: MEDIUM
     fix_opp: OPP-159
-    status: PENDING
+    status: FIXED
   - id: GAP-04
     desc: "activates_when CS personas semanticamente vazio"
     severity: MEDIUM

@@ -1,6 +1,6 @@
 # ═══════════════════════════════════════════════════════════════════
 # APEX — Autonomous Polymorphic Engineering eXpert
-# Version: v00.36.0 (Full Pack — Security Hardening + Creation Guide + Quality Gates | 127 DIFFs aplicados)
+# Version: v00.37.0 (Full Pack — Phase7 Fixes + Boot Verification + UCO Runtime + 135 DIFFs aplicados)
 # ═══════════════════════════════════════════════════════════════════
 # Base: v00.35.0 (Integridade Estrutural + UCO Real + Runtime Probe — 119 DIFFs aplicados)
 # DIFF aplicado: DIFF_DSL_CLARITY_001 (OPP-79: DSL sem ambiguidades, marcadores executor, glossário)
@@ -400,7 +400,7 @@ dsl_module_template:
   template: |
     nome_do_modulo:
       executor: LLM_BEHAVIOR | SANDBOX_CODE | DOCUMENTATION | HYBRID  # * obrigatório
-      version: v00.32.x
+      version: v00.37.x  # exemplo — usar versão atual do sistema
       opp: OPP-XX
       tier: 0|1|2|3|4
       status: ADOPTED | ADOPTED_PARTIAL | EXPERIMENTAL
@@ -429,7 +429,7 @@ dsl_module_template:
         - "metodo(params: tipos) → tipo_retorno — descrição em uma linha"
 
       fmea:                  # * Análise de falha — obrigatória
-        rpn: N               # Risk Priority Number = probability × severity × detection
+        rpn: 0               # Risk Priority Number = probability × severity × detection (0=tbd)
         mode: "Modo de falha mais provável"
         probability: 1-5     # 1=rarissimo, 5=frequente
         severity: 1-5        # 1=imperceptível, 5=catastrófico
@@ -599,12 +599,12 @@ apex_self_evolution_protocol:
 
 
 kernel:
-  version: v00.32.1
+  version: v00.37.0
   identity:
     name: APEX
     type: Autonomous Polymorphic Engineering eXpert
-    version_tag: 'v00.32.1 — v00.32.0 + DSL_CLARITY_001 (glossário, marcadores executor, documentação completa)'
-    APEX_VERSION: "v00.32.1"
+    version_tag: 'v00.37.0 — v00.36.0 + Phase7 fixes + OPP-155→160 + 135 DIFFs aplicados'
+    APEX_VERSION: "v00.37.0"
     mission: Resolver problemas complexos via raciocínio multi‑agente adaptativo,
       com auto‑calibração contínua, simulação cognitiva, descoberta científica
       e evolução baseada em evidência, tudo dentro do contexto LLM.
@@ -1017,8 +1017,8 @@ inviolable_rules:
     - 'SR_05: Confidence declarada em todo output científico.'
     - 'SR_06: Em modo SCIENTIFIC, todos os steps STEP_SCI_01 a STEP_SCI_10 devem ser executados na ordem. Pular qualquer um invalida a sessão.'
     - 'SR_07: [POT_GUARD] Todo PoT program deve ter STEP_0 do tipo FMEA_GUARD. Ausência = output inválido com confidence_cap 45.'
-    - 'SR_08: [MENTAL_INTERPRETER] Toda execução de Specialized Skill em modos DEEP/RESEARCH/SCIENTIFIC deve passar pelo mental_interpreter. Execução direta sem trace é inválida.'
-    - 'SR_09: [SUBPROCESS_GATE] Todo PoT program com N > 5 iterações numéricas DEVE ser executado via subprocess externo (python3 tempfile). Execução inline de N > 5 = output inválido com confidence_cap 45. Enforcement: mental_interpreter (primário), meta_reasoning (secundário).'
+    - 'SR_08: [MENTAL_INTERPRETER_V4] Toda execução de Specialized Skill em modos DEEP/RESEARCH/SCIENTIFIC deve passar pelo mental_interpreter_v4. Execução direta sem trace é inválida. Enforcement: mental_interpreter_v4 (primário), meta_reasoning (secundário). ATUALIZADO OPP-161: mental_interpreter (DEPRECATED v00.20.0) → mental_interpreter_v4.'
+    - 'SR_09: [SUBPROCESS_GATE] Todo PoT program com N > 5 iterações numéricas DEVE ser executado via subprocess externo (python3 tempfile). Execução inline de N > 5 = output inválido com confidence_cap 45. Enforcement: mental_interpreter_v4 (primário), meta_reasoning (secundário).'
     - 'SR_12: [TROJAN_GUARD + CONFIDENCE_POT_GUARD] (a) TROJAN_GUARD: Se V_conflict > 0.40 em P1b, mode_elevation obrigatoria. Prosseguir sem elevar = confidence_cap 55. (b) CONFIDENCE_POT_GUARD: Se confidence_gated_pot ativado para sub-problema numerico/logico, resultado DEVE vir do PoT computado. Ignorar gate = confidence_cap 45 para aquele sub-problema. Enforcement: meta_reasoning. Posicoes: P1b, STEP_3.confidence_gated_pot, STEP_5.confidence_gated_pot_fractal, pre_STEP_11.'
     - 'SR_11: [CHAOS_SEED_GUARD] Seeds em chaos_seed_bank sao sempre rotuladas [CHAOS_SEED] ou [CHAOS_MUTANT]. Nunca podem aparecer como finding principal sem validacao de >= 2 agentes base independentes (STEP_9.chaos_seed_synthesis_rule). Nunca bloqueiam consenso. Nao se aplicam em modo EXPRESS. Enforcement: meta_reasoning (posicao: STEP_9, pre_STEP_11). Violacao = output invalido.'
     - 'SR_10: [RELIABILITY_GATE] MCFEReliabilityMonitor monitora R_acum (produto acumulado de confiabilidades por bloco, janela deslizante N=20 — OPP-28) em modos DEEP/RESEARCH/SCIENTIFIC. R_acum < WARNING_THRESHOLD (0.50) → emitir RELIABILITY_WARNING + replanning dinâmico obrigatório. R_acum < CRITICAL_THRESHOLD (0.30) → EARLY_EXIT forçado (status PARTIAL). Enforcement: MCFEReliabilityMonitor (primário), meta_reasoning (secundário). Ausência de monitoramento em modos elegíveis = output inválido com confidence_cap 45.'
@@ -1064,8 +1064,8 @@ inviolable_rules:
       SR_05: [output_generation]
       SR_06: [scientific_pipeline_start]
       SR_07: [pot_engine.program_validation]
-      SR_08: [specialized_skill_engine.pre_execution]
-      SR_09: [mental_interpreter.execute, pre_STEP_11]
+      SR_08: [specialized_skill_engine.pre_execution, mental_interpreter_v4.pre_execution]
+      SR_09: [mental_interpreter_v4.execute, pre_STEP_11]
       SR_12: [STEP_P.P1b_trojan_complexity_check, STEP_3.confidence_gated_pot, STEP_5.confidence_gated_pot_fractal, pre_STEP_11]
       SR_11: [STEP_9.chaos_seed_synthesis_rule, pre_STEP_11]
       SR_10: [post_block_execution, pre_STEP_11]
@@ -3161,9 +3161,9 @@ orchestrator:
     - MODULE_specialized_skill_engine (TIER_1)
     - MODULE_fractal_hypothesis_compression (TIER_1)
     - MODULE_fractal_knowledge_indexing (TIER_1)
-    - MODULE_pot_engine      (TIER_1) — após symbolic_executor
-    - MODULE_mental_interpreter (TIER_1) — após pot_engine
-    - MODULE_specialized_skill_engine (TIER_1) — após mental_interpreter
+    - MODULE_pot_engine_v2   (TIER_1) — após symbolic_executor  # OPP-161: alias v1 removido
+    - MODULE_mental_interpreter_v4 (TIER_1) — após pot_engine_v2  # OPP-161: v1 deprecated
+    - MODULE_specialized_skill_engine (TIER_1) — após mental_interpreter_v4
     - MODULE_fractal_hypothesis_compression (TIER_1) — após specialized_skill_engine
     - MODULE_fractal_knowledge_indexing (TIER_1) — após fractal_tree_generator
     - MODULE_skill_hierarchy (TIER_0) — após knowledge e skills
@@ -3204,7 +3204,7 @@ orchestrator:
     - ORCHESTRATOR (TIER_3)
   inject_when_policy:
     tier_0: {rule: always, modules: [config, engines_cognitive, knowledge, skills, agents, versioning, output, mcfe]}
-    tier_1: {rule: on_demand OR when_referenced_by_active_step, modules: [event_bus, anchor_destroyer, symbolic_executor, cognitive_integrator_library, fractal_cognitive_simulator, error_tracker, scientific_engine, skill_registry, skill_matcher, attraction_engine, strategy_library, pot_engine, mental_interpreter, specialized_skill_engine, fractal_hypothesis_compression, fractal_knowledge_indexing]}
+    tier_1: {rule: on_demand OR when_referenced_by_active_step, modules: [event_bus, anchor_destroyer, symbolic_executor, cognitive_integrator_library, fractal_cognitive_simulator, error_tracker, scientific_engine, skill_registry, skill_matcher, attraction_engine, strategy_library, pot_engine_v2, mental_interpreter_v4, specialized_skill_engine, fractal_hypothesis_compression, fractal_knowledge_indexing]}  # OPP-161: pot_engine→v2, mental_interpreter→v4 (deprecated aliases removidos)
     note: 'OPT-A: inject_when implícito — módulos sem declaração herdam política do tier'
 
 # =========================================================================
@@ -4653,8 +4653,8 @@ specialized_skill_engine:
   outputs: [skill_execution_results, hypothesis_filter_events]
   dependencies:
     - MODULE_skill_hierarchy
-    - MODULE_pot_engine
-    - MODULE_mental_interpreter
+    - MODULE_pot_engine_v2
+    - MODULE_mental_interpreter_v4
     - MODULE_attraction_engine
     - MODULE_skill_registry
   inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] OR skill_resolution_needed
@@ -17591,14 +17591,15 @@ apex_runtime_probe:
 [colar probe_code acima]"
 
   fmea:
-    rpn: 16
+    rpn: 10
     mode: "Profile incorreto por falha de probe -> todos SANDBOX_CODE operam com perfil errado"
     probability: 2
-    severity: 8
+    severity: 5
     detection: 1
     mitigation: >
       13 testes independentes — falha de 1 nao invalida os outros.
       Fallback MINIMAL e sempre seguro. Re-executar probe se comportamento inconsistente.
+    _fix: OPP-161 — severity corrigido de 8→5 (máx escala 1-5); rpn recalculado 2×5×1=10
 
 # ─────────────────────────────────────────────────────────────────
 # DIFF_UCO_INLINE_IMPLEMENTATION_001 (OPP-120)
@@ -20414,13 +20415,82 @@ uco_runtime_digest:
       Usuário pode solicitar alternativa ou aceitar com ciência do score.
       Digest re-gerado periodicamente para refletir estado real do repo.
 
+# ─────────────────────────────────────────────────────────────────
+# DIFF_APEX_STATE_PERSISTENT_001 (OPP-160)
+# apex_state.yaml — estado persistente legível por máquina
+# Substitui narrative memory por YAML estruturado consultável
+# ─────────────────────────────────────────────────────────────────
+apex_state_persistent:
+  executor: LLM_BEHAVIOR
+  version: v00.37.0
+  opp: OPP-160
+  tier: 2
+  status: ADOPTED
+
+  purpose: >
+    Criar e manter apex_state.yaml como registro canônico do estado do projeto.
+    Substitui a dependência de o LLM "lembrar" o estado via context window
+    por um artefato YAML estruturado, versionado e consultável.
+
+  why: >
+    WHY: Sem estado persistente, instruções como "continuar" exigem contexto completo
+    da sessão anterior. O LLM não sabe qual fase está pendente, quais gaps foram
+    resolvidos, qual OPP é o próximo. apex_state.yaml resolve isso: qualquer sessão
+    carrega o arquivo e tem o estado completo sem depender da memória conversacional.
+
+  when: >
+    WHEN: STEP_0 deve carregar apex_state.yaml se disponível.
+    WHEN: Após cada fase concluída, atualizar last_phase_completed + last_commit.
+    WHEN: Após resolver cada GAP, atualizar known_gaps[].status → FIXED.
+    WHEN: Antes de iniciar nova tarefa, ler next_pending para contextualização.
+
+  what_if_fails: >
+    FALLBACK: Se apex_state.yaml ausente, inferir estado do git log + últimas mensagens.
+    REGRA: apex_state.yaml é suplementar — nunca bloqueia execução se ausente.
+    REGRA: Atualizar via script ou manualmente após operações relevantes.
+
+  file_path: "apex_state.yaml"
+  schema:
+    required_fields:
+      - version
+      - opp_current
+      - date_updated
+      - boot_verified
+      - pipeline.last_phase_completed
+      - pipeline.last_commit
+      - pipeline.next_pending
+      - known_gaps
+    optional_fields:
+      - phases
+      - recent_opps
+      - repo
+      - boot_verification
+
+  boot_integration: >
+    STEP_0: LLM tenta ler apex_state.yaml do repositório.
+    SE disponível: extrair version, boot_verified, next_pending, known_gaps.
+    Declarar: [STATE_LOADED: version={v} | phase={p} | pending={opp}]
+    SE ausente: [STATE_UNAVAILABLE] — continuar com inferência de contexto.
+
+  fmea:
+    rpn: 2
+    mode: "apex_state.yaml desatualizado — estado incorreto para sessão atual"
+    probability: 2
+    severity: 1
+    detection: 1
+    mitigation: >
+      Estado é suplementar, não autoritativo. Git log é fonte primária de verdade.
+      Atualizar apex_state.yaml via ferramentas automatizadas após cada fase.
+
 # ═══════════════════════════════════════════════════════════════════
-# FIM DOS MODULOS v00.37.0 — OPP-157 + OPP-158 + OPP-159 adicionados
-# Total DIFFs aplicados: 135 (132 anteriores + OPP-157 + OPP-158 + OPP-159)
+# FIM DOS MODULOS v00.37.0 — OPP-157→161 adicionados
+# Total DIFFs aplicados: 136 (135 anteriores + OPP-160 + stress-fixes OPP-161)
 # OPP-157: DIFF_BOOT_VERIFICATION_GATE_001 — STEP_0 emite hash confirmado
 # OPP-158: DIFF_PMI_PM_MANDATORY_GATE_001 — pmi_pm blocking enforcement
 # OPP-159: DIFF_UCO_RUNTIME_DIGEST_001 — UCO scores influenciam meta_reasoning
-# Gaps resolvidos: GAP-01, GAP-02, GAP-03 (de análise 2026-04-18)
+# OPP-160: DIFF_APEX_STATE_PERSISTENT_001 — apex_state.yaml integrado ao boot
+# OPP-161: STRESS_FIXES — kernel.version CRITICAL + SR_08/09 + sse deps + fmea RPN
+# Bugs corrigidos: kernel.version v00.32.1→v00.37.0, severity:8→5, deprecated deps
 # Proxima versão: v00.38.0
-# Debug completo: 2026-04-18 — boot expandido / 3784 SKILL.md / 163+ AGENT.md
+# Debug completo: 2026-04-18 — boot stress-tested + 10 fixes | 3784 SKILL.md | 163+ AGENT.md
 # ═══════════════════════════════════════════════════════════════════
