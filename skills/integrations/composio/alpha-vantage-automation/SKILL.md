@@ -3,6 +3,10 @@ name: alpha-vantage-automation
 description: "Automate Alpha Vantage tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.alpha-vantage-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Alpha Vantage Automation via Rube MCP

@@ -3,6 +3,10 @@ name: launch_darkly-automation
 description: "Automate LaunchDarkly tasks via Rube MCP (Composio): feature flags, environments, segments, and rollout management. Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.launch_darkly-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # LaunchDarkly Automation via Rube MCP

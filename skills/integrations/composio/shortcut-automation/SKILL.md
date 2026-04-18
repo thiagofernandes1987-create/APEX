@@ -4,6 +4,10 @@ description: "Automate project management workflows in Shortcut -- create storie
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.shortcut-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Shortcut Automation

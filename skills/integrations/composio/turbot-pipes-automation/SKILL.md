@@ -3,6 +3,10 @@ name: turbot-pipes-automation
 description: "Automate Turbot Pipes tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.turbot-pipes-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Turbot Pipes Automation via Rube MCP

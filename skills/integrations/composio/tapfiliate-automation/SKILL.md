@@ -3,6 +3,10 @@ name: tapfiliate-automation
 description: "Automate Tapfiliate tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.tapfiliate-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Tapfiliate Automation via Rube MCP

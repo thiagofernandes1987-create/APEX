@@ -3,6 +3,10 @@ name: dreamstudio-automation
 description: "Automate Dreamstudio tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.dreamstudio-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Dreamstudio Automation via Rube MCP

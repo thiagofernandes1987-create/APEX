@@ -7,6 +7,10 @@ metadata:
   author: Alireza Rezvani
   category: marketing
   updated: 2026-03-06
+executor: HYBRID
+skill_id: business.marketing-skill.churn-prevention
+status: CANDIDATE
+security: {level: high, pii: true, approval_required: true}
 ---
 
 # Churn Prevention

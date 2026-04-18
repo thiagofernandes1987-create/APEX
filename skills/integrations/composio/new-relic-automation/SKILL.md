@@ -4,6 +4,10 @@ description: "Automate New Relic observability workflows -- manage alert policie
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.new-relic-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # New Relic Automation

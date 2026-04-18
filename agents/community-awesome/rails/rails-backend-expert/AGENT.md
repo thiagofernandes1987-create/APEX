@@ -21,6 +21,7 @@ what_if_fails: >
   FALLBACK: Delegar para agente engineer ou architect.
   Emitir [AGENT_FALLBACK: rails-backend-expert].
 apex_version: v00.37.0
+security: {level: high, approval_required: true}
 ---
 
 ---

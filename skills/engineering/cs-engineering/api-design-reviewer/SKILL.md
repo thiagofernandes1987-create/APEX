@@ -1,6 +1,10 @@
 ---
 name: "api-design-reviewer"
 description: "API Design Reviewer"
+executor: HYBRID
+skill_id: engineering.cs-engineering.api-design-reviewer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # API Design Reviewer

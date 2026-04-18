@@ -13,6 +13,10 @@ triggers:
   - market entry
   - sales enablement
   - win loss analysis
+executor: LLM_BEHAVIOR
+skill_id: business.marketing-skill.marketing-strategy-pmm
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Marketing Strategy & PMM

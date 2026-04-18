@@ -3,6 +3,10 @@ name: keap-automation
 description: "Automate Keap tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.keap-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Keap Automation via Rube MCP

@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.marketing-skill.content_planner
+script_name: content_planner.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
+"""
 X/Twitter Content Planner — Generate weekly posting calendars.
 
 Creates structured content plans with topic suggestions, format mix,

@@ -1,6 +1,10 @@
 ---
 name: "database-designer"
 description: "Use when the user asks to design database schemas, plan data migrations, optimize queries, choose between SQL and NoSQL, or model data relationships."
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.database-designer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Database Designer - POWERFUL Tier Skill

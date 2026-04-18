@@ -1,6 +1,10 @@
 ---
 name: "performance-profiler"
 description: "Performance Profiler"
+executor: HYBRID
+skill_id: engineering.cs-engineering.performance-profiler
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Performance Profiler

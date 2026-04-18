@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.engineering.text_processor
+script_name: text_processor.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
+"""
 Sample Text Processor - Basic text analysis and transformation tool
 
 This script demonstrates the basic structure and functionality expected in 

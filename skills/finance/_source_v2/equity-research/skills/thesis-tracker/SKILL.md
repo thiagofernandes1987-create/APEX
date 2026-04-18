@@ -1,3 +1,9 @@
+---
+executor: LLM_BEHAVIOR
+skill_id: finance._source_v2.equity-research.skills
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
+---
 # Thesis Tracker
 
 description: Maintain and update investment theses for portfolio positions and watchlist names. Track key data points, catalysts, and thesis milestones over time. Use when updating a thesis with new information, reviewing position rationale, or checking if a thesis is still intact. Triggers on "update thesis for [company]", "is my thesis still intact", "thesis check", "add data point to [company]", or "review my positions".

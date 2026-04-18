@@ -3,6 +3,10 @@ name: fixer-automation
 description: "Automate Fixer tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.fixer-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Fixer Automation via Rube MCP

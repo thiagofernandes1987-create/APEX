@@ -3,6 +3,10 @@ name: getform-automation
 description: "Automate Getform tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.getform-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Getform Automation via Rube MCP

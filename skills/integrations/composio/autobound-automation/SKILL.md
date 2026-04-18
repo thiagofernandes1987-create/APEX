@@ -3,6 +3,10 @@ name: autobound-automation
 description: "Automate Autobound tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.autobound-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Autobound Automation via Rube MCP

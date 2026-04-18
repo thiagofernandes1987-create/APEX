@@ -25,6 +25,7 @@ output_schema:
   remediation: "list[str]"
 what_if_fails: >
   FALLBACK: Se análise incompleta por complexidade, priorizar CRITICAL e HIGH. Emitir [PARTIAL_SECURITY_REVIEW] com scope coberto.
+security: {level: high, approval_required: true}
 ---
 
 # security-code-reviewer

@@ -3,6 +3,10 @@ name: composio-search-automation
 description: "Automate Composio Search tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.composio-search-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Composio Search Automation via Rube MCP

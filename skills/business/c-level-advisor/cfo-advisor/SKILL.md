@@ -10,6 +10,10 @@ metadata:
   updated: 2026-03-05
   python-tools: burn_rate_calculator.py, unit_economics_analyzer.py, fundraising_model.py
   frameworks: financial-planning, fundraising-playbook, cash-management
+executor: HYBRID
+skill_id: business.c-level-advisor.cfo-advisor
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # CFO Advisor

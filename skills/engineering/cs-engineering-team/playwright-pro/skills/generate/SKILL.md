@@ -4,6 +4,10 @@ description: >-
   Generate Playwright tests. Use when user says "write tests", "generate tests",
   "add tests for", "test this component", "e2e test", "create test for",
   "test this page", or "test this feature".
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team.playwright-pro.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Generate Playwright Tests

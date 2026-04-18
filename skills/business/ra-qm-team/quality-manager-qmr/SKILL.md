@@ -14,6 +14,10 @@ triggers:
   - regulatory oversight
   - quality culture
   - quality governance
+executor: HYBRID
+skill_id: business.ra-qm-team.quality-manager-qmr
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Senior Quality Manager Responsible Person (QMR)

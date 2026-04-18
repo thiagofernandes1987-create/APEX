@@ -3,6 +3,10 @@ name: hashnode-automation
 description: "Automate Hashnode tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.hashnode-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Hashnode Automation via Rube MCP

@@ -7,6 +7,10 @@ metadata:
   author: Alireza Rezvani
   category: marketing
   updated: 2026-03-10
+executor: HYBRID
+skill_id: business.marketing-skill.x-twitter-growth
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # X/Twitter Growth Engine

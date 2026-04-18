@@ -10,6 +10,10 @@ metadata:
   updated: 2026-03-05
   python-tools: ops_efficiency_analyzer.py, okr_tracker.py
   frameworks: scaling-playbook, ops-cadence, process-frameworks
+executor: HYBRID
+skill_id: business.c-level-advisor.coo-advisor
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # COO Advisor

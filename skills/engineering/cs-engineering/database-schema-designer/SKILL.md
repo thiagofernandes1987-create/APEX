@@ -1,6 +1,10 @@
 ---
 name: "database-schema-designer"
 description: "Use when the user asks to create ERD diagrams, normalize database schemas, design table relationships, or plan schema migrations."
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.database-schema-designer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Database Schema Designer

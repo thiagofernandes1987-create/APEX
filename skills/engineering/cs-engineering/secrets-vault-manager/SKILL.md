@@ -1,6 +1,10 @@
 ---
 name: "secrets-vault-manager"
 description: "Use when the user asks to set up secret management infrastructure, integrate HashiCorp Vault, configure cloud secret stores (AWS Secrets Manager, Azure Key Vault, GCP Secret Manager), implement secret rotation, or audit secret access patterns."
+executor: HYBRID
+skill_id: engineering.cs-engineering.secrets-vault-manager
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Secrets Vault Manager

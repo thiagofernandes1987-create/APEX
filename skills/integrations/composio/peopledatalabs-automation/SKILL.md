@@ -3,6 +3,10 @@ name: peopledatalabs-automation
 description: "Automate Peopledatalabs tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.peopledatalabs-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Peopledatalabs Automation via Rube MCP

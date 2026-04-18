@@ -3,6 +3,10 @@ name: chatfai-automation
 description: "Automate Chatfai tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.chatfai-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Chatfai Automation via Rube MCP

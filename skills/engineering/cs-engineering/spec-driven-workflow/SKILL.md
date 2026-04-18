@@ -1,6 +1,10 @@
 ---
 name: "spec-driven-workflow"
 description: "Use when the user asks to write specs before code, define acceptance criteria, plan features before implementation, generate tests from specifications, or follow spec-first development practices."
+executor: HYBRID
+skill_id: engineering.cs-engineering.spec-driven-workflow
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Spec-Driven Workflow — POWERFUL

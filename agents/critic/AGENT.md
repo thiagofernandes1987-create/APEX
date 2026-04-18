@@ -41,6 +41,7 @@ output_schema:
   rpn: "int"
 what_if_fails: >
   FALLBACK: Se critic não encontrar falhas após 2 passes, emitir [CRITIC_PASS: no critical issues found] — não é falha, é resultado válido.
+security: {level: high, approval_required: true}
 ---
 
 # Critic — Agente de Validação Adversarial

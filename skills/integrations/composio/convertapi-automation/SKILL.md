@@ -3,6 +3,10 @@ name: convertapi-automation
 description: "Automate Convertapi tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.convertapi-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Convertapi Automation via Rube MCP

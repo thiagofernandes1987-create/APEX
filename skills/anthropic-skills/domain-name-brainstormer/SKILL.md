@@ -1,6 +1,10 @@
 ---
 name: domain-name-brainstormer
 description: Generates creative domain name ideas for your project and checks availability across multiple TLDs (.com, .io, .dev, .ai, etc.). Saves hours of brainstorming and manual checking.
+executor: LLM_BEHAVIOR
+skill_id: anthropic-skills.domain-name-brainstormer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Domain Name Brainstormer

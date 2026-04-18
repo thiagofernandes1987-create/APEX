@@ -3,6 +3,10 @@ name: cloudconvert-automation
 description: "Automate Cloudconvert tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.cloudconvert-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Cloudconvert Automation via Rube MCP

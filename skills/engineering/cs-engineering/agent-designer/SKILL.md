@@ -1,6 +1,10 @@
 ---
 name: "agent-designer"
 description: "Use when the user asks to design multi-agent systems, create agent architectures, define agent communication patterns, or build autonomous agent workflows."
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.agent-designer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Agent Designer - Multi-Agent System Architecture

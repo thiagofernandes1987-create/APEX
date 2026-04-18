@@ -3,6 +3,10 @@ name: signpath-automation
 description: "Automate Signpath tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.signpath-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Signpath Automation via Rube MCP

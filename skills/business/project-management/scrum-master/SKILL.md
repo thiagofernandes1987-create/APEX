@@ -10,6 +10,10 @@ metadata:
   updated: 2026-02-15
   python-tools: velocity_analyzer.py, sprint_health_scorer.py, retrospective_analyzer.py
   tech-stack: scrum, agile-coaching, team-dynamics, data-analysis
+executor: HYBRID
+skill_id: business.project-management.scrum-master
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Scrum Master Expert

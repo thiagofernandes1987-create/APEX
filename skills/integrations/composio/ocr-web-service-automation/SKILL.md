@@ -3,6 +3,10 @@ name: ocr-web-service-automation
 description: "Automate OCR Web Service tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.ocr-web-service-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # OCR Web Service Automation via Rube MCP

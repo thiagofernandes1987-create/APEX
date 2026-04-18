@@ -3,6 +3,10 @@ name: spoki-automation
 description: "Automate Spoki tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.spoki-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Spoki Automation via Rube MCP

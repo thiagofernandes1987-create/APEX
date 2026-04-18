@@ -1,6 +1,10 @@
 ---
 name: content-research-writer
 description: Assists in writing high-quality content by conducting research, adding citations, improving hooks, iterating on outlines, and providing real-time feedback on each section. Transforms your writing process from solo effort to collaborative partnership.
+executor: LLM_BEHAVIOR
+skill_id: anthropic-skills.content-research-writer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Content Research Writer

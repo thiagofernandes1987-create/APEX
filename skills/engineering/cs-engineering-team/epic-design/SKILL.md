@@ -17,6 +17,10 @@ metadata:
   author: Abbas Mir
   category: engineering-team
   updated: 2026-03-13
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.epic-design
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Epic Design Skill

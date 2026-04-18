@@ -3,6 +3,10 @@ name: spondyr-automation
 description: "Automate Spondyr tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.spondyr-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Spondyr Automation via Rube MCP

@@ -3,6 +3,10 @@ name: dnsfilter-automation
 description: "Automate Dnsfilter tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.dnsfilter-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Dnsfilter Automation via Rube MCP

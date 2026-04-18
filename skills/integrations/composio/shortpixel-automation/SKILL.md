@@ -3,6 +3,10 @@ name: shortpixel-automation
 description: "Automate Shortpixel tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.shortpixel-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Shortpixel Automation via Rube MCP

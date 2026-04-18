@@ -3,6 +3,10 @@ name: synthflow-ai-automation
 description: "Automate Synthflow AI tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.synthflow-ai-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Synthflow AI Automation via Rube MCP

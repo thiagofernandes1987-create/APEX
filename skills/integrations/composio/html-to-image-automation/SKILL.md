@@ -3,6 +3,10 @@ name: html-to-image-automation
 description: "Automate Html To Image tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.html-to-image-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Html To Image Automation via Rube MCP

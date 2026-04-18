@@ -4,6 +4,10 @@ description: "Automate recruiting workflows in Lever ATS -- manage opportunities
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.lever-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Lever Automation

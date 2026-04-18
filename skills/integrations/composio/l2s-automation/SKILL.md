@@ -3,6 +3,10 @@ name: l2s-automation
 description: "Automate L2s tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.l2s-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # L2s Automation via Rube MCP

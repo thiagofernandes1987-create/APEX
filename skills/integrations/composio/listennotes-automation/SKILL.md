@@ -3,6 +3,10 @@ name: listennotes-automation
 description: "Automate Listennotes tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.listennotes-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Listennotes Automation via Rube MCP

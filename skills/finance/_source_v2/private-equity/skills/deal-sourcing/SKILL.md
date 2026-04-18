@@ -1,3 +1,9 @@
+---
+executor: LLM_BEHAVIOR
+skill_id: finance._source_v2.private-equity.skills
+status: CANDIDATE
+security: {level: high, pii: true, approval_required: true}
+---
 # Deal Sourcing
 
 description: PE deal sourcing workflow — discover target companies, check CRM for existing relationships, and draft personalized founder outreach emails. Use when sourcing new deals, prospecting companies in a sector, or reaching out to founders. Triggers on "find companies", "source deals", "draft founder email", "check if we've seen this company", or "outreach to founder".

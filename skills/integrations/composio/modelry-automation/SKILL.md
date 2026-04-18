@@ -3,6 +3,10 @@ name: modelry-automation
 description: "Automate Modelry tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.modelry-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Modelry Automation via Rube MCP

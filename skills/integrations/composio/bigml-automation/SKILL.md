@@ -3,6 +3,10 @@ name: bigml-automation
 description: "Automate Bigml tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.bigml-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Bigml Automation via Rube MCP

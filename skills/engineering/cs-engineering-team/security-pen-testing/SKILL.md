@@ -1,6 +1,10 @@
 ---
 name: "security-pen-testing"
 description: "Use when the user asks to perform security audits, penetration testing, vulnerability scanning, OWASP Top 10 checks, or offensive security assessments. Covers static analysis, dependency scanning, secret detection, API security testing, and pen test report generation."
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.security-pen-testing
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Security Penetration Testing

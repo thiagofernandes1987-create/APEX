@@ -4,6 +4,10 @@ description: "Automate ElevenLabs text-to-speech workflows -- generate speech fr
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.elevenlabs-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # ElevenLabs Automation

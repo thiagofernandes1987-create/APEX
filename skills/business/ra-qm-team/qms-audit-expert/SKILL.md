@@ -12,6 +12,10 @@ triggers:
   - audit finding
   - external audit prep
   - audit schedule
+executor: HYBRID
+skill_id: business.ra-qm-team.qms-audit-expert
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # QMS Audit Expert

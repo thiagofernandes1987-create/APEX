@@ -3,6 +3,10 @@ name: benchmark-email-automation
 description: "Automate Benchmark Email tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.benchmark-email-automation
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Benchmark Email Automation via Rube MCP

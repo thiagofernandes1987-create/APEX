@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+"""
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.business-growth.competitive_matrix_builder
+script_name: competitive_matrix_builder.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
 """Competitive Matrix Builder - Generate feature comparison matrices and positioning analysis.
 
 Builds feature-by-feature comparison matrices, calculates weighted competitive

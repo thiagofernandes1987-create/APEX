@@ -7,6 +7,10 @@ metadata:
   author: Alireza Rezvani
   category: marketing
   updated: 2026-03-06
+executor: HYBRID
+skill_id: business.marketing-skill.ab-test-setup
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # A/B Test Setup

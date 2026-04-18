@@ -1,3 +1,9 @@
+---
+executor: LLM_BEHAVIOR
+skill_id: finance._source.wealth-management.skills
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
+---
 # Investment Proposal
 
 description: Create professional investment proposals for prospective clients. Covers the firm's approach, proposed allocation, expected outcomes, and fee structure. Use when pitching new clients or presenting a new investment strategy. Triggers on "investment proposal", "prospect presentation", "pitch new client", "proposal for [client]", or "new client presentation".

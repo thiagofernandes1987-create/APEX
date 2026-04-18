@@ -3,6 +3,10 @@ name: api-labz-automation
 description: "Automate API Labz tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.api-labz-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # API Labz Automation via Rube MCP

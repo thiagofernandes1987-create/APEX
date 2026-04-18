@@ -3,6 +3,10 @@ name: sitespeakai-automation
 description: "Automate Sitespeakai tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.sitespeakai-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Sitespeakai Automation via Rube MCP

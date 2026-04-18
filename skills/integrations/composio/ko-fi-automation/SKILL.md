@@ -3,6 +3,10 @@ name: ko-fi-automation
 description: "Automate Ko Fi tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.ko-fi-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Ko Fi Automation via Rube MCP

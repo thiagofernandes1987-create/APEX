@@ -3,6 +3,10 @@ name: autom-automation
 description: "Automate Autom tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.autom-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Autom Automation via Rube MCP

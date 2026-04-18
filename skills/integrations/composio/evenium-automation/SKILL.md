@@ -3,6 +3,10 @@ name: evenium-automation
 description: "Automate Evenium tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.evenium-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Evenium Automation via Rube MCP

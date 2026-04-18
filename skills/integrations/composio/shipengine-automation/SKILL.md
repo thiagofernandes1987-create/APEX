@@ -3,6 +3,10 @@ name: shipengine-automation
 description: "Automate Shipengine tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.shipengine-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Shipengine Automation via Rube MCP

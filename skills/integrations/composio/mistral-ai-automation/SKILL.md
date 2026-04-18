@@ -4,6 +4,10 @@ description: "Automate Mistral AI operations -- manage files and libraries, uplo
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.mistral-ai-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Mistral AI Automation

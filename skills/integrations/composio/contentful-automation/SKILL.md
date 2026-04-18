@@ -4,6 +4,10 @@ description: "Automate headless CMS operations in Contentful -- list spaces, ret
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.contentful-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Contentful Automation

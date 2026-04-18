@@ -21,6 +21,8 @@ risk: safe
 languages: [dsl]
 llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
 apex_version: v00.33.0
+executor: LLM_BEHAVIOR
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Test Fixing

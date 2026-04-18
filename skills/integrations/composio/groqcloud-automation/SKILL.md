@@ -4,6 +4,10 @@ description: "Automate AI inference, chat completions, audio translation, and TT
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.groqcloud-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # GroqCloud Automation

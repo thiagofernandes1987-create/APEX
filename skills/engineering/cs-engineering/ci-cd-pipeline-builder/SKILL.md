@@ -1,6 +1,10 @@
 ---
 name: "ci-cd-pipeline-builder"
 description: "CI/CD Pipeline Builder"
+executor: HYBRID
+skill_id: engineering.cs-engineering.ci-cd-pipeline-builder
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # CI/CD Pipeline Builder

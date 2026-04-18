@@ -3,6 +3,10 @@ name: codereadr-automation
 description: "Automate Codereadr tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.codereadr-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Codereadr Automation via Rube MCP

@@ -9,6 +9,10 @@ metadata:
   domain: competitive-strategy
   updated: 2026-03-05
   frameworks: ci-playbook, battlecard-template
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.competitive-intel
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Competitive Intelligence

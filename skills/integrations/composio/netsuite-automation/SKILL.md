@@ -3,6 +3,10 @@ name: NetSuite Automation
 description: "NetSuite Automation: manage customers, sales orders, invoices, inventory, and records via Oracle NetSuite ERP with SuiteQL queries"
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.netsuite-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # NetSuite Automation

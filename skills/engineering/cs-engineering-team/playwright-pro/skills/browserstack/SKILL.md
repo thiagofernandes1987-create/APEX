@@ -4,6 +4,10 @@ description: >-
   Run tests on BrowserStack. Use when user mentions "browserstack",
   "cross-browser", "cloud testing", "browser matrix", "test on safari",
   "test on firefox", or "browser compatibility".
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team.playwright-pro.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # BrowserStack Integration

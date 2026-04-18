@@ -3,6 +3,10 @@ name: respond-io-automation
 description: "Automate Respond IO tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.respond-io-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Respond IO Automation via Rube MCP

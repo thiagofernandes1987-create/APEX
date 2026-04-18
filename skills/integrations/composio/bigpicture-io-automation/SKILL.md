@@ -3,6 +3,10 @@ name: bigpicture-io-automation
 description: "Automate Bigpicture IO tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.bigpicture-io-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Bigpicture IO Automation via Rube MCP

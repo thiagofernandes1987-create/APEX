@@ -1,3 +1,9 @@
+---
+executor: LLM_BEHAVIOR
+skill_id: finance._source_v2.private-equity.skills
+status: CANDIDATE
+security: {level: high, pii: true, approval_required: true}
+---
 # Diligence Meeting Prep
 
 description: Prepare for due diligence meetings — management presentations, expert network calls, customer references, and advisor sessions. Generates targeted question lists, benchmarks to reference, and red flags to probe. Use before any diligence meeting or call. Triggers on "prep for management meeting", "diligence call prep", "expert call questions", "customer reference questions", or "meeting prep for [company]".

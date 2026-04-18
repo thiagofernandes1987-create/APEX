@@ -4,6 +4,10 @@ description: "Automate Facebook Page management including post creation, schedul
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.facebook-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Facebook Automation

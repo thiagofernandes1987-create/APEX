@@ -3,6 +3,10 @@ name: rootly-automation
 description: "Automate Rootly tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.rootly-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Rootly Automation via Rube MCP

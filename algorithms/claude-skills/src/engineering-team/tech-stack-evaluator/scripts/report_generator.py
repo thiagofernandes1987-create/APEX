@@ -1,4 +1,13 @@
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.engineering-team.report_generator
+script_name: report_generator.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
+"""
 Report Generator - Context-aware report generation with progressive disclosure.
 
 Generates reports adapted for Claude Desktop (rich markdown) or CLI (terminal-friendly),

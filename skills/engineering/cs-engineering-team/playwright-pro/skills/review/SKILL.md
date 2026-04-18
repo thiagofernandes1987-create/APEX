@@ -4,6 +4,10 @@ description: >-
   Review Playwright tests for quality. Use when user says "review tests",
   "check test quality", "audit tests", "improve tests", "test code review",
   or "playwright best practices check".
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team.playwright-pro.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Review Playwright Tests

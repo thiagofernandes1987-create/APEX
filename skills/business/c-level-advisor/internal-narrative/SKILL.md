@@ -9,6 +9,10 @@ metadata:
   domain: narrative-strategy
   updated: 2026-03-05
   frameworks: narrative-frameworks, all-hands-template
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.internal-narrative
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Internal Narrative Builder

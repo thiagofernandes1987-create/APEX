@@ -1,6 +1,10 @@
 ---
 name: experiment-designer
 description: Use when planning product experiments, writing testable hypotheses, estimating sample size, prioritizing tests, or interpreting A/B outcomes with practical statistical rigor.
+executor: HYBRID
+skill_id: business.product-team.experiment-designer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Experiment Designer

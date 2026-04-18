@@ -4,6 +4,10 @@ description: "Zoho Desk automation via Rube MCP -- toolkit not currently availab
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.zoho-desk-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Zoho Desk Automation

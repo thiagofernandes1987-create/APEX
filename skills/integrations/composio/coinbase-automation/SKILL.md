@@ -3,6 +3,10 @@ name: Coinbase Automation
 description: "Coinbase Automation: list and manage cryptocurrency wallets, accounts, and portfolio data via Coinbase CDP SDK"
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.coinbase-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Coinbase Automation

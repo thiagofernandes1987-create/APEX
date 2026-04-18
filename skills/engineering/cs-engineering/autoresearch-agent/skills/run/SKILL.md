@@ -2,6 +2,10 @@
 name: "run"
 description: "Run a single experiment iteration. Edit the target file, evaluate, keep or discard."
 command: /ar:run
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.autoresearch-agent.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /ar:run — Single Experiment Iteration

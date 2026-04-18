@@ -3,6 +3,10 @@ name: api2pdf-automation
 description: "Automate Api2pdf tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.api2pdf-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Api2pdf Automation via Rube MCP

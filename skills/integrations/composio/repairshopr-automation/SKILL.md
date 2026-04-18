@@ -3,6 +3,10 @@ name: repairshopr-automation
 description: "Automate Repairshopr tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.repairshopr-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Repairshopr Automation via Rube MCP

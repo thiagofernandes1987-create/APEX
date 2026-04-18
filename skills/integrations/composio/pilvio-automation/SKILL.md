@@ -3,6 +3,10 @@ name: pilvio-automation
 description: "Automate Pilvio tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.pilvio-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Pilvio Automation via Rube MCP

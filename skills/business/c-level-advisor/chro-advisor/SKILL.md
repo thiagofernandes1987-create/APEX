@@ -10,6 +10,10 @@ metadata:
   updated: 2026-03-05
   python-tools: hiring_plan_modeler.py, comp_benchmarker.py
   frameworks: people-strategy, comp-frameworks, org-design
+executor: HYBRID
+skill_id: business.c-level-advisor.chro-advisor
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # CHRO Advisor

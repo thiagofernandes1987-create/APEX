@@ -20,6 +20,10 @@ description: |
 license: MIT
 metadata:
   updated: 2026-03-17
+executor: HYBRID
+skill_id: business.product-team.code-to-prd
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 ## Name

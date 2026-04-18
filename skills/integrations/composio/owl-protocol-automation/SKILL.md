@@ -3,6 +3,10 @@ name: owl-protocol-automation
 description: "Automate Owl Protocol tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.owl-protocol-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Owl Protocol Automation via Rube MCP

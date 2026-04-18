@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: science.life-sciences._source.nextflow-development
+script_name: detect_data_type.py
+script_purpose: [TODO: one sentence — what this script does and when it is invoked]
+why: [TODO: why this script exists — what problem it solves vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block the parent skill.
+apex_version: v00.36.0
+"""
+"""
 Auto-detect appropriate nf-core pipeline from data directory.
 
 Analyzes filenames, directory structure, and file content hints to suggest

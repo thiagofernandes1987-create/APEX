@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.engineering-team.gws_recipe_runner
+script_name: gws_recipe_runner.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
+"""
 Google Workspace CLI Recipe Runner — Catalog, search, and execute gws recipes.
 
 Browse 43 built-in recipes, filter by persona, search by keyword,

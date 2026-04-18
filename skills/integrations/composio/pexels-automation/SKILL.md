@@ -3,6 +3,10 @@ name: pexels-automation
 description: "Automate Pexels tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.pexels-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Pexels Automation via Rube MCP

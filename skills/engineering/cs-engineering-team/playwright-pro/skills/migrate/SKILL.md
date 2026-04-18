@@ -4,6 +4,10 @@ description: >-
   Migrate from Cypress or Selenium to Playwright. Use when user mentions
   "cypress", "selenium", "migrate tests", "convert tests", "switch to
   playwright", "move from cypress", or "replace selenium".
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team.playwright-pro.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Migrate to Playwright

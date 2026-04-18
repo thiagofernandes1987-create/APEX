@@ -39,6 +39,7 @@ output_schema:
   recovery_log: "str"
 what_if_fails: >
   FALLBACK: Se CFI não recuperar após 2 iterações, emitir [ANCHOR_DESTROY_FAILED] e escalar para meta_reasoning. Nunca bloquear pipeline por falha de deanchoring.
+security: {level: standard, approval_required: false}
 ---
 
 # Anchor Destroyer — Recuperador de Contexto por Primeiros Princípios

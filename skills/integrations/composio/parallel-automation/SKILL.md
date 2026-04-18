@@ -3,6 +3,10 @@ name: parallel-automation
 description: "Automate Parallel tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.parallel-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Parallel Automation via Rube MCP

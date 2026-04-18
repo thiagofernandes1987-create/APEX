@@ -3,6 +3,10 @@ name: dripcel-automation
 description: "Automate Dripcel tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.dripcel-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Dripcel Automation via Rube MCP

@@ -3,6 +3,10 @@ name: botsonic-automation
 description: "Automate Botsonic tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.botsonic-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Botsonic Automation via Rube MCP

@@ -14,6 +14,10 @@ triggers:
   - user story template
   - sprint capacity
   - velocity tracking
+executor: HYBRID
+skill_id: business.product-team.agile-product-owner
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Agile Product Owner

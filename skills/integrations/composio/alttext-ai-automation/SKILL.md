@@ -3,6 +3,10 @@ name: alttext-ai-automation
 description: "Automate Alttext AI tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.alttext-ai-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Alttext AI Automation via Rube MCP

@@ -11,6 +11,10 @@ metadata:
   skills_count: 28
   scripts_count: 25
   references_count: 52
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # C-Level Advisory Ecosystem

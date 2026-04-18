@@ -1,6 +1,10 @@
 ---
 name: "git-worktree-manager"
 description: "Git Worktree Manager"
+executor: HYBRID
+skill_id: engineering.cs-engineering.git-worktree-manager
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Git Worktree Manager

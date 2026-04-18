@@ -4,6 +4,10 @@ description: "Automate product management workflows in Productboard -- manage fe
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.productboard-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Productboard Automation

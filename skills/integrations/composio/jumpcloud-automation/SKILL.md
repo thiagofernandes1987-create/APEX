@@ -3,6 +3,10 @@ name: jumpcloud-automation
 description: "Automate Jumpcloud tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.jumpcloud-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Jumpcloud Automation via Rube MCP

@@ -3,6 +3,10 @@ name: bench-automation
 description: "Automate Bench tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.bench-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Bench Automation via Rube MCP

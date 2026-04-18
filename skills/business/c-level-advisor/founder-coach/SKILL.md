@@ -9,6 +9,10 @@ metadata:
   domain: founder-development
   updated: 2026-03-05
   frameworks: leadership-growth, founder-toolkit
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.founder-coach
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Founder Development Coach

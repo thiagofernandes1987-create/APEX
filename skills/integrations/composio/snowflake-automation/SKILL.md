@@ -4,6 +4,10 @@ description: "Automate Snowflake data warehouse operations -- list databases, sc
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.snowflake-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Snowflake Automation

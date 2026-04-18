@@ -1,6 +1,10 @@
 ---
 name: "pr-review-expert"
 description: "Use when the user asks to review pull requests, analyze code changes, check for security issues in PRs, or assess code quality of diffs."
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.pr-review-expert
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # PR Review Expert

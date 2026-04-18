@@ -3,6 +3,10 @@ name: fraudlabs-pro-automation
 description: "Automate Fraudlabs Pro tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.fraudlabs-pro-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Fraudlabs Pro Automation via Rube MCP

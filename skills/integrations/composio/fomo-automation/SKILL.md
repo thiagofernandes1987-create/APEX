@@ -3,6 +3,10 @@ name: fomo-automation
 description: "Automate Fomo tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.fomo-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Fomo Automation via Rube MCP

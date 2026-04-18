@@ -1,3 +1,9 @@
+---
+executor: LLM_BEHAVIOR
+skill_id: finance._source.investment-banking.skills
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
+---
 # CIM Builder
 
 description: Structure and draft a Confidential Information Memorandum for sell-side M&A processes. Organizes company information into a professional, investor-ready document with consistent formatting and narrative flow. Use when preparing sell-side materials, drafting a CIM, or organizing company data for a sale process. Triggers on "CIM", "confidential information memorandum", "offering memorandum", "info memo", "draft CIM", or "sell-side materials".

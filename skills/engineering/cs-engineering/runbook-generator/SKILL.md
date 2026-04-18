@@ -1,6 +1,10 @@
 ---
 name: "runbook-generator"
 description: "Runbook Generator"
+executor: HYBRID
+skill_id: engineering.cs-engineering.runbook-generator
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Runbook Generator

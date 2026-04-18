@@ -3,6 +3,10 @@ name: browserhub-automation
 description: "Automate Browserhub tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.browserhub-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Browserhub Automation via Rube MCP

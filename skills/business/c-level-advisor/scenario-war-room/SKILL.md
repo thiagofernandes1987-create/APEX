@@ -10,6 +10,10 @@ metadata:
   updated: 2026-03-05
   python-tools: scenario_modeler.py
   frameworks: scenario-planning
+executor: HYBRID
+skill_id: business.c-level-advisor.scenario-war-room
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Scenario War Room

@@ -1,6 +1,10 @@
 ---
 name: "email-template-builder"
 description: "Email Template Builder"
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team.email-template-builder
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Email Template Builder

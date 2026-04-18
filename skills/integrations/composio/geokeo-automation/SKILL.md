@@ -3,6 +3,10 @@ name: geokeo-automation
 description: "Automate Geokeo tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.geokeo-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Geokeo Automation via Rube MCP

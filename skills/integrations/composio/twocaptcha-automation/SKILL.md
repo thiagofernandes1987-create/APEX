@@ -3,6 +3,10 @@ name: twocaptcha-automation
 description: "Automate Twocaptcha tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.twocaptcha-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Twocaptcha Automation via Rube MCP

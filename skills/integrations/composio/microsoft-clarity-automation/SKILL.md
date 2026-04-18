@@ -4,6 +4,10 @@ description: "Automate user behavior analytics with Microsoft Clarity -- export 
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.microsoft-clarity-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Microsoft Clarity Automation

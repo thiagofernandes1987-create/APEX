@@ -1,6 +1,10 @@
 ---
 name: "api-test-suite-builder"
 description: "Use when the user asks to generate API tests, create integration test suites, test REST endpoints, or build contract tests."
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.api-test-suite-builder
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # API Test Suite Builder

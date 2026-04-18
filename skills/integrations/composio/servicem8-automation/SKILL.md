@@ -3,6 +3,10 @@ name: servicem8-automation
 description: "Automate Servicem8 tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.servicem8-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Servicem8 Automation via Rube MCP

@@ -3,6 +3,10 @@ name: sage-automation
 description: "Automate Sage tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.sage-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Sage Automation via Rube MCP

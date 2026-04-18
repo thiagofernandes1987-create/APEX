@@ -3,6 +3,10 @@ name: waiverfile-automation
 description: "Automate Waiverfile tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.waiverfile-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Waiverfile Automation via Rube MCP

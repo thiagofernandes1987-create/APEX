@@ -1,6 +1,10 @@
 ---
 name: "codebase-onboarding"
 description: "Codebase Onboarding"
+executor: HYBRID
+skill_id: engineering.cs-engineering.codebase-onboarding
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Codebase Onboarding

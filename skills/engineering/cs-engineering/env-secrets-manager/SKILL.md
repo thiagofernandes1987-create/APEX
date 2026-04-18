@@ -1,6 +1,10 @@
 ---
 name: "env-secrets-manager"
 description: "Env & Secrets Manager"
+executor: HYBRID
+skill_id: engineering.cs-engineering.env-secrets-manager
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Env & Secrets Manager

@@ -3,6 +3,10 @@ name: census-bureau-automation
 description: "Automate Census Bureau tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.census-bureau-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Census Bureau Automation via Rube MCP

@@ -3,6 +3,10 @@ name: ynab-automation
 description: "Automate Ynab tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.ynab-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Ynab Automation via Rube MCP

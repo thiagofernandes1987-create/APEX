@@ -1,6 +1,10 @@
 ---
 name: "skill-tester"
 description: "Skill Tester"
+executor: HYBRID
+skill_id: engineering.cs-engineering.skill-tester
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Skill Tester

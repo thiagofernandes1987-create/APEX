@@ -23,6 +23,7 @@ output_schema:
   verdict: "ACCURATE|INACCURATE|INCOMPLETE"
 what_if_fails: >
   FALLBACK: Se sem acesso ao source code, revisar documentação isoladamente e marcar [NO_CODE_VALIDATION].
+security: {level: high, approval_required: true}
 ---
 
 # documentation-accuracy-reviewer

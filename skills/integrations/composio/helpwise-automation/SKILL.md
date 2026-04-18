@@ -3,6 +3,10 @@ name: helpwise-automation
 description: "Automate Helpwise tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.helpwise-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Helpwise Automation via Rube MCP

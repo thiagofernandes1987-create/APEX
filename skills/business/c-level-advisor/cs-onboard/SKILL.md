@@ -9,6 +9,10 @@ metadata:
   domain: orchestration
   updated: 2026-03-05
   frameworks: founder-interview, context-capture, quarterly-refresh
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.cs-onboard
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # C-Suite Onboarding

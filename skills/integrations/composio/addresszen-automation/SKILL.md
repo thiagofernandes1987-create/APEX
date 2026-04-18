@@ -3,6 +3,10 @@ name: addresszen-automation
 description: "Automate Addresszen tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.addresszen-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Addresszen Automation via Rube MCP

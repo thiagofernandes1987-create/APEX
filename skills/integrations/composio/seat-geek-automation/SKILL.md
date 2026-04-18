@@ -3,6 +3,10 @@ name: seat-geek-automation
 description: "Automate Seat Geek tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.seat-geek-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Seat Geek Automation via Rube MCP

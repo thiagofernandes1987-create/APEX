@@ -4,6 +4,10 @@ description: "Automate SurveyMonkey survey creation, response collection, collec
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.survey-monkey-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # SurveyMonkey Automation

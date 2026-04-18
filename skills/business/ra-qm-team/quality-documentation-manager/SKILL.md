@@ -14,6 +14,10 @@ triggers:
   - controlled document
   - document master list
   - record retention
+executor: HYBRID
+skill_id: business.ra-qm-team.quality-documentation-manager
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Quality Documentation Manager

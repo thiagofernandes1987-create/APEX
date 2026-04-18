@@ -3,6 +3,10 @@ name: apiverve-automation
 description: "Automate Apiverve tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.apiverve-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Apiverve Automation via Rube MCP

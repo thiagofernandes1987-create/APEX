@@ -2,6 +2,10 @@
 name: "board"
 description: "Read, write, and browse the AgentHub message board for agent coordination."
 command: /hub:board
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.agenthub.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /hub:board — Message Board

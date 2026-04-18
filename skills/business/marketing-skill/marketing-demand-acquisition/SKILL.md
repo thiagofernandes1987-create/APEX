@@ -23,6 +23,10 @@ metadata:
   category: marketing
   domain: demand-generation
   updated: 2025-01
+executor: HYBRID
+skill_id: business.marketing-skill.marketing-demand-acquisition
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Marketing Demand & Acquisition

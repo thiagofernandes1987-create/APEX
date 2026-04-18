@@ -3,6 +3,10 @@ name: genderize-automation
 description: "Automate Genderize tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.genderize-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Genderize Automation via Rube MCP

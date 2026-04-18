@@ -3,6 +3,10 @@ name: boldsign-automation
 description: "Automate Boldsign tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.boldsign-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Boldsign Automation via Rube MCP

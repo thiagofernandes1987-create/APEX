@@ -3,6 +3,10 @@ name: moxie-automation
 description: "Automate Moxie tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.moxie-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Moxie Automation via Rube MCP

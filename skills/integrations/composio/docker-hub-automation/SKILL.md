@@ -4,6 +4,10 @@ description: "Automate Docker Hub operations -- manage organizations, repositori
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.docker-hub-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Docker Hub Automation

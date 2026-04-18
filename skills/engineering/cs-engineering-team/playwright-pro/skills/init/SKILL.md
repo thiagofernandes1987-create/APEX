@@ -4,6 +4,10 @@ description: >-
   Set up Playwright in a project. Use when user says "set up playwright",
   "add e2e tests", "configure playwright", "testing setup", "init playwright",
   or "add test infrastructure".
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team.playwright-pro.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Initialize Playwright Project

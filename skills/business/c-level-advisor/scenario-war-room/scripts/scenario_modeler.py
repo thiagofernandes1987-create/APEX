@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: business.c-level-advisor.scenario-war-room
+script_name: scenario_modeler.py
+script_purpose: [TODO: one sentence — what this script does and when it is invoked]
+why: [TODO: why this script exists — what problem it solves vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block the parent skill.
+apex_version: v00.36.0
+"""
+"""
 Scenario War Room — Multi-Variable Cascade Modeler
 Models cascading effects of compound adversity across business domains.
 Stdlib only. Run with: python scenario_modeler.py

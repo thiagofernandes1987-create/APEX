@@ -3,6 +3,10 @@ name: aero-workflow-automation
 description: "Automate Aero Workflow tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.aero-workflow-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Aero Workflow Automation via Rube MCP

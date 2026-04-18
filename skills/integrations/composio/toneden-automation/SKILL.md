@@ -3,6 +3,10 @@ name: toneden-automation
 description: "Automate Toneden tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.toneden-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Toneden Automation via Rube MCP

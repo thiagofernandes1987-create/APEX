@@ -1,6 +1,10 @@
 ---
 name: spec-to-repo
 description: "Use when the user says 'build me an app', 'create a project from this spec', 'scaffold a new repo', 'generate a starter', 'turn this idea into code', 'bootstrap a project', 'I have requirements and need a codebase', or provides a natural-language project specification and expects a complete, runnable repository. Stack-agnostic: Next.js, FastAPI, Rails, Go, Rust, Flutter, and more."
+executor: HYBRID
+skill_id: business.product-team.spec-to-repo
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Spec to Repo

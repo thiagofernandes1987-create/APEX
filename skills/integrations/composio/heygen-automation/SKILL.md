@@ -4,6 +4,10 @@ description: "Automate AI video generation, avatar browsing, template-based vide
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.heygen-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # HeyGen Automation

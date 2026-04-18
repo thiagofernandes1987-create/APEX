@@ -3,6 +3,10 @@ name: ip2whois-automation
 description: "Automate Ip2whois tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.ip2whois-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Ip2whois Automation via Rube MCP

@@ -41,6 +41,7 @@ output_schema:
   uncertainty_flag: "str"
 what_if_fails: >
   FALLBACK: Se fontes indisponíveis, declarar [KNOWLEDGE_GAP] com estimativa de confiança. Nunca inventar citações. Usar [SYNTHESIZED] se nenhuma fonte disponível.
+security: {level: standard, approval_required: false}
 ---
 
 # Researcher — Agente de Pesquisa e Evidência

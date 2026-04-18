@@ -3,6 +3,10 @@ name: enginemailer-automation
 description: "Automate Enginemailer tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.enginemailer-automation
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Enginemailer Automation via Rube MCP

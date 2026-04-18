@@ -41,6 +41,7 @@ output_schema:
   complexity_analysis: "str"
 what_if_fails: >
   FALLBACK: Se sandbox indisponível, gerar código com [UNTESTED: sandbox unavailable]. Se linguagem não suportada, gerar pseudocódigo + instruções de implementação.
+security: {level: high, approval_required: true}
 ---
 
 # Engineer — Agente de Implementação Técnica

@@ -1,6 +1,10 @@
 ---
 name: competitive-ads-extractor
 description: Extracts and analyzes competitors' ads from ad libraries (Facebook, LinkedIn, etc.) to understand what messaging, problems, and creative approaches are working. Helps inspire and improve your own ad campaigns.
+executor: LLM_BEHAVIOR
+skill_id: anthropic-skills.competitive-ads-extractor
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Competitive Ads Extractor

@@ -1,6 +1,10 @@
 ---
 name: image-enhancer
 description: Improves the quality of images, especially screenshots, by enhancing resolution, sharpness, and clarity. Perfect for preparing images for presentations, documentation, or social media posts.
+executor: LLM_BEHAVIOR
+skill_id: anthropic-skills.image-enhancer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Image Enhancer

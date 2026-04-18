@@ -3,6 +3,10 @@ name: customgpt-automation
 description: "Automate Customgpt tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.customgpt-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Customgpt Automation via Rube MCP

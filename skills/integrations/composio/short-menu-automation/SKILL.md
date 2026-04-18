@@ -3,6 +3,10 @@ name: short-menu-automation
 description: "Automate Short Menu tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.short-menu-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Short Menu Automation via Rube MCP

@@ -3,6 +3,10 @@ name: retently-automation
 description: "Automate Retently tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.retently-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Retently Automation via Rube MCP

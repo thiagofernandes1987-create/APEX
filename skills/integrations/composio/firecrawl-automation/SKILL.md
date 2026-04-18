@@ -4,6 +4,10 @@ description: "Automate web crawling and data extraction with Firecrawl -- scrape
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.firecrawl-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Firecrawl Automation

@@ -3,6 +3,10 @@ name: cardly-automation
 description: "Automate Cardly tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.cardly-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Cardly Automation via Rube MCP

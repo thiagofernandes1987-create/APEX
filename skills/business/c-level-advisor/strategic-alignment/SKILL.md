@@ -10,6 +10,10 @@ metadata:
   updated: 2026-03-05
   python-tools: alignment_checker.py
   frameworks: alignment-playbook
+executor: HYBRID
+skill_id: business.c-level-advisor.strategic-alignment
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Strategic Alignment Engine

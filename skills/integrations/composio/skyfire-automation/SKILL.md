@@ -3,6 +3,10 @@ name: skyfire-automation
 description: "Automate Skyfire tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.skyfire-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Skyfire Automation via Rube MCP

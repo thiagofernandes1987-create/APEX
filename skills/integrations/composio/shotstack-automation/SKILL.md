@@ -3,6 +3,10 @@ name: shotstack-automation
 description: "Automate Shotstack tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.shotstack-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Shotstack Automation via Rube MCP

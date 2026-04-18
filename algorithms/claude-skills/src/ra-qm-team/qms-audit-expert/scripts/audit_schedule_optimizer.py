@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.ra-qm-team.audit_schedule_optimizer
+script_name: audit_schedule_optimizer.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
+"""
 Audit Schedule Optimizer - Risk-Based Internal Audit Planning
 
 Generates optimized audit schedules based on process risk levels,

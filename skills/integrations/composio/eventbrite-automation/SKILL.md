@@ -4,6 +4,10 @@ description: "Automate Eventbrite event management, attendee tracking, organizat
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.eventbrite-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Eventbrite Automation

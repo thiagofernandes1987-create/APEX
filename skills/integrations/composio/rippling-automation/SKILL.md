@@ -3,6 +3,10 @@ name: rippling-automation
 description: "Automate Rippling tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.rippling-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Rippling Automation via Rube MCP

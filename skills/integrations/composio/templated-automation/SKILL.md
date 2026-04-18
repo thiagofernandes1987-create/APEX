@@ -3,6 +3,10 @@ name: templated-automation
 description: "Automate Templated tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.templated-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Templated Automation via Rube MCP

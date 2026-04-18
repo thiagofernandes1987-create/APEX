@@ -3,6 +3,10 @@ name: superchat-automation
 description: "Automate Superchat tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.superchat-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Superchat Automation via Rube MCP

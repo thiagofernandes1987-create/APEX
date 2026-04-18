@@ -1,6 +1,10 @@
 ---
 name: "observability-designer"
 description: "Observability Designer (POWERFUL)"
+executor: HYBRID
+skill_id: engineering.cs-engineering.observability-designer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Observability Designer (POWERFUL)

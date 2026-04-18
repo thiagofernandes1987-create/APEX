@@ -3,6 +3,10 @@ name: sidetracker-automation
 description: "Automate Sidetracker tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.sidetracker-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Sidetracker Automation via Rube MCP

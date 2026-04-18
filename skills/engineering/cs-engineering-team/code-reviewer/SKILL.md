@@ -1,6 +1,10 @@
 ---
 name: "code-reviewer"
 description: Code review automation for TypeScript, JavaScript, Python, Go, Swift, Kotlin. Analyzes PRs for complexity and risk, checks code quality for SOLID violations and code smells, generates review reports. Use when reviewing pull requests, analyzing code quality, identifying issues, generating review checklists.
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.code-reviewer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Code Reviewer

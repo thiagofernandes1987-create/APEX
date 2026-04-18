@@ -3,6 +3,10 @@ name: neverbounce-automation
 description: "Automate Neverbounce tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.neverbounce-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Neverbounce Automation via Rube MCP

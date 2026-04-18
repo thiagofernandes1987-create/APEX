@@ -3,6 +3,10 @@ name: hypeauditor-automation
 description: "Automate Hypeauditor tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.hypeauditor-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Hypeauditor Automation via Rube MCP

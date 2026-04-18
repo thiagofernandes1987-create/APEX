@@ -1,6 +1,10 @@
 ---
 name: "release-manager"
 description: "Use when the user asks to plan releases, manage changelogs, coordinate deployments, create release branches, or automate versioning."
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.release-manager
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Release Manager

@@ -1,6 +1,10 @@
 ---
 name: invoice-organizer
 description: Automatically organizes invoices and receipts for tax preparation by reading messy files, extracting key information, renaming them consistently, and sorting them into logical folders. Turns hours of manual bookkeeping into minutes of automated organization.
+executor: LLM_BEHAVIOR
+skill_id: anthropic-skills.invoice-organizer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Invoice Organizer

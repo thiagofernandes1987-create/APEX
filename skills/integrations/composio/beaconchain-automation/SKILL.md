@@ -3,6 +3,10 @@ name: beaconchain-automation
 description: "Automate Beaconchain tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.beaconchain-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Beaconchain Automation via Rube MCP

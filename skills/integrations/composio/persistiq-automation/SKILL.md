@@ -3,6 +3,10 @@ name: persistiq-automation
 description: "Automate Persistiq tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.persistiq-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Persistiq Automation via Rube MCP

@@ -3,6 +3,10 @@ name: mailbluster-automation
 description: "Automate Mailbluster tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.mailbluster-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Mailbluster Automation via Rube MCP

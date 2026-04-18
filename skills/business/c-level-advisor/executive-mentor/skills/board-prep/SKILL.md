@@ -1,6 +1,10 @@
 ---
 name: "board-prep"
 description: "/em -board-prep — Board Meeting Preparation"
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.executive-mentor.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /em:board-prep — Board Meeting Preparation

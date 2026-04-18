@@ -1,3 +1,12 @@
+"""
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.tests.test_rice_prioritizer
+script_name: test_rice_prioritizer.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
 """Unit tests for the RICE Prioritizer."""
 
 import sys

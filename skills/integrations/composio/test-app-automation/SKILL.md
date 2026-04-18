@@ -3,6 +3,10 @@ name: test-app-automation
 description: "Automate Test App tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.test-app-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Test App Automation via Rube MCP

@@ -5,6 +5,10 @@ category: accounting
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.wave-accounting-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Wave Accounting Automation

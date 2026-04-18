@@ -7,6 +7,10 @@ metadata:
   author: Alireza Rezvani
   category: engineering
   updated: 2026-03-17
+executor: HYBRID
+skill_id: engineering.cs-engineering.agenthub
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # AgentHub — Multi-Agent Collaboration

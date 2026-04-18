@@ -3,6 +3,10 @@ name: timelink-automation
 description: "Automate Timelink tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.timelink-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Timelink Automation via Rube MCP

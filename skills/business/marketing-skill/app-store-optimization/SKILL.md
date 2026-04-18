@@ -14,6 +14,10 @@ triggers:
   - app store SEO
   - mobile app marketing
   - app conversion rate
+executor: HYBRID
+skill_id: business.marketing-skill.app-store-optimization
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # App Store Optimization (ASO)

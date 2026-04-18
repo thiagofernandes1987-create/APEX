@@ -1,6 +1,10 @@
 ---
 name: "agent-workflow-designer"
 description: "Agent Workflow Designer"
+executor: HYBRID
+skill_id: engineering.cs-engineering.agent-workflow-designer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Agent Workflow Designer

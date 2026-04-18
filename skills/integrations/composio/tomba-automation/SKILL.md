@@ -3,6 +3,10 @@ name: tomba-automation
 description: "Automate Tomba tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.tomba-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Tomba Automation via Rube MCP

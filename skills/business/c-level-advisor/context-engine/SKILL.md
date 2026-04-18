@@ -9,6 +9,10 @@ metadata:
   domain: orchestration
   updated: 2026-03-05
   frameworks: context-loading, anonymization, context-enrichment
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.context-engine
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Company Context Engine

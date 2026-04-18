@@ -3,6 +3,10 @@ name: zylvie-automation
 description: "Automate Zylvie tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.zylvie-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Zylvie Automation via Rube MCP

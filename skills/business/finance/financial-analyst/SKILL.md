@@ -1,6 +1,10 @@
 ---
 name: "financial-analyst"
 description: Performs financial ratio analysis, DCF valuation, budget variance analysis, and rolling forecast construction for strategic decision-making. Use when analyzing financial statements, building valuation models, assessing budget variances, or constructing financial projections and forecasts. Also applicable when users mention financial modeling, cash flow analysis, company valuation, financial projections, or spreadsheet analysis.
+executor: HYBRID
+skill_id: business.finance.financial-analyst
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Financial Analyst Skill

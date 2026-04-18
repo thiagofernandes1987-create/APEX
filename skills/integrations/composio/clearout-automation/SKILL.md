@@ -3,6 +3,10 @@ name: clearout-automation
 description: "Automate Clearout tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.clearout-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Clearout Automation via Rube MCP

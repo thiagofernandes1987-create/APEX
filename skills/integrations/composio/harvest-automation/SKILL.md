@@ -4,6 +4,10 @@ description: "Automate time tracking, project management, and invoicing workflow
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.harvest-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Harvest Automation

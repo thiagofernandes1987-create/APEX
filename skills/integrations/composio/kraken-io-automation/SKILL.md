@@ -3,6 +3,10 @@ name: kraken-io-automation
 description: "Automate Kraken IO tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.kraken-io-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Kraken IO Automation via Rube MCP

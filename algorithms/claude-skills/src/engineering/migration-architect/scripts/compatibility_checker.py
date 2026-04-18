@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.engineering.compatibility_checker
+script_name: compatibility_checker.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
+"""
 Compatibility Checker - Analyze schema and API compatibility between versions
 
 This tool analyzes schema and API changes between versions and identifies backward

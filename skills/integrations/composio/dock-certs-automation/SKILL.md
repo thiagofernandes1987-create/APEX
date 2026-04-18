@@ -3,6 +3,10 @@ name: dock-certs-automation
 description: "Automate Dock Certs tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.dock-certs-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Dock Certs Automation via Rube MCP

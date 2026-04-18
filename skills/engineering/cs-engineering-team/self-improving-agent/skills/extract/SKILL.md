@@ -2,6 +2,10 @@
 name: "extract"
 description: "Turn a proven pattern or debugging solution into a standalone reusable skill with SKILL.md, reference docs, and examples."
 command: /si:extract
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team.self-improving-agent.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /si:extract — Create Skills from Patterns

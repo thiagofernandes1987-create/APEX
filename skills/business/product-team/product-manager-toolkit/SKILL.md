@@ -1,6 +1,10 @@
 ---
 name: "product-manager-toolkit"
 description: Comprehensive toolkit for product managers including RICE prioritization, customer interview analysis, PRD templates, discovery frameworks, and go-to-market strategies. Use for feature prioritization, user research synthesis, requirement documentation, and product strategy development.
+executor: HYBRID
+skill_id: business.product-team.product-manager-toolkit
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Product Manager Toolkit

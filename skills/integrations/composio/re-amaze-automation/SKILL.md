@@ -3,6 +3,10 @@ name: re-amaze-automation
 description: "Automate Re Amaze tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.re-amaze-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Re Amaze Automation via Rube MCP

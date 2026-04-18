@@ -3,6 +3,10 @@ name: go-to-webinar-automation
 description: "Automate GoToWebinar tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.go-to-webinar-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # GoToWebinar Automation via Rube MCP

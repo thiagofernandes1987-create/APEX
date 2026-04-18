@@ -3,6 +3,10 @@ name: nocrm-io-automation
 description: "Automate Nocrm IO tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.nocrm-io-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Nocrm IO Automation via Rube MCP

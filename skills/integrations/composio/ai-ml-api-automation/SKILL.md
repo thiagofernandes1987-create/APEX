@@ -3,6 +3,10 @@ name: ai-ml-api-automation
 description: "Automate AI ML API tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.ai-ml-api-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # AI ML API Automation via Rube MCP

@@ -3,6 +3,10 @@ name: open-sea-automation
 description: "Automate Open Sea tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.open-sea-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Open Sea Automation via Rube MCP

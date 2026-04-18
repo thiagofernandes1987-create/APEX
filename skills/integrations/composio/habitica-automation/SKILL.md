@@ -3,6 +3,10 @@ name: habitica-automation
 description: "Automate Habitica tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.habitica-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Habitica Automation via Rube MCP

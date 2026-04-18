@@ -3,6 +3,10 @@ name: coinranking-automation
 description: "Automate Coinranking tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.coinranking-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Coinranking Automation via Rube MCP

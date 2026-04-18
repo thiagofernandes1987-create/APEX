@@ -3,6 +3,10 @@ name: serply-automation
 description: "Automate Serply tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.serply-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Serply Automation via Rube MCP

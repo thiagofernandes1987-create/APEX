@@ -3,6 +3,10 @@ name: breeze-automation
 description: "Automate Breeze tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.breeze-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Breeze Automation via Rube MCP

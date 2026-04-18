@@ -3,6 +3,10 @@ name: polygon-automation
 description: "Automate Polygon tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.polygon-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Polygon Automation via Rube MCP

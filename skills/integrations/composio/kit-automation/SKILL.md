@@ -3,6 +3,10 @@ name: kit-automation
 description: "Automate Kit tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.kit-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Kit Automation via Rube MCP

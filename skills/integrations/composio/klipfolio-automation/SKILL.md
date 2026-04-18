@@ -3,6 +3,10 @@ name: klipfolio-automation
 description: "Automate Klipfolio tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.klipfolio-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Klipfolio Automation via Rube MCP

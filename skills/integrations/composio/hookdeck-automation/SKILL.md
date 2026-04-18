@@ -3,6 +3,10 @@ name: hookdeck-automation
 description: "Automate Hookdeck tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.hookdeck-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Hookdeck Automation via Rube MCP

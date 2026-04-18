@@ -4,6 +4,10 @@ description: "Automate SEO research with Ahrefs -- analyze backlink profiles, re
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.ahrefs-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Ahrefs Automation

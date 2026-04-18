@@ -3,6 +3,10 @@ name: zoho-automation
 description: "Automate Zoho tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.zoho-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Zoho Automation via Rube MCP

@@ -3,6 +3,10 @@ name: smtp2go-automation
 description: "Automate Smtp2go tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.smtp2go-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Smtp2go Automation via Rube MCP

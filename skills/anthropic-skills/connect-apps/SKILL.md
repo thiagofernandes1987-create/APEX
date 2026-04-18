@@ -1,6 +1,10 @@
 ---
 name: connect-apps
 description: Connect Claude to external apps like Gmail, Slack, GitHub. Use this skill when the user wants to send emails, create issues, post messages, or take actions in external services.
+executor: LLM_BEHAVIOR
+skill_id: anthropic-skills.connect-apps
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Connect Apps

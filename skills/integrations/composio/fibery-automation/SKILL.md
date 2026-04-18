@@ -3,6 +3,10 @@ name: fibery-automation
 description: "Automate Fibery tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.fibery-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Fibery Automation via Rube MCP

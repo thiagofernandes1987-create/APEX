@@ -3,6 +3,10 @@ name: Xero Automation
 description: "Xero Automation: manage invoices, contacts, payments, bank transactions, and accounts in Xero for cloud-based bookkeeping"
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.xero-automation
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Xero Automation

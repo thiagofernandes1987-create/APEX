@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+"""
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.business-growth.rfp_response_analyzer
+script_name: rfp_response_analyzer.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
 """RFP/RFI Response Analyzer - Score coverage, identify gaps, and recommend bid/no-bid.
 
 Parses RFP/RFI requirements and scores coverage using Full/Partial/Planned/Gap

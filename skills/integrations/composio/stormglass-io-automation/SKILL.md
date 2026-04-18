@@ -3,6 +3,10 @@ name: stormglass-io-automation
 description: "Automate Stormglass IO tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.stormglass-io-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Stormglass IO Automation via Rube MCP

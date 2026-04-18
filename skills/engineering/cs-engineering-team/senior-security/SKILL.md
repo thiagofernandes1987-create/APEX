@@ -14,6 +14,10 @@ triggers:
   - secret scanning
   - security audit
   - zero trust
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.senior-security
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Senior Security Engineer

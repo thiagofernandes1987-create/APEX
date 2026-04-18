@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: engineering.cs-engineering.spec-driven-workflow
+script_name: spec_generator.py
+script_purpose: [TODO: one sentence — what this script does and when it is invoked]
+why: [TODO: why this script exists — what problem it solves vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block the parent skill.
+apex_version: v00.36.0
+"""
+"""
 Spec Generator - Generates a feature specification template from a name and description.
 
 Produces a complete spec document with all required sections pre-filled with

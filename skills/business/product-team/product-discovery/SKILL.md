@@ -1,6 +1,10 @@
 ---
 name: product-discovery
 description: Use when validating product opportunities, mapping assumptions, planning discovery sprints, or testing problem-solution fit before committing delivery resources.
+executor: HYBRID
+skill_id: business.product-team.product-discovery
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Product Discovery

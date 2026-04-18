@@ -9,6 +9,10 @@ metadata:
   domain: culture-leadership
   updated: 2026-03-05
   frameworks: culture-playbook, culture-code-template
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.culture-architect
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Culture Architect

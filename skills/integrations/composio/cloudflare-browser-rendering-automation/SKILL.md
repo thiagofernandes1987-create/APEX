@@ -3,6 +3,10 @@ name: cloudflare-browser-rendering-automation
 description: "Automate Cloudflare Browser Rendering tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.cloudflare-browser-rendering-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Cloudflare Browser Rendering Automation via Rube MCP

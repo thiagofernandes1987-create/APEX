@@ -3,6 +3,10 @@ name: icims-talent-cloud-automation
 description: "Automate Icims Talent Cloud tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.icims-talent-cloud-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Icims Talent Cloud Automation via Rube MCP

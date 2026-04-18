@@ -10,6 +10,10 @@ metadata:
   updated: 2026-03-05
   python-tools: tech_debt_analyzer.py, team_scaling_calculator.py
   frameworks: architecture-decisions, engineering-metrics, technology-evaluation
+executor: HYBRID
+skill_id: business.c-level-advisor.cto-advisor
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # CTO Advisor

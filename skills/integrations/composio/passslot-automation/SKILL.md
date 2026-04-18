@@ -3,6 +3,10 @@ name: passslot-automation
 description: "Automate Passslot tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.passslot-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Passslot Automation via Rube MCP

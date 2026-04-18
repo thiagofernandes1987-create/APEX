@@ -3,6 +3,10 @@ name: formbricks-automation
 description: "Automate Formbricks tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.formbricks-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Formbricks Automation via Rube MCP

@@ -3,6 +3,10 @@ name: pdf-co-automation
 description: "Automate PDF co tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.pdf-co-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # PDF co Automation via Rube MCP

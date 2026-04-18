@@ -3,6 +3,10 @@ name: connecteam-automation
 description: "Automate Connecteam tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.connecteam-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Connecteam Automation via Rube MCP

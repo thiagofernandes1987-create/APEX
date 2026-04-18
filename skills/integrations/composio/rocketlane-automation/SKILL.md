@@ -3,6 +3,10 @@ name: rocketlane-automation
 description: "Automate Rocketlane tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.rocketlane-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Rocketlane Automation via Rube MCP

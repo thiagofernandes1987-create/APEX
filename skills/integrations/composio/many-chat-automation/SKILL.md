@@ -3,6 +3,10 @@ name: many-chat-automation
 description: "Automate ManyChat tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.many-chat-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # ManyChat Automation via Rube MCP

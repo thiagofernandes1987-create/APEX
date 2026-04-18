@@ -3,6 +3,10 @@ name: recallai-automation
 description: "Automate Recallai tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.recallai-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Recallai Automation via Rube MCP

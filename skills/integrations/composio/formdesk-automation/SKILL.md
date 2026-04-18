@@ -3,6 +3,10 @@ name: formdesk-automation
 description: "Automate Formdesk tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.formdesk-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Formdesk Automation via Rube MCP

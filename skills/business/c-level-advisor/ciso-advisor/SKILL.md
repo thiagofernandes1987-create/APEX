@@ -10,6 +10,10 @@ metadata:
   updated: 2026-03-05
   python-tools: risk_quantifier.py, compliance_tracker.py
   frameworks: risk-based-security, zero-trust, defense-in-depth
+executor: HYBRID
+skill_id: business.c-level-advisor.ciso-advisor
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # CISO Advisor

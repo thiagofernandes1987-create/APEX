@@ -4,6 +4,10 @@ description: "Automate lead generation, web scraping, and social media data extr
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.phantombuster-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # PhantomBuster Automation

@@ -3,6 +3,10 @@ name: codeinterpreter-automation
 description: "Automate Codeinterpreter tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.codeinterpreter-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Codeinterpreter Automation via Rube MCP

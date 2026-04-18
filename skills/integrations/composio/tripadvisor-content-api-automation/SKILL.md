@@ -3,6 +3,10 @@ name: tripadvisor-content-api-automation
 description: "Automate TripAdvisor tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.tripadvisor-content-api-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # TripAdvisor Automation via Rube MCP

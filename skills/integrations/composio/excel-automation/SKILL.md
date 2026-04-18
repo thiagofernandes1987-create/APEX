@@ -3,6 +3,10 @@ name: Excel Automation
 description: "Excel Automation: create workbooks, manage worksheets, read/write cell data, and format spreadsheets via Microsoft Excel and Google Sheets integration"
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.excel-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Excel Automation

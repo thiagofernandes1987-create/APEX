@@ -4,6 +4,10 @@ description: "Automate Lemlist multichannel outreach -- manage campaigns, enroll
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.lemlist-automation
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Lemlist Automation

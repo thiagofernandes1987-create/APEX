@@ -9,6 +9,10 @@ metadata:
   domain: decision-memory
   updated: 2026-03-05
   python-tools: scripts/decision_tracker.py
+executor: HYBRID
+skill_id: business.c-level-advisor.decision-logger
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Decision Logger

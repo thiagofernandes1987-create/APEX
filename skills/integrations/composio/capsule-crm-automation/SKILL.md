@@ -5,6 +5,10 @@ category: crm
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.capsule-crm-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Capsule CRM Automation

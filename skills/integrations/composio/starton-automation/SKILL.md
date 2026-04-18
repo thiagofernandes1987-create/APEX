@@ -3,6 +3,10 @@ name: starton-automation
 description: "Automate Starton tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.starton-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Starton Automation via Rube MCP

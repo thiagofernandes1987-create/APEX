@@ -3,6 +3,10 @@ name: campaign-cleaner-automation
 description: "Automate Campaign Cleaner tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.campaign-cleaner-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Campaign Cleaner Automation via Rube MCP

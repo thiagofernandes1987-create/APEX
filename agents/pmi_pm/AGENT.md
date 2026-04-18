@@ -43,6 +43,7 @@ output_schema:
   recommended_pipeline: "list[str]"
 what_if_fails: >
   FALLBACK: Se request ambíguo, emitir [SCOPE_UNCLEAR] e solicitar 1 pergunta de clarificação (nunca mais de 1). Se urgente, usar scope mínimo viável.
+security: {level: standard, approval_required: false}
 ---
 
 # PMI-PM — Agente de Scoping e Governança

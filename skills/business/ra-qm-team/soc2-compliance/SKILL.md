@@ -1,6 +1,10 @@
 ---
 name: "soc2-compliance"
 description: "Use when the user asks to prepare for SOC 2 audits, map Trust Service Criteria, build control matrices, collect audit evidence, perform gap analysis, or assess SOC 2 Type I vs Type II readiness."
+executor: HYBRID
+skill_id: business.ra-qm-team.soc2-compliance
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # SOC 2 Compliance

@@ -40,6 +40,7 @@ output_schema:
   rollback_plan: "str"
 what_if_fails: >
   FALLBACK: Se aprovação nivel_4 não obtida em 24h, manter estado anterior. Nunca aplicar DIFFs nível_3+ sem aprovação explícita.
+security: {level: standard, approval_required: false}
 ---
 
 # Diff Governance — Controle de Versão do APEX

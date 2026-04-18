@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.marketing-skill.tool_roi_estimator
+script_name: tool_roi_estimator.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
+"""
 tool_roi_estimator.py — Estimates ROI of building a free marketing tool.
 
 Models the return from a free tool given build cost, maintenance, expected traffic,

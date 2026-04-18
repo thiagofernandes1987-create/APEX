@@ -3,6 +3,10 @@ name: echtpost-automation
 description: "Automate Echtpost tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.echtpost-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Echtpost Automation via Rube MCP

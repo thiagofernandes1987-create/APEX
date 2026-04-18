@@ -3,6 +3,10 @@ name: control-d-automation
 description: "Automate Control D tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.control-d-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Control D Automation via Rube MCP

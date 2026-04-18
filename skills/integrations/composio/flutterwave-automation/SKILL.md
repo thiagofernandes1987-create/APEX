@@ -3,6 +3,10 @@ name: flutterwave-automation
 description: "Automate Flutterwave tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.flutterwave-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Flutterwave Automation via Rube MCP

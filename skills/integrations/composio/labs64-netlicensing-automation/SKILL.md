@@ -3,6 +3,10 @@ name: labs64-netlicensing-automation
 description: "Automate Labs64 Netlicensing tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.labs64-netlicensing-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Labs64 Netlicensing Automation via Rube MCP

@@ -3,6 +3,10 @@ name: moneybird-automation
 description: "Automate Moneybird tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.moneybird-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Moneybird Automation via Rube MCP

@@ -1,6 +1,10 @@
 ---
 name: raffle-winner-picker
 description: Picks random winners from lists, spreadsheets, or Google Sheets for giveaways, raffles, and contests. Ensures fair, unbiased selection with transparency.
+executor: LLM_BEHAVIOR
+skill_id: anthropic-skills.raffle-winner-picker
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Raffle Winner Picker

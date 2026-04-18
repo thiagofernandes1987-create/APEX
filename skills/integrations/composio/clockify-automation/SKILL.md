@@ -4,6 +4,10 @@ description: "Automate time tracking workflows in Clockify -- create and manage 
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.clockify-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Clockify Automation

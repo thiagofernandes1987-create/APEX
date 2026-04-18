@@ -3,6 +3,10 @@ name: callingly-automation
 description: "Automate Callingly tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.callingly-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Callingly Automation via Rube MCP

@@ -3,6 +3,10 @@ name: placid-automation
 description: "Automate Placid tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.placid-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Placid Automation via Rube MCP

@@ -3,6 +3,10 @@ name: Dynamics 365 Automation
 description: "Dynamics 365 Automation: manage CRM contacts, accounts, leads, opportunities, sales orders, invoices, and cases via the Dynamics CRM Web API"
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.dynamics365-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Dynamics 365 Automation

@@ -1,6 +1,10 @@
 ---
 name: "monorepo-navigator"
 description: "Monorepo Navigator"
+executor: HYBRID
+skill_id: engineering.cs-engineering.monorepo-navigator
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Monorepo Navigator

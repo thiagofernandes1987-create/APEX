@@ -10,6 +10,10 @@ metadata:
   updated: 2026-03-05
   python-tools: revenue_forecast_model.py, churn_analyzer.py
   frameworks: sales-playbook, pricing-strategy, nrr-playbook
+executor: HYBRID
+skill_id: business.c-level-advisor.cro-advisor
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # CRO Advisor

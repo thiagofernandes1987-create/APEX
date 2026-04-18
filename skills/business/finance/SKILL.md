@@ -14,6 +14,10 @@ agents:
   - claude-code
   - codex-cli
   - openclaw
+executor: LLM_BEHAVIOR
+skill_id: business.finance
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Finance Skills

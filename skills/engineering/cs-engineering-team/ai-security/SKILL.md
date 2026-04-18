@@ -1,6 +1,10 @@
 ---
 name: "ai-security"
 description: "Use when assessing AI/ML systems for prompt injection, jailbreak vulnerabilities, model inversion risk, data poisoning exposure, or agent tool abuse. Covers MITRE ATLAS technique mapping, injection signature detection, and adversarial robustness scoring."
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.ai-security
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # AI Security

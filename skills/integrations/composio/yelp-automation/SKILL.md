@@ -3,6 +3,10 @@ name: yelp-automation
 description: "Automate Yelp tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.yelp-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Yelp Automation via Rube MCP

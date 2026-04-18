@@ -3,6 +3,10 @@ name: precoro-automation
 description: "Automate Precoro tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.precoro-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Precoro Automation via Rube MCP

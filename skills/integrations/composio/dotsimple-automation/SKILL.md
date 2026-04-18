@@ -3,6 +3,10 @@ name: dotsimple-automation
 description: "Automate Dotsimple tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.dotsimple-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Dotsimple Automation via Rube MCP

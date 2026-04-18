@@ -3,6 +3,10 @@ name: files-com-automation
 description: "Automate Files Com tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.files-com-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Files Com Automation via Rube MCP

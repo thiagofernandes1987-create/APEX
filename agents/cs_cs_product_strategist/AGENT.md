@@ -23,6 +23,7 @@ what_if_fails: >
   FALLBACK: Delegar para agente base mais próximo.
   Emitir [AGENT_FALLBACK: cs-product-strategist].
 apex_version: v00.37.0
+security: {level: high, approval_required: true}
 ---
 
 ---

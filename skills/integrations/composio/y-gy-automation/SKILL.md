@@ -3,6 +3,10 @@ name: y-gy-automation
 description: "Automate Y Gy tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.y-gy-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Y Gy Automation via Rube MCP

@@ -4,6 +4,10 @@ description: "Automate recruiting and hiring workflows in Ashby -- manage candid
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.ashby-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Ashby Automation

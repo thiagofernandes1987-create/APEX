@@ -3,6 +3,10 @@ name: d2lbrightspace-automation
 description: "Automate D2lbrightspace tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.d2lbrightspace-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # D2lbrightspace Automation via Rube MCP

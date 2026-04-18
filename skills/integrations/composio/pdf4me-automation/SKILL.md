@@ -3,6 +3,10 @@ name: pdf4me-automation
 description: "Automate Pdf4me tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.pdf4me-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Pdf4me Automation via Rube MCP

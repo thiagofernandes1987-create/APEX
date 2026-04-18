@@ -3,6 +3,10 @@ name: deadline-funnel-automation
 description: "Automate Deadline Funnel tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.deadline-funnel-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Deadline Funnel Automation via Rube MCP

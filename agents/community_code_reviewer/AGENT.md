@@ -17,6 +17,7 @@ output_schema:
   summary: "str"
 what_if_fails: >
   FALLBACK: Se arquivo inacessível, solicitar conteúdo inline. Documentar limitações no review.
+security: {level: high, approval_required: true}
 ---
 
 # code-reviewer

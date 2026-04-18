@@ -3,6 +3,10 @@ name: gleap-automation
 description: "Automate Gleap tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.gleap-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Gleap Automation via Rube MCP

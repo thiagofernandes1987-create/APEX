@@ -3,6 +3,10 @@ name: langbase-automation
 description: "Automate Langbase tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.langbase-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Langbase Automation via Rube MCP

@@ -3,6 +3,10 @@ name: turso-automation
 description: "Automate Turso tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.turso-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Turso Automation via Rube MCP

@@ -2,6 +2,10 @@
 name: "eval"
 description: "Evaluate and rank agent results by metric or LLM judge for an AgentHub session."
 command: /hub:eval
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.agenthub.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /hub:eval — Evaluate Agent Results

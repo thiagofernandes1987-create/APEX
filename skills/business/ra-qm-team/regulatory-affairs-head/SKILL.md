@@ -14,6 +14,10 @@ triggers:
   - regulatory intelligence
   - submission planning
   - notified body
+executor: HYBRID
+skill_id: business.ra-qm-team.regulatory-affairs-head
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Head of Regulatory Affairs

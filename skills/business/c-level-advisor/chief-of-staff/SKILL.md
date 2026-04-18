@@ -9,6 +9,10 @@ metadata:
   domain: orchestration
   updated: 2026-03-05
   frameworks: routing-matrix, synthesis-framework, decision-log, board-protocol
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.chief-of-staff
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Chief of Staff

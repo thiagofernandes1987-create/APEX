@@ -2,6 +2,10 @@
 name: "merge"
 description: "Merge the winning agent's branch into base, archive losers, and clean up worktrees."
 command: /hub:merge
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.agenthub.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /hub:merge — Merge Winner

@@ -4,6 +4,10 @@ description: >-
   Sync tests with TestRail. Use when user mentions "testrail", "test management",
   "test cases", "test run", "sync test cases", "push results to testrail",
   or "import from testrail".
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team.playwright-pro.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # TestRail Integration

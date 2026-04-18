@@ -4,6 +4,10 @@ description: "Automate Cloudinary media management including folder organization
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.cloudinary-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Cloudinary Automation

@@ -1,6 +1,10 @@
 ---
 name: "postmortem"
 description: "/em -postmortem — Honest Analysis of What Went Wrong"
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.executive-mentor.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /em:postmortem — Honest Analysis of What Went Wrong

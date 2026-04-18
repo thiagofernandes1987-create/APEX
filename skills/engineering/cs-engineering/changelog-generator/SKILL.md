@@ -1,6 +1,10 @@
 ---
 name: "changelog-generator"
 description: "Changelog Generator"
+executor: HYBRID
+skill_id: engineering.cs-engineering.changelog-generator
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Changelog Generator

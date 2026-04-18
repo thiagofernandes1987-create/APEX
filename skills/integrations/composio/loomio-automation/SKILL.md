@@ -3,6 +3,10 @@ name: loomio-automation
 description: "Automate Loomio tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.loomio-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Loomio Automation via Rube MCP

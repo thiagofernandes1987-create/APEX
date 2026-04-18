@@ -3,6 +3,10 @@ name: mem0-automation
 description: "Automate Mem0 tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.mem0-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Mem0 Automation via Rube MCP

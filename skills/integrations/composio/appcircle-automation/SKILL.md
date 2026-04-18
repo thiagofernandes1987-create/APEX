@@ -3,6 +3,10 @@ name: appcircle-automation
 description: "Automate Appcircle tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.appcircle-automation
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Appcircle Automation via Rube MCP

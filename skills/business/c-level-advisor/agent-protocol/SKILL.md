@@ -9,6 +9,10 @@ metadata:
   domain: agent-orchestration
   updated: 2026-03-05
   frameworks: invocation-patterns
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.agent-protocol
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Inter-Agent Protocol

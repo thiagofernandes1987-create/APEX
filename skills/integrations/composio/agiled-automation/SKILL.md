@@ -3,6 +3,10 @@ name: agiled-automation
 description: "Automate Agiled tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.agiled-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Agiled Automation via Rube MCP

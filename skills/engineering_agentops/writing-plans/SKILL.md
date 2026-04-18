@@ -80,6 +80,7 @@ security:
     mitigation: "Documentar explicitamente qualquer requisito de permissão em cada task"
   - risk: "Plano assume dependências externas não verificadas"
     mitigation: "Incluir task de verificação de dependências como primeira tarefa do plano"
+executor: LLM_BEHAVIOR
 ---
 
 # Writing Plans

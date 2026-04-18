@@ -4,6 +4,10 @@ description: "Automate Cisco Webex messaging, rooms, teams, webhooks, and people
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.webex-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Webex Automation

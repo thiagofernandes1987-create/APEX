@@ -7,6 +7,10 @@ metadata:
   author: Alireza Rezvani
   category: engineering
   updated: 2026-03-13
+executor: HYBRID
+skill_id: engineering.cs-engineering.autoresearch-agent
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Autoresearch Agent

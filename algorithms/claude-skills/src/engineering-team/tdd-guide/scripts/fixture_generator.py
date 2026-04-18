@@ -1,4 +1,13 @@
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.engineering-team.fixture_generator
+script_name: fixture_generator.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
+"""
 Fixture and test data generation module.
 
 Generates realistic test data, mock objects, and fixtures for various scenarios.

@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: science.life-sciences._source_v2.scvi-tools
+script_name: transfer_labels.py
+script_purpose: [TODO: one sentence — what this script does and when it is invoked]
+why: [TODO: why this script exists — what problem it solves vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block the parent skill.
+apex_version: v00.36.0
+"""
+"""
 Transfer cell type labels from reference to query using scANVI.
 
 Maps query cells to a pre-trained reference model and predicts cell types.

@@ -1,6 +1,10 @@
 ---
 name: "stripe-integration-expert"
 description: "Stripe Integration Expert"
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team.stripe-integration-expert
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Stripe Integration Expert

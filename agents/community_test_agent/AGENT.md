@@ -18,6 +18,7 @@ output_schema:
   answer: "str"
 what_if_fails: >
   FALLBACK: Se pergunta fora do escopo, responder o que for possível e indicar limitações.
+security: {level: standard, approval_required: false}
 ---
 
 # test-agent

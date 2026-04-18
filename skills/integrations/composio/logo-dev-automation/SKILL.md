@@ -3,6 +3,10 @@ name: logo-dev-automation
 description: "Automate Logo Dev tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.logo-dev-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Logo Dev Automation via Rube MCP

@@ -1,6 +1,10 @@
 ---
 name: lead-research-assistant
 description: Identifies high-quality leads for your product or service by analyzing your business, searching for target companies, and providing actionable contact strategies. Perfect for sales, business development, and marketing professionals.
+executor: LLM_BEHAVIOR
+skill_id: anthropic-skills.lead-research-assistant
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Lead Research Assistant

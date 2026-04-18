@@ -3,6 +3,10 @@ name: dromo-automation
 description: "Automate Dromo tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.dromo-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Dromo Automation via Rube MCP

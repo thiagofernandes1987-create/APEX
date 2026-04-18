@@ -3,6 +3,10 @@ name: placekey-automation
 description: "Automate Placekey tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.placekey-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Placekey Automation via Rube MCP

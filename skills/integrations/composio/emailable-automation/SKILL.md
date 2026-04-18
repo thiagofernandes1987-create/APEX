@@ -3,6 +3,10 @@ name: emailable-automation
 description: "Automate Emailable tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.emailable-automation
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Emailable Automation via Rube MCP

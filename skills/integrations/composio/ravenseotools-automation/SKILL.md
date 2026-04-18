@@ -3,6 +3,10 @@ name: ravenseotools-automation
 description: "Automate Ravenseotools tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.ravenseotools-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Ravenseotools Automation via Rube MCP

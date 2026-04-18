@@ -3,6 +3,10 @@ name: bunnycdn-automation
 description: "Automate Bunnycdn tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.bunnycdn-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Bunnycdn Automation via Rube MCP

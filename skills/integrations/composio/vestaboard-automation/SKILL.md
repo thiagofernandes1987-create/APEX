@@ -3,6 +3,10 @@ name: vestaboard-automation
 description: "Automate Vestaboard tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.vestaboard-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Vestaboard Automation via Rube MCP

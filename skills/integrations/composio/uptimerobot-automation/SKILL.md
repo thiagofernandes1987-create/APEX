@@ -3,6 +3,10 @@ name: uptimerobot-automation
 description: "Automate Uptimerobot tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.uptimerobot-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Uptimerobot Automation via Rube MCP

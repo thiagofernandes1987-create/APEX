@@ -3,6 +3,10 @@ name: sendloop-automation
 description: "Automate Sendloop tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.sendloop-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Sendloop Automation via Rube MCP

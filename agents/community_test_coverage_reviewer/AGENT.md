@@ -24,6 +24,7 @@ output_schema:
   recommended_tests: "list[str]"
 what_if_fails: >
   FALLBACK: Se sem testes existentes, gerar lista de casos de teste recomendados a partir da implementação.
+security: {level: high, approval_required: true}
 ---
 
 # test-coverage-reviewer

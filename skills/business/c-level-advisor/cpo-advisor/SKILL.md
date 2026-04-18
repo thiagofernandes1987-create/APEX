@@ -10,6 +10,10 @@ metadata:
   updated: 2026-03-05
   python-tools: pmf_scorer.py, portfolio_analyzer.py
   frameworks: pmf-playbook, product-strategy, product-org-design
+executor: HYBRID
+skill_id: business.c-level-advisor.cpo-advisor
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # CPO Advisor

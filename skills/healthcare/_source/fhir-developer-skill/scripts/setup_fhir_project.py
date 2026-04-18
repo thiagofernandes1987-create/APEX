@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+"""
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: healthcare._source.fhir-developer-skill
+script_name: setup_fhir_project.py
+script_purpose: [TODO: one sentence — what this script does and when it is invoked]
+why: [TODO: why this script exists — what problem it solves vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block the parent skill.
+apex_version: v00.36.0
+"""
 """FHIR API Project Scaffold - Creates a working FHIR API structure with correct patterns."""
 
 import argparse

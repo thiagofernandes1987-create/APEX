@@ -80,6 +80,9 @@ security:
   - Não retornar dados sensíveis do contexto do sistema
 apex_version: v00.36.0
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
+executor: HYBRID
+skill_id: knowledge-work._source.bio-research.skills
+status: CANDIDATE
 ---
 # Single-Cell RNA-seq Quality Control
 

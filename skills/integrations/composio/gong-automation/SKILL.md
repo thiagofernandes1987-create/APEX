@@ -5,6 +5,10 @@ category: conversation-intelligence
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.gong-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Gong Automation

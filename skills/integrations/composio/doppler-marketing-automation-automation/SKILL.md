@@ -3,6 +3,10 @@ name: doppler-marketing-automation-automation
 description: "Automate Doppler Marketing Automation tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.doppler-marketing-automation-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Doppler Marketing Automation Automation via Rube MCP

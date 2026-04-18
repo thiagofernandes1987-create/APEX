@@ -3,6 +3,10 @@ name: optimoroute-automation
 description: "Automate Optimoroute tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.optimoroute-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Optimoroute Automation via Rube MCP

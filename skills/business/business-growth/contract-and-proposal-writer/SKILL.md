@@ -1,6 +1,10 @@
 ---
 name: "contract-and-proposal-writer"
 description: "Contract & Proposal Writer"
+executor: LLM_BEHAVIOR
+skill_id: business.business-growth.contract-and-proposal-writer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Contract & Proposal Writer

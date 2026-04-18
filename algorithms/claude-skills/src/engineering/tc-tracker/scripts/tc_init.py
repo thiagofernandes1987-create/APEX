@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+"""
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: algorithms.engineering.tc_init
+script_name: tc_init.py
+script_purpose: [TODO: one sentence — what this script does and when invoked]
+why: [TODO: why this script exists vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block parent skill.
+apex_version: v00.36.0
+"""
 """TC Init — Initialize TC tracking inside a project.
 
 Creates docs/TC/ with tc_config.json, tc_registry.json, records/, and evidence/.

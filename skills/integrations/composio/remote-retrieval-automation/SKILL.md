@@ -3,6 +3,10 @@ name: remote-retrieval-automation
 description: "Automate Remote Retrieval tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.remote-retrieval-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Remote Retrieval Automation via Rube MCP

@@ -7,6 +7,10 @@ metadata:
   author: Alireza Rezvani
   category: marketing
   updated: 2026-03-06
+executor: LLM_BEHAVIOR
+skill_id: business.marketing-skill.brand-guidelines
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Brand Guidelines

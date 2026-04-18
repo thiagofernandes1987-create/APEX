@@ -10,6 +10,10 @@ description: >
   chain risks, (7) verifying file system access stays within skill boundaries.
   Triggers: "audit this skill", "is this skill safe", "scan skill for security",
   "check skill before install", "skill security check", "skill vulnerability scan".
+executor: HYBRID
+skill_id: engineering.cs-engineering.skill-security-auditor
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Skill Security Auditor

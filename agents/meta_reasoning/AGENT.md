@@ -40,6 +40,7 @@ output_schema:
   quality_gate: "PASS|FAIL"
 what_if_fails: >
   FALLBACK: Se meta_reasoning inacessível, pipeline continua mas sem quality gate. Emitir [META_DEGRADED] e limitar output a claims de baixa incerteza.
+security: {level: standard, approval_required: false}
 ---
 
 # Meta-Reasoning — Monitor Epistêmico do Pipeline

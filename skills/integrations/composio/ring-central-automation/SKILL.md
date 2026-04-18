@@ -4,6 +4,10 @@ description: "RingCentral automation via Rube MCP -- toolkit not currently avail
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.ring-central-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # RingCentral Automation

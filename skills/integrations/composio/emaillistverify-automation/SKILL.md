@@ -3,6 +3,10 @@ name: emaillistverify-automation
 description: "Automate Emaillistverify tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.emaillistverify-automation
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Emaillistverify Automation via Rube MCP

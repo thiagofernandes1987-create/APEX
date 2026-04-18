@@ -40,6 +40,7 @@ output_schema:
   diagrams_description: "str"
 what_if_fails: >
   FALLBACK: Se constraints insuficientes, solicitar esclarecimento via pmi_pm. Se múltiplas arquiteturas viáveis, apresentar top-3 com pros/cons.
+security: {level: standard, approval_required: false}
 ---
 
 # Architect — Agente de Design Estrutural

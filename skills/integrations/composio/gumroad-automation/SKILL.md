@@ -5,6 +5,10 @@ category: e-commerce
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.gumroad-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Gumroad Automation

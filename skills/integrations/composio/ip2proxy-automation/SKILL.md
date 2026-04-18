@@ -3,6 +3,10 @@ name: ip2proxy-automation
 description: "Automate Ip2proxy tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.ip2proxy-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Ip2proxy Automation via Rube MCP

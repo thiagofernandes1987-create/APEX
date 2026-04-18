@@ -3,6 +3,10 @@ name: openperplex-automation
 description: "Automate Openperplex tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.openperplex-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Openperplex Automation via Rube MCP

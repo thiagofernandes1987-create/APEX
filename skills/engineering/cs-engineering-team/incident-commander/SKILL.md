@@ -1,6 +1,10 @@
 ---
 name: "incident-commander"
 description: "Incident Commander Skill"
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.incident-commander
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Incident Commander Skill

@@ -3,6 +3,10 @@ name: mocean-automation
 description: "Automate Mocean tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.mocean-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Mocean Automation via Rube MCP

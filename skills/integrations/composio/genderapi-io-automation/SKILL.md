@@ -3,6 +3,10 @@ name: genderapi-io-automation
 description: "Automate Genderapi IO tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.genderapi-io-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Genderapi IO Automation via Rube MCP

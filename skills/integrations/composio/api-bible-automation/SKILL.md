@@ -3,6 +3,10 @@ name: api-bible-automation
 description: "Automate API Bible tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.api-bible-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # API Bible Automation via Rube MCP

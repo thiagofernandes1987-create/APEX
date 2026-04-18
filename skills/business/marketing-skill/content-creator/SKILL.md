@@ -8,6 +8,10 @@ metadata:
   category: marketing
   updated: 2026-03-06
   status: deprecated
+executor: LLM_BEHAVIOR
+skill_id: business.marketing-skill.content-creator
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Content Creator → Redirected

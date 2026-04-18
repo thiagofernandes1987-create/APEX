@@ -3,6 +3,10 @@ name: pdf-api-io-automation
 description: "Automate PDF API IO tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.pdf-api-io-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # PDF API IO Automation via Rube MCP

@@ -1,6 +1,10 @@
 ---
 name: "google-workspace-cli"
 description: "Google Workspace administration via the gws CLI. Install, authenticate, and automate Gmail, Drive, Sheets, Calendar, Docs, Chat, and Tasks. Run security audits, execute 43 built-in recipes, and use 10 persona bundles. Use for Google Workspace admin, gws CLI setup, Gmail automation, Drive management, or Calendar scheduling."
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.google-workspace-cli
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Google Workspace CLI

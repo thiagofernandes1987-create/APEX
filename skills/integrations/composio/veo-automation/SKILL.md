@@ -3,6 +3,10 @@ name: veo-automation
 description: "Automate Veo tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.veo-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Veo Automation via Rube MCP

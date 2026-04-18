@@ -3,6 +3,10 @@ name: better-stack-automation
 description: "Automate Better Stack tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.better-stack-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Better Stack Automation via Rube MCP

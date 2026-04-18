@@ -1,6 +1,10 @@
 ---
 name: tailored-resume-generator
 description: Analyzes job descriptions and generates tailored resumes that highlight relevant experience, skills, and achievements to maximize interview chances
+executor: LLM_BEHAVIOR
+skill_id: anthropic-skills.tailored-resume-generator
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Tailored Resume Generator

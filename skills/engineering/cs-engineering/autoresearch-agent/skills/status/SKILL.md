@@ -2,6 +2,10 @@
 name: "status"
 description: "Show experiment dashboard with results, active loops, and progress."
 command: /ar:status
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.autoresearch-agent.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /ar:status — Experiment Dashboard

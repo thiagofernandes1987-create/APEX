@@ -4,6 +4,10 @@ description: "Automate Spotify workflows including playlist management, music se
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.spotify-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Spotify Automation

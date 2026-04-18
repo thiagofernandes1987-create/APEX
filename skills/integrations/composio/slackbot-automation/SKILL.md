@@ -3,6 +3,10 @@ name: slackbot-automation
 description: "Automate Slackbot tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.slackbot-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Slackbot Automation via Rube MCP

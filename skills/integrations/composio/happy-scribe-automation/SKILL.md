@@ -3,6 +3,10 @@ name: happy-scribe-automation
 description: "Automate Happy Scribe tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.happy-scribe-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Happy Scribe Automation via Rube MCP

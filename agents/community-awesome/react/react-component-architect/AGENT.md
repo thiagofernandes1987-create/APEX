@@ -21,6 +21,7 @@ what_if_fails: >
   FALLBACK: Delegar para agente engineer ou architect.
   Emitir [AGENT_FALLBACK: react-component-architect].
 apex_version: v00.37.0
+security: {level: standard, approval_required: false}
 ---
 
 ---

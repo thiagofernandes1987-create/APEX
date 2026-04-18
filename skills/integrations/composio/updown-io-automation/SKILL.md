@@ -3,6 +3,10 @@ name: updown-io-automation
 description: "Automate Updown IO tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.updown-io-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Updown IO Automation via Rube MCP

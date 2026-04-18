@@ -1,6 +1,10 @@
 ---
 name: "migration-architect"
 description: "Migration Architect"
+executor: HYBRID
+skill_id: engineering.cs-engineering.migration-architect
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Migration Architect

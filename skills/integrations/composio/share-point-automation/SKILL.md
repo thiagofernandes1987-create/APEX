@@ -3,6 +3,10 @@ name: SharePoint Automation
 description: "SharePoint Automation: manage sites, lists, documents, folders, pages, and search content across SharePoint and OneDrive"
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.share-point-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # SharePoint Automation

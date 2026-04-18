@@ -3,6 +3,10 @@ name: piloterr-automation
 description: "Automate Piloterr tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.piloterr-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Piloterr Automation via Rube MCP

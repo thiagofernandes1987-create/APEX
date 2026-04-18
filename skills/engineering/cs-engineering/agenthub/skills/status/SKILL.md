@@ -2,6 +2,10 @@
 name: "status"
 description: "Show DAG state, agent progress, and branch status for an AgentHub session."
 command: /hub:status
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.agenthub.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /hub:status — Session Status

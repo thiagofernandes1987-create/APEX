@@ -3,6 +3,10 @@ name: timekit-automation
 description: "Automate Timekit tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.timekit-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Timekit Automation via Rube MCP

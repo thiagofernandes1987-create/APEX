@@ -3,6 +3,10 @@ name: appointo-automation
 description: "Automate Appointo tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.appointo-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Appointo Automation via Rube MCP

@@ -25,6 +25,7 @@ output_schema:
   market_insights: "str"
 what_if_fails: >
   FALLBACK: Se sem acesso a mercado externo, gerar análise baseada em padrões da indústria. Marcar [MARKET_DATA_UNAVAILABLE].
+security: {level: high, approval_required: true}
 ---
 
 # recruiter

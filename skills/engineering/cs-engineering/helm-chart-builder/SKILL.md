@@ -7,6 +7,10 @@ metadata:
   author: Alireza Rezvani
   category: engineering
   updated: 2026-03-15
+executor: HYBRID
+skill_id: engineering.cs-engineering.helm-chart-builder
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Helm Chart Builder

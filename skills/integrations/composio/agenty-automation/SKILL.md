@@ -3,6 +3,10 @@ name: agenty-automation
 description: "Automate Agenty tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.agenty-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Agenty Automation via Rube MCP

@@ -4,6 +4,10 @@ description: "Automate e-commerce customer support workflows in Gorgias -- manag
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.gorgias-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Gorgias Automation

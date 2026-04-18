@@ -3,6 +3,10 @@ name: wakatime-automation
 description: "Automate Wakatime tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.wakatime-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Wakatime Automation via Rube MCP

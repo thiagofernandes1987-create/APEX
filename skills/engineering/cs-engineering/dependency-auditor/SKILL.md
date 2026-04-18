@@ -1,6 +1,10 @@
 ---
 name: "dependency-auditor"
 description: "Dependency Auditor"
+executor: HYBRID
+skill_id: engineering.cs-engineering.dependency-auditor
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Dependency Auditor

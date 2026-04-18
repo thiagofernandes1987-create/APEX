@@ -4,6 +4,10 @@ description: "Automate HR operations in Workday -- manage workers, time off requ
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.workday-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Workday Automation

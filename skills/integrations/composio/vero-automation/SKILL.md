@@ -3,6 +3,10 @@ name: vero-automation
 description: "Automate Vero tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.vero-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Vero Automation via Rube MCP

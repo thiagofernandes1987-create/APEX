@@ -1,6 +1,10 @@
 ---
 name: "challenge"
 description: "/em -challenge — Pre-Mortem Plan Analysis"
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.executive-mentor.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /em:challenge — Pre-Mortem Plan Analysis

@@ -25,6 +25,7 @@ output_schema:
   risk_flags: "list[str]"
 what_if_fails: >
   FALLBACK: Se dados incompletos, indicar quais métricas não puderam ser calculadas e solicitar dados faltantes.
+security: {level: high, approval_required: true}
 ---
 
 # financial-analyst

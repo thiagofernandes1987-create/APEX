@@ -4,6 +4,10 @@ description: "Automate Uploadcare file management including listing, storing, in
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.uploadcare-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Uploadcare Automation

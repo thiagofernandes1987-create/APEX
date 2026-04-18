@@ -2,6 +2,10 @@
 name: skill-creator
 description: Guide for creating effective skills. This skill should be used when users want to create a new skill (or update an existing skill) that extends Claude's capabilities with specialized knowledge, workflows, or tool integrations.
 license: Complete terms in LICENSE.txt
+executor: HYBRID
+skill_id: anthropic-skills.skill-creator
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Skill Creator

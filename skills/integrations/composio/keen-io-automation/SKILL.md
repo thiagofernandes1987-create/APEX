@@ -3,6 +3,10 @@ name: keen-io-automation
 description: "Automate Keen IO tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.keen-io-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Keen IO Automation via Rube MCP

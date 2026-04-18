@@ -4,6 +4,10 @@ description: "Automate Zoho Books accounting workflows including invoice creatio
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.zoho-books-automation
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Zoho Books Automation

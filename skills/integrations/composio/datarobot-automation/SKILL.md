@@ -3,6 +3,10 @@ name: datarobot-automation
 description: "Automate Datarobot tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.datarobot-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Datarobot Automation via Rube MCP

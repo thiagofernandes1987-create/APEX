@@ -3,6 +3,10 @@ name: appdrag-automation
 description: "Automate Appdrag tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.appdrag-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Appdrag Automation via Rube MCP

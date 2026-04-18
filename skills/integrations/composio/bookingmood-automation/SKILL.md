@@ -3,6 +3,10 @@ name: bookingmood-automation
 description: "Automate Bookingmood tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.bookingmood-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Bookingmood Automation via Rube MCP

@@ -24,6 +24,7 @@ output_schema:
   estimated_improvement: "str"
 what_if_fails: >
   FALLBACK: Se sem profiling data, fornecer análise estática de complexidade. Marcar [STATIC_ANALYSIS_ONLY].
+security: {level: high, approval_required: true}
 ---
 
 # performance-reviewer

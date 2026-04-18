@@ -3,6 +3,10 @@ name: influxdb-cloud-automation
 description: "Automate Influxdb Cloud tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.influxdb-cloud-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Influxdb Cloud Automation via Rube MCP

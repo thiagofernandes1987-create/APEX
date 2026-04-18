@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: business.finance.saas-metrics-coach
+script_name: quick_ratio_calculator.py
+script_purpose: [TODO: one sentence — what this script does and when it is invoked]
+why: [TODO: why this script exists — what problem it solves vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block the parent skill.
+apex_version: v00.36.0
+"""
+"""
 Quick Ratio Calculator - SaaS growth efficiency metric.
 
 Quick Ratio = (New MRR + Expansion MRR) / (Churned MRR + Contraction MRR)

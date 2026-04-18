@@ -4,6 +4,10 @@ description: "Automate document workflows with PandaDoc -- create documents from
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.pandadoc-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # PandaDoc Automation

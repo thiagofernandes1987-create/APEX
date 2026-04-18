@@ -3,6 +3,10 @@ name: Ramp Automation
 description: "Ramp Automation: manage corporate card transactions, reimbursements, users, and expense tracking via the Ramp platform"
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.ramp-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Ramp Automation

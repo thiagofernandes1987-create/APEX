@@ -1,6 +1,10 @@
 ---
 name: "incident-response"
 description: "Use when a security incident has been detected or declared and needs classification, triage, escalation path determination, and forensic evidence collection. Covers SEV1-SEV4 classification, false positive filtering, incident taxonomy, and NIST SP 800-61 lifecycle."
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.incident-response
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Incident Response

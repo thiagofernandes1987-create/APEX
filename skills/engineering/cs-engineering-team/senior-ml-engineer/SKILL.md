@@ -12,6 +12,10 @@ triggers:
   - model serving
   - A/B testing ML
   - automated retraining
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.senior-ml-engineer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Senior ML Engineer

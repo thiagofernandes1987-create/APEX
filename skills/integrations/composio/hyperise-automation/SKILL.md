@@ -3,6 +3,10 @@ name: hyperise-automation
 description: "Automate Hyperise tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.hyperise-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Hyperise Automation via Rube MCP

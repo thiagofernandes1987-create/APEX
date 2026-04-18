@@ -3,6 +3,10 @@ name: semanticscholar-automation
 description: "Automate Semanticscholar tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.semanticscholar-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Semanticscholar Automation via Rube MCP

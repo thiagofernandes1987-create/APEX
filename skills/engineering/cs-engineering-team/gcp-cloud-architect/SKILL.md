@@ -1,6 +1,10 @@
 ---
 name: "gcp-cloud-architect"
 description: "Design GCP architectures for startups and enterprises. Use when asked to design Google Cloud infrastructure, deploy to GKE or Cloud Run, configure BigQuery pipelines, optimize GCP costs, or migrate to GCP. Covers Cloud Run, GKE, Cloud Functions, Cloud SQL, BigQuery, and cost optimization."
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.gcp-cloud-architect
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # GCP Cloud Architect

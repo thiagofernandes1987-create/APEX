@@ -3,6 +3,10 @@ name: apex27-automation
 description: "Automate Apex27 tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.apex27-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Apex27 Automation via Rube MCP

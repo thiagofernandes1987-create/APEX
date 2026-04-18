@@ -1,6 +1,10 @@
 ---
 name: llm-cost-optimizer
 description: "Use when you need to reduce LLM API spend, control token usage, route between models by cost/quality, implement prompt caching, or build cost observability for AI features. Triggers: 'my AI costs are too high', 'optimize token usage', 'which model should I use', 'LLM spend is out of control', 'implement prompt caching'. NOT for RAG pipeline design (use rag-architect). NOT for prompt writing quality (use senior-prompt-engineer)."
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.llm-cost-optimizer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # LLM Cost Optimizer

@@ -7,6 +7,10 @@ metadata:
   author: Alireza Rezvani
   category: product
   updated: 2026-03-16
+executor: HYBRID
+skill_id: business.product-team.research-summarizer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Research Summarizer

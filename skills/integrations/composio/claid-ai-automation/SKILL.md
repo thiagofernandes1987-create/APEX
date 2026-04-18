@@ -3,6 +3,10 @@ name: claid-ai-automation
 description: "Automate Claid AI tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.claid-ai-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Claid AI Automation via Rube MCP

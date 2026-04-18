@@ -9,6 +9,10 @@ metadata:
   domain: board-governance
   updated: 2026-03-05
   frameworks: deck-frameworks, board-deck-template
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.board-deck-builder
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Board Deck Builder

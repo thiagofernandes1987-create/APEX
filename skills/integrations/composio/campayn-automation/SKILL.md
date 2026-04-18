@@ -3,6 +3,10 @@ name: campayn-automation
 description: "Automate Campayn tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.campayn-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Campayn Automation via Rube MCP

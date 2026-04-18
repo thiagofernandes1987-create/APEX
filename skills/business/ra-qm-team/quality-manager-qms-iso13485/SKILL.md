@@ -14,6 +14,10 @@ triggers:
   - design control
   - supplier qualification
   - quality records
+executor: HYBRID
+skill_id: business.ra-qm-team.quality-manager-qms-iso13485
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Quality Manager - QMS ISO 13485 Specialist

@@ -3,6 +3,10 @@ name: alchemy-automation
 description: "Automate Alchemy tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.alchemy-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Alchemy Automation via Rube MCP

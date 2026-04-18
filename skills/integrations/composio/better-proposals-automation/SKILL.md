@@ -3,6 +3,10 @@ name: better-proposals-automation
 description: "Automate Better Proposals tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.better-proposals-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Better Proposals Automation via Rube MCP

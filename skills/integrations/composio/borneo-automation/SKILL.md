@@ -3,6 +3,10 @@ name: borneo-automation
 description: "Automate Borneo tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.borneo-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Borneo Automation via Rube MCP

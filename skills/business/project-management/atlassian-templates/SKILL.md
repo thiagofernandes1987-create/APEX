@@ -1,6 +1,10 @@
 ---
 name: "atlassian-templates"
 description: Atlassian Template and Files Creator/Modifier expert for creating, modifying, and managing Jira and Confluence templates, blueprints, custom layouts, reusable components, and standardized content structures. Use when building org-wide templates, custom blueprints, page layouts, and automated content generation.
+executor: HYBRID
+skill_id: business.project-management.atlassian-templates
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Atlassian Template & Files Creator Expert

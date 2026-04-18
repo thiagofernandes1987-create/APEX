@@ -8,6 +8,10 @@ metadata:
   category: c-level
   domain: ma-strategy
   updated: 2026-03-05
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.ma-playbook
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # M&A Playbook

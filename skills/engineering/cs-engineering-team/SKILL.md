@@ -16,6 +16,10 @@ agents:
   - claude-code
   - codex-cli
   - openclaw
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Engineering Team Skills

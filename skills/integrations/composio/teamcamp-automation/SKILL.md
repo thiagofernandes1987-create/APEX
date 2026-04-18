@@ -3,6 +3,10 @@ name: teamcamp-automation
 description: "Automate Teamcamp tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.teamcamp-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Teamcamp Automation via Rube MCP

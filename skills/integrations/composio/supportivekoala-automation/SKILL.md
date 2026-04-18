@@ -3,6 +3,10 @@ name: supportivekoala-automation
 description: "Automate Supportivekoala tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.supportivekoala-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Supportivekoala Automation via Rube MCP

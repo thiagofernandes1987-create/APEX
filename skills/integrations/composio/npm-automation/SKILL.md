@@ -3,6 +3,10 @@ name: npm-automation
 description: "Automate NPM tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.npm-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # NPM Automation via Rube MCP

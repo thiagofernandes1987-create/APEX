@@ -4,6 +4,10 @@ description: "Automate headless CMS operations in Prismic -- query documents, se
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.prismic-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Prismic Automation

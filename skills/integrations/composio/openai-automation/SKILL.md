@@ -4,6 +4,10 @@ description: "Automate OpenAI API operations -- generate responses with multimod
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.openai-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # OpenAI Automation

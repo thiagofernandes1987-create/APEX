@@ -3,6 +3,10 @@ name: salesforce-service-cloud-automation
 description: "Automate Salesforce Service Cloud tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.salesforce-service-cloud-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Salesforce Service Cloud Automation via Rube MCP

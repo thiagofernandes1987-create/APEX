@@ -1,6 +1,10 @@
 ---
 name: file-organizer
 description: Intelligently organizes your files and folders across your computer by understanding context, finding duplicates, suggesting better structures, and automating cleanup tasks. Reduces cognitive load and keeps your digital workspace tidy without manual effort.
+executor: LLM_BEHAVIOR
+skill_id: anthropic-skills.file-organizer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # File Organizer

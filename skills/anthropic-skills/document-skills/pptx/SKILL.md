@@ -2,6 +2,10 @@
 name: pptx
 description: "Presentation creation, editing, and analysis. When Claude needs to work with presentations (.pptx files) for: (1) Creating new presentations, (2) Modifying or editing content, (3) Working with layouts, (4) Adding comments or speaker notes, or any other presentation tasks"
 license: Proprietary. LICENSE.txt has complete terms
+executor: HYBRID
+skill_id: anthropic-skills.document-skills.pptx
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # PPTX creation, editing, and analysis

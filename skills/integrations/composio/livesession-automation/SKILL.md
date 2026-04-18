@@ -3,6 +3,10 @@ name: livesession-automation
 description: "Automate Livesession tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.livesession-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Livesession Automation via Rube MCP

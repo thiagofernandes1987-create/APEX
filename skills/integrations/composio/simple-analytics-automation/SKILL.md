@@ -3,6 +3,10 @@ name: simple-analytics-automation
 description: "Automate Simple Analytics tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.simple-analytics-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Simple Analytics Automation via Rube MCP

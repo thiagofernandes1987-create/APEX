@@ -3,6 +3,10 @@ name: mapbox-automation
 description: "Automate Mapbox tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.mapbox-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Mapbox Automation via Rube MCP

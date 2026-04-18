@@ -2,6 +2,10 @@
 name: "setup"
 description: "Set up a new autoresearch experiment interactively. Collects domain, target file, eval command, metric, direction, and evaluator."
 command: /ar:setup
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.autoresearch-agent.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /ar:setup — Create New Experiment

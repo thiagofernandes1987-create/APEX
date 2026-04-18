@@ -3,6 +3,10 @@ name: enigma-automation
 description: "Automate Enigma tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.enigma-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Enigma Automation via Rube MCP

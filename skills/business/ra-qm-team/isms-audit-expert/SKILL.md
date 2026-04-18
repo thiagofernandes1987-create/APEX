@@ -11,6 +11,10 @@ triggers:
   - surveillance audit
   - audit finding
   - nonconformity
+executor: HYBRID
+skill_id: business.ra-qm-team.isms-audit-expert
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # ISMS Audit Expert

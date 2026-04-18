@@ -3,6 +3,10 @@ name: extracta-ai-automation
 description: "Automate Extracta AI tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.extracta-ai-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Extracta AI Automation via Rube MCP

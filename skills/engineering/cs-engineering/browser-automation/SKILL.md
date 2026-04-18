@@ -1,6 +1,10 @@
 ---
 name: "browser-automation"
 description: "Use when the user asks to automate browser tasks, scrape websites, fill forms, capture screenshots, extract structured data from web pages, or build web automation workflows. NOT for testing — use playwright-pro for that."
+executor: HYBRID
+skill_id: engineering.cs-engineering.browser-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Browser Automation - POWERFUL

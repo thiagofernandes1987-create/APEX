@@ -3,6 +3,10 @@ name: interzoid-automation
 description: "Automate Interzoid tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.interzoid-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Interzoid Automation via Rube MCP

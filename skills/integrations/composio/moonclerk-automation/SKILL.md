@@ -3,6 +3,10 @@ name: moonclerk-automation
 description: "Automate Moonclerk tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.moonclerk-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Moonclerk Automation via Rube MCP

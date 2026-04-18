@@ -3,6 +3,10 @@ name: asin-data-api-automation
 description: "Automate Asin Data API tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.asin-data-api-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Asin Data API Automation via Rube MCP

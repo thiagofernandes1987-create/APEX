@@ -10,6 +10,10 @@ metadata:
   updated: 2026-03-05
   python-tools: decision_matrix_scorer.py, stakeholder_mapper.py
   frameworks: pre-mortem, board-prep, hard-call, stress-test, postmortem
+executor: HYBRID
+skill_id: business.c-level-advisor.executive-mentor
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Executive Mentor

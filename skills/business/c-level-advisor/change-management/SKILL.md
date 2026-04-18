@@ -9,6 +9,10 @@ metadata:
   domain: change-management
   updated: 2026-03-05
   frameworks: change-playbook
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.change-management
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Change Management Playbook

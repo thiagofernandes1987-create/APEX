@@ -3,6 +3,10 @@ name: certifier-automation
 description: "Automate Certifier tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.certifier-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Certifier Automation via Rube MCP

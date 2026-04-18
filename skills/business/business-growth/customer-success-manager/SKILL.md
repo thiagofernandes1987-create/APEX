@@ -10,6 +10,10 @@ metadata:
   updated: 2026-02-06
   python-tools: health_score_calculator.py, churn_risk_analyzer.py, expansion_opportunity_scorer.py
   tech-stack: customer-success, saas-metrics, health-scoring
+executor: HYBRID
+skill_id: business.business-growth.customer-success-manager
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Customer Success Manager

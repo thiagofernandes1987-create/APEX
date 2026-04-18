@@ -5,6 +5,10 @@ category: email-intelligence
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.hunter-automation
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Hunter Automation

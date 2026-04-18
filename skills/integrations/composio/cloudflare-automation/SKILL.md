@@ -3,6 +3,10 @@ name: cloudflare-automation
 description: "Automate Cloudflare tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.cloudflare-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Cloudflare Automation via Rube MCP

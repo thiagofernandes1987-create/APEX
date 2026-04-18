@@ -3,6 +3,10 @@ name: -21risk-automation
 description: "Automate 21risk tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.-21risk-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # 21risk Automation via Rube MCP

@@ -7,6 +7,10 @@ metadata:
   author: Alireza Rezvani
   category: marketing
   updated: 2026-03-06
+executor: HYBRID
+skill_id: business.marketing-skill.copywriting
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Copywriting

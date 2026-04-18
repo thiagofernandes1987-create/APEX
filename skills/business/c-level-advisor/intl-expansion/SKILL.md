@@ -8,6 +8,10 @@ metadata:
   category: c-level
   domain: international-strategy
   updated: 2026-03-05
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.intl-expansion
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # International Expansion

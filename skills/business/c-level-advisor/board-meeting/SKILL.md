@@ -9,6 +9,10 @@ metadata:
   domain: board-protocol
   updated: 2026-03-05
   frameworks: 6-phase-board, two-layer-memory, independent-contributions
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.board-meeting
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Board Meeting Protocol

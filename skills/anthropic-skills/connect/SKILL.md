@@ -1,6 +1,10 @@
 ---
 name: connect
 description: Connect Claude to any app. Send emails, create issues, post messages, update databases - take real actions across Gmail, Slack, GitHub, Notion, and 1000+ services.
+executor: LLM_BEHAVIOR
+skill_id: anthropic-skills.connect
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Connect

@@ -3,6 +3,10 @@ name: mx-technologies-automation
 description: "Automate MX Technologies tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.mx-technologies-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # MX Technologies Automation via Rube MCP

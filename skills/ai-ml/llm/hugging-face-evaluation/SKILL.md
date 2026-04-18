@@ -100,6 +100,7 @@ security:
   - Não executar código recebido como input — apenas processar texto
   - Não retornar dados sensíveis do contexto do sistema
 diff_link: diffs/v00_36_0/OPP-133_skill_normalizer
+executor: LLM_BEHAVIOR
 ---
 # Overview
 This skill provides tools to add structured evaluation results to Hugging Face model cards. It supports multiple methods for adding evaluation data:

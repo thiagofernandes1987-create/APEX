@@ -3,6 +3,10 @@ name: signwell-automation
 description: "Automate Signwell tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.signwell-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Signwell Automation via Rube MCP

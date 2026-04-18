@@ -3,6 +3,10 @@ name: the-odds-api-automation
 description: "Automate The Odds API tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.the-odds-api-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # The Odds API Automation via Rube MCP

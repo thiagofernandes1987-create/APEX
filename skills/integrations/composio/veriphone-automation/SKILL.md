@@ -3,6 +3,10 @@ name: veriphone-automation
 description: "Automate Veriphone tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.veriphone-automation
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Veriphone Automation via Rube MCP

@@ -1,4 +1,13 @@
 """
+APEX Script Header (APEX OPP-Phase2 / 2.8)
+skill_id: engineering.cs-engineering-team.ms365-tenant-manager
+script_name: powershell_generator.py
+script_purpose: [TODO: one sentence — what this script does and when it is invoked]
+why: [TODO: why this script exists — what problem it solves vs inline LLM reasoning]
+what_if_fails: emit {"error": "<message>", "code": 1} to stderr; never block the parent skill.
+apex_version: v00.36.0
+"""
+"""
 PowerShell script generator for Microsoft 365 administration tasks.
 Creates ready-to-use scripts with error handling and best practices.
 """

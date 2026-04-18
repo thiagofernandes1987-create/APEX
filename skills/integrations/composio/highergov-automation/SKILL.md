@@ -3,6 +3,10 @@ name: highergov-automation
 description: "Automate Highergov tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.highergov-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Highergov Automation via Rube MCP

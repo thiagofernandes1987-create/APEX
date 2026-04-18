@@ -9,6 +9,10 @@ metadata:
   domain: company-operations
   updated: 2026-03-05
   frameworks: os-comparison, implementation-guide
+executor: LLM_BEHAVIOR
+skill_id: business.c-level-advisor.company-os
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Company Operating System

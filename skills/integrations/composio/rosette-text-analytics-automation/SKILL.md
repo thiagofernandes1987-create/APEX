@@ -3,6 +3,10 @@ name: rosette-text-analytics-automation
 description: "Automate Rosette Text Analytics tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.rosette-text-analytics-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Rosette Text Analytics Automation via Rube MCP

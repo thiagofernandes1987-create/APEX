@@ -3,6 +3,10 @@ name: verifiedemail-automation
 description: "Automate Verifiedemail tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.verifiedemail-automation
+status: CANDIDATE
+security: {level: standard, pii: true, approval_required: false}
 ---
 
 # Verifiedemail Automation via Rube MCP

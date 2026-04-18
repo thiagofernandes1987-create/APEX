@@ -4,6 +4,10 @@ description: "Automate Replicate AI model operations -- run predictions, upload 
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.replicate-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Replicate Automation

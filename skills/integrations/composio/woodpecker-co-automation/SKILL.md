@@ -3,6 +3,10 @@ name: woodpecker-co-automation
 description: "Automate Woodpecker co tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.woodpecker-co-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Woodpecker co Automation via Rube MCP

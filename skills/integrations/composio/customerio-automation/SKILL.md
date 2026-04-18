@@ -4,6 +4,10 @@ description: "Automate customer engagement workflows including broadcast trigger
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.customerio-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Customer.io Automation

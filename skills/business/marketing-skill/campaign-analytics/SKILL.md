@@ -10,6 +10,10 @@ metadata:
   updated: 2026-02-06
   python-tools: attribution_analyzer.py, funnel_analyzer.py, campaign_roi_calculator.py
   tech-stack: marketing-analytics, attribution-modeling
+executor: HYBRID
+skill_id: business.marketing-skill.campaign-analytics
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Campaign Analytics

@@ -22,6 +22,7 @@ what_if_fails: >
   FALLBACK: Usar agente base engineer ou researcher.
   Emitir [SUBAGENT_FALLBACK: sales-engineer].
 apex_version: v00.37.0
+security: {level: high, approval_required: true}
 ---
 
 ---

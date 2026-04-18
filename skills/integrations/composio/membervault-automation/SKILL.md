@@ -3,6 +3,10 @@ name: membervault-automation
 description: "Automate Membervault tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.membervault-automation
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Membervault Automation via Rube MCP

@@ -3,6 +3,10 @@ name: dungeon-fighter-online-automation
 description: "Automate Dungeon Fighter Online tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.dungeon-fighter-online-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Dungeon Fighter Online Automation via Rube MCP

@@ -40,6 +40,7 @@ output_schema:
   discovery_notes: "str"
 what_if_fails: >
   FALLBACK: Se simulação exceder budget, retornar resultados parciais com [PARTIAL_SIMULATION]. Se hipótese não testável computacionalmente, reencaminhar para researcher.
+security: {level: standard, approval_required: false}
 ---
 
 # Scientist Agent — Descoberta Científica e Simulação

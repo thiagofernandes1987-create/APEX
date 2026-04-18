@@ -3,6 +3,10 @@ name: discordbot-automation
 description: "Automate Discordbot tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.discordbot-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Discordbot Automation via Rube MCP

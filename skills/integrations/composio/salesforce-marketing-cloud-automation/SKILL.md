@@ -3,6 +3,10 @@ name: salesforce-marketing-cloud-automation
 description: "Automate Salesforce Marketing Cloud tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.salesforce-marketing-cloud-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Salesforce Marketing Cloud Automation via Rube MCP

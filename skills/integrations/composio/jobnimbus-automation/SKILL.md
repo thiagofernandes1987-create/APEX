@@ -3,6 +3,10 @@ name: jobnimbus-automation
 description: "Automate Jobnimbus tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.jobnimbus-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Jobnimbus Automation via Rube MCP

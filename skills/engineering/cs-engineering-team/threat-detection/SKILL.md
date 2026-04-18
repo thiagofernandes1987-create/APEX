@@ -1,6 +1,10 @@
 ---
 name: "threat-detection"
 description: "Use when hunting for threats in an environment, analyzing IOCs, or detecting behavioral anomalies in telemetry. Covers hypothesis-driven threat hunting, IOC sweep generation, z-score anomaly detection, and MITRE ATT&CK-mapped signal prioritization."
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.threat-detection
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Threat Detection

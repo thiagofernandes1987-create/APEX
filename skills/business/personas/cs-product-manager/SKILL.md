@@ -23,6 +23,7 @@ llm_compat:
   claude: full
   gpt4o: partial
 apex_version: v00.37.0
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 ---

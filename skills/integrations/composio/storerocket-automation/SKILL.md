@@ -3,6 +3,10 @@ name: storerocket-automation
 description: "Automate Storerocket tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.storerocket-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Storerocket Automation via Rube MCP

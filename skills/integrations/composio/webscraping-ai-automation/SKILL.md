@@ -3,6 +3,10 @@ name: webscraping-ai-automation
 description: "Automate Webscraping AI tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.webscraping-ai-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Webscraping AI Automation via Rube MCP

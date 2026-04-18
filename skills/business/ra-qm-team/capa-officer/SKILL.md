@@ -14,6 +14,10 @@ triggers:
   - quality issue investigation
   - CAPA tracking
   - audit finding CAPA
+executor: HYBRID
+skill_id: business.ra-qm-team.capa-officer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # CAPA Officer

@@ -3,6 +3,10 @@ name: Braintree Automation
 description: "Braintree Automation: manage payment processing via Stripe-compatible tools for customers, subscriptions, payment methods, and transactions"
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.braintree-automation
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Braintree Automation

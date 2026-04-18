@@ -3,6 +3,10 @@ name: imgbb-automation
 description: "Automate Imgbb tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.imgbb-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Imgbb Automation via Rube MCP

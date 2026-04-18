@@ -3,6 +3,10 @@ name: hyperbrowser-automation
 description: "Automate Hyperbrowser tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.hyperbrowser-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Hyperbrowser Automation via Rube MCP

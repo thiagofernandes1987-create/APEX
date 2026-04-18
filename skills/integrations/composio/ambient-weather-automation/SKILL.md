@@ -3,6 +3,10 @@ name: ambient-weather-automation
 description: "Automate Ambient Weather tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.ambient-weather-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Ambient Weather Automation via Rube MCP

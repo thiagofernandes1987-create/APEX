@@ -40,6 +40,7 @@ output_schema:
   calibration_note: "str"
 what_if_fails: >
   FALLBACK: Se evidências insuficientes para Bayesian update, retornar prior com flag [LOW_EVIDENCE]. Se conflito irresolvível, declarar [EPISTEMIC_UNCERTAINTY: High] e passar para critic.
+security: {level: standard, approval_required: false}
 ---
 
 # Bayesian Curator — Sintetizador Probabilístico de Evidências

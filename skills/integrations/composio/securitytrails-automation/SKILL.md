@@ -3,6 +3,10 @@ name: securitytrails-automation
 description: "Automate Securitytrails tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.securitytrails-automation
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Securitytrails Automation via Rube MCP

@@ -7,6 +7,10 @@ dependencies: "None (prompt-only, no external tools required)"
 author: "ekreloff"
 version: "1.0.0"
 license: "MIT"
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team.adversarial-reviewer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Adversarial Code Reviewer

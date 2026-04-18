@@ -3,6 +3,10 @@ name: dictionary-api-automation
 description: "Automate Dictionary API tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.dictionary-api-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Dictionary API Automation via Rube MCP

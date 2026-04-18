@@ -2,6 +2,10 @@
 name: "loop"
 description: "Start an autonomous experiment loop with user-selected interval (10min, 1h, daily, weekly, monthly). Uses CronCreate for scheduling."
 command: /ar:loop
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.autoresearch-agent.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # /ar:loop — Autonomous Experiment Loop

@@ -7,6 +7,10 @@ metadata:
   author: Alireza Rezvani
   category: engineering
   updated: 2026-03-16
+executor: HYBRID
+skill_id: engineering.cs-engineering.docker-development
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Docker Development

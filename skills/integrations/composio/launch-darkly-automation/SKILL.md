@@ -4,6 +4,10 @@ description: "Automate LaunchDarkly feature flag management -- list projects and
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.launch-darkly-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # LaunchDarkly Automation

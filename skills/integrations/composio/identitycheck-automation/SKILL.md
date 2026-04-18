@@ -3,6 +3,10 @@ name: identitycheck-automation
 description: "Automate Identitycheck tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.identitycheck-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Identitycheck Automation via Rube MCP

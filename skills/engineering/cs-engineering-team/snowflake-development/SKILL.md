@@ -1,6 +1,10 @@
 ---
 name: "snowflake-development"
 description: "Use when writing Snowflake SQL, building data pipelines with Dynamic Tables or Streams/Tasks, using Cortex AI functions, creating Cortex Agents, writing Snowpark Python, configuring dbt for Snowflake, or troubleshooting Snowflake errors."
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.snowflake-development
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Snowflake Development

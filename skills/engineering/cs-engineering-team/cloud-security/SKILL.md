@@ -1,6 +1,10 @@
 ---
 name: "cloud-security"
 description: "Use when assessing cloud infrastructure for security misconfigurations, IAM privilege escalation paths, S3 public exposure, open security group rules, or IaC security gaps. Covers AWS, Azure, and GCP posture assessment with MITRE ATT&CK mapping."
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.cloud-security
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Cloud Security

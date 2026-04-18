@@ -7,6 +7,10 @@ metadata:
   author: Abbas Mir
   category: finance
   updated: 2026-03-08
+executor: HYBRID
+skill_id: business.finance.saas-metrics-coach
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # SaaS Metrics Coach

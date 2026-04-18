@@ -3,6 +3,10 @@ name: pushbullet-automation
 description: "Automate Pushbullet tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.pushbullet-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Pushbullet Automation via Rube MCP

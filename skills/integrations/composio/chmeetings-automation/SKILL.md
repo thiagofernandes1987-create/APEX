@@ -3,6 +3,10 @@ name: chmeetings-automation
 description: "Automate Chmeetings tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.chmeetings-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Chmeetings Automation via Rube MCP

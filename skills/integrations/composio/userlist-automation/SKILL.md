@@ -3,6 +3,10 @@ name: userlist-automation
 description: "Automate Userlist tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.userlist-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Userlist Automation via Rube MCP

@@ -3,6 +3,10 @@ name: recruitee-automation
 description: "Automate Recruitee tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.recruitee-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Recruitee Automation via Rube MCP

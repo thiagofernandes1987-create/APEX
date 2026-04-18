@@ -1,6 +1,10 @@
 ---
 name: "demo-video"
 description: "Use when the user asks to create a demo video, product walkthrough, feature showcase, animated presentation, marketing video, or GIF from screenshots or scene descriptions. Orchestrates playwright, ffmpeg, and edge-tts MCPs to produce polished video content."
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.demo-video
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Demo Video

@@ -4,6 +4,10 @@ description: >-
   Analyze test coverage gaps. Use when user says "test coverage",
   "what's not tested", "coverage gaps", "missing tests", "coverage report",
   or "what needs testing".
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering-team.playwright-pro.skills
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Analyze Test Coverage Gaps

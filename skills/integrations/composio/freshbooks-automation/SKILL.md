@@ -3,6 +3,10 @@ name: FreshBooks Automation
 description: "FreshBooks Automation: manage businesses, projects, time tracking, and billing in FreshBooks cloud accounting"
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.freshbooks-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # FreshBooks Automation

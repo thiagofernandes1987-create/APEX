@@ -25,6 +25,7 @@ output_schema:
   quality_score: "int"
 what_if_fails: >
   FALLBACK: Se código muito longo (>500L), revisar em blocos de 100L. Emitir [PARTIAL_REVIEW] se análise incompleta.
+security: {level: high, approval_required: true}
 ---
 
 # code-quality-reviewer

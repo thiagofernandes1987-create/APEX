@@ -3,6 +3,10 @@ name: cal-automation
 description: "Automate Cal tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.cal-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Cal Automation via Rube MCP

@@ -12,6 +12,10 @@ triggers:
   - Facebook metrics
   - TikTok performance
   - LinkedIn engagement
+executor: HYBRID
+skill_id: business.marketing-skill.social-media-analyzer
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Social Media Analyzer

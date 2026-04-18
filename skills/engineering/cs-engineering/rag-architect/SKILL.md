@@ -1,6 +1,10 @@
 ---
 name: "rag-architect"
 description: "Use when the user asks to design RAG pipelines, optimize retrieval strategies, choose embedding models, implement vector search, or build knowledge retrieval systems."
+executor: LLM_BEHAVIOR
+skill_id: engineering.cs-engineering.rag-architect
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # RAG Architect - POWERFUL

@@ -10,6 +10,10 @@ metadata:
   updated: 2026-03-05
   python-tools: marketing_budget_modeler.py, growth_model_simulator.py
   frameworks: brand-positioning, growth-frameworks, marketing-org
+executor: HYBRID
+skill_id: business.c-level-advisor.cmo-advisor
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # CMO Advisor

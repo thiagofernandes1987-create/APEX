@@ -1,3 +1,9 @@
+---
+executor: LLM_BEHAVIOR
+skill_id: anthropic-official._source.skills.claude-api
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
+---
 # Building LLM-Powered Applications with Claude
 
 This skill helps you build LLM-powered applications with Claude. Choose the right surface based on your needs, detect the project language, then read the relevant language-specific documentation.

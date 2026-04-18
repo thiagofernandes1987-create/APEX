@@ -12,6 +12,10 @@ triggers:
   - EUDAMED
   - UDI
   - notified body
+executor: HYBRID
+skill_id: business.ra-qm-team.mdr-745-specialist
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # MDR 2017/745 Specialist

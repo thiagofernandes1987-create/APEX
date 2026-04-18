@@ -1,6 +1,10 @@
 ---
 name: "red-team"
 description: "Use when planning or executing authorized red team engagements, attack path analysis, or offensive security simulations. Covers MITRE ATT&CK kill-chain planning, technique scoring, choke point identification, OPSEC risk assessment, and crown jewel targeting."
+executor: HYBRID
+skill_id: engineering.cs-engineering-team.red-team
+status: CANDIDATE
+security: {level: high, pii: false, approval_required: true}
 ---
 
 # Red Team

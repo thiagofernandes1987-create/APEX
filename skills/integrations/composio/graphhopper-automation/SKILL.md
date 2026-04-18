@@ -3,6 +3,10 @@ name: graphhopper-automation
 description: "Automate Graphhopper tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.graphhopper-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Graphhopper Automation via Rube MCP

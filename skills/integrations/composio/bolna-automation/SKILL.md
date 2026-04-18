@@ -3,6 +3,10 @@ name: bolna-automation
 description: "Automate Bolna tasks via Rube MCP (Composio). Always search tools first for current schemas."
 requires:
   mcp: [rube]
+executor: HYBRID
+skill_id: integrations.composio.bolna-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Bolna Automation via Rube MCP

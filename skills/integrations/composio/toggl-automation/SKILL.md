@@ -4,6 +4,10 @@ description: "Automate time tracking workflows in Toggl Track -- create time ent
 requires:
   mcp:
     - rube
+executor: HYBRID
+skill_id: integrations.composio.toggl-automation
+status: CANDIDATE
+security: {level: standard, pii: false, approval_required: false}
 ---
 
 # Toggl Automation
