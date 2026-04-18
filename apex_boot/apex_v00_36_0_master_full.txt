@@ -19024,12 +19024,1150 @@ repo_quality_baseline:
       engineering_domain_mapping documenta path correto.
       skill_resolution_chain priority_1 busca no repo antes de sintetizar.
 
+# ─────────────────────────────────────────────────────────────────
+# DIFF_COMMUNITY_SUBAGENT_ROSTER_BOOT_001 (OPP-155)
+# 140 community subagents across 10 categories registered in boot
+# Source: agents/community_agent_roster.yaml (OPP-153)
+# ─────────────────────────────────────────────────────────────────
+community_subagent_roster_boot:
+  executor: LLM_BEHAVIOR
+  version: v00.37.0
+  opp: OPP-155
+  tier: 2
+  status: ADOPTED
+
+  purpose: >
+    Registrar 140 community subagents (OPP-153) no kernel do boot com mapeamento
+    completo de activates_when por domínio. Substitui referência pendente OPP-140.
+    Cada subagent é ativado automaticamente pelo meta_reasoning quando o domínio
+    da requisição bate com activates_when[].
+
+  why: >
+    WHY: OPP-153 criou community_agent_roster.yaml com 140 subagents, mas o boot
+    kernel (apex_v00_36_0_master_full.txt) continuava sem os blocos DIFF correspondentes.
+    Sem integração ao kernel, os subagents existem no disco mas são invisíveis ao
+    pipeline de ativação do meta_reasoning durante o boot.
+
+  when: >
+    WHEN: meta_reasoning.STEP_1 detecta domínio com match em activates_when[].
+    WHEN: Nenhum agente base (engineer, architect, etc.) tem expertise primária no domínio.
+    WHEN: Usuário solicita explicitamente um subagente especializado.
+
+  what_if_fails: >
+    FALLBACK: meta_reasoning usa agente base engineer como fallback.
+    REGRA: Subagents NUNCA bloqueiam o fluxo — são OPCIONAIS.
+    REGRA: Máximo 2 community agents ativos por sessão (token budget).
+    REGRA: Se community_agent_roster.yaml não carrega, usar OPP-116 legacy roster.
+
+  source_file: "agents/community_agent_roster.yaml"
+  total_agents: 140
+  categories: 10
+  activation_gate: "meta_reasoning verifica activates_when antes de ativar"
+  max_concurrent: 2
+  fallback_agent: engineer
+
+  categories_summary:
+    01-core-development: 11
+    02-language-specialists: 29
+    03-infrastructure: 16
+    04-quality-security: 15
+    05-data-ai: 13
+    06-developer-experience: 14
+    07-specialized-domains: 12
+    08-business-product: 12
+    09-meta-orchestration: 10
+    10-research-analysis: 8
+
+  agents:
+      # 01-core-development
+      api-designer:
+        agent_id: subagent.01-core-development.api_designer
+        activates_when: [api, backend, code, engineering, frontend, fullstack, refactoring]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\01-core-development\api-designer\AGENT.md"
+      backend-developer:
+        agent_id: subagent.01-core-development.backend_developer
+        activates_when: [api, backend, code, engineering, frontend, fullstack, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\01-core-development\backend-developer\AGENT.md"
+      design-bridge:
+        agent_id: subagent.01-core-development.design_bridge
+        activates_when: [ai, api, backend, code, engineering, frontend, fullstack]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\01-core-development\design-bridge\AGENT.md"
+      electron-pro:
+        agent_id: subagent.01-core-development.electron_pro
+        activates_when: [api, backend, code, engineering, frontend, fullstack, performance, security]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\01-core-development\electron-pro\AGENT.md"
+      frontend-developer:
+        agent_id: subagent.01-core-development.frontend_developer
+        activates_when: [api, backend, code, engineering, frontend, fullstack]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\01-core-development\frontend-developer\AGENT.md"
+      fullstack-developer:
+        agent_id: subagent.01-core-development.fullstack_developer
+        activates_when: [api, backend, code, data, database, engineering, frontend, fullstack]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\01-core-development\fullstack-developer\AGENT.md"
+      graphql-architect:
+        agent_id: subagent.01-core-development.graphql_architect
+        activates_when: [api, backend, code, engineering, frontend, fullstack, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\01-core-development\graphql-architect\AGENT.md"
+      microservices-architect:
+        agent_id: subagent.01-core-development.microservices_architect
+        activates_when: [api, backend, code, engineering, frontend, fullstack]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\01-core-development\microservices-architect\AGENT.md"
+      mobile-developer:
+        agent_id: subagent.01-core-development.mobile_developer
+        activates_when: [api, backend, code, engineering, frontend, fullstack, mobile, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\01-core-development\mobile-developer\AGENT.md"
+      ui-designer:
+        agent_id: subagent.01-core-development.ui_designer
+        activates_when: [api, backend, code, engineering, frontend, fullstack]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\01-core-development\ui-designer\AGENT.md"
+      websocket-engineer:
+        agent_id: subagent.01-core-development.websocket_engineer
+        activates_when: [api, backend, code, engineering, frontend, fullstack]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\01-core-development\websocket-engineer\AGENT.md"
+
+      # 02-language-specialists
+      angular-architect:
+        agent_id: subagent.02-language-specialists.angular_architect
+        activates_when: [backend, code, engineering, frontend, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\angular-architect\AGENT.md"
+      cpp-pro:
+        agent_id: subagent.02-language-specialists.cpp_pro
+        activates_when: [backend, code, engineering, frontend, performance, specialized]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\cpp-pro\AGENT.md"
+      csharp-developer:
+        agent_id: subagent.02-language-specialists.csharp_developer
+        activates_when: [api, backend, cloud, code, engineering, frontend]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\csharp-developer\AGENT.md"
+      django-developer:
+        agent_id: subagent.02-language-specialists.django_developer
+        activates_when: [api, backend, code, engineering, frontend]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\django-developer\AGENT.md"
+      dotnet-core-expert:
+        agent_id: subagent.02-language-specialists.dotnet_core_expert
+        activates_when: [api, backend, cloud, code, engineering, frontend, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\dotnet-core-expert\AGENT.md"
+      dotnet-framework-4.8-expert:
+        agent_id: subagent.02-language-specialists.dotnet_framework_4.8_expert
+        activates_when: [ai, backend, code, engineering, frontend]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\dotnet-framework-4.8-expert\AGENT.md"
+      elixir-expert:
+        agent_id: subagent.02-language-specialists.elixir_expert
+        activates_when: [backend, code, engineering, frontend]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\elixir-expert\AGENT.md"
+      expo-react-native-expert:
+        agent_id: subagent.02-language-specialists.expo_react_native_expert
+        activates_when: [backend, code, engineering, frontend, mobile]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\expo-react-native-expert\AGENT.md"
+      fastapi-developer:
+        agent_id: subagent.02-language-specialists.fastapi_developer
+        activates_when: [api, backend, code, engineering, frontend, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\fastapi-developer\AGENT.md"
+      flutter-expert:
+        agent_id: subagent.02-language-specialists.flutter_expert
+        activates_when: [backend, code, engineering, frontend, mobile, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\flutter-expert\AGENT.md"
+      golang-pro:
+        agent_id: subagent.02-language-specialists.golang_pro
+        activates_when: [backend, cloud, code, engineering, frontend, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\golang-pro\AGENT.md"
+      java-architect:
+        agent_id: subagent.02-language-specialists.java_architect
+        activates_when: [backend, cloud, code, engineering, frontend]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\java-architect\AGENT.md"
+      javascript-pro:
+        agent_id: subagent.02-language-specialists.javascript_pro
+        activates_when: [backend, code, engineering, frontend, performance, refactoring]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\javascript-pro\AGENT.md"
+      kotlin-specialist:
+        agent_id: subagent.02-language-specialists.kotlin_specialist
+        activates_when: [backend, code, engineering, frontend, mobile]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\kotlin-specialist\AGENT.md"
+      laravel-specialist:
+        agent_id: subagent.02-language-specialists.laravel_specialist
+        activates_when: [api, backend, code, engineering, frontend, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\laravel-specialist\AGENT.md"
+      nextjs-developer:
+        agent_id: subagent.02-language-specialists.nextjs_developer
+        activates_when: [backend, code, engineering, frontend, performance, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\nextjs-developer\AGENT.md"
+      php-pro:
+        agent_id: subagent.02-language-specialists.php_pro
+        activates_when: [backend, code, engineering, frontend]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\php-pro\AGENT.md"
+      powershell-5.1-expert:
+        agent_id: subagent.02-language-specialists.powershell_5.1_expert
+        activates_when: [backend, code, engineering, frontend]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\powershell-5.1-expert\AGENT.md"
+      powershell-7-expert:
+        agent_id: subagent.02-language-specialists.powershell_7_expert
+        activates_when: [backend, cloud, code, engineering, frontend, orchestration]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\powershell-7-expert\AGENT.md"
+      python-pro:
+        agent_id: subagent.02-language-specialists.python_pro
+        activates_when: [api, backend, code, engineering, frontend, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\python-pro\AGENT.md"
+      rails-expert:
+        agent_id: subagent.02-language-specialists.rails_expert
+        activates_when: [ai, api, backend, code, engineering, frontend]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\rails-expert\AGENT.md"
+      react-specialist:
+        agent_id: subagent.02-language-specialists.react_specialist
+        activates_when: [backend, code, engineering, frontend, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\react-specialist\AGENT.md"
+      rust-engineer:
+        agent_id: subagent.02-language-specialists.rust_engineer
+        activates_when: [backend, code, engineering, frontend, performance, specialized]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\rust-engineer\AGENT.md"
+      spring-boot-engineer:
+        agent_id: subagent.02-language-specialists.spring_boot_engineer
+        activates_when: [backend, cloud, code, engineering, frontend]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\spring-boot-engineer\AGENT.md"
+      sql-pro:
+        agent_id: subagent.02-language-specialists.sql_pro
+        activates_when: [backend, code, data, database, engineering, frontend, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\sql-pro\AGENT.md"
+      swift-expert:
+        agent_id: subagent.02-language-specialists.swift_expert
+        activates_when: [backend, code, engineering, frontend, mobile]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\swift-expert\AGENT.md"
+      symfony-specialist:
+        agent_id: subagent.02-language-specialists.symfony_specialist
+        activates_when: [api, backend, code, engineering, frontend]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\symfony-specialist\AGENT.md"
+      typescript-pro:
+        agent_id: subagent.02-language-specialists.typescript_pro
+        activates_when: [backend, code, engineering, frontend]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\typescript-pro\AGENT.md"
+      vue-expert:
+        agent_id: subagent.02-language-specialists.vue_expert
+        activates_when: [api, backend, code, engineering, frontend, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\02-language-specialists\vue-expert\AGENT.md"
+
+      # 03-infrastructure
+      azure-infra-engineer:
+        agent_id: subagent.03-infrastructure.azure_infra_engineer
+        activates_when: [cloud, deployment, devops, infrastructure, operations]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\azure-infra-engineer\AGENT.md"
+      cloud-architect:
+        agent_id: subagent.03-infrastructure.cloud_architect
+        activates_when: [cloud, deployment, devops, infrastructure, operations]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\cloud-architect\AGENT.md"
+      database-administrator:
+        agent_id: subagent.03-infrastructure.database_administrator
+        activates_when: [ai, cloud, data, database, deployment, devops, infrastructure, operations, performance, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\database-administrator\AGENT.md"
+      deployment-engineer:
+        agent_id: subagent.03-infrastructure.deployment_engineer
+        activates_when: [cloud, deployment, devops, infrastructure, operations]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\deployment-engineer\AGENT.md"
+      devops-engineer:
+        agent_id: subagent.03-infrastructure.devops_engineer
+        activates_when: [ai, cloud, deployment, devops, infrastructure, operations, workflow]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\devops-engineer\AGENT.md"
+      devops-incident-responder:
+        agent_id: subagent.03-infrastructure.devops_incident_responder
+        activates_when: [ai, cloud, deployment, devops, infrastructure, operations, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\devops-incident-responder\AGENT.md"
+      docker-expert:
+        agent_id: subagent.03-infrastructure.docker_expert
+        activates_when: [ai, cloud, deployment, devops, infrastructure, operations, orchestration, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\docker-expert\AGENT.md"
+      incident-responder:
+        agent_id: subagent.03-infrastructure.incident_responder
+        activates_when: [cloud, deployment, devops, infrastructure, operations, security]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\incident-responder\AGENT.md"
+      kubernetes-specialist:
+        agent_id: subagent.03-infrastructure.kubernetes_specialist
+        activates_when: [cloud, deployment, devops, infrastructure, operations, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\kubernetes-specialist\AGENT.md"
+      network-engineer:
+        agent_id: subagent.03-infrastructure.network_engineer
+        activates_when: [cloud, deployment, devops, infrastructure, operations, performance, security]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\network-engineer\AGENT.md"
+      platform-engineer:
+        agent_id: subagent.03-infrastructure.platform_engineer
+        activates_when: [cloud, deployment, devops, infrastructure, operations, workflow]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\platform-engineer\AGENT.md"
+      security-engineer:
+        agent_id: subagent.03-infrastructure.security_engineer
+        activates_when: [analysis, cloud, deployment, devops, infrastructure, operations, security]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\security-engineer\AGENT.md"
+      sre-engineer:
+        agent_id: subagent.03-infrastructure.sre_engineer
+        activates_when: [cloud, deployment, devops, infrastructure, operations]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\sre-engineer\AGENT.md"
+      terraform-engineer:
+        agent_id: subagent.03-infrastructure.terraform_engineer
+        activates_when: [cloud, deployment, devops, infrastructure, operations, refactoring]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\terraform-engineer\AGENT.md"
+      terragrunt-expert:
+        agent_id: subagent.03-infrastructure.terragrunt_expert
+        activates_when: [cloud, deployment, devops, infrastructure, operations, orchestration]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\terragrunt-expert\AGENT.md"
+      windows-infra-admin:
+        agent_id: subagent.03-infrastructure.windows_infra_admin
+        activates_when: [cloud, deployment, devops, infrastructure, operations]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\03-infrastructure\windows-infra-admin\AGENT.md"
+
+      # 04-quality-security
+      accessibility-tester:
+        agent_id: subagent.04-quality-security.accessibility_tester
+        activates_when: [analysis, code_review, debugging, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\accessibility-tester\AGENT.md"
+      ad-security-reviewer:
+        agent_id: subagent.04-quality-security.ad_security_reviewer
+        activates_when: [analysis, code_review, debugging, quality, risk, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\ad-security-reviewer\AGENT.md"
+      ai-writing-auditor:
+        agent_id: subagent.04-quality-security.ai_writing_auditor
+        activates_when: [ai, analysis, code_review, debugging, marketing, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\ai-writing-auditor\AGENT.md"
+      architect-reviewer:
+        agent_id: subagent.04-quality-security.architect_reviewer
+        activates_when: [analysis, code_review, debugging, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\architect-reviewer\AGENT.md"
+      chaos-engineer:
+        agent_id: subagent.04-quality-security.chaos_engineer
+        activates_when: [ai, analysis, code_review, debugging, quality, security, specialized, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\chaos-engineer\AGENT.md"
+      code-reviewer:
+        agent_id: subagent.04-quality-security.code_reviewer
+        activates_when: [analysis, code_review, debugging, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\code-reviewer\AGENT.md"
+      compliance-auditor:
+        agent_id: subagent.04-quality-security.compliance_auditor
+        activates_when: [analysis, code_review, debugging, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\compliance-auditor\AGENT.md"
+      debugger:
+        agent_id: subagent.04-quality-security.debugger
+        activates_when: [ai, analysis, code_review, debugging, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\debugger\AGENT.md"
+      error-detective:
+        agent_id: subagent.04-quality-security.error_detective
+        activates_when: [ai, analysis, code_review, debugging, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\error-detective\AGENT.md"
+      penetration-tester:
+        agent_id: subagent.04-quality-security.penetration_tester
+        activates_when: [analysis, code_review, debugging, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\penetration-tester\AGENT.md"
+      performance-engineer:
+        agent_id: subagent.04-quality-security.performance_engineer
+        activates_when: [analysis, code_review, data, database, debugging, performance, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\performance-engineer\AGENT.md"
+      powershell-security-hardening:
+        agent_id: subagent.04-quality-security.powershell_security_hardening
+        activates_when: [analysis, code_review, debugging, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\powershell-security-hardening\AGENT.md"
+      qa-expert:
+        agent_id: subagent.04-quality-security.qa_expert
+        activates_when: [analysis, code_review, debugging, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\qa-expert\AGENT.md"
+      security-auditor:
+        agent_id: subagent.04-quality-security.security_auditor
+        activates_when: [analysis, code_review, debugging, quality, risk, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\security-auditor\AGENT.md"
+      test-automator:
+        agent_id: subagent.04-quality-security.test_automator
+        activates_when: [analysis, code_review, debugging, quality, security, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\04-quality-security\test-automator\AGENT.md"
+
+      # 05-data-ai
+      ai-engineer:
+        agent_id: subagent.05-data-ai.ai_engineer
+        activates_when: [ai, analytics, data, database, llm, ml, monitoring, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\ai-engineer\AGENT.md"
+      data-analyst:
+        agent_id: subagent.05-data-ai.data_analyst
+        activates_when: [ai, analysis, analytics, business, data, database, llm, ml]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\data-analyst\AGENT.md"
+      data-engineer:
+        agent_id: subagent.05-data-ai.data_engineer
+        activates_when: [ai, analytics, data, database, llm, ml, orchestration]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\data-engineer\AGENT.md"
+      data-scientist:
+        agent_id: subagent.05-data-ai.data_scientist
+        activates_when: [ai, analysis, analytics, data, database, llm, ml, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\data-scientist\AGENT.md"
+      database-optimizer:
+        agent_id: subagent.05-data-ai.database_optimizer
+        activates_when: [ai, analytics, data, database, llm, ml, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\database-optimizer\AGENT.md"
+      llm-architect:
+        agent_id: subagent.05-data-ai.llm_architect
+        activates_when: [ai, analytics, data, database, llm, ml, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\llm-architect\AGENT.md"
+      machine-learning-engineer:
+        agent_id: subagent.05-data-ai.machine_learning_engineer
+        activates_when: [ai, analytics, data, database, llm, ml, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\machine-learning-engineer\AGENT.md"
+      ml-engineer:
+        agent_id: subagent.05-data-ai.ml_engineer
+        activates_when: [ai, analytics, data, database, llm, ml, performance, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\ml-engineer\AGENT.md"
+      mlops-engineer:
+        agent_id: subagent.05-data-ai.mlops_engineer
+        activates_when: [ai, analytics, data, database, llm, ml]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\mlops-engineer\AGENT.md"
+      nlp-engineer:
+        agent_id: subagent.05-data-ai.nlp_engineer
+        activates_when: [ai, analysis, analytics, data, database, llm, ml, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\nlp-engineer\AGENT.md"
+      postgres-pro:
+        agent_id: subagent.05-data-ai.postgres_pro
+        activates_when: [ai, analytics, data, database, llm, ml, performance]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\postgres-pro\AGENT.md"
+      prompt-engineer:
+        agent_id: subagent.05-data-ai.prompt_engineer
+        activates_when: [ai, analytics, data, database, llm, ml, product, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\prompt-engineer\AGENT.md"
+      reinforcement-learning-engineer:
+        agent_id: subagent.05-data-ai.reinforcement_learning_engineer
+        activates_when: [ai, analytics, data, database, llm, ml]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\05-data-ai\reinforcement-learning-engineer\AGENT.md"
+
+      # 06-developer-experience
+      build-engineer:
+        agent_id: subagent.06-developer-experience.build_engineer
+        activates_when: [devops, documentation, dx, engineering, performance, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\build-engineer\AGENT.md"
+      cli-developer:
+        agent_id: subagent.06-developer-experience.cli_developer
+        activates_when: [devops, documentation, dx, engineering, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\cli-developer\AGENT.md"
+      dependency-manager:
+        agent_id: subagent.06-developer-experience.dependency_manager
+        activates_when: [devops, documentation, dx, engineering, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\dependency-manager\AGENT.md"
+      documentation-engineer:
+        agent_id: subagent.06-developer-experience.documentation_engineer
+        activates_when: [api, devops, documentation, dx, engineering, marketing, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\documentation-engineer\AGENT.md"
+      dx-optimizer:
+        agent_id: subagent.06-developer-experience.dx_optimizer
+        activates_when: [devops, documentation, dx, engineering, testing, tooling, workflow]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\dx-optimizer\AGENT.md"
+      git-workflow-manager:
+        agent_id: subagent.06-developer-experience.git_workflow_manager
+        activates_when: [devops, documentation, dx, engineering, tooling, workflow]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\git-workflow-manager\AGENT.md"
+      legacy-modernizer:
+        agent_id: subagent.06-developer-experience.legacy_modernizer
+        activates_when: [ai, business, devops, documentation, dx, engineering, risk, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\legacy-modernizer\AGENT.md"
+      mcp-developer:
+        agent_id: subagent.06-developer-experience.mcp_developer
+        activates_when: [ai, data, debugging, devops, documentation, dx, engineering, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\mcp-developer\AGENT.md"
+      powershell-module-architect:
+        agent_id: subagent.06-developer-experience.powershell_module_architect
+        activates_when: [devops, documentation, dx, engineering, refactoring, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\powershell-module-architect\AGENT.md"
+      powershell-ui-architect:
+        agent_id: subagent.06-developer-experience.powershell_ui_architect
+        activates_when: [devops, documentation, dx, engineering, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\powershell-ui-architect\AGENT.md"
+      readme-generator:
+        agent_id: subagent.06-developer-experience.readme_generator
+        activates_when: [ai, devops, documentation, dx, engineering, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\readme-generator\AGENT.md"
+      refactoring-specialist:
+        agent_id: subagent.06-developer-experience.refactoring_specialist
+        activates_when: [ai, devops, documentation, dx, engineering, refactoring, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\refactoring-specialist\AGENT.md"
+      slack-expert:
+        agent_id: subagent.06-developer-experience.slack_expert
+        activates_when: [api, devops, documentation, dx, engineering, security, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\slack-expert\AGENT.md"
+      tooling-engineer:
+        agent_id: subagent.06-developer-experience.tooling_engineer
+        activates_when: [devops, documentation, dx, engineering, tooling]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\06-developer-experience\tooling-engineer\AGENT.md"
+
+      # 07-specialized-domains
+      api-documenter:
+        agent_id: subagent.07-specialized-domains.api_documenter
+        activates_when: [ai, api, documentation, domain_expert, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\api-documenter\AGENT.md"
+      blockchain-developer:
+        agent_id: subagent.07-specialized-domains.blockchain_developer
+        activates_when: [ai, domain_expert, security, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\blockchain-developer\AGENT.md"
+      embedded-systems:
+        agent_id: subagent.07-specialized-domains.embedded_systems
+        activates_when: [ai, domain_expert, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\embedded-systems\AGENT.md"
+      fintech-engineer:
+        agent_id: subagent.07-specialized-domains.fintech_engineer
+        activates_when: [ai, domain_expert, finance, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\fintech-engineer\AGENT.md"
+      game-developer:
+        agent_id: subagent.07-specialized-domains.game_developer
+        activates_when: [ai, domain_expert, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\game-developer\AGENT.md"
+      iot-engineer:
+        agent_id: subagent.07-specialized-domains.iot_engineer
+        activates_when: [ai, cloud, domain_expert, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\iot-engineer\AGENT.md"
+      m365-admin:
+        agent_id: subagent.07-specialized-domains.m365_admin
+        activates_when: [ai, domain_expert, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\m365-admin\AGENT.md"
+      mobile-app-developer:
+        agent_id: subagent.07-specialized-domains.mobile_app_developer
+        activates_when: [ai, domain_expert, mobile, performance, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\mobile-app-developer\AGENT.md"
+      payment-integration:
+        agent_id: subagent.07-specialized-domains.payment_integration
+        activates_when: [ai, domain_expert, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\payment-integration\AGENT.md"
+      quant-analyst:
+        agent_id: subagent.07-specialized-domains.quant_analyst
+        activates_when: [ai, analytics, domain_expert, finance, risk, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\quant-analyst\AGENT.md"
+      risk-manager:
+        agent_id: subagent.07-specialized-domains.risk_manager
+        activates_when: [ai, domain_expert, finance, risk, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\risk-manager\AGENT.md"
+      seo-specialist:
+        agent_id: subagent.07-specialized-domains.seo_specialist
+        activates_when: [ai, domain_expert, marketing, specialized]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\07-specialized-domains\seo-specialist\AGENT.md"
+
+      # 08-business-product
+      business-analyst:
+        agent_id: subagent.08-business-product.business_analyst
+        activates_when: [business, legal, marketing, product, sales]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\business-analyst\AGENT.md"
+      content-marketer:
+        agent_id: subagent.08-business-product.content_marketer
+        activates_when: [ai, business, legal, marketing, product, sales]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\content-marketer\AGENT.md"
+      customer-success-manager:
+        agent_id: subagent.08-business-product.customer_success_manager
+        activates_when: [analysis, business, legal, marketing, product, sales]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\customer-success-manager\AGENT.md"
+      legal-advisor:
+        agent_id: subagent.08-business-product.legal_advisor
+        activates_when: [business, legal, marketing, product, risk, sales]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\legal-advisor\AGENT.md"
+      license-engineer:
+        agent_id: subagent.08-business-product.license_engineer
+        activates_when: [business, legal, marketing, product, risk, sales]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\license-engineer\AGENT.md"
+      product-manager:
+        agent_id: subagent.08-business-product.product_manager
+        activates_when: [business, legal, marketing, product, sales]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\product-manager\AGENT.md"
+      project-manager:
+        agent_id: subagent.08-business-product.project_manager
+        activates_when: [business, legal, marketing, product, risk, sales]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\project-manager\AGENT.md"
+      sales-engineer:
+        agent_id: subagent.08-business-product.sales_engineer
+        activates_when: [business, legal, marketing, product, sales]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\sales-engineer\AGENT.md"
+      scrum-master:
+        agent_id: subagent.08-business-product.scrum_master
+        activates_when: [business, legal, marketing, product, sales]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\scrum-master\AGENT.md"
+      technical-writer:
+        agent_id: subagent.08-business-product.technical_writer
+        activates_when: [ai, api, business, documentation, legal, marketing, product, sales]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\technical-writer\AGENT.md"
+      ux-researcher:
+        agent_id: subagent.08-business-product.ux_researcher
+        activates_when: [business, legal, marketing, product, research, sales, testing]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\ux-researcher\AGENT.md"
+      wordpress-master:
+        agent_id: subagent.08-business-product.wordpress_master
+        activates_when: [business, legal, marketing, product, sales]
+        tier: 3
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\08-business-product\wordpress-master\AGENT.md"
+
+      # 09-meta-orchestration
+      agent-installer:
+        agent_id: subagent.09-meta-orchestration.agent_installer
+        activates_when: [coordination, multi_agent, orchestration, workflow]
+        tier: 1
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\09-meta-orchestration\agent-installer\AGENT.md"
+      agent-organizer:
+        agent_id: subagent.09-meta-orchestration.agent_organizer
+        activates_when: [coordination, multi_agent, orchestration, workflow]
+        tier: 1
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\09-meta-orchestration\agent-organizer\AGENT.md"
+      context-manager:
+        agent_id: subagent.09-meta-orchestration.context_manager
+        activates_when: [coordination, data, multi_agent, orchestration, workflow]
+        tier: 1
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\09-meta-orchestration\context-manager\AGENT.md"
+      error-coordinator:
+        agent_id: subagent.09-meta-orchestration.error_coordinator
+        activates_when: [ai, coordination, multi_agent, orchestration, workflow]
+        tier: 1
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\09-meta-orchestration\error-coordinator\AGENT.md"
+      it-ops-orchestrator:
+        agent_id: subagent.09-meta-orchestration.it_ops_orchestrator
+        activates_when: [ai, cloud, coordination, multi_agent, orchestration, workflow]
+        tier: 1
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\09-meta-orchestration\it-ops-orchestrator\AGENT.md"
+      knowledge-synthesizer:
+        agent_id: subagent.09-meta-orchestration.knowledge_synthesizer
+        activates_when: [coordination, multi_agent, orchestration, workflow]
+        tier: 1
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\09-meta-orchestration\knowledge-synthesizer\AGENT.md"
+      multi-agent-coordinator:
+        agent_id: subagent.09-meta-orchestration.multi_agent_coordinator
+        activates_when: [ai, coordination, multi_agent, orchestration, workflow]
+        tier: 1
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\09-meta-orchestration\multi-agent-coordinator\AGENT.md"
+      performance-monitor:
+        agent_id: subagent.09-meta-orchestration.performance_monitor
+        activates_when: [coordination, monitoring, multi_agent, orchestration, performance, workflow]
+        tier: 1
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\09-meta-orchestration\performance-monitor\AGENT.md"
+      task-distributor:
+        agent_id: subagent.09-meta-orchestration.task_distributor
+        activates_when: [coordination, multi_agent, orchestration, workflow]
+        tier: 1
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\09-meta-orchestration\task-distributor\AGENT.md"
+      workflow-orchestrator:
+        agent_id: subagent.09-meta-orchestration.workflow_orchestrator
+        activates_when: [business, coordination, multi_agent, orchestration, workflow]
+        tier: 1
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\09-meta-orchestration\workflow-orchestrator\AGENT.md"
+
+      # 10-research-analysis
+      competitive-analyst:
+        agent_id: subagent.10-research-analysis.competitive_analyst
+        activates_when: [ai, analysis, competitive, intelligence, research]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\10-research-analysis\competitive-analyst\AGENT.md"
+      data-researcher:
+        agent_id: subagent.10-research-analysis.data_researcher
+        activates_when: [analysis, competitive, data, intelligence, research]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\10-research-analysis\data-researcher\AGENT.md"
+      market-researcher:
+        agent_id: subagent.10-research-analysis.market_researcher
+        activates_when: [analysis, business, competitive, intelligence, research]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\10-research-analysis\market-researcher\AGENT.md"
+      project-idea-validator:
+        agent_id: subagent.10-research-analysis.project_idea_validator
+        activates_when: [analysis, competitive, intelligence, research, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\10-research-analysis\project-idea-validator\AGENT.md"
+      research-analyst:
+        agent_id: subagent.10-research-analysis.research_analyst
+        activates_when: [ai, analysis, competitive, intelligence, research]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\10-research-analysis\research-analyst\AGENT.md"
+      scientific-literature-researcher:
+        agent_id: subagent.10-research-analysis.scientific_literature_researcher
+        activates_when: [analysis, competitive, data, intelligence, research]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\10-research-analysis\scientific-literature-researcher\AGENT.md"
+      search-specialist:
+        agent_id: subagent.10-research-analysis.search_specialist
+        activates_when: [analysis, competitive, intelligence, research]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\10-research-analysis\search-specialist\AGENT.md"
+      trend-analyst:
+        agent_id: subagent.10-research-analysis.trend_analyst
+        activates_when: [analysis, competitive, intelligence, mobile, research]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\community-subagents\categories\10-research-analysis\trend-analyst\AGENT.md"
+
+
+  activation_protocol: |
+    # OPP-155 Activation Protocol:
+    # STEP_1: pmi_pm detecta domínio primário da tarefa
+    # STEP_2: meta_reasoning busca community_agent_roster.yaml
+    #         → filtra por activates_when match com domínio detectado
+    #         → score = len(intersection(request_domains, activates_when))
+    # STEP_3: SE score > 0 E base_agent não cobre primariamente:
+    #         → [COMMUNITY_AGENT_ACTIVATED: {agent_id} | domain: {domain} | score: {score}]
+    # STEP_4: Subagent recebe [PARTITION_ACTIVE: {role}] e executa em STEP_N
+    #         → MAX 2 simultâneos (1 domain expert + 1 orchestrator)
+    # STEP_5: SE falha: [SUBAGENT_FALLBACK: {agent_id}] → usar engineer
+
+  fmea:
+    rpn: 4
+    mode: "Subagent ativado com domínio errado — expertise mismatch"
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: >
+      activates_when[] derivado de category + capabilities do AGENT.md.
+      Score threshold > 0 previne ativações sem match real.
+      Fallback para engineer sempre disponível.
+
+# ─────────────────────────────────────────────────────────────────
+# DIFF_CS_PERSONA_ROSTER_BOOT_001 (OPP-156)
+# 23 CS persona agents registered in boot kernel
+# Source: agents/community_agent_roster.yaml (OPP-154)
+# ─────────────────────────────────────────────────────────────────
+cs_persona_roster_boot:
+  executor: LLM_BEHAVIOR
+  version: v00.37.0
+  opp: OPP-156
+  tier: 2
+  status: ADOPTED
+
+  purpose: >
+    Registrar 23 CS persona agents (OPP-154) no kernel do boot.
+    Agentes convertidos de SKILL.md → AGENT.md em OPP-148→152, agora com
+    mapeamento completo de activates_when para ativação automática pelo meta_reasoning.
+
+  why: >
+    WHY: Os 23 agentes cs_* (content-strategist, cs-agile-product-owner, etc.)
+    foram convertidos para AGENT.md mas nunca integrados ao pipeline de ativação.
+    Especialistas de produto, estratégia e negócio ficavam inacessíveis ao meta_reasoning.
+
+  when: >
+    WHEN: meta_reasoning detecta contexto de produto, estratégia, marketing ou liderança.
+    WHEN: Usuário solicita perspectiva de CEO/CTO/PM/estrategista.
+    WHEN: Domínio da tarefa é business, product, growth ou finance.
+
+  what_if_fails: >
+    FALLBACK: architect ou engineer cobrem contexto técnico.
+    REGRA: CS personas são OPCIONAIS — nunca bloqueiam workflow.
+    REGRA: Máximo 1 CS persona ativa por sessão (role único).
+
+  source_file: "agents/community_agent_roster.yaml"
+  total_agents: 23
+  activation_gate: "meta_reasoning detecta contexto business/product/strategy"
+  max_concurrent: 1
+  fallback_agent: architect
+
+  agents:
+      content-strategist:
+        agent_id: community.content_strategist
+        activates_when: [llm, marketing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_content_strategist\AGENT.md"
+      cs-agile-product-owner:
+        agent_id: community.cs_agile_product_owner
+        activates_when: [llm, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_agile_product_owner\AGENT.md"
+      cs-ceo-advisor:
+        agent_id: community.cs_ceo_advisor
+        activates_when: [llm]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_ceo_advisor\AGENT.md"
+      cs-content-creator:
+        agent_id: community.cs_content_creator
+        activates_when: [ai, llm, marketing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_content_creator\AGENT.md"
+      cs-cto-advisor:
+        agent_id: community.cs_cto_advisor
+        activates_when: [llm]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_cto_advisor\AGENT.md"
+      cs-demand-gen-specialist:
+        agent_id: community.cs_demand_gen_specialist
+        activates_when: [ai, llm, marketing, sales]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_demand_gen_specialist\AGENT.md"
+      cs-engineering-lead:
+        agent_id: community.cs_engineering_lead
+        activates_when: [backend, data, frontend, llm, ml, orchestration, security]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_engineering_lead\AGENT.md"
+      cs-financial-analyst:
+        agent_id: community.cs_financial_analyst
+        activates_when: [finance, llm, orchestration]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_financial_analyst\AGENT.md"
+      cs-growth-strategist:
+        agent_id: community.cs_growth_strategist
+        activates_when: [analysis, business, llm, orchestration, sales]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_growth_strategist\AGENT.md"
+      cs-product-analyst:
+        agent_id: community.cs_product_analyst
+        activates_when: [analytics, llm, product, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_product_analyst\AGENT.md"
+      cs-product-manager:
+        agent_id: community.cs_product_manager
+        activates_when: [llm, product, sales]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_product_manager\AGENT.md"
+      cs-product-strategist:
+        agent_id: community.cs_product_strategist
+        activates_when: [analysis, llm, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_product_strategist\AGENT.md"
+      cs-project-manager:
+        agent_id: community.cs_project_manager
+        activates_when: [llm, orchestration, workflow]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_project_manager\AGENT.md"
+      cs-quality-regulatory:
+        agent_id: community.cs_quality_regulatory
+        activates_when: [llm, orchestration]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_quality_regulatory\AGENT.md"
+      cs-senior-engineer:
+        agent_id: community.cs_senior_engineer
+        activates_when: [api, devops, llm, orchestration]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_senior_engineer\AGENT.md"
+      cs-ux-researcher:
+        agent_id: community.cs_ux_researcher
+        activates_when: [analysis, llm, product, research, testing]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_ux_researcher\AGENT.md"
+      cs-workspace-admin:
+        agent_id: community.cs_workspace_admin
+        activates_when: [ai, llm, orchestration, security]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_cs_workspace_admin\AGENT.md"
+      devops-engineer:
+        agent_id: community.devops_engineer
+        activates_when: [ai, devops, llm, monitoring, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_devops_engineer\AGENT.md"
+      finance-lead:
+        agent_id: community.finance_lead
+        activates_when: [ai, finance, llm, startup]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_finance_lead\AGENT.md"
+      growth-marketer:
+        agent_id: community.growth_marketer
+        activates_when: [llm, marketing, startup]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_growth_marketer\AGENT.md"
+      product-manager:
+        agent_id: community.product_manager
+        activates_when: [business, data, llm, product]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_product_manager\AGENT.md"
+      solo-founder:
+        agent_id: community.solo_founder
+        activates_when: [llm, marketing, product, startup]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_solo_founder\AGENT.md"
+      startup-cto:
+        agent_id: community.startup_cto
+        activates_when: [llm, startup]
+        tier: 2
+        max_concurrent: 1
+        path: "agents\cs_startup_cto\AGENT.md"
+
+
+  activation_protocol: |
+    # OPP-156 CS Persona Activation:
+    # STEP_1: pmi_pm detecta contexto business/product/marketing/strategy
+    # STEP_2: meta_reasoning verifica cs_persona_roster_boot.agents
+    #         → match por activates_when ∩ request_context
+    # STEP_3: [CS_PERSONA_ACTIVATED: {agent_id} | context: {context}]
+    # STEP_4: CS persona assume perspectiva de role específico no output
+    #         → MAX 1 CS persona (role único, sem conflito)
+    # STEP_5: SE falha: [CS_PERSONA_FALLBACK] → usar architect com business lens
+
+  fmea:
+    rpn: 2
+    mode: "CS persona ativada em contexto puramente técnico"
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: >
+      activates_when[] focado em domínios business/product.
+      Meta_reasoning gate: SE domínio é 100% técnico → não ativar CS persona.
+
 # ═══════════════════════════════════════════════════════════════════
-# FIM DOS MODULOS v00.37.0 — OPP-138 + OPP-139 adicionados
-# Total DIFFs aplicados: 130 (128 anteriores + OPP-138 + OPP-139)
+# FIM DOS MODULOS v00.37.0 — OPP-155 + OPP-156 adicionados
+# Total DIFFs aplicados: 132 (130 anteriores + OPP-155 + OPP-156)
+# OPP-155: DIFF_COMMUNITY_SUBAGENT_ROSTER_BOOT_001 — 140 subagents registrados
+# OPP-156: DIFF_CS_PERSONA_ROSTER_BOOT_001 — 23 CS personas registradas
+# Total agentes registrados no boot: 163 (OPP-153/154/155/156)
 # Proxima versão: v00.38.0
-# Debug completo: 2026-04-11 — boot 18718L / repo 2766 SKILL.md / 19 AGENT.md
-# ═══════════════════════════════════════════════════════════════════
-
-
+# Debug completo: 2026-04-18 — boot 19035L → expandido / repo 3784 SKILL.md / 163+ AGENT.md
 # ═══════════════════════════════════════════════════════════════════
