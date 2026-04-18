@@ -71,7 +71,7 @@ python tools/validate_repo_uco.py --digest
 
 | File | Change |
 |------|--------|
-| `apex_boot/apex_v00_36_0_master_full.txt` | +OPP-157 + OPP-158 + OPP-159 DIFF blocks |
+| `apex_boot/apex_v00_37_0_master_full.txt` | +OPP-157 + OPP-158 + OPP-159 DIFF blocks |
 | `references/OPP-157-158-159-runtime-fixes.md` | NEW — este documento |
 | `apex_state.yaml` | Updated: GAP-01/02/03 → FIXED |
 

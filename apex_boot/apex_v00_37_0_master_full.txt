@@ -18618,7 +18618,7 @@ skill_resolution_priority:
       marker: "[SKILL_CACHED: {skill_id}]"
 
     priority_3_prompt_base:
-      condition: "Skill esta embutida no system prompt (apex_v00_36_0_master_full.txt)"
+      condition: "Skill esta embutida no system prompt (apex_v00_37_0_master_full.txt)"
       action: "Usar definicao do prompt. Nao requer fetch."
       marker: "[SKILL_PROMPT: {skill_id}]"
 
@@ -19045,7 +19045,7 @@ community_subagent_roster_boot:
 
   why: >
     WHY: OPP-153 criou community_agent_roster.yaml com 140 subagents, mas o boot
-    kernel (apex_v00_36_0_master_full.txt) continuava sem os blocos DIFF correspondentes.
+    kernel (apex_v00_37_0_master_full.txt) continuava sem os blocos DIFF correspondentes.
     Sem integração ao kernel, os subagents existem no disco mas são invisíveis ao
     pipeline de ativação do meta_reasoning durante o boot.
 
@@ -20207,7 +20207,7 @@ boot_verification_gate:
       SE [BOOT_VERIFIED] não emitido em STEP_0:
         → state: boot_verified = false
         → output: [BOOT_UNVERIFIED: contexto pode estar desatualizado]
-        → solicitar: "Por favor recarregue o arquivo apex_boot/apex_v00_36_0_master_full.txt"
+        → solicitar: "Por favor recarregue o arquivo apex_boot/apex_v00_37_0_master_full.txt"
       SE [BOOT_VERIFIED] emitido:
         → state: boot_verified = true
         → prosseguir para STEP_1 (pmi_pm)

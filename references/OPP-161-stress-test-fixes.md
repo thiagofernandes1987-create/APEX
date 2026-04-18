@@ -74,12 +74,12 @@
 ## Verificação
 
 ```bash
-grep "kernel:" -A3 apex_boot/apex_v00_36_0_master_full.txt | grep "version:"
+grep "kernel:" -A3 apex_boot/apex_v00_37_0_master_full.txt | grep "version:"
 # Expected: version: v00.37.0
 
-grep "SR_08" apex_boot/apex_v00_36_0_master_full.txt | grep "mental_interpreter"
+grep "SR_08" apex_boot/apex_v00_37_0_master_full.txt | grep "mental_interpreter"
 # Expected: mental_interpreter_v4 only
 
-grep "severity: 8" apex_boot/apex_v00_36_0_master_full.txt
+grep "severity: 8" apex_boot/apex_v00_37_0_master_full.txt
 # Expected: 0 matches
 ```

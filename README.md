@@ -44,7 +44,7 @@ git clone https://github.com/thiagofernandes1987-create/APEX.git
 1. Leia: README.md            → contexto geral (você está aqui)
 2. Leia: INDEX.md             → domain_map completo (machine-parseable YAML)
 3. Leia: meta/llm_compat.yaml → instruções específicas para seu runtime
-4. Carregue: apex_boot/apex_v00_36_0_master_full.txt → system prompt completo (18.516 linhas, 127 DIFFs)
+4. Carregue: apex_boot/apex_v00_37_0_master_full.txt → system prompt completo (18.516 linhas, 127 DIFFs)
 5. Qualquer skill: skills/{domínio}/{skill}/SKILL.md (≤ 3 passos via INDEX.md)
 ```
 
@@ -60,7 +60,7 @@ APEX/
 ├── INTAKE_WORKFLOW.md                 ← Pipeline de ingestão de repositórios externos
 │
 ├── apex_boot/
-│   └── apex_v00_36_0_master_full.txt  ← System prompt completo (18.516 linhas)
+│   └── apex_v00_37_0_master_full.txt  ← System prompt completo (18.516 linhas)
 │
 ├── skills/                            ← 2.624 skills em 50 domínios normalizados (OPP-133)
 │   ├── engineering_frontend/          ← ATENÇÃO: nome canônico é "engineering_frontend", não "frontend"
@@ -231,7 +231,7 @@ Ver [`APEX_CREATION_GUIDE.md`](APEX_CREATION_GUIDE.md):
 
 | Recurso | Arquivo |
 |---------|---------|
-| System prompt completo | [`apex_boot/apex_v00_36_0_master_full.txt`](apex_boot/apex_v00_36_0_master_full.txt) |
+| System prompt completo | [`apex_boot/apex_v00_37_0_master_full.txt`](apex_boot/apex_v00_37_0_master_full.txt) |
 | Guia de criação de artefatos | [`APEX_CREATION_GUIDE.md`](APEX_CREATION_GUIDE.md) |
 | Compatibilidade por LLM | [`meta/llm_compat.yaml`](meta/llm_compat.yaml) |
 | API canônica do UCO | [`algorithms/uco/UCO_API_SURFACE.yaml`](algorithms/uco/UCO_API_SURFACE.yaml) |

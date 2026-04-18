@@ -36,7 +36,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='repla
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 REPO_ROOT  = Path(__file__).parent.parent
-BOOT_FILE  = REPO_ROOT / "apex_boot" / "apex_v00_36_0_master_full.txt"
+BOOT_FILE  = REPO_ROOT / "apex_boot" / "apex_v00_37_0_master_full.txt"
 STATE_FILE = REPO_ROOT / "apex_state.yaml"
 
 
@@ -87,7 +87,7 @@ boot_verification_gate:
       SE [BOOT_VERIFIED] não emitido em STEP_0:
         → state: boot_verified = false
         → output: [BOOT_UNVERIFIED: contexto pode estar desatualizado]
-        → solicitar: "Por favor recarregue o arquivo apex_boot/apex_v00_36_0_master_full.txt"
+        → solicitar: "Por favor recarregue o arquivo apex_boot/apex_v00_37_0_master_full.txt"
       SE [BOOT_VERIFIED] emitido:
         → state: boot_verified = true
         → prosseguir para STEP_1 (pmi_pm)
@@ -485,7 +485,7 @@ python tools/validate_repo_uco.py --digest
 
 | File | Change |
 |------|--------|
-| `apex_boot/apex_v00_36_0_master_full.txt` | +OPP-157 + OPP-158 + OPP-159 DIFF blocks |
+| `apex_boot/apex_v00_37_0_master_full.txt` | +OPP-157 + OPP-158 + OPP-159 DIFF blocks |
 | `references/OPP-157-158-159-runtime-fixes.md` | NEW — este documento |
 | `apex_state.yaml` | Updated: GAP-01/02/03 → FIXED |
 

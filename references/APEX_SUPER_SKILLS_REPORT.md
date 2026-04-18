@@ -112,7 +112,7 @@
 **ALTO-07: 163 agentes em disco sem registro no boot**
 
 - **Descrição**: 140 community-subagents (OPP-150) e 23 agentes `cs_*` existem como AGENT.md mas não estão no `community_agent_roster` do boot. O `meta_reasoning` não os conhece; nunca serão ativados automaticamente.
-- **Evidência**: Análise do roster: `community-subagents` (140) e `cs_*` (23) sem registro em nenhuma seção do `apex_v00_36_0_master_full.txt`.
+- **Evidência**: Análise do roster: `community-subagents` (140) e `cs_*` (23) sem registro em nenhuma seção do `apex_v00_37_0_master_full.txt`.
 - **Remediação**: Criar OPP para adicionar `subagent_roster` e `business_persona_roster` no boot com mapeamento `activates_when` por categoria. Esforço: 1 OPP + 8h de edição do master.
 
 ---

@@ -37,7 +37,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='repla
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 REPO_ROOT  = Path(__file__).parent.parent
-BOOT_FILE  = REPO_ROOT / "apex_boot" / "apex_v00_36_0_master_full.txt"
+BOOT_FILE  = REPO_ROOT / "apex_boot" / "apex_v00_37_0_master_full.txt"
 STATE_FILE = REPO_ROOT / "apex_state.yaml"
 
 # ─── OPP-160 DIFF block (was in apex_state.yaml as DONE but absent from boot)
@@ -494,13 +494,13 @@ def _build_ref_doc(stats: dict, applied: list, delta: int) -> str:
 ## Verificação
 
 ```bash
-grep "kernel:" -A3 apex_boot/apex_v00_36_0_master_full.txt | grep "version:"
+grep "kernel:" -A3 apex_boot/apex_v00_37_0_master_full.txt | grep "version:"
 # Expected: version: v00.37.0
 
-grep "SR_08" apex_boot/apex_v00_36_0_master_full.txt | grep "mental_interpreter"
+grep "SR_08" apex_boot/apex_v00_37_0_master_full.txt | grep "mental_interpreter"
 # Expected: mental_interpreter_v4 only
 
-grep "severity: 8" apex_boot/apex_v00_36_0_master_full.txt
+grep "severity: 8" apex_boot/apex_v00_37_0_master_full.txt
 # Expected: 0 matches
 ```
 """

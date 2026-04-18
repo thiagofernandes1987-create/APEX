@@ -4,7 +4,7 @@ tools/inject_opp155_156_boot.py
 ────────────────────────────────────────────────────────────────────
 APEX Boot Integration | OPP-155 + OPP-156 | 2026-04-18
 
-Injects two new DIFF blocks into apex_boot/apex_v00_36_0_master_full.txt:
+Injects two new DIFF blocks into apex_boot/apex_v00_37_0_master_full.txt:
 
   OPP-155: DIFF_COMMUNITY_SUBAGENT_ROSTER_BOOT_001
            → 140 subagents (10 categories) registered in boot kernel
@@ -31,7 +31,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='repla
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 REPO_ROOT   = Path(__file__).parent.parent
-BOOT_FILE   = REPO_ROOT / "apex_boot" / "apex_v00_36_0_master_full.txt"
+BOOT_FILE   = REPO_ROOT / "apex_boot" / "apex_v00_37_0_master_full.txt"
 ROSTER_FILE = REPO_ROOT / "agents" / "community_agent_roster.yaml"
 
 # ─── Inline YAML parser (no dependency on PyYAML) ──────────────────
@@ -96,7 +96,7 @@ community_subagent_roster_boot:
 
   why: >
     WHY: OPP-153 criou community_agent_roster.yaml com {total} subagents, mas o boot
-    kernel (apex_v00_36_0_master_full.txt) continuava sem os blocos DIFF correspondentes.
+    kernel (apex_v00_37_0_master_full.txt) continuava sem os blocos DIFF correspondentes.
     Sem integração ao kernel, os subagents existem no disco mas são invisíveis ao
     pipeline de ativação do meta_reasoning durante o boot.
 
@@ -341,7 +341,7 @@ def _build_reference_doc(sub_count: int, cs_count: int, total: int) -> str:
 ## Problem Statement
 
 OPP-153/154 criou `agents/community_agent_roster.yaml` com {total} agentes registrados
-no disco, mas o **boot kernel** (`apex_v00_36_0_master_full.txt`) não tinha os DIFF blocks
+no disco, mas o **boot kernel** (`apex_v00_37_0_master_full.txt`) não tinha os DIFF blocks
 correspondentes. Resultado: meta_reasoning não carregava os agentes durante o boot.
 
 ### Gap Identificado
@@ -375,7 +375,7 @@ correspondentes. Resultado: meta_reasoning não carregava os agentes durante o b
 
 | File | Change |
 |------|--------|
-| `apex_boot/apex_v00_36_0_master_full.txt` | +OPP-155 + OPP-156 DIFF blocks |
+| `apex_boot/apex_v00_37_0_master_full.txt` | +OPP-155 + OPP-156 DIFF blocks |
 | `references/OPP-155-156-boot-integration.md` | NEW — este documento |
 
 ---
@@ -406,10 +406,10 @@ Boot STEP_N: Agente executa em PARTITION_ACTIVE com role especializado
 ## Verification
 
 ```bash
-grep "OPP-155\\|OPP-156" apex_boot/apex_v00_36_0_master_full.txt
+grep "OPP-155\\|OPP-156" apex_boot/apex_v00_37_0_master_full.txt
 # Expected: 2+ matches
 
-grep "community_subagent_roster_boot\\|cs_persona_roster_boot" apex_boot/apex_v00_36_0_master_full.txt
+grep "community_subagent_roster_boot\\|cs_persona_roster_boot" apex_boot/apex_v00_37_0_master_full.txt
 # Expected: both keys present
 ```
 

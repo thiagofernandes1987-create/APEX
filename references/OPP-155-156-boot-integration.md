@@ -14,7 +14,7 @@
 ## Problem Statement
 
 OPP-153/154 criou `agents/community_agent_roster.yaml` com 163 agentes registrados
-no disco, mas o **boot kernel** (`apex_v00_36_0_master_full.txt`) não tinha os DIFF blocks
+no disco, mas o **boot kernel** (`apex_v00_37_0_master_full.txt`) não tinha os DIFF blocks
 correspondentes. Resultado: meta_reasoning não carregava os agentes durante o boot.
 
 ### Gap Identificado
@@ -48,7 +48,7 @@ correspondentes. Resultado: meta_reasoning não carregava os agentes durante o b
 
 | File | Change |
 |------|--------|
-| `apex_boot/apex_v00_36_0_master_full.txt` | +OPP-155 + OPP-156 DIFF blocks |
+| `apex_boot/apex_v00_37_0_master_full.txt` | +OPP-155 + OPP-156 DIFF blocks |
 | `references/OPP-155-156-boot-integration.md` | NEW — este documento |
 
 ---
@@ -79,10 +79,10 @@ Boot STEP_N: Agente executa em PARTITION_ACTIVE com role especializado
 ## Verification
 
 ```bash
-grep "OPP-155\|OPP-156" apex_boot/apex_v00_36_0_master_full.txt
+grep "OPP-155\|OPP-156" apex_boot/apex_v00_37_0_master_full.txt
 # Expected: 2+ matches
 
-grep "community_subagent_roster_boot\|cs_persona_roster_boot" apex_boot/apex_v00_36_0_master_full.txt
+grep "community_subagent_roster_boot\|cs_persona_roster_boot" apex_boot/apex_v00_37_0_master_full.txt
 # Expected: both keys present
 ```
 
