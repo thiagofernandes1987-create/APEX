@@ -1,7 +1,7 @@
 # APEX Index — Hub de Navegação
 
-**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-17 21:25 UTC
-**Versão APEX**: v00.36.0 | **Skills**: 3761 | **Domínios**: 52 | **Erros de parse**: 0
+**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-18 01:37 UTC
+**Versão APEX**: v00.36.0 | **Skills**: 3762 | **Domínios**: 52 | **Erros de parse**: 0
 
 > Este arquivo é gerado automaticamente. Não editar manualmente.
 > Para atualizar: `python tools/generate_index.py` ou aguardar o GitHub Action.
@@ -63,7 +63,7 @@ PASSO 3: Leia o SKILL.md do skill específico
 | Finance | 191 | `skills/finance/` | OK |
 | Healthcare | 23 | `skills/healthcare/` | OK |
 | Human Resources | 10 | `skills/human-resources/` | OK |
-| Integrations | 841 | `skills/integrations/` | OK |
+| Integrations | 842 | `skills/integrations/` | OK |
 | Knowledge Management | 10 | `skills/knowledge-management/` | OK |
 | Knowledge Work | 248 | `skills/knowledge-work/` | OK |
 | Legal | 27 | `skills/legal/` | OK |
@@ -720,24 +720,24 @@ domain_map:
         path: skills/anthropic-official/_source/
         skill_count: 18
         skills:
-          - skill: algorithmic-art
+          - skill: anthropic-official._source.skills.algorithmic-art
             path: skills/anthropic-official/_source/skills/algorithmic-art/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [algorithmic-art, creating, algorithmic, art, seeded]
-          - skill: brand-guidelines
+          - skill: anthropic-official._source.skills.brand-guidelines
             path: skills/anthropic-official/_source/skills/brand-guidelines/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [brand-guidelines, applies, anthropic, official, brand]
-          - skill: canvas-design
+          - skill: anthropic-official._source.skills.canvas-design
             path: skills/anthropic-official/_source/skills/canvas-design/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [canvas-design, create, beautiful, visual, art]
-          - skill: claude-api
+          - skill: anthropic-official._source.skills.claude-api
             path: skills/anthropic-official/_source/skills/claude-api/SKILL.md
-            status: UNKNOWN
-          - skill: doc-coauthoring
+            status: CANDIDATE
+          - skill: anthropic-official._source.skills.doc-coauthoring
             path: skills/anthropic-official/_source/skills/doc-coauthoring/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [doc-coauthoring, guide, through, structured, workflow]
           # ... +13 skills adicionais
       algorithmic-art:
@@ -886,214 +886,214 @@ domain_map:
         path: skills/anthropic-skills/artifacts-builder/
         skill_count: 1
         skills:
-          - skill: artifacts-builder
+          - skill: anthropic-skills.artifacts-builder
             path: skills/anthropic-skills/artifacts-builder/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       brand-guidelines:
         path: skills/anthropic-skills/brand-guidelines/
         skill_count: 1
         skills:
-          - skill: brand-guidelines
+          - skill: anthropic-skills.brand-guidelines
             path: skills/anthropic-skills/brand-guidelines/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       canvas-design:
         path: skills/anthropic-skills/canvas-design/
         skill_count: 1
         skills:
-          - skill: canvas-design
+          - skill: anthropic-skills.canvas-design
             path: skills/anthropic-skills/canvas-design/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       changelog-generator:
         path: skills/anthropic-skills/changelog-generator/
         skill_count: 1
         skills:
-          - skill: changelog-generator
+          - skill: anthropic-skills.changelog-generator
             path: skills/anthropic-skills/changelog-generator/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       competitive-ads-extractor:
         path: skills/anthropic-skills/competitive-ads-extractor/
         skill_count: 1
         skills:
-          - skill: competitive-ads-extractor
+          - skill: anthropic-skills.competitive-ads-extractor
             path: skills/anthropic-skills/competitive-ads-extractor/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       connect:
         path: skills/anthropic-skills/connect/
         skill_count: 1
         skills:
-          - skill: connect
+          - skill: anthropic-skills.connect
             path: skills/anthropic-skills/connect/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       connect-apps:
         path: skills/anthropic-skills/connect-apps/
         skill_count: 1
         skills:
-          - skill: connect-apps
+          - skill: anthropic-skills.connect-apps
             path: skills/anthropic-skills/connect-apps/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       content-research-writer:
         path: skills/anthropic-skills/content-research-writer/
         skill_count: 1
         skills:
-          - skill: content-research-writer
+          - skill: anthropic-skills.content-research-writer
             path: skills/anthropic-skills/content-research-writer/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       developer-growth-analysis:
         path: skills/anthropic-skills/developer-growth-analysis/
         skill_count: 1
         skills:
-          - skill: developer-growth-analysis
+          - skill: anthropic-skills.developer-growth-analysis
             path: skills/anthropic-skills/developer-growth-analysis/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       document-skills:
         path: skills/anthropic-skills/document-skills/
         skill_count: 4
         skills:
-          - skill: docx
+          - skill: anthropic-skills.document-skills.docx
             path: skills/anthropic-skills/document-skills/docx/SKILL.md
-            status: UNKNOWN
-          - skill: pdf
+            status: CANDIDATE
+          - skill: anthropic-skills.document-skills.pdf
             path: skills/anthropic-skills/document-skills/pdf/SKILL.md
-            status: UNKNOWN
-          - skill: pptx
+            status: CANDIDATE
+          - skill: anthropic-skills.document-skills.pptx
             path: skills/anthropic-skills/document-skills/pptx/SKILL.md
-            status: UNKNOWN
-          - skill: xlsx
+            status: CANDIDATE
+          - skill: anthropic-skills.document-skills.xlsx
             path: skills/anthropic-skills/document-skills/xlsx/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       domain-name-brainstormer:
         path: skills/anthropic-skills/domain-name-brainstormer/
         skill_count: 1
         skills:
-          - skill: domain-name-brainstormer
+          - skill: anthropic-skills.domain-name-brainstormer
             path: skills/anthropic-skills/domain-name-brainstormer/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       file-organizer:
         path: skills/anthropic-skills/file-organizer/
         skill_count: 1
         skills:
-          - skill: file-organizer
+          - skill: anthropic-skills.file-organizer
             path: skills/anthropic-skills/file-organizer/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       image-enhancer:
         path: skills/anthropic-skills/image-enhancer/
         skill_count: 1
         skills:
-          - skill: image-enhancer
+          - skill: anthropic-skills.image-enhancer
             path: skills/anthropic-skills/image-enhancer/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       internal-comms:
         path: skills/anthropic-skills/internal-comms/
         skill_count: 1
         skills:
-          - skill: internal-comms
+          - skill: anthropic-skills.internal-comms
             path: skills/anthropic-skills/internal-comms/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       invoice-organizer:
         path: skills/anthropic-skills/invoice-organizer/
         skill_count: 1
         skills:
-          - skill: invoice-organizer
+          - skill: anthropic-skills.invoice-organizer
             path: skills/anthropic-skills/invoice-organizer/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       langsmith-fetch:
         path: skills/anthropic-skills/langsmith-fetch/
         skill_count: 1
         skills:
-          - skill: langsmith-fetch
+          - skill: anthropic-skills.langsmith-fetch
             path: skills/anthropic-skills/langsmith-fetch/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       lead-research-assistant:
         path: skills/anthropic-skills/lead-research-assistant/
         skill_count: 1
         skills:
-          - skill: lead-research-assistant
+          - skill: anthropic-skills.lead-research-assistant
             path: skills/anthropic-skills/lead-research-assistant/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       mcp-builder:
         path: skills/anthropic-skills/mcp-builder/
         skill_count: 1
         skills:
-          - skill: mcp-builder
+          - skill: anthropic-skills.mcp-builder
             path: skills/anthropic-skills/mcp-builder/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       meeting-insights-analyzer:
         path: skills/anthropic-skills/meeting-insights-analyzer/
         skill_count: 1
         skills:
-          - skill: meeting-insights-analyzer
+          - skill: anthropic-skills.meeting-insights-analyzer
             path: skills/anthropic-skills/meeting-insights-analyzer/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       raffle-winner-picker:
         path: skills/anthropic-skills/raffle-winner-picker/
         skill_count: 1
         skills:
-          - skill: raffle-winner-picker
+          - skill: anthropic-skills.raffle-winner-picker
             path: skills/anthropic-skills/raffle-winner-picker/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       skill-creator:
         path: skills/anthropic-skills/skill-creator/
         skill_count: 1
         skills:
-          - skill: skill-creator
+          - skill: anthropic-skills.skill-creator
             path: skills/anthropic-skills/skill-creator/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       skill-share:
         path: skills/anthropic-skills/skill-share/
         skill_count: 1
         skills:
-          - skill: skill-share
+          - skill: anthropic-skills.skill-share
             path: skills/anthropic-skills/skill-share/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       slack-gif-creator:
         path: skills/anthropic-skills/slack-gif-creator/
         skill_count: 1
         skills:
-          - skill: slack-gif-creator
+          - skill: anthropic-skills.slack-gif-creator
             path: skills/anthropic-skills/slack-gif-creator/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       tailored-resume-generator:
         path: skills/anthropic-skills/tailored-resume-generator/
         skill_count: 1
         skills:
-          - skill: tailored-resume-generator
+          - skill: anthropic-skills.tailored-resume-generator
             path: skills/anthropic-skills/tailored-resume-generator/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       template-skill:
         path: skills/anthropic-skills/template-skill/
         skill_count: 1
         skills:
-          - skill: template-skill
+          - skill: anthropic-skills.template-skill
             path: skills/anthropic-skills/template-skill/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       theme-factory:
         path: skills/anthropic-skills/theme-factory/
         skill_count: 1
         skills:
-          - skill: theme-factory
+          - skill: anthropic-skills.theme-factory
             path: skills/anthropic-skills/theme-factory/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       twitter-algorithm-optimizer:
         path: skills/anthropic-skills/twitter-algorithm-optimizer/
         skill_count: 1
         skills:
-          - skill: twitter-algorithm-optimizer
+          - skill: anthropic-skills.twitter-algorithm-optimizer
             path: skills/anthropic-skills/twitter-algorithm-optimizer/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       video-downloader:
         path: skills/anthropic-skills/video-downloader/
         skill_count: 1
         skills:
-          - skill: video-downloader
+          - skill: anthropic-skills.video-downloader
             path: skills/anthropic-skills/video-downloader/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       webapp-testing:
         path: skills/anthropic-skills/webapp-testing/
         skill_count: 1
         skills:
-          - skill: webapp-testing
+          - skill: anthropic-skills.webapp-testing
             path: skills/anthropic-skills/webapp-testing/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
 
   APEX_INTERNALS:
     path: skills/apex_internals/
@@ -1299,76 +1299,76 @@ domain_map:
         path: skills/business/business-growth/
         skill_count: 5
         skills:
-          - skill: business-growth
+          - skill: business.business-growth
             path: skills/business/business-growth/SKILL.md
-            status: UNKNOWN
-          - skill: contract-and-proposal-writer
+            status: CANDIDATE
+          - skill: business.business-growth.contract-and-proposal-writer
             path: skills/business/business-growth/contract-and-proposal-writer/SKILL.md
-            status: UNKNOWN
-          - skill: customer-success-manager
+            status: CANDIDATE
+          - skill: business.business-growth.customer-success-manager
             path: skills/business/business-growth/customer-success-manager/SKILL.md
-            status: UNKNOWN
-          - skill: revenue-operations
+            status: CANDIDATE
+          - skill: business.business-growth.revenue-operations
             path: skills/business/business-growth/revenue-operations/SKILL.md
-            status: UNKNOWN
-          - skill: sales-engineer
+            status: CANDIDATE
+          - skill: business.business-growth.sales-engineer
             path: skills/business/business-growth/sales-engineer/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       c-level-advisor:
         path: skills/business/c-level-advisor/
         skill_count: 34
         skills:
-          - skill: c-level-advisor
+          - skill: business.c-level-advisor
             path: skills/business/c-level-advisor/SKILL.md
-            status: UNKNOWN
-          - skill: agent-protocol
+            status: CANDIDATE
+          - skill: business.c-level-advisor.agent-protocol
             path: skills/business/c-level-advisor/agent-protocol/SKILL.md
-            status: UNKNOWN
-          - skill: board-deck-builder
+            status: CANDIDATE
+          - skill: business.c-level-advisor.board-deck-builder
             path: skills/business/c-level-advisor/board-deck-builder/SKILL.md
-            status: UNKNOWN
-          - skill: board-meeting
+            status: CANDIDATE
+          - skill: business.c-level-advisor.board-meeting
             path: skills/business/c-level-advisor/board-meeting/SKILL.md
-            status: UNKNOWN
-          - skill: ceo-advisor
+            status: CANDIDATE
+          - skill: business.c-level-advisor.ceo-advisor
             path: skills/business/c-level-advisor/ceo-advisor/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
           # ... +29 skills adicionais
       finance:
         path: skills/business/finance/
         skill_count: 4
         skills:
-          - skill: finance
+          - skill: business.finance
             path: skills/business/finance/SKILL.md
-            status: UNKNOWN
-          - skill: business-investment-advisor
+            status: CANDIDATE
+          - skill: business.finance.business-investment-advisor
             path: skills/business/finance/business-investment-advisor/SKILL.md
-            status: UNKNOWN
-          - skill: financial-analyst
+            status: CANDIDATE
+          - skill: business.finance.financial-analyst
             path: skills/business/finance/financial-analyst/SKILL.md
-            status: UNKNOWN
-          - skill: saas-metrics-coach
+            status: CANDIDATE
+          - skill: business.finance.saas-metrics-coach
             path: skills/business/finance/saas-metrics-coach/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
       marketing-skill:
         path: skills/business/marketing-skill/
         skill_count: 45
         skills:
-          - skill: marketing-skill
+          - skill: business.marketing-skill
             path: skills/business/marketing-skill/SKILL.md
-            status: UNKNOWN
-          - skill: ab-test-setup
+            status: CANDIDATE
+          - skill: business.marketing-skill.ab-test-setup
             path: skills/business/marketing-skill/ab-test-setup/SKILL.md
-            status: UNKNOWN
-          - skill: ad-creative
+            status: CANDIDATE
+          - skill: business.marketing-skill.ad-creative
             path: skills/business/marketing-skill/ad-creative/SKILL.md
-            status: UNKNOWN
-          - skill: ai-seo
+            status: CANDIDATE
+          - skill: business.marketing-skill.ai-seo
             path: skills/business/marketing-skill/ai-seo/SKILL.md
-            status: UNKNOWN
-          - skill: analytics-tracking
+            status: CANDIDATE
+          - skill: business.marketing-skill.analytics-tracking
             path: skills/business/marketing-skill/analytics-tracking/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
           # ... +40 skills adicionais
       personas:
         path: skills/business/personas/
@@ -1394,61 +1394,61 @@ domain_map:
         path: skills/business/product-team/
         skill_count: 16
         skills:
-          - skill: product-team
+          - skill: business.product-team
             path: skills/business/product-team/SKILL.md
-            status: UNKNOWN
-          - skill: agile-product-owner
+            status: CANDIDATE
+          - skill: business.product-team.agile-product-owner
             path: skills/business/product-team/agile-product-owner/SKILL.md
-            status: UNKNOWN
-          - skill: code-to-prd
+            status: CANDIDATE
+          - skill: business.product-team.code-to-prd
             path: skills/business/product-team/code-to-prd/SKILL.md
-            status: UNKNOWN
-          - skill: competitive-teardown
+            status: CANDIDATE
+          - skill: business.product-team.competitive-teardown
             path: skills/business/product-team/competitive-teardown/SKILL.md
-            status: UNKNOWN
-          - skill: experiment-designer
+            status: CANDIDATE
+          - skill: business.product-team.experiment-designer
             path: skills/business/product-team/experiment-designer/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
           # ... +11 skills adicionais
       project-management:
         path: skills/business/project-management/
         skill_count: 9
         skills:
-          - skill: project-management
+          - skill: business.project-management
             path: skills/business/project-management/SKILL.md
-            status: UNKNOWN
-          - skill: atlassian-admin
+            status: CANDIDATE
+          - skill: business.project-management.atlassian-admin
             path: skills/business/project-management/atlassian-admin/SKILL.md
-            status: UNKNOWN
-          - skill: atlassian-templates
+            status: CANDIDATE
+          - skill: business.project-management.atlassian-templates
             path: skills/business/project-management/atlassian-templates/SKILL.md
-            status: UNKNOWN
-          - skill: confluence-expert
+            status: CANDIDATE
+          - skill: business.project-management.confluence-expert
             path: skills/business/project-management/confluence-expert/SKILL.md
-            status: UNKNOWN
-          - skill: jira-expert
+            status: CANDIDATE
+          - skill: business.project-management.jira-expert
             path: skills/business/project-management/jira-expert/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
           # ... +4 skills adicionais
       ra-qm-team:
         path: skills/business/ra-qm-team/
         skill_count: 14
         skills:
-          - skill: ra-qm-team
+          - skill: business.ra-qm-team
             path: skills/business/ra-qm-team/SKILL.md
-            status: UNKNOWN
-          - skill: capa-officer
+            status: CANDIDATE
+          - skill: business.ra-qm-team.capa-officer
             path: skills/business/ra-qm-team/capa-officer/SKILL.md
-            status: UNKNOWN
-          - skill: fda-consultant-specialist
+            status: CANDIDATE
+          - skill: business.ra-qm-team.fda-consultant-specialist
             path: skills/business/ra-qm-team/fda-consultant-specialist/SKILL.md
-            status: UNKNOWN
-          - skill: gdpr-dsgvo-expert
+            status: CANDIDATE
+          - skill: business.ra-qm-team.gdpr-dsgvo-expert
             path: skills/business/ra-qm-team/gdpr-dsgvo-expert/SKILL.md
-            status: UNKNOWN
-          - skill: information-security-manager-iso27001
+            status: CANDIDATE
+          - skill: business.ra-qm-team.information-security-manager-iso27001
             path: skills/business/ra-qm-team/information-security-manager-iso27001/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
           # ... +9 skills adicionais
       startup:
         path: skills/business/startup/
@@ -2741,41 +2741,41 @@ domain_map:
         path: skills/engineering/cs-engineering/
         skill_count: 58
         skills:
-          - skill: cs-engineering
+          - skill: engineering.cs-engineering
             path: skills/engineering/cs-engineering/SKILL.md
-            status: UNKNOWN
-          - skill: agent-designer
+            status: CANDIDATE
+          - skill: engineering.cs-engineering.agent-designer
             path: skills/engineering/cs-engineering/agent-designer/SKILL.md
-            status: UNKNOWN
-          - skill: agent-workflow-designer
+            status: CANDIDATE
+          - skill: engineering.cs-engineering.agent-workflow-designer
             path: skills/engineering/cs-engineering/agent-workflow-designer/SKILL.md
-            status: UNKNOWN
-          - skill: agenthub
+            status: CANDIDATE
+          - skill: engineering.cs-engineering.agenthub
             path: skills/engineering/cs-engineering/agenthub/SKILL.md
-            status: UNKNOWN
-          - skill: board
+            status: CANDIDATE
+          - skill: engineering.cs-engineering.agenthub.skills
             path: skills/engineering/cs-engineering/agenthub/skills/board/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
           # ... +53 skills adicionais
       cs-engineering-team:
         path: skills/engineering/cs-engineering-team/
         skill_count: 51
         skills:
-          - skill: cs-engineering-team
+          - skill: engineering.cs-engineering-team
             path: skills/engineering/cs-engineering-team/SKILL.md
-            status: UNKNOWN
-          - skill: a11y-audit
+            status: CANDIDATE
+          - skill: engineering.cs-engineering-team.a11y-audit
             path: skills/engineering/cs-engineering-team/a11y-audit/SKILL.md
-            status: UNKNOWN
-          - skill: adversarial-reviewer
+            status: CANDIDATE
+          - skill: engineering.cs-engineering-team.adversarial-reviewer
             path: skills/engineering/cs-engineering-team/adversarial-reviewer/SKILL.md
-            status: UNKNOWN
-          - skill: ai-security
+            status: CANDIDATE
+          - skill: engineering.cs-engineering-team.ai-security
             path: skills/engineering/cs-engineering-team/ai-security/SKILL.md
-            status: UNKNOWN
-          - skill: aws-solution-architect
+            status: CANDIDATE
+          - skill: engineering.cs-engineering-team.aws-solution-architect
             path: skills/engineering/cs-engineering-team/aws-solution-architect/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
           # ... +46 skills adicionais
       devops:
         path: skills/engineering/devops/
@@ -5584,44 +5584,44 @@ domain_map:
         path: skills/finance/_source/
         skill_count: 56
         skills:
-          - skill: catalyst-calendar
+          - skill: finance._source.equity-research.skills
             path: skills/finance/_source/equity-research/skills/catalyst-calendar/SKILL.md
-            status: UNKNOWN
-          - skill: earnings-analysis
+            status: CANDIDATE
+          - skill: finance._source.equity-research.skills
             path: skills/finance/_source/equity-research/skills/earnings-analysis/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [earnings-analysis, create, professional, equity, research]
-          - skill: earnings-preview
+          - skill: finance._source.equity-research.skills
             path: skills/finance/_source/equity-research/skills/earnings-preview/SKILL.md
-            status: UNKNOWN
-          - skill: idea-generation
+            status: CANDIDATE
+          - skill: finance._source.equity-research.skills
             path: skills/finance/_source/equity-research/skills/idea-generation/SKILL.md
-            status: UNKNOWN
-          - skill: initiating-coverage
+            status: CANDIDATE
+          - skill: finance._source.equity-research.skills
             path: skills/finance/_source/equity-research/skills/initiating-coverage/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [initiating-coverage, create, institutional-quality, equity, research]
           # ... +51 skills adicionais
       _source_v2:
         path: skills/finance/_source_v2/
         skill_count: 56
         skills:
-          - skill: catalyst-calendar
+          - skill: finance._source_v2.equity-research.skills
             path: skills/finance/_source_v2/equity-research/skills/catalyst-calendar/SKILL.md
-            status: UNKNOWN
-          - skill: earnings-analysis
+            status: CANDIDATE
+          - skill: finance._source_v2.equity-research.skills
             path: skills/finance/_source_v2/equity-research/skills/earnings-analysis/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [earnings-analysis, create, professional, equity, research]
-          - skill: earnings-preview
+          - skill: finance._source_v2.equity-research.skills
             path: skills/finance/_source_v2/equity-research/skills/earnings-preview/SKILL.md
-            status: UNKNOWN
-          - skill: idea-generation
+            status: CANDIDATE
+          - skill: finance._source_v2.equity-research.skills
             path: skills/finance/_source_v2/equity-research/skills/idea-generation/SKILL.md
-            status: UNKNOWN
-          - skill: initiating-coverage
+            status: CANDIDATE
+          - skill: finance._source_v2.equity-research.skills
             path: skills/finance/_source_v2/equity-research/skills/initiating-coverage/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [initiating-coverage, create, institutional-quality, equity, research]
           # ... +51 skills adicionais
       accounting:
@@ -5878,33 +5878,33 @@ domain_map:
         path: skills/healthcare/_source/
         skill_count: 3
         skills:
-          - skill: clinical-trial-protocol-skill
+          - skill: healthcare._source.clinical-trial-protocol-skill
             path: skills/healthcare/_source/clinical-trial-protocol-skill/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [clinical-trial-protocol-skill, generate, clinical, trial, protocols]
-          - skill: fhir-developer-skill
+          - skill: healthcare._source.fhir-developer-skill
             path: skills/healthcare/_source/fhir-developer-skill/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [fhir-developer-skill, fhir, api, development, guide]
-          - skill: prior-auth-review-skill
+          - skill: healthcare._source.prior-auth-review-skill
             path: skills/healthcare/_source/prior-auth-review-skill/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [prior-auth-review-skill, automate, payer, review, prior]
       _source_v2:
         path: skills/healthcare/_source_v2/
         skill_count: 3
         skills:
-          - skill: clinical-trial-protocol-skill
+          - skill: healthcare._source_v2.clinical-trial-protocol-skill
             path: skills/healthcare/_source_v2/clinical-trial-protocol-skill/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [clinical-trial-protocol-skill, generate, clinical, trial, protocols]
-          - skill: fhir-developer-skill
+          - skill: healthcare._source_v2.fhir-developer-skill
             path: skills/healthcare/_source_v2/fhir-developer-skill/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [fhir-developer-skill, fhir, api, development, guide]
-          - skill: prior-auth-review-skill
+          - skill: healthcare._source_v2.prior-auth-review-skill
             path: skills/healthcare/_source_v2/prior-auth-review-skill/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [prior-auth-review-skill, automate, payer, review, prior]
       analyze-project:
         path: skills/healthcare/analyze-project/
@@ -6129,29 +6129,29 @@ domain_map:
   INTEGRATIONS:
     path: skills/integrations/
     display_name: "Integrations"
-    skill_count: 841
+    skill_count: 842
     anchors: [guidance, slack, search, messages, for, effectively, searching, find, files, node, configuration, operation, aware, configuring, nodes]
     sub_domains:
       composio:
         path: skills/integrations/composio/
-        skill_count: 832
+        skill_count: 833
         skills:
-          - skill: -21risk-automation
+          - skill: integrations.composio.-21risk-automation
             path: skills/integrations/composio/-21risk-automation/SKILL.md
-            status: UNKNOWN
-          - skill: -2chat-automation
+            status: CANDIDATE
+          - skill: integrations.composio.-2chat-automation
             path: skills/integrations/composio/-2chat-automation/SKILL.md
-            status: UNKNOWN
-          - skill: ably-automation
+            status: CANDIDATE
+          - skill: integrations.composio.meta
+            path: skills/integrations/composio/SKILL.md
+            status: ADOPTED
+          - skill: integrations.composio.ably-automation
             path: skills/integrations/composio/ably-automation/SKILL.md
-            status: UNKNOWN
-          - skill: abstract-automation
+            status: CANDIDATE
+          - skill: integrations.composio.abstract-automation
             path: skills/integrations/composio/abstract-automation/SKILL.md
-            status: UNKNOWN
-          - skill: abuselpdb-automation
-            path: skills/integrations/composio/abuselpdb-automation/SKILL.md
-            status: UNKNOWN
-          # ... +827 skills adicionais
+            status: CANDIDATE
+          # ... +828 skills adicionais
       n8n:
         path: skills/integrations/n8n/
         skill_count: 3
@@ -6260,50 +6260,50 @@ domain_map:
         path: skills/knowledge-work/_source/
         skill_count: 124
         skills:
-          - skill: instrument-data-to-allotrope
+          - skill: knowledge-work._source.bio-research.skills
             path: skills/knowledge-work/_source/bio-research/skills/instrument-data-to-allotrope/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [instrument-data-to-allotrope, convert, laboratory, instrument, output]
-          - skill: nextflow-development
+          - skill: knowledge-work._source.bio-research.skills
             path: skills/knowledge-work/_source/bio-research/skills/nextflow-development/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [nextflow-development, run, nf-core, bioinformatics, pipelines]
-          - skill: scientific-problem-selection
+          - skill: knowledge-work._source.bio-research.skills
             path: skills/knowledge-work/_source/bio-research/skills/scientific-problem-selection/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [scientific-problem-selection, this, skill, should, when]
-          - skill: scvi-tools
+          - skill: knowledge-work._source.bio-research.skills
             path: skills/knowledge-work/_source/bio-research/skills/scvi-tools/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [scvi-tools, deep, learning, for, single-cell]
-          - skill: single-cell-rna-qc
+          - skill: knowledge-work._source.bio-research.skills
             path: skills/knowledge-work/_source/bio-research/skills/single-cell-rna-qc/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [single-cell-rna-qc, performs, quality, control, single-cell]
           # ... +119 skills adicionais
       _source_v2:
         path: skills/knowledge-work/_source_v2/
         skill_count: 124
         skills:
-          - skill: instrument-data-to-allotrope
+          - skill: knowledge-work._source_v2.bio-research.skills
             path: skills/knowledge-work/_source_v2/bio-research/skills/instrument-data-to-allotrope/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [instrument-data-to-allotrope, convert, laboratory, instrument, output]
-          - skill: nextflow-development
+          - skill: knowledge-work._source_v2.bio-research.skills
             path: skills/knowledge-work/_source_v2/bio-research/skills/nextflow-development/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [nextflow-development, run, nf-core, bioinformatics, pipelines]
-          - skill: scientific-problem-selection
+          - skill: knowledge-work._source_v2.bio-research.skills
             path: skills/knowledge-work/_source_v2/bio-research/skills/scientific-problem-selection/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [scientific-problem-selection, this, skill, should, when]
-          - skill: scvi-tools
+          - skill: knowledge-work._source_v2.bio-research.skills
             path: skills/knowledge-work/_source_v2/bio-research/skills/scvi-tools/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [scvi-tools, deep, learning, for, single-cell]
-          - skill: single-cell-rna-qc
+          - skill: knowledge-work._source_v2.bio-research.skills
             path: skills/knowledge-work/_source_v2/bio-research/skills/single-cell-rna-qc/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [single-cell-rna-qc, performs, quality, control, single-cell]
           # ... +119 skills adicionais
 
@@ -6453,25 +6453,25 @@ domain_map:
         path: skills/marketing/_source_marketingskills/
         skill_count: 35
         skills:
-          - skill: ab-test-setup
+          - skill: marketing._source_marketingskills.skills.ab-test-setup
             path: skills/marketing/_source_marketingskills/skills/ab-test-setup/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [ab-test-setup, when, the, plan, design]
-          - skill: ad-creative
+          - skill: marketing._source_marketingskills.skills.ad-creative
             path: skills/marketing/_source_marketingskills/skills/ad-creative/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [ad-creative, when, the, generate, iterate]
-          - skill: ai-seo
+          - skill: marketing._source_marketingskills.skills.ai-seo
             path: skills/marketing/_source_marketingskills/skills/ai-seo/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [ai-seo, when, the, optimize, content]
-          - skill: analytics-tracking
+          - skill: marketing._source_marketingskills.skills.analytics-tracking
             path: skills/marketing/_source_marketingskills/skills/analytics-tracking/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [analytics-tracking, when, the, set, improve]
-          - skill: churn-prevention
+          - skill: marketing._source_marketingskills.skills.churn-prevention
             path: skills/marketing/_source_marketingskills/skills/churn-prevention/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [churn-prevention, when, the, reduce, churn]
           # ... +30 skills adicionais
       ab-test-setup:
@@ -7524,25 +7524,25 @@ domain_map:
         path: skills/science/life-sciences/
         skill_count: 18
         skills:
-          - skill: clinical-trial-protocol-skill
+          - skill: science.life-sciences._source.clinical-trial-protocol-skill
             path: skills/science/life-sciences/_source/clinical-trial-protocol-skill/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [clinical-trial-protocol-skill, generate, clinical, trial, protocols]
-          - skill: instrument-data-to-allotrope
+          - skill: science.life-sciences._source.instrument-data-to-allotrope
             path: skills/science/life-sciences/_source/instrument-data-to-allotrope/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [instrument-data-to-allotrope, convert, laboratory, instrument, output]
-          - skill: nextflow-development
+          - skill: science.life-sciences._source.nextflow-development
             path: skills/science/life-sciences/_source/nextflow-development/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [nextflow-development, run, nf-core, bioinformatics, pipelines]
-          - skill: scientific-problem-selection
+          - skill: science.life-sciences._source.scientific-problem-selection
             path: skills/science/life-sciences/_source/scientific-problem-selection/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [scientific-problem-selection, this, skill, should, when]
-          - skill: scvi-tools
+          - skill: science.life-sciences._source.scvi-tools
             path: skills/science/life-sciences/_source/scvi-tools/SKILL.md
-            status: UNKNOWN
+            status: CANDIDATE
             anchors: [scvi-tools, deep, learning, for, single-cell]
           # ... +13 skills adicionais
 
@@ -8095,19 +8095,18 @@ domain_map:
 ## Estatísticas de Geração
 
 **Por Status:**
-- CANDIDATE: 1979 (52.6%)
-- UNKNOWN: 1531 (40.7%)
-- ADOPTED: 251 (6.7%)
+- CANDIDATE: 3510 (93.3%)
+- ADOPTED: 252 (6.7%)
 
 **Por Tier:**
-- ADAPTED: 2526 (67.2%)
+- ADAPTED: 2526 (67.1%)
 - IMPORTED: 1174 (31.2%)
 - COMMUNITY: 37 (1.0%)
-- 2: 23 (0.6%)
+- 2: 24 (0.6%)
 - STANDARD: 1 (0.0%)
 
 **Top 10 Domínios por Quantidade de Skills:**
-1. Integrations: 841 skills
+1. Integrations: 842 skills
 2. Engineering (Core): 596 skills
 3. Community: 414 skills
 4. AI & Machine Learning: 286 skills
@@ -8120,4 +8119,4 @@ domain_map:
 
 ---
 
-*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-17 21:25 UTC*
+*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-18 01:37 UTC*
