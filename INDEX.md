@@ -1,7 +1,7 @@
 # APEX Index — Hub de Navegação
 
-**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-18 01:37 UTC
-**Versão APEX**: v00.36.0 | **Skills**: 3762 | **Domínios**: 52 | **Erros de parse**: 0
+**Gerado automaticamente** por `tools/generate_index.py` — 2026-04-18 01:45 UTC
+**Versão APEX**: v00.36.0 | **Skills**: 3769 | **Domínios**: 52 | **Erros de parse**: 0
 
 > Este arquivo é gerado automaticamente. Não editar manualmente.
 > Para atualizar: `python tools/generate_index.py` ou aguardar o GitHub Action.
@@ -26,14 +26,14 @@ PASSO 3: Leia o SKILL.md do skill específico
 | Domínio | Skills | Path | Status |
 |---------|--------|------|--------|
 | AI & Machine Learning | 286 | `skills/ai-ml/` | OK |
-| AI/ML — Agents | 25 | `skills/ai_ml_agents/` | OK |
+| AI/ML — Agents | 26 | `skills/ai_ml_agents/` | OK |
 | AI/ML — LLMs | 14 | `skills/ai_ml_llm/` | OK |
-| AI/ML — Machine Learning | 14 | `skills/ai_ml_ml/` | OK |
+| AI/ML — Machine Learning | 15 | `skills/ai_ml_ml/` | OK |
 | Anthropic Official | 35 | `skills/anthropic-official/` | OK |
 | Anthropic-Skills | 32 | `skills/anthropic-skills/` | OK |
 | APEX Internals | 8 | `skills/apex_internals/` | OK |
 | Awesome Claude | 14 | `skills/awesome_claude/` | OK |
-| Business | 159 | `skills/business/` | OK |
+| Business | 160 | `skills/business/` | OK |
 | Business — Content | 6 | `skills/business_content/` | OK |
 | Business — Human Resources | 6 | `skills/business_human_resources/` | OK |
 | Business — Productivity | 9 | `skills/business_productivity/` | OK |
@@ -46,7 +46,7 @@ PASSO 3: Leia o SKILL.md do skill específico
 | Data Science | 11 | `skills/data-science/` | OK |
 | Design | 73 | `skills/design/` | OK |
 | Engineering (Core) | 596 | `skills/engineering/` | OK |
-| Engineering Agentops | 14 | `skills/engineering_agentops/` | OK |
+| Engineering Agentops | 15 | `skills/engineering_agentops/` | OK |
 | Engineering — API | 14 | `skills/engineering_api/` | OK |
 | Engineering — Backend | 9 | `skills/engineering_backend/` | OK |
 | Engineering — CLI | 3 | `skills/engineering_cli/` | OK |
@@ -54,11 +54,11 @@ PASSO 3: Leia o SKILL.md do skill específico
 | Engineering — Cloud Azure | 161 | `skills/engineering_cloud_azure/` | OK |
 | Engineering — Cloud GCP | 2 | `skills/engineering_cloud_gcp/` | OK |
 | Engineering — Database | 13 | `skills/engineering_database/` | OK |
-| Engineering — DevOps | 29 | `skills/engineering_devops/` | OK |
+| Engineering — DevOps | 30 | `skills/engineering_devops/` | OK |
 | Engineering — Frontend | 15 | `skills/engineering_frontend/` | OK |
 | Engineering — Git | 6 | `skills/engineering_git/` | OK |
 | Engineering — Mobile | 3 | `skills/engineering_mobile/` | OK |
-| Engineering — Security | 29 | `skills/engineering_security/` | OK |
+| Engineering — Security | 30 | `skills/engineering_security/` | OK |
 | Engineering — Testing | 19 | `skills/engineering_testing/` | OK |
 | Finance | 191 | `skills/finance/` | OK |
 | Healthcare | 23 | `skills/healthcare/` | OK |
@@ -67,7 +67,7 @@ PASSO 3: Leia o SKILL.md do skill específico
 | Knowledge Management | 10 | `skills/knowledge-management/` | OK |
 | Knowledge Work | 248 | `skills/knowledge-work/` | OK |
 | Legal | 27 | `skills/legal/` | OK |
-| Marketing | 137 | `skills/marketing/` | OK |
+| Marketing | 138 | `skills/marketing/` | OK |
 | Mathematics | 2 | `skills/mathematics/` | OK |
 | Operations | 10 | `skills/operations/` | OK |
 | Product Management | 11 | `skills/product-management/` | OK |
@@ -268,7 +268,7 @@ domain_map:
   AI_ML_AGENTS:
     path: skills/ai_ml_agents/
     display_name: "AI/ML — Agents"
-    skill_count: 25
+    skill_count: 26
     anchors: [agent, and, skills, plugins, claude, the, skill, agents, for, designer, when, multi-agent, protocol, board, agenthub]
     sub_domains:
       agent-designer:
@@ -375,6 +375,13 @@ domain_map:
             path: skills/ai_ml_agents/init/SKILL.md
             status: CANDIDATE
             anchors: [init, create, agenthub, collaboration, session]
+      intelligent-agent-factory:
+        path: skills/ai_ml_agents/intelligent-agent-factory/
+        skill_count: 1
+        skills:
+          - skill: ai_ml.intelligent_agent_factory
+            path: skills/ai_ml_agents/intelligent-agent-factory/SKILL.md
+            status: ADOPTED
       langsmith-fetch:
         path: skills/ai_ml_agents/langsmith-fetch/
         skill_count: 1
@@ -594,7 +601,7 @@ domain_map:
   AI_ML_ML:
     path: skills/ai_ml_ml/
     display_name: "AI/ML — Machine Learning"
-    skill_count: 14
+    skill_count: 15
     anchors: [companies, for, advisor, leadership, and, skills, analyzes, financial, scaling, marketing, saas, analysis, campaign, analytics, performance]
     sub_domains:
       campaign-analytics:
@@ -677,6 +684,13 @@ domain_map:
             path: skills/ai_ml_ml/marketing-psychology/SKILL.md
             status: CANDIDATE
             anchors: [marketing, psychology, when, apply, marketing-psychology]
+      mlops-deployment-pipeline:
+        path: skills/ai_ml_ml/mlops-deployment-pipeline/
+        skill_count: 1
+        skills:
+          - skill: engineering_mlops.model_deployment_pipeline
+            path: skills/ai_ml_ml/mlops-deployment-pipeline/SKILL.md
+            status: ADOPTED
       pricing-strategy:
         path: skills/ai_ml_ml/pricing-strategy/
         skill_count: 1
@@ -1272,7 +1286,7 @@ domain_map:
   BUSINESS:
     path: skills/business/
     display_name: "Business"
-    skill_count: 159
+    skill_count: 160
     anchors: [startup, business, analyst, comprehensive, analysis, financial, market, generate, year, sizing, calculating, master, modern, powered, analytics]
     sub_domains:
       analysis:
@@ -1334,6 +1348,13 @@ domain_map:
             path: skills/business/c-level-advisor/ceo-advisor/SKILL.md
             status: CANDIDATE
           # ... +29 skills adicionais
+      deal-due-diligence:
+        path: skills/business/deal-due-diligence/
+        skill_count: 1
+        skills:
+          - skill: business_intelligence.deal_due_diligence
+            path: skills/business/deal-due-diligence/SKILL.md
+            status: ADOPTED
       finance:
         path: skills/business/finance/
         skill_count: 4
@@ -2931,7 +2952,7 @@ domain_map:
   ENGINEERING_AGENTOPS:
     path: skills/engineering_agentops/
     display_name: "Engineering Agentops"
-    skill_count: 14
+    skill_count: 15
     sub_domains:
       brainstorming:
         path: skills/engineering_agentops/brainstorming/
@@ -2960,6 +2981,13 @@ domain_map:
         skills:
           - skill: engineering_agentops.finishing-a-development-branch
             path: skills/engineering_agentops/finishing-a-development-branch/SKILL.md
+            status: ADOPTED
+      full-dev-cycle:
+        path: skills/engineering_agentops/full-dev-cycle/
+        skill_count: 1
+        skills:
+          - skill: engineering_agentops.full_dev_cycle
+            path: skills/engineering_agentops/full-dev-cycle/SKILL.md
             status: ADOPTED
       receiving-code-review:
         path: skills/engineering_agentops/receiving-code-review/
@@ -4728,7 +4756,7 @@ domain_map:
   ENGINEERING_DEVOPS:
     path: skills/engineering_devops/
     display_name: "Engineering — DevOps"
-    skill_count: 29
+    skill_count: 30
     anchors: [skill, for, when, pipeline, senior, and, data, engineering, agent, pipelines, patterns, docker, including, development, engineer]
     sub_domains:
       a11y-audit:
@@ -4907,6 +4935,13 @@ domain_map:
             path: skills/engineering_devops/runbook-generator/SKILL.md
             status: CANDIDATE
             anchors: [runbook, generator, runbook-generator, overview, core]
+      security-gate-injector:
+        path: skills/engineering_devops/security-gate-injector/
+        skill_count: 1
+        skills:
+          - skill: engineering_devops.security_gate_injector
+            path: skills/engineering_devops/security-gate-injector/SKILL.md
+            status: ADOPTED
       senior-computer-vision:
         path: skills/engineering_devops/senior-computer-vision/
         skill_count: 1
@@ -5180,7 +5215,7 @@ domain_map:
   ENGINEERING_SECURITY:
     path: skills/engineering_security/
     display_name: "Engineering — Security"
-    skill_count: 29
+    skill_count: 30
     anchors: [security, when, skill, the, for, code, review, patterns, including, and, automate, analyze, auditor, agent, incident]
     sub_domains:
       adversarial-reviewer:
@@ -5350,6 +5385,13 @@ domain_map:
             path: skills/engineering_security/sample-skill/SKILL.md
             status: CANDIDATE
             anchors: [sample, skill, sample-skill, text, example]
+      secure-delivery-pipeline:
+        path: skills/engineering_security/secure-delivery-pipeline/
+        skill_count: 1
+        skills:
+          - skill: security_engineering.secure_delivery_pipeline
+            path: skills/engineering_security/secure-delivery-pipeline/SKILL.md
+            status: ADOPTED
       security-hardening:
         path: skills/engineering_security/security-hardening/
         skill_count: 1
@@ -6446,7 +6488,7 @@ domain_map:
   MARKETING:
     path: skills/marketing/
     display_name: "Marketing"
-    skill_count: 137
+    skill_count: 138
     anchors: [when, the, content, optimize, create, marketing, plan, audit, analysis, improve, and, pages, page, schema, for]
     sub_domains:
       _source_marketingskills:
@@ -6726,6 +6768,13 @@ domain_map:
             path: skills/marketing/free-tool-strategy/SKILL.md
             status: CANDIDATE
             anchors: [free, tool, strategy, when, free-tool-strategy]
+      full-funnel-optimizer:
+        path: skills/marketing/full-funnel-optimizer/
+        skill_count: 1
+        skills:
+          - skill: growth_engine.full_funnel_optimizer
+            path: skills/marketing/full-funnel-optimizer/SKILL.md
+            status: ADOPTED
       growth-engine:
         path: skills/marketing/growth-engine/
         skill_count: 1
@@ -8095,14 +8144,15 @@ domain_map:
 ## Estatísticas de Geração
 
 **Por Status:**
-- CANDIDATE: 3510 (93.3%)
-- ADOPTED: 252 (6.7%)
+- CANDIDATE: 3510 (93.1%)
+- ADOPTED: 259 (6.9%)
 
 **Por Tier:**
-- ADAPTED: 2526 (67.1%)
-- IMPORTED: 1174 (31.2%)
+- ADAPTED: 2526 (67.0%)
+- IMPORTED: 1174 (31.1%)
 - COMMUNITY: 37 (1.0%)
-- 2: 24 (0.6%)
+- 2: 26 (0.7%)
+- SUPER: 5 (0.1%)
 - STANDARD: 1 (0.0%)
 
 **Top 10 Domínios por Quantidade de Skills:**
@@ -8113,10 +8163,10 @@ domain_map:
 5. Knowledge Work: 248 skills
 6. Finance: 191 skills
 7. Engineering — Cloud Azure: 161 skills
-8. Business: 159 skills
-9. Marketing: 137 skills
+8. Business: 160 skills
+9. Marketing: 138 skills
 10. Design: 73 skills
 
 ---
 
-*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-18 01:37 UTC*
+*Gerado por `tools/generate_index.py` — APEX v00.36.0 — 2026-04-18 01:45 UTC*
