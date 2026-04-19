@@ -11,6 +11,13 @@ Funcionalidades:
   get_anomalies(module_id)           — lista anomalias detectadas
   list_modules()                     — lista todos os módulos conhecidos
 
+  Auth + Billing:
+  create_key(name, quota)            — cria API key e retorna chave plain-text
+  validate_key(plain_key)            — valida + incrementa uso; retorna dict ou None
+  get_usage(key_prefix)              — retorna uso corrente de uma chave
+  list_keys()                        — lista chaves (sem revelar hash)
+  revoke_key(key_prefix)             — revoga API key
+
 Design:
   SQLite em arquivo ou ":memory:" — adequado para testes e uso local.
   Schema imutável (não usa ALTER TABLE) — compatível com SQLite < 3.37.
@@ -29,6 +36,8 @@ import math
 import time
 import threading
 import statistics
+import secrets
+import hashlib
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass
 
@@ -97,6 +106,26 @@ ON snapshots(module_id, timestamp);
 _IDX_ANOMALIES = """
 CREATE INDEX IF NOT EXISTS idx_anom_module
 ON anomalies(module_id);
+"""
+
+_DDL_API_KEYS = """
+CREATE TABLE IF NOT EXISTS api_keys (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    key_prefix  TEXT    NOT NULL UNIQUE,   -- primeiros 8 chars (uco_XXXX) — display safe
+    key_hash    TEXT    NOT NULL UNIQUE,   -- SHA-256 da chave completa
+    name        TEXT    NOT NULL DEFAULT '',
+    quota_day   INTEGER NOT NULL DEFAULT 0,    -- 0 = ilimitado
+    calls_today INTEGER NOT NULL DEFAULT 0,
+    calls_total INTEGER NOT NULL DEFAULT 0,
+    last_reset  REAL    NOT NULL DEFAULT 0.0,  -- timestamp do último reset diário
+    active      INTEGER NOT NULL DEFAULT 1,    -- 1=ativo, 0=revogado
+    created_at  REAL    NOT NULL
+);
+"""
+
+_IDX_API_KEYS = """
+CREATE INDEX IF NOT EXISTS idx_api_key_hash
+ON api_keys(key_hash);
 """
 
 
@@ -205,8 +234,10 @@ class SnapshotStore:
             cur = self._conn.cursor()
             cur.execute(_DDL_SNAPSHOTS)
             cur.execute(_DDL_ANOMALIES)
+            cur.execute(_DDL_API_KEYS)
             cur.execute(_IDX_SNAPSHOTS)
             cur.execute(_IDX_ANOMALIES)
+            cur.execute(_IDX_API_KEYS)
 
     # ─── Insert ──────────────────────────────────────────────────────────────
 
@@ -489,6 +520,151 @@ class SnapshotStore:
         with self._lock:
             rows = self._conn.execute(sql).fetchall()
         return [r[0] for r in rows]
+
+    # ─── Auth + Billing ──────────────────────────────────────────────────────
+
+    @staticmethod
+    def _hash_key(plain_key: str) -> str:
+        return hashlib.sha256(plain_key.encode("utf-8")).hexdigest()
+
+    def create_key(self, name: str = "", quota_day: int = 0) -> str:
+        """
+        Cria uma nova API key.
+
+        Formato: uco_<32 hex chars>  (total 36 chars)
+        Armazena apenas o SHA-256 — a plain key é retornada UMA vez.
+
+        Parâmetros
+        ----------
+        name      : descrição humana (ex: "github_ci_prod")
+        quota_day : máximo de chamadas por dia, 0 = ilimitado
+
+        Retorna
+        -------
+        str — plain key no formato "uco_<hex>" (guardar em segurança)
+        """
+        plain = f"uco_{secrets.token_hex(16)}"
+        prefix = plain[:12]           # "uco_" + 8 hex = 12 chars de display
+        key_hash = self._hash_key(plain)
+        sql = """
+        INSERT INTO api_keys (key_prefix, key_hash, name, quota_day, calls_today,
+                              calls_total, last_reset, active, created_at)
+        VALUES (?, ?, ?, ?, 0, 0, ?, 1, ?)
+        """
+        now = time.time()
+        with self._lock:
+            self._conn.execute(sql, (prefix, key_hash, name, quota_day, now, now))
+        return plain
+
+    def validate_key(self, plain_key: str) -> Optional[Dict[str, Any]]:
+        """
+        Valida uma API key e incrementa contador.
+
+        Realiza reset diário automático se o dia mudou desde last_reset.
+
+        Retorna dict com info da chave, ou None se inválida/excedeu quota.
+        """
+        if not plain_key or not plain_key.startswith("uco_"):
+            return None
+
+        key_hash = self._hash_key(plain_key)
+        sql = """
+        SELECT id, key_prefix, name, quota_day, calls_today, calls_total,
+               last_reset, active
+        FROM api_keys
+        WHERE key_hash = ?
+        """
+        with self._lock:
+            row = self._conn.execute(sql, (key_hash,)).fetchone()
+            if not row:
+                return None
+
+            key_id, prefix, name, quota_day, calls_today, calls_total, last_reset, active = row
+
+            if not active:
+                return None
+
+            # Reset diário
+            now = time.time()
+            today_start = now - (now % 86400)
+            if last_reset < today_start:
+                calls_today = 0
+                self._conn.execute(
+                    "UPDATE api_keys SET calls_today=0, last_reset=? WHERE id=?",
+                    (now, key_id)
+                )
+
+            # Verificar quota
+            if quota_day > 0 and calls_today >= quota_day:
+                return None   # quota excedida
+
+            # Incrementar
+            self._conn.execute(
+                "UPDATE api_keys SET calls_today=calls_today+1, calls_total=calls_total+1 WHERE id=?",
+                (key_id,)
+            )
+
+        return {
+            "key_prefix":   prefix,
+            "name":         name,
+            "quota_day":    quota_day,
+            "calls_today":  calls_today + 1,
+            "calls_total":  calls_total + 1,
+        }
+
+    def get_usage(self, key_prefix: str) -> Optional[Dict[str, Any]]:
+        """Retorna stats de uso de uma chave pelo prefixo (sem expor hash)."""
+        sql = """
+        SELECT key_prefix, name, quota_day, calls_today, calls_total, active, created_at
+        FROM api_keys WHERE key_prefix = ?
+        """
+        with self._lock:
+            row = self._conn.execute(sql, (key_prefix,)).fetchone()
+        if not row:
+            return None
+        return {
+            "key_prefix":  row[0],
+            "name":        row[1],
+            "quota_day":   row[2],
+            "calls_today": row[3],
+            "calls_total": row[4],
+            "active":      bool(row[5]),
+            "created_at":  row[6],
+        }
+
+    def list_keys(self) -> List[Dict[str, Any]]:
+        """Lista todas as chaves (sem expor hash completo)."""
+        sql = """
+        SELECT key_prefix, name, quota_day, calls_today, calls_total, active, created_at
+        FROM api_keys ORDER BY created_at DESC
+        """
+        with self._lock:
+            rows = self._conn.execute(sql).fetchall()
+        return [
+            {
+                "key_prefix":  r[0],
+                "name":        r[1],
+                "quota_day":   r[2],
+                "calls_today": r[3],
+                "calls_total": r[4],
+                "active":      bool(r[5]),
+                "created_at":  r[6],
+            }
+            for r in rows
+        ]
+
+    def revoke_key(self, key_prefix: str) -> bool:
+        """
+        Revoga uma API key pelo prefixo.
+
+        Retorna True se a chave existia e foi revogada.
+        """
+        with self._lock:
+            cur = self._conn.execute(
+                "UPDATE api_keys SET active=0 WHERE key_prefix=? AND active=1",
+                (key_prefix,)
+            )
+        return cur.rowcount > 0
 
     # ─── Close ───────────────────────────────────────────────────────────────
 

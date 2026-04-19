@@ -1,0 +1,298 @@
+# UCO-Sensor GitHub Actions — PR Quality Gate
+# ============================================
+# Copie este arquivo para .github/workflows/uco-sensor.yml no seu repositório.
+#
+# O que faz:
+#   1. Detecta arquivos modificados no PR (Python, JS, TS, Java, Go)
+#   2. Chama POST /analyze-pr no UCO-Sensor
+#   3. Faz upload do relatório SARIF para o GitHub Code Scanning
+#   4. Comenta no PR com o score UCO e os arquivos afetados
+#   5. Falha o CI se encontrar status CRITICAL
+#   6. Publica UCO_ANOMALY_DETECTED no APEX (se UCO_APEX_URL configurado)
+#
+# Pré-requisitos:
+#   - UCO_SENSOR_URL (var ou secret): URL da instância UCO (ou deixe vazio = local)
+#   - UCO_API_KEY    (secret, opcional): API key se auth habilitado
+#   - UCO_APEX_URL   (secret, opcional): URL APEX para publicar anomalias CRITICAL
+#
+# Opções de deploy:
+#   A) Self-hosted local (default): o job sobe o servidor inline — zero infra
+#   B) SaaS/on-prem: defina UCO_SENSOR_URL como secret/variable
+
+name: UCO-Sensor Quality Gate
+
+on:
+  pull_request:
+    branches: ["main", "master", "develop"]
+    paths:
+      - "**/*.py"
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.jsx"
+      - "**/*.tsx"
+      - "**/*.java"
+      - "**/*.go"
+
+permissions:
+  contents: read
+  security-events: write   # upload SARIF → GitHub Code Scanning
+  pull-requests: write      # comentar no PR
+
+jobs:
+  uco-quality-gate:
+    name: UCO-Sensor Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────────────
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ── 2. Setup Python ──────────────────────────────────────────────────
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      # ── 3. Instalar dependências UCO-Sensor ──────────────────────────────
+      - name: Install UCO-Sensor dependencies
+        run: |
+          pip install --quiet \
+            numpy scipy PyWavelets \
+            tree-sitter tree-sitter-python \
+            tree-sitter-javascript tree-sitter-typescript \
+            tree-sitter-java tree-sitter-go
+
+      # ── 4. Clonar UCO-Sensor (se não estiver no mesmo repo) ─────────────
+      # Se o UCO-Sensor JÁ estiver no seu repo (monorepo), remova este step
+      # e ajuste UCO_ROOT abaixo para o caminho correto.
+      - name: Clone UCO-Sensor
+        run: |
+          git clone --depth=1 --quiet \
+            https://github.com/thiagofernandes1987-create/APEX.git \
+            /tmp/uco_source || true
+          # Fallback: tenta localizar no workspace
+          if [ -d "$GITHUB_WORKSPACE/algorithms/uco-sensor" ]; then
+            echo "UCO_ROOT=$GITHUB_WORKSPACE/algorithms/uco-sensor" >> $GITHUB_ENV
+          elif [ -d "/tmp/uco_source/algorithms/uco-sensor" ]; then
+            echo "UCO_ROOT=/tmp/uco_source/algorithms/uco-sensor" >> $GITHUB_ENV
+          else
+            echo "ERRO: UCO-Sensor não encontrado. Ajuste UCO_ROOT manualmente."
+            exit 1
+          fi
+
+      # ── 5. Subir servidor UCO-Sensor (modo local) ────────────────────────
+      - name: Start UCO-Sensor server
+        if: ${{ !vars.UCO_SENSOR_URL }}
+        run: |
+          UCO_SENSOR_DIR="${UCO_ROOT}/sensor-api"
+          UCO_ENGINE_DIR="${UCO_ROOT}/frequency-engine"
+
+          export PYTHONPATH="${UCO_SENSOR_DIR}:${UCO_ENGINE_DIR}:${PYTHONPATH}"
+
+          # Iniciar servidor em background via CLI
+          cd "${UCO_SENSOR_DIR}"
+          python cli.py serve \
+            --host 127.0.0.1 \
+            --port 8765 \
+            --db /tmp/uco_ci.db \
+            > /tmp/uco_server.log 2>&1 &
+
+          echo "UCO_SERVER_PID=$!" >> $GITHUB_ENV
+          echo "UCO_SENSOR_URL=http://127.0.0.1:8765" >> $GITHUB_ENV
+
+          # Aguarda servidor ficar healthy (máx 15s)
+          for i in $(seq 1 15); do
+            if curl -sf http://127.0.0.1:8765/health > /dev/null 2>&1; then
+              echo "UCO-Sensor online após ${i}s"
+              break
+            fi
+            sleep 1
+          done
+
+      # ── 6. Detectar arquivos modificados ─────────────────────────────────
+      - name: Detect changed files
+        id: changed
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          git diff --name-only "$BASE" "$HEAD" \
+            | grep -E '\.(py|js|ts|jsx|tsx|java|go)$' \
+            > /tmp/changed_files.txt || true
+          FILES_COUNT=$(wc -l < /tmp/changed_files.txt)
+          echo "files_count=${FILES_COUNT}" >> $GITHUB_OUTPUT
+          echo "Changed files (${FILES_COUNT}):"
+          cat /tmp/changed_files.txt
+
+      # ── 7. Analisar PR via UCO-Sensor ────────────────────────────────────
+      - name: Analyze PR files
+        if: steps.changed.outputs.files_count > 0
+        env:
+          UCO_API_KEY:    ${{ secrets.UCO_API_KEY }}
+          UCO_SENSOR_URL: ${{ env.UCO_SENSOR_URL || vars.UCO_SENSOR_URL }}
+          UCO_APEX_URL:   ${{ secrets.UCO_APEX_URL }}
+        run: |
+          python - <<'PYEOF'
+          import json, os, pathlib, urllib.request, urllib.error, sys
+
+          url     = os.environ["UCO_SENSOR_URL"].rstrip("/")
+          api_key = os.environ.get("UCO_API_KEY", "")
+          pr_num  = int("${{ github.event.pull_request.number }}")
+          repo    = "${{ github.repository }}"
+          commit  = "${{ github.event.pull_request.head.sha }}"
+          base_ref= "${{ github.event.pull_request.base.ref }}"
+
+          # Ler arquivos modificados
+          files = []
+          with open("/tmp/changed_files.txt") as f:
+              for line in f:
+                  path = line.strip()
+                  if not path:
+                      continue
+                  try:
+                      content = pathlib.Path(path).read_text(encoding="utf-8", errors="replace")
+                      files.append({"path": path, "content": content, "commit_hash": commit})
+                  except Exception as e:
+                      print(f"  Skip {path}: {e}", file=sys.stderr)
+
+          if not files:
+              print("Nenhum arquivo para analisar.")
+              sys.exit(0)
+
+          payload = json.dumps({
+              "files":       files,
+              "pr_number":   pr_num,
+              "repo":        repo,
+              "base_branch": base_ref,
+          }).encode()
+
+          headers = {"Content-Type": "application/json"}
+          if api_key:
+              headers["X-UCO-API-Key"] = api_key
+
+          try:
+              req = urllib.request.Request(f"{url}/analyze-pr", data=payload, headers=headers)
+              with urllib.request.urlopen(req, timeout=120) as resp:
+                  result = json.loads(resp.read())
+          except urllib.error.HTTPError as e:
+              result = json.loads(e.read())
+              print(f"UCO-Sensor erro {e.code}: {result}", file=sys.stderr)
+              sys.exit(1)
+
+          data      = result.get("data", {})
+          sarif     = data.get("sarif", {})
+          pr_status = data.get("pr_status", "STABLE")
+          critical  = data.get("critical_files", 0)
+          warnings  = data.get("warning_files",  0)
+
+          # Salvar SARIF + sumário
+          with open("/tmp/uco-results.sarif", "w") as f:
+              json.dump(sarif, f, indent=2)
+          with open("/tmp/uco-summary.json", "w") as f:
+              json.dump(data, f, indent=2, default=str)
+
+          # Output legível
+          print("=" * 50)
+          print("UCO-Sensor PR Analysis")
+          print("=" * 50)
+          print(f"Arquivos analisados : {data.get('files_analyzed', 0)}")
+          print(f"PR status           : {pr_status}")
+          print(f"CRITICAL            : {critical}")
+          print(f"WARNING             : {warnings}")
+          for fr in data.get("file_results", []):
+              icon = "🔴" if fr["status"] == "CRITICAL" else "🟡" if fr["status"] == "WARNING" else "🟢"
+              m = fr.get("metrics", {})
+              print(f"  {icon} [{fr['status']:8}] {fr['path']}  "
+                    f"H={m.get('hamiltonian',0):.2f}  CC={m.get('cyclomatic_complexity',1)}")
+
+          # Gate de CI
+          if pr_status == "CRITICAL":
+              print("\n❌ UCO-Sensor: PR bloqueado — arquivos com status CRITICAL detectados.")
+              print("   Corrija os problemas de qualidade antes de fazer merge.")
+              sys.exit(1)
+          elif pr_status == "WARNING":
+              print("\n⚠️  UCO-Sensor: PR contém arquivos WARNING. Revise antes do merge.")
+          else:
+              print("\n✅ UCO-Sensor: Todos os arquivos dentro dos limites de qualidade.")
+          PYEOF
+
+      # ── 8. Upload SARIF para GitHub Code Scanning ────────────────────────
+      - name: Upload SARIF
+        if: always() && steps.changed.outputs.files_count > 0
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: /tmp/uco-results.sarif
+          category:   uco-sensor
+
+      # ── 9. Comentar no PR com UCO Score ──────────────────────────────────
+      - name: Comment on PR
+        if: always() && steps.changed.outputs.files_count > 0
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let summary;
+            try {
+              summary = JSON.parse(fs.readFileSync('/tmp/uco-summary.json', 'utf8'));
+            } catch (e) {
+              console.log('Sem sumário UCO para comentar');
+              return;
+            }
+
+            const statusEmoji = { CRITICAL: '🔴', WARNING: '🟡', STABLE: '🟢' };
+            const emoji = statusEmoji[summary.pr_status] || '⚪';
+
+            let body = `## ${emoji} UCO-Sensor Quality Report\n\n`;
+            body += `| Métrica | Valor |\n|---------|-------|\n`;
+            body += `| Status  | **${summary.pr_status}** |\n`;
+            body += `| Arquivos analisados | ${summary.files_analyzed || 0} |\n`;
+            body += `| Arquivos CRITICAL   | ${summary.critical_files || 0} |\n`;
+            body += `| Arquivos WARNING    | ${summary.warning_files  || 0} |\n\n`;
+
+            if (summary.file_results && summary.file_results.length > 0) {
+              body += `<details><summary>Detalhes por arquivo</summary>\n\n`;
+              body += `| Arquivo | Linguagem | Status | H | CC | ILR |\n`;
+              body += `|---------|-----------|--------|---|----|----|​\n`;
+              for (const f of summary.file_results) {
+                const m  = f.metrics || {};
+                const ic = f.status === 'CRITICAL' ? '🔴' : f.status === 'WARNING' ? '🟡' : '🟢';
+                body += `| \`${f.path}\` | ${f.language || '?'} | ${ic} ${f.status} | `;
+                body += `${(m.hamiltonian||0).toFixed(2)} | ${m.cyclomatic_complexity||1} | `;
+                body += `${(m.infinite_loop_risk||0).toFixed(2)} |\n`;
+              }
+              body += `\n</details>\n\n`;
+            }
+
+            body += `> 🔬 Powered by **[UCO-Sensor](https://github.com/thiagofernandes1987-create/APEX/tree/main/algorithms/uco-sensor)** — spectral code quality analysis  \n`;
+            body += `> Integrado ao **APEX EventBus** — anomalias CRITICAL publicam \`UCO_ANOMALY_DETECTED\``;
+
+            // Deletar comentário anterior do UCO se existir
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            for (const c of comments) {
+              if (c.body.includes('UCO-Sensor Quality Report')) {
+                await github.rest.issues.deleteComment({
+                  comment_id: c.id,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                });
+              }
+            }
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body,
+            });
+
+      # ── 10. Parar servidor (cleanup) ─────────────────────────────────────
+      - name: Stop UCO-Sensor server
+        if: always() && env.UCO_SERVER_PID != ''
+        run: kill $UCO_SERVER_PID 2>/dev/null || true

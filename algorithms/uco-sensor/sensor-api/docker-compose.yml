@@ -1,0 +1,93 @@
+version: "3.9"
+
+# UCO-Sensor — docker-compose
+# ============================
+# Modo dev  : docker compose up
+# Modo prod : UCO_AUTH=1 UCO_ADMIN_KEY=<key> docker compose -f docker-compose.yml up -d
+# Com APEX  : APEX_WEBHOOK_URL=https://apex.example.com docker compose up
+
+services:
+
+  # ── UCO-Sensor API ────────────────────────────────────────────────────────
+  uco-sensor:
+    build:
+      context:    .
+      dockerfile: Dockerfile
+      target:     runtime
+    image: uco-sensor:0.3.0
+    container_name: uco-sensor
+    restart: unless-stopped
+
+    ports:
+      - "${UCO_PORT:-8080}:8080"
+
+    volumes:
+      # Banco SQLite persistente entre restarts
+      - uco_data:/data
+
+    environment:
+      UCO_PORT:      "${UCO_PORT:-8080}"
+      UCO_DB_PATH:   /data/uco_sensor.db
+      UCO_AUTH:      "${UCO_AUTH:-0}"
+      UCO_ADMIN_KEY: "${UCO_ADMIN_KEY:-}"
+      UCO_VERBOSE:   "${UCO_VERBOSE:-0}"
+      # APEX integration (opcional)
+      APEX_WEBHOOK_URL: "${APEX_WEBHOOK_URL:-}"
+      APEX_API_KEY:     "${APEX_API_KEY:-}"
+
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8080/health', timeout=5)"]
+      interval:     30s
+      timeout:      10s
+      start_period: 10s
+      retries:      3
+
+    labels:
+      - "com.apex.service=uco-sensor"
+      - "com.apex.version=0.3.0"
+
+  # ── UCO-Sensor Cron (scan diário) ─────────────────────────────────────────
+  # Opcional: ativa se UCO_CRON=1
+  uco-cron:
+    build:
+      context:    .
+      dockerfile: Dockerfile
+      target:     runtime
+    image: uco-sensor:0.3.0
+    container_name: uco-sensor-cron
+    restart: unless-stopped
+    profiles:
+      - cron
+    depends_on:
+      uco-sensor:
+        condition: service_healthy
+
+    environment:
+      UCO_SENSOR_URL: "http://uco-sensor:8080"
+      UCO_API_KEY:    "${UCO_API_KEY:-}"
+      UCO_SCAN_PATH:  "${UCO_SCAN_PATH:-/workspace}"
+      UCO_CRON_EXPR:  "${UCO_CRON_EXPR:-0 2 * * *}"
+
+    volumes:
+      - "${UCO_SCAN_PATH:-/tmp}:/workspace:ro"
+
+    command: >
+      sh -c "
+        while true; do
+          echo '[cron] Iniciando scan diário...' &&
+          python /app/cli.py scan /workspace
+            --format json
+            --output /data/last_scan.json &&
+          echo '[cron] Scan completo.' ;
+          sleep 86400
+        done
+      "
+
+volumes:
+  uco_data:
+    driver: local
+
+networks:
+  default:
+    name: uco-network

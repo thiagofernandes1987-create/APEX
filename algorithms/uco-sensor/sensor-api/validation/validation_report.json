@@ -1,0 +1,248 @@
+{
+  "timestamp": 1776552025.8671145,
+  "passed": 48,
+  "failed": 0,
+  "total": 48,
+  "checks": [
+    {
+      "name": "Python simples: MetricVector retornado",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Python simples: language=python",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Python simples: status n\u00e3o \u00e9 None",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Python simples: STABLE ou WARNING (n\u00e3o CRITICAL)",
+      "passed": true,
+      "detail": "status=STABLE, H=0.56"
+    },
+    {
+      "name": "Python simples: LOC plaus\u00edvel (>5)",
+      "passed": true,
+      "detail": "LOC=22"
+    },
+    {
+      "name": "Python simples: CC >= 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Python complexo: MetricVector retornado",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Python complexo: language=python",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Python complexo: CC > simples",
+      "passed": true,
+      "detail": "CC_complex=10 vs CC_simple=1"
+    },
+    {
+      "name": "Python complexo: H > simples",
+      "passed": true,
+      "detail": "H_complex=2.631 vs H_simple=0.561"
+    },
+    {
+      "name": "Python complexo: n_functions >= 8",
+      "passed": true,
+      "detail": "n_functions=11"
+    },
+    {
+      "name": "JS: MetricVector retornado",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JS: language detectada",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JS: CC >= 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JS: H >= 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JS: ILR = 0 (sem loops infinitos)",
+      "passed": true,
+      "detail": "ILR=0.0"
+    },
+    {
+      "name": "Go: MetricVector retornado",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Go: language=go",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Go: CC >= 1",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Go: H >= 0",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Arquivo vazio: sem crash",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Arquivo vazio: H=0 ou baixo",
+      "passed": true,
+      "detail": "H=0.01"
+    },
+    {
+      "name": "S\u00f3 coment\u00e1rios: sem crash",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Unicode: sem crash",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Unicode: language=python",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "JS como .ts: sem crash",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Go goroutine select: ILR=0 (escape leg\u00edtimo)",
+      "passed": true,
+      "detail": "ILR=0.0 (for{select{} deve ser ILR=0)"
+    },
+    {
+      "name": "RepoScanner: sem crash",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "RepoScanner: encontrou 4 arquivos",
+      "passed": true,
+      "detail": "files_found=4"
+    },
+    {
+      "name": "RepoScanner: escaneou todos",
+      "passed": true,
+      "detail": "files_scanned=4"
+    },
+    {
+      "name": "RepoScanner: ignorou __pycache__",
+      "passed": true,
+      "detail": "scanned=4 found=4"
+    },
+    {
+      "name": "RepoScanner: UCO score [0,100]",
+      "passed": true,
+      "detail": "score=100.0"
+    },
+    {
+      "name": "RepoScanner: by_language n\u00e3o vazio",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "RepoScanner: total_loc > 0",
+      "passed": true,
+      "detail": "total_loc=228"
+    },
+    {
+      "name": "RepoScanner: scan < 10s",
+      "passed": true,
+      "detail": "elapsed=0.06s"
+    },
+    {
+      "name": "RepoScanner: summary() n\u00e3o quebra",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "RepoScanner: to_dict() serializ\u00e1vel",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "RepoScanner: H\u0304 plaus\u00edvel (0\u2013500)",
+      "passed": true,
+      "detail": "avg_H=1.10"
+    },
+    {
+      "name": "RepoScanner: CC\u0304 plaus\u00edvel (1\u2013100)",
+      "passed": true,
+      "detail": "avg_CC=6.50"
+    },
+    {
+      "name": "Performance Python simples: < 2000ms",
+      "passed": true,
+      "detail": "0.7ms"
+    },
+    {
+      "name": "Performance Python complexo: < 2000ms",
+      "passed": true,
+      "detail": "2.0ms"
+    },
+    {
+      "name": "Performance JavaScript: < 2000ms",
+      "passed": true,
+      "detail": "1.2ms"
+    },
+    {
+      "name": "Performance Go: < 2000ms",
+      "passed": true,
+      "detail": "0.7ms"
+    },
+    {
+      "name": "ILR > 0 para while True sem escape",
+      "passed": true,
+      "detail": "ILR=1.0"
+    },
+    {
+      "name": "dead > 0 para c\u00f3digo ap\u00f3s return",
+      "passed": true,
+      "detail": "dead=1"
+    },
+    {
+      "name": "dups > 0 para linhas repetidas",
+      "passed": true,
+      "detail": "dups=1"
+    },
+    {
+      "name": "M\u00e9tricas determin\u00edsticas (H)",
+      "passed": true,
+      "detail": "H1=0.561 H2=0.561"
+    },
+    {
+      "name": "M\u00e9tricas determin\u00edsticas (CC)",
+      "passed": true,
+      "detail": ""
+    }
+  ]
+}

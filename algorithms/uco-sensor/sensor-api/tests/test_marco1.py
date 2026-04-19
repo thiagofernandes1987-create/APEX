@@ -9,9 +9,14 @@ Testa os três componentes do Marco 1:
   T05  Performance — < 500ms para análise completa
 """
 import sys, os, time, json, threading, urllib.request, urllib.error
+from pathlib import Path
 
-sys.path.insert(0, "/home/claude/uco-sensor-api")
-sys.path.insert(0, "/home/claude/uco-frequency-engine")
+# ── Path setup (portável Windows/Linux/Mac) ────────────────────────────────────
+_SENSOR = Path(__file__).resolve().parent.parent
+_ENGINE = _SENSOR.parent / "frequency-engine"
+for _p in (str(_ENGINE), str(_SENSOR)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 from sensor_core.uco_bridge import UCOBridge
 from sensor_storage.snapshot_store import SnapshotStore
@@ -356,8 +361,7 @@ def test_api_server_lifecycle():
     import http.client
 
     # Importar e iniciar o servidor em thread separada
-    sys.path.insert(0, "/home/claude/uco-sensor-api/api")
-    from server import UCOSensorHandler, _store as api_store, SensorConfig
+    from api.server import UCOSensorHandler, SensorConfig
     from http.server import HTTPServer
 
     test_port = 18080
@@ -408,8 +412,6 @@ R.run("T05a — servidor HTTP: /health + /analyze + /modules", test_api_server_l
 
 # ─── T06 Gap A — f_w (Weighted Mean Frequency) ──────────────────────────────────
 
-import sys as _sys
-_sys.path.insert(0, "/home/claude/uco-frequency-engine")
 from receptor.spectral_analyzer import SpectralAnalyzer
 from transmitter.metric_signal_builder import MetricSignalBuilder
 from synthetic.generators import generate_tech_debt as _gen_td, generate_ai_code_bomb as _gen_bomb
@@ -600,4 +602,5 @@ R.run("T08c — POST /repair com código vazio retorna 400", test_repair_empty_c
 print(f"\n{'═'*65}")
 print("  Marco 1 — Test Suite")
 print(f"{'═'*65}")
-R.summary()
+ok = R.summary()
+sys.exit(0 if ok else 1)

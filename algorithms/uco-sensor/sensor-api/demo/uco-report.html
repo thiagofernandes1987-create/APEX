@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>UCO-Sensor Demo</title>
+  <style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f1117;color:#e2e8f0;line-height:1.5}
+a{color:#7dd3fc;text-decoration:none}
+.container{max-width:1200px;margin:0 auto;padding:24px}
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;background:#1e2130;border-radius:12px;margin-bottom:24px;
+  border:1px solid #2d3352}
+.header h1{font-size:1.4rem;font-weight:700;color:#f1f5f9}
+.header .meta{font-size:.8rem;color:#64748b}
+.badge-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+/* Score gauge */
+.gauge-card{background:#1e2130;border:1px solid #2d3352;border-radius:12px;
+  padding:20px;text-align:center;min-width:160px}
+.gauge-score{font-size:3rem;font-weight:800;line-height:1}
+.gauge-label{font-size:.75rem;color:#64748b;margin-top:4px;text-transform:uppercase;letter-spacing:.05em}
+/* Stats grid */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.stat{background:#1e2130;border:1px solid #2d3352;border-radius:10px;padding:14px 16px}
+.stat .val{font-size:1.6rem;font-weight:700}
+.stat .lbl{font-size:.75rem;color:#64748b;margin-top:2px}
+/* Status colors */
+.critical{color:#f87171}.warning{color:#fbbf24}.stable{color:#4ade80}.info{color:#94a3b8}
+.bg-critical{background:#450a0a;border-color:#7f1d1d}
+.bg-warning{background:#451a03;border-color:#78350f}
+.bg-stable{background:#052e16;border-color:#14532d}
+/* Tables */
+.section{background:#1e2130;border:1px solid #2d3352;border-radius:12px;
+  padding:20px;margin-bottom:20px}
+.section h2{font-size:1rem;font-weight:600;margin-bottom:14px;color:#cbd5e1;
+  padding-bottom:8px;border-bottom:1px solid #2d3352}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{text-align:left;padding:8px 12px;color:#64748b;font-weight:500;
+  border-bottom:1px solid #2d3352;white-space:nowrap}
+td{padding:8px 12px;border-bottom:1px solid #1a1f35;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#252a3f}
+.tag{display:inline-block;padding:1px 8px;border-radius:4px;font-size:.72rem;
+  font-weight:600;letter-spacing:.03em}
+.tag-critical{background:#7f1d1d;color:#fca5a5}
+.tag-warning{background:#78350f;color:#fde68a}
+.tag-stable{background:#14532d;color:#86efac}
+.tag-info{background:#1e3a5f;color:#93c5fd}
+.tag-lang{background:#1e293b;color:#94a3b8;font-weight:400}
+/* Bars */
+.bar{height:6px;border-radius:3px;display:inline-block;vertical-align:middle}
+/* Lang chart */
+.lang-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.lang-name{width:80px;font-size:.8rem;color:#94a3b8}
+.lang-bar{height:8px;border-radius:4px;background:#3b82f6}
+.lang-count{font-size:.8rem;color:#64748b;min-width:30px}
+/* Sparkline placeholder */
+.spark{display:inline-block;width:80px;height:20px;vertical-align:middle}
+/* Apex event box */
+.apex-box{background:#0c1a2e;border:1px solid #1d4ed8;border-radius:8px;
+  padding:12px 16px;margin-bottom:20px;font-size:.8rem;color:#93c5fd}
+.apex-box strong{color:#60a5fa}
+/* Footer */
+.footer{text-align:center;padding:20px;font-size:.75rem;color:#475569}
+/* Sortable */
+th.sort{cursor:pointer;user-select:none}
+th.sort:hover{color:#e2e8f0}
+th.sort::after{content:' ⇅';opacity:.4}
+/* Responsive */
+@media(max-width:640px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+  table{font-size:.78rem}
+  td,th{padding:6px 8px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <h1>🔬 UCO-Sensor Demo</h1>
+      <div class="meta">
+        Repositório: demo.user_service &nbsp;|&nbsp;
+        Commit: <code>c019</code> &nbsp;|&nbsp;
+        Modo: Snapshot &nbsp;|&nbsp; Gerado: 2026-04-19 05:50
+      </div>
+    </div>
+    <div class="gauge-card">
+      <svg width="120" height="80" viewBox="0 0 120 80">
+  <path d="M12,70 A48,48 0 0 1 108,70" fill="none" stroke="#2d3352" stroke-width="8"/>
+  <path d="M12,70 A48,48 0 0 1 107.98,68.78" fill="none"
+        stroke="#4c1" stroke-width="8" stroke-linecap="round"/>
+  <text x="60" y="66" text-anchor="middle" fill="#4c1"
+        font-size="22" font-weight="800" font-family="system-ui">99</text>
+  <text x="60" y="84" text-anchor="middle" fill="#64748b"
+        font-size="9" font-family="system-ui">/ 100</text>
+</svg>
+      <div class="gauge-label">UCO Score</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  
+<div class="stats">
+  <div class="stat bg-stable">
+    <div class="val stable">STABLE</div>
+    <div class="lbl">Status do Projeto</div>
+  </div>
+  <div class="stat"><div class="val" style="color:#4c1">99/100</div><div class="lbl">UCO Score</div></div>
+  <div class="stat"><div class="val">20</div><div class="lbl">Arquivos</div></div>
+  <div class="stat"><div class="val">371</div><div class="lbl">Linhas de Código</div></div>
+  <div class="stat"><div class="val critical">0</div><div class="lbl">CRITICAL</div></div>
+  <div class="stat"><div class="val warning">0</div><div class="lbl">WARNING</div></div>
+  <div class="stat"><div class="val stable">20</div><div class="lbl">STABLE</div></div>
+  <div class="stat"><div class="val">0.81</div><div class="lbl">H̄ Médio</div></div>
+</div>
+
+  <!-- Linguagens (se disponível) -->
+  <section class="section"><h2>Linguagens</h2><div class="lang-row">
+  <span class="lang-name">python</span>
+  <span class="lang-bar" style="width:200px"></span>
+  <span class="lang-count">1</span>
+</div></section>
+
+  <!-- Tabela principal -->
+  
+<section class="section">
+  <h2>Arquivos analisados (20 de 20)</h2>
+  <table>
+    <thead><tr>
+      <th class="sort">Arquivo</th>
+      <th class="sort">Status</th>
+      <th class="sort">Linguagem</th>
+      <th class="sort" data-num="1">H (Hamiltoniano)</th>
+      <th class="sort" data-num="1">CC</th>
+      <th class="sort" data-num="1">ILR</th>
+      <th class="sort" data-num="1">Dead</th>
+      <th class="sort" data-num="1">Dups</th>
+    </tr></thead>
+    <tbody><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c000">demo.user_service@c000</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="0.0290"><span class="bar" style="width:0px;background:#4ade80"></span> <span style="font-size:.8rem">0.03</span></td>
+  <td data-val="1">1</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="0">0</td>
+  <td data-val="0">0</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c001">demo.user_service@c001</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="0.0491"><span class="bar" style="width:1px;background:#4ade80"></span> <span style="font-size:.8rem">0.05</span></td>
+  <td data-val="1">1</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="0">0</td>
+  <td data-val="0">0</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c002">demo.user_service@c002</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="0.0310"><span class="bar" style="width:0px;background:#4ade80"></span> <span style="font-size:.8rem">0.03</span></td>
+  <td data-val="1">1</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="0">0</td>
+  <td data-val="0">0</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c003">demo.user_service@c003</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="0.0500"><span class="bar" style="width:1px;background:#4ade80"></span> <span style="font-size:.8rem">0.05</span></td>
+  <td data-val="1">1</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="0">0</td>
+  <td data-val="0">0</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c004">demo.user_service@c004</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="0.0617"><span class="bar" style="width:1px;background:#4ade80"></span> <span style="font-size:.8rem">0.06</span></td>
+  <td data-val="1">1</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="0">0</td>
+  <td data-val="0">0</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c005">demo.user_service@c005</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="0.2270"><span class="bar" style="width:7px;background:#4ade80"></span> <span style="font-size:.8rem">0.23</span></td>
+  <td data-val="2">2</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="0">0</td>
+  <td data-val="1">1</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c006">demo.user_service@c006</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="0.7585"><span class="bar" style="width:24px;background:#4ade80"></span> <span style="font-size:.8rem">0.76</span></td>
+  <td data-val="4">4</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="0">0</td>
+  <td data-val="2">2</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c007">demo.user_service@c007</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.5602"><span class="bar" style="width:50px;background:#4ade80"></span> <span style="font-size:.8rem">1.56</span></td>
+  <td data-val="6">6</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="0">0</td>
+  <td data-val="3">3</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c008">demo.user_service@c008</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.0236"><span class="bar" style="width:32px;background:#4ade80"></span> <span style="font-size:.8rem">1.02</span></td>
+  <td data-val="6">6</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c009">demo.user_service@c009</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.1269"><span class="bar" style="width:36px;background:#4ade80"></span> <span style="font-size:.8rem">1.13</span></td>
+  <td data-val="7">7</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c010">demo.user_service@c010</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.1269"><span class="bar" style="width:36px;background:#4ade80"></span> <span style="font-size:.8rem">1.13</span></td>
+  <td data-val="7">7</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c011">demo.user_service@c011</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.1269"><span class="bar" style="width:36px;background:#4ade80"></span> <span style="font-size:.8rem">1.13</span></td>
+  <td data-val="7">7</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c012">demo.user_service@c012</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.1269"><span class="bar" style="width:36px;background:#4ade80"></span> <span style="font-size:.8rem">1.13</span></td>
+  <td data-val="7">7</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c013">demo.user_service@c013</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.1269"><span class="bar" style="width:36px;background:#4ade80"></span> <span style="font-size:.8rem">1.13</span></td>
+  <td data-val="7">7</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c014">demo.user_service@c014</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.1269"><span class="bar" style="width:36px;background:#4ade80"></span> <span style="font-size:.8rem">1.13</span></td>
+  <td data-val="7">7</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c015">demo.user_service@c015</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.1269"><span class="bar" style="width:36px;background:#4ade80"></span> <span style="font-size:.8rem">1.13</span></td>
+  <td data-val="7">7</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c016">demo.user_service@c016</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.1269"><span class="bar" style="width:36px;background:#4ade80"></span> <span style="font-size:.8rem">1.13</span></td>
+  <td data-val="7">7</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c017">demo.user_service@c017</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.1269"><span class="bar" style="width:36px;background:#4ade80"></span> <span style="font-size:.8rem">1.13</span></td>
+  <td data-val="7">7</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c018">demo.user_service@c018</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.1269"><span class="bar" style="width:36px;background:#4ade80"></span> <span style="font-size:.8rem">1.13</span></td>
+  <td data-val="7">7</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr><tr>
+  <td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"
+      title="demo.user_service@c019">demo.user_service@c019</td>
+  <td><span class="tag tag-stable">STABLE</span></td>
+  <td><span class="tag tag-lang">python</span></td>
+  <td data-val="1.1269"><span class="bar" style="width:36px;background:#4ade80"></span> <span style="font-size:.8rem">1.13</span></td>
+  <td data-val="7">7</td>
+  <td data-val="0.0000">🟢 0.00</td>
+  <td data-val="1">1</td>
+  <td data-val="6">6</td>
+</tr></tbody>
+  </table>
+</section>
+
+  <!-- Extra (padrões, etc.) -->
+  
+
+  <!-- Footer APEX -->
+  <div class="apex-box">
+    <strong>APEX Integration:</strong> Arquivos com severity CRITICAL publicam
+    <code>UCO_ANOMALY_DETECTED</code> no APEX EventBus.
+    Hurst &gt; 0.8 indica padrão <strong>irreversível sem intervenção ativa</strong>.
+    Self-cure &lt; 5% = refactoring obrigatório.
+  </div>
+
+  <div class="footer">
+    Powered by <strong>UCO-Sensor v0.3.0</strong> — Spectral Code Quality Analysis |
+    <a href="https://github.com/thiagofernandes1987-create/APEX/tree/main/algorithms/uco-sensor">GitHub</a>
+  </div>
+
+</div>
+<script>
+function sortTable(tbl, col, numeric) {
+  const tbody = tbl.querySelector('tbody');
+  const rows  = Array.from(tbody.querySelectorAll('tr'));
+  const dir   = tbl.dataset.sortCol == col && tbl.dataset.sortDir == '1' ? -1 : 1;
+  tbl.dataset.sortCol = col; tbl.dataset.sortDir = dir;
+  rows.sort((a,b) => {
+    const av = a.cells[col]?.dataset.val ?? a.cells[col]?.textContent ?? '';
+    const bv = b.cells[col]?.dataset.val ?? b.cells[col]?.textContent ?? '';
+    if (numeric) return dir * (parseFloat(av)||0 - (parseFloat(bv)||0));
+    return dir * av.localeCompare(bv);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+}
+document.querySelectorAll('th.sort').forEach(th => {
+  th.addEventListener('click', () => {
+    const tbl = th.closest('table');
+    const col = th.cellIndex;
+    sortTable(tbl, col, th.dataset.num === '1');
+  });
+});
+</script>
+</body>
+</html>

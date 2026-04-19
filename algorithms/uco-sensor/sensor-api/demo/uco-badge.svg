@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="125" height="20" role="img" aria-label="UCO Score: 72/100 — WARNING">
+  <title>UCO Score: 72/100 — WARNING</title>
+  <defs>
+    <linearGradient id="uco_s" x2="0" y2="100%">
+      <stop offset="0"   stop-color="#bbb" stop-opacity=".1"/>
+      <stop offset="1"   stop-opacity=".1"/>
+    </linearGradient>
+    <clipPath id="uco_r">
+      <rect width="125" height="20" rx="3" fill="#fff"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#uco_r)">
+    <rect width="73" height="20" fill="#555"/>
+    <rect x="73" width="52" height="20" fill="#97ca00"/>
+    <rect width="125" height="20" fill="url(#uco_s)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="110">
+    <text x="360" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="630">UCO Score</text>
+    <text x="360" y="140" transform="scale(.1)" textLength="630">UCO Score</text>
+    <text x="990" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="420">72/100</text>
+    <text x="990" y="140" transform="scale(.1)" textLength="420">72/100</text>
+  </g>
+</svg>
