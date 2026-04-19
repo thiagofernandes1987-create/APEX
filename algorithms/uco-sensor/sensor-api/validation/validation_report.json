@@ -1,8 +1,8 @@
 {
-  "timestamp": 1776552025.8671145,
-  "passed": 48,
+  "timestamp": 1776611016.135634,
+  "passed": 73,
   "failed": 0,
-  "total": 48,
+  "total": 73,
   "checks": [
     {
       "name": "Python simples: MetricVector retornado",
@@ -15,17 +15,17 @@
       "detail": ""
     },
     {
-      "name": "Python simples: status n\u00e3o \u00e9 None",
+      "name": "Python simples: status não é None",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "Python simples: STABLE ou WARNING (n\u00e3o CRITICAL)",
+      "name": "Python simples: STABLE ou WARNING (não CRITICAL)",
       "passed": true,
       "detail": "status=STABLE, H=0.56"
     },
     {
-      "name": "Python simples: LOC plaus\u00edvel (>5)",
+      "name": "Python simples: LOC plausível (>5)",
       "passed": true,
       "detail": "LOC=22"
     },
@@ -115,7 +115,7 @@
       "detail": "H=0.01"
     },
     {
-      "name": "S\u00f3 coment\u00e1rios: sem crash",
+      "name": "Só comentários: sem crash",
       "passed": true,
       "detail": ""
     },
@@ -135,7 +135,7 @@
       "detail": ""
     },
     {
-      "name": "Go goroutine select: ILR=0 (escape leg\u00edtimo)",
+      "name": "Go goroutine select: ILR=0 (escape legítimo)",
       "passed": true,
       "detail": "ILR=0.0 (for{select{} deve ser ILR=0)"
     },
@@ -165,7 +165,7 @@
       "detail": "score=100.0"
     },
     {
-      "name": "RepoScanner: by_language n\u00e3o vazio",
+      "name": "RepoScanner: by_language não vazio",
       "passed": true,
       "detail": ""
     },
@@ -180,22 +180,22 @@
       "detail": "elapsed=0.06s"
     },
     {
-      "name": "RepoScanner: summary() n\u00e3o quebra",
+      "name": "RepoScanner: summary() não quebra",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "RepoScanner: to_dict() serializ\u00e1vel",
+      "name": "RepoScanner: to_dict() serializável",
       "passed": true,
       "detail": ""
     },
     {
-      "name": "RepoScanner: H\u0304 plaus\u00edvel (0\u2013500)",
+      "name": "RepoScanner: H̄ plausível (0–500)",
       "passed": true,
       "detail": "avg_H=1.10"
     },
     {
-      "name": "RepoScanner: CC\u0304 plaus\u00edvel (1\u2013100)",
+      "name": "RepoScanner: CC̄ plausível (1–100)",
       "passed": true,
       "detail": "avg_CC=6.50"
     },
@@ -225,7 +225,7 @@
       "detail": "ILR=1.0"
     },
     {
-      "name": "dead > 0 para c\u00f3digo ap\u00f3s return",
+      "name": "dead > 0 para código após return",
       "passed": true,
       "detail": "dead=1"
     },
@@ -235,14 +235,307 @@
       "detail": "dups=1"
     },
     {
-      "name": "M\u00e9tricas determin\u00edsticas (H)",
+      "name": "Métricas determinísticas (H)",
       "passed": true,
       "detail": "H1=0.561 H2=0.561"
     },
     {
-      "name": "M\u00e9tricas determin\u00edsticas (CC)",
+      "name": "Métricas determinísticas (CC)",
       "passed": true,
       "detail": ""
+    },
+    {
+      "name": "benchmark requests: UCO Score em [0,100]",
+      "passed": true,
+      "detail": "score=78.4"
+    },
+    {
+      "name": "benchmark requests: scan < 60s",
+      "passed": true,
+      "detail": "0.1s"
+    },
+    {
+      "name": "benchmark requests: status valido (STABLE/WARNING/CRITICAL)",
+      "passed": true,
+      "detail": "status=WARNING, crit%=22.2%"
+    },
+    {
+      "name": "benchmark fastapi: UCO Score em [0,100]",
+      "passed": true,
+      "detail": "score=96.8"
+    },
+    {
+      "name": "benchmark fastapi: scan < 60s",
+      "passed": true,
+      "detail": "0.9s"
+    },
+    {
+      "name": "benchmark fastapi: status valido (STABLE/WARNING/CRITICAL)",
+      "passed": true,
+      "detail": "status=STABLE, crit%=5.3%"
+    },
+    {
+      "name": "benchmark scrapy: UCO Score em [0,100]",
+      "passed": true,
+      "detail": "score=88.3"
+    },
+    {
+      "name": "benchmark scrapy: scan < 60s",
+      "passed": true,
+      "detail": "0.9s"
+    },
+    {
+      "name": "benchmark scrapy: status valido (STABLE/WARNING/CRITICAL)",
+      "passed": true,
+      "detail": "status=STABLE, crit%=18.3%"
+    },
+    {
+      "name": "benchmark celery: UCO Score em [0,100]",
+      "passed": true,
+      "detail": "score=81.3"
+    },
+    {
+      "name": "benchmark celery: scan < 60s",
+      "passed": true,
+      "detail": "1.4s"
+    },
+    {
+      "name": "benchmark celery: status valido (STABLE/WARNING/CRITICAL)",
+      "passed": true,
+      "detail": "status=WARNING, crit%=26.1%"
+    },
+    {
+      "name": "benchmark django: UCO Score em [0,100]",
+      "passed": true,
+      "detail": "score=88.7"
+    },
+    {
+      "name": "benchmark django: scan < 60s",
+      "passed": true,
+      "detail": "2.3s"
+    },
+    {
+      "name": "benchmark django: status valido (STABLE/WARNING/CRITICAL)",
+      "passed": true,
+      "detail": "status=STABLE, crit%=6.3%"
+    },
+    {
+      "name": "benchmark matplotlib: UCO Score em [0,100]",
+      "passed": true,
+      "detail": "score=37.9"
+    },
+    {
+      "name": "benchmark matplotlib: scan < 60s",
+      "passed": true,
+      "detail": "4.1s"
+    },
+    {
+      "name": "benchmark matplotlib: status valido (STABLE/WARNING/CRITICAL)",
+      "passed": true,
+      "detail": "status=CRITICAL, crit%=35.3%"
+    },
+    {
+      "name": "benchmark pandas: UCO Score em [0,100]",
+      "passed": true,
+      "detail": "score=18.1"
+    },
+    {
+      "name": "benchmark pandas: scan < 60s",
+      "passed": true,
+      "detail": "3.5s"
+    },
+    {
+      "name": "benchmark pandas: status valido (STABLE/WARNING/CRITICAL)",
+      "passed": true,
+      "detail": "status=CRITICAL, crit%=48.0%"
+    },
+    {
+      "name": "calibracao: fastapi (codebase limpo) score >= 80",
+      "passed": true,
+      "detail": "score=96.8"
+    },
+    {
+      "name": "calibracao: django (codebase maduro) score >= 70",
+      "passed": true,
+      "detail": "score=88.7"
+    },
+    {
+      "name": "calibracao: pandas (alta complexidade) score < 50",
+      "passed": true,
+      "detail": "score=18.1"
+    },
+    {
+      "name": "calibracao: matplotlib (alta complexidade) score < 60",
+      "passed": true,
+      "detail": "score=37.9"
     }
-  ]
+  ],
+  "date": "2026-04-19",
+  "benchmark_real_repos": {
+    "date": "2026-04-19",
+    "repos_tested": 7,
+    "total_scan_time_s": 13.2,
+    "score_formula": "proportional: critical_ratio*50 + warning_ratio*20 + H_penalty + CC_penalty + bugs_penalty + ILR_flag",
+    "status_thresholds": {
+      "CRITICAL": "score<50 OR crit%>40",
+      "WARNING": "score<70 OR crit%>20",
+      "STABLE": "otherwise"
+    },
+    "results": [
+      {
+        "repo": "requests",
+        "uco_score": 78.4,
+        "status": "WARNING",
+        "files_scanned": 27,
+        "files_found": 27,
+        "critical": 6,
+        "critical_pct": 22.2,
+        "warning": 3,
+        "warning_pct": 11.1,
+        "stable": 18,
+        "stable_pct": 66.7,
+        "avg_H": 1.598,
+        "avg_CC": 23.22,
+        "avg_bugs": 0.9926,
+        "avg_ILR": 0.0741,
+        "avg_DI": 0.603,
+        "total_LOC": 5143,
+        "dead_code": 0,
+        "duplicates": 340,
+        "elapsed_s": 0.1
+      },
+      {
+        "repo": "fastapi",
+        "uco_score": 96.8,
+        "status": "STABLE",
+        "files_scanned": 300,
+        "files_found": 300,
+        "critical": 16,
+        "critical_pct": 5.3,
+        "warning": 8,
+        "warning_pct": 2.7,
+        "stable": 276,
+        "stable_pct": 92.0,
+        "avg_H": 0.651,
+        "avg_CC": 5.03,
+        "avg_bugs": 0.3345,
+        "avg_ILR": 0.0033,
+        "avg_DI": 0.52,
+        "total_LOC": 23688,
+        "dead_code": 0,
+        "duplicates": 3177,
+        "elapsed_s": 0.9
+      },
+      {
+        "repo": "scrapy",
+        "uco_score": 88.3,
+        "status": "STABLE",
+        "files_scanned": 278,
+        "files_found": 278,
+        "critical": 51,
+        "critical_pct": 18.3,
+        "warning": 35,
+        "warning_pct": 12.6,
+        "stable": 192,
+        "stable_pct": 69.1,
+        "avg_H": 1.681,
+        "avg_CC": 11.06,
+        "avg_bugs": 0.6354,
+        "avg_ILR": 0.021,
+        "avg_DI": 0.724,
+        "total_LOC": 28002,
+        "dead_code": 0,
+        "duplicates": 2178,
+        "elapsed_s": 0.9
+      },
+      {
+        "repo": "celery",
+        "uco_score": 81.3,
+        "status": "WARNING",
+        "files_scanned": 261,
+        "files_found": 261,
+        "critical": 68,
+        "critical_pct": 26.1,
+        "warning": 32,
+        "warning_pct": 12.3,
+        "stable": 161,
+        "stable_pct": 61.7,
+        "avg_H": 1.938,
+        "avg_CC": 18.16,
+        "avg_bugs": 1.006,
+        "avg_ILR": 0.0405,
+        "avg_DI": 0.602,
+        "total_LOC": 38874,
+        "dead_code": 0,
+        "duplicates": 2458,
+        "elapsed_s": 1.4
+      },
+      {
+        "repo": "django",
+        "uco_score": 88.7,
+        "status": "STABLE",
+        "files_scanned": 300,
+        "files_found": 300,
+        "critical": 19,
+        "critical_pct": 6.3,
+        "warning": 17,
+        "warning_pct": 5.7,
+        "stable": 264,
+        "stable_pct": 88.0,
+        "avg_H": 2.139,
+        "avg_CC": 4.57,
+        "avg_bugs": 2.4062,
+        "avg_ILR": 0.0,
+        "avg_DI": 0.384,
+        "total_LOC": 71776,
+        "dead_code": 0,
+        "duplicates": 10618,
+        "elapsed_s": 2.3
+      },
+      {
+        "repo": "matplotlib",
+        "uco_score": 37.9,
+        "status": "CRITICAL",
+        "files_scanned": 300,
+        "files_found": 300,
+        "critical": 106,
+        "critical_pct": 35.3,
+        "warning": 26,
+        "warning_pct": 8.7,
+        "stable": 168,
+        "stable_pct": 56.0,
+        "avg_H": 4.854,
+        "avg_CC": 42.61,
+        "avg_bugs": 4.0183,
+        "avg_ILR": 0.0373,
+        "avg_DI": 0.581,
+        "total_LOC": 149813,
+        "dead_code": 0,
+        "duplicates": 14304,
+        "elapsed_s": 4.1
+      },
+      {
+        "repo": "pandas",
+        "uco_score": 18.1,
+        "status": "CRITICAL",
+        "files_scanned": 300,
+        "files_found": 300,
+        "critical": 144,
+        "critical_pct": 48.0,
+        "warning": 26,
+        "warning_pct": 8.7,
+        "stable": 130,
+        "stable_pct": 43.3,
+        "avg_H": 4.21,
+        "avg_CC": 59.49,
+        "avg_bugs": 3.3272,
+        "avg_ILR": 0.0159,
+        "avg_DI": 0.596,
+        "total_LOC": 181757,
+        "dead_code": 0,
+        "duplicates": 23753,
+        "elapsed_s": 3.5
+      }
+    ]
+  }
 }

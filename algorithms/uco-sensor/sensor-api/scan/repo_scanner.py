@@ -101,12 +101,14 @@ class ScanResult:
     # Todos os resultados individuais
     file_results:   List[FileScanResult] = field(default_factory=list)
 
-    # Status geral do projeto
+    # Status geral do projeto — baseado no UCO Score e ratio de arquivos críticos
     @property
     def project_status(self) -> str:
-        if self.critical_count > 0:
+        n = max(1, self.files_scanned)
+        critical_ratio = self.critical_count / n
+        if self.uco_score < 50 or critical_ratio > 0.40:
             return "CRITICAL"
-        if self.warning_count > 0:
+        if self.uco_score < 70 or critical_ratio > 0.20:
             return "WARNING"
         return "STABLE"
 
@@ -481,13 +483,24 @@ class RepoScanner:
         total_dead = sum(fr.metrics.get("syntactic_dead_code", 0) for fr in scanned)
         total_dups = sum(fr.metrics.get("duplicate_block_count", 0) for fr in scanned)
 
-        # Score UCO [0–100]
-        # Penalidades: CRITICAL=-5pts, WARNING=-1pt, H>10=-2pts/unidade, ILR>0.5=-10pts
+        # Score UCO [0–100] — fórmula proporcional (escala com qualquer tamanho de repo)
+        # Penalidades baseadas em RATIO para não colapsar em repos grandes:
+        #   critical_ratio * 50  → até -50 se 100% crítico
+        #   warning_ratio  * 20  → até -20 se 100% em aviso
+        #   avg_H > 10           → -2 pts por unidade acima do threshold
+        #   avg_CC > 15          → -1 pt por unidade acima do threshold
+        #   avg_bugs > 1.0       → -5 pts por unidade acima de 1.0
+        #   ILR > 0.5            → -10 pts fixo
+        n_total        = max(1, len(scanned))
+        critical_ratio = len(critical) / n_total
+        warning_ratio  = len(warning)  / n_total
+
         score = 100.0
-        score -= len(critical) * 5.0
-        score -= len(warning)  * 1.0
-        score -= max(0, avg_h - 10.0) * 2.0
-        score -= max(0, avg_cc - 10.0) * 1.0
+        score -= critical_ratio * 50.0
+        score -= warning_ratio  * 20.0
+        score -= max(0, avg_h   - 10.0) * 2.0
+        score -= max(0, avg_cc  - 15.0) * 1.0
+        score -= max(0, avg_bug -  1.0) * 5.0
         score -= (avg_ilr > 0.5) * 10.0
         score  = max(0.0, min(100.0, score))
 
