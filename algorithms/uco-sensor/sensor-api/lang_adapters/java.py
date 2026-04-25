@@ -92,7 +92,14 @@ class _JavaCollector:
         if ntype in _JAVA_CC_NODES:
             # Filtrar binary_expression: só && e ||
             if ntype == "binary_expression":
-                op = self._child_text(node, "&&", "||")
+                # BUG-01: use child_by_field_name("operator") for robustness across
+                # tree-sitter grammar versions; fall back to text scan if unavailable.
+                op = ""
+                op_node = node.child_by_field_name("operator") if hasattr(node, "child_by_field_name") else None
+                if op_node and op_node.text:
+                    op = op_node.text.decode("utf-8", "replace")
+                if not op:
+                    op = self._child_text(node, "&&", "||")
                 if op in ("&&", "||"):
                     self.cc += 1
                     self._op(op)
@@ -131,7 +138,9 @@ class _JavaCollector:
                 if child.type == "parenthesized_expression":
                     if child.text:
                         cond_text = child.text.decode("utf-8", "replace").strip()
-            if cond_text in ("(true)", "(Boolean.TRUE)", "(1)"):
+            # BUG-17: normalize whitespace and case before comparison
+            cond_norm = cond_text.replace(" ", "").replace("\t", "").lower()
+            if cond_norm in ("(true)", "(boolean.true)", "(1)"):
                 self.n_while_true += 1
                 body = next((c for c in node.children if c.type == "block"), None)
                 has_unconditional = body and any(

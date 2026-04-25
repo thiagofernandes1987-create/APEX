@@ -180,10 +180,23 @@ class _JSMetricsCollector:
 
         # ── ILR: while(true) / for(;;) sem break direto ──────────────────
         if ntype in ("while_statement", "do_statement"):
-            cond = self._get_child_text(node, "condition")
-            if cond in ("true", "(true)", "1", "(1)"):
+            # BUG-02: tree-sitter JS stores condition via field name, not child type.
+            # _get_child(node, "condition") was searching by child.type=="condition"
+            # which never matches — ILR was always 0 for all JS files.
+            cond_node = None
+            if hasattr(node, "child_by_field_name"):
+                cond_node = node.child_by_field_name("condition")
+            if cond_node is None:
+                # fallback: look for parenthesized_expression directly
+                cond_node = self._get_child(node, "parenthesized_expression")
+            cond = ""
+            if cond_node and cond_node.text:
+                cond = cond_node.text.decode("utf-8", errors="replace").strip()
+            # strip outer parens and whitespace for normalization
+            cond_inner = cond.strip("() \t")
+            if cond_inner in ("true", "1"):
                 self.n_while_true += 1
-                body = self._get_child(node, "body", "statement_block")
+                body = self._get_child(node, "statement_block")
                 has_unconditional = body and any(
                     c.type in _TERMINAL_NODES
                     for c in (body.children if body else [])

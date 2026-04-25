@@ -18,6 +18,7 @@ Uso:
 """
 from __future__ import annotations
 import sys
+import threading
 from pathlib import Path
 from typing import Optional, Dict, List
 
@@ -175,11 +176,18 @@ class UCOBridgeRegistry:
 # ─── Singleton global ─────────────────────────────────────────────────────────
 
 _REGISTRY: Optional[UCOBridgeRegistry] = None
+_REGISTRY_LOCK = threading.Lock()
 
 
 def get_registry() -> UCOBridgeRegistry:
-    """Retorna a instância global do UCOBridgeRegistry (singleton lazy)."""
+    """Retorna a instância global do UCOBridgeRegistry (singleton thread-safe).
+
+    BUG-03: double-checked locking prevents race condition when multiple
+    threads call get_registry() simultaneously during server startup.
+    """
     global _REGISTRY
-    if _REGISTRY is None:
-        _REGISTRY = UCOBridgeRegistry()
+    if _REGISTRY is None:          # fast path (no lock when already initialized)
+        with _REGISTRY_LOCK:
+            if _REGISTRY is None:  # inner check: re-test after acquiring lock
+                _REGISTRY = UCOBridgeRegistry()
     return _REGISTRY

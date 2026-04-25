@@ -215,23 +215,50 @@ class SnapshotStore:
     """
 
     def __init__(self, db_path: str = ":memory:"):
-        self.db_path = db_path
-        self._lock   = threading.Lock()
-        # Em-memória: check_same_thread=False para acessos de múltiplas threads
-        self._conn   = sqlite3.connect(
-            db_path,
-            check_same_thread=False,
-            isolation_level=None,   # autocommit
-        )
-        self._conn.execute("PRAGMA journal_mode=WAL")
-        self._conn.execute("PRAGMA synchronous=NORMAL")
+        self.db_path   = db_path
+        self._lock     = threading.Lock()
+        self._in_memory = (db_path == ":memory:")
+
+        if self._in_memory:
+            # ":memory:" databases MUST share a single connection — per-thread
+            # connections would create independent empty databases.
+            # Protect with Lock throughout (already done for every operation).
+            self._shared_conn = sqlite3.connect(
+                db_path,
+                check_same_thread=False,
+                isolation_level=None,  # autocommit
+            )
+            self._shared_conn.execute("PRAGMA journal_mode=WAL")
+            self._shared_conn.execute("PRAGMA synchronous=NORMAL")
+        else:
+            # BUG-04: file databases use per-thread connections via threading.local()
+            # to avoid cross-thread SQLite cursor issues even with WAL + Lock.
+            self._local = threading.local()
+
         self._init_schema()
+
+    def _get_conn(self) -> sqlite3.Connection:
+        """Returns the appropriate SQLite connection for the current thread."""
+        if self._in_memory:
+            return self._shared_conn
+        # Per-thread connection: created on first access for this thread
+        conn = getattr(self._local, "conn", None)
+        if conn is None:
+            conn = sqlite3.connect(
+                self.db_path,
+                check_same_thread=True,   # safe: this conn is thread-local
+                isolation_level=None,     # autocommit
+            )
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA synchronous=NORMAL")
+            self._local.conn = conn
+        return conn
 
     # ─── Schema ──────────────────────────────────────────────────────────────
 
     def _init_schema(self) -> None:
         with self._lock:
-            cur = self._conn.cursor()
+            cur = self._get_conn().cursor()
             cur.execute(_DDL_SNAPSHOTS)
             cur.execute(_DDL_ANOMALIES)
             cur.execute(_DDL_API_KEYS)
@@ -284,7 +311,7 @@ class SnapshotStore:
             int(getattr(mv, "max_function_cc", 0)),
         )
         with self._lock:
-            self._conn.execute(sql, values)
+            self._get_conn().execute(sql, values)
 
     # ─── Get history ─────────────────────────────────────────────────────────
 
@@ -320,7 +347,7 @@ class SnapshotStore:
         LIMIT ?
         """
         with self._lock:
-            rows = self._conn.execute(sql, (module_id, window)).fetchall()
+            rows = self._get_conn().execute(sql, (module_id, window)).fetchall()
 
         # Reverter para ordem ASC (mais antigo primeiro — correto para FrequencyEngine)
         rows = list(reversed(rows))
@@ -454,7 +481,7 @@ class SnapshotStore:
             json.dumps(data, default=str),
         )
         with self._lock:
-            self._conn.execute(sql, values)
+            self._get_conn().execute(sql, values)
 
     def get_anomalies(
         self,
@@ -484,7 +511,7 @@ class SnapshotStore:
             LIMIT ?
             """
             with self._lock:
-                rows = self._conn.execute(sql, (module_id, limit)).fetchall()
+                rows = self._get_conn().execute(sql, (module_id, limit)).fetchall()
         else:
             sql = """
             SELECT event_id, module_id, error_type, severity, confidence,
@@ -494,7 +521,7 @@ class SnapshotStore:
             LIMIT ?
             """
             with self._lock:
-                rows = self._conn.execute(sql, (limit,)).fetchall()
+                rows = self._get_conn().execute(sql, (limit,)).fetchall()
 
         return [
             {
@@ -518,7 +545,7 @@ class SnapshotStore:
         """Retorna lista de todos os module_id conhecidos."""
         sql = "SELECT DISTINCT module_id FROM snapshots ORDER BY module_id"
         with self._lock:
-            rows = self._conn.execute(sql).fetchall()
+            rows = self._get_conn().execute(sql).fetchall()
         return [r[0] for r in rows]
 
     # ─── Auth + Billing ──────────────────────────────────────────────────────
@@ -553,7 +580,7 @@ class SnapshotStore:
         """
         now = time.time()
         with self._lock:
-            self._conn.execute(sql, (prefix, key_hash, name, quota_day, now, now))
+            self._get_conn().execute(sql, (prefix, key_hash, name, quota_day, now, now))
         return plain
 
     def validate_key(self, plain_key: str) -> Optional[Dict[str, Any]]:
@@ -575,7 +602,7 @@ class SnapshotStore:
         WHERE key_hash = ?
         """
         with self._lock:
-            row = self._conn.execute(sql, (key_hash,)).fetchone()
+            row = self._get_conn().execute(sql, (key_hash,)).fetchone()
             if not row:
                 return None
 
@@ -589,7 +616,7 @@ class SnapshotStore:
             today_start = now - (now % 86400)
             if last_reset < today_start:
                 calls_today = 0
-                self._conn.execute(
+                self._get_conn().execute(
                     "UPDATE api_keys SET calls_today=0, last_reset=? WHERE id=?",
                     (now, key_id)
                 )
@@ -599,7 +626,7 @@ class SnapshotStore:
                 return None   # quota excedida
 
             # Incrementar
-            self._conn.execute(
+            self._get_conn().execute(
                 "UPDATE api_keys SET calls_today=calls_today+1, calls_total=calls_total+1 WHERE id=?",
                 (key_id,)
             )
@@ -619,7 +646,7 @@ class SnapshotStore:
         FROM api_keys WHERE key_prefix = ?
         """
         with self._lock:
-            row = self._conn.execute(sql, (key_prefix,)).fetchone()
+            row = self._get_conn().execute(sql, (key_prefix,)).fetchone()
         if not row:
             return None
         return {
@@ -639,7 +666,7 @@ class SnapshotStore:
         FROM api_keys ORDER BY created_at DESC
         """
         with self._lock:
-            rows = self._conn.execute(sql).fetchall()
+            rows = self._get_conn().execute(sql).fetchall()
         return [
             {
                 "key_prefix":  r[0],
@@ -660,7 +687,7 @@ class SnapshotStore:
         Retorna True se a chave existia e foi revogada.
         """
         with self._lock:
-            cur = self._conn.execute(
+            cur = self._get_conn().execute(
                 "UPDATE api_keys SET active=0 WHERE key_prefix=? AND active=1",
                 (key_prefix,)
             )
@@ -669,9 +696,16 @@ class SnapshotStore:
     # ─── Close ───────────────────────────────────────────────────────────────
 
     def close(self) -> None:
-        """Fecha conexão SQLite explicitamente."""
+        """Fecha conexão(ões) SQLite explicitamente."""
         with self._lock:
-            self._conn.close()
+            if self._in_memory:
+                self._shared_conn.close()
+            else:
+                # Close the connection for the current thread if it exists
+                conn = getattr(self._local, "conn", None)
+                if conn is not None:
+                    conn.close()
+                    self._local.conn = None
 
     def __del__(self):
         try:

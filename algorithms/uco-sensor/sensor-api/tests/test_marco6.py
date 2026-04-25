@@ -242,17 +242,23 @@ def test_T6A_cli_has_main():
 
 def test_T6B_cli_help_exit_0():
     """cli.py --help retorna exit 0 e imprime subcomandos."""
+    # encoding='utf-8' + errors='replace' prevents Windows CP1252 UnicodeDecodeError
+    # when cli.py outputs UTF-8 characters (em dashes, box-drawing, etc.)
     result = subprocess.run(
         [sys.executable, str(_SENSOR / "cli.py"), "--help"],
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         timeout=15,
         cwd=str(_SENSOR),
     )
     assert result.returncode == 0, \
         f"cli.py --help retornou exit {result.returncode}:\n{result.stderr}"
 
-    output = result.stdout + result.stderr
+    stdout  = result.stdout  or ""
+    stderr  = result.stderr  or ""
+    output  = stdout + stderr
     # Deve listar pelo menos um dos subcomandos principais
     has_subcommand = any(cmd in output for cmd in ["scan", "serve", "analyze", "key"])
     assert has_subcommand, f"Nenhum subcomando encontrado em --help:\n{output[:500]}"

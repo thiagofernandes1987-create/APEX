@@ -134,13 +134,39 @@ class _GoCollector:
             self.visit(child)
 
     def _has_channel_escape(self, node) -> bool:
-        """Busca recursiva: retorna True se há select/return/break em qualquer
-        nível abaixo de `node` (cobre tree-sitter >= 0.22 onde block pode ter
-        nós intermediários dependendo da versão da grammar)."""
+        """Busca recursiva: retorna True se há escape legítimo de goroutine loop.
+
+        Detecta:
+          - select{} / select com cases de channel
+          - return / break incondicional
+          - BUG-16: <-channel receive (any unary <- expression)
+          - BUG-16: time.After(), time.NewTimer(), ctx.Done(), context.Done()
+        """
         if node is None:
             return False
         if node.type in ("select_statement", "return_statement", "break_statement"):
             return True
+
+        # BUG-16: channel receive operator (<-expr) guarantees eventual unblocking
+        if node.type == "unary_expression":
+            for child in node.children:
+                if child.text == b"<-":
+                    return True
+
+        # BUG-16: explicit timer/context patterns used as goroutine cancellation
+        if node.type == "call_expression":
+            fn_node = (node.child_by_field_name("function")
+                       if hasattr(node, "child_by_field_name") else None)
+            if fn_node is None:
+                # fallback: first child is often the function
+                fn_node = node.children[0] if node.children else None
+            fn_text = fn_node.text.decode("utf-8", "replace") if (fn_node and fn_node.text) else ""
+            _TIMER_PATTERNS = ("time.After", "time.NewTimer", "ctx.Done",
+                                "context.Done", "context.WithTimeout",
+                                "context.WithDeadline", "context.WithCancel")
+            if any(p in fn_text for p in _TIMER_PATTERNS):
+                return True
+
         for child in node.children:
             if self._has_channel_escape(child):
                 return True

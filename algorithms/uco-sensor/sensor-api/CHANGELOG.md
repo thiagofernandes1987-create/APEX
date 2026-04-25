@@ -5,6 +5,76 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [0.6.0] — 2026-04-25 — M0 FOUNDATION (Bug Fix Sprint)
+
+### Corrigido — M0.1 Métricas (9 bugs de medição)
+
+**BUG-06 — Halstead overcounting ~10× (uco_bridge.py)**
+- `visit_Attribute`: removido `self._operand(node.attr)` — `.attr` é operador, não operando. Reduz n2/N2 em ~50%.
+
+**BUG-07 — CC undercount ~33% — padrões Python ausentes (uco_bridge.py)**
+- Adicionados visitors: `visit_AsyncFor`, `visit_AsyncWith`, `visit_Lambda`, `visit_match_case`
+
+**BUG-15 — CC comprehension inflation (uco_bridge.py)**
+- `visit_comprehension`: `+= 1` → `+= len(node.ifs)`. `[x for x in lst]` → +0 CC.
+
+**BUG-08 — ILR: recursão sem base case não detectada (uco_bridge.py)**
+- `_check_recursion_risk()`: detecta `def f(n): return f(n-1)` sem `if` guard → ILR+1.
+
+**BUG-13 — Dead code: constant-False branches ignoradas (uco_bridge.py)**
+- `_scan_dead_code()`: detecta `if False:`, `while False:`, `if True: ... else: ...`
+
+**BUG-01 — Java CC logical expressions (java.py)**
+- `child_by_field_name("operator")` substitui text-scan para `&&`/`||`.
+
+**BUG-17 — Java while(true) case-sensitive (java.py)**
+- Normaliza whitespace+lowercase: `while ( true )` e `while(TRUE)` detectados.
+
+**BUG-02 — JS ILR sempre zero (javascript.py)**
+- `child_by_field_name("condition")` substitui `_get_child(node, "condition")` (type ≠ field).
+
+**BUG-16 — Go ILR false negative: time.After/ctx.Done (golang.py)**
+- `_has_channel_escape()`: detecta `<-` operator, `time.After`, `time.NewTimer`, `ctx.Done`.
+
+### Corrigido — M0.2 Estabilidade e Segurança
+
+**BUG-03 — Registry race condition (registry.py)**
+- Double-checked locking em `get_registry()`.
+
+**BUG-04 — SQLite thread-unsafe (snapshot_store.py)**
+- Per-thread connections via `threading.local()` + `_get_conn()` helper.
+
+**BUG-05 — Auth desabilitada por padrão (server.py)**
+- `auth_enabled` lê `UCO_AUTH_ENABLED` env var. Produção requer `UCO_AUTH_ENABLED=1`.
+
+**SEC-04 — APEX webhook recursão ilimitada (server.py)**
+- Depth guard via `threading.local()`, limite de 3 níveis.
+
+**T77 — Body size sem limite (server.py)**
+- Rejeita `Content-Length > 10MB` com HTTP 413.
+
+### Adicionado
+
+- `tests/test_calibration.py` — 25 testes: CC, ILR, DeadCode, Halstead, radon comparison, performance
+- `pyproject.toml`: versão 0.3.0 → 0.6.0; `python_files` inclui `test_calibration.py`
+
+### Resultados de Validação
+
+| Conjunto | Resultado |
+|----------|-----------|
+| M1 Core (27) | ✅ 27/27 |
+| M2 Lang+Auth (48) | ✅ 48/48 |
+| M3 APEX (16) | ✅ 16/16 |
+| M4 Reports (35) | ✅ 35/35 |
+| M5 Diff+Bench (15) | ✅ 15/15 |
+| M6 Docker (14) | ✅ 14/14 |
+| M7 Templates (16) | ✅ 16/16 |
+| M8 Demo (10) | ✅ 10/10 |
+| **Calibration (25)** | **✅ 24/25 (1 skip)** |
+| **Total** | **205/206** |
+
+---
+
 ## [0.5.0] — 2026-04-19 — ENTREGAR
 
 ### Adicionado — Marco 8 (M8 — ENTREGAR)

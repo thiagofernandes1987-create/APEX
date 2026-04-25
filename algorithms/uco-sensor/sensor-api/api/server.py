@@ -35,6 +35,7 @@ import os
 import sys
 import json
 import time
+import threading
 import traceback
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
@@ -70,15 +71,23 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "0.3.0"
-    auth_enabled: bool  = False   # False → sem verificação de key (dev mode)
+    version:      str   = "0.6.0"
+    # BUG-05: auth was False by default — any unprotected server was open.
+    # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
+    auth_enabled: bool  = False   # overridden by env var below
     admin_key:    str   = ""      # key do admin para /auth/keys
     apex_enabled: bool  = False   # True → integração APEX ativa
 
 
 # ─── Singletons globais ──────────────────────────────────────────────────────
 
-_config    = SensorConfig()
+_config = SensorConfig(
+    # BUG-05: resolve from env at startup so production containers are
+    # always authenticated even if the code default wasn't changed.
+    auth_enabled=os.environ.get("UCO_AUTH_ENABLED", "0").lower() in ("1", "true", "yes"),
+    admin_key=os.environ.get("UCO_ADMIN_KEY", ""),
+    apex_enabled=os.environ.get("UCO_APEX_ENABLED", "0").lower() in ("1", "true", "yes"),
+)
 _store     = SnapshotStore(_config.db_path)
 _bridge    = UCOBridge(mode=_config.engine_mode)
 _engine    = FrequencyEngine(verbose=_config.verbose)
@@ -666,13 +675,33 @@ def handle_apex_ping() -> Tuple[int, Dict]:
     }
 
 
+# SEC-04: thread-local depth counter prevents recursive APEX event processing.
+_MAX_WEBHOOK_DEPTH = 3
+_webhook_depth     = threading.local()
+
+
 def handle_apex_webhook(data: Dict) -> Tuple[int, Dict]:
     """
     POST /apex/webhook — recebe eventos do APEX (handshake bidirecional).
 
     Permite que o APEX envie comandos de volta para o UCO Sensor,
     como "rescan module X" ou "lower severity gate".
+
+    SEC-04: profundidade máxima de processamento aninhado = 3.
+    Um APEX_FIX_REQUEST que dispara outro webhook não pode ultrapassar esse limite.
     """
+    # SEC-04: guard against deeply-nested event chains
+    depth = getattr(_webhook_depth, "n", 0)
+    if depth >= _MAX_WEBHOOK_DEPTH:
+        return 400, {"error": f"APEX webhook depth limit ({_MAX_WEBHOOK_DEPTH}) exceeded"}
+    _webhook_depth.n = depth + 1
+    try:
+        return _handle_apex_webhook_impl(data)
+    finally:
+        _webhook_depth.n = depth
+
+
+def _handle_apex_webhook_impl(data: Dict) -> Tuple[int, Dict]:
     event_type = data.get("event", "")
     payload    = data.get("payload", {})
 
@@ -1104,8 +1133,13 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
         path   = parsed.path
         params = parse_qs(parsed.query)
 
-        # Ler body
+        # Ler body — T77: limite de 10 MB para evitar DoS
+        _MAX_BODY = 10 * 1024 * 1024  # 10 MB
         length = int(self.headers.get("Content-Length", 0))
+        if length > _MAX_BODY:
+            return self._send_json(413, {
+                "error": f"Request body too large: {length} bytes (max {_MAX_BODY})"
+            })
         raw    = self.rfile.read(length) if length > 0 else b"{}"
         try:
             body = json.loads(raw)

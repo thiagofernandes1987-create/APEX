@@ -136,6 +136,10 @@ class _UCOVisitor(ast.NodeVisitor):
         self._fn_stack.pop()
         self.cc_total = old_cc + fn_cc - 1   # acumula no módulo
 
+        # BUG-08: Detect unbounded recursion risk (direct self-call without
+        # a guaranteed base case at the function's top level).
+        self._check_recursion_risk(node, name)
+
     visit_AsyncFunctionDef = visit_FunctionDef
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
@@ -174,8 +178,35 @@ class _UCOVisitor(ast.NodeVisitor):
             self._op("or")
         self.generic_visit(node)
 
-    def visit_comprehension(self, node: ast.comprehension) -> None:
+    def visit_AsyncFor(self, node: ast.AsyncFor) -> None:
+        """BUG-07: async for loops were missing from CC counting."""
         self.cc_total += 1
+        self._op("for")
+        self.generic_visit(node)
+
+    def visit_AsyncWith(self, node: ast.AsyncWith) -> None:
+        """BUG-07: async with blocks were missing from CC counting."""
+        self.cc_total += 1
+        self._op("with")
+        self.generic_visit(node)
+
+    def visit_Lambda(self, node: ast.Lambda) -> None:
+        """BUG-07: lambda expressions were missing from CC counting."""
+        self.cc_total += 1
+        self._op("lambda")
+        self.generic_visit(node)
+
+    def visit_match_case(self, node: ast.match_case) -> None:
+        """BUG-07: Python 3.10+ match/case arms were missing from CC counting."""
+        self.cc_total += 1
+        self.generic_visit(node)
+
+    def visit_comprehension(self, node: ast.comprehension) -> None:
+        # BUG-15: each comprehension adds +1 per if-clause, not +1 flat.
+        # [x for x in lst]           → 0 (no ifs)
+        # [x for x in lst if p(x)]   → +1
+        # [x for x in lst if a if b] → +2
+        self.cc_total += len(node.ifs)
         self.generic_visit(node)
 
     # ── Dead code ────────────────────────────────────────────────────────────
@@ -190,8 +221,12 @@ class _UCOVisitor(ast.NodeVisitor):
 
     def _scan_dead_code(self, stmts: List[ast.stmt]) -> None:
         """
-        Detecta código após return/raise/break/continue — nunca executado.
-        Também detecta variáveis atribuídas mas nunca referenciadas (basic).
+        Detecta código nunca executado — dead code sintático.
+
+        Padrões detectados:
+          1. Statements após return/raise/break/continue no mesmo bloco
+          2. BUG-13: `if False:` / `while False:` — corpo jamais executado
+          3. `if True:` else-branch — else jamais executado
         """
         terminal_found = False
         for stmt in stmts:
@@ -206,11 +241,32 @@ class _UCOVisitor(ast.NodeVisitor):
             if isinstance(stmt, (ast.Return, ast.Raise, ast.Break, ast.Continue)):
                 terminal_found = True
 
-            # Recursão para blocos internos
+            # BUG-13: Constant-condition dead code branches
             if isinstance(stmt, ast.If):
-                self._scan_dead_code(stmt.body)
-                self._scan_dead_code(stmt.orelse)
-            elif isinstance(stmt, (ast.For, ast.While)):
+                is_const = isinstance(stmt.test, ast.Constant)
+                if is_const and not stmt.test.value:
+                    # if False: — entire if-body is dead code
+                    self._count_dead_block(stmt.body)
+                    # else-branch (if any) IS live — scan normally
+                    self._scan_dead_code(stmt.orelse)
+                elif is_const and stmt.test.value:
+                    # if True: — else-branch is dead code
+                    self._scan_dead_code(stmt.body)
+                    self._count_dead_block(stmt.orelse)
+                else:
+                    self._scan_dead_code(stmt.body)
+                    self._scan_dead_code(stmt.orelse)
+
+            elif isinstance(stmt, ast.While):
+                is_const = isinstance(stmt.test, ast.Constant)
+                if is_const and not stmt.test.value:
+                    # while False: — body never runs
+                    self._count_dead_block(stmt.body)
+                else:
+                    self._scan_dead_code(stmt.body)
+                    self._scan_dead_code(stmt.orelse)
+
+            elif isinstance(stmt, ast.For):
                 self._scan_dead_code(stmt.body)
                 self._scan_dead_code(stmt.orelse)
             elif isinstance(stmt, ast.Try):
@@ -223,6 +279,13 @@ class _UCOVisitor(ast.NodeVisitor):
                 self._scan_dead_code(stmt.body)
             elif isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 self._scan_dead_code(stmt.body)
+
+    def _count_dead_block(self, stmts: List[ast.stmt]) -> None:
+        """Conta todas as linhas de um bloco como dead code (sem recursão)."""
+        for stmt in stmts:
+            start = getattr(stmt, 'lineno', 0)
+            end   = getattr(stmt, 'end_lineno', start)
+            self.dead_code_lines += max(1, end - start + 1)
 
     def visit_Module(self, node: ast.Module) -> None:
         self._scan_dead_code(node.body)
@@ -259,6 +322,54 @@ class _UCOVisitor(ast.NodeVisitor):
         )
 
         if not has_unconditional_escape:
+            self.loop_risk_count += 1
+
+    def _check_recursion_risk(self, node: ast.FunctionDef, fn_name: str) -> None:
+        """
+        BUG-08: ILR — detecta recursão direta sem base case garantido.
+
+        Regra: função que chama a si mesma (direto) sem um `if` ou `return`
+        incondicional no primeiro nível do corpo = risco de recursão infinita.
+
+        Exemplos:
+          def f(n): return f(n-1)      → sem base case → loop_risk_count += 1
+          def f(n):
+              if n == 0: return 0
+              return f(n-1)            → base case garantido → ok
+        """
+        # Detect direct recursive calls (skip nested functions via limited walk)
+        has_recursive_call = False
+        for child in ast.walk(node):
+            # Skip inner function definitions — their recursion is their own
+            if child is not node and isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            if (isinstance(child, ast.Call) and
+                    isinstance(child.func, ast.Name) and
+                    child.func.id == fn_name):
+                has_recursive_call = True
+                break
+
+        if not has_recursive_call:
+            return
+
+        # A top-level `if` statement is a base-case guard (e.g. `if n == 0: return 1`).
+        has_if_guard = any(isinstance(stmt, ast.If) for stmt in node.body)
+
+        # A `return` is a base case ONLY if it does NOT itself contain a recursive call.
+        # `return factorial(n-1)` is NOT a base case; `return 0` IS.
+        has_plain_return = any(
+            isinstance(stmt, ast.Return) and not any(
+                isinstance(n, ast.Call) and
+                isinstance(n.func, ast.Name) and
+                n.func.id == fn_name
+                for n in ast.walk(stmt)
+            )
+            for stmt in node.body
+        )
+
+        top_level_guard = has_if_guard or has_plain_return
+
+        if not top_level_guard:
             self.loop_risk_count += 1
 
     # ── Halstead ─────────────────────────────────────────────────────────────
@@ -303,8 +414,10 @@ class _UCOVisitor(ast.NodeVisitor):
             self._operand(node.id)
 
     def visit_Attribute(self, node: ast.Attribute) -> None:
+        # BUG-06: attribute name (node.attr) is part of the operator ".attr",
+        # NOT a standalone operand. Counting it as an operand inflated n2/N2
+        # by ~2x vs Radon ground truth.
         self._op(".")
-        self._operand(node.attr)
         self.generic_visit(node)
 
     # ── Imports ──────────────────────────────────────────────────────────────
