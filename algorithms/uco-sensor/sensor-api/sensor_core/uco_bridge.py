@@ -481,6 +481,17 @@ class UCOBridge:
 
     def __init__(self, mode: str = "full"):
         self.mode = mode
+        # M1 advanced metrics analyzer (lazy import to avoid circular deps)
+        self._advanced: Optional[Any] = None
+
+    def _get_advanced(self):
+        if self._advanced is None:
+            try:
+                from sensor_core.advanced_metrics import AdvancedAnalyzer
+                self._advanced = AdvancedAnalyzer()
+            except ImportError:
+                self._advanced = False   # sentinel: unavailable
+        return self._advanced if self._advanced else None
 
     def analyze(
         self,
@@ -614,6 +625,14 @@ class UCOBridge:
         mv.max_methods_per_class= visitor.max_methods_per_class
         mv.cc_hotspot_ratio     = round(cc_hotspot_ratio, 4)
         mv.max_function_cc      = max_fn_cc
+
+        # M1 — Advanced Metrics (cognitive CC, SQALE, function profiles,
+        #      clone detection, ratings) — only in "full" mode
+        if self.mode == "full":
+            adv = self._get_advanced()
+            if adv is not None:
+                adv.analyze(source, mv, visitor)
+
         return mv
 
     def suggest_transforms(

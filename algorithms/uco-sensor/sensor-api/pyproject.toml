@@ -4,7 +4,7 @@ build-backend = "setuptools.backends.legacy:build"
 
 [project]
 name        = "uco-sensor"
-version     = "0.6.0"
+version     = "0.7.0"
 description = "Spectral code-quality API powered by UCO v4 + FrequencyEngine"
 readme      = "README.md"
 license     = { text = "MIT" }
@@ -73,7 +73,7 @@ exclude = ["tests*", "validation*"]
 # ── Pytest ────────────────────────────────────────────────────────────────────
 [tool.pytest.ini_options]
 testpaths    = ["tests"]
-python_files = ["test_marco*.py", "test_calibration.py", "test_performance.py"]
+python_files = ["test_marco*.py", "test_marco_m1.py", "test_calibration.py", "test_performance.py"]
 python_functions = ["test_*"]
 addopts      = "-v --tb=short"
 

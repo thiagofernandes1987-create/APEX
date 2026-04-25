@@ -5,6 +5,64 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [0.7.0] — 2026-04-25 — M1 ADVANCED METRICS
+
+### Adicionado — M1 Advanced Quality Metrics
+
+**M1.1 — Cognitive Complexity (Campbell 2018) (`advanced_metrics.py`)**
+- `cognitive_complexity(source)` → `(total, per_function_dict)`
+- Regras: +1 + depth para estruturas (if/for/while/except/with/lambda/fn aninhada)
+- elif/else: +1 flat; BoolOp: +1 flat por sequência; ternary: +1 flat; recursão: +1 flat
+- Nesting depth incrementa dentro de cada estrutura de controle
+
+**M1.2 — SQALE Technical Debt (`advanced_metrics.py`)**
+- `sqale_debt(metrics_dict, loc)` → `SQALEResult(debt_minutes, sqale_ratio, rating, breakdown)`
+- Tabela de remediation costs: CC alto (30-60min), dead code (5min/linha), ILR (30min/loop), clones (30min/grupo), DI > 0.8 (480min)
+- `sqale_ratio = debt / (loc × 30) × 100%`; Ratings A (≤5%) → E (>50%)
+
+**M1.3 — Function-level Breakdown (`advanced_metrics.py`)**
+- `build_function_profiles(source, fn_cc, fn_cog)` → `List[FunctionProfile]`
+- `FunctionProfile`: name, loc, cc, cognitive_cc, halstead_volume, is_complex, debt_minutes, risk_level (LOW/MEDIUM/HIGH)
+
+**M1.4 — Real Dependency Instability (`advanced_metrics.py`)**
+- `ImportGraphAnalyzer` — compute real Martin DI via project-level import graph
+- `DI(m) = Ce(m) / (Ca(m) + Ce(m))` contando apenas imports internos ao projeto
+
+**M1.5 — Clone Detection Type-2 (`advanced_metrics.py`)**
+- `detect_clones(source)` → número de grupos de clone
+- Skeleton hash: normaliza `id`, `arg`, `attr`, `name`, `value` em AST dump
+- Funções estruturalmente idênticas (renomeadas) são detectadas como Type-2 clones
+
+**M1.6 — Ratings A–E (`advanced_metrics.py`)**
+- `compute_ratings(uco_score, sqale_ratio_pct, ...)` → `Ratings(uco, sqale, reliability, security)`
+- UCO: ≥80→A, ≥60→B, ≥40→C, ≥20→D, <20→E
+- Reliability: penaliza ILR > 0.5 (−40pts) e CC > 20 (−20pts)
+- Security: penaliza dead code ratio > 0.1 (−30pts) e Halstead bugs > 3 (−30pts)
+
+**`AdvancedAnalyzer` — Orquestrador M1**
+- `UCOBridge(mode="full")` injeta automaticamente todos os atributos M1 no MetricVector
+- Dynamic attribute pattern: `mv.cognitive_complexity`, `mv.sqale_rating`, `mv.ratings`, `mv.function_profiles`, `mv.clone_count`, etc.
+- `mode="fast"` não executa M1 (preserva performance de análises em lote)
+
+**`/analyze` endpoint ampliado**
+- Response inclui: `cognitive_complexity`, `cognitive_fn_max`, `sqale_debt_minutes`, `sqale_ratio`, `sqale_rating`, `clone_count`, `ratings`, `function_profiles`
+
+### Testes
+- `tests/test_marco_m1.py` — TM01–TM30 (30 testes)
+
+### Resultados de Validação
+
+| Conjunto | Resultado |
+|----------|-----------|
+| M1 Advanced (30) | ✅ 30/30 |
+| Calibration (25) | ✅ 24/25 (1 skip) |
+| Marco 6 (14) | ✅ 14/14 |
+| Marco 7 (16) | ✅ 16/16 |
+| Marco 8 (10) | ✅ 10/10 |
+| **Total novo** | **94/95** |
+
+---
+
 ## [0.6.0] — 2026-04-25 — M0 FOUNDATION (Bug Fix Sprint)
 
 ### Corrigido — M0.1 Métricas (9 bugs de medição)

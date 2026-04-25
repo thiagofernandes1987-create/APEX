@@ -71,7 +71,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "0.6.0"
+    version:      str   = "0.7.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -252,6 +252,15 @@ def handle_analyze(data: Dict) -> Tuple[int, Dict]:
             "duplicate_block_count":  mv.duplicate_block_count,
             "halstead_bugs":          mv.halstead_bugs,
             "status":                 mv.status,
+            # M1 advanced metrics (present when language=python and mode=full)
+            "cognitive_complexity":   getattr(mv, "cognitive_complexity", None),
+            "cognitive_fn_max":       getattr(mv, "cognitive_fn_max", None),
+            "sqale_debt_minutes":     getattr(mv, "sqale_debt_minutes", None),
+            "sqale_ratio":            getattr(mv, "sqale_ratio", None),
+            "sqale_rating":           getattr(mv, "sqale_rating", None),
+            "clone_count":            getattr(mv, "clone_count", None),
+            "ratings":                getattr(mv, "ratings", None),
+            "function_profiles":      getattr(mv, "function_profiles", None),
         },
         "classification":  classification,
         "history_size":    len(history),
