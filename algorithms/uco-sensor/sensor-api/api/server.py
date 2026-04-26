@@ -71,6 +71,11 @@ from governance.trend_engine import (
 )
 from report.sarif import SARIFBuilder
 from report.webui import generate_dashboard_html
+from sensor_core.auto_analyzer import AutoAnalyzer
+from scan.incremental_scanner import (
+    IncrementalScanner, ChangedFile,
+    CHANGE_ADDED, CHANGE_MODIFIED, CHANGE_DELETED, CHANGE_RENAMED,
+)
 
 
 # ─── Configuração ────────────────────────────────────────────────────────────
@@ -81,7 +86,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "1.0.0"
+    version:      str   = "2.0.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -178,6 +183,9 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/badge",         "auth": False,  "desc": "Badge SVG (?score=87&status=STABLE ou ?module=)"},
             {"method": "POST",   "path": "/diff",          "auth": True,   "desc": "Diff UCO entre 2 commits (before/after)"},
             {"method": "POST",   "path": "/apex/fix",      "auth": True,   "desc": "Fix bidirecional: APEX envia comando corretivo"},
+            {"method": "GET",    "path": "/predict",          "auth": True,   "desc": "Degradation forecast para um módulo (?module=&horizon=)"},
+            {"method": "GET",    "path": "/predict/all",      "auth": True,   "desc": "Fleet forecast — todos os módulos, ordenado por risco"},
+            {"method": "POST",   "path": "/scan-incremental", "auth": True,   "desc": "Incremental scan — apenas arquivos alterados (M6.1)"},
         ],
         "analyze_body": {
             "code":           "string — código fonte",
@@ -1268,6 +1276,135 @@ def handle_sast_rules() -> Tuple[int, Dict]:
     }
 
 
+# ─── Predictor endpoints (M6) ────────────────────────────────────────────────
+
+def handle_predict(
+    module_id: Optional[str],
+    window:    int = 20,
+    horizon:   int = 5,
+) -> Tuple[int, Dict]:
+    """
+    GET /predict?module=<id>&window=<n>&horizon=<h>
+
+    Returns a DegradationForecast for one module from its stored history.
+    """
+    if not module_id:
+        return 400, {"error": "module query param is required"}
+
+    analyzer = AutoAnalyzer(_store, default_window=window, default_horizon=horizon)
+    forecast = analyzer.analyze_module(module_id, window=window, horizon=horizon)
+    return 200, forecast.to_dict()
+
+
+def handle_predict_all(
+    window:  int = 20,
+    horizon: int = 5,
+    top_n:   int = 10,
+) -> Tuple[int, Dict]:
+    """
+    GET /predict/all?window=<n>&horizon=<h>&top_n=<k>
+
+    Returns FleetReport: all modules ordered by risk level then slope.
+    """
+    analyzer = AutoAnalyzer(_store, default_window=window, default_horizon=horizon)
+    report   = analyzer.analyze_fleet(window=window, top_n=top_n, horizon=horizon)
+    return 200, report.to_dict()
+
+
+# ─── Incremental scan endpoint (M6.1) ───────────────────────────────────────
+
+def handle_scan_incremental(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /scan-incremental  (M6.1)
+
+    Scans ONLY changed files and returns per-file metric deltas against
+    stored baselines.  Two modes:
+
+    Mode "files" (default):
+    {
+      "files": [
+        {"path": "src/auth.py", "content": "...", "change_type": "MODIFIED"},
+        ...
+      ],
+      "commit_hash":  "abc123",          # optional
+      "base_commit":  "baseline",        # optional (informational label)
+      "root":         "/abs/repo/path",  # optional (default ".")
+      "persist":      true               # save new snapshots to store
+    }
+
+    Mode "git_diff":
+    {
+      "mode":         "git_diff",
+      "repo_path":    "/abs/path/repo",
+      "base_commit":  "HEAD~1",
+      "head_commit":  "HEAD",
+      "commit_hash":  "HEAD",            # optional
+      "persist":      true
+    }
+
+    Returns IncrementalScanResult.to_dict():
+    {
+      "total_changed", "added_count", "modified_count", "deleted_count",
+      "renamed_count", "scanned_count", "error_count", "regressions",
+      "new_criticals", "file_deltas": [...], "commit_hash", "base_commit",
+      "scan_duration_s"
+    }
+    """
+    mode        = data.get("mode", "files")
+    commit_hash = data.get("commit_hash", f"inc_{int(time.time())}")
+    base_commit = data.get("base_commit", "baseline")
+    root        = data.get("root", ".")
+    persist     = bool(data.get("persist", True))
+
+    store_ref = _store if persist else None
+    scanner   = IncrementalScanner(root=root, store=store_ref, commit_hash=commit_hash)
+
+    if mode == "git_diff":
+        repo_path   = data.get("repo_path", root)
+        head_commit = data.get("head_commit", "HEAD")
+        result = scanner.scan_git_diff(
+            repo_path=repo_path,
+            base_commit=base_commit,
+            head_commit=head_commit,
+        )
+        return 200, result.to_dict()
+
+    # ── files mode ────────────────────────────────────────────────────────────
+    raw_files = data.get("files", [])
+    if not raw_files:
+        return 400, {
+            "error": "'files' list is required (or set mode='git_diff')"
+        }
+
+    changed: List[ChangedFile] = []
+    for f in raw_files:
+        path        = f.get("path", "")
+        change_type = (f.get("change_type") or CHANGE_MODIFIED).upper()
+        content     = f.get("content", None)
+        old_path    = f.get("old_path", None)
+        if not path:
+            continue
+        # Normalise change_type — accept "added"/"ADDED" etc.
+        if change_type not in (CHANGE_ADDED, CHANGE_MODIFIED, CHANGE_DELETED, CHANGE_RENAMED):
+            change_type = CHANGE_MODIFIED
+        changed.append(ChangedFile(
+            path=path,
+            change_type=change_type,
+            old_path=old_path,
+            content=content,
+        ))
+
+    if not changed:
+        return 400, {"error": "No valid file entries found in 'files' list"}
+
+    result = scanner.scan_changed_files(
+        changed,
+        commit_hash=commit_hash,
+        base_commit=base_commit,
+    )
+    return 200, result.to_dict()
+
+
 # ─── Auth endpoints ──────────────────────────────────────────────────────────
 
 def handle_create_key(data: Dict) -> Tuple[int, Dict]:
@@ -1389,6 +1526,16 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                     label=label_val, module_id=module_id
                 )
                 return self._send_svg(http_code, svg)
+            elif path == "/predict":
+                module_id = params.get("module",  [None])[0]
+                window_n  = int(params.get("window",  ["20"])[0])
+                horizon_n = int(params.get("horizon", ["5"])[0])
+                code, data = handle_predict(module_id, window=window_n, horizon=horizon_n)
+            elif path == "/predict/all":
+                window_n  = int(params.get("window",  ["20"])[0])
+                horizon_n = int(params.get("horizon", ["5"])[0])
+                top_n_val = int(params.get("top_n",   ["10"])[0])
+                code, data = handle_predict_all(window=window_n, horizon=horizon_n, top_n=top_n_val)
             else:
                 code, data = 404, {"error": f"Unknown endpoint: {path}"}
         except Exception as e:
@@ -1442,6 +1589,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_sast(body)
             elif path == "/apex/fix":
                 code, data = handle_apex_fix(body)
+            elif path == "/scan-incremental":
+                code, data = handle_scan_incremental(body)
             elif path == "/auth/keys":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:

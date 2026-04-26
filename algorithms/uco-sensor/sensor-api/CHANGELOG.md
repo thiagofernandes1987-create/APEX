@@ -5,6 +5,277 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.0.0] — 2026-04-26 — M6.2 MULTI-LANGUAGE SUPPORT (APEX SCIENTIFIC)
+
+### Adicionado — M6.2 40 Language Adapters
+
+**APEX SCIENTIFIC mode** | Diferencial: SonarQube OSS suporta ~30 linguagens; UCO-Sensor v2 entrega **40 adaptadores calibrados** com Hamiltonian, CC, ILR, DSM e dead-code por linguagem — superando a cobertura do SonarQube Community Edition.
+
+#### Arquitetura
+
+- **`lang_adapters/generic.py`** — `GenericRegexAdapter(LanguageAdapter)`: base universal
+  - `_strip(source)` → strings → bloco → linha (evita falsos positivos CC/import dentro de literais)
+  - `_compute_ilr(clean)` → window-scan de 20 linhas por loop infinito; fração sem escape = ILR
+  - `_count_dead_code(clean)` → brace-depth tracking pós-`return/throw/exit`
+  - `_classify(h, cc)` → CRITICAL / WARNING / STABLE (limiares H≥20/8, CC>20/10)
+  - `_halstead_metrics(tokens, ops)` → (n1, n2, N1, N2) particionamento Halstead 1977
+  - `_count_duplicates(source, prefix)` → clone density proxy — linhas repetidas ≥ 2×
+  - Calibrado para ±15% de medições AST tree-sitter no corpus UCO-Sensor
+
+#### Grupos de Adaptadores
+
+- **`lang_adapters/c_family.py`** — C, C++, Objective-C
+  - `CAdapter` (.c, .h): `#include`, typed functions, `struct/union/enum`
+  - `CppAdapter` (.cpp, .cc, .cxx, .hpp, .hxx, .h++, .c++, .cp, .inl): `catch`, `co_await/co_yield`, namespace/template
+  - `ObjectiveCAdapter` (.m, .mm): `@interface/@implementation`, `[-+] (type) method:` selectors
+
+- **`lang_adapters/csharp.py`** — C# (.cs)
+  - `foreach/when/??`, `global using`, `record`, access-modifier function patterns
+
+- **`lang_adapters/rust.py`** — Rust (.rs)
+  - `match =>` arms, `loop {}` ILR, `?` propagation, `pub/async/const/unsafe fn`
+
+- **`lang_adapters/ruby.py`** — Ruby (.rb, .rake, .gemspec, .ru, .rbw)
+  - `=begin/=end` block comments, `unless/until/rescue/ensure/when`, `.each/.map` iterators
+
+- **`lang_adapters/swift.py`** — Swift (.swift)
+  - `guard/where/if let`, `??` null-coalescing, `fatalError/preconditionFailure`, `actor`
+
+- **`lang_adapters/kotlin.py`** — Kotlin (.kt, .kts)
+  - `when` expressions, `?.` safe-call, `?:` Elvis, `data/sealed class`, `companion object`
+
+- **`lang_adapters/php.py`** — PHP (.php, .php3–7, .phps, .phtml)
+  - PHP-8 `match`, `??` null-coalescing, heredoc strings, `require_once/use`, `die`
+
+- **`lang_adapters/scala.py`** — Scala + Groovy
+  - `ScalaAdapter` (.scala, .sc, .sbt): triple-quoted, `s"..."` interpolation, `match/case`, `sealed/case class`
+  - `GroovyAdapter` (.groovy, .gradle, .gvy, .gy): GString `"...$var"`, Elvis `?:`, safe navigation `?.`
+
+- **`lang_adapters/scripting_langs.py`** — R, Shell, PowerShell, Lua, Perl, MATLAB (6 adapters)
+  - `RAdapter` (.r/.R/.rmd/.Rmd/.rscript): `library()`/`require()`, `name <- function(`, R6Class, `repeat{}` ILR
+  - `ShellAdapter` (.sh/.bash/.zsh/.ksh/.fish/.command): `[[`/`[` conditions, `source`/`.` imports, sem classes
+  - `PowerShellAdapter` (.ps1/.psm1/.psd1/.pssc): `<# #>` block, `-and/-or`, `Import-Module`, case-insensitive
+  - `LuaAdapter` (.lua): `--[[ ]]` block, `and/or`, `require()`, `while true do` ILR
+  - `PerlAdapter` (.pl/.pm/.t/.cgi/.plx): POD `=begin/=cut`, `elsif/unless/until`, `sub name {`
+  - `MatlabAdapter` (.matlab/.octave): `%{ %}` blocks, `function [out]=name(`, `parfor`, `while 1`
+
+- **`lang_adapters/functional_langs.py`** — Haskell, Erlang, Elixir, F#, OCaml, Clojure (6 adapters)
+  - `HaskellAdapter` (.hs/.lhs): `|` guards como CC, `--`/`{- -}`, `forever`/`fix` = ILR
+  - `ErlangAdapter` (.erl/.hrl): `->` clause arrows, `andalso/orelse`, `receive` = ILR
+  - `ElixirAdapter` (.ex/.exs): sigils `~r/.../`, `cond/with/receive`, `defmodule/defprotocol`
+  - `FSharpAdapter` (.fs/.fsx/.fsi): `(* *)`, `|` arms (não `||` ou `|>`), `let rec/member/override`
+  - `OCamlAdapter` (.ml/.mli): sem line comments, `(* *)`, `|` arms, `while true do` ILR
+  - `ClojureAdapter` (.clj/.cljs/.cljc/.edn): `;`/`#_`, `(if/when/cond/loop...)`, `(defn...)`
+
+- **`lang_adapters/modern_systems.py`** — Dart, Julia, Zig, Nim, Crystal, D (6 adapters)
+  - `DartAdapter` (.dart): `??/?.`, `on/rethrow`, `import/export/part`, `mixin/extension/typedef`
+  - `JuliaAdapter` (.jl): `#= =#` block, `elseif`, `using/import/include`, `mutable struct/abstract type`
+  - `ZigAdapter` (.zig): sem block comments, `\\` multiline, `comptime/orelse/catch/try`, `@import()`
+  - `NimAdapter` (.nim/.nims): `#[...]#`, `proc/func/method/iterator/macro/template`, `of` case arms
+  - `CrystalAdapter` (.cr): Ruby-like, `select` channels, `loop do/loop {`, `lib/annotation`
+  - `DAdapter` (.d/.di): `/+ +/` nestable, `foreach_reverse`, `scope(exit/failure/success)`, backtick strings
+
+- **`lang_adapters/domain_langs.py`** — VB.NET, Assembly, COBOL, Fortran, Tcl, Solidity, HCL (7 adapters)
+  - `VBNetAdapter` (.vb): `'` comments, `For Each/AndAlso/OrElse/Select Case`, `Sub/Function/Property`
+  - `AssemblyAdapter` (.asm/.s/.S/.nasm/.nas): `jXX` branches, `cbz/cbnz` ARM, labels = funções, `section` = struct
+  - `CobolAdapter` (.cob/.cbl/.cpy/.cobol): `*>` e col-7 `*`, `EVALUATE/WHEN/PERFORM/UNTIL`, `PERFORM FOREVER`
+  - `FortranAdapter` (.f/.for/.f77-.f08): `.AND./.OR./.NOT./.EQV./.NEQV.`, `USE`, `SUBROUTINE/FUNCTION/PROGRAM`
+  - `TclAdapter` (.tcl/.tk/.tclsh): `package require`, `proc`, `namespace eval`, `while {1}` ILR
+  - `SolidityAdapter` (.sol): `///` NatSpec, `require/revert` como CC, `contract/interface/library`
+  - `HCLAdapter` (.hcl/.tf/.tfvars): `count/for_each/for/dynamic`, `module/data` = imports, `resource/provider`
+
+#### Registry
+
+- **`lang_adapters/registry.py`** — REESCRITO para M6.2
+  - `_EXT_MAP`: 140+ extensões → 40 classes de adaptadores
+  - `_load_adapter_by_name(class_name)`: factory com lazy imports para todos os 40 adaptadores
+  - `UCOBridgeRegistry.supported_languages()` → 41 linguagens (TypeScript listado separado de JavaScript)
+  - `UCOBridgeRegistry.supported_extensions()` → 140+ extensões mapeadas
+  - `reset_registry()`: helper para isolamento de testes
+
+#### IncrementalScanner — extensões M6.2
+
+- **`scan/incremental_scanner.py`** — `_SUPPORTED_EXT` expandido
+  - Adicionadas 100+ extensões cobrindo todos os 40 adaptadores M6.2
+  - Grupos: C/C++/ObjC, C#, Rust, Ruby, Swift, Kotlin, PHP, Scala/Groovy, R, Shell, PowerShell, Lua, Perl, MATLAB, Haskell, Erlang, Elixir, F#, OCaml, Clojure, Dart, Julia, Zig, Nim, Crystal, D, VB.NET, Assembly, COBOL, Fortran, Tcl, Solidity, HCL
+
+#### Testes
+
+- **`tests/test_marco_m10.py`** — 30 testes TL01–TL30 (210/210 acumulado M4–M10)
+  - Group 1 — `GenericRegexAdapter` (TL01–TL05): empty, LOC, CC, strip, classify
+  - Group 2 — C-family (TL06–TL10): C, C++, ObjC extensões; C# foreach/??
+  - Group 3 — Rust/Swift/Kotlin/Scala/PHP (TL11–TL15): match arms, guard, when, extensões
+  - Group 4 — Scripting (TL16–TL20): R library(), Shell [[, PS case-insensitive, Lua and/or, Perl sub
+  - Group 5 — Functional (TL21–TL24): Haskell guards, Elixir defmodule, F# arms, Clojure defn
+  - Group 6 — Modern systems (TL25–TL27): Dart ??, Zig comptime, Nim proc/elif
+  - Group 7 — Registry (TL28–TL30): ≥36 linguagens, ≥100 extensões, dispatch por extensão
+
+### Alterado
+
+- **`lang_adapters/registry.py`**: completamente reescrito (substituiu stub de 6 linguagens)
+- **`scan/incremental_scanner.py`**: `_SUPPORTED_EXT` expandido de 10 para 110+ extensões
+- Versão bumped: 1.5.0 → **2.0.0** (major — cobertura de linguagens 6× maior)
+
+---
+
+## [1.5.0] — 2026-04-26 — M6.1 INCREMENTAL ANALYSIS ENGINE
+
+### Adicionado — M6.1 IncrementalScanner
+
+**APEX DEEP mode** | Diferencial: SonarQube incremental = enterprise-only; UCO-Sensor entrega grátis com Hamiltonian delta e detecção de regressão persistida.
+
+- **`scan/incremental_scanner.py`** — motor de análise incremental
+  - `ChangedFile(path, change_type, old_path, content)` — ADDED / MODIFIED / DELETED / RENAMED
+  - `FileDelta` — comparação before/after de métricas por arquivo:
+    - `old_hamiltonian`, `new_hamiltonian`, `delta_h`
+    - `old_cc`, `new_cc`, `delta_cc`
+    - `status_before`, `status_after`, `regression`, `scan_error`
+    - `to_dict()` com rounding correto
+  - `IncrementalScanResult` — resultado agregado da passagem incremental:
+    - Contadores: `total_changed`, `added_count`, `modified_count`, `deleted_count`, `renamed_count`
+    - `scanned_count`, `error_count`, `regressions`, `new_criticals`
+    - `regressions_list()` — lista de `FileDelta` com `regression=True`
+    - `new_criticals_list()` — arquivos que passaram para CRITICAL nesta passagem
+    - `summary()` — string legível para CI logs
+    - `to_dict()` — serialização completa (incluindo `file_deltas`)
+  - `IncrementalScanner(root, store, commit_hash)`:
+    - `scan_files(paths, commit_hash, base_commit)` — lê do disco, detecta ADDED vs MODIFIED via store
+    - `scan_changed_files(changed_files, …)` — lista pré-construída de `ChangedFile`
+    - `scan_git_diff(repo_path, base_commit, head_commit)` — `git diff --name-status`
+    - `_baseline(path)` → `(h, cc, status)` da última snapshot no `SnapshotStore`
+    - `_git_changed_files(repo, base, head)` — parser de saída git: A/M/D/R
+  - **Detecção de regressão**: `delta_h > max(0.5, old_h * 0.05)` OR piora de status rank
+  - Fallback seguro: git ausente → lista vazia; extensão não suportada → `scan_error`
+
+- **`api/server.py`** — novo endpoint `POST /scan-incremental`
+  - Modo `files`: aceita lista de `{"path", "content", "change_type"}` + `persist`, `root`
+  - Modo `git_diff`: delega a `scan_git_diff()` com `repo_path`, `base_commit`, `head_commit`
+  - `persist=False` → scanner usa `store=None` (sem escrita no DB)
+  - Retorna `IncrementalScanResult.to_dict()` com regressions e new_criticals
+  - Versão bumped: 1.4.0 → **1.5.0**
+
+- **`tests/test_marco_m9.py`** — 30 testes TI01–TI30 (210/210 passing acumulado)
+  - Group 1 — `ChangedFile` (TI01–TI03): construção, rename, conteúdo
+  - Group 2 — `FileDelta` (TI04–TI07): defaults, to_dict, regression, DELETED
+  - Group 3 — `IncrementalScanResult` (TI08–TI12): summary, regressions_list, new_criticals_list, to_dict, rounding
+  - Group 4 — `scan_files()` (TI13–TI17): empty, ADDED, MODIFIED, DELETED, contadores múltiplos
+  - Group 5 — `scan_changed_files()` (TI18–TI21): empty content, extensão insuportada, DELETED, Python válido
+  - Group 6 — `_baseline()` (TI22–TI23): sem store, com history
+  - Group 7 — `_git_changed_files()` (TI24–TI26): não-git, parse A/M/D/R, timeout
+  - Group 8 — `handle_scan_incremental()` REST (TI27–TI30): 400 sem files, 200 files mode, git_diff mode mock, persist=False
+
+---
+
+## [1.4.0] — 2026-04-26 — M5.3 AI EXPLANATIONS VIA APEX ENGINEER
+
+### Adicionado — M5.3 FixExplainer
+
+- **`sensor_core/explainer.py`** — `FixExplainer` + `ExplanationReport`
+  - `explain(autofix_result, module_id, forecast?, anomaly_type?, …)` → `ExplanationReport`
+  - Auto-detecção de `anomaly_type` via `_infer_anomaly_type()`:
+    1. Dominant transform aplicado pelo AutofixEngine (`DeadCodeRemover` → `DEAD_CODE_DRIFT`, etc.)
+    2. Fallback para `DegradationForecast.risk_level` → tipo APEX correspondente
+    3. Fallback final: `TECH_DEBT_ACCUMULATION`
+  - `ExplanationReport` (13 campos + `to_dict()`):
+    - `apex_prompt` — pronto para o agente APEX engineer (renderizado via `render_prompt()`)
+    - `mode` — FAST | DEEP | RESEARCH determinado pelo template do anomaly_type
+    - `agents` — lista de agentes APEX recomendados
+    - `transforms_summary` — sumário do que o AutofixEngine já corrigiu
+    - `transforms_auto_applied` — nomes únicos (dedup, order-preserving)
+    - `remaining_transforms` — o que ainda precisa de intervenção manual/agente
+    - `success_criteria` — critério de sucesso APEX para o tipo de anomalia
+    - `risk_narrative` — narrativa derivada do `DegradationForecast` (slope, Hurst, advice)
+    - `intervention_now` — True quando template exige ação imediata
+    - `uco_channels` — canais UCO afetados
+  - Enriquecimento automático de `delta_h` e `hurst` a partir do forecast quando não fornecidos
+- **Integração completa M5.1 + M5.2 + M5.3**: Forecast → Autofix → Explain → APEX prompt
+
+### Modo APEX utilizado: `DEEP`
+  - Agentes: `["engineer", "architect", "critic"]`
+  - Justificativa: síntese multi-camada (predictor + AST transforms + templates)
+
+### Testes
+
+- `tests/test_marco_m8.py` — 30 testes TE01-TE30, **30/30 PASS**
+- Regressão: M1…M8 = **240/240 PASS**
+
+---
+
+## [1.3.0] — 2026-04-26 — M5.2 AUTOFIX ENGINE (AST TRANSFORMS)
+
+### Adicionado — M5.2 AutofixEngine
+
+- **`sensor_core/autofix/engine.py`** — `AutofixEngine` + `AutofixResult`
+  - Pipeline configurável de 4 transforms aplicados em sequência
+  - `apply(source)` → `AutofixResult` com `fixed_source`, `transforms_applied`, `is_valid_python`, `parse_error`, `changed`
+  - `apply_named(source, names)` — aplica apenas transforms selecionados
+  - Guarda-costas completo: parse error → original retornado; transform exception nunca quebra o pipeline
+- **`sensor_core/autofix/transforms/dead_code.py`** — `DeadCodeRemover`
+  - Remove statements após `return`/`raise`/`continue`/`break` em function bodies
+  - Aplica recursivamente em branches `if`/`for`/`while`/`try`
+- **`sensor_core/autofix/transforms/redundant_else.py`** — `RedundantElseRemover`
+  - Guard clause pattern: `if x: return … else: …` → `if x: return …\n…`
+  - Multi-pass até estabilidade; trata `raise` como terminador
+- **`sensor_core/autofix/transforms/boolean_simplify.py`** — `BooleanSimplifier`
+  - `x == True` → `x`, `x is True` → `x`
+  - `x == False` → `not x`, `x is False` → `not x`
+  - `x != True` → `not x`, `x is not False` → `x`
+- **`sensor_core/autofix/transforms/unused_imports.py`** — `UnusedImportRemover`
+  - Remove `import` e `from … import` cujos nomes não aparecem no AST
+  - Preserva `from __future__ import`, star imports, `__all__`-exported names
+  - Bail-out automático quando `getattr`/`eval`/`exec` presentes (dynamic access)
+- **Pipeline order**: `UnusedImports → BooleanSimplify → RedundantElse → DeadCode`
+  - Ordem garante que `RedundantElse` cria novos terminators antes de `DeadCode` varrer
+
+### Testes
+
+- `tests/test_marco_m7.py` — 30 testes TF01-TF30, **30/30 PASS**
+- Regressão: M1…M7 = **210/210 PASS**
+
+---
+
+## [1.2.0] — 2026-04-26 — M6 PREDICTOR API + FLEET HEALTH ENGINE
+
+### Adicionado — M6 Predictor API + AutoAnalyzer
+
+- **`sensor_core/auto_analyzer.py`** — `AutoAnalyzer` + `FleetReport`
+  - `analyze_module(module_id, window, horizon)` → `DegradationForecast` direto do store
+  - `analyze_fleet(window, top_n, horizon)` → `FleetReport` com todos os módulos ordenados por risco
+  - `FleetReport`: `total_modules`, `analysed_modules`, `risk_counts`, `critical_count`, `high_count`, `avg_confidence`, `most_at_risk`, `all_forecasts`, `summary()`
+  - Ordenação: `_RISK_ORDER` (CRITICAL < HIGH < MEDIUM < LOW < STABLE), desempate por `slope_pct` decrescente
+- **`api/server.py`** — 2 novos endpoints REST
+  - `GET /predict?module=<id>&window=<n>&horizon=<h>` — forecast por módulo
+  - `GET /predict/all?window=<n>&horizon=<h>&top_n=<k>` — fleet forecast completo
+  - Versão bumped para `1.1.0`
+
+### Testes
+
+- `tests/test_marco_m6.py` — 30 testes TA01-TA30, **30/30 PASS**
+- Regressão: M1 (30) + M2 (30) + M3 (30) + M4 (30) + M5 (30) + M6 (30) = **180/180 PASS**
+
+---
+
+## [1.1.0] — 2026-04-26 — M5 DEGRADATION PREDICTOR
+
+### Adicionado — M5.1 DegradationPredictor
+
+- **`sensor_core/predictor.py`** — `DegradationPredictor` com previsão combinada de dois sinais
+- **Hurst Exponent** via Rescaled Range (R/S): H > 0.55 → persistente, H < 0.45 → auto-corretivo
+- **OLS Slope** (% change per snapshot): slope positivo → Hamiltonian crescendo → degradação
+- `DegradationForecast` dataclass com 13 campos + `to_dict()`
+- Risk classification: `CRITICAL | HIGH | MEDIUM | LOW | STABLE` com amplificação por persistência
+- `hurst_rs(series)` — estimador Hurst por análise R/S com OLS sobre log(R/S) ~ H·log(L)
+- `_ols() / _r2()` — regressão linear + R² para projeção de tendência
+- `confidence` — escala com `n_samples / 20 × R²`; `predicted_h` clampado em ≥ 0
+- Fast-path para dados insuficientes (< 4 snapshots) → retorna `insufficient_data=True`
+
+### Testes
+
+- `tests/test_marco_m5.py` — 30 testes TP01-TP30, **30/30 PASS** (0 falhas na primeira execução)
+- Regressão: M1 (30) + M2 (30) + M3 (30) + M4 (30) + M5 (30) = **150/150 PASS**
+
+---
+
 ## [1.0.0] — 2026-04-26 — M4 WEB UI + SARIF + GITHUB ACTIONS + VS CODE
 
 ### Adicionado — M4.3 SARIF 2.1.0 Melhorado
