@@ -5,6 +5,57 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [0.8.0] — 2026-04-25 — M2 GOVERNANCE ENGINE
+
+### Adicionado — M2 Governance Engine
+
+**M2.1 — Policy Engine (`governance/policy_engine.py`)**
+- `PolicyRule`: id, field, operator, threshold, severity (ERROR/WARNING/INFO)
+- Operadores: `lte`, `gte`, `lt`, `gt`, `eq`, `neq`, `in`, `not_in`, `rating_lte`, `rating_gte`
+- `evaluate_policy(metrics_dict, policy)` → `PolicyResult(passed, gate_score, grade, violations)`
+- `load_default_policy()` — 11 regras default cobrindo CC, Cognitive CC, ILR, SQALE, DI, clones
+
+**M2.2 — Quality Gate**
+- `POST /gate` — analisa código e avalia política em uma chamada
+- `gate_score` = 100 − Σ penalidades (ERROR −20, WARNING −10, INFO −2)
+- `grade` A–F; `passed` = gate_score ≥ pass_threshold (default 70)
+- Em caso de falha publica evento `UCO_GATE_FAILURE` ao APEX (quando apex_enabled=1)
+- `gate_score_to_grade()`, `mv_to_metrics_dict()`
+
+**M2.3 — Trend Engine (`governance/trend_engine.py`)**
+- `analyze_trend(history, metric, window)` → `TrendAnalysis`
+- Classificação: IMPROVING | STABLE | DEGRADING | VOLATILE | INSUFFICIENT_DATA
+- Linear regression slope + R² — VOLATILE só quando R² < 0.6 AND CV > 30%
+- `forecast_next` via extrapolação da regressão linear
+- `analyze_module_trends()` — multi-metric para um módulo
+- `overall_trend()` — direção agregada em múltiplas métricas
+
+**M2.4 — Debt Budget**
+- `track_debt_budget(module_debts, budget_minutes)` → `DebtBudget`
+- Campos: `total_debt_minutes`, `remaining_minutes`, `over_budget`, `velocity_min_per_day`
+- `days_until_exhausted` — previsão baseada na velocidade de acúmulo de dívida
+
+**M2.5 + M2.6 — Dashboard + Trend API**
+- `GET /trend?module=<id>&metric=<field>&window=<n>` — trend per-módulo
+- `GET /dashboard` — snapshot de todos os módulos + debt budget + contagens por status/trend
+
+### Testes
+- `tests/test_marco_m2.py` — TG01–TG30 (30 testes)
+
+### Resultados de Validação
+
+| Conjunto | Resultado |
+|----------|-----------|
+| M2 Governance (30) | ✅ 30/30 |
+| M1 Advanced (30)   | ✅ 30/30 |
+| Calibration (25)   | ✅ 24/25 (1 skip) |
+| Marco 6 (14)       | ✅ 14/14 |
+| Marco 7 (16)       | ✅ 16/16 |
+| Marco 8 (10)       | ✅ 10/10 |
+| **Total acumulado** | **124/125** |
+
+---
+
 ## [0.7.0] — 2026-04-25 — M1 ADVANCED METRICS
 
 ### Adicionado — M1 Advanced Quality Metrics

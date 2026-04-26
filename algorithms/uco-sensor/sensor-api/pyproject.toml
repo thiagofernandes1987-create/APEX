@@ -4,7 +4,7 @@ build-backend = "setuptools.backends.legacy:build"
 
 [project]
 name        = "uco-sensor"
-version     = "0.7.0"
+version     = "0.8.0"
 description = "Spectral code-quality API powered by UCO v4 + FrequencyEngine"
 readme      = "README.md"
 license     = { text = "MIT" }
@@ -64,6 +64,7 @@ where   = ["."]
 include = [
   "sensor_core*", "sensor_storage*", "api*",
   "lang_adapters*", "apex_integration*", "scan*", "report*",
+  "governance*",
 ]
 exclude = ["tests*", "validation*"]
 

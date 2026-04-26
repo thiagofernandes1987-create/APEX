@@ -61,6 +61,13 @@ from scan.repo_scanner import RepoScanner
 from report.html_report import generate_html_report
 from report.badge import generate_badge_svg, generate_status_badge_svg
 from apex_integration.templates import get_template, render_prompt, fix_action_for, all_error_types
+from governance.policy_engine import (
+    evaluate_policy, load_default_policy, policy_from_dict, mv_to_metrics_dict,
+)
+from governance.trend_engine import (
+    analyze_trend, analyze_module_trends, track_debt_budget,
+    trend_summary, overall_trend,
+)
 
 
 # ─── Configuração ────────────────────────────────────────────────────────────
@@ -71,7 +78,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "0.7.0"
+    version:      str   = "0.8.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -1018,6 +1025,198 @@ def handle_anomalies(module_id: Optional[str], limit: int = 50) -> Tuple[int, Di
     }
 
 
+# ─── Governance endpoints ────────────────────────────────────────────────────
+
+def handle_gate(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /gate — Quality gate for CI/CD pipelines.
+
+    Body:
+      {
+        "code":          str,         — source code to analyse
+        "module_id":     str,         — module identifier
+        "commit_hash":   str,         — current commit hash
+        "file_extension": str,        — ".py" | ".js" | ...
+        "policy":        dict | null  — inline policy; null = default UCO policy
+      }
+
+    Response:
+      {
+        "passed":        bool,
+        "gate_score":    int,   [0–100]
+        "grade":         str,   A–F
+        "violations":    [...],
+        "metric_vector": {...},
+        "policy_name":   str
+      }
+    """
+    code        = data.get("code", "")
+    module_id   = data.get("module_id", "unknown")
+    commit_hash = data.get("commit_hash", f"gate_{int(time.time())}")
+    file_ext    = data.get("file_extension", data.get("language", ".py"))
+    policy_dict = data.get("policy", None)
+
+    if not code.strip():
+        return 400, {"error": "code is required and cannot be empty"}
+    if not file_ext.startswith("."):
+        file_ext = f".{file_ext}"
+
+    # Analyse code
+    registry = get_registry()
+    mv = registry.analyze(
+        source=code,
+        file_extension=file_ext,
+        module_id=module_id,
+        commit_hash=commit_hash,
+        timestamp=time.time(),
+    )
+    _store.insert(mv)
+
+    # Load policy
+    policy = policy_from_dict(policy_dict) if policy_dict else load_default_policy()
+
+    # Evaluate
+    metrics = mv_to_metrics_dict(mv)
+    result  = evaluate_policy(metrics, policy)
+
+    # Publish APEX event on failure
+    if not result.passed and _config.apex_enabled:
+        try:
+            from apex_integration.event_bus import ApexEvent
+            ev = ApexEvent(
+                event_type="UCO_GATE_FAILURE",
+                module_id=module_id,
+                commit_hash=commit_hash,
+                severity="CRITICAL" if result.errors else "WARNING",
+                payload={
+                    "gate_score":  result.gate_score,
+                    "violations":  [v.to_dict() for v in result.violations[:5]],
+                    "policy_name": result.policy_name,
+                },
+            )
+            _connector._bus.publish(ev)
+        except Exception:
+            pass
+
+    return 200, {
+        **result.to_dict(),
+        "metric_vector": metrics,
+    }
+
+
+def handle_trend(module_id: Optional[str], metric: str = "hamiltonian",
+                 window: int = 10) -> Tuple[int, Dict]:
+    """
+    GET /trend?module=<id>&metric=<field>&window=<n>
+
+    Returns trend analysis for one module / one metric.
+    Also returns overall multi-metric trend direction.
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history for module '{module_id}'"}
+
+    # Single-metric trend
+    trend = analyze_trend(history, metric=metric, window=window,
+                          module_id=module_id)
+
+    # Multi-metric overview (always compute for dashboard convenience)
+    multi = analyze_module_trends(history, module_id=module_id, window=window)
+    ov    = overall_trend(multi)
+
+    return 200, {
+        "module_id":      module_id,
+        "metric":         metric,
+        "trend":          trend.to_dict(),
+        "trend_summary":  trend_summary(trend),
+        "overall_direction": ov,
+        "multi_metric": {
+            m: t.to_dict() for m, t in multi.items()
+        },
+    }
+
+
+def handle_dashboard() -> Tuple[int, Dict]:
+    """
+    GET /dashboard
+
+    Returns project-wide quality dashboard:
+    - All known modules with their latest snapshot
+    - Per-module trend direction (H, CC)
+    - Project-level aggregates
+    - SQALE debt budget summary
+    """
+    modules = _store.list_modules()
+    module_data: List[Dict] = []
+    total_debt  = 0
+    module_debts: Dict[str, int] = {}
+
+    for mod_id in modules:
+        history = _store.get_history(mod_id, window=10)
+        if not history:
+            continue
+        latest = history[-1]
+
+        # Trend direction (hamiltonian as primary signal)
+        trend = analyze_trend(history, metric="hamiltonian",
+                              window=10, module_id=mod_id)
+
+        debt = getattr(latest, "sqale_debt_minutes", 0) or 0
+        module_debts[mod_id] = debt
+        total_debt += debt
+
+        module_data.append({
+            "module_id":        mod_id,
+            "status":           latest.status,
+            "hamiltonian":      round(latest.hamiltonian, 4),
+            "cyclomatic_complexity": latest.cyclomatic_complexity,
+            "cognitive_complexity":  getattr(latest, "cognitive_complexity", None),
+            "sqale_rating":     getattr(latest, "sqale_rating", None),
+            "sqale_debt_minutes": debt,
+            "ratings":          getattr(latest, "ratings", None),
+            "trend_direction":  trend.direction,
+            "trend_slope_pct":  round(trend.slope_pct, 4),
+            "snapshots_count":  len(history),
+        })
+
+    # Sort: CRITICAL first, then by hamiltonian desc
+    module_data.sort(key=lambda m: (
+        {"CRITICAL": 0, "WARNING": 1, "STABLE": 2}.get(m["status"], 3),
+        -(m["hamiltonian"]),
+    ))
+
+    # SQALE debt budget (default 480 min = 1 working day per project)
+    budget = track_debt_budget(module_debts, budget_minutes=480)
+
+    # Aggregate counts
+    critical_n = sum(1 for m in module_data if m["status"] == "CRITICAL")
+    warning_n  = sum(1 for m in module_data if m["status"] == "WARNING")
+    stable_n   = sum(1 for m in module_data if m["status"] == "STABLE")
+
+    degrading_n  = sum(1 for m in module_data if m["trend_direction"] == "DEGRADING")
+    improving_n  = sum(1 for m in module_data if m["trend_direction"] == "IMPROVING")
+
+    return 200, {
+        "modules":    module_data,
+        "total_modules": len(module_data),
+        "status_counts": {
+            "critical": critical_n,
+            "warning":  warning_n,
+            "stable":   stable_n,
+        },
+        "trend_counts": {
+            "degrading": degrading_n,
+            "improving": improving_n,
+            "stable":    len(module_data) - degrading_n - improving_n,
+        },
+        "debt_budget": budget.to_dict(),
+        "generated_at": time.time(),
+    }
+
+
 # ─── Auth endpoints ──────────────────────────────────────────────────────────
 
 def handle_create_key(data: Dict) -> Tuple[int, Dict]:
@@ -1110,6 +1309,13 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 limit_n   = int(params.get("limit", ["50"])[0])
                 code, data = handle_anomalies(module_id, limit_n)
+            elif path == "/trend":
+                module_id = params.get("module", [None])[0]
+                metric    = params.get("metric", ["hamiltonian"])[0]
+                window_n  = int(params.get("window", ["10"])[0])
+                code, data = handle_trend(module_id, metric, window_n)
+            elif path == "/dashboard":
+                code, data = handle_dashboard()
             elif path == "/report":
                 module_id = params.get("module", [None])[0]
                 title     = params.get("title", ["UCO-Sensor Report"])[0]
@@ -1174,6 +1380,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_apex_webhook(body)
             elif path == "/diff":
                 code, data = handle_diff(body)
+            elif path == "/gate":
+                code, data = handle_gate(body)
             elif path == "/apex/fix":
                 code, data = handle_apex_fix(body)
             elif path == "/auth/keys":
