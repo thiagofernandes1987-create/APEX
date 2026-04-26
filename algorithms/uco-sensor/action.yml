@@ -1,0 +1,165 @@
+name: 'UCO-Sensor Quality Gate'
+description: |
+  Static code quality + security analysis for Python, JS, TS, Java, Go.
+  Computes UCO Hamiltonian, cyclomatic/cognitive complexity, SAST findings,
+  and SQALE technical debt. Fails CI when quality gate is breached.
+  Outputs SARIF 2.1.0 for upload to GitHub Security tab.
+
+branding:
+  icon: 'activity'
+  color: 'blue'
+
+# ── Inputs ─────────────────────────────────────────────────────────────────────
+
+inputs:
+  path:
+    description: 'Repository path to scan (default: repository root)'
+    required: false
+    default: '.'
+
+  fail_on_critical:
+    description: 'Fail the workflow step if any file is rated CRITICAL'
+    required: false
+    default: 'true'
+
+  fail_on_gate_fail:
+    description: 'Fail the workflow step if UCO quality gate score < gate_threshold'
+    required: false
+    default: 'true'
+
+  gate_threshold:
+    description: 'Minimum UCO gate score to pass (0–100, default 70)'
+    required: false
+    default: '70'
+
+  sarif_output:
+    description: 'Output SARIF 2.1.0 file path (empty string = skip SARIF)'
+    required: false
+    default: 'uco-sensor.sarif'
+
+  policy_file:
+    description: 'Custom policy YAML file path (empty = use default UCO policy)'
+    required: false
+    default: ''
+
+  max_files:
+    description: 'Maximum number of files to scan (0 = unlimited)'
+    required: false
+    default: '500'
+
+  include_tests:
+    description: 'Include test files in scan (true | false)'
+    required: false
+    default: 'false'
+
+  python_version:
+    description: 'Python version to use for UCO-Sensor execution'
+    required: false
+    default: '3.11'
+
+  upload_sarif:
+    description: 'Automatically upload SARIF to GitHub Security tab (true | false)'
+    required: false
+    default: 'true'
+
+# ── Outputs ────────────────────────────────────────────────────────────────────
+
+outputs:
+  uco_score:
+    description: 'UCO quality score (0–100 float)'
+    value: ${{ steps.scan.outputs.uco_score }}
+
+  status:
+    description: 'Overall project status: STABLE | WARNING | CRITICAL'
+    value: ${{ steps.scan.outputs.status }}
+
+  critical_count:
+    description: 'Number of files rated CRITICAL'
+    value: ${{ steps.scan.outputs.critical_count }}
+
+  warning_count:
+    description: 'Number of files rated WARNING'
+    value: ${{ steps.scan.outputs.warning_count }}
+
+  files_scanned:
+    description: 'Total number of files scanned'
+    value: ${{ steps.scan.outputs.files_scanned }}
+
+  sarif_file:
+    description: 'Path to generated SARIF 2.1.0 file'
+    value: ${{ steps.scan.outputs.sarif_file }}
+
+  debt_minutes:
+    description: 'Total SQALE technical debt in minutes (Python files)'
+    value: ${{ steps.scan.outputs.debt_minutes }}
+
+# ── Steps ──────────────────────────────────────────────────────────────────────
+
+runs:
+  using: 'composite'
+  steps:
+
+    - name: Set up Python ${{ inputs.python_version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python_version }}
+
+    - name: Install UCO-Sensor
+      shell: bash
+      run: |
+        pip install --quiet \
+          "${{ github.action_path }}/algorithms/uco-sensor/sensor-api"
+
+    - name: Run UCO-Sensor scan
+      id: scan
+      shell: bash
+      env:
+        UCO_SCAN_PATH:      ${{ inputs.path }}
+        UCO_MAX_FILES:      ${{ inputs.max_files }}
+        UCO_INCLUDE_TESTS:  ${{ inputs.include_tests }}
+        UCO_SARIF_OUTPUT:   ${{ inputs.sarif_output }}
+        UCO_POLICY_FILE:    ${{ inputs.policy_file }}
+        UCO_FAIL_CRITICAL:  ${{ inputs.fail_on_critical }}
+        UCO_FAIL_GATE:      ${{ inputs.fail_on_gate_fail }}
+        UCO_GATE_THRESHOLD: ${{ inputs.gate_threshold }}
+        GITHUB_OUTPUT:      ${{ github.output }}
+      run: |
+        python \
+          "${{ github.action_path }}/algorithms/uco-sensor/sensor-api/ci/action_entrypoint.py"
+
+    - name: Upload SARIF to GitHub Security
+      if: >-
+        inputs.upload_sarif == 'true' &&
+        inputs.sarif_output != '' &&
+        always()
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ inputs.sarif_output }}
+        category:   'uco-sensor'
+      continue-on-error: true
+
+    - name: Annotate PR summary
+      if: always()
+      shell: bash
+      run: |
+        STATUS="${{ steps.scan.outputs.status }}"
+        SCORE="${{ steps.scan.outputs.uco_score }}"
+        CRIT="${{ steps.scan.outputs.critical_count }}"
+        WARN="${{ steps.scan.outputs.warning_count }}"
+        DEBT="${{ steps.scan.outputs.debt_minutes }}"
+        FILES="${{ steps.scan.outputs.files_scanned }}"
+
+        ICON="✅"
+        [[ "$STATUS" == "WARNING"  ]] && ICON="⚠️"
+        [[ "$STATUS" == "CRITICAL" ]] && ICON="❌"
+
+        echo "## $ICON UCO-Sensor Quality Report" >> "$GITHUB_STEP_SUMMARY"
+        echo ""                                   >> "$GITHUB_STEP_SUMMARY"
+        echo "| Metric | Value |"                 >> "$GITHUB_STEP_SUMMARY"
+        echo "|--------|-------|"                 >> "$GITHUB_STEP_SUMMARY"
+        echo "| Status | **$STATUS** |"           >> "$GITHUB_STEP_SUMMARY"
+        echo "| UCO Score | **$SCORE** / 100 |"  >> "$GITHUB_STEP_SUMMARY"
+        echo "| Critical files | $CRIT |"        >> "$GITHUB_STEP_SUMMARY"
+        echo "| Warning files | $WARN |"         >> "$GITHUB_STEP_SUMMARY"
+        echo "| Files scanned | $FILES |"        >> "$GITHUB_STEP_SUMMARY"
+        echo "| SQALE debt | $DEBT min |"        >> "$GITHUB_STEP_SUMMARY"

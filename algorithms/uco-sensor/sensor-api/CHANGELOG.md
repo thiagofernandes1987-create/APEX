@@ -5,6 +5,65 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [1.0.0] — 2026-04-26 — M4 WEB UI + SARIF + GITHUB ACTIONS + VS CODE
+
+### Adicionado — M4.3 SARIF 2.1.0 Melhorado
+
+- **`report/sarif.py`** — `SARIFBuilder` incremental: 22 regras (9 UCO + 13 SAST)
+- Line/column reais em `physicalLocation.region`: `startLine` e `startColumn` (1-based)
+- `add_sast_findings(uri, sast_result)` — mapeia `SASTFinding.line/col` para região SARIF
+- `add_uco_findings_from_profiles(uri, fps)` — emite UCO001/UCO002 por função com CC/CogCC alto
+- `add_uco_finding(...)` — finding UCO com `logicalLocations` (nome da função)
+- CWE/OWASP tags em `rule.properties`; `fullDescription` e `help.markdown` por regra
+- `/analyze-pr` refatorado para usar `SARIFBuilder` (elimina `startLine: 1` hardcoded)
+
+### Adicionado — M4.4 GitHub Actions Native Action
+
+- **`algorithms/uco-sensor/action.yml`** — composite action com 8 inputs + 7 outputs
+- Inputs: `path`, `fail_on_critical`, `fail_on_gate_fail`, `gate_threshold`, `sarif_output`,
+  `policy_file`, `max_files`, `include_tests`, `python_version`, `upload_sarif`
+- Outputs: `uco_score`, `status`, `critical_count`, `warning_count`, `files_scanned`,
+  `sarif_file`, `debt_minutes`
+- **`ci/action_entrypoint.py`** — script standalone: RepoScanner + SARIFBuilder + SAST scan
+- SARIF auto-upload via `github/codeql-action/upload-sarif@v3`
+- GitHub Step Summary com tabela de métricas + emoji de status
+
+### Adicionado — M4.1 Web Dashboard Temporal
+
+- **`report/webui.py`** — `generate_dashboard_html()`: HTML standalone com Chart.js 4.x (CDN)
+- 4 canvas: Hamiltonian temporal, CC temporal, Cognitive CC por módulo, SQALE debt por módulo
+- Module health cards com status/trend icons, SQALE rating badges
+- Top-issues table + SQALE debt budget progress bar
+- Auto-refresh configável via `setInterval + fetch('/dashboard')`
+- `GET /dashboard/ui` — endpoint no servidor stdlib servindo o dashboard completo
+- Dados pré-embutidos como JSON (`INITIAL_DATA`) para renderização imediata
+
+### Adicionado — M4.2 VS Code Extension
+
+- **`vscode-extension/package.json`** — manifesto completo v1.0.0
+  - Activation: Python, JS, TS, Java, Go
+  - 4 commands: `analyze`, `showDashboard`, `analyzeWorkspace`, `configureServer`
+  - 6 configurações: serverUrl, apiKey, analyzeOnSave, decorations, statusBarFormat, refresh
+- **`vscode-extension/src/api.ts`** — `UCOClient` typed (fetch-based): 10 métodos API
+- **`vscode-extension/src/extension.ts`** — extensão completa:
+  - Status bar com H/status/SQALE rating
+  - 3 decoration types: CRITICAL, HIGH, MEDIUM (coloured highlights + hover)
+  - VS Code Diagnostics (Problems panel) com SAST + função profiles
+  - WebView dashboard panel (HTML inline, sem servidor Node)
+  - Auto-analyse on save; configureServer com ping test
+
+### Modificado
+
+- `api/server.py` — versão `1.0.0`; `/analyze-pr` usa `SARIFBuilder`; `GET /dashboard/ui`
+- `pyproject.toml` — versão `1.0.0`; `webui = [fastapi, uvicorn]` optional dep; `ci*` package
+
+### Testes
+
+- `tests/test_marco_m4.py` — 30 testes TW01-TW30, **30/30 PASS** (0 falhas na primeira execução)
+- Regressão: M1 (30) + M2 (30) + M3 (30) + M4 (30) = **120/120 PASS**
+
+---
+
 ## [0.9.0] — 2026-04-25 — M3 SAST SECURITY RULES
 
 ### Adicionado — M3 SAST Security Rules

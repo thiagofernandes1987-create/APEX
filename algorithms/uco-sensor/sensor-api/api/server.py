@@ -69,6 +69,8 @@ from governance.trend_engine import (
     analyze_trend, analyze_module_trends, track_debt_budget,
     trend_summary, overall_trend,
 )
+from report.sarif import SARIFBuilder
+from report.webui import generate_dashboard_html
 
 
 # ─── Configuração ────────────────────────────────────────────────────────────
@@ -79,7 +81,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "0.9.0"
+    version:      str   = "1.0.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -399,10 +401,13 @@ def handle_analyze_pr(data: Dict) -> Tuple[int, Dict]:
         return 400, {"error": "files list is required and cannot be empty"}
 
     registry = get_registry()
-    results: List[Dict] = []
-    sarif_results: List[Dict] = []
+    results:       List[Dict] = []
     critical_count = 0
     warning_count  = 0
+    sarif_builder  = SARIFBuilder(
+        tool_version=_config.version,
+        repo=repo,
+    )
 
     for f in files:
         path    = f.get("path", "unknown")
@@ -420,9 +425,6 @@ def handle_analyze_pr(data: Dict) -> Tuple[int, Dict]:
             commit_hash=chash,
         )
         _store.insert(mv)
-
-        severity_map = {"CRITICAL": "error", "WARNING": "warning", "STABLE": "note"}
-        sarif_level = severity_map.get(mv.status, "note")
 
         result = {
             "path":     path,
@@ -444,53 +446,33 @@ def handle_analyze_pr(data: Dict) -> Tuple[int, Dict]:
         elif mv.status == "WARNING":
             warning_count += 1
 
-        # SARIF result para cada arquivo com status não-STABLE
+        # SARIF — use SARIFBuilder for rich line/col + SAST integration
         if mv.status != "STABLE":
-            sarif_results.append({
-                "ruleId": f"UCO-{mv.status}",
-                "level": sarif_level,
-                "message": {
-                    "text": (
-                        f"UCO-Sensor: {mv.status} — "
-                        f"H={mv.hamiltonian:.2f}, CC={mv.cyclomatic_complexity}, "
-                        f"ILR={mv.infinite_loop_risk:.2f}, bugs={mv.halstead_bugs:.2f}"
-                    )
-                },
-                "locations": [{
-                    "physicalLocation": {
-                        "artifactLocation": {"uri": path},
-                        "region": {"startLine": 1}
-                    }
-                }]
-            })
+            h  = mv.hamiltonian
+            cc = mv.cyclomatic_complexity
+            sarif_builder.add_uco_finding(
+                file_uri=path,
+                rule_id="UCO001",
+                message=(
+                    f"UCO {mv.status}: H={h:.2f}, CC={cc}, "
+                    f"ILR={mv.infinite_loop_risk:.2f}, bugs={mv.halstead_bugs:.2f}"
+                ),
+                severity=mv.status,
+                line=1,
+            )
+        # SAST scan inline per file (Python only, non-blocking)
+        if content.strip() and path.endswith(".py"):
+            try:
+                sast_file = sast_scan(content, file_extension=".py")
+                sarif_builder.add_sast_findings(path, sast_file)
+            except Exception:
+                pass
+        # Function-level UCO findings from profiles
+        fps = getattr(mv, "function_profiles", None) or []
+        if fps:
+            sarif_builder.add_uco_findings_from_profiles(path, fps)
 
-    # SARIF 2.1.0 envelope
-    sarif_output = {
-        "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
-        "version": "2.1.0",
-        "runs": [{
-            "tool": {
-                "driver": {
-                    "name": "UCO-Sensor",
-                    "version": _config.version,
-                    "informationUri": "https://github.com/apex/uco-sensor",
-                    "rules": [
-                        {
-                            "id": "UCO-CRITICAL",
-                            "name": "CriticalQualitySignal",
-                            "shortDescription": {"text": "UCO critical quality threshold exceeded"},
-                        },
-                        {
-                            "id": "UCO-WARNING",
-                            "name": "WarningQualitySignal",
-                            "shortDescription": {"text": "UCO warning quality threshold exceeded"},
-                        },
-                    ]
-                }
-            },
-            "results": sarif_results,
-        }]
-    }
+    sarif_output = sarif_builder.build()
 
     pr_status = "CRITICAL" if critical_count > 0 else ("WARNING" if warning_count > 0 else "STABLE")
     return 200, {
@@ -1226,6 +1208,27 @@ def handle_dashboard() -> Tuple[int, Dict]:
     }
 
 
+# ─── Web UI endpoint ─────────────────────────────────────────────────────────
+
+def handle_dashboard_ui() -> Tuple[int, str]:
+    """
+    GET /dashboard/ui — Serve the interactive HTML dashboard (M4.1).
+
+    Returns a self-contained HTML page with Chart.js temporal charts.
+    Dashboard data is pre-embedded as JSON so the page renders without
+    an additional /dashboard round-trip.
+    """
+    _, dashboard_data = handle_dashboard()
+    html = generate_dashboard_html(
+        dashboard_data=dashboard_data,
+        title="UCO-Sensor Dashboard",
+        refresh_seconds=30,
+        api_base="",
+        tool_version=_config.version,
+    )
+    return 200, html
+
+
 # ─── SAST endpoints ──────────────────────────────────────────────────────────
 
 def handle_sast(data: Dict) -> Tuple[int, Dict]:
@@ -1364,6 +1367,9 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_trend(module_id, metric, window_n)
             elif path == "/dashboard":
                 code, data = handle_dashboard()
+            elif path == "/dashboard/ui":
+                http_code, html = handle_dashboard_ui()
+                return self._send_html(http_code, html)
             elif path == "/sast/rules":
                 code, data = handle_sast_rules()
             elif path == "/report":

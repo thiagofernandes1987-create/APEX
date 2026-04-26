@@ -1,0 +1,162 @@
+{
+  "name": "uco-sensor",
+  "displayName": "UCO-Sensor",
+  "description": "Real-time UCO code quality + SAST security analysis in VS Code. Cyclomatic/Cognitive complexity, SQALE debt, 13 security rules, inline decorations.",
+  "version": "1.0.0",
+  "publisher": "apex-uco",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thiagofernandes1987-create/APEX"
+  },
+  "homepage": "https://github.com/thiagofernandes1987-create/APEX/tree/main/algorithms/uco-sensor",
+  "bugs": {
+    "url": "https://github.com/thiagofernandes1987-create/APEX/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Linters",
+    "Other"
+  ],
+  "keywords": [
+    "code-quality",
+    "static-analysis",
+    "sast",
+    "security",
+    "complexity",
+    "cyclomatic",
+    "cognitive",
+    "sqale",
+    "technical-debt",
+    "uco",
+    "apex"
+  ],
+  "activationEvents": [
+    "onLanguage:python",
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:java",
+    "onLanguage:go",
+    "onCommand:uco-sensor.analyze",
+    "onCommand:uco-sensor.showDashboard",
+    "onCommand:uco-sensor.analyzeWorkspace",
+    "onCommand:uco-sensor.configureServer"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "uco-sensor.analyze",
+        "title": "UCO-Sensor: Analyze Current File",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "uco-sensor.showDashboard",
+        "title": "UCO-Sensor: Open Dashboard",
+        "icon": "$(dashboard)"
+      },
+      {
+        "command": "uco-sensor.analyzeWorkspace",
+        "title": "UCO-Sensor: Analyze Workspace",
+        "icon": "$(search)"
+      },
+      {
+        "command": "uco-sensor.configureServer",
+        "title": "UCO-Sensor: Configure Server URL",
+        "icon": "$(settings-gear)"
+      }
+    ],
+    "configuration": {
+      "title": "UCO-Sensor",
+      "properties": {
+        "ucoSensor.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:8080",
+          "description": "UCO-Sensor API server URL (http://host:port)"
+        },
+        "ucoSensor.apiKey": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "API key sent as `X-UCO-API-Key` header. Leave empty when auth is disabled."
+        },
+        "ucoSensor.analyzeOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically analyze the active file when it is saved."
+        },
+        "ucoSensor.showInlineDecorations": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show inline SAST finding decorations (coloured line highlights + hover messages)."
+        },
+        "ucoSensor.minSeverityToDecorate": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"],
+          "default": "MEDIUM",
+          "description": "Minimum SAST finding severity level to decorate inline."
+        },
+        "ucoSensor.statusBarFormat": {
+          "type": "string",
+          "enum": ["score", "status", "both"],
+          "default": "both",
+          "description": "Status bar display format: score only, status only, or both."
+        },
+        "ucoSensor.dashboardRefreshSeconds": {
+          "type": "number",
+          "default": 30,
+          "minimum": 10,
+          "description": "Dashboard auto-refresh interval in seconds."
+        }
+      }
+    },
+    "menus": {
+      "editor/title": [
+        {
+          "command": "uco-sensor.analyze",
+          "when": "editorLangId =~ /^(python|javascript|typescript|java|go)$/",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "uco-sensor.analyze",
+          "when": "editorLangId =~ /^(python|javascript|typescript|java|go)$/"
+        },
+        { "command": "uco-sensor.showDashboard" },
+        { "command": "uco-sensor.analyzeWorkspace" },
+        { "command": "uco-sensor.configureServer" }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "ucoSensorPanel",
+          "name": "UCO-Sensor",
+          "visibility": "collapsed"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.x",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.2",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4",
+    "ts-loader": "^9.5.1"
+  }
+}
