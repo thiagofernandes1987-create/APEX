@@ -76,6 +76,7 @@ from scan.incremental_scanner import (
     IncrementalScanner, ChangedFile,
     CHANGE_ADDED, CHANGE_MODIFIED, CHANGE_DELETED, CHANGE_RENAMED,
 )
+from sca.vulnerability_scanner import VulnerabilityScanner
 
 
 # ─── Configuração ────────────────────────────────────────────────────────────
@@ -86,7 +87,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "2.0.0"
+    version:      str   = "2.1.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -186,6 +187,7 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/predict",          "auth": True,   "desc": "Degradation forecast para um módulo (?module=&horizon=)"},
             {"method": "GET",    "path": "/predict/all",      "auth": True,   "desc": "Fleet forecast — todos os módulos, ordenado por risco"},
             {"method": "POST",   "path": "/scan-incremental", "auth": True,   "desc": "Incremental scan — apenas arquivos alterados (M6.1)"},
+            {"method": "POST",   "path": "/scan-sca",         "auth": True,   "desc": "SCA dependency vulnerability scan — 9 ecosystems, 65+ CVEs (M6.3)"},
         ],
         "analyze_body": {
             "code":           "string — código fonte",
@@ -1405,6 +1407,42 @@ def handle_scan_incremental(data: Dict) -> Tuple[int, Dict]:
     return 200, result.to_dict()
 
 
+# ─── SCA endpoint (M6.3) ─────────────────────────────────────────────────────
+
+def handle_scan_sca(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /scan-sca  (M6.3)
+
+    Software Composition Analysis: detect known CVEs in project dependencies.
+    Two modes:
+
+    mode="path" (default):
+        Scans the filesystem starting at `root`.
+        Body: {"root": "/path/to/repo"}
+
+    mode="files":
+        Inline manifest content supplied in the request.
+        Body: {"files": {"requirements.txt": "django==3.1.0\\n..."}}
+
+    Returns SCAResult.to_dict() with:
+        status, summary, findings[], dependencies[], severity counts, debt.
+    """
+    mode = data.get("mode", "path")
+    scanner = VulnerabilityScanner()
+
+    if mode == "files":
+        files_raw = data.get("files", {})
+        if not isinstance(files_raw, dict) or not files_raw:
+            return 400, {"error": "'files' dict is required for mode='files'"}
+        result = scanner.scan_files(files_raw)
+        return 200, result.to_dict()
+
+    # mode == "path"
+    root = data.get("root", ".")
+    result = scanner.scan_path(root)
+    return 200, result.to_dict()
+
+
 # ─── Auth endpoints ──────────────────────────────────────────────────────────
 
 def handle_create_key(data: Dict) -> Tuple[int, Dict]:
@@ -1591,6 +1629,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_apex_fix(body)
             elif path == "/scan-incremental":
                 code, data = handle_scan_incremental(body)
+            elif path == "/scan-sca":
+                code, data = handle_scan_sca(body)
             elif path == "/auth/keys":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:

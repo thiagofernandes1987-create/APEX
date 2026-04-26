@@ -5,6 +5,72 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.1.0] — 2026-04-26 — M6.3 SCA DEPENDENCY VULNERABILITY SCANNER
+
+### Adicionado — M6.3 Software Composition Analysis
+
+**APEX SCIENTIFIC mode** | Diferencial: SonarQube Community **não tem SCA** (requer OWASP Dependency-Check separado); UCO-Sensor integra SCA nativamente com SQALE debt, detecção Log4Shell/Spring4Shell offline-first e endpoint REST.
+
+#### Arquitetura
+
+- **`sca/__init__.py`** — package com exports públicos
+- **`sca/cve_database.py`** — base de CVEs embutida, sem dependências externas
+  - `CVEEntry(cve_id, severity, cvss_score, description, affected_range, fixed_version, cwe)` — imutável (frozen dataclass)
+  - `_parse_version(v)` → tuple comparável — suporta `1.2.3`, `v2.0`, `1.0.0-rc1`, `1.0.0.post1`, epoch PEP 440
+  - `_version_satisfies(version, range_spec)` → bool — operadores `>= <= > < == =`, separados por vírgula
+  - `lookup(ecosystem, name, version)` → `List[CVEEntry]` — lookup normalizado por ecosistema
+  - `_normalize_name(ecosystem, name)` — PEP 503 para pip (hyphen/underscore), lowercase para todos
+  - **65+ CVEs reais** cobrindo 9 ecosistemas:
+    - **pip**: Django (SQL injection, timing), Pillow (heap overflow), cryptography, requests, Flask, aiohttp, setuptools, lxml, PyYAML, gunicorn, certifi, paramiko
+    - **npm**: lodash (3 CVEs), axios (3 CVEs), follow-redirects (2 CVEs), minimist, node-fetch, qs (3 CVEs), ws (4 CVEs), path-parse, tar (3 CVEs)
+    - **maven**: Log4Shell (CVE-2021-44228, 45046, 45105), Spring4Shell (CVE-2022-22965), Spring Cloud Function (CVE-2022-22963), jackson-databind, Struts2 (2 CVEs), commons-collections, commons-text (Text4Shell), Spring Security
+    - **cargo**: regex (ReDoS), rustls, openssl, h2
+    - **go**: golang.org/x/net (2 CVEs), golang.org/x/crypto, gin
+    - **composer**: Laravel/framework (2 CVEs), symfony/security-core, guzzlehttp/guzzle
+    - **gem**: rails (3 CVEs), nokogiri (2 CVEs), loofah
+    - **nuget**: System.Text.Encodings.Web (3 CVEs), Microsoft.AspNetCore.Http, Newtonsoft.Json, System.Net.Http
+    - **gradle**: aliases automáticos para todos os artefatos Maven
+
+- **`sca/vulnerability_scanner.py`** — motor principal
+  - `Dependency(name, version, ecosystem, source_file)` — dependência resolvida
+  - `VulnerabilityFinding(dependency, cve_id, severity, cvss_score, description, fixed_version, cwe, debt_minutes)` — finding com SQALE auto-calculado
+  - `SCAResult` — resultado agregado com `summary()`, `to_dict()`, status CRITICAL/WARNING/STABLE
+  - `VulnerabilityScanner`:
+    - `scan_path(root)` — varredura recursiva filesystem, pula node_modules/.git/vendor/etc.
+    - `scan_files(files: Dict[str, str])` — inline content dict (CI webhook, testes)
+    - **9 parsers de manifesto**:
+      - pip: `requirements.txt/in`, `Pipfile`, `Pipfile.lock`, `pyproject.toml` (PEP 621 + Poetry)
+      - npm: `package.json` (strip `^/~/>=`), `package-lock.json` (v2/v3 exato)
+      - maven: `pom.xml` via regex `<dependency>` blocks
+      - cargo: `Cargo.toml` ([dependencies] section), `Cargo.lock` ([[package]] blocks)
+      - go: `go.mod` (inline `require` e bloco `require (...)`)
+      - composer: `composer.json` (require + require-dev)
+      - gem: `Gemfile.lock` (GEM specs section, 4-space indent)
+      - nuget: `packages.config`, `*.csproj` (PackageReference inline + child element)
+      - gradle: `build.gradle/kts` (implementation/compile/api/testImplementation)
+
+- **`api/server.py`** — novo endpoint `POST /scan-sca`
+  - Modo `path`: `{"root": "/repo"}` — varredura filesystem
+  - Modo `files`: `{"files": {"requirements.txt": "..."}}` — inline
+  - Retorna `SCAResult.to_dict()` com findings, severity counts, debt
+  - Versão bumped: 2.0.0 → **2.1.0**
+
+#### Testes
+
+- **`tests/test_marco_m11.py`** — 30 testes TS01–TS30 (240/240 acumulado M4–M11)
+  - Group 1 — CVE DB (TS01–TS07): parse_version, version_satisfies, lookup Log4Shell, safe version empty, DB size ≥50, PEP 503 normalize
+  - Group 2 — Data structures (TS08–TS10): Dependency.to_dict, debt_minutes auto, SCAResult summary+status
+  - Group 3 — Parsers (TS11–TS20): requirements.txt, package.json, pom.xml, Cargo.lock, go.mod, composer.json, Gemfile.lock, packages.config, build.gradle, pyproject.toml
+  - Group 4 — scan_files E2E (TS21–TS25): Log4Shell detected, lodash prototype pollution, clean deps=STABLE, multi-ecosystem, debt accumulation
+  - Group 5 — REST endpoint (TS26–TS30): files mode 200, CVE detection, 400 empty files, 400 no key, path mode filesystem
+
+### Alterado
+
+- `api/server.py`: importa `VulnerabilityScanner`; `handle_scan_sca()` adicionado; `/scan-sca` no router do `do_POST`; `/docs` atualizado
+- Versão bumped: 2.0.0 → **2.1.0**
+
+---
+
 ## [2.0.0] — 2026-04-26 — M6.2 MULTI-LANGUAGE SUPPORT (APEX SCIENTIFIC)
 
 ### Adicionado — M6.2 40 Language Adapters
