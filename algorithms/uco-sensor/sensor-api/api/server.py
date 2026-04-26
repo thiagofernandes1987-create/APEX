@@ -61,6 +61,7 @@ from scan.repo_scanner import RepoScanner
 from report.html_report import generate_html_report
 from report.badge import generate_badge_svg, generate_status_badge_svg
 from apex_integration.templates import get_template, render_prompt, fix_action_for, all_error_types
+from sast.scanner import scan as sast_scan, RULES as SAST_RULES
 from governance.policy_engine import (
     evaluate_policy, load_default_policy, policy_from_dict, mv_to_metrics_dict,
 )
@@ -78,7 +79,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "0.8.0"
+    version:      str   = "0.9.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -242,7 +243,15 @@ def handle_analyze(data: Dict) -> Tuple[int, Dict]:
             except Exception:
                 pass   # APEX nunca quebra o fluxo principal
 
+    # SAST scan (Python only, non-blocking)
+    sast_result = None
+    try:
+        sast_result = sast_scan(code, file_extension=file_ext)
+    except Exception:
+        pass
+
     return 200, {
+        "sast": sast_result.to_dict() if sast_result else None,
         "metric_vector": {
             "module_id":              mv.module_id,
             "commit_hash":            mv.commit_hash,
@@ -1217,6 +1226,45 @@ def handle_dashboard() -> Tuple[int, Dict]:
     }
 
 
+# ─── SAST endpoints ──────────────────────────────────────────────────────────
+
+def handle_sast(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /sast — Static security scan of source code.
+
+    Body: {"code": str, "file_extension": str, "module_id": str}
+    Response: SASTResult dict + SQALE debt contribution
+    """
+    code     = data.get("code", "")
+    file_ext = data.get("file_extension", data.get("language", ".py"))
+    if not code.strip():
+        return 400, {"error": "code is required"}
+    if not file_ext.startswith("."):
+        file_ext = f".{file_ext}"
+
+    result = sast_scan(code, file_extension=file_ext)
+    return 200, result.to_dict()
+
+
+def handle_sast_rules() -> Tuple[int, Dict]:
+    """GET /sast/rules — list all SAST rules with metadata."""
+    return 200, {
+        "rules": [
+            {
+                "rule_id":    r.rule_id,
+                "title":      r.title,
+                "cwe_id":     r.cwe_id,
+                "owasp":      r.owasp,
+                "severity":   r.severity,
+                "description": r.description,
+                "remediation": r.remediation,
+            }
+            for r in SAST_RULES
+        ],
+        "count": len(SAST_RULES),
+    }
+
+
 # ─── Auth endpoints ──────────────────────────────────────────────────────────
 
 def handle_create_key(data: Dict) -> Tuple[int, Dict]:
@@ -1316,6 +1364,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_trend(module_id, metric, window_n)
             elif path == "/dashboard":
                 code, data = handle_dashboard()
+            elif path == "/sast/rules":
+                code, data = handle_sast_rules()
             elif path == "/report":
                 module_id = params.get("module", [None])[0]
                 title     = params.get("title", ["UCO-Sensor Report"])[0]
@@ -1382,6 +1432,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_diff(body)
             elif path == "/gate":
                 code, data = handle_gate(body)
+            elif path == "/sast":
+                code, data = handle_sast(body)
             elif path == "/apex/fix":
                 code, data = handle_apex_fix(body)
             elif path == "/auth/keys":

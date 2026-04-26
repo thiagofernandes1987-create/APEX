@@ -5,6 +5,41 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [0.9.0] — 2026-04-25 — M3 SAST SECURITY RULES
+
+### Adicionado — M3 SAST Security Rules
+
+- **`sast/` package** — Static Application Security Testing engine com 13 regras de segurança
+- **SAST001** (CWE-89, CRITICAL) — SQL Injection via `execute()` com string formatada ou concatenada
+- **SAST002** (CWE-78, HIGH) — OS Command Injection via `os.system()` / `os.popen()` com argumento variável
+- **SAST003** (CWE-95, HIGH) — Unsafe `eval()` / `exec()` com argumento não-literal
+- **SAST004** (CWE-502, HIGH) — Pickle deserialization via `pickle.load()` / `pickle.loads()`
+- **SAST005** (CWE-502, MEDIUM) — YAML unsafe load sem `Loader` contendo "safe"
+- **SAST006** (CWE-327, MEDIUM) — Algoritmo de hash fraco: MD5, SHA1
+- **SAST007** (CWE-338, MEDIUM) — Randomness insegura via módulo `random`
+- **SAST008** (CWE-798, HIGH) — Segredo hardcoded: `password`, `api_key`, `token`, etc.; exclui placeholders (`CHANGEME`, `YOUR_`, etc.)
+- **SAST009** (CWE-321, CRITICAL) — Chave privada PEM no código-fonte
+- **SAST010** (CWE-489, MEDIUM) — Flask/app `debug=True` em produção
+- **SAST011** (CWE-22, HIGH) — Path Traversal via `open()` com caminho variável
+- **SAST012** (CWE-617, LOW) — `assert` usado para verificação de segurança
+- **SAST013** (CWE-78, HIGH) — `subprocess` com `shell=True` + argumento não-literal
+- **`SASTFinding` / `SASTResult`** — dataclasses com `to_dict()`, debt_minutes, security_rating A-E
+- **Security rating** — CRITICAL→E, ≥2 HIGH→D, 1 HIGH→C, ≥2 MEDIUM→C, 1 MEDIUM→B, clean→A
+- **SAST debt** — CRITICAL=240 min, HIGH=120 min, MEDIUM=60 min, LOW=30 min, INFO=5 min
+
+### API — Novos endpoints (v0.9.0)
+
+- `POST /sast` — scan de código-fonte; retorna findings + rating + debt
+- `GET /sast/rules` — catálogo das 13 regras SAST
+- `POST /analyze` — enriquecido com campo `"sast"` no payload de resposta
+
+### Testes
+
+- `tests/test_marco_m3.py` — 30 testes TS01-TS30, **30/30 PASS**
+- Regressão: M1 (30/30) + M2 (30/30) mantidos intactos
+
+---
+
 ## [0.8.0] — 2026-04-25 — M2 GOVERNANCE ENGINE
 
 ### Adicionado — M2 Governance Engine
