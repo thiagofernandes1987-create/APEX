@@ -5,6 +5,106 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.6.0] — 2026-04-27 — M7.2 Taint Analysis + FlowVector
+
+### Adicionado — M7.2 FASE 3 (WBS 5.1-5.7)
+
+**Intra-function Data Flow Analysis (DFA) engine** — `sast/taint_engine.py` (novo, ~500 LOC).  
+Rastreia propagação de variáveis contaminadas de fontes controladas pelo atacante até chamadas perigosas (sinks), com neutralização via sanitizadores.
+
+#### Módulo: `sast/taint_engine.py` — NOVO (M7.2)
+
+**Fontes (Sources) rastreadas:**
+
+| Categoria | Padrões |
+|---|---|
+| HTTP inputs | `request.args/form/json/data/values/files/cookies/headers/GET/POST/body/query` |
+| CLI | `sys.argv[n]`, `sys.argv` (todo o objeto) |
+| OS | `os.environ[key]`, `os.environ`, `os.getenv()` |
+| Python built-in | `input()`, `raw_input()` |
+
+**Sinks (Perigosos) rastreados:**
+
+| Regra | Sink | CWE | Severidade |
+|---|---|---|---|
+| SAST040 | `cursor/db/session.execute()` | CWE-89 | CRITICAL |
+| SAST041 | `os.system/popen/execv`, `subprocess.call/run/Popen` | CWE-78 | CRITICAL |
+| SAST042 | `Template.render()`, `env.get_template()` | CWE-94 | CRITICAL |
+| SAST043 | `eval()`, `exec()`, `compile()` | CWE-95 | HIGH |
+| SAST044 | `open()` | CWE-22 | HIGH |
+| SAST045 | Sinks não classificados | CWE-20 | MEDIUM |
+
+**Sanitizadores reconhecidos:** `html.escape`, `bleach.clean`, `markupsafe.escape`, `re.escape`, `urllib.parse.quote/quote_plus`, `hashlib.sha256/sha512`, `hmac.new`, `jinja2.escape`, `secrets.token_*`
+
+**Propagação implementada:**
+- Atribuição direta: `x = tainted_expr` → `x` ∈ TaintSet
+- Augmented assign: `x += tainted` → `x` ∈ TaintSet (se x ou RHS tainted)
+- Tuple unpack: `a, b = tainted_pair` → ambos ∈ TaintSet
+- F-string: `` f"...{tainted}..." `` → resultado tainted
+- BinOp concat: `clean + tainted` → resultado tainted
+- Call heuristic: `func(tainted_arg)` → resultado tainted (interprocedural proxy)
+- Branches: if/else — merge conservativo (union de ambos os branches)
+- Loops: for/while — variável de loop herda taint do iterável
+
+**Estruturas de dados:**
+- `TaintInfo` — provenance: `origin`, `origin_line`, `path: List[str]`
+- `TaintSet` — scope-local: `add/remove/is_tainted/get/clone/merge_from`
+- `TaintFlow` — flow confirmado: source_desc, sink_desc, path, sanitized, vuln_type, rule_id
+- `TaintResult` — agregado: flows, source_count, sink_count, cross_fn_risk, taint_sanitized_ratio, injection_surface
+
+**AST traversal:** `TaintAnalyzer.analyze(source)` — walk hierárquico com dispatch em `_stmt_assign`, `_stmt_if`, `_stmt_for`, `_stmt_while`, `_stmt_with`, `_stmt_try`, `_stmt_call`; aninhamento correto de função preserva scopes.
+
+#### Módulo: `metrics/extended_vectors.py` — FlowVector (6 canais, M7.2)
+
+| Canal | Tipo | Fonte |
+|---|---|---|
+| `taint_source_count` | `int` | `TaintResult.source_count` |
+| `taint_sink_count` | `int` | `TaintResult.sink_count` |
+| `taint_path_count` | `int` | `len(TaintResult.flows)` |
+| `taint_sanitized_ratio` | `float` | `sanitized_count / path_count` [0.0–1.0] |
+| `cross_fn_taint_risk` | `int` | taint passado a chamadas não-sink (deduped por linha) |
+| `injection_surface` | `float` | `path_count × (1 − sanitized_ratio)` |
+
+- `flow_rating()`: escala A–E (E se surface>5 ou >6 paths não saneados)
+- `unsanitized_paths`: propriedade derivada
+- `from_taint_result(result)`: factory
+- `from_dict(d)` / `to_dict()`: persistência
+
+#### Módulo: `sensor_core/uco_bridge.py` — integração M7.2
+
+- `analyze()` agora executa `TaintAnalyzer().analyze(source)` e anexa `mv.flow = FlowVector.from_taint_result(result)` para todo Python code em modo `full`
+- Guard condicional `_TAINT_AVAILABLE` — retrocompatível se `sast.taint_engine` não importar
+- Falhas de taint analysis são silenciadas (try/except) — nunca quebram o pipeline principal
+
+#### Módulo: `api/server.py` — 2 novos endpoints
+
+| Endpoint | Método | Descrição |
+|---|---|---|
+| `POST /scan-flow` | POST | Executa taint analysis em Python source; retorna flows + FlowVector + summary |
+| `GET /metrics/flow?module=<id>` | GET | FlowVector do último snapshot persistido |
+
+- `handle_scan_flow(data)` — valida `code`, executa TaintAnalyzer, retorna dict com `flow_vector`, `flows[]`, `summary`
+- `handle_metrics_flow(module_id, window)` — lookup no SnapshotStore; 400/404/503/200
+- Guards: `_TAINT_ENGINE_AVAILABLE`
+- Registrados em `/docs` autodoc e GET/POST dispatchers
+
+#### Módulo: `tests/test_marco_m17.py` — NOVO (TF01-TF30, 67 testes)
+
+67 testes cobrindo:
+- TF01-TF04: TaintSet / TaintInfo data structures
+- TF05-TF09: Source detection (request.args, sys.argv, os.environ, input, os.getenv)
+- TF10-TF14: Propagation rules (assign, tuple unpack, f-string, BinOp, call heuristic)
+- TF15-TF19: Sink detection (SQL, OS command, eval, open, subprocess); clean args → no finding
+- TF20-TF24: Sanitizers (html.escape, bleach, re.escape, urllib.quote, partial sanitization)
+- TF25-TF29: FlowVector (defaults, from_taint_result, ratings A-E, to_dict, unsanitized_paths)
+- TF30: Full pipeline (UCOBridge attaches mv.flow, API handlers 400/404/200)
+
+### Técnico
+- Versão: `2.5.0 → 2.6.0`
+- `pyproject.toml`: version 2.6.0, `python_files` atualizado com `test_marco_m17.py`
+
+---
+
 ## [2.5.0] — 2026-04-27 — M7.3 ReliabilityVector + MaintainabilityVector
 
 ### Adicionado — M7.3 FASE 2 (WBS 4.1-4.6)

@@ -1175,3 +1175,133 @@ def _analyse_maintainability(tree, lines):
         fns_long_params,
         docstring_ratio,
     )
+
+
+# ─── FlowVector (M7.2) ───────────────────────────────────────────────────────
+
+@dataclass
+class FlowVector:
+    """
+    6-channel taint / data-flow analysis vector — M7.2.
+
+    Aggregates signals from the intra-function TaintAnalyzer DFA engine.
+    All channels feed from TaintResult produced by sast.taint_engine.
+
+    Channels
+    --------
+    taint_source_count    : int   — unique user-controlled source expressions
+    taint_sink_count      : int   — unique dangerous sink call sites
+    taint_path_count      : int   — confirmed source→sink flows
+    taint_sanitized_ratio : float — sanitized flows / total flows [0.0–1.0]
+    cross_fn_taint_risk   : int   — tainted args passed to non-sink calls
+    injection_surface     : float — taint_path_count × (1 − taint_sanitized_ratio)
+
+    Rating thresholds
+    -----------------
+    A: injection_surface == 0, path_count == 0
+    B: 1 unsanitized flow
+    C: 2–3 unsanitized flows OR injection_surface > 1
+    D: 4–6 unsanitized flows OR injection_surface > 3
+    E: >6 unsanitized flows OR injection_surface > 5
+
+    References
+    ----------
+    CWE-20  : Improper Input Validation
+    CWE-89  : SQL Injection
+    CWE-78  : OS Command Injection
+    CWE-94  : Code Injection / Template Injection
+    CWE-501 : Trust Boundary Violation (cross-function taint)
+    """
+
+    # ── channels ─────────────────────────────────────────────────────────────
+    taint_source_count:    int   = 0
+    taint_sink_count:      int   = 0
+    taint_path_count:      int   = 0
+    taint_sanitized_ratio: float = 0.0
+    cross_fn_taint_risk:   int   = 0
+    injection_surface:     float = 0.0
+
+    # ── metadata ──────────────────────────────────────────────────────────────
+    module_id: str = ""
+    language:  str = "python"
+
+    # ── constructors ─────────────────────────────────────────────────────────
+
+    @classmethod
+    def from_taint_result(
+        cls,
+        result,
+        module_id: str = "",
+        language:  str = "python",
+    ) -> "FlowVector":
+        """
+        Build FlowVector from a TaintResult produced by TaintAnalyzer.
+
+        Parameters
+        ----------
+        result    : TaintResult — output of TaintAnalyzer().analyze()
+        module_id : str — module identifier for persistence
+        language  : str — source language (always 'python' for M7.2)
+        """
+        return cls(
+            taint_source_count    = result.source_count,
+            taint_sink_count      = result.sink_count,
+            taint_path_count      = result.taint_path_count,
+            taint_sanitized_ratio = round(result.taint_sanitized_ratio, 4),
+            cross_fn_taint_risk   = result.cross_fn_risk,
+            injection_surface     = round(result.injection_surface, 4),
+            module_id             = module_id,
+            language              = language,
+        )
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "FlowVector":
+        known = {f for f in cls.__dataclass_fields__}
+        return cls(**{k: v for k, v in d.items() if k in known})
+
+    # ── derived properties ────────────────────────────────────────────────────
+
+    @property
+    def unsanitized_paths(self) -> int:
+        """Flows that were NOT sanitized."""
+        return max(0, self.taint_path_count - round(
+            self.taint_path_count * self.taint_sanitized_ratio
+        ))
+
+    def flow_rating(self) -> str:
+        """
+        A–E data-flow security rating.
+
+          A: no confirmed paths, injection_surface == 0
+          B: 1 unsanitized path OR injection_surface ≤ 1
+          C: 2–3 unsanitized paths OR injection_surface > 1
+          D: 4–6 unsanitized paths OR injection_surface > 3
+          E: >6 unsanitized paths OR injection_surface > 5
+        """
+        unsan = self.unsanitized_paths
+        surf  = self.injection_surface
+        if unsan > 6 or surf > 5:
+            return "E"
+        if unsan >= 4 or surf > 3:
+            return "D"
+        if unsan >= 2 or surf > 1:
+            return "C"
+        if unsan >= 1 or surf > 0:
+            return "B"
+        return "A"
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["flow_rating"]        = self.flow_rating()
+        d["unsanitized_paths"]  = self.unsanitized_paths
+        return d
+
+    def __repr__(self) -> str:
+        return (
+            f"FlowVector("
+            f"rating={self.flow_rating()}, "
+            f"paths={self.taint_path_count}, "
+            f"surface={self.injection_surface:.2f}, "
+            f"sources={self.taint_source_count}, "
+            f"sinks={self.taint_sink_count})"
+        )

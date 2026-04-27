@@ -44,15 +44,26 @@ if str(_ROOT) not in sys.path:
 
 from core.data_structures import MetricVector
 
-# Extended vectors (M6.4 + M7.0 + M7.3) — import lazily to avoid circular deps
+# Extended vectors (M6.4 + M7.0 + M7.3 + M7.2) — import lazily to avoid circular deps
 try:
     from metrics.extended_vectors import (
         HalsteadVector, StructuralVector, AdvancedVector,
-        ReliabilityVector, MaintainabilityVector,
+        ReliabilityVector, MaintainabilityVector, FlowVector,
     )
     _EXTENDED_VECTORS_AVAILABLE = True
 except ImportError:
     _EXTENDED_VECTORS_AVAILABLE = False
+
+# M7.2 — TaintAnalyzer (intra-function DFA)
+try:
+    from sast.taint_engine import TaintAnalyzer as _TaintAnalyzer
+    _TAINT_AVAILABLE = True
+except ImportError:
+    try:
+        from taint_engine import TaintAnalyzer as _TaintAnalyzer  # type: ignore[no-redef]
+        _TAINT_AVAILABLE = True
+    except ImportError:
+        _TAINT_AVAILABLE = False
 
 
 # ─── Python builtins (AST-IMP: shadow builtin detection) ─────────────────────
@@ -847,6 +858,18 @@ class UCOBridge:
         if _EXTENDED_VECTORS_AVAILABLE:
             mv.reliability    = ReliabilityVector.from_mv(mv)
             mv.maintainability = MaintainabilityVector.from_mv(mv, source=source)
+
+        # ── M7.2: Attach FlowVector (taint analysis — Python only, full mode) ──
+        if _TAINT_AVAILABLE and _EXTENDED_VECTORS_AVAILABLE and language == "python":
+            try:
+                _taint_result = _TaintAnalyzer().analyze(source, module_id=module_id)
+                mv.flow = FlowVector.from_taint_result(
+                    _taint_result,
+                    module_id=module_id,
+                    language=language,
+                )
+            except Exception:
+                pass  # taint analysis failure must never break the main pipeline
 
         # ── M6.4: Attach extended vectors to MetricVector ─────────────────
         if _EXTENDED_VECTORS_AVAILABLE:

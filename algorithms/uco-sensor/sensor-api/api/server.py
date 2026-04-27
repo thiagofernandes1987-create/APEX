@@ -100,6 +100,16 @@ except ImportError:
     _RELIABILITY_VECTOR_AVAILABLE     = False
     _MAINTAINABILITY_VECTOR_AVAILABLE = False
 
+# M7.2 — TaintAnalyzer + FlowVector
+try:
+    from sast.taint_engine import TaintAnalyzer as _TaintAnalyzer
+    from metrics.extended_vectors import FlowVector as _FlowVector
+    _TAINT_ENGINE_AVAILABLE = True
+except ImportError:
+    _TaintAnalyzer  = None  # type: ignore[assignment,misc]
+    _FlowVector     = None  # type: ignore[assignment,misc]
+    _TAINT_ENGINE_AVAILABLE = False
+
 
 # ─── Configuração ────────────────────────────────────────────────────────────
 
@@ -109,7 +119,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "2.5.0"
+    version:      str   = "2.6.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -214,6 +224,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/metrics/advanced",        "auth": True,   "desc": "AdvancedVector + DiagnosticVector — persisted M7.0 extended signals (?module=)"},
             {"method": "GET",    "path": "/metrics/reliability",     "auth": True,   "desc": "ReliabilityVector — 10-channel reliability posture for a module (?module=) [M7.3a]"},
             {"method": "GET",    "path": "/metrics/maintainability", "auth": True,   "desc": "MaintainabilityVector — 9-channel maintainability posture for a module (?module=) [M7.3b]"},
+            {"method": "POST",   "path": "/scan-flow",               "auth": True,   "desc": "Taint analysis DFA — source→sink flows, FlowVector, SAST findings (M7.2)"},
+            {"method": "GET",    "path": "/metrics/flow",            "auth": True,   "desc": "FlowVector — 6-channel taint/data-flow posture for a module (?module=) [M7.2]"},
         ],
         "analyze_body": {
             "code":           "string — código fonte",
@@ -1711,6 +1723,138 @@ def handle_metrics_maintainability(module_id: Optional[str], window: int = 50) -
     }
 
 
+# ─── M7.2 Taint Analysis endpoints ──────────────────────────────────────────
+
+def handle_scan_flow(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /scan-flow  (M7.2)
+
+    Run intra-function taint analysis (DFA) on a Python source snippet.
+    Returns all detected source→sink flows, FlowVector, and SAST-compatible
+    finding dicts for each confirmed taint path.
+
+    Request body
+    ------------
+    {
+      "code":      str  — Python source code (required)
+      "module_id": str  — identifier for the module (optional)
+    }
+
+    Response schema
+    ---------------
+    {
+      "module_id":         str,
+      "flow_vector": {
+        "taint_source_count":    int,
+        "taint_sink_count":      int,
+        "taint_path_count":      int,
+        "taint_sanitized_ratio": float,
+        "cross_fn_taint_risk":   int,
+        "injection_surface":     float,
+        "flow_rating":           str,   # A–E
+        "unsanitized_paths":     int
+      },
+      "flows": [
+        {
+          "rule_id":      str,          # SAST040-SAST045
+          "severity":     str,          # CRITICAL / HIGH / MEDIUM
+          "cwe_id":       str,
+          "vuln_type":    str,          # SQL_INJECTION / COMMAND_INJECTION / …
+          "source_desc":  str,
+          "source_line":  int,
+          "sink_desc":    str,
+          "line":         int,
+          "flow_path":    [str],        # variable chain source→sink
+          "sanitized":    bool,
+          "debt_minutes": int
+        }
+      ],
+      "summary": {
+        "source_count":          int,
+        "sink_count":            int,
+        "taint_path_count":      int,
+        "sanitized_count":       int,
+        "taint_sanitized_ratio": float,
+        "injection_surface":     float,
+        "cross_fn_risk":         int
+      }
+    }
+    """
+    if not _TAINT_ENGINE_AVAILABLE:
+        return 503, {"error": "Taint engine not available (sast.taint_engine missing)"}
+
+    source    = data.get("code", "")
+    module_id = data.get("module_id", "<anonymous>")
+
+    if not source or not source.strip():
+        return 400, {"error": "Field 'code' is required and must be non-empty"}
+
+    try:
+        result = _TaintAnalyzer().analyze(source, module_id=module_id)
+    except Exception as exc:
+        return 500, {"error": f"Taint analysis failed: {exc}"}
+
+    fv = _FlowVector.from_taint_result(result, module_id=module_id)
+
+    return 200, {
+        "module_id":   module_id,
+        "flow_vector": fv.to_dict(),
+        "flows":       [f.to_dict() for f in result.flows],
+        "summary": {
+            "source_count":          result.source_count,
+            "sink_count":            result.sink_count,
+            "taint_path_count":      result.taint_path_count,
+            "sanitized_count":       result.sanitized_count,
+            "taint_sanitized_ratio": result.taint_sanitized_ratio,
+            "injection_surface":     result.injection_surface,
+            "cross_fn_risk":         result.cross_fn_risk,
+        },
+    }
+
+
+def handle_metrics_flow(module_id: Optional[str], window: int = 50) -> Tuple[int, Dict]:
+    """
+    GET /metrics/flow?module=<id>[&window=<n>]  (M7.2)
+
+    Returns the most-recent persisted FlowVector for a module.
+
+    Response schema
+    ---------------
+    {
+      "module_id":    str,
+      "history_size": int,
+      "last_commit":  str,
+      "last_timestamp": float,
+      "flow_vector":  {FlowVector.to_dict()} | null,
+      "flow_rating":  str   — A–E (top-level convenience)
+    }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    if not _TAINT_ENGINE_AVAILABLE:
+        return 503, {"error": "FlowVector not available (taint engine missing)"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]
+
+    fv = getattr(latest, "flow", None)
+    fv_dict   = fv.to_dict()     if fv is not None else None
+    fv_rating = fv.flow_rating() if fv is not None else "N/A"
+
+    return 200, {
+        "module_id":     module_id,
+        "history_size":  len(history),
+        "last_commit":   latest.commit_hash,
+        "last_timestamp": latest.timestamp,
+        "flow_vector":   fv_dict,
+        "flow_rating":   fv_rating,
+    }
+
+
 # ─── Auth endpoints ──────────────────────────────────────────────────────────
 
 def handle_create_key(data: Dict) -> Tuple[int, Dict]:
@@ -1854,6 +1998,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
                 code, data = handle_metrics_maintainability(module_id, window=window_n)
+            elif path == "/metrics/flow":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_metrics_flow(module_id, window=window_n)
             else:
                 code, data = 404, {"error": f"Unknown endpoint: {path}"}
         except Exception as e:
@@ -1913,6 +2061,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_scan_sca(body)
             elif path == "/scan-iac":
                 code, data = handle_scan_iac(body)
+            elif path == "/scan-flow":
+                code, data = handle_scan_flow(body)
             elif path == "/auth/keys":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:

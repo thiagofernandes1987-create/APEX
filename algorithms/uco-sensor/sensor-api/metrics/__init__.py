@@ -1,6 +1,6 @@
 """
-UCO-Sensor — metrics package  (M7.3)
-=====================================
+UCO-Sensor — metrics package  (M7.3 + M7.2)
+=============================================
 Extended metric vectors that complement the 9-channel MetricVector schema.
 
 Exports
@@ -13,6 +13,7 @@ AdvancedVector        — 6-channel advanced static analysis (cognitive CC, SQAL
 DiagnosticVector      — 8-channel spectral diagnostic (FrequencyEngine persistence signals)
 ReliabilityVector     — 10-channel reliability signals (M7.3a)
 MaintainabilityVector — 9-channel maintainability signals (M7.3b)
+FlowVector            — 6-channel taint / data-flow analysis signals (M7.2)
 """
 from .extended_vectors import (
     HalsteadVector,
@@ -23,6 +24,7 @@ from .extended_vectors import (
     DiagnosticVector,
     ReliabilityVector,
     MaintainabilityVector,
+    FlowVector,
 )
 
 __all__ = [
@@ -34,4 +36,5 @@ __all__ = [
     "DiagnosticVector",
     "ReliabilityVector",
     "MaintainabilityVector",
+    "FlowVector",
 ]
