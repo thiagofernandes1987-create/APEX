@@ -34,6 +34,13 @@ if str(_ROOT) not in sys.path:
 
 from core.data_structures import MetricVector
 
+# Extended vectors (M6.4)
+try:
+    from metrics.extended_vectors import HalsteadVector, StructuralVector
+    _EXTENDED_AVAILABLE = True
+except ImportError:
+    _EXTENDED_AVAILABLE = False
+
 
 # ── Module-level helpers ───────────────────────────────────────────────────────
 
@@ -261,6 +268,25 @@ class GenericRegexAdapter(LanguageAdapter):
         )
         mv.n_functions = n_functions
         mv.n_classes   = n_classes
+
+        # ── M6.4: Attach extended vectors ─────────────────────────────────
+        if _EXTENDED_AVAILABLE:
+            mv.halstead = HalsteadVector.from_primitives(
+                n1=n1, n2=n2, N1=N1, N2=N2,
+                module_id=module_id,
+                language=self.LANGUAGE,
+            )
+            mv.structural = StructuralVector.from_counts(
+                max_function_cc=cc,          # best proxy for generic adapter
+                fn_cc_list=[cc],
+                max_methods_per_class=0,
+                n_functions=n_functions,
+                n_classes=n_classes,
+                source=source,
+                module_id=module_id,
+                language=self.LANGUAGE,
+            )
+
         return mv
 
     # ═════════════════════════════════════════════════════════════════════════

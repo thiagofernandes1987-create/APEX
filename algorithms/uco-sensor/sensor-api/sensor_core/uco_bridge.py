@@ -43,6 +43,13 @@ if str(_ROOT) not in sys.path:
 
 from core.data_structures import MetricVector
 
+# Extended vectors (M6.4) — import lazily to avoid circular deps at module load
+try:
+    from metrics.extended_vectors import HalsteadVector, StructuralVector
+    _EXTENDED_VECTORS_AVAILABLE = True
+except ImportError:
+    _EXTENDED_VECTORS_AVAILABLE = False
+
 
 # ─── Constantes Halstead ─────────────────────────────────────────────────────
 
@@ -625,6 +632,27 @@ class UCOBridge:
         mv.max_methods_per_class= visitor.max_methods_per_class
         mv.cc_hotspot_ratio     = round(cc_hotspot_ratio, 4)
         mv.max_function_cc      = max_fn_cc
+
+        # ── M6.4: Attach extended vectors to MetricVector ─────────────────
+        if _EXTENDED_VECTORS_AVAILABLE:
+            mv.halstead = HalsteadVector.from_primitives(
+                n1=visitor.n1,
+                n2=visitor.n2,
+                N1=visitor.N1,
+                N2=visitor.N2,
+                module_id=module_id,
+                language=language,
+            )
+            mv.structural = StructuralVector.from_counts(
+                max_function_cc=max_fn_cc,
+                fn_cc_list=visitor.fn_cc_list,
+                max_methods_per_class=visitor.max_methods_per_class,
+                n_functions=visitor.n_functions,
+                n_classes=visitor.n_classes,
+                source=source,
+                module_id=module_id,
+                language=language,
+            )
 
         # M1 — Advanced Metrics (cognitive CC, SQALE, function profiles,
         #      clone detection, ratings) — only in "full" mode

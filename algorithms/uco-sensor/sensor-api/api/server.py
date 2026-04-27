@@ -77,6 +77,7 @@ from scan.incremental_scanner import (
     CHANGE_ADDED, CHANGE_MODIFIED, CHANGE_DELETED, CHANGE_RENAMED,
 )
 from sca.vulnerability_scanner import VulnerabilityScanner
+from iac.iac_scanner import IaCScanner
 
 
 # ─── Configuração ────────────────────────────────────────────────────────────
@@ -87,7 +88,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "2.1.0"
+    version:      str   = "2.2.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -188,6 +189,7 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/predict/all",      "auth": True,   "desc": "Fleet forecast — todos os módulos, ordenado por risco"},
             {"method": "POST",   "path": "/scan-incremental", "auth": True,   "desc": "Incremental scan — apenas arquivos alterados (M6.1)"},
             {"method": "POST",   "path": "/scan-sca",         "auth": True,   "desc": "SCA dependency vulnerability scan — 9 ecosystems, 65+ CVEs (M6.3)"},
+            {"method": "POST",   "path": "/scan-iac",         "auth": True,   "desc": "IaC misconfiguration scan — Dockerfile/Compose/k8s/Terraform/Helm (M6.4)"},
         ],
         "analyze_body": {
             "code":           "string — código fonte",
@@ -1443,6 +1445,44 @@ def handle_scan_sca(data: Dict) -> Tuple[int, Dict]:
     return 200, result.to_dict()
 
 
+def handle_scan_iac(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /scan-iac  (M6.4)
+
+    IaC Misconfiguration Scanner: detect security misconfigurations in
+    Infrastructure-as-Code files (Dockerfile, Compose, k8s YAML,
+    Terraform .tf/.tfvars, Helm values.yaml).
+
+    Two modes:
+
+    mode="path" (default):
+        Walks the filesystem starting at `root`.
+        Body: {"root": "/path/to/repo"}
+
+    mode="files":
+        Inline file contents supplied in the request body.
+        Body: {"files": {"Dockerfile": "FROM ubuntu:latest\\n..."}}
+
+    Returns IaCScanResult.to_dict() with:
+        status, total_findings, by_severity, by_category,
+        total_debt_minutes, files_scanned, findings[].
+    """
+    mode = data.get("mode", "path")
+    scanner = IaCScanner()
+
+    if mode == "files":
+        files_raw = data.get("files", {})
+        if not isinstance(files_raw, dict) or not files_raw:
+            return 400, {"error": "'files' dict is required for mode='files'"}
+        result = scanner.scan_files(files_raw)
+        return 200, result.to_dict()
+
+    # mode == "path"
+    root = data.get("root", ".")
+    result = scanner.scan_path(root)
+    return 200, result.to_dict()
+
+
 # ─── Auth endpoints ──────────────────────────────────────────────────────────
 
 def handle_create_key(data: Dict) -> Tuple[int, Dict]:
@@ -1631,6 +1671,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_scan_incremental(body)
             elif path == "/scan-sca":
                 code, data = handle_scan_sca(body)
+            elif path == "/scan-iac":
+                code, data = handle_scan_iac(body)
             elif path == "/auth/keys":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:

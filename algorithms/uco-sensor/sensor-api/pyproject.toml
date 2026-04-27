@@ -4,7 +4,7 @@ build-backend = "setuptools.backends.legacy:build"
 
 [project]
 name        = "uco-sensor"
-version     = "2.1.0"
+version     = "2.2.0"
 description = "Spectral code-quality API powered by UCO v4 + FrequencyEngine"
 readme      = "README.md"
 license     = { text = "MIT" }
@@ -68,7 +68,7 @@ where   = ["."]
 include = [
   "sensor_core*", "sensor_storage*", "api*",
   "lang_adapters*", "apex_integration*", "scan*", "report*",
-  "governance*", "sast*", "ci*",
+  "governance*", "sast*", "ci*", "sca*", "iac*", "metrics*",
 ]
 exclude = ["tests*", "validation*"]
 
@@ -78,14 +78,15 @@ exclude = ["tests*", "validation*"]
 # ── Pytest ────────────────────────────────────────────────────────────────────
 [tool.pytest.ini_options]
 testpaths    = ["tests"]
-python_files = ["test_marco*.py", "test_marco_m1.py", "test_marco_m4.py", "test_marco_m5.py", "test_calibration.py", "test_performance.py"]
+python_files = ["test_marco*.py", "test_marco_m1.py", "test_marco_m4.py", "test_marco_m5.py", "test_calibration.py", "test_performance.py", "test_marco_m12.py"]
 python_functions = ["test_*"]
 addopts      = "-v --tb=short"
 
 # ── Coverage ──────────────────────────────────────────────────────────────────
 [tool.coverage.run]
 source  = ["sensor_core", "sensor_storage", "api", "lang_adapters",
-           "apex_integration", "scan", "report", "governance", "sast", "ci"]
+           "apex_integration", "scan", "report", "governance", "sast", "ci",
+           "sca", "iac", "metrics"]
 omit    = ["tests/*", "validation/*", "*/__pycache__/*"]
 
 [tool.coverage.report]

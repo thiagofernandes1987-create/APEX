@@ -5,6 +5,130 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.2.0] — 2026-04-26 — M6.4 IaC SCANNER + EXTENDED METRIC VECTORS
+
+### Adicionado — M6.4 Infrastructure-as-Code Scanner + Extended Metric Vectors
+
+**APEX SCIENTIFIC mode** | Diferencial duplo: (1) SonarQube Community **não tem scanner IaC nativo** (requer plugins pagos); (2) Os 30+ sinais identificados na análise de gap de M6.4 eram computados mas **descartados** antes de chegar ao MetricVector — agora são formalizados em 4 novos vetores ortogonais ao schema de 9 canais existente.
+
+#### Módulo: `metrics/` — 4 Vetores Estendidos
+
+- **`metrics/__init__.py`** — package com exports públicos
+- **`metrics/extended_vectors.py`** — 4 dataclasses formalizando sinais previamente descartados:
+
+  **`HalsteadVector`** (6 canais — gap crítico: effort/volume/difficulty eram computados em `uco_bridge.py` e descartados)
+  - `volume` V = (N1+N2) × log₂(n1+n2) — tamanho do programa em bits
+  - `difficulty` D = (n1/2) × (N2/n2) — esforço mental para compreensão
+  - `effort` E = D × V — esforço de implementação em operações elementares
+  - `time_to_implement` T = E/18 — tempo estimado em segundos (Halstead 1977)
+  - `program_level` L = 1/D — inverso da dificuldade (maior = mais limpo)
+  - `token_count` N = N1 + N2 — comprimento bruto do programa
+  - Construtor: `HalsteadVector.from_primitives(n1, n2, N1, N2)`
+
+  **`StructuralVector`** (7 canais — gap: max_fn_cc, cc_hotspot_ratio, max_methods eram attrs informais no MetricVector)
+  - `max_function_cc` — CC da função mais complexa do módulo
+  - `cc_hotspot_ratio` — max_fn_cc / (avg_fn_cc × 3), capped 1.0
+  - `max_methods_per_class` — maior contagem de métodos em uma classe
+  - `n_functions` — total de definições de função/método
+  - `n_classes` — total de classes/structs/interfaces
+  - `comment_density` — linhas de comentário / total de linhas
+  - `test_ratio` — funções de teste / total de funções
+  - Construtor: `StructuralVector.from_counts(..., source="")`
+
+  **`SecurityVector`** (10+1 canais — gap: SAST e SCA eram completamente desconectados do MetricVector)
+  - `sast_critical/high/medium/low` — contagens SAST por severidade
+  - `sast_security_rating` — A=1…E=5 (SQALE rating)
+  - `sast_debt_minutes` — dívida técnica SAST em minutos
+  - `sca_vulnerable_deps` — dependências com CVEs conhecidos
+  - `sca_cvss_max` — maior CVSS score entre todos os findings SCA
+  - `sca_debt_minutes` — dívida técnica SCA em minutos
+  - `iac_misconfig_count` — findings do scanner IaC (M6.4)
+  - `iac_privilege_score` — score máximo de escalada de privilégio [0.0–1.0]
+  - Construtores: `from_sast_result()`, `from_sca_result()`, `from_iac_result()`, `merge(*vectors)`
+
+  **`VelocityVector`** (4 canais — gap: hurst_exponent/velocity eram computados em predictor.py sem persistência)
+  - `hamiltonian_velocity` — ΔH por snapshot (positivo = complexidade crescente)
+  - `cc_velocity` — ΔCC por snapshot
+  - `degradation_hurst` — expoente de Hurst H∈(0,1): >0.5=tendência persistente, 0.5=random walk
+  - `regression_rate` — fração de snapshots em que métrica piorou
+  - Construtores: `from_forecast()`, `from_trend()`, `from_metric_series(h_series, cc_series)`
+  - Implementa R/S analysis (rescaled range) para estimativa do expoente de Hurst
+
+#### Módulo: `iac/` — IaC Misconfiguration Scanner
+
+- **`iac/__init__.py`** — package com exports públicos
+- **`iac/iac_scanner.py`** — scanner offline-first, zero dependências externas:
+  - `IaCFinding(rule_id, category, severity, title, description, source_file, line_number)` — finding com `debt_minutes` e `priv_score` auto-calculados
+  - `IaCScanResult` — resultado agregado com `total_findings`, `max_privilege_score`, `status`, `summary()`, `to_dict()`
+  - `IaCScanner`:
+    - `scan_path(root)` — varredura recursiva, pula `.git/node_modules/.terraform/vendor/etc.`
+    - `scan_files(files: Dict[str, str])` — modo inline (CI webhook, testes)
+    - Dispatcher automático por nome de arquivo + extensão + heurística de conteúdo
+
+  **5 scanners especializados com 44 regras:**
+
+  | Scanner        | Regras | Categorias cobertas                              |
+  |----------------|--------|--------------------------------------------------|
+  | Dockerfile     | 10     | PRIVILEGE, IMAGE, SECRET, NETWORK, STORAGE, CONFIG |
+  | docker-compose | 8      | PRIVILEGE, NETWORK, SECRET, STORAGE, IMAGE, RESOURCE |
+  | Kubernetes YAML| 12     | PRIVILEGE, NETWORK, SECRET, RESOURCE, STORAGE, IMAGE, CONFIG |
+  | Terraform .tf  | 12     | NETWORK, STORAGE, SECRET, PRIVILEGE, CONFIG      |
+  | Helm values    | 6      | PRIVILEGE, NETWORK, SECRET, IMAGE, RESOURCE, CONFIG |
+
+  **Regras de ausência** (detectam configuração faltando, não apenas padrão errado):
+  - IAC-D001: sem `USER` instruction no Dockerfile
+  - IAC-D008: sem `HEALTHCHECK` no Dockerfile
+  - IAC-C007: sem `memory` limit em Compose
+  - IAC-K003: `allowPrivilegeEscalation` ausente em k8s
+  - IAC-K007: sem `limits` em k8s containers
+  - IAC-K011: sem `namespace` explícito
+  - IAC-K012: `readOnlyRootFilesystem` não habilitado
+  - IAC-T004: S3 bucket sem `versioning` block
+  - IAC-T010: terraform sem `backend` configurado
+  - IAC-H005: Helm sem `resources.limits`
+
+  **Regras de privilégio crítico:**
+  - IAC-D004/D005: ENV/ARG com PASSWORD/SECRET/TOKEN/API_KEY
+  - IAC-D006: `--cap-add SYS_ADMIN` no Dockerfile
+  - IAC-C001: `privileged: true` em Compose
+  - IAC-K001: `privileged: true` em k8s Pod
+  - IAC-K002: `runAsUser: 0` em k8s
+  - IAC-T002: SG com `from_port 0` + cidr `0.0.0.0/0`
+  - IAC-T005: credentials hardcoded em Terraform
+  - IAC-T007: IAM policy com `"Action": "*"`
+
+#### Integração com Vetores Existentes
+
+- **`sensor_core/uco_bridge.py`** — modificado:
+  - `HalsteadVector.from_primitives(n1, n2, N1, N2)` agora populado em todo `analyze()` Python
+  - `StructuralVector.from_counts(...)` populado com todos os campos estruturais do `_UCOVisitor`
+  - Ambos os vetores attached ao MetricVector como `mv.halstead` e `mv.structural`
+  - Import lazy — graceful degradation se `metrics/` não estiver no path
+
+- **`lang_adapters/generic.py`** — modificado:
+  - `HalsteadVector` e `StructuralVector` populados para todas as 40 linguagens do GenericRegexAdapter
+  - `max_function_cc = cc` como melhor proxy para adaptadores regex
+
+#### API
+
+- **`api/server.py`** — novo endpoint `POST /scan-iac`
+  - Modo `path`: `{"root": "/infra"}` — varredura filesystem
+  - Modo `files`: `{"files": {"Dockerfile": "...", "k8s/pod.yaml": "..."}}` — inline
+  - Retorna `IaCScanResult.to_dict()` com: status, total_findings, by_severity, by_category, total_debt_minutes, files_scanned, findings[]
+  - Versão bumped: 2.1.0 → **2.2.0**
+
+#### Testes
+
+- **`tests/test_marco_m12.py`** — 30 testes TV01–TV30 (270/270 acumulado M4–M12)
+  - TV01–TV06: HalsteadVector — from_primitives, fórmulas V/D/E, T=E/18, to_dict
+  - TV07–TV12: StructuralVector — from_counts, cc_hotspot_ratio, cap@1.0, comment_density, test_ratio
+  - TV13–TV17: SecurityVector — SAST channels, rating E=CRITICAL, merge(), to_dict
+  - TV18–TV20: VelocityVector — velocity, Hurst range, regression_rate=0 para série melhorando
+  - TV21–TV26: IaCScanner — Dockerfile/Compose/k8s/Terraform rules por arquivo
+  - TV27–TV30: handle_scan_iac() REST — 200/400, missing dir, result structure
+
+---
+
 ## [2.1.0] — 2026-04-26 — M6.3 SCA DEPENDENCY VULNERABILITY SCANNER
 
 ### Adicionado — M6.3 Software Composition Analysis
