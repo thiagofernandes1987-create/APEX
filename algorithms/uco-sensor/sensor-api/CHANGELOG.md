@@ -5,6 +5,59 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.4.0] — 2026-04-27 — M7.1 SAST EXPANSION ROUND 1
+
+### Adicionado — M7.1 SAST Expansion Round 1
+
+**15 novas regras SAST (SAST014–SAST039)** + integração `sast/regex_analyzer.py` para detecção de ReDoS. Scanner expande de 13 para 28 regras cobrindo SSRF, XXE, SSTI, ReDoS, Crypto fraca, Auth/TLS inseguro e Reliability.
+
+#### Módulo: `sast/regex_analyzer.py` — NOVO
+
+Motor de análise de ReDoS (CWE-400) baseado exclusivamente em stdlib. Detecta três classes de vulnerabilidade:
+- **Classe A — Nested Quantifiers**: `(\w+)+`, `([a-z]+)*` → backtracking exponencial
+- **Classe B — Overlapping Alternation**: `(a|aa)+`, `(foo|fo)+` → splits exponenciais
+- **Classe C — Char-Class Overlap**: `([\w.]+@)+` → sobreposição de classes sob quantificador
+- API pública: `analyze_pattern(pattern) → List[ReDoSFinding]`, `is_vulnerable(pattern) → bool`
+
+#### Módulo: `sast/scanner.py` — 15 novas regras + melhorias
+
+**Novas regras M7.1:**
+| ID | Título | CWE | Severidade |
+|---|---|---|---|
+| SAST014 | Server-Side Request Forgery (SSRF) | CWE-918 | HIGH |
+| SAST015 | XML External Entity (XXE) Injection | CWE-611 | HIGH |
+| SAST018 | Server-Side Template Injection (SSTI) | CWE-94 | CRITICAL |
+| SAST019 | ReDoS — Catastrophic Backtracking | CWE-400 | MEDIUM |
+| SAST021 | Weak Asymmetric Key Size (< 2048 bits) | CWE-326 | HIGH |
+| SAST022 | Weak IV / All-Zero Nonce | CWE-329 | MEDIUM |
+| SAST023 | ECB Mode / Weak Cipher (DES, Blowfish) | CWE-327 | MEDIUM |
+| SAST024 | JWT None Algorithm / Signature Bypass | CWE-347 | CRITICAL |
+| SAST025 | Timing Attack via String Comparison `==` | CWE-208 | MEDIUM |
+| SAST026 | CSRF Protection Disabled (`@csrf_exempt`) | CWE-352 | MEDIUM |
+| SAST027 | SSL Certificate Verification Disabled | CWE-295 | HIGH |
+| SAST028 | Deprecated TLS/SSL Protocol Version | CWE-326 | MEDIUM |
+| SAST037 | Resource Leak — Unclosed File Handle | CWE-772 | MEDIUM |
+| SAST038 | Exception Swallowing (`except: pass`) | CWE-390 | LOW |
+| SAST039 | Mutable Default Argument (`def f(arg=[])`) | CWE-1386 | LOW |
+
+**Melhorias em regras existentes (M7.1.8):**
+- **SAST006** expandido para "Weak Cryptographic Algorithm": adiciona detecção de `DES.new()`, `ARC4.new()`, `RC4.new()` (PyCryptodome) e `hashlib.new("des"/"rc4"/"arcfour")`
+- **SAST007** narrowed: reduzido ao subconjunto de chamadas `random` mais relevantes para contexto criptográfico (`random`, `randint`, `randrange`, `getrandbits`, `choice`) — elimina falsos positivos de `shuffle`, `sample`, `seed`, `uniform`
+- **SAST028** implementado via regex no raw source (não requer AST): detecta `ssl.PROTOCOL_SSLv2/v3/TLSv1/TLSv1_1`
+
+**Detalhe técnico — rastreamento de `with` para SAST037:**
+- `_ASTScanner._with_depth: int` incrementado em `visit_With`/`visit_AsyncWith` e decrementado após `generic_visit` — garante que `with open(...) as f:` não aciona SAST037
+
+#### Módulo: `tests/test_marco_m14.py` — NOVO (TV61-TV90, 30+50 testes)
+
+80 testes cobrindo regex_analyzer (TS01-TS04), SAST014-039 (TS05-TS20), SAST006 DES/RC4, SAST007 narrowing e integridade do catálogo de regras.
+
+### Técnico
+- Versão: `2.3.0 → 2.4.0`
+- `pyproject.toml`: `python_files` atualizado com `test_marco_m14.py`
+
+---
+
 ## [2.3.0] — 2026-04-27 — M7.0 FORMALIZAR SINAIS INFORMAIS
 
 ### Adicionado — M7.0 Formalização de Sinais Informais
