@@ -79,6 +79,13 @@ from scan.incremental_scanner import (
 from sca.vulnerability_scanner import VulnerabilityScanner
 from iac.iac_scanner import IaCScanner
 
+# M7.0 — DiagnosticVector (FrequencyEngine persistence signals)
+try:
+    from metrics.extended_vectors import DiagnosticVector as _DiagnosticVector
+    _DIAGNOSTIC_VECTOR_AVAILABLE = True
+except ImportError:
+    _DIAGNOSTIC_VECTOR_AVAILABLE = False
+
 
 # ─── Configuração ────────────────────────────────────────────────────────────
 
@@ -88,7 +95,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "2.2.0"
+    version:      str   = "2.3.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -190,6 +197,7 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "POST",   "path": "/scan-incremental", "auth": True,   "desc": "Incremental scan — apenas arquivos alterados (M6.1)"},
             {"method": "POST",   "path": "/scan-sca",         "auth": True,   "desc": "SCA dependency vulnerability scan — 9 ecosystems, 65+ CVEs (M6.3)"},
             {"method": "POST",   "path": "/scan-iac",         "auth": True,   "desc": "IaC misconfiguration scan — Dockerfile/Compose/k8s/Terraform/Helm (M6.4)"},
+            {"method": "GET",    "path": "/metrics/advanced", "auth": True,   "desc": "AdvancedVector + DiagnosticVector — persisted M7.0 extended signals (?module=)"},
         ],
         "analyze_body": {
             "code":           "string — código fonte",
@@ -249,7 +257,29 @@ def handle_analyze(data: Dict) -> Tuple[int, Dict]:
                 "dominant_band":     result.dominant_band,
                 "plain_english":     result.plain_english,
                 "spectral_evidence": result.spectral_evidence,
+                # M7.0 persistence signals
+                "hurst_H":               round(getattr(result, "hurst_H", 0.5), 4),
+                "burst_index_H":         round(getattr(result, "burst_index_H", 0.0), 4),
+                "phase_coupling_CC_H":   round(getattr(result, "phase_coupling_CC_H", 0.0), 4),
+                "onset_reversibility":   round(getattr(result, "onset_reversibility", 0.5), 4),
+                "self_cure_probability": round(getattr(result, "self_cure_probability", 0.0), 4),
             }
+            # ── M7.0: persist DiagnosticVector into the most-recent snapshot ──
+            if _DIAGNOSTIC_VECTOR_AVAILABLE:
+                try:
+                    dv = _DiagnosticVector.from_classification_result(
+                        result,
+                        module_id=module_id,
+                        n_snapshots=len(history),
+                    )
+                    dv_json = __import__("json").dumps(dv.to_dict(), default=str)
+                    _store.update_diagnostic(
+                        module_id=module_id,
+                        commit_hash=mv.commit_hash,
+                        diagnostic_json=dv_json,
+                    )
+                except Exception:
+                    pass   # DiagnosticVector never breaks the main flow
             # ── Marco 3: publicar evento APEX se severity=CRITICAL ───────────
             try:
                 delivery = _connector.handle(result, store=_store)
@@ -1483,6 +1513,74 @@ def handle_scan_iac(data: Dict) -> Tuple[int, Dict]:
     return 200, result.to_dict()
 
 
+# ─── M7.0 Advanced metrics endpoint ─────────────────────────────────────────
+
+def handle_metrics_advanced(module_id: Optional[str], window: int = 50) -> Tuple[int, Dict]:
+    """
+    GET /metrics/advanced?module=<id>[&window=<n>]  (M7.0)
+
+    Returns the most-recent persisted AdvancedVector + DiagnosticVector for a
+    module.  These vectors capture signals computed on every /analyze call that
+    were previously lost between requests.
+
+    Response schema
+    ---------------
+    {
+      "module_id":       str,
+      "history_size":    int,
+      "advanced_vector": {   — AdvancedVector (6 channels)
+        "cognitive_cc_total":  int,
+        "cognitive_cc_max":    int,
+        "sqale_debt_minutes":  int,
+        "sqale_rating":        str,   # A–E
+        "clone_count":         int,
+        "fn_profile_count":    int
+      } | null,
+      "diagnostic_vector": {  — DiagnosticVector (8 channels), present when ≥5 snapshots
+        "dominant_frequency_H":    float,
+        "spectral_entropy_H":      float,
+        "phase_coupling_CC_H":     float,
+        "burst_index":             float,
+        "self_cure_probability":   float,
+        "onset_reversibility":     float,
+        "degradation_signature":   str,
+        "frequency_anomaly_score": float
+      } | null,
+      "risk_tier":   str   — STABLE | WARNING | CRITICAL (DiagnosticVector.risk_tier)
+    }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]   # most-recent snapshot (chronological order)
+
+    # AdvancedVector
+    adv = getattr(latest, "advanced", None)
+    adv_dict = adv.to_dict() if adv is not None else None
+
+    # DiagnosticVector
+    diag = getattr(latest, "diagnostic", None)
+    diag_dict = None
+    risk_tier  = "STABLE"
+    if diag is not None:
+        diag_dict = diag.to_dict()
+        risk_tier  = diag.risk_tier()
+
+    return 200, {
+        "module_id":         module_id,
+        "history_size":      len(history),
+        "last_commit":       latest.commit_hash,
+        "last_timestamp":    latest.timestamp,
+        "advanced_vector":   adv_dict,
+        "diagnostic_vector": diag_dict,
+        "risk_tier":         risk_tier,
+    }
+
+
 # ─── Auth endpoints ──────────────────────────────────────────────────────────
 
 def handle_create_key(data: Dict) -> Tuple[int, Dict]:
@@ -1614,6 +1712,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 horizon_n = int(params.get("horizon", ["5"])[0])
                 top_n_val = int(params.get("top_n",   ["10"])[0])
                 code, data = handle_predict_all(window=window_n, horizon=horizon_n, top_n=top_n_val)
+            elif path == "/metrics/advanced":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_metrics_advanced(module_id, window=window_n)
             else:
                 code, data = 404, {"error": f"Unknown endpoint: {path}"}
         except Exception as e:

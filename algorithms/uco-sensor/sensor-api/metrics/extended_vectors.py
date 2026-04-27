@@ -508,3 +508,262 @@ class VelocityVector:
             f"hurst={self.degradation_hurst:.3f}, "
             f"regr={self.regression_rate:.3f})"
         )
+
+
+# ─── AdvancedVector ──────────────────────────────────────────────────────────
+
+@dataclass
+class AdvancedVector:
+    """
+    6-channel advanced static-analysis vector  (M7.0).
+
+    Formalizes signals computed by AdvancedAnalyzer (M1) that were previously
+    computed on every request but never persisted — closing the 83% signal-loss
+    gap identified in the M6.4 autopsy.
+
+    Channels
+    --------
+    cognitive_cc_total  — module-level Cognitive Complexity (Campbell 2018)
+    cognitive_cc_max    — highest Cognitive CC across all functions
+    sqale_debt_minutes  — total SQALE technical debt (minutes to remediate)
+    sqale_rating        — SQALE letter rating A (best) … E (worst)
+    clone_count         — Type-2 AST clone groups detected
+    fn_profile_count    — number of function profiles available (rich breakdown)
+
+    References
+    ----------
+    Campbell, G.A. (2018). Cognitive Complexity. SonarSource SA.
+    SQALE Method (2016). SQALE Technical Report, version 1.0.
+    """
+    cognitive_cc_total:  int   = 0
+    cognitive_cc_max:    int   = 0
+    sqale_debt_minutes:  int   = 0
+    sqale_rating:        str   = "A"   # A=best … E=worst
+    clone_count:         int   = 0
+    fn_profile_count:    int   = 0
+
+    # ── source attribution ────────────────────────────────────────────────────
+    module_id:  str = ""
+    language:   str = ""
+
+    # ── constructors ──────────────────────────────────────────────────────────
+
+    @classmethod
+    def from_advanced_mv(
+        cls,
+        mv: Any,
+        module_id: str = "",
+        language:  str = "",
+    ) -> "AdvancedVector":
+        """
+        Populate all 6 channels from a MetricVector enriched by AdvancedAnalyzer.
+
+        AdvancedAnalyzer attaches its results as dynamic attributes via setattr,
+        so we use getattr with safe defaults for any attribute that may be absent
+        (e.g. when mode != "full" or when the source is not Python).
+        """
+        profiles = getattr(mv, "function_profiles", [])
+        return cls(
+            cognitive_cc_total=int(getattr(mv, "cognitive_complexity", 0)),
+            cognitive_cc_max=int(getattr(mv, "cognitive_fn_max", 0)),
+            sqale_debt_minutes=int(getattr(mv, "sqale_debt_minutes", 0)),
+            sqale_rating=str(getattr(mv, "sqale_rating", "A")),
+            clone_count=int(getattr(mv, "clone_count", 0)),
+            fn_profile_count=len(profiles) if profiles else 0,
+            module_id=module_id or getattr(mv, "module_id", ""),
+            language=language or getattr(mv, "language", ""),
+        )
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "AdvancedVector":
+        """Deserialize from a JSON-compatible dict (SnapshotStore round-trip)."""
+        return cls(
+            cognitive_cc_total=int(d.get("cognitive_cc_total", 0)),
+            cognitive_cc_max=int(d.get("cognitive_cc_max", 0)),
+            sqale_debt_minutes=int(d.get("sqale_debt_minutes", 0)),
+            sqale_rating=str(d.get("sqale_rating", "A")),
+            clone_count=int(d.get("clone_count", 0)),
+            fn_profile_count=int(d.get("fn_profile_count", 0)),
+            module_id=str(d.get("module_id", "")),
+            language=str(d.get("language", "")),
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    def sqale_debt_hours(self) -> float:
+        """Convert debt to hours (convenience helper)."""
+        return round(self.sqale_debt_minutes / 60.0, 2)
+
+    def __repr__(self) -> str:
+        return (
+            f"AdvancedVector(cog_cc={self.cognitive_cc_total}, "
+            f"cog_max={self.cognitive_cc_max}, "
+            f"sqale={self.sqale_rating}({self.sqale_debt_minutes}min), "
+            f"clones={self.clone_count}, fns={self.fn_profile_count})"
+        )
+
+
+# ─── DiagnosticVector ────────────────────────────────────────────────────────
+
+# Onset-reversibility mapping by temporal pattern  (heuristic calibration)
+_REVERSIBILITY_BY_PATTERN: Dict[str, float] = {
+    "spike":       0.80,   # spikes self-resolve after the transient
+    "stable":      1.00,   # nothing to reverse
+    "oscillating": 0.55,   # partial reversal possible
+    "step":        0.35,   # step changes are structurally sticky
+    "monotone":    0.15,   # monotone growth — needs active intervention
+}
+
+
+@dataclass
+class DiagnosticVector:
+    """
+    8-channel spectral diagnostic vector  (M7.0).
+
+    Formalizes the FrequencyEngine persistence/causalidade signals that were
+    computed inside ClassificationResult but never surfaced beyond the
+    /analyze response JSON — and therefore never persisted or trended.
+
+    Channels
+    --------
+    dominant_frequency_H  — dominant Fourier frequency of H series [0.0–0.5 Hz_norm]
+    spectral_entropy_H    — Shannon spectral entropy of H channel [0.0=periodic … 1.0=noise]
+    phase_coupling_CC_H   — Phase Coupling Index (CC ↔ H via Hilbert) [0.0–1.0]
+    burst_index           — temporal concentration of ΔH (acute vs chronic) [0.0–1.0]
+    self_cure_probability — P(system self-corrects without intervention) [0.0–1.0]
+    onset_reversibility   — ease of reversing the detected degradation [0.0–1.0]
+    degradation_signature — primary FrequencyEngine error-type label
+    frequency_anomaly_score— overall anomaly severity score [0.0–1.0]
+
+    References
+    ----------
+    Hurst, H.E. (1951). Long-term storage capacity of reservoirs. ASCE Trans.
+    Hilbert transform Phase Coupling Index: Lachaux et al. (1999). Hum. Brain Map.
+    """
+    dominant_frequency_H:   float = 0.0    # norm. freq. in H-series PSD
+    spectral_entropy_H:     float = 0.5    # Shannon entropy [0=periodic, 1=noise]
+    phase_coupling_CC_H:    float = 0.0    # Hilbert PCI CC↔H [0–1]
+    burst_index:            float = 0.0    # acute-vs-chronic indicator [0–1]
+    self_cure_probability:  float = 0.0    # P(auto-resolution) [0–1]
+    onset_reversibility:    float = 0.5    # reversal ease [0–1]
+    degradation_signature:  str   = "STABLE"   # primary_error label
+    frequency_anomaly_score: float = 0.0   # severity_score [0–1]
+
+    # ── source attribution ────────────────────────────────────────────────────
+    module_id:   str = ""
+    n_snapshots: int = 0
+
+    # ── constructors ──────────────────────────────────────────────────────────
+
+    @classmethod
+    def from_classification_result(
+        cls,
+        result: Any,
+        module_id: str = "",
+        n_snapshots: int = 0,
+    ) -> "DiagnosticVector":
+        """
+        Populate all 8 channels from a FrequencyEngine ClassificationResult.
+
+        Uses getattr with safe defaults so this works regardless of which
+        fields are present on the result object (forward/backward compat).
+        """
+        if result is None:
+            return cls(module_id=module_id, n_snapshots=n_snapshots)
+
+        # ── spectral_evidence dict extraction ─────────────────────────────────
+        ev: Dict[str, Any] = getattr(result, "spectral_evidence", {}) or {}
+
+        # dominant_frequency_H — from spectral_evidence if classifier exposed it,
+        # otherwise fall back to hflf_ratio_H as a band-position proxy.
+        dom_freq = float(ev.get("H_dominant_freq", ev.get("dominant_freq_H", 0.0)))
+
+        # spectral_entropy_H — classifier may or may not expose it in evidence
+        sp_entropy = float(ev.get("H_spectral_entropy", ev.get("spectral_entropy_H", 0.5)))
+        sp_entropy = max(0.0, min(1.0, sp_entropy))
+
+        # burst_index — use burst_index_H directly from ClassificationResult
+        burst = float(getattr(result, "burst_index_H", 0.0))
+        burst = max(0.0, min(1.0, burst))
+
+        # phase_coupling_CC_H — direct field
+        pci = float(getattr(result, "phase_coupling_CC_H", 0.0))
+        pci = max(0.0, min(1.0, pci))
+
+        # self_cure_probability — stored as [0–100] percentage → normalize to [0–1]
+        scp_raw = float(getattr(result, "self_cure_probability", 0.0))
+        scp = max(0.0, min(1.0, scp_raw / 100.0 if scp_raw > 1.0 else scp_raw))
+
+        # onset_reversibility — direct field [0–1]
+        rev = float(getattr(result, "onset_reversibility", 0.5))
+        rev = max(0.0, min(1.0, rev))
+
+        # degradation_signature
+        sig = str(getattr(result, "primary_error", "STABLE"))
+
+        # frequency_anomaly_score = severity_score [0–1]
+        fas = float(getattr(result, "severity_score", 0.0))
+        fas = max(0.0, min(1.0, fas))
+
+        return cls(
+            dominant_frequency_H=round(dom_freq, 6),
+            spectral_entropy_H=round(sp_entropy, 4),
+            phase_coupling_CC_H=round(pci, 4),
+            burst_index=round(burst, 4),
+            self_cure_probability=round(scp, 4),
+            onset_reversibility=round(rev, 4),
+            degradation_signature=sig,
+            frequency_anomaly_score=round(fas, 4),
+            module_id=module_id or getattr(result, "module_id", ""),
+            n_snapshots=n_snapshots,
+        )
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "DiagnosticVector":
+        """Deserialize from a JSON-compatible dict (SnapshotStore round-trip)."""
+        return cls(
+            dominant_frequency_H=float(d.get("dominant_frequency_H", 0.0)),
+            spectral_entropy_H=float(d.get("spectral_entropy_H", 0.5)),
+            phase_coupling_CC_H=float(d.get("phase_coupling_CC_H", 0.0)),
+            burst_index=float(d.get("burst_index", 0.0)),
+            self_cure_probability=float(d.get("self_cure_probability", 0.0)),
+            onset_reversibility=float(d.get("onset_reversibility", 0.5)),
+            degradation_signature=str(d.get("degradation_signature", "STABLE")),
+            frequency_anomaly_score=float(d.get("frequency_anomaly_score", 0.0)),
+            module_id=str(d.get("module_id", "")),
+            n_snapshots=int(d.get("n_snapshots", 0)),
+        )
+
+    def is_chronic(self) -> bool:
+        """True when onset_reversibility < 0.20 — structural problem requiring intervention."""
+        return self.onset_reversibility < 0.20
+
+    def risk_tier(self) -> str:
+        """
+        3-tier risk classification based on anomaly score and reversibility.
+
+        CRITICAL — frequency_anomaly_score ≥ 0.70 OR (score ≥ 0.40 AND chronic)
+        WARNING  — frequency_anomaly_score ≥ 0.30 OR is_chronic
+        STABLE   — below all thresholds
+        """
+        if self.frequency_anomaly_score >= 0.70:
+            return "CRITICAL"
+        if self.frequency_anomaly_score >= 0.40 and self.is_chronic():
+            return "CRITICAL"
+        if self.frequency_anomaly_score >= 0.30 or self.is_chronic():
+            return "WARNING"
+        return "STABLE"
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    def __repr__(self) -> str:
+        return (
+            f"DiagnosticVector(sig={self.degradation_signature}, "
+            f"score={self.frequency_anomaly_score:.3f}, "
+            f"burst={self.burst_index:.3f}, "
+            f"pci={self.phase_coupling_CC_H:.3f}, "
+            f"scp={self.self_cure_probability:.3f}, "
+            f"rev={self.onset_reversibility:.3f})"
+        )

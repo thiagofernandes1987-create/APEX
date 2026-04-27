@@ -75,9 +75,22 @@ CREATE TABLE IF NOT EXISTS snapshots (
     max_methods_per_class INTEGER NOT NULL DEFAULT 0,
     cc_hotspot_ratio REAL   NOT NULL DEFAULT 0.0,
     max_function_cc  INTEGER NOT NULL DEFAULT 0,
+    extended_vectors_json  TEXT DEFAULT NULL,
+    advanced_vector_json   TEXT DEFAULT NULL,
+    diagnostic_vector_json TEXT DEFAULT NULL,
     UNIQUE(module_id, commit_hash)
 );
 """
+
+# M7.0 — Column migration for databases created before this schema version.
+# Uses try/except because SQLite does not support IF NOT EXISTS on ADD COLUMN
+# before version 3.37 (2021-11-27).  The except branch is intentionally silent
+# — the column simply already exists.
+_M70_MIGRATION_COLUMNS = [
+    ("extended_vectors_json",  "TEXT DEFAULT NULL"),
+    ("advanced_vector_json",   "TEXT DEFAULT NULL"),
+    ("diagnostic_vector_json", "TEXT DEFAULT NULL"),
+]
 
 _DDL_ANOMALIES = """
 CREATE TABLE IF NOT EXISTS anomalies (
@@ -265,6 +278,24 @@ class SnapshotStore:
             cur.execute(_IDX_SNAPSHOTS)
             cur.execute(_IDX_ANOMALIES)
             cur.execute(_IDX_API_KEYS)
+            # M7.0: add extended-vector columns to pre-existing databases
+            self._migrate_m70(cur)
+
+    def _migrate_m70(self, cur: sqlite3.Cursor) -> None:
+        """
+        Idempotent migration: add M7.0 JSON columns to the snapshots table.
+
+        Safe to call on both new (columns already in DDL) and old databases
+        (columns added here).  sqlite3.OperationalError is suppressed because
+        it signals that the column already exists — not a real error.
+        """
+        for col_name, col_def in _M70_MIGRATION_COLUMNS:
+            try:
+                cur.execute(
+                    f"ALTER TABLE snapshots ADD COLUMN {col_name} {col_def}"
+                )
+            except Exception:
+                pass   # column already exists — not an error
 
     # ─── Insert ──────────────────────────────────────────────────────────────
 
@@ -274,7 +305,15 @@ class SnapshotStore:
 
         Idempotente: inserir (module_id, commit_hash) já existente
         atualiza os campos — não duplica o registro.
+
+        M7.0: serializes AdvancedVector + Halstead/StructuralVector JSON blobs
+        into the three new extended-vector columns when present on the mv.
         """
+        # ── M7.0: serialize extended vectors ─────────────────────────────────
+        extended_json  = self._serialize_extended(mv)
+        advanced_json  = self._serialize_advanced(mv)
+        diagnostic_json = self._serialize_diagnostic(mv)
+
         sql = """
         INSERT OR REPLACE INTO snapshots (
             module_id, commit_hash, timestamp,
@@ -283,9 +322,11 @@ class SnapshotStore:
             syntactic_dead_code, duplicate_block_count, halstead_bugs,
             language, lines_of_code, status,
             n_functions, n_classes, max_methods_per_class,
-            cc_hotspot_ratio, max_function_cc
+            cc_hotspot_ratio, max_function_cc,
+            extended_vectors_json, advanced_vector_json, diagnostic_vector_json
         ) VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+            ?, ?, ?
         )
         """
         values = (
@@ -309,9 +350,74 @@ class SnapshotStore:
             getattr(mv, "max_methods_per_class", 0),
             float(getattr(mv, "cc_hotspot_ratio", 0.0)),
             int(getattr(mv, "max_function_cc", 0)),
+            extended_json,
+            advanced_json,
+            diagnostic_json,
         )
         with self._lock:
             self._get_conn().execute(sql, values)
+
+    # ── M7.0: update diagnostic_vector after FrequencyEngine classification ──
+
+    def update_diagnostic(self, module_id: str, commit_hash: str,
+                          diagnostic_json: str) -> None:
+        """
+        Update the diagnostic_vector_json column for the given snapshot.
+
+        Called from the API server after FrequencyEngine.analyze() produces a
+        ClassificationResult (requires ≥5 snapshots — cannot be set at insert time).
+        """
+        sql = """
+        UPDATE snapshots
+        SET diagnostic_vector_json = ?
+        WHERE module_id = ? AND commit_hash = ?
+        """
+        with self._lock:
+            self._get_conn().execute(sql, (diagnostic_json, module_id, commit_hash))
+
+    # ── M7.0: serialization helpers ──────────────────────────────────────────
+
+    @staticmethod
+    def _serialize_extended(mv: Any) -> Optional[str]:
+        """JSON-serialize HalsteadVector + StructuralVector (M6.4) if present."""
+        halstead  = getattr(mv, "halstead",  None)
+        structural = getattr(mv, "structural", None)
+        if halstead is None and structural is None:
+            return None
+        d: Dict[str, Any] = {}
+        if halstead is not None:
+            try:
+                d["halstead"] = halstead.to_dict()
+            except Exception:
+                pass
+        if structural is not None:
+            try:
+                d["structural"] = structural.to_dict()
+            except Exception:
+                pass
+        return json.dumps(d, default=str) if d else None
+
+    @staticmethod
+    def _serialize_advanced(mv: Any) -> Optional[str]:
+        """JSON-serialize AdvancedVector (M7.0) if present."""
+        advanced = getattr(mv, "advanced", None)
+        if advanced is None:
+            return None
+        try:
+            return json.dumps(advanced.to_dict(), default=str)
+        except Exception:
+            return None
+
+    @staticmethod
+    def _serialize_diagnostic(mv: Any) -> Optional[str]:
+        """JSON-serialize DiagnosticVector (M7.0) if present."""
+        diagnostic = getattr(mv, "diagnostic", None)
+        if diagnostic is None:
+            return None
+        try:
+            return json.dumps(diagnostic.to_dict(), default=str)
+        except Exception:
+            return None
 
     # ─── Get history ─────────────────────────────────────────────────────────
 
@@ -340,7 +446,8 @@ class SnapshotStore:
             syntactic_dead_code, duplicate_block_count, halstead_bugs,
             language, lines_of_code, status,
             n_functions, n_classes, max_methods_per_class,
-            cc_hotspot_ratio, max_function_cc
+            cc_hotspot_ratio, max_function_cc,
+            extended_vectors_json, advanced_vector_json, diagnostic_vector_json
         FROM snapshots
         WHERE module_id = ?
         ORDER BY timestamp DESC
@@ -717,7 +824,13 @@ class SnapshotStore:
 
     @staticmethod
     def _row_to_mv(row: tuple) -> MetricVector:
-        """Converte linha SQLite em MetricVector."""
+        """
+        Converte linha SQLite em MetricVector.
+
+        M7.0: also deserializes extended_vectors_json, advanced_vector_json,
+        and diagnostic_vector_json back into their respective vector objects
+        (HalsteadVector, StructuralVector, AdvancedVector, DiagnosticVector).
+        """
         (
             module_id, commit_hash, timestamp,
             h, cc, ilr,
@@ -726,6 +839,7 @@ class SnapshotStore:
             lang, loc, status,
             n_fn, n_cls, max_meth,
             cc_hr, max_fn_cc,
+            extended_json, advanced_json, diagnostic_json,
         ) = row
 
         mv = MetricVector(
@@ -751,4 +865,53 @@ class SnapshotStore:
         mv.max_methods_per_class = int(max_meth or 0)
         mv.cc_hotspot_ratio      = float(cc_hr or 0.0)
         mv.max_function_cc       = int(max_fn_cc or 0)
+
+        # M7.0: restore extended vectors from JSON blobs (lazy import)
+        if extended_json:
+            try:
+                from metrics.extended_vectors import HalsteadVector, StructuralVector
+                d = json.loads(extended_json)
+                if "halstead" in d:
+                    from dataclasses import fields as _dc_fields
+                    hd = d["halstead"]
+                    mv.halstead = HalsteadVector(
+                        volume=float(hd.get("volume", 0.0)),
+                        difficulty=float(hd.get("difficulty", 0.0)),
+                        effort=float(hd.get("effort", 0.0)),
+                        time_to_implement=float(hd.get("time_to_implement", 0.0)),
+                        program_level=float(hd.get("program_level", 0.0)),
+                        token_count=int(hd.get("token_count", 0)),
+                        module_id=str(hd.get("module_id", "")),
+                        language=str(hd.get("language", "")),
+                    )
+                if "structural" in d:
+                    sd = d["structural"]
+                    mv.structural = StructuralVector(
+                        max_function_cc=int(sd.get("max_function_cc", 1)),
+                        cc_hotspot_ratio=float(sd.get("cc_hotspot_ratio", 0.0)),
+                        max_methods_per_class=int(sd.get("max_methods_per_class", 0)),
+                        n_functions=int(sd.get("n_functions", 0)),
+                        n_classes=int(sd.get("n_classes", 0)),
+                        comment_density=float(sd.get("comment_density", 0.0)),
+                        test_ratio=float(sd.get("test_ratio", 0.0)),
+                        module_id=str(sd.get("module_id", "")),
+                        language=str(sd.get("language", "")),
+                    )
+            except Exception:
+                pass
+
+        if advanced_json:
+            try:
+                from metrics.extended_vectors import AdvancedVector
+                mv.advanced = AdvancedVector.from_dict(json.loads(advanced_json))
+            except Exception:
+                pass
+
+        if diagnostic_json:
+            try:
+                from metrics.extended_vectors import DiagnosticVector
+                mv.diagnostic = DiagnosticVector.from_dict(json.loads(diagnostic_json))
+            except Exception:
+                pass
+
         return mv

@@ -43,9 +43,11 @@ if str(_ROOT) not in sys.path:
 
 from core.data_structures import MetricVector
 
-# Extended vectors (M6.4) — import lazily to avoid circular deps at module load
+# Extended vectors (M6.4 + M7.0) — import lazily to avoid circular deps at module load
 try:
-    from metrics.extended_vectors import HalsteadVector, StructuralVector
+    from metrics.extended_vectors import (
+        HalsteadVector, StructuralVector, AdvancedVector,
+    )
     _EXTENDED_VECTORS_AVAILABLE = True
 except ImportError:
     _EXTENDED_VECTORS_AVAILABLE = False
@@ -660,6 +662,13 @@ class UCOBridge:
             adv = self._get_advanced()
             if adv is not None:
                 adv.analyze(source, mv, visitor)
+                # M7.0 — Attach AdvancedVector so signals survive beyond /analyze response
+                if _EXTENDED_VECTORS_AVAILABLE and getattr(mv, "advanced_ok", False):
+                    mv.advanced = AdvancedVector.from_advanced_mv(
+                        mv,
+                        module_id=module_id,
+                        language=language,
+                    )
 
         return mv
 

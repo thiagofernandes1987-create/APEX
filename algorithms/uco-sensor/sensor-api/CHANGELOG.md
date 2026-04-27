@@ -5,6 +5,73 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.3.0] — 2026-04-27 — M7.0 FORMALIZAR SINAIS INFORMAIS
+
+### Adicionado — M7.0 Formalização de Sinais Informais
+
+**APEX SCIENTIFIC mode** | Fecha a **lacuna de 83% de perda de sinal** identificada na autópsia M6.4: sinais computados a cada `/analyze` eram descartados antes de chegar à persistência. Dois novos vetores formalizados diretamente do pipeline existente — sem recomputação, sem overhead.
+
+#### Módulo: `metrics/extended_vectors.py` — 2 Novos Vetores
+
+**`AdvancedVector`** (6 canais — M7.0.1 — sinais do AdvancedAnalyzer M1 agora persistidos)
+- `cognitive_cc_total` — Complexidade Cognitiva total do módulo (Campbell 2018 / SonarQube-compatible)
+- `cognitive_cc_max` — maior Cognitive CC entre todas as funções
+- `sqale_debt_minutes` — dívida técnica SQALE total em minutos (ISO/IEC 9126-style)
+- `sqale_rating` — rating SQALE de A (≤5% ratio) a E (>50% ratio)
+- `clone_count` — grupos de clone Type-2 detectados via AST skeleton hash
+- `fn_profile_count` — número de FunctionProfiles disponíveis (breakdown rico por função)
+- Construtores: `AdvancedVector.from_advanced_mv(mv)`, `AdvancedVector.from_dict(d)`
+- Helper: `sqale_debt_hours()` — converte minutos em horas
+
+**`DiagnosticVector`** (8 canais — M7.0.2 — sinais de persistência do FrequencyEngine agora persistidos)
+- `dominant_frequency_H` — frequência dominante da PSD do canal H [0.0–0.5 Hz_norm]
+- `spectral_entropy_H` — entropia de Shannon do canal H [0.0=periódico … 1.0=ruído branco]
+- `phase_coupling_CC_H` — Phase Coupling Index CC↔H via transformada de Hilbert [0.0–1.0]
+- `burst_index` — concentração temporal de ΔH (agudo vs crônico): >0.50=evento agudo [0.0–1.0]
+- `self_cure_probability` — P(auto-resolução sem intervenção humana) normalizado em [0.0–1.0]
+- `onset_reversibility` — facilidade de reverter o onset detectado [0.0=irreversível … 1.0=reversível]
+- `degradation_signature` — label do tipo de erro primário (FrequencyEngine primary_error)
+- `frequency_anomaly_score` — severity_score geral do evento anômalo [0.0–1.0]
+- Construtores: `DiagnosticVector.from_classification_result(result)`, `DiagnosticVector.from_dict(d)`
+- Helpers: `is_chronic()` — reversibilidade < 20%; `risk_tier()` — STABLE/WARNING/CRITICAL
+
+#### Módulo: `metrics/__init__.py`
+- Adicionados `AdvancedVector` e `DiagnosticVector` aos exports públicos do package
+
+#### Módulo: `sensor_core/uco_bridge.py` — M7.0 Integration
+- `UCOBridge.analyze()` agora anexa `mv.advanced = AdvancedVector.from_advanced_mv(mv)` imediatamente após `AdvancedAnalyzer.analyze()` (modo "full" + Python)
+- Sinal persiste além da vida útil da request sem recomputação
+
+#### Módulo: `sensor_storage/snapshot_store.py` — M7.0 Persistence
+- **Schema migration**: 3 novas colunas `TEXT DEFAULT NULL` na tabela `snapshots`:
+  - `extended_vectors_json` — HalsteadVector + StructuralVector (M6.4 retroativo)
+  - `advanced_vector_json` — AdvancedVector (M7.0)
+  - `diagnostic_vector_json` — DiagnosticVector (M7.0, preenchido após FrequencyEngine)
+- **`_migrate_m70(cursor)`** — migração idempotente via try/except para bancos pré-existentes (compatível com SQLite < 3.37)
+- **`insert(mv)`** — serializa os 3 vetores como JSON quando presentes no MetricVector
+- **`update_diagnostic(module_id, commit_hash, json_str)`** — endpoint dedicado para persistir DiagnosticVector após FrequencyEngine
+- **`get_history()`** — desserializa todos os 4 vetores extendidos de volta ao MetricVector
+- **`_row_to_mv()`** — atualizado para incluir as 3 colunas JSON na leitura
+
+#### Módulo: `api/server.py` — M7.0 Endpoint + Signals
+- **`GET /metrics/advanced?module=<id>[&window=<n>]`** — novo endpoint expondo AdvancedVector + DiagnosticVector persistidos
+  - Resposta inclui `risk_tier` (STABLE/WARNING/CRITICAL) calculado pelo DiagnosticVector
+- **`handle_analyze()`** atualizado:
+  - classification dict agora inclui `hurst_H`, `burst_index_H`, `phase_coupling_CC_H`, `onset_reversibility`, `self_cure_probability`
+  - DiagnosticVector criado após FrequencyEngine e persistido via `update_diagnostic()`
+- **`handle_docs()`** atualizado com nova rota documentada
+- Versão: `2.2.0` → `2.3.0`
+
+#### Testes: `tests/test_marco_m13.py` — TV31-TV60 (30 testes)
+- TV31-TV36: `AdvancedVector` — construção, canais, to_dict, safe defaults
+- TV37-TV44: `DiagnosticVector` — construção, normalização [0,1], roundtrip JSON
+- TV45-TV52: `SnapshotStore` — persistência dos 3 JSON columns, update_diagnostic, migração
+- TV53-TV60: Integração UCOBridge + exports do package + endpoint /metrics/advanced
+
+**Resultado:** 30/30 testes passando | acumulado M4-M13: **300 testes**
+
+---
+
 ## [2.2.0] — 2026-04-26 — M6.4 IaC SCANNER + EXTENDED METRIC VECTORS
 
 ### Adicionado — M6.4 Infrastructure-as-Code Scanner + Extended Metric Vectors
