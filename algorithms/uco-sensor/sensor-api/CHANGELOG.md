@@ -5,6 +5,43 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.4.1] — 2026-04-27 — AST-IMP _UCOVisitor 10 novos padrões
+
+### Adicionado — AST-IMP FASE 1.B
+
+**10 novos contadores de qualidade/confiabilidade** adicionados ao `_UCOVisitor` em `sensor_core/uco_bridge.py`. Todos os sinais são agora propagados como atributos do `MetricVector`, prontos para alimentar o `ReliabilityVector` (M7.3) sem re-análise.
+
+#### Módulo: `sensor_core/uco_bridge.py`
+
+| Contador | Padrão Detectado | AST Node | WBS |
+|---|---|---|---|
+| `bare_except_count` | `except:` sem tipo especificado | `ExceptHandler(type=None)` | 3.1 |
+| `swallowed_exception_count` | `except [E]: pass` — exceção silenciada | `ExceptHandler` com body=[Pass] | 3.1 |
+| `shadow_builtin_count` | `list = []`, `open = ...` — sombra de builtin | `Name(ctx=Store)` ∈ builtins | 3.2 |
+| `mutable_default_arg_count` | `def f(x=[])`, `def f(x={})`, `def f(x=set())` | `FunctionDef.defaults` | 3.2 |
+| `inconsistent_return_count` | Função mescla `return value` e `return None`/fall-through | `ast.Return` walk | 3.3 |
+| `global_mutation_count` | `global x` + atribuição subsequente | `ast.Global` + `ast.Assign` | 3.3 |
+| `deeply_nested_comprehension_count` | `[f(x) for x in [g(y) for y in ...]]` | `ListComp` dentro de `ListComp.elt` | 3.4 |
+| `missing_all_flag` | Módulo com funções públicas mas sem `__all__` | `ast.Assign` target=`__all__` | 3.4 |
+
+**Detalhes técnicos:**
+- `_PYTHON_BUILTINS` — frozenset derivado de `vars(builtins)`, filtrado de keywords imutáveis em Python 3
+- `shadow_builtin_count` deduplica por nome (cada builtin conta apenas uma vez mesmo com múltiplas atribuições)
+- `_check_inconsistent_return()` skips nested function defs via `ast.walk` com guard
+- `_check_global_mutation()` skips nested function defs via `ast.walk` com guard
+- `visit_Module` consolidado: executa `_scan_dead_code` + `generic_visit` + set `missing_all_flag`
+- `visit_Assign` consolidado: registra `_op("=")` + detecta `__all__`
+
+#### Módulo: `tests/test_marco_m15.py` — NOVO (TV91-TV98, 37 testes)
+
+37 testes cobrindo todos os 8 novos contadores + integração com `MetricVector`.
+
+### Técnico
+- Versão: `2.4.0 → 2.4.1`
+- `pyproject.toml`: `python_files` atualizado com `test_marco_m15.py`
+
+---
+
 ## [2.4.0] — 2026-04-27 — M7.1 SAST EXPANSION ROUND 1
 
 ### Adicionado — M7.1 SAST Expansion Round 1

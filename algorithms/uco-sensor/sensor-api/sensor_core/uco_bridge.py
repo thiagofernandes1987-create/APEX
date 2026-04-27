@@ -29,6 +29,7 @@ Ref: Halstead, M.H. (1977). Elements of Software Science. Elsevier.
 """
 from __future__ import annotations
 import ast
+import builtins as _builtins_module
 import math
 import time
 import hashlib
@@ -51,6 +52,16 @@ try:
     _EXTENDED_VECTORS_AVAILABLE = True
 except ImportError:
     _EXTENDED_VECTORS_AVAILABLE = False
+
+
+# ─── Python builtins (AST-IMP: shadow builtin detection) ─────────────────────
+
+_PYTHON_BUILTINS: frozenset = frozenset(vars(_builtins_module).keys()) - frozenset({
+    # These cannot be assigned in Python 3 (keywords/constants) — filter to reduce FPs
+    "None", "True", "False", "__name__", "__doc__", "__package__",
+    "__loader__", "__spec__", "__build_class__", "__import__",
+    "copyright", "credits", "license", "quit", "exit", "help",
+})
 
 
 # ─── Constantes Halstead ─────────────────────────────────────────────────────
@@ -124,6 +135,28 @@ class _UCOVisitor(ast.NodeVisitor):
         self.imports_set: Set[str] = set()
         self.from_imports_set: Set[str] = set()
 
+        # ── AST-IMP: 10 new reliability/quality patterns ──────────────────────
+        # 1. bare except — ExceptHandler with type=None
+        self.bare_except_count: int = 0
+        # 2. swallowed exception — ExceptHandler body is only Pass
+        self.swallowed_exception_count: int = 0
+        # 3. shadow builtin — Name assigned in Store context where id ∈ builtins
+        self.shadow_builtin_count: int = 0
+        # 4. mutable default argument — def f(x=[]) / def f(x={}) / def f(x=set())
+        self.mutable_default_arg_count: int = 0
+        # 5. inconsistent return — function mixes Return(value) and Return(None)/fall-through
+        self.inconsistent_return_count: int = 0
+        # 6. global mutation — global x declared + assignment in same function
+        self.global_mutation_count: int = 0
+        # 7. deeply nested comprehension — comprehension with comprehension inside elt/value
+        self.deeply_nested_comprehension_count: int = 0
+        # 8. missing __all__ — module with public functions but no __all__ assignment
+        self.missing_all_flag: bool = False    # set to True in visit_Module post-check
+        # Tracking helpers
+        self._top_level_public_fns: bool = False   # whether any public fn at module level
+        self._has_all_assignment: bool = False      # whether __all__ is defined
+        self._shadowed_names: Set[str] = set()      # deduplicate shadow findings
+
     # ── CC ───────────────────────────────────────────────────────────────────
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
@@ -148,6 +181,19 @@ class _UCOVisitor(ast.NodeVisitor):
         # BUG-08: Detect unbounded recursion risk (direct self-call without
         # a guaranteed base case at the function's top level).
         self._check_recursion_risk(node, name)
+
+        # AST-IMP.2 — mutable default argument
+        self._check_mutable_defaults(node)
+
+        # AST-IMP.3 — inconsistent return
+        self._check_inconsistent_return(node)
+
+        # AST-IMP.3 — global mutation
+        self._check_global_mutation(node)
+
+        # Track top-level public functions for missing __all__ detection
+        if not self._fn_stack and not name.startswith("_"):
+            self._top_level_public_fns = True
 
     visit_AsyncFunctionDef = visit_FunctionDef
 
@@ -176,6 +222,20 @@ class _UCOVisitor(ast.NodeVisitor):
 
     def visit_ExceptHandler(self, node: ast.ExceptHandler) -> None:
         self.cc_total += 1
+        # AST-IMP.1 — bare except (no type specified)
+        if node.type is None:
+            self.bare_except_count += 1
+        # AST-IMP.1 — swallowed exception (body contains only Pass, possibly with docstring)
+        non_trivial = [
+            s for s in node.body
+            if not isinstance(s, ast.Pass) and not (
+                isinstance(s, ast.Expr)
+                and isinstance(s.value, ast.Constant)
+                and isinstance(s.value.value, str)
+            )
+        ]
+        if not non_trivial:
+            self.swallowed_exception_count += 1
         self.generic_visit(node)
 
     def visit_BoolOp(self, node: ast.BoolOp) -> None:
@@ -296,10 +356,6 @@ class _UCOVisitor(ast.NodeVisitor):
             end   = getattr(stmt, 'end_lineno', start)
             self.dead_code_lines += max(1, end - start + 1)
 
-    def visit_Module(self, node: ast.Module) -> None:
-        self._scan_dead_code(node.body)
-        self.generic_visit(node)
-
     # ── Loop Risk ────────────────────────────────────────────────────────────
 
     def _check_loop_risk(self, node: ast.While) -> None:
@@ -381,6 +437,85 @@ class _UCOVisitor(ast.NodeVisitor):
         if not top_level_guard:
             self.loop_risk_count += 1
 
+    # ── AST-IMP helper methods ────────────────────────────────────────────────
+
+    def _check_mutable_defaults(self, node: ast.FunctionDef) -> None:
+        """AST-IMP.2 — mutable default argument: def f(x=[]), def f(x={}), def f(x=set())."""
+        all_defaults = list(node.args.defaults)
+        all_defaults += [d for d in node.args.kw_defaults if d is not None]
+        for default in all_defaults:
+            if isinstance(default, (ast.List, ast.Dict, ast.Set)):
+                self.mutable_default_arg_count += 1
+                return  # count once per function
+            # set(), list(), dict() with no args
+            if (isinstance(default, ast.Call)
+                    and isinstance(default.func, ast.Name)
+                    and default.func.id in ("set", "list", "dict")
+                    and not default.args
+                    and not default.keywords):
+                self.mutable_default_arg_count += 1
+                return
+
+    def _check_inconsistent_return(self, node: ast.FunctionDef) -> None:
+        """
+        AST-IMP.3 — inconsistent return: function mixes Return(value) and
+        Return(None) / implicit fall-through.
+
+        Strategy: collect all Return nodes NOT inside nested function defs.
+        """
+        returns: List[ast.Return] = []
+        for child in ast.walk(node):
+            # Skip body of nested functions — their returns are their own
+            if child is not node and isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            if isinstance(child, ast.Return):
+                returns.append(child)
+
+        if not returns:
+            return  # no return at all — implicitly None everywhere, consistent
+
+        has_value    = any(r.value is not None for r in returns)
+        has_none_ret = any(r.value is None for r in returns)
+
+        # Also check fall-through: if the last statement at function body level is not a Return
+        last_stmt = node.body[-1] if node.body else None
+        can_fall_through = not isinstance(last_stmt, (ast.Return, ast.Raise))
+
+        if has_value and (has_none_ret or can_fall_through):
+            self.inconsistent_return_count += 1
+
+    def _check_global_mutation(self, node: ast.FunctionDef) -> None:
+        """
+        AST-IMP.3 — global mutation: 'global x' declared inside a function,
+        and x is subsequently assigned (ast.Assign or ast.AugAssign).
+
+        Counts once per function that mutates at least one global variable.
+        """
+        # Collect names declared global in this function (not nested ones)
+        global_names: Set[str] = set()
+        for child in ast.walk(node):
+            if child is not node and isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            if isinstance(child, ast.Global):
+                global_names.update(child.names)
+
+        if not global_names:
+            return
+
+        # Check if any global name is assigned within this function
+        for child in ast.walk(node):
+            if child is not node and isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            if isinstance(child, ast.Assign):
+                for target in child.targets:
+                    if isinstance(target, ast.Name) and target.id in global_names:
+                        self.global_mutation_count += 1
+                        return
+            if isinstance(child, ast.AugAssign):
+                if isinstance(child.target, ast.Name) and child.target.id in global_names:
+                    self.global_mutation_count += 1
+                    return
+
     # ── Halstead ─────────────────────────────────────────────────────────────
 
     def _op(self, name: str) -> None:
@@ -403,10 +538,6 @@ class _UCOVisitor(ast.NodeVisitor):
             self._op(type(op).__name__)
         self.generic_visit(node)
 
-    def visit_Assign(self, node: ast.Assign) -> None:
-        self._op("=")
-        self.generic_visit(node)
-
     def visit_AugAssign(self, node: ast.AugAssign) -> None:
         self._op(type(node.op).__name__ + "=")
         self.generic_visit(node)
@@ -421,6 +552,14 @@ class _UCOVisitor(ast.NodeVisitor):
     def visit_Name(self, node: ast.Name) -> None:
         if isinstance(node.ctx, ast.Load):
             self._operand(node.id)
+        elif isinstance(node.ctx, ast.Store):
+            # AST-IMP.2 — shadow builtin detection
+            # Only flag each name once and exclude private/dunder names
+            if (node.id in _PYTHON_BUILTINS
+                    and not node.id.startswith("_")
+                    and node.id not in self._shadowed_names):
+                self._shadowed_names.add(node.id)
+                self.shadow_builtin_count += 1
 
     def visit_Attribute(self, node: ast.Attribute) -> None:
         # BUG-06: attribute name (node.attr) is part of the operator ".attr",
@@ -438,6 +577,64 @@ class _UCOVisitor(ast.NodeVisitor):
     def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
         if node.module:
             self.from_imports_set.add(node.module.split(".")[0])
+
+    # ── AST-IMP: Assign — track __all__ definition ───────────────────────────
+
+    def visit_Assign(self, node: ast.Assign) -> None:
+        self._op("=")
+        # AST-IMP.4 — detect __all__ assignment at module level
+        if not self._fn_stack and not self._class_stack:
+            for target in node.targets:
+                if isinstance(target, ast.Name) and target.id == "__all__":
+                    self._has_all_assignment = True
+                    break
+        self.generic_visit(node)
+
+    # ── AST-IMP: Module — finalize missing __all__ check ────────────────────
+
+    def visit_Module(self, node: ast.Module) -> None:
+        self._scan_dead_code(node.body)
+        self.generic_visit(node)
+        # AST-IMP.4 — missing_all_flag: module has public functions but no __all__
+        if self._top_level_public_fns and not self._has_all_assignment:
+            self.missing_all_flag = True
+
+    # ── AST-IMP: Comprehension nesting detection ─────────────────────────────
+
+    _COMPREHENSION_TYPES = (
+        ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp,
+    )
+
+    def _check_nested_comprehension(self, node: ast.expr) -> None:
+        """AST-IMP.4 — flag if comprehension's elt/value/key contains another comprehension."""
+        # Get the expression part (elt for List/Set/Gen, key+value for Dict)
+        check_nodes: List[ast.expr] = []
+        if isinstance(node, (ast.ListComp, ast.SetComp, ast.GeneratorExp)):
+            check_nodes = [node.elt]
+        elif isinstance(node, ast.DictComp):
+            check_nodes = [node.key, node.value]
+
+        for expr in check_nodes:
+            for child in ast.walk(expr):
+                if isinstance(child, self._COMPREHENSION_TYPES) and child is not node:
+                    self.deeply_nested_comprehension_count += 1
+                    return  # count once per outer comprehension
+
+    def visit_ListComp(self, node: ast.ListComp) -> None:
+        self._check_nested_comprehension(node)
+        self.generic_visit(node)
+
+    def visit_SetComp(self, node: ast.SetComp) -> None:
+        self._check_nested_comprehension(node)
+        self.generic_visit(node)
+
+    def visit_DictComp(self, node: ast.DictComp) -> None:
+        self._check_nested_comprehension(node)
+        self.generic_visit(node)
+
+    def visit_GeneratorExp(self, node: ast.GeneratorExp) -> None:
+        self._check_nested_comprehension(node)
+        self.generic_visit(node)
 
     # ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -634,6 +831,16 @@ class UCOBridge:
         mv.max_methods_per_class= visitor.max_methods_per_class
         mv.cc_hotspot_ratio     = round(cc_hotspot_ratio, 4)
         mv.max_function_cc      = max_fn_cc
+
+        # ── AST-IMP: reliability/quality signals (10 new patterns) ───────────
+        mv.bare_except_count               = visitor.bare_except_count
+        mv.swallowed_exception_count       = visitor.swallowed_exception_count
+        mv.shadow_builtin_count            = visitor.shadow_builtin_count
+        mv.mutable_default_arg_count       = visitor.mutable_default_arg_count
+        mv.inconsistent_return_count       = visitor.inconsistent_return_count
+        mv.global_mutation_count           = visitor.global_mutation_count
+        mv.deeply_nested_comprehension_count = visitor.deeply_nested_comprehension_count
+        mv.missing_all_flag                = visitor.missing_all_flag
 
         # ── M6.4: Attach extended vectors to MetricVector ─────────────────
         if _EXTENDED_VECTORS_AVAILABLE:
