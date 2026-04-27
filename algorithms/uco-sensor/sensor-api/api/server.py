@@ -86,6 +86,20 @@ try:
 except ImportError:
     _DIAGNOSTIC_VECTOR_AVAILABLE = False
 
+# M7.3 — ReliabilityVector + MaintainabilityVector
+try:
+    from metrics.extended_vectors import (
+        ReliabilityVector  as _ReliabilityVector,
+        MaintainabilityVector as _MaintainabilityVector,
+    )
+    _RELIABILITY_VECTOR_AVAILABLE     = True
+    _MAINTAINABILITY_VECTOR_AVAILABLE = True
+except ImportError:
+    _ReliabilityVector                = None  # type: ignore[assignment,misc]
+    _MaintainabilityVector            = None  # type: ignore[assignment,misc]
+    _RELIABILITY_VECTOR_AVAILABLE     = False
+    _MAINTAINABILITY_VECTOR_AVAILABLE = False
+
 
 # ─── Configuração ────────────────────────────────────────────────────────────
 
@@ -95,7 +109,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "2.3.0"
+    version:      str   = "2.5.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -197,7 +211,9 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "POST",   "path": "/scan-incremental", "auth": True,   "desc": "Incremental scan — apenas arquivos alterados (M6.1)"},
             {"method": "POST",   "path": "/scan-sca",         "auth": True,   "desc": "SCA dependency vulnerability scan — 9 ecosystems, 65+ CVEs (M6.3)"},
             {"method": "POST",   "path": "/scan-iac",         "auth": True,   "desc": "IaC misconfiguration scan — Dockerfile/Compose/k8s/Terraform/Helm (M6.4)"},
-            {"method": "GET",    "path": "/metrics/advanced", "auth": True,   "desc": "AdvancedVector + DiagnosticVector — persisted M7.0 extended signals (?module=)"},
+            {"method": "GET",    "path": "/metrics/advanced",        "auth": True,   "desc": "AdvancedVector + DiagnosticVector — persisted M7.0 extended signals (?module=)"},
+            {"method": "GET",    "path": "/metrics/reliability",     "auth": True,   "desc": "ReliabilityVector — 10-channel reliability posture for a module (?module=) [M7.3a]"},
+            {"method": "GET",    "path": "/metrics/maintainability", "auth": True,   "desc": "MaintainabilityVector — 9-channel maintainability posture for a module (?module=) [M7.3b]"},
         ],
         "analyze_body": {
             "code":           "string — código fonte",
@@ -1581,6 +1597,120 @@ def handle_metrics_advanced(module_id: Optional[str], window: int = 50) -> Tuple
     }
 
 
+# ─── M7.3a ReliabilityVector endpoint ───────────────────────────────────────
+
+def handle_metrics_reliability(module_id: Optional[str], window: int = 50) -> Tuple[int, Dict]:
+    """
+    GET /metrics/reliability?module=<id>[&window=<n>]  (M7.3a)
+
+    Returns the most-recent persisted ReliabilityVector for a module.
+
+    Response schema
+    ---------------
+    {
+      "module_id":          str,
+      "history_size":       int,
+      "last_commit":        str,
+      "last_timestamp":     float,
+      "reliability_vector": {          — ReliabilityVector (10 channels)
+        "bare_except_count":           int,
+        "swallowed_exception_count":   int,
+        "mutable_default_arg_count":   int,
+        "inconsistent_return_count":   int,
+        "shadow_builtin_count":        int,
+        "global_mutation_count":       int,
+        "empty_except_block_count":    int,
+        "resource_leak_risk":          int,
+        "regex_redos_risk":            int,
+        "infinite_recursion_risk":     float,
+        "total_issues":                int,
+        "reliability_rating":          str   # A–E
+      } | null,
+      "reliability_rating": str   — A–E (top-level convenience field)
+    }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    if not _RELIABILITY_VECTOR_AVAILABLE:
+        return 503, {"error": "ReliabilityVector not available (metrics package missing)"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]
+
+    rel = getattr(latest, "reliability", None)
+    rel_dict   = rel.to_dict()           if rel is not None else None
+    rel_rating = rel.reliability_rating() if rel is not None else "N/A"
+
+    return 200, {
+        "module_id":          module_id,
+        "history_size":       len(history),
+        "last_commit":        latest.commit_hash,
+        "last_timestamp":     latest.timestamp,
+        "reliability_vector": rel_dict,
+        "reliability_rating": rel_rating,
+    }
+
+
+# ─── M7.3b MaintainabilityVector endpoint ────────────────────────────────────
+
+def handle_metrics_maintainability(module_id: Optional[str], window: int = 50) -> Tuple[int, Dict]:
+    """
+    GET /metrics/maintainability?module=<id>[&window=<n>]  (M7.3b)
+
+    Returns the most-recent persisted MaintainabilityVector for a module.
+
+    Response schema
+    ---------------
+    {
+      "module_id":               str,
+      "history_size":            int,
+      "last_commit":             str,
+      "last_timestamp":          float,
+      "maintainability_vector":  {       — MaintainabilityVector (9 channels)
+        "missing_docstring_ratio":  float,
+        "avg_function_args":        float,
+        "long_function_ratio":      float,
+        "deeply_nested_ratio":      float,
+        "cognitive_cc_hotspot":     int,
+        "boolean_param_count":      int,
+        "magic_number_count":       int,
+        "long_parameter_list":      int,
+        "invariant_density":        float,
+        "maintainability_rating":   str   # A–E
+      } | null,
+      "maintainability_rating": str   — A–E (top-level convenience field)
+    }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    if not _MAINTAINABILITY_VECTOR_AVAILABLE:
+        return 503, {"error": "MaintainabilityVector not available (metrics package missing)"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]
+
+    mnt = getattr(latest, "maintainability", None)
+    mnt_dict   = mnt.to_dict()                if mnt is not None else None
+    mnt_rating = mnt.maintainability_rating() if mnt is not None else "N/A"
+
+    return 200, {
+        "module_id":              module_id,
+        "history_size":           len(history),
+        "last_commit":            latest.commit_hash,
+        "last_timestamp":         latest.timestamp,
+        "maintainability_vector": mnt_dict,
+        "maintainability_rating": mnt_rating,
+    }
+
+
 # ─── Auth endpoints ──────────────────────────────────────────────────────────
 
 def handle_create_key(data: Dict) -> Tuple[int, Dict]:
@@ -1716,6 +1846,14 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
                 code, data = handle_metrics_advanced(module_id, window=window_n)
+            elif path == "/metrics/reliability":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_metrics_reliability(module_id, window=window_n)
+            elif path == "/metrics/maintainability":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_metrics_maintainability(module_id, window=window_n)
             else:
                 code, data = 404, {"error": f"Unknown endpoint: {path}"}
         except Exception as e:

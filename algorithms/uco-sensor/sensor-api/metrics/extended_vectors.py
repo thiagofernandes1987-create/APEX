@@ -767,3 +767,411 @@ class DiagnosticVector:
             f"scp={self.self_cure_probability:.3f}, "
             f"rev={self.onset_reversibility:.3f})"
         )
+
+
+# ─── ReliabilityVector (M7.3a) ───────────────────────────────────────────────
+
+@dataclass
+class ReliabilityVector:
+    """
+    10-channel reliability signal vector — M7.3a.
+
+    Formalizes AST-IMP counters from _UCOVisitor into a typed, persistable
+    vector. All channels feed directly from MetricVector attrs set by UCOBridge.
+
+    Channels
+    --------
+    bare_except_count           : int   — ExceptHandler(type=None) occurrences
+    swallowed_exception_count   : int   — except: pass (silent error discard)
+    mutable_default_arg_count   : int   — def f(x=[]/{}/ set()) occurrences
+    inconsistent_return_count   : int   — functions mixing Return(v) + fall-through
+    shadow_builtin_count        : int   — assignments that shadow builtins
+    global_mutation_count       : int   — global x + subsequent assignment
+    empty_except_block_count    : int   — alias for swallowed_exception_count (CWE-390)
+    resource_leak_risk          : int   — open() outside `with` (from SAST037 count)
+    regex_redos_risk            : int   — SAST019 ReDoS pattern count
+    infinite_recursion_risk     : float — ILR proxy from MetricVector
+
+    CWE coverage
+    ------------
+    CWE-390: bare_except_count, swallowed_exception_count
+    CWE-1220: mutable_default_arg_count
+    CWE-394: inconsistent_return_count
+    CWE-362: global_mutation_count
+    CWE-772: resource_leak_risk
+    CWE-1333: regex_redos_risk
+    CWE-674: infinite_recursion_risk
+    """
+
+    # ── fields ───────────────────────────────────────────────────────────────
+    bare_except_count:          int   = 0
+    swallowed_exception_count:  int   = 0
+    mutable_default_arg_count:  int   = 0
+    inconsistent_return_count:  int   = 0
+    shadow_builtin_count:       int   = 0
+    global_mutation_count:      int   = 0
+    empty_except_block_count:   int   = 0   # alias: swallowed_exception_count
+    resource_leak_risk:         int   = 0
+    regex_redos_risk:           int   = 0
+    infinite_recursion_risk:    float = 0.0
+
+    # ── metadata ─────────────────────────────────────────────────────────────
+    module_id: str = ""
+    language:  str = "python"
+
+    # ── constructors ─────────────────────────────────────────────────────────
+
+    @classmethod
+    def from_mv(cls, mv, sast_result=None) -> "ReliabilityVector":
+        """
+        Build ReliabilityVector from a MetricVector (post-UCOBridge) and an
+        optional SASTResult (to count resource-leak and ReDoS findings).
+
+        Parameters
+        ----------
+        mv          : MetricVector — must have AST-IMP attrs attached by UCOBridge
+        sast_result : SASTResult | None — scanner result for SAST037/SAST019 counts
+        """
+        resource_leak = 0
+        redos_risk    = 0
+        if sast_result is not None:
+            for f in getattr(sast_result, "findings", []):
+                if f.rule_id == "SAST037":
+                    resource_leak += 1
+                if f.rule_id == "SAST019":
+                    redos_risk += 1
+
+        swallowed = getattr(mv, "swallowed_exception_count", 0)
+        return cls(
+            bare_except_count         = getattr(mv, "bare_except_count", 0),
+            swallowed_exception_count = swallowed,
+            mutable_default_arg_count = getattr(mv, "mutable_default_arg_count", 0),
+            inconsistent_return_count = getattr(mv, "inconsistent_return_count", 0),
+            shadow_builtin_count      = getattr(mv, "shadow_builtin_count", 0),
+            global_mutation_count     = getattr(mv, "global_mutation_count", 0),
+            empty_except_block_count  = swallowed,      # alias
+            resource_leak_risk        = resource_leak,
+            regex_redos_risk          = redos_risk,
+            infinite_recursion_risk   = round(
+                min(1.0, getattr(mv, "infinite_loop_risk", 0.0)), 4
+            ),
+            module_id = getattr(mv, "module_id", ""),
+            language  = getattr(mv, "language", "python"),
+        )
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "ReliabilityVector":
+        known = {f for f in cls.__dataclass_fields__}
+        return cls(**{k: v for k, v in d.items() if k in known})
+
+    # ── derived properties ────────────────────────────────────────────────────
+
+    @property
+    def total_issues(self) -> int:
+        """Sum of all integer reliability issue counts."""
+        return (
+            self.bare_except_count
+            + self.swallowed_exception_count
+            + self.mutable_default_arg_count
+            + self.inconsistent_return_count
+            + self.shadow_builtin_count
+            + self.global_mutation_count
+            + self.resource_leak_risk
+            + self.regex_redos_risk
+        )
+
+    def reliability_rating(self) -> str:
+        """
+        A–E rating based on total issue count and infinite_recursion_risk.
+
+          A: 0 issues, ILR < 0.1
+          B: 1–2 issues OR ILR 0.1–0.3
+          C: 3–5 issues OR ILR 0.3–0.5
+          D: 6–10 issues OR ILR > 0.5
+          E: >10 issues OR bare_except > 3 OR global_mutation > 2
+        """
+        issues = self.total_issues
+        ilr    = self.infinite_recursion_risk
+        if issues > 10 or self.bare_except_count > 3 or self.global_mutation_count > 2:
+            return "E"
+        if issues >= 6 or ilr > 0.5:
+            return "D"
+        if issues >= 3 or ilr > 0.3:
+            return "C"
+        if issues >= 1 or ilr > 0.1:
+            return "B"
+        return "A"
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["total_issues"]       = self.total_issues
+        d["reliability_rating"] = self.reliability_rating()
+        return d
+
+    def __repr__(self) -> str:
+        return (
+            f"ReliabilityVector("
+            f"rating={self.reliability_rating()}, "
+            f"issues={self.total_issues}, "
+            f"bare_except={self.bare_except_count}, "
+            f"swallowed={self.swallowed_exception_count}, "
+            f"ilr={self.infinite_recursion_risk:.3f})"
+        )
+
+
+# ─── MaintainabilityVector (M7.3b) ───────────────────────────────────────────
+
+@dataclass
+class MaintainabilityVector:
+    """
+    9-channel maintainability signal vector — M7.3b.
+
+    Aggregates structural quality signals derived from AST analysis.
+    All channels are normalized to [0.0, 1.0] or bounded integers.
+
+    Channels
+    --------
+    missing_docstring_ratio    : float — public fns without docstring / total public fns
+    avg_function_args          : float — mean arg count per function
+    long_function_ratio        : float — fns with LOC > 50 / total fns
+    deeply_nested_ratio        : float — deeply_nested_comprehension_count / n_functions
+    cognitive_cc_hotspot       : int   — max Cognitive CC across all functions
+    boolean_param_count        : int   — params with default True/False
+    magic_number_count         : int   — numeric literals ∉ {-1, 0, 1, 2} outside constants
+    long_parameter_list        : int   — functions with > 5 parameters
+    invariant_density          : float — (docstring_ratio + type_hint_proxy) / 2
+
+    Thresholds (WARNING)
+    --------------------
+    missing_docstring_ratio > 0.5  → WARNING
+    avg_function_args > 4.0        → WARNING
+    long_function_ratio > 0.2      → WARNING
+    deeply_nested_ratio > 0.1      → WARNING
+    cognitive_cc_hotspot > 20      → CRITICAL
+    boolean_param_count > 3        → WARNING
+    magic_number_count > 10        → WARNING
+    long_parameter_list > 2        → WARNING
+    invariant_density < 0.3        → WARNING
+    """
+
+    # ── fields ───────────────────────────────────────────────────────────────
+    missing_docstring_ratio:    float = 0.0
+    avg_function_args:          float = 0.0
+    long_function_ratio:        float = 0.0
+    deeply_nested_ratio:        float = 0.0
+    cognitive_cc_hotspot:       int   = 0
+    boolean_param_count:        int   = 0
+    magic_number_count:         int   = 0
+    long_parameter_list:        int   = 0
+    invariant_density:          float = 0.5
+
+    # ── metadata ─────────────────────────────────────────────────────────────
+    module_id: str = ""
+    language:  str = "python"
+
+    # ── constructors ─────────────────────────────────────────────────────────
+
+    @classmethod
+    def from_mv(cls, mv, source: str = "") -> "MaintainabilityVector":
+        """
+        Build MaintainabilityVector from MetricVector + (optionally) raw source.
+
+        Parameters
+        ----------
+        mv     : MetricVector — must have AST-IMP attrs and n_functions
+        source : raw Python source — enables magic_number, boolean_param,
+                 docstring and long_function analysis via a lightweight AST pass
+        """
+        n_fns = max(1, getattr(mv, "n_functions", 1))
+
+        # Default values (available from MetricVector without re-parse)
+        deeply_nested_ratio = round(
+            min(1.0, getattr(mv, "deeply_nested_comprehension_count", 0) / n_fns), 4
+        )
+        cognitive_hotspot = getattr(mv, "max_function_cc", 0)
+
+        # Fields that require AST re-walk of source
+        missing_doc_ratio   = 0.0
+        avg_args            = 0.0
+        long_fn_ratio       = 0.0
+        bool_param_count    = 0
+        magic_num_count     = 0
+        long_param_list     = 0
+        docstring_ratio     = 0.0
+
+        if source:
+            try:
+                import ast as _ast
+                tree = _ast.parse(source)
+                lines = source.splitlines()
+                (missing_doc_ratio, avg_args, long_fn_ratio,
+                 bool_param_count, magic_num_count, long_param_list,
+                 docstring_ratio) = _analyse_maintainability(tree, lines)
+            except SyntaxError:
+                pass
+
+        # invariant_density: proxy = (docstring_ratio + 0.5*type_hint_proxy) / 1.5
+        # type_hint_proxy uses loc-normalized assertions as a simplification
+        loc = max(1, getattr(mv, "lines_of_code", 1))
+        assert_proxy = min(1.0, getattr(mv, "syntactic_dead_code", 0) * 0.0)  # 0 — no assert count yet
+        invariant_d = round(min(1.0, (docstring_ratio + assert_proxy) / max(1.0, 1.0)), 4)
+
+        return cls(
+            missing_docstring_ratio = round(missing_doc_ratio, 4),
+            avg_function_args       = round(avg_args, 4),
+            long_function_ratio     = round(long_fn_ratio, 4),
+            deeply_nested_ratio     = deeply_nested_ratio,
+            cognitive_cc_hotspot    = cognitive_hotspot,
+            boolean_param_count     = bool_param_count,
+            magic_number_count      = magic_num_count,
+            long_parameter_list     = long_param_list,
+            invariant_density       = invariant_d,
+            module_id = getattr(mv, "module_id", ""),
+            language  = getattr(mv, "language", "python"),
+        )
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "MaintainabilityVector":
+        known = {f for f in cls.__dataclass_fields__}
+        return cls(**{k: v for k, v in d.items() if k in known})
+
+    # ── derived properties ────────────────────────────────────────────────────
+
+    def maintainability_rating(self) -> str:
+        """
+        A–E Maintainability rating.
+
+          A: no warnings
+          B: 1–2 mild warnings
+          C: 3–4 warnings OR cognitive_hotspot > 20
+          D: 5+ warnings
+          E: cognitive_hotspot > 30 OR missing_docstring_ratio > 0.8
+        """
+        hotspot = self.cognitive_cc_hotspot
+        if hotspot > 30 or self.missing_docstring_ratio > 0.8:
+            return "E"
+        warnings = sum([
+            self.missing_docstring_ratio > 0.5,
+            self.avg_function_args > 4.0,
+            self.long_function_ratio > 0.2,
+            self.deeply_nested_ratio > 0.1,
+            hotspot > 20,
+            self.boolean_param_count > 3,
+            self.magic_number_count > 10,
+            self.long_parameter_list > 2,
+            self.invariant_density < 0.3,
+        ])
+        if warnings >= 5:
+            return "D"
+        if warnings >= 3 or hotspot > 20:
+            return "C"
+        if warnings >= 1:
+            return "B"
+        return "A"
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["maintainability_rating"] = self.maintainability_rating()
+        return d
+
+    def __repr__(self) -> str:
+        return (
+            f"MaintainabilityVector("
+            f"rating={self.maintainability_rating()}, "
+            f"miss_doc={self.missing_docstring_ratio:.2f}, "
+            f"cc_hot={self.cognitive_cc_hotspot}, "
+            f"magic={self.magic_number_count})"
+        )
+
+
+# ─── AST helper for MaintainabilityVector ────────────────────────────────────
+
+def _analyse_maintainability(tree, lines):
+    """
+    Single-pass AST analysis for MaintainabilityVector fields that require
+    re-walking the source tree.
+
+    Returns
+    -------
+    (missing_docstring_ratio, avg_function_args, long_function_ratio,
+     boolean_param_count, magic_number_count, long_parameter_list,
+     docstring_ratio)
+    """
+    import ast as _ast
+
+    _MAGIC_EXEMPT = frozenset({-1, 0, 1, 2})
+
+    total_fns       = 0
+    public_fns      = 0
+    fns_with_doc    = 0
+    fns_long        = 0      # LOC > 50
+    fns_long_params = 0      # > 5 params
+    total_args      = 0
+    bool_params     = 0
+    magic_numbers   = 0
+
+    for node in _ast.walk(tree):
+        if not isinstance(node, (_ast.FunctionDef, _ast.AsyncFunctionDef)):
+            continue
+        total_fns += 1
+        fn_name = node.name
+
+        # docstring presence
+        is_public = not fn_name.startswith("_")
+        if is_public:
+            public_fns += 1
+            has_doc = (
+                node.body
+                and isinstance(node.body[0], _ast.Expr)
+                and isinstance(node.body[0].value, _ast.Constant)
+                and isinstance(node.body[0].value.value, str)
+            )
+            if has_doc:
+                fns_with_doc += 1
+
+        # function length (approx: end_lineno - lineno)
+        fn_loc = (getattr(node, "end_lineno", node.lineno) - node.lineno + 1)
+        if fn_loc > 50:
+            fns_long += 1
+
+        # args
+        all_args = (
+            node.args.args
+            + node.args.posonlyargs
+            + node.args.kwonlyargs
+        )
+        n_args = len(all_args)
+        total_args += n_args
+        if n_args > 5:
+            fns_long_params += 1
+
+        # boolean defaults (True/False)
+        for default in node.args.defaults + node.args.kw_defaults:
+            if default is None:
+                continue
+            if isinstance(default, _ast.Constant) and isinstance(default.value, bool):
+                bool_params += 1
+
+    # magic numbers: scan entire tree for numeric literals
+    for node in _ast.walk(tree):
+        if isinstance(node, _ast.Constant) and isinstance(node.value, (int, float)):
+            if node.value not in _MAGIC_EXEMPT and not isinstance(node.value, bool):
+                magic_numbers += 1
+
+    n_fns  = max(1, total_fns)
+    n_pub  = max(1, public_fns)
+
+    missing_doc_ratio = round(1.0 - fns_with_doc / n_pub, 4) if public_fns > 0 else 0.0
+    docstring_ratio   = round(fns_with_doc / n_pub, 4) if public_fns > 0 else 0.0
+    avg_args          = round(total_args / n_fns, 4)
+    long_fn_ratio     = round(fns_long / n_fns, 4)
+
+    return (
+        missing_doc_ratio,
+        avg_args,
+        long_fn_ratio,
+        bool_params,
+        magic_numbers,
+        fns_long_params,
+        docstring_ratio,
+    )

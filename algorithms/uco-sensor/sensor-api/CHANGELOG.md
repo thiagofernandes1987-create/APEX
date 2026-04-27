@@ -5,6 +5,85 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.5.0] — 2026-04-27 — M7.3 ReliabilityVector + MaintainabilityVector
+
+### Adicionado — M7.3 FASE 2 (WBS 4.1-4.6)
+
+**ReliabilityVector (10 canais) e MaintainabilityVector (9 canais)** — dois novos vetores de métricas tipados que formalizam os sinais AST-IMP do `_UCOVisitor` e os sinais estruturais de manutenibilidade em representações persistíveis.
+
+#### Módulo: `metrics/extended_vectors.py` — 2 novas classes
+
+**`ReliabilityVector` — 10 canais (M7.3a)**
+
+| Canal | Tipo | Fonte | CWE |
+|---|---|---|---|
+| `bare_except_count` | `int` | `_UCOVisitor.bare_except_count` | CWE-390 |
+| `swallowed_exception_count` | `int` | `_UCOVisitor.swallowed_exception_count` | CWE-390 |
+| `mutable_default_arg_count` | `int` | `_UCOVisitor.mutable_default_arg_count` | CWE-1220 |
+| `inconsistent_return_count` | `int` | `_UCOVisitor.inconsistent_return_count` | CWE-394 |
+| `shadow_builtin_count` | `int` | `_UCOVisitor.shadow_builtin_count` | — |
+| `global_mutation_count` | `int` | `_UCOVisitor.global_mutation_count` | CWE-362 |
+| `empty_except_block_count` | `int` | alias de `swallowed_exception_count` | CWE-390 |
+| `resource_leak_risk` | `int` | count de SAST037 em `SASTResult` | CWE-772 |
+| `regex_redos_risk` | `int` | count de SAST019 em `SASTResult` | CWE-1333 |
+| `infinite_recursion_risk` | `float` | `MetricVector.infinite_loop_risk` clamped [0,1] | CWE-674 |
+
+- `total_issues`: propriedade derivada — soma de todos os canais inteiros (sem double-count do alias `empty_except_block_count`)
+- `reliability_rating()`: escala A–E baseada em `total_issues` + `infinite_recursion_risk` + regras especiais (bare_except>3 → E, global_mutation>2 → E)
+- `from_mv(mv, sast_result)`: factory class-method a partir de `MetricVector`
+- `from_dict(d)`: deserialização para persistência
+
+**`MaintainabilityVector` — 9 canais (M7.3b)**
+
+| Canal | Tipo | Cálculo | Threshold |
+|---|---|---|---|
+| `missing_docstring_ratio` | `float` | public fns sem docstring / total public fns | >0.5 = WARNING |
+| `avg_function_args` | `float` | Σ args / n_fns | >4.0 = WARNING |
+| `long_function_ratio` | `float` | fns com LOC>50 / n_fns | >0.2 = WARNING |
+| `deeply_nested_ratio` | `float` | `deeply_nested_comprehension_count` / n_fns | >0.1 = WARNING |
+| `cognitive_cc_hotspot` | `int` | `max_function_cc` | >20 = CRITICAL |
+| `boolean_param_count` | `int` | defaults `True/False` em params | >3 = WARNING |
+| `magic_number_count` | `int` | literais numéricos ∉ {-1,0,1,2} | >10 = WARNING |
+| `long_parameter_list` | `int` | fns com >5 params | >2 = WARNING |
+| `invariant_density` | `float` | `(docstring_ratio + assert_proxy) / 1` | <0.3 = WARNING |
+
+- `maintainability_rating()`: escala A–E (E se hotspot>30 ou missing_doc>0.8; D se ≥5 warnings)
+- `from_mv(mv, source)`: factory — re-parseia `source` via `_analyse_maintainability()` para campos dependentes de LOC/defaults
+- `_analyse_maintainability(tree, lines)`: helper standalone — percorre AST em single-pass e retorna `(missing_doc_ratio, avg_args, long_fn_ratio, bool_param_count, magic_num_count, long_param_list, docstring_ratio)`
+
+#### Módulo: `sensor_core/uco_bridge.py` — integração M7.3
+
+- `analyze()` agora constrói e anexa `mv.reliability = ReliabilityVector.from_mv(mv)` e `mv.maintainability = MaintainabilityVector.from_mv(mv, source=source)` ao final de cada análise
+- Importações condicionais via `_EXTENDED_VECTORS_AVAILABLE` — retrocompatível com ambientes sem o pacote `metrics`
+
+#### Módulo: `api/server.py` — 2 novos endpoints GET
+
+| Endpoint | Descrição |
+|---|---|
+| `GET /metrics/reliability?module=<id>` | Retorna `ReliabilityVector` do último snapshot persistido (M7.3a) |
+| `GET /metrics/maintainability?module=<id>` | Retorna `MaintainabilityVector` do último snapshot persistido (M7.3b) |
+
+- Ambos seguem o padrão de `handle_metrics_advanced()`: lookup no `SnapshotStore`, resposta 200/400/404/503
+- Handlers: `handle_metrics_reliability()`, `handle_metrics_maintainability()`
+- Guards de import `_RELIABILITY_VECTOR_AVAILABLE`, `_MAINTAINABILITY_VECTOR_AVAILABLE`
+- Registrados em `/docs` autodocumentação
+
+#### Módulo: `tests/test_marco_m16.py` — NOVO (TV99-TV128, 52 testes)
+
+52 testes cobrindo:
+- TR01-TR05: `ReliabilityVector` dataclass — defaults, `total_issues`, rating A–E, `to_dict`, `from_dict` roundtrip
+- TR06-TR10: `ReliabilityVector.from_mv` — extração de contadores AST-IMP, ILR proxy, metadata
+- TM01-TM05: `MaintainabilityVector` dataclass — defaults, rating A/B/C/D/E, `to_dict`
+- TM06-TM10: `_analyse_maintainability` — magic-numbers, long params, bool defaults, missing docstrings, avg args
+- TI01-TI05: Pipeline completo — `UCOBridge.analyze` anexa ambos os vetores; `bare_except` flui corretamente
+- TI06-TI10: API handlers — 400 (module=None), 404 (módulo desconhecido), 200 (módulo com histórico via `handle_analyze`)
+
+### Técnico
+- Versão: `2.4.1 → 2.5.0`
+- `pyproject.toml`: `python_files` atualizado com `test_marco_m16.py`
+
+---
+
 ## [2.4.1] — 2026-04-27 — AST-IMP _UCOVisitor 10 novos padrões
 
 ### Adicionado — AST-IMP FASE 1.B

@@ -44,10 +44,11 @@ if str(_ROOT) not in sys.path:
 
 from core.data_structures import MetricVector
 
-# Extended vectors (M6.4 + M7.0) — import lazily to avoid circular deps at module load
+# Extended vectors (M6.4 + M7.0 + M7.3) — import lazily to avoid circular deps
 try:
     from metrics.extended_vectors import (
         HalsteadVector, StructuralVector, AdvancedVector,
+        ReliabilityVector, MaintainabilityVector,
     )
     _EXTENDED_VECTORS_AVAILABLE = True
 except ImportError:
@@ -841,6 +842,11 @@ class UCOBridge:
         mv.global_mutation_count           = visitor.global_mutation_count
         mv.deeply_nested_comprehension_count = visitor.deeply_nested_comprehension_count
         mv.missing_all_flag                = visitor.missing_all_flag
+
+        # ── M7.3: Attach ReliabilityVector + MaintainabilityVector ───────────
+        if _EXTENDED_VECTORS_AVAILABLE:
+            mv.reliability    = ReliabilityVector.from_mv(mv)
+            mv.maintainability = MaintainabilityVector.from_mv(mv, source=source)
 
         # ── M6.4: Attach extended vectors to MetricVector ─────────────────
         if _EXTENDED_VECTORS_AVAILABLE:
