@@ -110,6 +110,16 @@ except ImportError:
     _FlowVector     = None  # type: ignore[assignment,misc]
     _TAINT_ENGINE_AVAILABLE = False
 
+# M7.4 — PerformanceAnalyzer + PerformanceVector
+try:
+    from metrics.performance_analyzer import PerformanceAnalyzer as _PerformanceAnalyzer
+    from metrics.extended_vectors import PerformanceVector as _PerformanceVector
+    _PERFORMANCE_AVAILABLE = True
+except ImportError:
+    _PerformanceAnalyzer = None  # type: ignore[assignment,misc]
+    _PerformanceVector   = None  # type: ignore[assignment,misc]
+    _PERFORMANCE_AVAILABLE = False
+
 
 # ─── Configuração ────────────────────────────────────────────────────────────
 
@@ -119,7 +129,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "2.7.0"
+    version:      str   = "2.8.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -226,6 +236,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/metrics/maintainability", "auth": True,   "desc": "MaintainabilityVector — 9-channel maintainability posture for a module (?module=) [M7.3b]"},
             {"method": "POST",   "path": "/scan-flow",               "auth": True,   "desc": "Taint analysis DFA — source→sink flows, FlowVector, SAST findings (M7.2)"},
             {"method": "GET",    "path": "/metrics/flow",            "auth": True,   "desc": "FlowVector — 6-channel taint/data-flow posture for a module (?module=) [M7.2]"},
+            {"method": "POST",   "path": "/scan-performance",        "auth": True,   "desc": "Performance anti-pattern analysis — 8 channels, PerformanceVector (M7.4)"},
+            {"method": "GET",    "path": "/metrics/performance",     "auth": True,   "desc": "PerformanceVector — 8-channel performance posture for a module (?module=) [M7.4]"},
             {"method": "GET",    "path": "/lsp/diagnostics",         "auth": True,   "desc": "LSP-format diagnostics (publishDiagnostics) from stored vectors (?module=) [M8.1]"},
         ],
         "analyze_body": {
@@ -1856,6 +1868,119 @@ def handle_metrics_flow(module_id: Optional[str], window: int = 50) -> Tuple[int
     }
 
 
+# ─── M7.4 Performance endpoints ─────────────────────────────────────────────
+
+def handle_scan_performance(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /scan-performance  (M7.4)
+
+    Run performance anti-pattern analysis on a Python source snippet.
+    Returns PerformanceVector + per-pattern counts + rating.
+
+    Request body
+    ------------
+    {
+      "code":      str  — Python source code (required)
+      "module_id": str  — identifier for the module (optional)
+    }
+
+    Response schema
+    ---------------
+    {
+      "module_id":          str,
+      "performance_vector": {PerformanceVector.to_dict()},
+      "summary": {
+        "n_plus_one_risk":             int,
+        "list_in_loop_append_count":   int,
+        "string_concat_in_loop":       int,
+        "quadratic_nested_loop_count": int,
+        "repeated_computation_count":  int,
+        "regex_compile_in_loop":       int,
+        "io_in_tight_loop":            int,
+        "inefficient_dict_lookup":     int,
+        "total_issues":                int,
+        "performance_rating":          str
+      }
+    }
+    """
+    if not _PERFORMANCE_AVAILABLE:
+        return 503, {"error": "Performance analyzer not available (metrics.performance_analyzer missing)"}
+
+    source    = data.get("code", "")
+    module_id = data.get("module_id", "<anonymous>")
+
+    if not source or not source.strip():
+        return 400, {"error": "Field 'code' is required and must be non-empty"}
+
+    try:
+        result = _PerformanceAnalyzer().analyze(source, module_id=module_id)
+    except Exception as exc:
+        return 500, {"error": f"Performance analysis failed: {exc}"}
+
+    pv = _PerformanceVector.from_analyzer(result, module_id=module_id)
+
+    return 200, {
+        "module_id":          module_id,
+        "performance_vector": pv.to_dict(),
+        "summary": {
+            "n_plus_one_risk":             result.n_plus_one_risk,
+            "list_in_loop_append_count":   result.list_in_loop_append_count,
+            "string_concat_in_loop":       result.string_concat_in_loop,
+            "quadratic_nested_loop_count": result.quadratic_nested_loop_count,
+            "repeated_computation_count":  result.repeated_computation_count,
+            "regex_compile_in_loop":       result.regex_compile_in_loop,
+            "io_in_tight_loop":            result.io_in_tight_loop,
+            "inefficient_dict_lookup":     result.inefficient_dict_lookup,
+            "total_issues":                pv.total_issues,
+            "performance_rating":          pv.performance_rating(),
+        },
+    }
+
+
+def handle_metrics_performance(
+    module_id: Optional[str], window: int = 50,
+) -> Tuple[int, Dict]:
+    """
+    GET /metrics/performance?module=<id>[&window=<n>]  (M7.4)
+
+    Returns the most-recent persisted PerformanceVector for a module.
+
+    Response schema
+    ---------------
+    {
+      "module_id":            str,
+      "history_size":         int,
+      "last_commit":          str,
+      "last_timestamp":       float,
+      "performance_vector":   {PerformanceVector.to_dict()} | null,
+      "performance_rating":   str   — A–E (top-level convenience)
+    }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    if not _PERFORMANCE_AVAILABLE:
+        return 503, {"error": "PerformanceVector not available (performance_analyzer missing)"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]
+    pv     = getattr(latest, "performance", None)
+    pv_dict   = pv.to_dict()            if pv is not None else None
+    pv_rating = pv.performance_rating() if pv is not None else "N/A"
+
+    return 200, {
+        "module_id":          module_id,
+        "history_size":       len(history),
+        "last_commit":        latest.commit_hash,
+        "last_timestamp":     latest.timestamp,
+        "performance_vector": pv_dict,
+        "performance_rating": pv_rating,
+    }
+
+
 # ─── M8.1 LSP endpoint ───────────────────────────────────────────────────────
 
 # LSP severity constants (Microsoft Language Server Protocol)
@@ -2251,6 +2376,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
                 code, data = handle_metrics_flow(module_id, window=window_n)
+            elif path == "/metrics/performance":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_metrics_performance(module_id, window=window_n)
             elif path == "/lsp/diagnostics":
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
@@ -2316,6 +2445,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_scan_iac(body)
             elif path == "/scan-flow":
                 code, data = handle_scan_flow(body)
+            elif path == "/scan-performance":
+                code, data = handle_scan_performance(body)
             elif path == "/auth/keys":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:

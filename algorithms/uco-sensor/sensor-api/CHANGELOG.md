@@ -5,6 +5,59 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.8.0] — 2026-04-28 — M7.4 PerformanceVector
+
+### Adicionado — M7.4 FASE 5a (WBS 7.1-7.4)
+
+#### WBS 7.1 — PerformanceVector dataclass (`metrics/extended_vectors.py`)
+
+Nova classe `PerformanceVector` com **8 canais** de detecção de anti-padrões de performance:
+
+| Canal | Tipo | Anti-padrão detectado |
+|---|---|---|
+| `n_plus_one_risk` | `int` | Chamadas DB (execute/query/filter/get/all/…) dentro de `for`/`while` |
+| `list_in_loop_append_count` | `int` | `list.append()` dentro de `for` (preferir list comprehension) |
+| `string_concat_in_loop` | `int` | `s += x` dentro de loop (O(n²) — preferir list+join) |
+| `quadratic_nested_loop_count` | `int` | `for/while` aninhado → complexidade mínima O(n²) |
+| `repeated_computation_count` | `int` | Mesma expressão ≥2× no corpo do loop (oportunidade de cache) |
+| `regex_compile_in_loop` | `int` | `re.compile/search/match/…` dentro de loop (compilar 1× fora) |
+| `io_in_tight_loop` | `int` | `open()`, `requests.*`, `socket.*` dentro de loop |
+| `inefficient_dict_lookup` | `int` | `k in d.keys()` → redundante; `k in d` é O(1) |
+
+**Métodos auxiliares:**
+- `performance_rating()` — grade A–E baseada em `weighted_score` (N+1 × 3, I/O × 2, nested × 2, concat × 2)
+- `total_issues` — soma simples de todos os 8 canais
+- `weighted_score` — score ponderado por impacto
+- `from_analyzer(result)`, `from_dict(d)`, `to_dict()`
+
+#### WBS 7.2-7.3 — PerformanceAnalyzer AST (`metrics/performance_analyzer.py`)
+
+Novo módulo `metrics/performance_analyzer.py` com `PerformanceAnalyzer`:
+- AST-only, stdlib pura, sem dependências externas
+- `_walk_no_fn()` — visita descendentes SEM cruzar `FunctionDef`/`ClassDef` (evita falsos positivos)
+- **Pass 1**: detecta `k in d.keys()` em todo o módulo
+- **Pass 2**: por loop — detecta os 7 padrões restantes com deduplicação por `lineno`
+- `PerformanceResult` — dataclass simples com os 8 contadores
+- Wired em `sensor_core/uco_bridge.py` → `mv.performance = PerformanceVector.from_analyzer(...)`
+
+#### WBS 7.4 — Endpoints + integração (`api/server.py`)
+
+| Endpoint | Método | Descrição |
+|---|---|---|
+| `POST /scan-performance` | POST | Análise de performance em código Python fornecido |
+| `GET /metrics/performance` | GET | PerformanceVector persistido para um módulo (`?module=`) |
+
+- `SensorConfig.version` atualizado para `"2.8.0"`
+- `metrics/__init__.py` atualizado com `PerformanceVector`
+
+#### WBS 7.4 — Testes + CHANGELOG
+
+- **`tests/test_marco_m19.py`** — 39 testes TP01-TP30j (todos verdes)
+- **`CHANGELOG.md`** — entrada `[2.8.0]`
+- **`pyproject.toml`** — versão `2.7.0` → `2.8.0`
+
+---
+
 ## [2.7.0] — 2026-04-27 — M8.1 IDE/LSP Integration
 
 ### Adicionado — M8.1 FASE 4 (WBS 6.1-6.4)

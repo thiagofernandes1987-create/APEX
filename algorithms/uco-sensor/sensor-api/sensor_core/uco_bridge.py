@@ -49,10 +49,22 @@ try:
     from metrics.extended_vectors import (
         HalsteadVector, StructuralVector, AdvancedVector,
         ReliabilityVector, MaintainabilityVector, FlowVector,
+        PerformanceVector,
     )
     _EXTENDED_VECTORS_AVAILABLE = True
 except ImportError:
     _EXTENDED_VECTORS_AVAILABLE = False
+
+# M7.4 — PerformanceAnalyzer
+try:
+    from metrics.performance_analyzer import PerformanceAnalyzer as _PerformanceAnalyzer
+    _PERFORMANCE_ANALYZER_AVAILABLE = True
+except ImportError:
+    try:
+        from performance_analyzer import PerformanceAnalyzer as _PerformanceAnalyzer  # type: ignore[no-redef]
+        _PERFORMANCE_ANALYZER_AVAILABLE = True
+    except ImportError:
+        _PERFORMANCE_ANALYZER_AVAILABLE = False
 
 # M7.2 — TaintAnalyzer (intra-function DFA)
 try:
@@ -870,6 +882,18 @@ class UCOBridge:
                 )
             except Exception:
                 pass  # taint analysis failure must never break the main pipeline
+
+        # ── M7.4: Attach PerformanceVector (Python only) ──────────────────────
+        if _PERFORMANCE_ANALYZER_AVAILABLE and _EXTENDED_VECTORS_AVAILABLE and language == "python":
+            try:
+                _perf_result = _PerformanceAnalyzer().analyze(source, module_id=module_id)
+                mv.performance = PerformanceVector.from_analyzer(
+                    _perf_result,
+                    module_id=module_id,
+                    language=language,
+                )
+            except Exception:
+                pass  # performance analysis failure must never break the pipeline
 
         # ── M6.4: Attach extended vectors to MetricVector ─────────────────
         if _EXTENDED_VECTORS_AVAILABLE:

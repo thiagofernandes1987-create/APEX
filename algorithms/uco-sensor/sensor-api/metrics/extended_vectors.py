@@ -1305,3 +1305,138 @@ class FlowVector:
             f"sources={self.taint_source_count}, "
             f"sinks={self.taint_sink_count})"
         )
+
+
+# ─── PerformanceVector (M7.4) ─────────────────────────────────────────────────
+
+@dataclass
+class PerformanceVector:
+    """
+    8-channel performance anti-pattern detection vector — M7.4.
+
+    All channels are count-based (int ≥ 0).  Each count reflects the
+    number of distinct sites where the anti-pattern was detected.
+
+    Channels
+    --------
+    n_plus_one_risk             DB query call inside a For/While loop
+    list_in_loop_append_count   list.append() inside a For loop
+    string_concat_in_loop       s += x inside a For/While (O(n²))
+    quadratic_nested_loop_count For/While containing another For/While
+    repeated_computation_count  Same call expression ≥2× per loop body
+    regex_compile_in_loop       re.compile/search/match inside loop
+    io_in_tight_loop            open()/requests.*/socket.* inside loop
+    inefficient_dict_lookup     k in d.keys() — redundant .keys() call
+    """
+    n_plus_one_risk:             int   = 0
+    list_in_loop_append_count:   int   = 0
+    string_concat_in_loop:       int   = 0
+    quadratic_nested_loop_count: int   = 0
+    repeated_computation_count:  int   = 0
+    regex_compile_in_loop:       int   = 0
+    io_in_tight_loop:            int   = 0
+    inefficient_dict_lookup:     int   = 0
+    module_id: str  = ""
+    language:  str  = "python"
+
+    # ── Derived properties ────────────────────────────────────────────────────
+
+    @property
+    def total_issues(self) -> int:
+        """Total count of all detected performance anti-patterns."""
+        return (
+            self.n_plus_one_risk
+            + self.list_in_loop_append_count
+            + self.string_concat_in_loop
+            + self.quadratic_nested_loop_count
+            + self.repeated_computation_count
+            + self.regex_compile_in_loop
+            + self.io_in_tight_loop
+            + self.inefficient_dict_lookup
+        )
+
+    @property
+    def weighted_score(self) -> int:
+        """
+        Weighted severity score for rating calculation.
+
+        Weights reflect approximate performance impact:
+          - N+1 queries × 3   (database round-trips)
+          - I/O in loop  × 2  (network/filesystem latency)
+          - Nested loops × 2  (CPU O(n²))
+          - String concat × 2 (memory O(n²))
+          - Others × 1
+        """
+        return (
+            self.n_plus_one_risk             * 3
+            + self.io_in_tight_loop          * 2
+            + self.quadratic_nested_loop_count * 2
+            + self.string_concat_in_loop     * 2
+            + self.list_in_loop_append_count
+            + self.regex_compile_in_loop
+            + self.repeated_computation_count
+            + self.inefficient_dict_lookup
+        )
+
+    def performance_rating(self) -> str:
+        """
+        A–E performance grade based on weighted_score.
+
+        A  0       — no issues detected
+        B  1–3     — minor issues, low risk
+        C  4–8     — moderate issues, review recommended
+        D  9–14    — significant issues, refactoring warranted
+        E  15+     — critical performance risk
+        """
+        ws = self.weighted_score
+        if ws == 0:   return "A"
+        if ws <= 3:   return "B"
+        if ws <= 8:   return "C"
+        if ws <= 14:  return "D"
+        return "E"
+
+    # ── Constructors ──────────────────────────────────────────────────────────
+
+    @classmethod
+    def from_analyzer(
+        cls,
+        result: Any,          # PerformanceResult (avoid circular import)
+        module_id: str = "",
+        language:  str = "python",
+    ) -> "PerformanceVector":
+        """Build a PerformanceVector from a PerformanceResult."""
+        return cls(
+            n_plus_one_risk             = result.n_plus_one_risk,
+            list_in_loop_append_count   = result.list_in_loop_append_count,
+            string_concat_in_loop       = result.string_concat_in_loop,
+            quadratic_nested_loop_count = result.quadratic_nested_loop_count,
+            repeated_computation_count  = result.repeated_computation_count,
+            regex_compile_in_loop       = result.regex_compile_in_loop,
+            io_in_tight_loop            = result.io_in_tight_loop,
+            inefficient_dict_lookup     = result.inefficient_dict_lookup,
+            module_id                   = module_id,
+            language                    = language,
+        )
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "PerformanceVector":
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in d.items() if k in known})
+
+    # ── Serialisation ─────────────────────────────────────────────────────────
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["performance_rating"] = self.performance_rating()
+        d["total_issues"]       = self.total_issues
+        d["weighted_score"]     = self.weighted_score
+        return d
+
+    def __repr__(self) -> str:
+        return (
+            f"PerformanceVector("
+            f"rating={self.performance_rating()}, "
+            f"issues={self.total_issues}, "
+            f"n+1={self.n_plus_one_risk}, "
+            f"nested={self.quadratic_nested_loop_count})"
+        )
