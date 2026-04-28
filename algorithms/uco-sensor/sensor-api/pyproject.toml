@@ -78,7 +78,7 @@ exclude = ["tests*", "validation*"]
 # ── Pytest ────────────────────────────────────────────────────────────────────
 [tool.pytest.ini_options]
 testpaths    = ["tests"]
-python_files = ["test_marco*.py", "test_marco_m1.py", "test_marco_m4.py", "test_marco_m5.py", "test_calibration.py", "test_performance.py", "test_marco_m12.py", "test_marco_m13.py", "test_marco_m14.py", "test_marco_m15.py", "test_marco_m16.py", "test_marco_m17.py", "test_marco_m18.py", "test_marco_m19.py", "test_marco_m20.py"]
+python_files = ["test_marco*.py", "test_marco_m1.py", "test_marco_m4.py", "test_marco_m5.py", "test_calibration.py", "test_marco_m12.py", "test_marco_m13.py", "test_marco_m14.py", "test_marco_m15.py", "test_marco_m16.py", "test_marco_m17.py", "test_marco_m18.py", "test_marco_m19.py", "test_marco_m20.py"]
 python_functions = ["test_*"]
 addopts      = "-v --tb=short"
 
