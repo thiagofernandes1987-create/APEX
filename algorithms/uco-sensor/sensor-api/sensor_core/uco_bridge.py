@@ -44,12 +44,12 @@ if str(_ROOT) not in sys.path:
 
 from core.data_structures import MetricVector
 
-# Extended vectors (M6.4 + M7.0 + M7.3 + M7.2) — import lazily to avoid circular deps
+# Extended vectors (M6.4 + M7.0 + M7.3 + M7.2 + M7.5) — import lazily to avoid circular deps
 try:
     from metrics.extended_vectors import (
         HalsteadVector, StructuralVector, AdvancedVector,
         ReliabilityVector, MaintainabilityVector, FlowVector,
-        PerformanceVector,
+        PerformanceVector, ArchitectureVector,
     )
     _EXTENDED_VECTORS_AVAILABLE = True
 except ImportError:
@@ -65,6 +65,17 @@ except ImportError:
         _PERFORMANCE_ANALYZER_AVAILABLE = True
     except ImportError:
         _PERFORMANCE_ANALYZER_AVAILABLE = False
+
+# M7.5 — ArchitectureAnalyzer
+try:
+    from metrics.architecture_analyzer import ArchitectureAnalyzer as _ArchitectureAnalyzer
+    _ARCHITECTURE_ANALYZER_AVAILABLE = True
+except ImportError:
+    try:
+        from architecture_analyzer import ArchitectureAnalyzer as _ArchitectureAnalyzer  # type: ignore[no-redef]
+        _ARCHITECTURE_ANALYZER_AVAILABLE = True
+    except ImportError:
+        _ARCHITECTURE_ANALYZER_AVAILABLE = False
 
 # M7.2 — TaintAnalyzer (intra-function DFA)
 try:
@@ -894,6 +905,20 @@ class UCOBridge:
                 )
             except Exception:
                 pass  # performance analysis failure must never break the pipeline
+
+        # ── M7.5: Attach ArchitectureVector (Python only) ─────────────────────
+        if _ARCHITECTURE_ANALYZER_AVAILABLE and _EXTENDED_VECTORS_AVAILABLE and language == "python":
+            try:
+                _arch_result = _ArchitectureAnalyzer().analyze(
+                    source, module_id=module_id
+                )
+                mv.architecture = ArchitectureVector.from_analyzer(
+                    _arch_result,
+                    module_id=module_id,
+                    language=language,
+                )
+            except Exception:
+                pass  # architecture analysis failure must never break the pipeline
 
         # ── M6.4: Attach extended vectors to MetricVector ─────────────────
         if _EXTENDED_VECTORS_AVAILABLE:

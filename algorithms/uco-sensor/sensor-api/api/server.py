@@ -120,6 +120,16 @@ except ImportError:
     _PerformanceVector   = None  # type: ignore[assignment,misc]
     _PERFORMANCE_AVAILABLE = False
 
+# M7.5 — ArchitectureAnalyzer + ArchitectureVector
+try:
+    from metrics.architecture_analyzer import ArchitectureAnalyzer as _ArchitectureAnalyzer
+    from metrics.extended_vectors import ArchitectureVector as _ArchitectureVector
+    _ARCHITECTURE_AVAILABLE = True
+except ImportError:
+    _ArchitectureAnalyzer = None  # type: ignore[assignment,misc]
+    _ArchitectureVector   = None  # type: ignore[assignment,misc]
+    _ARCHITECTURE_AVAILABLE = False
+
 
 # ─── Configuração ────────────────────────────────────────────────────────────
 
@@ -129,7 +139,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "2.8.0"
+    version:      str   = "2.9.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -238,6 +248,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/metrics/flow",            "auth": True,   "desc": "FlowVector — 6-channel taint/data-flow posture for a module (?module=) [M7.2]"},
             {"method": "POST",   "path": "/scan-performance",        "auth": True,   "desc": "Performance anti-pattern analysis — 8 channels, PerformanceVector (M7.4)"},
             {"method": "GET",    "path": "/metrics/performance",     "auth": True,   "desc": "PerformanceVector — 8-channel performance posture for a module (?module=) [M7.4]"},
+            {"method": "POST",   "path": "/scan-architecture",       "auth": True,   "desc": "Architecture coupling/cohesion analysis — 8 channels, ArchitectureVector (M7.5)"},
+            {"method": "GET",    "path": "/metrics/architecture",    "auth": True,   "desc": "ArchitectureVector — 8-channel architecture posture for a module (?module=) [M7.5]"},
             {"method": "GET",    "path": "/lsp/diagnostics",         "auth": True,   "desc": "LSP-format diagnostics (publishDiagnostics) from stored vectors (?module=) [M8.1]"},
         ],
         "analyze_body": {
@@ -1981,6 +1993,126 @@ def handle_metrics_performance(
     }
 
 
+# ─── M7.5 Architecture endpoints ─────────────────────────────────────────────
+
+def handle_scan_architecture(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /scan-architecture  (M7.5)
+
+    Run architecture coupling/cohesion analysis on a Python source snippet.
+    Returns ArchitectureVector + per-channel counts + rating.
+
+    Request body
+    ------------
+    {
+      "code":                  str  — Python source code (required)
+      "module_id":             str  — identifier for the module (optional)
+      "fan_in":                int  — project-level fan_in (optional, default 0)
+      "circular_import_count": int  — project-level circular imports (optional, default 0)
+    }
+
+    Response schema
+    ---------------
+    {
+      "module_id":              str,
+      "architecture_vector":   {ArchitectureVector.to_dict()},
+      "summary": {
+        "fan_in":                   int,
+        "fan_out":                  int,
+        "coupling_between_objects": int,
+        "response_for_class":       int,
+        "lack_of_cohesion":         float,
+        "abstraction_level":        float,
+        "circular_import_count":    int,
+        "layer_violation_count":    int,
+        "architecture_rating":      str
+      }
+    }
+    """
+    if not _ARCHITECTURE_AVAILABLE:
+        return 503, {"error": "Architecture analyzer not available (metrics.architecture_analyzer missing)"}
+
+    source                 = data.get("code", "")
+    module_id              = data.get("module_id", "<anonymous>")
+    fan_in                 = int(data.get("fan_in", 0))
+    circular_import_count  = int(data.get("circular_import_count", 0))
+
+    if not source or not source.strip():
+        return 400, {"error": "Field 'code' is required and must be non-empty"}
+
+    try:
+        result = _ArchitectureAnalyzer().analyze(
+            source,
+            module_id=module_id,
+            fan_in=fan_in,
+            circular_import_count=circular_import_count,
+        )
+    except Exception as exc:
+        return 500, {"error": f"Architecture analysis failed: {exc}"}
+
+    av = _ArchitectureVector.from_analyzer(result, module_id=module_id)
+
+    return 200, {
+        "module_id":           module_id,
+        "architecture_vector": av.to_dict(),
+        "summary": {
+            "fan_in":                   result.fan_in,
+            "fan_out":                  result.fan_out,
+            "coupling_between_objects": result.coupling_between_objects,
+            "response_for_class":       result.response_for_class,
+            "lack_of_cohesion":         result.lack_of_cohesion,
+            "abstraction_level":        result.abstraction_level,
+            "circular_import_count":    result.circular_import_count,
+            "layer_violation_count":    result.layer_violation_count,
+            "architecture_rating":      av.architecture_rating(),
+        },
+    }
+
+
+def handle_metrics_architecture(
+    module_id: Optional[str], window: int = 50,
+) -> Tuple[int, Dict]:
+    """
+    GET /metrics/architecture?module=<id>[&window=<n>]  (M7.5)
+
+    Returns the most-recent persisted ArchitectureVector for a module.
+
+    Response schema
+    ---------------
+    {
+      "module_id":             str,
+      "history_size":          int,
+      "last_commit":           str,
+      "last_timestamp":        float,
+      "architecture_vector":  {ArchitectureVector.to_dict()} | null,
+      "architecture_rating":   str   — A–E (top-level convenience)
+    }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    if not _ARCHITECTURE_AVAILABLE:
+        return 503, {"error": "ArchitectureVector not available (architecture_analyzer missing)"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]
+    av     = getattr(latest, "architecture", None)
+    av_dict   = av.to_dict()              if av is not None else None
+    av_rating = av.architecture_rating()  if av is not None else "N/A"
+
+    return 200, {
+        "module_id":           module_id,
+        "history_size":        len(history),
+        "last_commit":         latest.commit_hash,
+        "last_timestamp":      latest.timestamp,
+        "architecture_vector": av_dict,
+        "architecture_rating": av_rating,
+    }
+
+
 # ─── M8.1 LSP endpoint ───────────────────────────────────────────────────────
 
 # LSP severity constants (Microsoft Language Server Protocol)
@@ -2380,6 +2512,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
                 code, data = handle_metrics_performance(module_id, window=window_n)
+            elif path == "/metrics/architecture":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_metrics_architecture(module_id, window=window_n)
             elif path == "/lsp/diagnostics":
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
@@ -2447,6 +2583,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_scan_flow(body)
             elif path == "/scan-performance":
                 code, data = handle_scan_performance(body)
+            elif path == "/scan-architecture":
+                code, data = handle_scan_architecture(body)
             elif path == "/auth/keys":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:

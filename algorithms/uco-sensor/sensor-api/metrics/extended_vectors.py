@@ -1440,3 +1440,130 @@ class PerformanceVector:
             f"n+1={self.n_plus_one_risk}, "
             f"nested={self.quadratic_nested_loop_count})"
         )
+
+
+# ─── ArchitectureVector (M7.5) ───────────────────────────────────────────────
+
+@dataclass
+class ArchitectureVector:
+    """
+    8-channel architecture coupling / cohesion vector — M7.5.
+
+    Channels
+    --------
+    fan_in                   : int   — modules importing this module (project-level)
+    fan_out                  : int   — distinct modules this module imports
+    coupling_between_objects : int   — CBO: external types in class methods (< 5 healthy)
+    response_for_class       : int   — RFC: own + external calls from class (< 20 healthy)
+    lack_of_cohesion         : float — LCOM': (P-Q)/max(P+Q,1) [0.0–1.0; < 0.5 healthy]
+    abstraction_level        : float — abstract_classes / total_classes [0.0–1.0]
+    circular_import_count    : int   — circular import cycles detected (0 = ideal)
+    layer_violation_count    : int   — clean-arch layer hierarchy violations (0 = ideal)
+
+    Architecture rating
+    -------------------
+    A — all channels within healthy thresholds
+    B — 1 channel exceeds threshold
+    C — 2–3 channels exceed thresholds OR circular_import_count > 0
+    D — 4–5 channels exceed thresholds OR layer_violation_count > 2
+    E — 6+ channels exceed thresholds OR circular > 0 AND violations > 2
+
+    References
+    ----------
+    Chidamber, S.R. & Kemerer, C.F. (1994). IEEE TSE 20(6), 476-493.
+    Martin, R.C. (2002). Agile Software Development. Prentice Hall.
+    Henderson-Sellers, B. (1996). Object-Oriented Metrics. Prentice Hall.
+    """
+
+    # ── channels ─────────────────────────────────────────────────────────────
+    fan_in:                   int   = 0
+    fan_out:                  int   = 0
+    coupling_between_objects: int   = 0
+    response_for_class:       int   = 0
+    lack_of_cohesion:         float = 0.0
+    abstraction_level:        float = 0.0
+    circular_import_count:    int   = 0
+    layer_violation_count:    int   = 0
+
+    # ── metadata ─────────────────────────────────────────────────────────────
+    module_id: str = ""
+    language:  str = "python"
+
+    # ── Derived properties ────────────────────────────────────────────────────
+
+    def architecture_rating(self) -> str:
+        """
+        A–E architecture grade based on threshold violations.
+
+        Thresholds (WARNING conditions)
+        --------------------------------
+        fan_out > 10
+        coupling_between_objects > 5   (CBO)
+        response_for_class > 20        (RFC)
+        lack_of_cohesion > 0.5         (LCOM)
+        circular_import_count > 0
+        layer_violation_count > 0
+        """
+        warnings = sum([
+            self.fan_out > 10,
+            self.coupling_between_objects > 5,
+            self.response_for_class > 20,
+            self.lack_of_cohesion > 0.5,
+            self.circular_import_count > 0,
+            self.layer_violation_count > 0,
+        ])
+        if warnings >= 6 or (self.circular_import_count > 0 and self.layer_violation_count > 2):
+            return "E"
+        if warnings >= 4 or self.layer_violation_count > 2:
+            return "D"
+        if warnings >= 2 or self.circular_import_count > 0:
+            return "C"
+        if warnings >= 1:
+            return "B"
+        return "A"
+
+    # ── Constructors ──────────────────────────────────────────────────────────
+
+    @classmethod
+    def from_analyzer(
+        cls,
+        result: Any,          # ArchitectureResult (avoid circular import)
+        module_id: str = "",
+        language:  str = "python",
+    ) -> "ArchitectureVector":
+        """Build an ArchitectureVector from an ArchitectureResult."""
+        return cls(
+            fan_in                   = result.fan_in,
+            fan_out                  = result.fan_out,
+            coupling_between_objects = result.coupling_between_objects,
+            response_for_class       = result.response_for_class,
+            lack_of_cohesion         = result.lack_of_cohesion,
+            abstraction_level        = result.abstraction_level,
+            circular_import_count    = result.circular_import_count,
+            layer_violation_count    = result.layer_violation_count,
+            module_id                = module_id,
+            language                 = language,
+        )
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "ArchitectureVector":
+        """Deserialize from a JSON-compatible dict (SnapshotStore round-trip)."""
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in d.items() if k in known})
+
+    # ── Serialisation ─────────────────────────────────────────────────────────
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["architecture_rating"] = self.architecture_rating()
+        return d
+
+    def __repr__(self) -> str:
+        return (
+            f"ArchitectureVector("
+            f"rating={self.architecture_rating()}, "
+            f"fan_out={self.fan_out}, "
+            f"cbo={self.coupling_between_objects}, "
+            f"rfc={self.response_for_class}, "
+            f"lcom={self.lack_of_cohesion:.3f})"
+        )

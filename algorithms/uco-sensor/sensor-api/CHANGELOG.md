@@ -5,6 +5,70 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.9.0] — 2026-04-28 — M7.5 ArchitectureVector
+
+### Adicionado — M7.5 FASE 5b (WBS 8.1-8.5)
+
+#### WBS 8.1-8.4 — ArchitectureAnalyzer AST (`metrics/architecture_analyzer.py`)
+
+Novo módulo `metrics/architecture_analyzer.py` com `ArchitectureAnalyzer`:
+- AST-only, stdlib pura, sem dependências externas
+- `_collect_imports()` — extrai todos os top-level módulos importados
+- `_module_layer()` — classifica módulo em camada arquitetural por keywords (infra/domain/app/api)
+- `_instance_attrs()` — coleta `self.x` acessos em um método (para LCOM)
+- `_method_calls()` — coleta todos os callables invocados (para RFC)
+- `_external_types()` — detecta tipos externos em anotações e call-sites capitalizados (para CBO)
+- `ArchitectureAnalyzer._lcom()` — Henderson-Sellers LCOM' = (P-Q)/max(P+Q,1)
+- `ArchitectureAnalyzer._is_abstract()` — detecta classes que herdam `ABC`/`ABCMeta` ou têm `@abstractmethod`
+- `ArchitectureResult` — dataclass com 8 contadores brutos
+
+#### WBS 8.2-8.4 — ArchitectureVector dataclass (`metrics/extended_vectors.py`)
+
+Nova classe `ArchitectureVector` com **8 canais** de coupling/cohesion arquitetural:
+
+| Canal | Tipo | Limiar saudável | Descrição |
+|---|---|---|---|
+| `fan_in` | `int` | contextual | Módulos que importam este módulo (project-level) |
+| `fan_out` | `int` | ≤ 10 | Módulos distintos importados por este módulo |
+| `coupling_between_objects` | `int` | < 5 | Tipos externos referenciados em métodos de classe (CBO) |
+| `response_for_class` | `int` | < 20 | Métodos próprios + chamadas externas da classe (RFC) |
+| `lack_of_cohesion` | `float` | < 0.5 | LCOM': (P-Q)/max(P+Q,1) — coesão entre métodos |
+| `abstraction_level` | `float` | 0.0–1.0 | Classes abstratas / total de classes |
+| `circular_import_count` | `int` | 0 | Ciclos de import detectados (project-level DFS) |
+| `layer_violation_count` | `int` | 0 | Imports violando hierarquia infra→domain→app→api |
+
+**Métodos auxiliares:**
+- `architecture_rating()` — grade A–E baseada em contagem de thresholds violados
+- `from_analyzer(result)`, `from_dict(d)`, `to_dict()`
+
+**Integração:**
+- Wired em `sensor_core/uco_bridge.py` → `mv.architecture = ArchitectureVector.from_analyzer(...)`
+- Guard de importação M7.5 adicionado em `uco_bridge.py`
+
+#### WBS 8.5 — Endpoints + integração (`api/server.py`)
+
+| Endpoint | Método | Descrição |
+|---|---|---|
+| `POST /scan-architecture` | POST | Análise de arquitetura em código Python fornecido |
+| `GET /metrics/architecture` | GET | ArchitectureVector persistido para um módulo (`?module=`) |
+
+- Aceita `fan_in` e `circular_import_count` como campos opcionais no body (project-level context)
+- `SensorConfig.version` atualizado para `"2.9.0"`
+- `metrics/__init__.py` atualizado com `ArchitectureVector`
+
+#### WBS 8.5 — Testes + CHANGELOG
+
+- **`tests/test_marco_m20.py`** — 35 testes TA01-TA30 + edge cases (todos verdes)
+- **`CHANGELOG.md`** — entrada `[2.9.0]`
+- **`pyproject.toml`** — versão `2.8.0` → `2.9.0`
+
+**Referências:**
+- Chidamber, S.R. & Kemerer, C.F. (1994). IEEE TSE 20(6), 476-493.
+- Martin, R.C. (2002). Agile Software Development. Prentice Hall.
+- Henderson-Sellers, B. (1996). Object-Oriented Metrics. Prentice Hall.
+
+---
+
 ## [2.8.0] — 2026-04-28 — M7.4 PerformanceVector
 
 ### Adicionado — M7.4 FASE 5a (WBS 7.1-7.4)
