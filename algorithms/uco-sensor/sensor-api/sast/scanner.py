@@ -81,13 +81,16 @@ _SEVERITY_DEBT: Dict[str, int] = {
 
 @dataclass
 class SASTRuleInfo:
-    rule_id:     str
-    title:       str
-    cwe_id:      str
-    owasp:       str
-    severity:    str
-    description: str
-    remediation: str
+    rule_id:       str
+    title:         str
+    cwe_id:        str
+    owasp:         str
+    severity:      str
+    description:   str
+    remediation:   str
+    suggested_fix: str   = ""
+    explanation:   str   = ""
+    confidence:    float = 0.9
 
 
 RULES: List[SASTRuleInfo] = [
@@ -101,6 +104,13 @@ RULES: List[SASTRuleInfo] = [
             "non-literal arguments. Attacker-controlled input may alter query structure."
         ),
         remediation="Use parameterised queries: cursor.execute(sql, (param,))",
+        suggested_fix="cursor.execute(sql, (param,))  # parameterised — never format user data into SQL",
+        explanation=(
+            "String-formatting user data into SQL lets an attacker inject "
+            "SQL metacharacters (e.g. ' OR 1=1 --) that alter the query's "
+            "structure and bypass authentication or exfiltrate data."
+        ),
+        confidence=0.9,
     ),
     SASTRuleInfo(
         rule_id="SAST002", title="OS Command Injection",
@@ -114,6 +124,13 @@ RULES: List[SASTRuleInfo] = [
             "Use subprocess with a list of arguments and shell=False: "
             "subprocess.run(['cmd', arg], shell=False)"
         ),
+        suggested_fix="subprocess.run(['cmd', arg], shell=False, check=True)  # never use os.system with user input",
+        explanation=(
+            "os.system/popen invokes the shell to run the command string. "
+            "If user-controlled data is embedded, metacharacters like ; | && "
+            "let the attacker inject additional commands."
+        ),
+        confidence=0.9,
     ),
     SASTRuleInfo(
         rule_id="SAST003", title="Unsafe eval() / exec()",
@@ -127,6 +144,13 @@ RULES: List[SASTRuleInfo] = [
             "Avoid eval/exec entirely. If necessary, use ast.literal_eval() for "
             "safe expression evaluation of literals."
         ),
+        suggested_fix="# Replace eval(): use ast.literal_eval(expr) for safe data parsing",
+        explanation=(
+            "eval() and exec() compile and run arbitrary Python code. "
+            "Any user-controlled input reaching these calls results in full "
+            "remote code execution with the process's privileges."
+        ),
+        confidence=0.95,
     ),
     SASTRuleInfo(
         rule_id="SAST004", title="Pickle Deserialization",
@@ -501,31 +525,38 @@ _RULE_MAP: Dict[str, SASTRuleInfo] = {r.rule_id: r for r in RULES}
 @dataclass
 class SASTFinding:
     """One security issue detected by the SAST scanner."""
-    rule_id:      str
-    severity:     str
-    cwe_id:       str
-    owasp:        str
-    title:        str
-    description:  str
-    line:         int
-    col:          int
-    code_snippet: str
-    remediation:  str
-    debt_minutes: int
+    rule_id:       str
+    severity:      str
+    cwe_id:        str
+    owasp:         str
+    title:         str
+    description:   str
+    line:          int
+    col:           int
+    code_snippet:  str
+    remediation:   str
+    debt_minutes:  int
+    # M8.1 — IDE/LSP enrichment fields
+    suggested_fix: str   = ""
+    confidence:    float = 0.9
+    explanation:   str   = ""
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "rule_id":      self.rule_id,
-            "severity":     self.severity,
-            "cwe_id":       self.cwe_id,
-            "owasp":        self.owasp,
-            "title":        self.title,
-            "description":  self.description,
-            "line":         self.line,
-            "col":          self.col,
-            "code_snippet": self.code_snippet,
-            "remediation":  self.remediation,
-            "debt_minutes": self.debt_minutes,
+            "rule_id":       self.rule_id,
+            "severity":      self.severity,
+            "cwe_id":        self.cwe_id,
+            "owasp":         self.owasp,
+            "title":         self.title,
+            "description":   self.description,
+            "line":          self.line,
+            "col":           self.col,
+            "code_snippet":  self.code_snippet,
+            "remediation":   self.remediation,
+            "debt_minutes":  self.debt_minutes,
+            "suggested_fix": self.suggested_fix,
+            "confidence":    self.confidence,
+            "explanation":   self.explanation,
         }
 
 
@@ -1171,4 +1202,7 @@ def _make_finding(rule: SASTRuleInfo, line: int, col: int, snippet: str) -> SAST
         code_snippet=snippet,
         remediation=rule.remediation,
         debt_minutes=_SEVERITY_DEBT.get(rule.severity, 30),
+        suggested_fix=rule.suggested_fix,
+        confidence=rule.confidence,
+        explanation=rule.explanation,
     )

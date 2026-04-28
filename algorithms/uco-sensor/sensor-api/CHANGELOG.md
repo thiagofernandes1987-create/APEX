@@ -5,6 +5,98 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.7.0] — 2026-04-27 — M8.1 IDE/LSP Integration
+
+### Adicionado — M8.1 FASE 4 (WBS 6.1-6.4)
+
+#### WBS 6.1 — SASTFinding Enrichment (`sast/scanner.py`, `sast/taint_engine.py`)
+
+**Novos campos em `SASTFinding`:**
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `suggested_fix` | `str` | Código de exemplo pronto para copy-paste que corrige o problema |
+| `confidence` | `float` | Probabilidade de ser um verdadeiro positivo (0.0-1.0) |
+| `explanation` | `str` | Explicação técnica detalhada de por que o padrão é perigoso |
+
+- `SASTRuleInfo` recebe os mesmos três campos como atributos opcionais com defaults (`"", "", 0.9`)
+- `_make_finding()` propaga automaticamente os campos da regra para o `SASTFinding`
+- `SASTFinding.to_dict()` serializa os três novos campos
+- **Regras enriquecidas:** SAST001 (SQL Injection), SAST002 (OS Command Injection), SAST003 (Unsafe eval/exec) com `suggested_fix` + `explanation` + `confidence` específico
+- **`sast/taint_engine.py`:** `_TAINT_RULE_META` expandido com `suggested_fix`, `explanation`, `confidence` para todas as 6 regras de taint (SAST040-SAST045)
+- `TaintFlow.to_dict()` expõe os três campos enriquecidos
+
+#### WBS 6.2 — AutoFix Transforms #5-12 (`sensor_core/autofix/transforms/`)
+
+8 novos transforms adicionados ao pipeline padrão do `AutofixEngine`:
+
+| # | Classe | Arquivo | Tipo | Descrição |
+|---|---|---|---|---|
+| 5 | `MutableDefaultRemover` | `remove_mutable_default.py` | Rewrite | `def f(x=[])` → `def f(x=None)` + guard |
+| 6 | `BareExceptReplacer` | `replace_bare_except.py` | Rewrite | `except:` → `except Exception as e:` |
+| 7 | `NoneComparisonSimplifier` | `simplify_comparison.py` | Rewrite | `x == None` → `x is None` |
+| 8 | `DocstringAdder` | `add_docstring.py` | Rewrite | Insere `"""TODO: Add docstring."""` em funções públicas |
+| 9 | `ContextManagerAdvisor` | `add_context_manager.py` | Sugestão | Detecta `open()` sem `with` |
+| 10 | `ExtractMethodAdvisor` | `extract_method.py` | Sugestão | Detecta CC>10 / LOC>50 |
+| 11 | `StringConcatLoopAdvisor` | `replace_string_concat_loop.py` | Sugestão | Detecta `s += x` em loops |
+| 12 | `TypeHintAdder` | `add_type_hints.py` | Rewrite | Adiciona `: Any` + `from typing import Any` |
+
+- `transforms/__init__.py` atualizado com todos os 8 novos exports
+- `engine.py` pipeline padrão agora tem 12 transforms (anteriormente 4)
+
+#### WBS 6.3 — Endpoint `GET /lsp/diagnostics` (`api/server.py`)
+
+Novo endpoint que retorna diagnósticos no formato **Language Server Protocol (LSP)**
+(`textDocument/publishDiagnostics`), consumível diretamente por editores de código.
+
+**Request:** `GET /lsp/diagnostics?module=<id>[&window=<n>]`
+
+**Response schema:**
+```json
+{
+  "uri":         "file:///myapp/routes.py",
+  "module_id":   "myapp.routes",
+  "diagnostics": [
+    {
+      "range":    {"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 80}},
+      "severity": 1,
+      "code":     "UCO-FLOW-001",
+      "source":   "uco-sensor",
+      "message":  "2 unsanitised taint flow(s) detected ...",
+      "data":     {"flow_rating": "D", "unsanitized_paths": 2, ...}
+    }
+  ],
+  "count": 1,
+  "history_size": 50,
+  "last_timestamp": 1700000000.0
+}
+```
+
+**Severity mapping (LSP):**
+
+| UCO Severity | LSP Code | LSP Name |
+|---|---|---|
+| CRITICAL / HIGH | 1 | Error |
+| MEDIUM | 2 | Warning |
+| LOW | 3 | Information |
+| INFO | 4 | Hint |
+
+**Fontes de diagnósticos (em ordem):**
+1. Findings SAST armazenados no snapshot (se `sast_result` presente)
+2. FlowVector — `unsanitized_paths > 0` → Error; `cross_fn_taint_risk > 0` → Warning
+3. ReliabilityVector — `crash_risk > 0.6` → Warning; `bug_density > 0.05` → Info
+4. MaintainabilityVector — `hotspot_density > 0.5` → Hint; `debt_ratio > 0.3` → Hint
+
+- `SensorConfig.version` atualizado para `"2.7.0"`
+
+#### WBS 6.4 — Testes + CHANGELOG
+
+- **`tests/test_marco_m18.py`** — 30 testes (TL01-TL30) cobrindo todos os entregáveis de M8.1
+- **`CHANGELOG.md`** — entrada `[2.7.0]` adicionada
+- **`pyproject.toml`** — versão `2.6.0` → `2.7.0`
+
+---
+
 ## [2.6.0] — 2026-04-27 — M7.2 Taint Analysis + FlowVector
 
 ### Adicionado — M7.2 FASE 3 (WBS 5.1-5.7)

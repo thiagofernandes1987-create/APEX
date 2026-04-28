@@ -119,7 +119,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "2.6.0"
+    version:      str   = "2.7.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -226,6 +226,7 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/metrics/maintainability", "auth": True,   "desc": "MaintainabilityVector — 9-channel maintainability posture for a module (?module=) [M7.3b]"},
             {"method": "POST",   "path": "/scan-flow",               "auth": True,   "desc": "Taint analysis DFA — source→sink flows, FlowVector, SAST findings (M7.2)"},
             {"method": "GET",    "path": "/metrics/flow",            "auth": True,   "desc": "FlowVector — 6-channel taint/data-flow posture for a module (?module=) [M7.2]"},
+            {"method": "GET",    "path": "/lsp/diagnostics",         "auth": True,   "desc": "LSP-format diagnostics (publishDiagnostics) from stored vectors (?module=) [M8.1]"},
         ],
         "analyze_body": {
             "code":           "string — código fonte",
@@ -1855,6 +1856,254 @@ def handle_metrics_flow(module_id: Optional[str], window: int = 50) -> Tuple[int
     }
 
 
+# ─── M8.1 LSP endpoint ───────────────────────────────────────────────────────
+
+# LSP severity constants (Microsoft Language Server Protocol)
+_LSP_SEV_ERROR:       int = 1
+_LSP_SEV_WARNING:     int = 2
+_LSP_SEV_INFORMATION: int = 3
+_LSP_SEV_HINT:        int = 4
+
+_SAST_SEV_TO_LSP: Dict[str, int] = {
+    "CRITICAL": _LSP_SEV_ERROR,
+    "HIGH":     _LSP_SEV_ERROR,
+    "MEDIUM":   _LSP_SEV_WARNING,
+    "LOW":      _LSP_SEV_INFORMATION,
+    "INFO":     _LSP_SEV_HINT,
+}
+
+
+def _lsp_range(line: int, col: int = 0, end_col: int = 80) -> Dict:
+    """Build an LSP ``range`` object (0-indexed)."""
+    ln = max(0, line - 1)       # LSP is 0-indexed; SAST findings are 1-indexed
+    return {
+        "start": {"line": ln, "character": col},
+        "end":   {"line": ln, "character": max(col, end_col)},
+    }
+
+
+def _finding_to_lsp_diag(finding: Dict) -> Dict:
+    """Convert a SASTFinding.to_dict() payload to an LSP Diagnostic object."""
+    severity = _SAST_SEV_TO_LSP.get(finding.get("severity", "MEDIUM"), _LSP_SEV_WARNING)
+    line = finding.get("line", 1)
+    col  = finding.get("col", 0)
+    return {
+        "range":    _lsp_range(line, col),
+        "severity": severity,
+        "code":     finding.get("rule_id", ""),
+        "source":   "uco-sensor",
+        "message":  (
+            f"[{finding.get('rule_id','')}] {finding.get('title', '')}: "
+            f"{finding.get('description', '')}"
+        ),
+        "data": {
+            "rule_id":       finding.get("rule_id", ""),
+            "cwe_id":        finding.get("cwe_id", ""),
+            "owasp":         finding.get("owasp", ""),
+            "remediation":   finding.get("remediation", ""),
+            "suggested_fix": finding.get("suggested_fix", ""),
+            "confidence":    finding.get("confidence", 0.9),
+            "explanation":   finding.get("explanation", ""),
+            "debt_minutes":  finding.get("debt_minutes", 0),
+        },
+    }
+
+
+def _vector_diag(
+    line: int, col: int, severity: int,
+    code: str, message: str, data: Optional[Dict] = None,
+) -> Dict:
+    """Build a synthetic LSP diagnostic from a metric vector signal."""
+    return {
+        "range":    _lsp_range(line, col),
+        "severity": severity,
+        "code":     code,
+        "source":   "uco-sensor",
+        "message":  message,
+        "data":     data or {},
+    }
+
+
+def handle_lsp_diagnostics(
+    module_id: Optional[str],
+    window: int = 50,
+) -> Tuple[int, Dict]:
+    """
+    GET /lsp/diagnostics?module=<id>[&window=<n>]  (M8.1)
+
+    Returns stored analysis results in Language Server Protocol (LSP)
+    Diagnostic format, suitable for direct consumption by editors via
+    the LSP ``textDocument/publishDiagnostics`` notification.
+
+    Diagnostic sources (in priority order)
+    ----------------------------------------
+    1. SAST findings stored in the latest snapshot (if available)
+    2. FlowVector (taint) signals — unsanitised flows → Error/Warning
+    3. ReliabilityVector signals  — crash_risk, bug_density → Warning/Info
+    4. MaintainabilityVector signals — hotspot_density → Hint
+
+    Response schema
+    ---------------
+    {
+      "uri":         str,              # file:///<module_id>.py
+      "module_id":   str,
+      "diagnostics": [
+        {
+          "range":    {"start": {"line": N, "character": C},
+                       "end":   {"line": N, "character": C}},
+          "severity": 1|2|3|4,        # Error/Warning/Information/Hint
+          "code":     str,             # rule_id / signal code
+          "source":   "uco-sensor",
+          "message":  str,
+          "data":     {...}            # rule metadata + enrichment
+        }
+      ],
+      "count": int,
+      "history_size": int,
+      "last_timestamp": float | null
+    }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest       = history[-1]
+    uri          = f"file:///{module_id.replace('.', '/')}.py"
+    diagnostics: List[Dict] = []
+
+    # ── 1. SAST findings (stored in mv.sast_result if present) ───────────────
+    sast_result = getattr(latest, "sast_result", None)
+    if sast_result is not None:
+        raw_findings = (
+            sast_result.get("findings", [])
+            if isinstance(sast_result, dict)
+            else getattr(sast_result, "findings", [])
+        )
+        for finding in raw_findings:
+            f_dict = finding if isinstance(finding, dict) else finding.to_dict()
+            diagnostics.append(_finding_to_lsp_diag(f_dict))
+
+    # ── 2. FlowVector signals ─────────────────────────────────────────────────
+    if _TAINT_ENGINE_AVAILABLE:
+        fv = getattr(latest, "flow", None)
+        if fv is not None:
+            unsanitized = getattr(fv, "unsanitized_paths",
+                                  fv.taint_path_count if hasattr(fv, "taint_path_count") else 0)
+            if unsanitized > 0:
+                diagnostics.append(_vector_diag(
+                    line=1, col=0,
+                    severity=_LSP_SEV_ERROR,
+                    code="UCO-FLOW-001",
+                    message=(
+                        f"{unsanitized} unsanitised taint flow(s) detected "
+                        f"(injection_surface={fv.injection_surface:.2f}). "
+                        f"Run /scan-flow for line-level detail."
+                    ),
+                    data={
+                        "flow_rating":         fv.flow_rating(),
+                        "taint_source_count":  fv.taint_source_count,
+                        "taint_sink_count":    fv.taint_sink_count,
+                        "unsanitized_paths":   unsanitized,
+                        "injection_surface":   fv.injection_surface,
+                        "cross_fn_taint_risk": fv.cross_fn_taint_risk,
+                    },
+                ))
+            if fv.cross_fn_taint_risk > 0:
+                diagnostics.append(_vector_diag(
+                    line=1, col=0,
+                    severity=_LSP_SEV_WARNING,
+                    code="UCO-FLOW-002",
+                    message=(
+                        f"Cross-function taint risk detected at {fv.cross_fn_taint_risk} "
+                        f"call site(s). Tainted values passed to non-sink functions."
+                    ),
+                    data={"cross_fn_taint_risk": fv.cross_fn_taint_risk},
+                ))
+
+    # ── 3. ReliabilityVector signals ──────────────────────────────────────────
+    if _RELIABILITY_VECTOR_AVAILABLE:
+        rv = getattr(latest, "reliability", None)
+        if rv is not None:
+            crash_risk = getattr(rv, "crash_risk", 0.0)
+            bug_density = getattr(rv, "bug_density", 0.0)
+            if crash_risk > 0.6:
+                diagnostics.append(_vector_diag(
+                    line=1, col=0,
+                    severity=_LSP_SEV_WARNING,
+                    code="UCO-REL-001",
+                    message=(
+                        f"High crash risk detected: crash_risk={crash_risk:.2f}. "
+                        f"Review exception handling and null-check coverage."
+                    ),
+                    data={"crash_risk": crash_risk, "bug_density": bug_density,
+                          "reliability_rating": rv.reliability_rating()
+                          if hasattr(rv, "reliability_rating") else "?"},
+                ))
+            elif crash_risk > 0.3:
+                diagnostics.append(_vector_diag(
+                    line=1, col=0,
+                    severity=_LSP_SEV_INFORMATION,
+                    code="UCO-REL-001",
+                    message=(
+                        f"Moderate crash risk: crash_risk={crash_risk:.2f}. "
+                        f"Consider adding defensive exception handling."
+                    ),
+                    data={"crash_risk": crash_risk},
+                ))
+            if bug_density > 0.05:
+                diagnostics.append(_vector_diag(
+                    line=1, col=0,
+                    severity=_LSP_SEV_INFORMATION,
+                    code="UCO-REL-002",
+                    message=(
+                        f"Elevated bug density: {bug_density:.4f} issues/LOC. "
+                        f"Review bare exceptions and error handling."
+                    ),
+                    data={"bug_density": bug_density},
+                ))
+
+    # ── 4. MaintainabilityVector signals ─────────────────────────────────────
+    if _MAINTAINABILITY_VECTOR_AVAILABLE:
+        mv = getattr(latest, "maintainability", None)
+        if mv is not None:
+            hotspot_density = getattr(mv, "hotspot_density", 0.0)
+            debt_ratio      = getattr(mv, "debt_ratio", 0.0)
+            if hotspot_density > 0.5:
+                diagnostics.append(_vector_diag(
+                    line=1, col=0,
+                    severity=_LSP_SEV_HINT,
+                    code="UCO-MAINT-001",
+                    message=(
+                        f"High hotspot density: {hotspot_density:.2f}. "
+                        f"Module has many refactoring candidates."
+                    ),
+                    data={"hotspot_density": hotspot_density, "debt_ratio": debt_ratio},
+                ))
+            if debt_ratio > 0.3:
+                diagnostics.append(_vector_diag(
+                    line=1, col=0,
+                    severity=_LSP_SEV_HINT,
+                    code="UCO-MAINT-002",
+                    message=(
+                        f"Technical debt ratio: {debt_ratio:.2f}. "
+                        f"Consider scheduling a refactoring sprint."
+                    ),
+                    data={"debt_ratio": debt_ratio},
+                ))
+
+    return 200, {
+        "uri":            uri,
+        "module_id":      module_id,
+        "diagnostics":    diagnostics,
+        "count":          len(diagnostics),
+        "history_size":   len(history),
+        "last_timestamp": getattr(latest, "timestamp", None),
+    }
+
+
 # ─── Auth endpoints ──────────────────────────────────────────────────────────
 
 def handle_create_key(data: Dict) -> Tuple[int, Dict]:
@@ -2002,6 +2251,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
                 code, data = handle_metrics_flow(module_id, window=window_n)
+            elif path == "/lsp/diagnostics":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_lsp_diagnostics(module_id, window=window_n)
             else:
                 code, data = 404, {"error": f"Unknown endpoint: {path}"}
         except Exception as e:

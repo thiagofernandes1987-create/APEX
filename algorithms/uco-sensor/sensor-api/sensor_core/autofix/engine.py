@@ -1,6 +1,6 @@
 """
-UCO-Sensor — AutofixEngine  (M5.2)
-====================================
+UCO-Sensor — AutofixEngine  (M5.2 + M8.1)
+============================================
 Orchestrates a pipeline of AST-based code transforms to automatically
 reduce code quality debt (Hamiltonian, cyclomatic complexity, dead code).
 
@@ -14,10 +14,18 @@ Pipeline
    and whether the output is valid Python.
 
 Available transforms (applied in this order by default):
-  1. UnusedImportRemover  — removes provably unused imports
-  2. DeadCodeRemover      — strips unreachable statements after return/raise
-  3. RedundantElseRemover — converts if/else with terminating if to guard clauses
-  4. BooleanSimplifier    — x==True→x, x==False→not x, etc.
+  1. UnusedImportRemover       — removes provably unused imports
+  2. BooleanSimplifier         — x==True→x, x==False→not x, etc.
+  3. RedundantElseRemover      — converts if/else with terminating if to guard clauses
+  4. DeadCodeRemover           — strips unreachable statements after return/raise
+  5. MutableDefaultRemover     — def f(x=[]) → def f(x=None) + guard  [M8.1]
+  6. BareExceptReplacer        — except: → except Exception as e:       [M8.1]
+  7. NoneComparisonSimplifier  — x==None → x is None                   [M8.1]
+  8. DocstringAdder            — placeholder docstring for public fns    [M8.1]
+  9. ContextManagerAdvisor     — flags open() outside with (suggestion) [M8.1]
+  10. ExtractMethodAdvisor     — flags LOC>50/CC>10 (suggestion)        [M8.1]
+  11. StringConcatLoopAdvisor  — flags s+=x in loop (suggestion)        [M8.1]
+  12. TypeHintAdder            — adds : Any annotations + typing import  [M8.1]
 
 Usage
 -----
@@ -42,6 +50,15 @@ from sensor_core.autofix.transforms.unused_imports import UnusedImportRemover
 from sensor_core.autofix.transforms.dead_code import DeadCodeRemover
 from sensor_core.autofix.transforms.redundant_else import RedundantElseRemover
 from sensor_core.autofix.transforms.boolean_simplify import BooleanSimplifier
+# M8.1 — new transforms #5-12
+from sensor_core.autofix.transforms.remove_mutable_default import MutableDefaultRemover
+from sensor_core.autofix.transforms.replace_bare_except import BareExceptReplacer
+from sensor_core.autofix.transforms.simplify_comparison import NoneComparisonSimplifier
+from sensor_core.autofix.transforms.add_docstring import DocstringAdder
+from sensor_core.autofix.transforms.add_context_manager import ContextManagerAdvisor
+from sensor_core.autofix.transforms.extract_method import ExtractMethodAdvisor
+from sensor_core.autofix.transforms.replace_string_concat_loop import StringConcatLoopAdvisor
+from sensor_core.autofix.transforms.add_type_hints import TypeHintAdder
 
 
 # ── AutofixResult ─────────────────────────────────────────────────────────────
@@ -103,10 +120,18 @@ class AutofixResult:
 # ── Default pipeline ──────────────────────────────────────────────────────────
 
 _DEFAULT_PIPELINE: List[Type[BaseTransform]] = [
-    UnusedImportRemover,      # 1. remove dead imports first (no AST deps)
-    BooleanSimplifier,        # 2. simplify conditions (may expose guard patterns)
-    RedundantElseRemover,     # 3. flatten else-after-return (creates new terminators)
-    DeadCodeRemover,          # 4. remove unreachable code (catches code after hoisted returns)
+    UnusedImportRemover,          # 1.  remove dead imports first (no AST deps)
+    BooleanSimplifier,            # 2.  simplify conditions (may expose guard patterns)
+    RedundantElseRemover,         # 3.  flatten else-after-return (creates new terminators)
+    DeadCodeRemover,              # 4.  remove unreachable code (catches code after hoisted returns)
+    MutableDefaultRemover,        # 5.  replace mutable defaults with None + guard  [M8.1]
+    BareExceptReplacer,           # 6.  bare except: → except Exception as e:       [M8.1]
+    NoneComparisonSimplifier,     # 7.  == None → is None                           [M8.1]
+    DocstringAdder,               # 8.  placeholder docstring for public fns         [M8.1]
+    ContextManagerAdvisor,        # 9.  open() outside with (suggestion)            [M8.1]
+    ExtractMethodAdvisor,         # 10. LOC>50/CC>10 refactoring hint (suggestion)  [M8.1]
+    StringConcatLoopAdvisor,      # 11. s+=x in loop → list+join (suggestion)       [M8.1]
+    TypeHintAdder,                # 12. add : Any annotations + import              [M8.1]
 ]
 
 
