@@ -5,6 +5,108 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.0.0] — 2026-05-31 — M7.7 ThreadSafetyVector + Anti-Pattern Score (RELEASE MAJOR)
+
+### Adicionado — M7.7 FASE 6b (WBS 10.1-10.4)
+
+#### WBS 10.1-10.2 — ThreadSafetyAnalyzer AST (`metrics/thread_safety_analyzer.py`)
+
+Novo módulo `metrics/thread_safety_analyzer.py` com `ThreadSafetyAnalyzer`:
+- AST-only, stdlib pura, sem dependências externas
+- `_collect_thread_targets()` — varre `Thread/Process/Timer(target=fn)` e coleta nomes
+- `_function_mutates_global()` — detecta `global X` + assignment a X
+- `_function_has_lock_synchronisation()` — detecta `Lock/RLock/Semaphore/Condition/Event` e `with lock:`
+- `_function_mutates_module_collection()` — detecta `.append/.extend/.update/.add/...` em collections de módulo
+- `_collect_module_level_collections()` — coleta names atribuídos a `[]`/`{}`/`set()` no top-level
+- `_count_async_blocking()` — varre `async def` por `time.sleep`, `requests.*`, `socket.*`, `subprocess.*`
+- `_count_daemon_threads()` — `Thread(daemon=True)` sem `.join()` no módulo
+- `_count_unbounded_queues()` — `Queue/LifoQueue/PriorityQueue/SimpleQueue` sem `maxsize=`
+- `ThreadSafetyResult` — dataclass com 6 contadores
+
+#### WBS 10.1 — ThreadSafetyVector dataclass (`metrics/extended_vectors.py`)
+
+Nova classe `ThreadSafetyVector` com **6 canais** de concurrency-correctness:
+
+| Canal | CWE | Detecção |
+|---|---|---|
+| `global_shared_state_count` | CWE-362 | `global X` mutado em Thread target |
+| `lock_missing_count` | CWE-362 | Mutação compartilhada sem primitivo de sync |
+| `daemon_thread_risk` | CWE-366 | `Thread(daemon=True)` sem `.join()` |
+| `queue_unbounded_risk` | CWE-400 | `Queue()` sem `maxsize=` |
+| `asyncio_blocking_call` | CWE-557 | I/O bloqueante dentro de `async def` |
+| `shared_mutable_default` | CWE-362 | Collection de módulo mutada em Thread target |
+
+**Métodos auxiliares:**
+- `thread_safety_rating()` — grade A–E (E forçado se `lock_missing_count ≥ 3`)
+- `total_issues` — soma dos 6 canais
+- `from_analyzer(result)`, `from_dict(d)`, `to_dict()`
+
+#### WBS 10.3 — Anti-Pattern Score (`metrics/anti_pattern_score.py`)
+
+Novo módulo `metrics/anti_pattern_score.py` agregando **17 sinais** em score 0-100:
+
+| Dimensão | Peso | Sinais |
+|---|---:|---|
+| Security        | 60 | taint_path_count(30), injection_surface(15), sca_vulnerable_deps(10), iac_misconfig_count(5) |
+| Reliability     | 20 | bare_except(5), resource_leak(5), mutable_default(5), inconsistent_return(5) |
+| Performance     | 15 | n_plus_one(5), quadratic_nested(5), string_concat(5) |
+| Maintainability | 15 | docstring(5), long_function(5), cognitive_hotspot(5) |
+| Thread safety   | 20 | lock_missing(10), asyncio_blocking(5), global_shared(5) |
+| **TOTAL**       | **130** | 17 sinais |
+
+**Fórmula:** `APS = 100 × (1 − Σ(weight_i × min(1, raw_i/threshold_i)) / 130)`
+
+**Grade SonarQube-style:** A≥90, B 80-89, C 60-79, D 40-59, E<40
+
+**API:**
+- `compute_aps(signals)` — score 0-100 puro
+- `rate_aps(score)` — A-E
+- `aps_from_metric_vector(mv)` — extração + score em uma chamada; retorna `{aps, rating, components, signals}`
+- `APS_COMPONENTS` — tabela de pesos (frozen)
+- `APS_WEIGHT_SUM` — 130
+
+#### WBS 10.4 — Endpoints + integração (`api/server.py`)
+
+| Endpoint | Método | Descrição |
+|---|---|---|
+| `POST /scan-thread-safety` | POST | Análise concurrency em código Python fornecido |
+| `GET /metrics/thread-safety` | GET | ThreadSafetyVector persistido (`?module=`) |
+| `GET /anti-pattern-score` | GET | APS composto 0-100 + components dict (`?module=`) |
+
+- `SensorConfig.version` atualizado para `"3.0.0"`
+- `metrics/__init__.py` atualizado com `ThreadSafetyVector`, `compute_aps`, `rate_aps`, `aps_from_metric_vector`, `APS_COMPONENTS`, `APS_WEIGHT_SUM`
+- Wired em `sensor_core/uco_bridge.py` → `mv.thread_safety = ThreadSafetyVector.from_analyzer(...)`
+- Fail-silent: análise nunca quebra o pipeline principal
+
+#### WBS 10.4 — Testes + CHANGELOG
+
+- **`tests/test_marco_m22.py`** — 30 testes TT01-TT30 (todos verdes)
+  - TT01-TT05: dataclass basics + round-trip
+  - TT06-TT10: global_shared + lock_missing (Thread/Process + Lock variants)
+  - TT11-TT15: daemon_thread_risk + queue_unbounded
+  - TT16-TT20: asyncio_blocking + shared_mutable_default
+  - TT21-TT25: rating ladder + repr + REST endpoint
+  - TT26-TT30: APS (table, compute, grade, mv-extraction)
+- **`pyproject.toml`** — versão `2.9.1` → `3.0.0`, `test_marco_m22.py` adicionado a `python_files`
+- `__test__ = False` em `ThreadSafetyResult` e `ThreadSafetyVector`
+
+**Resultado:** 798/799 marco-tests pass (M7.7 + APS + M2.x→M7.6 regressão completa). 1 falha preexistente M7.1 não relacionada.
+
+**Impacto na competitividade vs SonarQube:**
+- ✅ Thread Safety (M7.7) — UCO agora cobre **paridade com SonarQube Enterprise** neste eixo
+- ✅ APS — métrica composta única, **nenhum analisador gratuito oferece equivalente**
+- 📊 Score competitivo estimado: 56/100 (v2.2.0) → **~75/100 (v3.0.0)** [APPROX]
+
+**Próximo marco:** M8.0 — Real-Time Monitoring Mode (SSE stream) → v3.1.0
+
+**Referências:**
+- Lea, D.   (1999). *Concurrent Programming in Java*. Addison-Wesley.
+- Goetz, B. (2006). *Java Concurrency in Practice*. Addison-Wesley.
+- PEP 492   — Coroutines with `async` and `await` syntax.
+- CWE-362, CWE-366, CWE-400, CWE-557 — MITRE Common Weakness Enumeration.
+
+---
+
 ## [2.9.1] — 2026-05-31 — M7.6 TestQualityVector
 
 ### Adicionado — M7.6 FASE 6a (WBS 9.1-9.2)

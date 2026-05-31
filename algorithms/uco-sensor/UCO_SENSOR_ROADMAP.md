@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX RESEARCH MODE** · Gerado em 2026-04-26 · Última atualização: 2026-05-31  
-> **Versão atual:** v2.9.1 (M7.6 entregue) · Próximo: M7.7 ThreadSafetyVector + APS → v3.0.0  
+> **Versão atual:** v3.0.0 (M7.7 + APS entregues — RELEASE MAJOR) · Próximo: M8.0 Real-Time Monitoring → v3.1.0  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -664,11 +664,11 @@ SPRINT 10 (Aug 10 – Aug 21):
 | 9.0 | **M7.6 — TestQualityVector** ✅ entregue 2026-05-31 → v2.9.1 | Criar | 3d | 22/06 | 24/06 | 4.x | | |
 | 9.1 | M7.6.1 — TestQualityVector dataclass (8 canais) + AST visitor ✅ | Criar | 2d | 22/06 | 23/06 | 4.4 | `metrics/extended_vectors.py`, `metrics/test_quality_analyzer.py` (novo), `sensor_core/uco_bridge.py` | 30 testes TQ01-TQ30 |
 | 9.2 | M7.6.2 — Endpoints `/scan-test-quality` + `/metrics/test-quality` + CHANGELOG ✅ | Criar | 1d | 24/06 | 24/06 | 9.1 | `api/server.py`, `CHANGELOG.md`, `pyproject.toml` | inline |
-| 10.0 | **M7.7 — ThreadSafetyVector + APS** | Criar | 5d | 25/06 | 01/07 | 4.x, 5.x | | |
-| 10.1 | M7.7.1 — ThreadSafetyVector dataclass (6 canais) | Criar | 1d | 25/06 | 25/06 | 5.7 | `metrics/extended_vectors.py` | 3 testes |
-| 10.2 | M7.7.2 — AST visitor thread safety patterns | Criar | 2d | 26/06 | 29/06 | 10.1 | `sensor_core/uco_bridge.py` | 5 testes |
-| 10.3 | M7.7.3 — `metrics/anti_pattern_score.py` (APS) | Criar | 1d | 30/06 | 30/06 | 10.2 | `metrics/anti_pattern_score.py` (novo) | 4 testes |
-| 10.4 | M7.7.4 — Endpoint `/anti-pattern-score` + CHANGELOG [3.0.0] + 30 testes | Criar | 1d | 01/07 | 01/07 | 10.3 | `api/server.py`, `tests/test_marco_m18.py`, `CHANGELOG.md` | 30 testes total |
+| 10.0 | **M7.7 — ThreadSafetyVector + APS** ✅ entregue 2026-05-31 → v3.0.0 | Criar | 5d | 25/06 | 01/07 | 4.x, 5.x | | |
+| 10.1 | M7.7.1 — ThreadSafetyVector dataclass (6 canais) ✅ | Criar | 1d | 25/06 | 25/06 | 5.7 | `metrics/extended_vectors.py` | TT01-TT05 |
+| 10.2 | M7.7.2 — AST visitor thread safety patterns ✅ | Criar | 2d | 26/06 | 29/06 | 10.1 | `metrics/thread_safety_analyzer.py` (novo), `sensor_core/uco_bridge.py` | TT06-TT20 |
+| 10.3 | M7.7.3 — `metrics/anti_pattern_score.py` (APS) ✅ | Criar | 1d | 30/06 | 30/06 | 10.2 | `metrics/anti_pattern_score.py` (novo) | TT26-TT30 |
+| 10.4 | M7.7.4 — Endpoints `/scan-thread-safety` + `/metrics/thread-safety` + `/anti-pattern-score` + CHANGELOG [3.0.0] ✅ | Criar | 1d | 01/07 | 01/07 | 10.3 | `api/server.py`, `tests/test_marco_m22.py`, `CHANGELOG.md` | TT21-TT25, TT30 |
 | **FASE 7 — REAL-TIME MONITORING** | | | | | | | | |
 | 11.0 | **M8.0 — Real-Time Monitoring Mode** | Criar | 8d | 06/07 | 15/07 | 1.x, 5.x | | |
 | 11.1 | M8.0.1 — `monitor/file_watcher.py` — FileSystem polling watcher | Criar | 2d | 06/07 | 07/07 | 1.3 | `monitor/__init__.py`, `monitor/file_watcher.py` (novos) | 4 testes |

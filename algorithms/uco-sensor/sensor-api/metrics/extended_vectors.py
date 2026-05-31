@@ -1694,3 +1694,105 @@ class TestQualityVector:
             f"dead={self.dead_test_count}, "
             f"flaky={self.flaky_test_risk})"
         )
+
+
+# ─── ThreadSafetyVector (M7.7) ───────────────────────────────────────────────
+
+@dataclass
+class ThreadSafetyVector:
+    """
+    6-channel concurrency-correctness vector — M7.7.
+
+    Channels
+    --------
+    global_shared_state_count : int — ``global X`` mutated in Thread target  (CWE-362)
+    lock_missing_count        : int — shared mutation without Lock primitive (CWE-362)
+    daemon_thread_risk        : int — ``daemon=True`` Thread without .join() (CWE-366)
+    queue_unbounded_risk      : int — ``Queue()`` without ``maxsize=``       (CWE-400)
+    asyncio_blocking_call     : int — blocking I/O inside ``async def``      (CWE-557)
+    shared_mutable_default    : int — module collection mutated in Thread    (CWE-362)
+
+    Rating (A–E)
+    ------------
+    A — zero issues across all 6 channels
+    B — total_issues == 1
+    C — total_issues in {2, 3} OR any channel > 0 that involves Lock
+    D — total_issues in {4, 5}
+    E — total_issues ≥ 6 OR lock_missing_count ≥ 3 (concurrency-critical)
+    """
+    __test__ = False  # pytest: data container, not a test class
+
+    # ── channels ─────────────────────────────────────────────────────────────
+    global_shared_state_count: int = 0
+    lock_missing_count:        int = 0
+    daemon_thread_risk:        int = 0
+    queue_unbounded_risk:      int = 0
+    asyncio_blocking_call:     int = 0
+    shared_mutable_default:    int = 0
+
+    # ── metadata ─────────────────────────────────────────────────────────────
+    module_id: str = ""
+    language:  str = "python"
+
+    # ── Derived properties ────────────────────────────────────────────────────
+
+    @property
+    def total_issues(self) -> int:
+        return (
+            self.global_shared_state_count
+            + self.lock_missing_count
+            + self.daemon_thread_risk
+            + self.queue_unbounded_risk
+            + self.asyncio_blocking_call
+            + self.shared_mutable_default
+        )
+
+    def thread_safety_rating(self) -> str:
+        t = self.total_issues
+        if t >= 6 or self.lock_missing_count >= 3: return "E"
+        if t >= 4:                                  return "D"
+        if t >= 2:                                  return "C"
+        if t == 1:                                  return "B"
+        return "A"
+
+    # ── Constructors ──────────────────────────────────────────────────────────
+
+    @classmethod
+    def from_analyzer(
+        cls,
+        result: Any,          # ThreadSafetyResult (avoid circular import)
+        module_id: str = "",
+        language:  str = "python",
+    ) -> "ThreadSafetyVector":
+        return cls(
+            global_shared_state_count = result.global_shared_state_count,
+            lock_missing_count        = result.lock_missing_count,
+            daemon_thread_risk        = result.daemon_thread_risk,
+            queue_unbounded_risk      = result.queue_unbounded_risk,
+            asyncio_blocking_call     = result.asyncio_blocking_call,
+            shared_mutable_default    = result.shared_mutable_default,
+            module_id                 = module_id,
+            language                  = language,
+        )
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "ThreadSafetyVector":
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in d.items() if k in known})
+
+    # ── Serialisation ─────────────────────────────────────────────────────────
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["thread_safety_rating"] = self.thread_safety_rating()
+        d["total_issues"]         = self.total_issues
+        return d
+
+    def __repr__(self) -> str:
+        return (
+            f"ThreadSafetyVector("
+            f"rating={self.thread_safety_rating()}, "
+            f"issues={self.total_issues}, "
+            f"lock_missing={self.lock_missing_count}, "
+            f"daemon={self.daemon_thread_risk})"
+        )

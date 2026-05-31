@@ -140,6 +140,28 @@ except ImportError:
     _TestQualityVector   = None  # type: ignore[assignment,misc]
     _TEST_QUALITY_AVAILABLE = False
 
+# M7.7 — ThreadSafetyAnalyzer + ThreadSafetyVector + APS
+try:
+    from metrics.thread_safety_analyzer import ThreadSafetyAnalyzer as _ThreadSafetyAnalyzer
+    from metrics.extended_vectors import ThreadSafetyVector as _ThreadSafetyVector
+    from metrics.anti_pattern_score import (
+        compute_aps as _compute_aps,
+        rate_aps as _rate_aps,
+        aps_from_metric_vector as _aps_from_mv,
+        APS_COMPONENTS as _APS_COMPONENTS,
+    )
+    _THREAD_SAFETY_AVAILABLE = True
+    _APS_AVAILABLE           = True
+except ImportError:
+    _ThreadSafetyAnalyzer = None  # type: ignore[assignment,misc]
+    _ThreadSafetyVector   = None  # type: ignore[assignment,misc]
+    _compute_aps          = None  # type: ignore[assignment]
+    _rate_aps             = None  # type: ignore[assignment]
+    _aps_from_mv          = None  # type: ignore[assignment]
+    _APS_COMPONENTS       = {}    # type: ignore[assignment]
+    _THREAD_SAFETY_AVAILABLE = False
+    _APS_AVAILABLE           = False
+
 
 # ─── Configuração ────────────────────────────────────────────────────────────
 
@@ -149,7 +171,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "2.9.1"
+    version:      str   = "3.0.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -262,6 +284,9 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/metrics/architecture",    "auth": True,   "desc": "ArchitectureVector — 8-channel architecture posture for a module (?module=) [M7.5]"},
             {"method": "POST",   "path": "/scan-test-quality",       "auth": True,   "desc": "Test-suite quality analysis — 8 channels, TestQualityVector (M7.6)"},
             {"method": "GET",    "path": "/metrics/test-quality",    "auth": True,   "desc": "TestQualityVector — 8-channel test-suite posture for a module (?module=) [M7.6]"},
+            {"method": "POST",   "path": "/scan-thread-safety",      "auth": True,   "desc": "Concurrency-correctness analysis — 6 channels, ThreadSafetyVector (M7.7)"},
+            {"method": "GET",    "path": "/metrics/thread-safety",   "auth": True,   "desc": "ThreadSafetyVector — 6-channel concurrency posture for a module (?module=) [M7.7]"},
+            {"method": "GET",    "path": "/anti-pattern-score",      "auth": True,   "desc": "Anti-Pattern Score — composite 0-100 across 17 signals (?module=) [M7.7]"},
             {"method": "GET",    "path": "/lsp/diagnostics",         "auth": True,   "desc": "LSP-format diagnostics (publishDiagnostics) from stored vectors (?module=) [M8.1]"},
         ],
         "analyze_body": {
@@ -2238,6 +2263,118 @@ def handle_metrics_test_quality(
     }
 
 
+# ─── M7.7 Thread-Safety endpoints ────────────────────────────────────────────
+
+def handle_scan_thread_safety(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /scan-thread-safety  (M7.7)
+
+    Run concurrency-correctness analysis on a Python source snippet.
+    Returns ThreadSafetyVector + per-channel counts + rating.
+
+    Request body
+    ------------
+    {
+      "code":      str  — Python source code (required)
+      "module_id": str  — identifier for the module (optional)
+    }
+    """
+    if not _THREAD_SAFETY_AVAILABLE:
+        return 503, {"error": "Thread-safety analyzer not available (metrics.thread_safety_analyzer missing)"}
+
+    source    = data.get("code", "")
+    module_id = data.get("module_id", "<anonymous>")
+
+    if not source or not source.strip():
+        return 400, {"error": "Field 'code' is required and must be non-empty"}
+
+    try:
+        result = _ThreadSafetyAnalyzer().analyze(source, module_id=module_id)
+    except Exception as exc:
+        return 500, {"error": f"Thread-safety analysis failed: {exc}"}
+
+    tsv = _ThreadSafetyVector.from_analyzer(result, module_id=module_id)
+
+    return 200, {
+        "module_id":            module_id,
+        "thread_safety_vector": tsv.to_dict(),
+        "summary": {
+            "global_shared_state_count": result.global_shared_state_count,
+            "lock_missing_count":        result.lock_missing_count,
+            "daemon_thread_risk":        result.daemon_thread_risk,
+            "queue_unbounded_risk":      result.queue_unbounded_risk,
+            "asyncio_blocking_call":     result.asyncio_blocking_call,
+            "shared_mutable_default":    result.shared_mutable_default,
+            "total_issues":              tsv.total_issues,
+            "thread_safety_rating":      tsv.thread_safety_rating(),
+        },
+    }
+
+
+def handle_metrics_thread_safety(
+    module_id: Optional[str], window: int = 50,
+) -> Tuple[int, Dict]:
+    """
+    GET /metrics/thread-safety?module=<id>[&window=<n>]  (M7.7)
+    Returns the most-recent persisted ThreadSafetyVector for a module.
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    if not _THREAD_SAFETY_AVAILABLE:
+        return 503, {"error": "ThreadSafetyVector not available (thread_safety_analyzer missing)"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]
+    tsv    = getattr(latest, "thread_safety", None)
+    tsv_dict   = tsv.to_dict()                if tsv is not None else None
+    tsv_rating = tsv.thread_safety_rating()   if tsv is not None else "N/A"
+
+    return 200, {
+        "module_id":            module_id,
+        "history_size":         len(history),
+        "last_commit":          latest.commit_hash,
+        "last_timestamp":       latest.timestamp,
+        "thread_safety_vector": tsv_dict,
+        "thread_safety_rating": tsv_rating,
+    }
+
+
+def handle_anti_pattern_score(
+    module_id: Optional[str], window: int = 50,
+) -> Tuple[int, Dict]:
+    """
+    GET /anti-pattern-score?module=<id>[&window=<n>]  (M7.7)
+
+    Computes the composite Anti-Pattern Score (APS) [0-100] from the
+    latest persisted MetricVector of a module.  Aggregates seventeen
+    signals across security, reliability, performance, maintainability
+    and thread-safety dimensions.
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    if not _APS_AVAILABLE:
+        return 503, {"error": "Anti-Pattern Score not available (metrics.anti_pattern_score missing)"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]
+    aps    = _aps_from_mv(latest)
+    return 200, {
+        "module_id":      module_id,
+        "history_size":   len(history),
+        "last_commit":    latest.commit_hash,
+        "last_timestamp": latest.timestamp,
+        **aps,
+    }
+
+
 # ─── M8.1 LSP endpoint ───────────────────────────────────────────────────────
 
 # LSP severity constants (Microsoft Language Server Protocol)
@@ -2645,6 +2782,14 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
                 code, data = handle_metrics_test_quality(module_id, window=window_n)
+            elif path == "/metrics/thread-safety":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_metrics_thread_safety(module_id, window=window_n)
+            elif path == "/anti-pattern-score":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_anti_pattern_score(module_id, window=window_n)
             elif path == "/lsp/diagnostics":
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
@@ -2716,6 +2861,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_scan_architecture(body)
             elif path == "/scan-test-quality":
                 code, data = handle_scan_test_quality(body)
+            elif path == "/scan-thread-safety":
+                code, data = handle_scan_thread_safety(body)
             elif path == "/auth/keys":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
