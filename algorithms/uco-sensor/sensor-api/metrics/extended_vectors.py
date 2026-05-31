@@ -1567,3 +1567,130 @@ class ArchitectureVector:
             f"rfc={self.response_for_class}, "
             f"lcom={self.lack_of_cohesion:.3f})"
         )
+
+
+# ─── TestQualityVector (M7.6) ────────────────────────────────────────────────
+
+@dataclass
+class TestQualityVector:
+    """
+    8-channel test-suite quality vector — M7.6.
+
+    Note
+    ----
+    ``__test__ = False`` tells pytest this is a data container, not a test
+    class — without it pytest emits a collection warning whenever this
+    module is imported by a test file.
+
+    Channels
+    --------
+    n_test_functions      : int   — count of ``def test_*`` discovered
+    assertion_density     : float — assertions per test function (target ≥ 2.0)
+    test_complexity       : float — mean cyclomatic CC per test (target < 3.0)
+    mock_overuse_ratio    : float — mocks / total calls in test scope (target < 0.3)
+    test_isolation_score  : float — 1 − polluting_tests/n_tests   (target > 0.8)
+    flaky_test_risk       : int   — tests touching time/random/uuid (target 0)
+    parameterized_ratio   : float — @parametrize|@given share     (target > 0.3)
+    test_naming_quality   : float — share of tests with ≥3 name tokens (target > 0.7)
+    dead_test_count       : int   — tests without any assertion   (target 0)
+
+    Quality rating (A–E)
+    --------------------
+    A — zero issues (all 8 channels within healthy thresholds)
+    B — 1 threshold violation OR 1 dead/flaky test
+    C — 2–3 violations
+    D — 4–5 violations
+    E — 6+ violations OR dead_test_count ≥ 5
+    """
+    __test__ = False  # pytest: data container, not a test class
+
+    # ── channels ─────────────────────────────────────────────────────────────
+    n_test_functions:     int   = 0
+    assertion_density:    float = 0.0
+    test_complexity:      float = 0.0
+    mock_overuse_ratio:   float = 0.0
+    test_isolation_score: float = 1.0
+    flaky_test_risk:      int   = 0
+    parameterized_ratio:  float = 0.0
+    test_naming_quality:  float = 0.0
+    dead_test_count:      int   = 0
+
+    # ── metadata ─────────────────────────────────────────────────────────────
+    module_id: str = ""
+    language:  str = "python"
+
+    # ── Derived properties ────────────────────────────────────────────────────
+
+    def _threshold_violations(self) -> int:
+        """Number of channels outside healthy thresholds (used for rating)."""
+        if self.n_test_functions == 0:
+            return 0
+        return sum([
+            self.assertion_density    < 2.0,
+            self.test_complexity      > 3.0,
+            self.mock_overuse_ratio   > 0.3,
+            self.test_isolation_score < 0.8,
+            self.flaky_test_risk      > 0,
+            self.parameterized_ratio  < 0.3,
+            self.test_naming_quality  < 0.7,
+            self.dead_test_count      > 0,
+        ])
+
+    def test_quality_rating(self) -> str:
+        """A–E grade. ``A`` for empty test files (vacuously perfect)."""
+        if self.n_test_functions == 0:
+            return "A"
+        v = self._threshold_violations()
+        if v >= 6 or self.dead_test_count >= 5: return "E"
+        if v >= 4:                              return "D"
+        if v >= 2:                              return "C"
+        if v >= 1:                              return "B"
+        return "A"
+
+    # ── Constructors ──────────────────────────────────────────────────────────
+
+    @classmethod
+    def from_analyzer(
+        cls,
+        result: Any,          # TestQualityResult (avoid circular import)
+        module_id: str = "",
+        language:  str = "python",
+    ) -> "TestQualityVector":
+        """Build a TestQualityVector from a TestQualityResult."""
+        return cls(
+            n_test_functions     = result.n_test_functions,
+            assertion_density    = result.assertion_density,
+            test_complexity      = result.test_complexity,
+            mock_overuse_ratio   = result.mock_overuse_ratio,
+            test_isolation_score = result.test_isolation_score,
+            flaky_test_risk      = result.flaky_test_risk,
+            parameterized_ratio  = result.parameterized_ratio,
+            test_naming_quality  = result.test_naming_quality,
+            dead_test_count      = result.dead_test_count,
+            module_id            = module_id,
+            language             = language,
+        )
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "TestQualityVector":
+        """Deserialize from a JSON-compatible dict (SnapshotStore round-trip)."""
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in d.items() if k in known})
+
+    # ── Serialisation ─────────────────────────────────────────────────────────
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["test_quality_rating"] = self.test_quality_rating()
+        d["threshold_violations"] = self._threshold_violations()
+        return d
+
+    def __repr__(self) -> str:
+        return (
+            f"TestQualityVector("
+            f"rating={self.test_quality_rating()}, "
+            f"tests={self.n_test_functions}, "
+            f"asserts/test={self.assertion_density:.2f}, "
+            f"dead={self.dead_test_count}, "
+            f"flaky={self.flaky_test_risk})"
+        )

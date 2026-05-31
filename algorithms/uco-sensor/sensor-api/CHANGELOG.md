@@ -5,6 +5,86 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [2.9.1] — 2026-05-31 — M7.6 TestQualityVector
+
+### Adicionado — M7.6 FASE 6a (WBS 9.1-9.2)
+
+#### WBS 9.1 — TestQualityAnalyzer AST (`metrics/test_quality_analyzer.py`)
+
+Novo módulo `metrics/test_quality_analyzer.py` com `TestQualityAnalyzer`:
+- AST-only, stdlib pura, sem dependências externas
+- `_collect_test_functions()` — descobre `def test_*` (top-level e em classes)
+- `_function_cc()` — McCabe cyclomatic complexity per test
+- `_is_assertion()` — reconhece `assert` + `self.assert*` + `self.fail()`
+- `_is_mock_construction()` — detecta `Mock`/`MagicMock`/`AsyncMock`/`patch`/`PropertyMock`/`create_autospec`/`mock_open`
+- `_is_flaky_call()` — detecta `time.sleep|time|monotonic|perf_counter`, `datetime.now|utcnow|today`, `uuid.uuid1|uuid4`, `random.*`, `os.urandom`
+- `_is_polluting_test()` — detecta `global`/`nonlocal` + mutação de atributo de módulo importado
+- `_is_parameterized()` — `@pytest.mark.parametrize`, `@parameterized.expand`, `@given` (hypothesis), `@ddt.data`
+- `_name_quality_ok()` — exige ≥3 tokens snake_case após `test_`
+- `TestQualityResult` — dataclass com 9 contadores brutos (canais + n_test_functions)
+
+#### WBS 9.1 — TestQualityVector dataclass (`metrics/extended_vectors.py`)
+
+Nova classe `TestQualityVector` com **8 canais** de qualidade de suíte de testes:
+
+| Canal | Tipo | Threshold saudável | Descrição |
+|---|---|---|---|
+| `assertion_density` | `float` | ≥ 2.0 | Assertions / total de tests |
+| `test_complexity` | `float` | < 3.0 | CC médio por test (McCabe) |
+| `mock_overuse_ratio` | `float` | < 0.3 | Mocks / total Call nodes |
+| `test_isolation_score` | `float` | > 0.8 | 1 − polluting/total |
+| `flaky_test_risk` | `int` | 0 | Tests tocando `time`/`random`/`uuid`/`datetime.now` |
+| `parameterized_ratio` | `float` | > 0.3 | Share com `@parametrize`/`@given` |
+| `test_naming_quality` | `float` | > 0.7 | Share com ≥3 tokens descritivos |
+| `dead_test_count` | `int` | 0 | Tests sem nenhum `assert` |
+
+**Métodos auxiliares:**
+- `test_quality_rating()` — grade A–E baseada em contagem de thresholds violados (A=0 violações, E=6+ ou dead≥5)
+- `_threshold_violations()` — contador interno usado pelo rating
+- `from_analyzer(result)`, `from_dict(d)`, `to_dict()`
+
+**Integração:**
+- Wired em `sensor_core/uco_bridge.py` → `mv.test_quality = TestQualityVector.from_analyzer(...)`
+- Guard de importação M7.6 adicionado (`_TEST_QUALITY_ANALYZER_AVAILABLE`)
+- Falha silenciosa: análise de qualidade de testes nunca quebra o pipeline principal
+
+#### WBS 9.2 — Endpoints + integração (`api/server.py`)
+
+| Endpoint | Método | Descrição |
+|---|---|---|
+| `POST /scan-test-quality` | POST | Análise de qualidade de testes em código Python fornecido |
+| `GET /metrics/test-quality` | GET | TestQualityVector persistido para um módulo (`?module=`) |
+
+- `SensorConfig.version` atualizado para `"2.9.1"`
+- `metrics/__init__.py` atualizado com `TestQualityVector`
+- Endpoints registrados em `do_GET` e `do_POST` do `UCOSensorHandler`
+- Lista de endpoints em `_API_ENDPOINTS_INFO` atualizada
+
+#### WBS 9.2 — Testes + CHANGELOG
+
+- **`tests/test_marco_m21.py`** — 30 testes TQ01-TQ30 (todos verdes)
+  - TQ01-TQ05: dataclass basics e round-trip
+  - TQ06-TQ10: descoberta de tests + assertion_density
+  - TQ11-TQ15: test_complexity + mock_overuse_ratio
+  - TQ16-TQ20: test_isolation_score + flaky_test_risk
+  - TQ21-TQ25: parameterized_ratio + test_naming_quality + dead_test_count
+  - TQ26-TQ30: rating, edge cases, REST endpoint
+- **`CHANGELOG.md`** — entrada `[2.9.1]`
+- **`pyproject.toml`** — versão `2.9.0` → `2.9.1`, `test_marco_m21.py` adicionado a `python_files`
+- `__test__ = False` em `TestQualityResult` e `TestQualityVector` (silencia warning de coleta pytest)
+
+**Resultado de regressão:** 439/439 tests pass (M7.6 + M2.x→M7.5) em 1.65s.
+
+**Próximo marco:** M7.7 — ThreadSafetyVector (6 canais) + APS Anti-Pattern Score → v3.0.0
+
+**Referências:**
+- Meszaros, G. (2007). *xUnit Test Patterns: Refactoring Test Code*. Addison-Wesley.
+- Beck, K.    (2002). *Test-Driven Development By Example*. Addison-Wesley.
+- Fowler, M.  (2007). *Mocks Aren't Stubs*. martinfowler.com.
+- McCabe, T.J. (1976). A complexity measure. *IEEE TSE*, 2(4), 308-320.
+
+---
+
 ## [2.9.0] — 2026-04-28 — M7.5 ArchitectureVector
 
 ### Adicionado — M7.5 FASE 5b (WBS 8.1-8.5)

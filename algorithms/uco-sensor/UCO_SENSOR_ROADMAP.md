@@ -1,5 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
-> **APEX SCIENTIFIC MODE** · Gerado em 2026-04-26 · Baseline: v2.2.0 (M6.4)  
+> **APEX RESEARCH MODE** · Gerado em 2026-04-26 · Última atualização: 2026-05-31  
+> **Versão atual:** v2.9.1 (M7.6 entregue) · Próximo: M7.7 ThreadSafetyVector + APS → v3.0.0  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -660,9 +661,9 @@ SPRINT 10 (Aug 10 – Aug 21):
 | 8.4 | M7.5.4 — RFC, abstraction_level, circular_import DFS | Criar | 1d | 18/06 | 18/06 | 8.3 | `metrics/extended_vectors.py` | 3 testes |
 | 8.5 | M7.5.5 — Endpoint `/metrics/architecture` + CHANGELOG [2.9.0] + 30 testes | Modificar | 1d | 19/06 | 19/06 | 8.4 | `api/server.py`, `tests/test_marco_m17.py`, `CHANGELOG.md` | 30 testes total |
 | **FASE 6 — TEST QUALITY + THREAD SAFETY + APS** | | | | | | | | |
-| 9.0 | **M7.6 — TestQualityVector** | Criar | 3d | 22/06 | 24/06 | 4.x | | |
-| 9.1 | M7.6.1 — TestQualityVector dataclass (8 canais) + AST visitor | Criar | 2d | 22/06 | 23/06 | 4.4 | `metrics/extended_vectors.py`, `sensor_core/uco_bridge.py` | 8 testes TQ01-TQ08 |
-| 9.2 | M7.6.2 — Endpoint `/metrics/test-quality` + CHANGELOG | Criar | 1d | 24/06 | 24/06 | 9.1 | `api/server.py`, `CHANGELOG.md` | inline |
+| 9.0 | **M7.6 — TestQualityVector** ✅ entregue 2026-05-31 → v2.9.1 | Criar | 3d | 22/06 | 24/06 | 4.x | | |
+| 9.1 | M7.6.1 — TestQualityVector dataclass (8 canais) + AST visitor ✅ | Criar | 2d | 22/06 | 23/06 | 4.4 | `metrics/extended_vectors.py`, `metrics/test_quality_analyzer.py` (novo), `sensor_core/uco_bridge.py` | 30 testes TQ01-TQ30 |
+| 9.2 | M7.6.2 — Endpoints `/scan-test-quality` + `/metrics/test-quality` + CHANGELOG ✅ | Criar | 1d | 24/06 | 24/06 | 9.1 | `api/server.py`, `CHANGELOG.md`, `pyproject.toml` | inline |
 | 10.0 | **M7.7 — ThreadSafetyVector + APS** | Criar | 5d | 25/06 | 01/07 | 4.x, 5.x | | |
 | 10.1 | M7.7.1 — ThreadSafetyVector dataclass (6 canais) | Criar | 1d | 25/06 | 25/06 | 5.7 | `metrics/extended_vectors.py` | 3 testes |
 | 10.2 | M7.7.2 — AST visitor thread safety patterns | Criar | 2d | 26/06 | 29/06 | 10.1 | `sensor_core/uco_bridge.py` | 5 testes |

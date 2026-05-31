@@ -130,6 +130,16 @@ except ImportError:
     _ArchitectureVector   = None  # type: ignore[assignment,misc]
     _ARCHITECTURE_AVAILABLE = False
 
+# M7.6 — TestQualityAnalyzer + TestQualityVector
+try:
+    from metrics.test_quality_analyzer import TestQualityAnalyzer as _TestQualityAnalyzer
+    from metrics.extended_vectors import TestQualityVector as _TestQualityVector
+    _TEST_QUALITY_AVAILABLE = True
+except ImportError:
+    _TestQualityAnalyzer = None  # type: ignore[assignment,misc]
+    _TestQualityVector   = None  # type: ignore[assignment,misc]
+    _TEST_QUALITY_AVAILABLE = False
+
 
 # ─── Configuração ────────────────────────────────────────────────────────────
 
@@ -139,7 +149,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "2.9.0"
+    version:      str   = "2.9.1"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -250,6 +260,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/metrics/performance",     "auth": True,   "desc": "PerformanceVector — 8-channel performance posture for a module (?module=) [M7.4]"},
             {"method": "POST",   "path": "/scan-architecture",       "auth": True,   "desc": "Architecture coupling/cohesion analysis — 8 channels, ArchitectureVector (M7.5)"},
             {"method": "GET",    "path": "/metrics/architecture",    "auth": True,   "desc": "ArchitectureVector — 8-channel architecture posture for a module (?module=) [M7.5]"},
+            {"method": "POST",   "path": "/scan-test-quality",       "auth": True,   "desc": "Test-suite quality analysis — 8 channels, TestQualityVector (M7.6)"},
+            {"method": "GET",    "path": "/metrics/test-quality",    "auth": True,   "desc": "TestQualityVector — 8-channel test-suite posture for a module (?module=) [M7.6]"},
             {"method": "GET",    "path": "/lsp/diagnostics",         "auth": True,   "desc": "LSP-format diagnostics (publishDiagnostics) from stored vectors (?module=) [M8.1]"},
         ],
         "analyze_body": {
@@ -2113,6 +2125,119 @@ def handle_metrics_architecture(
     }
 
 
+# ─── M7.6 Test-Quality endpoints ─────────────────────────────────────────────
+
+def handle_scan_test_quality(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /scan-test-quality  (M7.6)
+
+    Run test-suite quality analysis on a Python source snippet.
+    Returns TestQualityVector + per-channel counts + rating.
+
+    Request body
+    ------------
+    {
+      "code":      str  — Python source code (required)
+      "module_id": str  — identifier for the module (optional)
+    }
+
+    Response schema
+    ---------------
+    {
+      "module_id":            str,
+      "test_quality_vector": {TestQualityVector.to_dict()},
+      "summary": {
+        "n_test_functions":    int,
+        "assertion_density":   float,
+        "test_complexity":     float,
+        "mock_overuse_ratio":  float,
+        "test_isolation_score": float,
+        "flaky_test_risk":     int,
+        "parameterized_ratio": float,
+        "test_naming_quality": float,
+        "dead_test_count":     int,
+        "test_quality_rating": str
+      }
+    }
+    """
+    if not _TEST_QUALITY_AVAILABLE:
+        return 503, {"error": "Test-quality analyzer not available (metrics.test_quality_analyzer missing)"}
+
+    source    = data.get("code", "")
+    module_id = data.get("module_id", "<anonymous>")
+
+    if not source or not source.strip():
+        return 400, {"error": "Field 'code' is required and must be non-empty"}
+
+    try:
+        result = _TestQualityAnalyzer().analyze(source, module_id=module_id)
+    except Exception as exc:
+        return 500, {"error": f"Test-quality analysis failed: {exc}"}
+
+    tqv = _TestQualityVector.from_analyzer(result, module_id=module_id)
+
+    return 200, {
+        "module_id":           module_id,
+        "test_quality_vector": tqv.to_dict(),
+        "summary": {
+            "n_test_functions":     result.n_test_functions,
+            "assertion_density":    result.assertion_density,
+            "test_complexity":      result.test_complexity,
+            "mock_overuse_ratio":   result.mock_overuse_ratio,
+            "test_isolation_score": result.test_isolation_score,
+            "flaky_test_risk":      result.flaky_test_risk,
+            "parameterized_ratio":  result.parameterized_ratio,
+            "test_naming_quality":  result.test_naming_quality,
+            "dead_test_count":      result.dead_test_count,
+            "test_quality_rating":  tqv.test_quality_rating(),
+        },
+    }
+
+
+def handle_metrics_test_quality(
+    module_id: Optional[str], window: int = 50,
+) -> Tuple[int, Dict]:
+    """
+    GET /metrics/test-quality?module=<id>[&window=<n>]  (M7.6)
+
+    Returns the most-recent persisted TestQualityVector for a module.
+
+    Response schema
+    ---------------
+    {
+      "module_id":            str,
+      "history_size":         int,
+      "last_commit":          str,
+      "last_timestamp":       float,
+      "test_quality_vector": {TestQualityVector.to_dict()} | null,
+      "test_quality_rating":  str   — A–E (top-level convenience)
+    }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    if not _TEST_QUALITY_AVAILABLE:
+        return 503, {"error": "TestQualityVector not available (test_quality_analyzer missing)"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]
+    tqv    = getattr(latest, "test_quality", None)
+    tqv_dict   = tqv.to_dict()              if tqv is not None else None
+    tqv_rating = tqv.test_quality_rating()  if tqv is not None else "N/A"
+
+    return 200, {
+        "module_id":           module_id,
+        "history_size":        len(history),
+        "last_commit":         latest.commit_hash,
+        "last_timestamp":      latest.timestamp,
+        "test_quality_vector": tqv_dict,
+        "test_quality_rating": tqv_rating,
+    }
+
+
 # ─── M8.1 LSP endpoint ───────────────────────────────────────────────────────
 
 # LSP severity constants (Microsoft Language Server Protocol)
@@ -2516,6 +2641,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
                 code, data = handle_metrics_architecture(module_id, window=window_n)
+            elif path == "/metrics/test-quality":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_metrics_test_quality(module_id, window=window_n)
             elif path == "/lsp/diagnostics":
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
@@ -2585,6 +2714,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_scan_performance(body)
             elif path == "/scan-architecture":
                 code, data = handle_scan_architecture(body)
+            elif path == "/scan-test-quality":
+                code, data = handle_scan_test_quality(body)
             elif path == "/auth/keys":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
