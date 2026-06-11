@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
-> **APEX RESEARCH MODE** · Gerado em 2026-04-26 · Última atualização: 2026-05-31  
-> **Versão atual:** v3.0.0 (M7.7 + APS entregues — RELEASE MAJOR) · Próximo: M8.0 Real-Time Monitoring → v3.1.0  
+> **APEX SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-11  
+> **Versão atual:** v3.1.0 (M8.0 Real-Time Monitoring entregue) · Próximo: FASE 8 — SCA+/IaC+/AFix+ → v3.1.x  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -670,13 +670,13 @@ SPRINT 10 (Aug 10 – Aug 21):
 | 10.3 | M7.7.3 — `metrics/anti_pattern_score.py` (APS) ✅ | Criar | 1d | 30/06 | 30/06 | 10.2 | `metrics/anti_pattern_score.py` (novo) | TT26-TT30 |
 | 10.4 | M7.7.4 — Endpoints `/scan-thread-safety` + `/metrics/thread-safety` + `/anti-pattern-score` + CHANGELOG [3.0.0] ✅ | Criar | 1d | 01/07 | 01/07 | 10.3 | `api/server.py`, `tests/test_marco_m22.py`, `CHANGELOG.md` | TT21-TT25, TT30 |
 | **FASE 7 — REAL-TIME MONITORING** | | | | | | | | |
-| 11.0 | **M8.0 — Real-Time Monitoring Mode** | Criar | 8d | 06/07 | 15/07 | 1.x, 5.x | | |
-| 11.1 | M8.0.1 — `monitor/file_watcher.py` — FileSystem polling watcher | Criar | 2d | 06/07 | 07/07 | 1.3 | `monitor/__init__.py`, `monitor/file_watcher.py` (novos) | 4 testes |
-| 11.2 | M8.0.2 — Delta engine: ΔH, ΔCC, Δsecurity, Δreliability | Criar | 2d | 08/07 | 09/07 | 11.1 | `monitor/delta_engine.py` (novo) | 4 testes |
-| 11.3 | M8.0.3 — Alert thresholds + rule engine (ΔH>20%, nova SAST, ILR>0.7) | Criar | 1d | 10/07 | 10/07 | 11.2 | `monitor/alert_rules.py` (novo) | 3 testes |
-| 11.4 | M8.0.4 — SSE stream: `GET /monitor/stream` (Server-Sent Events) | Criar | 1d | 13/07 | 13/07 | 11.3 | `api/server.py` | 3 testes |
-| 11.5 | M8.0.5 — Endpoints `POST /monitor/start`, `POST /monitor/stop` | Criar | 1d | 14/07 | 14/07 | 11.4 | `api/server.py` | 3 testes |
-| 11.6 | M8.0.6 — CHANGELOG [3.1.0] + 30 testes consolidados | Docs+Test | 1d | 15/07 | 15/07 | 11.5 | `tests/test_marco_m19.py`, `CHANGELOG.md` | 30 testes total |
+| 11.0 | **M8.0 — Real-Time Monitoring Mode** ✅ entregue 2026-06-11 → v3.1.0 | Criar | 8d | 06/07 | 15/07 | 1.x, 5.x | | |
+| 11.1 | M8.0.1 — `monitor/file_watcher.py` — FileSystem polling watcher ✅ | Criar | 2d | 06/07 | 07/07 | 1.3 | `monitor/__init__.py`, `monitor/file_watcher.py` (novos) | TM01-TM08 |
+| 11.2 | M8.0.2 — Delta engine: ΔH, ΔCC, Δsecurity, Δreliability ✅ | Criar | 2d | 08/07 | 09/07 | 11.1 | `monitor/delta_engine.py` (novo) | TM09-TM16 |
+| 11.3 | M8.0.3 — Alert thresholds + rule engine (ΔH>20%, nova SAST, ILR>0.7) ✅ | Criar | 1d | 10/07 | 10/07 | 11.2 | `monitor/alert_rules.py` (novo) | TM17-TM24 |
+| 11.4 | M8.0.4 — SSE stream: `GET /monitor/stream` + ThreadingHTTPServer + `monitor/service.py` ✅ | Criar | 1d | 13/07 | 13/07 | 11.3 | `monitor/service.py` (novo), `api/server.py` | TM25-TM27, TM30 |
+| 11.5 | M8.0.5 — Endpoints `POST /monitor/start`, `POST /monitor/stop`, `GET /monitor/status` ✅ | Criar | 1d | 14/07 | 14/07 | 11.4 | `api/server.py` | TM28-TM29 |
+| 11.6 | M8.0.6 — CHANGELOG [3.1.0] + 30 testes consolidados + fix test_TS30 (M7.1 stale) ✅ | Docs+Test | 1d | 15/07 | 15/07 | 11.5 | `tests/test_marco_m23.py`, `CHANGELOG.md` | 30 testes (829/829 suíte verde) |
 | **FASE 8 — EXPANSÕES (SCA, IaC, AutoFix)** | | | | | | | | |
 | 12.0 | **SCA+ — Expansão CVE Database para 200+** | Melhorar | 3d | 16/07 | 20/07 | 2.x | | |
 | 12.1 | SCA+.1 — pip expansion (+22 CVEs: Werkzeug, Celery, SQLAlchemy, FastAPI) | Melhorar | 1d | 16/07 | 16/07 | 2.9 | `sca/cve_database.py` | 4 testes |

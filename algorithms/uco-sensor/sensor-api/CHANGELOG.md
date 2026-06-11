@@ -5,6 +5,89 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.1.0] — 2026-06-11 — M8.0 Real-Time Monitoring Mode
+
+### Adicionado — M8.0 FASE 7 (WBS 11.1-11.6)
+
+#### WBS 11.1 — FileWatcher (`monitor/file_watcher.py`)
+
+Novo pacote `monitor/` com `FileWatcher` polling stdlib-only:
+- `os.scandir` walk a cada `interval_ms` (default 500ms, min 10ms)
+- Fingerprint `(st_mtime_ns, st_size)` — detecta created/modified/deleted
+- Thread daemon + stop cooperativo via `threading.Event`
+- Skip de diretórios ocultos (`.git`, `.venv`) e `__pycache__`
+- Guard FMEA DATA: arquivo deletado entre scandir e stat é tolerado
+- Callback que lança exceção é engolido — watcher nunca morre
+- `poll_once()` exposto para testes determinísticos
+- `ChangedFile` dataclass (path, event, timestamp, size)
+
+#### WBS 11.2 — DeltaEngine (`monitor/delta_engine.py`)
+
+- `MetricDelta` — ΔH, ΔCC, ILR, Δsecurity (SAST crit+high), Δreliability (bare_except+leaks)
+- Guard FMEA NUMERICS: `_safe_pct` com floor ε=0.5 no baseline (0.001→0.002 ≠ +100%)
+- `prev=None` (first sight) → `*_before=0`, pct=0 — sem ruído inicial
+- Tolerante a vetores estendidos ausentes (default 0)
+
+#### WBS 11.3 — AlertRuleEngine (`monitor/alert_rules.py`)
+
+| Regra | Condição | Severidade |
+|---|---|---|
+| RULE-H-SPIKE | ΔH>+20% AND \|ΔH\|≥1.0 (>+50% → CRITICAL) | WARNING/CRITICAL |
+| RULE-ILR-HIGH | ILR_after > 0.7 | CRITICAL |
+| RULE-SAST-NEW | novo finding critical/high | CRITICAL |
+| RULE-CC-SPIKE | ΔCC>+30% AND ΔCC≥5 | WARNING |
+| RULE-REL-REGRESS | reliability_delta > 0 | WARNING |
+
+Thresholds parametrizáveis no construtor (governança por repositório).
+Guard FMEA THEORY: `min_abs` duplo (pct E absoluto) suprime ruído em baselines pequenos.
+
+#### WBS 11.4 — MonitorService (`monitor/service.py`)
+
+Pipeline: FileWatcher → `UCOBridge.analyze()` → DeltaEngine → AlertRuleEngine → buffer
+- Baseline por módulo em memória (delta contra análise imediatamente anterior)
+- Buffer bounded `deque(maxlen=1000)` — back-pressure descarta os mais antigos (anti CWE-400)
+- Thread-safe (lock único para baselines + buffer)
+- Deleção limpa baseline (recriação = first sight)
+- `drain_events(max_events)` — consumido pelo SSE endpoint
+- Falha de análise nunca mata a thread do watcher
+
+#### WBS 11.5 — Endpoints + SSE (`api/server.py`)
+
+| Endpoint | Método | Descrição |
+|---|---|---|
+| `POST /monitor/start` | POST | Inicia watcher (`{root, interval_ms}`); 409 se já rodando |
+| `POST /monitor/stop` | POST | Para watcher (idempotente) |
+| `GET /monitor/status` | GET | files_watched, poll_count, alerts_total, events_pending |
+| `GET /monitor/stream` | GET | **SSE**: connected/metric_change/alert/heartbeat |
+
+**SSE protocol** (roadmap §7.3): `event:` + `data:` JSON frames, heartbeat a cada 5s.
+Guard FMEA PROCESS (duplo):
+1. `HTTPServer` → **`ThreadingHTTPServer`** — SSE long-poll não bloqueia outras requests
+2. Stream bounded por `max_events` (default 100, cap 10k) E `timeout_s` (default 30s, cap 300s)
+
+- `SensorConfig.version` → `"3.1.0"`
+- Singleton `_monitor` + `_monitor_lock` (um monitor por servidor; start/stop sem races)
+
+#### WBS 11.6 — Testes + manutenção
+
+- **`tests/test_marco_m23.py`** — 30 testes TM01-TM30 (todos verdes)
+  - TM01-TM08: FileWatcher (baseline, created/modified/deleted, extensões, hidden dirs, lifecycle, callback resiliente)
+  - TM09-TM16: DeltaEngine (ΔH/ΔCC, ε-guard, first-sight, security/reliability, to_dict)
+  - TM17-TM24: AlertRules (5 regras + guards de supressão + estável→zero alertas)
+  - TM25-TM30: MonitorService pipeline + endpoints REST + SSE frame format
+- **Fix manutenção**: `test_marco_m3.py::test_TS30` — atualizado `==13` → `>=13`
+  (desatualizado desde a expansão SAST do M7.1 para 28 regras)
+- **`pyproject.toml`** — versão `3.0.0` → `3.1.0`, `test_marco_m23.py` registrado
+
+**Resultado: 829/829 marco-tests PASS — suíte 100% verde pela primeira vez desde M7.1.**
+
+**Validação ao vivo (smoke):** edição degradante de módulo gerou em 1 poll:
+`RULE-ILR-HIGH CRITICAL (ILR 1.00)`, `RULE-CC-SPIKE +800%`, `RULE-REL-REGRESS +1`.
+
+**Próximo marco:** FASE 8 — SCA+ (200+ CVEs) / IaC+ (100+ regras) / AFix+ (12 transforms) → v3.1.x
+
+---
+
 ## [3.0.0] — 2026-05-31 — M7.7 ThreadSafetyVector + Anti-Pattern Score (RELEASE MAJOR)
 
 ### Adicionado — M7.7 FASE 6b (WBS 10.1-10.4)

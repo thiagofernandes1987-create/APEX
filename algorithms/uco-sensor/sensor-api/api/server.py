@@ -37,7 +37,9 @@ import json
 import time
 import threading
 import traceback
-from http.server import BaseHTTPRequestHandler, HTTPServer
+# M8.0 FMEA: ThreadingHTTPServer — long-lived SSE connections must not
+# block other requests (single-thread HTTPServer would stall the API).
+from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 from typing import Any, Dict, Optional, Tuple, List
 from dataclasses import dataclass
@@ -162,6 +164,14 @@ except ImportError:
     _THREAD_SAFETY_AVAILABLE = False
     _APS_AVAILABLE           = False
 
+# M8.0 — MonitorService (real-time monitoring)
+try:
+    from monitor.service import MonitorService as _MonitorService
+    _MONITOR_AVAILABLE = True
+except ImportError:
+    _MonitorService = None  # type: ignore[assignment,misc]
+    _MONITOR_AVAILABLE = False
+
 
 # ─── Configuração ────────────────────────────────────────────────────────────
 
@@ -171,7 +181,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.0.0"
+    version:      str   = "3.1.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -193,6 +203,10 @@ _bridge    = UCOBridge(mode=_config.engine_mode)
 _engine    = FrequencyEngine(verbose=_config.verbose)
 _router    = SignalOutputRouter()
 _connector = get_connector()        # ApexConnector — null mode até configurado via env
+
+# M8.0 — one MonitorService at a time (guarded by lock for start/stop races)
+_monitor: Optional[Any] = None
+_monitor_lock = threading.Lock()
 
 
 # ─── Auth middleware ─────────────────────────────────────────────────────────
@@ -287,6 +301,10 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "POST",   "path": "/scan-thread-safety",      "auth": True,   "desc": "Concurrency-correctness analysis — 6 channels, ThreadSafetyVector (M7.7)"},
             {"method": "GET",    "path": "/metrics/thread-safety",   "auth": True,   "desc": "ThreadSafetyVector — 6-channel concurrency posture for a module (?module=) [M7.7]"},
             {"method": "GET",    "path": "/anti-pattern-score",      "auth": True,   "desc": "Anti-Pattern Score — composite 0-100 across 17 signals (?module=) [M7.7]"},
+            {"method": "POST",   "path": "/monitor/start",           "auth": True,   "desc": "Start real-time FileWatcher on a directory tree (M8.0)"},
+            {"method": "POST",   "path": "/monitor/stop",            "auth": True,   "desc": "Stop the running FileWatcher (M8.0)"},
+            {"method": "GET",    "path": "/monitor/status",          "auth": True,   "desc": "Watcher status: files watched, polls, alerts (M8.0)"},
+            {"method": "GET",    "path": "/monitor/stream",          "auth": True,   "desc": "SSE stream of metric_change/alert events (?max_events=&timeout_s=) [M8.0]"},
             {"method": "GET",    "path": "/lsp/diagnostics",         "auth": True,   "desc": "LSP-format diagnostics (publishDiagnostics) from stored vectors (?module=) [M8.1]"},
         ],
         "analyze_body": {
@@ -2375,6 +2393,75 @@ def handle_anti_pattern_score(
     }
 
 
+# ─── M8.0 Real-Time Monitoring endpoints ─────────────────────────────────────
+
+def handle_monitor_start(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /monitor/start  (M8.0)
+
+    Start a FileWatcher + analysis pipeline on a directory tree.
+
+    Request body
+    ------------
+    {
+      "root":        str — directory to watch (required, must exist)
+      "interval_ms": int — poll interval (optional, default 500, min 10)
+    }
+
+    Only one MonitorService runs at a time; starting while one is
+    running returns 409.
+    """
+    global _monitor
+    if not _MONITOR_AVAILABLE:
+        return 503, {"error": "Monitor not available (monitor.service missing)"}
+
+    root        = data.get("root", "")
+    interval_ms = int(data.get("interval_ms", 500))
+
+    if not root or not os.path.isdir(root):
+        return 400, {"error": f"Field 'root' must be an existing directory (got {root!r})"}
+
+    with _monitor_lock:
+        if _monitor is not None and _monitor.running:
+            return 409, {"error": "Monitor already running", "status": _monitor.status()}
+        _monitor = _MonitorService(root=root, interval_ms=interval_ms)
+        _monitor.start()
+        return 200, {"started": True, "status": _monitor.status()}
+
+
+def handle_monitor_stop(data: Dict) -> Tuple[int, Dict]:
+    """POST /monitor/stop  (M8.0) — stop the running watcher (idempotent)."""
+    global _monitor
+    if not _MONITOR_AVAILABLE:
+        return 503, {"error": "Monitor not available (monitor.service missing)"}
+
+    with _monitor_lock:
+        if _monitor is None:
+            return 200, {"stopped": False, "reason": "no monitor was running"}
+        status = _monitor.status()
+        _monitor.stop()
+        _monitor = None
+        return 200, {"stopped": True, "final_status": status}
+
+
+def handle_monitor_status() -> Tuple[int, Dict]:
+    """GET /monitor/status  (M8.0) — watcher status snapshot."""
+    if not _MONITOR_AVAILABLE:
+        return 503, {"error": "Monitor not available (monitor.service missing)"}
+    with _monitor_lock:
+        if _monitor is None:
+            return 200, {"running": False}
+        return 200, _monitor.status()
+
+
+def _sse_format(event: str, payload: Dict) -> bytes:
+    """Encode one Server-Sent Event frame (event: + data: lines)."""
+    return (
+        f"event: {event}\n"
+        f"data: {json.dumps(payload, default=str)}\n\n"
+    ).encode("utf-8")
+
+
 # ─── M8.1 LSP endpoint ───────────────────────────────────────────────────────
 
 # LSP severity constants (Microsoft Language Server Protocol)
@@ -2689,6 +2776,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
         if not ok:
             return self._send_json(401, {"error": "Invalid or missing API key"})
 
+        # M8.0: SSE stream escreve direto no socket — não passa por _send_json
+        if path == "/monitor/stream":
+            return self._serve_monitor_stream(params)
+
         try:
             if path == "/modules":
                 code, data = handle_modules()
@@ -2790,6 +2881,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
                 code, data = handle_anti_pattern_score(module_id, window=window_n)
+            elif path == "/monitor/status":
+                code, data = handle_monitor_status()
             elif path == "/lsp/diagnostics":
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
@@ -2863,6 +2956,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_scan_test_quality(body)
             elif path == "/scan-thread-safety":
                 code, data = handle_scan_thread_safety(body)
+            elif path == "/monitor/start":
+                code, data = handle_monitor_start(body)
+            elif path == "/monitor/stop":
+                code, data = handle_monitor_stop(body)
             elif path == "/auth/keys":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
@@ -2933,6 +3030,69 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    # ── M8.0: Server-Sent Events stream ───────────────────────────────────────
+
+    def _serve_monitor_stream(self, params: Dict) -> None:
+        """
+        GET /monitor/stream?max_events=<n>&timeout_s=<t>  (M8.0)
+
+        Streams ``connected`` / ``metric_change`` / ``alert`` / ``heartbeat``
+        events in SSE format, then closes.
+
+        FMEA PROCESS guard: the stream is bounded by BOTH ``max_events``
+        (default 100, cap 10000) and ``timeout_s`` (default 30, cap 300) so a
+        client can never hold a server thread forever.
+        """
+        if not _MONITOR_AVAILABLE:
+            return self._send_json(503, {"error": "Monitor not available"})
+
+        with _monitor_lock:
+            svc = _monitor
+        if svc is None or not svc.running:
+            return self._send_json(409, {"error": "No monitor running — POST /monitor/start first"})
+
+        max_events = min(10_000, max(1, int(params.get("max_events", ["100"])[0])))
+        timeout_s  = min(300.0,  max(0.1, float(params.get("timeout_s", ["30"])[0])))
+        heartbeat_every_s = 5.0
+
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Connection", "close")
+        self.send_header("X-UCO-Sensor-Version", _config.version)
+        self.end_headers()
+
+        try:
+            self.wfile.write(_sse_format("connected", {
+                "root":      svc.root,
+                "timestamp": time.time(),
+                **svc.status(),
+            }))
+            self.wfile.flush()
+
+            sent       = 0
+            deadline   = time.time() + timeout_s
+            next_beat  = time.time() + heartbeat_every_s
+            while sent < max_events and time.time() < deadline:
+                events = svc.drain_events(max_events=max_events - sent)
+                for ev in events:
+                    name = ev.get("event", "metric_change")
+                    self.wfile.write(_sse_format(name, ev))
+                    sent += 1
+                if events:
+                    self.wfile.flush()
+                elif time.time() >= next_beat:
+                    self.wfile.write(_sse_format("heartbeat", {
+                        "timestamp": time.time(),
+                        **svc.status(),
+                    }))
+                    self.wfile.flush()
+                    next_beat = time.time() + heartbeat_every_s
+                else:
+                    time.sleep(0.1)
+        except (BrokenPipeError, ConnectionResetError):
+            pass  # client disconnected — normal SSE lifecycle
+
 
 # ─── Entrypoint CLI ───────────────────────────────────────────────────────────
 
@@ -2973,7 +3133,8 @@ if __name__ == "__main__":
         ))
         _config.apex_enabled = True
 
-    server = HTTPServer((args.host, args.port), UCOSensorHandler)
+    # M8.0: ThreadingHTTPServer — SSE long-poll must not block other requests
+    server = ThreadingHTTPServer((args.host, args.port), UCOSensorHandler)
     print(f"[UCO-Sensor v{_config.version}] Rodando em http://{args.host}:{args.port}")
     print(f"[UCO-Sensor] DB: {args.db} | Auth: {_config.auth_enabled} | Verbose: {args.verbose}")
     print(f"[UCO-Sensor] Linguagens: {', '.join(get_registry().supported_languages())}")
