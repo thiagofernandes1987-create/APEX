@@ -64,6 +64,22 @@ from report.html_report import generate_html_report
 from report.badge import generate_badge_svg, generate_status_badge_svg
 from apex_integration.templates import get_template, render_prompt, fix_action_for, all_error_types
 from sast.scanner import scan as sast_scan, RULES as SAST_RULES
+
+# M9.0 — multi-language SAST (JS/TS, Java, Go)
+try:
+    from sast.multilang_scanner import (
+        scan_multilang as _scan_multilang,
+        language_for_extension as _ml_language_for_extension,
+        rule_count as _ml_rule_count,
+        _ALL_RULES as _ML_RULES,
+    )
+    _MULTILANG_SAST_AVAILABLE = True
+except ImportError:
+    _scan_multilang = None              # type: ignore[assignment]
+    _ml_language_for_extension = None   # type: ignore[assignment]
+    _ml_rule_count = None               # type: ignore[assignment]
+    _ML_RULES = []                      # type: ignore[assignment]
+    _MULTILANG_SAST_AVAILABLE = False
 from governance.policy_engine import (
     evaluate_policy, load_default_policy, policy_from_dict, mv_to_metrics_dict,
 )
@@ -181,7 +197,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.1.3"
+    version:      str   = "3.2.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -1395,26 +1411,54 @@ def handle_sast(data: Dict) -> Tuple[int, Dict]:
     if not file_ext.startswith("."):
         file_ext = f".{file_ext}"
 
+    # M9.0: route JS/TS/Java/Go to the multi-language scanner; Python keeps AST.
+    if (
+        _MULTILANG_SAST_AVAILABLE
+        and _ml_language_for_extension(file_ext) is not None
+    ):
+        result = _scan_multilang(code, file_extension=file_ext)
+        out = result.to_dict()
+        out["language"] = _ml_language_for_extension(file_ext)
+        out["engine"]   = "multilang"
+        return 200, out
+
     result = sast_scan(code, file_extension=file_ext)
     return 200, result.to_dict()
 
 
 def handle_sast_rules() -> Tuple[int, Dict]:
-    """GET /sast/rules — list all SAST rules with metadata."""
+    """GET /sast/rules — list all SAST rules (Python AST + M9.0 multi-language)."""
+    py_rules = [
+        {
+            "rule_id":    r.rule_id,
+            "title":      r.title,
+            "cwe_id":     r.cwe_id,
+            "owasp":      r.owasp,
+            "severity":   r.severity,
+            "description": r.description,
+            "remediation": r.remediation,
+            "languages":  ["python"],
+        }
+        for r in SAST_RULES
+    ]
+    ml_rules = [
+        {
+            "rule_id":    r.rule_id,
+            "title":      r.title,
+            "cwe_id":     r.cwe_id,
+            "owasp":      r.owasp,
+            "severity":   r.severity,
+            "description": r.title,
+            "remediation": r.remediation,
+            "languages":  list(r.languages),
+        }
+        for r in _ML_RULES
+    ] if _MULTILANG_SAST_AVAILABLE else []
     return 200, {
-        "rules": [
-            {
-                "rule_id":    r.rule_id,
-                "title":      r.title,
-                "cwe_id":     r.cwe_id,
-                "owasp":      r.owasp,
-                "severity":   r.severity,
-                "description": r.description,
-                "remediation": r.remediation,
-            }
-            for r in SAST_RULES
-        ],
-        "count": len(SAST_RULES),
+        "rules": py_rules + ml_rules,
+        "count": len(py_rules) + len(ml_rules),
+        "python_rules":     len(py_rules),
+        "multilang_rules":  len(ml_rules),
     }
 
 

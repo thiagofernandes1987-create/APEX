@@ -5,6 +5,77 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.0] — 2026-06-16 — M9.0 Tree-Sitter Multi-Language SAST (RELEASE MINOR)
+
+### Adicionado — M9.0 FASE 9 (WBS 15.1-15.5)
+
+#### WBS 15.1 — TreeSitterBridge (`lang_adapters/tree_sitter_bridge.py`)
+
+Ponte opcional para tree-sitter com **fallback regex automático**:
+- `TreeSitterBridge(language)` para javascript / typescript / java / go
+- `.available()` — probe de `tree_sitter` + grammar da linguagem (cacheado); nunca crasha
+- `.parse(source)` — árvore tree-sitter real OU `None` (modo fallback)
+- `.iter_lines()` / `.search_lines()` — primitivos line-oriented (estáticos, sempre disponíveis)
+- Import lazy: `import tree_sitter` envolto em try/except — módulo sempre importável
+- **Offline-first:** grammars são artefatos nativos compilados que podem faltar em CI mínimo; o fallback regex mantém as regras SAST funcionais em qualquer ambiente
+
+#### WBS 15.2-15.4 — Multi-Language SAST (`sast/multilang_scanner.py`)
+
+**30 regras SAST** cobrindo JS/TS + Java + Go, emitindo `SASTFinding` (mesmo contrato do scanner Python):
+
+**JavaScript / TypeScript (JS01-JS10):**
+| Regra | CWE | Detecção |
+|---|---|---|
+| JS01 | CWE-79 | XSS via `innerHTML`/`outerHTML` |
+| JS02 | CWE-79 | XSS via `document.write` |
+| JS03 | CWE-79 | React `dangerouslySetInnerHTML` |
+| JS04 | CWE-95 | Code injection via `eval()` |
+| JS05 | CWE-95 | `new Function()` constructor |
+| JS06 | CWE-78 | `child_process.exec` com interpolação |
+| JS07 | CWE-1321 | Prototype pollution via `__proto__` |
+| JS08 | CWE-327 | Weak hash `createHash('md5')` |
+| JS09 | CWE-330 | `Math.random()` para secrets |
+| JS10 | CWE-89 | SQL injection via concatenação |
+
+**Java (JV01-JV10):** `Runtime.exec`, SQL via `Statement`+concat, XXE (DocumentBuilderFactory), deserialização insegura (ObjectInputStream), weak crypto (MessageDigest MD5/SHA-1), trust-all TLS, senha hardcoded, `java.util.Random` para segurança, CORS `@CrossOrigin("*")`, `ScriptEngine.eval`.
+
+**Go (GO01-GO10):** `exec.Command` com interpolação, SQL via `fmt.Sprintf`, weak crypto (md5/sha1), `math/rand` para crypto, `InsecureSkipVerify: true`, credencial hardcoded, `defer` em loop (resource leak), `text/template` para HTML, path traversal via `filepath.Join`, SSRF via `http.Get`.
+
+- Dispatch por extensão: `.js/.jsx/.mjs/.cjs` → javascript, `.ts/.tsx` → typescript, `.java` → java, `.go` → go
+- Dedup por `(rule_id, line)`; skip de comentários `//` (preservando URLs `http://`)
+- `confidence=0.75` (regex-based, abaixo da confiança AST do scanner Python)
+- Rating A–E pela pior severidade presente
+
+#### WBS 15.5 — Integração REST (`api/server.py`)
+
+- `POST /sast` agora **roteia por extensão**: Python → scanner AST (inalterado); JS/TS/Java/Go → multilang. Resposta inclui `engine: "multilang"` + `language`
+- `GET /sast/rules` consolida ambos: **58 regras** (28 Python + 30 multilang), cada uma com campo `languages`
+- Import guard `_MULTILANG_SAST_AVAILABLE` (degradação graciosa)
+- `SensorConfig.version` → `"3.2.0"`
+- `tree-sitter` já presente em `[project.optional-dependencies].parsers` (grammars JS/TS/Java/Go)
+
+#### WBS 15.5 — Testes (`tests/test_marco_m27.py`)
+
+- **30 testes TG01-TG30 (todos verdes)**
+  - TG01-TG04: TreeSitterBridge (availability probe sem crash, fallback parse, iter_lines/search_lines)
+  - TG05-TG14: JS/TS rules JS01-JS10
+  - TG15-TG22: Java rules JV01-JV10
+  - TG23-TG28: Go rules GO01-GO10
+  - TG29-TG30: integração (inventário 30 regras, dispatch, rating E, código limpo + skip de comentários)
+- `pyproject.toml` — versão `3.1.3` → `3.2.0`, `test_marco_m27.py` registrado
+
+**Resultado: 950/950 marco-tests PASS — suíte 100% verde.**
+
+**Marco competitivo:** UCO-Sensor passa de **1 → 5 linguagens** com análise de segurança (Python AST + JS/TS/Java/Go). Regras SAST totais: 28 → **58**.
+
+**Próximo marco:** M9.1 — Research Signals (Shannon Entropy, Temporal Coupling Index, CC Churn) → v3.3.0 (release final)
+
+**Referências:**
+- OWASP Top 10 (2021); CWE Top 25 (2024); MITRE CWE.
+- Brunton-Spall, M. (2020). *Agile Application Security*. O'Reilly.
+
+---
+
 ## [3.1.3] — 2026-06-16 — AFix+ FASE 8 (4 security autofix transforms)
 
 ### Adicionado — AFix+ FASE 8 (WBS 14.1-14.2)

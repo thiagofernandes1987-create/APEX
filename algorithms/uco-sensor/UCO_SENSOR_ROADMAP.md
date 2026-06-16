@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-16  
-> **Versão atual:** v3.1.3 (FASE 8 COMPLETA — SCA+/IaC+/AFix+) · Próximo: M9.0 Tree-Sitter Multi-Lang SAST → v3.2.0  
+> **Versão atual:** v3.2.0 (M9.0 Tree-Sitter Multi-Lang SAST — 5 linguagens, 58 regras SAST) · Próximo: M9.1 Research Signals → v3.3.0 (release final)  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -691,12 +691,12 @@ SPRINT 10 (Aug 10 – Aug 21):
 | 14.1 | AFix+.1 — Transforms 5-12 (M8.1, já entregue em v2.7.0): mutable_default, bare_except, simplify_comparison, docstring, context_manager, extract_method, string_concat, type_hints ✅ | Criar | 2d | 27/07 | 28/07 | 6.2 | `sensor_core/autofix/transforms/*.py` | M18 (tl17-tl24) |
 | 14.2 | AFix+.2 — Transforms 13-16 (segurança): replace_weak_hash, replace_insecure_random, add_loop_guard, replace_format_string ✅ | Criar | 2d | 29/07 | 30/07 | 14.1 | `sensor_core/autofix/transforms/*.py`, `tests/test_marco_m26.py` | TX01-TX30 |
 | **FASE 9 — TREE-SITTER MULTI-LANGUAGE SAST** | | | | | | | | |
-| 15.0 | **M9.0 — Tree-Sitter Multi-Language SAST** | Criar | 10d | 03/08 | 14/08 | 2.x, 5.x | | |
-| 15.1 | M9.0.1 — `lang_adapters/tree_sitter_bridge.py` — base adapter | Criar | 2d | 03/08 | 04/08 | 5.7 | `lang_adapters/tree_sitter_bridge.py` (novo) | 4 testes |
-| 15.2 | M9.0.2 — JavaScript/TypeScript adapter (XSS, prototype pollution, eval) | Criar | 2d | 05/08 | 06/08 | 15.1 | `lang_adapters/javascript_ts_sast.py` (novo) | 6 testes |
-| 15.3 | M9.0.3 — Java adapter (null deref, Spring Security misconfig, thread safety) | Criar | 2d | 07/08 | 10/08 | 15.1 | `lang_adapters/java_sast.py` (novo) | 6 testes |
-| 15.4 | M9.0.4 — Go adapter (goroutine leaks, channel deadlocks, defer in loop) | Criar | 2d | 11/08 | 12/08 | 15.1 | `lang_adapters/go_sast.py` (novo) | 6 testes |
-| 15.5 | M9.0.5 — CHANGELOG [3.2.0] + 30 testes consolidados M9.0 | Docs+Test | 2d | 13/08 | 14/08 | 15.4 | `tests/test_marco_m20.py`, `CHANGELOG.md` | 30 testes total |
+| 15.0 | **M9.0 — Tree-Sitter Multi-Language SAST** ✅ entregue 2026-06-16 → v3.2.0 | Criar | 10d | 03/08 | 14/08 | 2.x, 5.x | | |
+| 15.1 | M9.0.1 — `lang_adapters/tree_sitter_bridge.py` — bridge + regex fallback ✅ | Criar | 2d | 03/08 | 04/08 | 5.7 | `lang_adapters/tree_sitter_bridge.py` (novo) | TG01-TG04 |
+| 15.2 | M9.0.2 — JS/TS SAST JS01-JS10 (XSS, proto pollution, eval, child_process) ✅ | Criar | 2d | 05/08 | 06/08 | 15.1 | `sast/multilang_scanner.py` (novo) | TG05-TG14 |
+| 15.3 | M9.0.3 — Java SAST JV01-JV10 (Runtime.exec, XXE, deserialização, TLS, CORS) ✅ | Criar | 2d | 07/08 | 10/08 | 15.1 | `sast/multilang_scanner.py` | TG15-TG22 |
+| 15.4 | M9.0.4 — Go SAST GO01-GO10 (exec, SQL Sprintf, InsecureSkipVerify, defer-in-loop) ✅ | Criar | 2d | 11/08 | 12/08 | 15.1 | `sast/multilang_scanner.py` | TG23-TG28 |
+| 15.5 | M9.0.5 — Integração REST (`/sast` dispatch + `/sast/rules`) + CHANGELOG [3.2.0] ✅ | Docs+Test | 2d | 13/08 | 14/08 | 15.4 | `api/server.py`, `tests/test_marco_m27.py`, `CHANGELOG.md` | TG29-TG30 (30 testes total) |
 | **FASE 10 — RESEARCH & ADVANCED SIGNALS** | | | | | | | | |
 | 16.0 | **M9.1 — Research Signals** | Criar | 5d | 17/08 | 21/08 | 15.x | | |
 | 16.1 | M9.1.1 — Shannon entropy module (`metrics/entropy.py`) | Criar | 1d | 17/08 | 17/08 | 15.5 | `metrics/entropy.py` (novo) | 3 testes |
