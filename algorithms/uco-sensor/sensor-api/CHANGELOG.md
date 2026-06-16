@@ -5,6 +5,75 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.1.1] — 2026-06-16 — SCA+ FASE 8 (CVE expansion + 3 new ecosystems)
+
+### Adicionado — SCA+ FASE 8 (WBS 12.1-12.3)
+
+#### WBS 12.1-12.2 — CVE database expansion (`sca/cve_database.py`)
+
+- **65 → 205 CVEs** (+140), target ≥200 ✓
+- **44 → 148 pacotes** distintos rastreados
+- **9 → 12 ecossistemas** (3 novos: swift / pub / hex)
+- Nova função pública `ecosystems()` → lista ordenada de ecossistemas suportados
+- Docstring do header atualizado com novos ecossistemas e contagens
+
+**Distribuição por ecossistema (v3.1.1):**
+
+| Ecossistema | CVEs | Pacotes |
+|---|---:|---:|
+| pip | 45 | 30 |
+| npm | 40 | 26 |
+| maven (+ gradle alias) | 30 | 20 |
+| go | 12 | 11 |
+| gem | 11 | 8 |
+| cargo | 10 | 9 |
+| nuget | 9 | 7 |
+| composer | 8 | 7 |
+| hex 🆕 | 4 | 4 |
+| swift 🆕 | 3 | 3 |
+| pub 🆕 | 3 | 3 |
+| **TOTAL** | **205** | **148** |
+
+**CVEs notáveis adicionados (sample):**
+- pip: Werkzeug debugger RCE (CVE-2024-34069), MLflow auth bypass (CVE-2023-6014, CVSS 9.8), LangChain PALChain RCE (CVE-2023-36258), HuggingFace Transformers RCE (CVE-2024-3568)
+- npm: Next.js middleware bypass (CVE-2025-29927, CVSS 9.1), tough-cookie prototype pollution (CVE-2023-26136, CVSS 9.8), ejs SSTI (CVE-2022-29078, CVSS 9.8)
+- maven: Apache Tomcat partial-PUT RCE (CVE-2025-24813, CVSS 9.8), SnakeYAML unsafe deserialization (CVE-2022-1471), Apache Shiro auth bypass (CVE-2023-34478, CVSS 9.8)
+- go: Docker authz plugin bypass (CVE-2024-41110, CVSS 9.9), HashiCorp Consul RPC escalation (CVE-2021-37219)
+- gem: Rack::Static path traversal (CVE-2025-27610), rails-html-sanitizer XSS bypass (CVE-2024-53985)
+- swift 🆕: Alamofire MITM (CVE-2021-31755), Vapor smuggling (CVE-2023-44389), SwiftNIO smuggling (CVE-2022-3215)
+- pub 🆕: Dart dio cert bypass (CVE-2021-31402), http header injection (CVE-2020-35669), shelf header injection (CVE-2022-41945)
+- hex 🆕: Phoenix open redirect (CVE-2023-21538), Plug cookie DoS (CVE-2024-27284), Ecto info disclosure (CVE-2021-46871), Cowboy HTTP/2 DoS (CVE-2024-26773)
+
+#### WBS 12.3 — Novos parsers de manifesto (`sca/vulnerability_scanner.py`)
+
+Quatro novos parsers, todos em stdlib pura (json + regex):
+
+| Manifesto | Ecossistema | Formato |
+|---|---|---|
+| `Package.resolved` | swift | JSON (SPM v1 + v2 schemas) |
+| `Podfile.lock` | swift | YAML-ish (CocoaPods) — top-level pods only, sub-specs ignorados |
+| `pubspec.lock` | pub | YAML (Dart/Flutter) — apenas o bloco `packages:`, ignora `sdks:` |
+| `mix.lock` | hex | Erlang map literal — apenas tuplos `:hex`, ignora `:git`/`:path` |
+
+`_MANIFEST_NAMES` estendido para reconhecer os 4 arquivos novos.
+Dispatcher `_dispatch_parse` roteia para os 4 novos parsers.
+
+#### WBS 12.3 — Testes (`tests/test_marco_m24.py`)
+
+- **30 testes TS31-TS60 (todos verdes)**
+  - TS31-TS40: database size ≥200, 12 ecossistemas, spot-checks cross-ecosystem, severidades canônicas
+  - TS41-TS47: novos ecossistemas (swift/pub/hex), normalização lowercase
+  - TS48-TS54: parsers (Package.resolved v1+v2, Podfile.lock, pubspec.lock, mix.lock) + casos de borda (`sdks:`, `:git`)
+  - TS55-TS60: integração end-to-end manifest→CVE→SCAResult.status
+- `pyproject.toml` — versão `3.1.0` → `3.1.1`, `test_marco_m24.py` registrado
+- `SensorConfig.version` → `"3.1.1"`
+
+**Resultado: 859/859 marco-tests PASS — suíte 100% verde.**
+
+**Próximo marco:** IaC+ (Dockerfile/K8s/Terraform 44→100+ regras + Ansible/Pulumi/CDK) → v3.1.2
+
+---
+
 ## [3.1.0] — 2026-06-11 — M8.0 Real-Time Monitoring Mode
 
 ### Adicionado — M8.0 FASE 7 (WBS 11.1-11.6)

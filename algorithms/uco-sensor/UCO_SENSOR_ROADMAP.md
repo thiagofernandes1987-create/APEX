@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
-> **APEX SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-11  
-> **Versão atual:** v3.1.0 (M8.0 Real-Time Monitoring entregue) · Próximo: FASE 8 — SCA+/IaC+/AFix+ → v3.1.x  
+> **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-16  
+> **Versão atual:** v3.1.1 (SCA+ FASE 8 entregue — 205 CVEs / 12 ecossistemas) · Próximo: IaC+ → v3.1.2  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -678,10 +678,10 @@ SPRINT 10 (Aug 10 – Aug 21):
 | 11.5 | M8.0.5 — Endpoints `POST /monitor/start`, `POST /monitor/stop`, `GET /monitor/status` ✅ | Criar | 1d | 14/07 | 14/07 | 11.4 | `api/server.py` | TM28-TM29 |
 | 11.6 | M8.0.6 — CHANGELOG [3.1.0] + 30 testes consolidados + fix test_TS30 (M7.1 stale) ✅ | Docs+Test | 1d | 15/07 | 15/07 | 11.5 | `tests/test_marco_m23.py`, `CHANGELOG.md` | 30 testes (829/829 suíte verde) |
 | **FASE 8 — EXPANSÕES (SCA, IaC, AutoFix)** | | | | | | | | |
-| 12.0 | **SCA+ — Expansão CVE Database para 200+** | Melhorar | 3d | 16/07 | 20/07 | 2.x | | |
-| 12.1 | SCA+.1 — pip expansion (+22 CVEs: Werkzeug, Celery, SQLAlchemy, FastAPI) | Melhorar | 1d | 16/07 | 16/07 | 2.9 | `sca/cve_database.py` | 4 testes |
-| 12.2 | SCA+.2 — npm expansion (+30 CVEs: express, jsonwebtoken, socket.io) | Melhorar | 1d | 17/07 | 17/07 | 12.1 | `sca/cve_database.py` | 4 testes |
-| 12.3 | SCA+.3 — maven/cargo/go/gem/nuget expansion + 3 novos ecossistemas | Melhorar | 1d | 20/07 | 20/07 | 12.2 | `sca/cve_database.py`, `sca/vulnerability_scanner.py` | 8 testes |
+| 12.0 | **SCA+ — Expansão CVE Database para 200+** ✅ entregue 2026-06-16 → v3.1.1 | Melhorar | 3d | 16/07 | 20/07 | 2.x | | |
+| 12.1 | SCA+.1 — pip expansion (+22 CVEs: Werkzeug, Celery, SQLAlchemy, FastAPI, urllib3, jinja2, ...) ✅ | Melhorar | 1d | 16/07 | 16/07 | 2.9 | `sca/cve_database.py` | TS31-TS34, TS40 |
+| 12.2 | SCA+.2 — npm/maven/cargo/go/gem/composer/nuget expansion ✅ | Melhorar | 1d | 17/07 | 17/07 | 12.1 | `sca/cve_database.py` | TS35-TS39 |
+| 12.3 | SCA+.3 — 3 novos ecossistemas (swift/pub/hex) + 4 parsers de manifesto ✅ | Melhorar | 1d | 20/07 | 20/07 | 12.2 | `sca/cve_database.py`, `sca/vulnerability_scanner.py`, `tests/test_marco_m24.py` | TS41-TS60 (20 testes) |
 | 13.0 | **IaC+ — Expansão para 100+ regras + 3 novos formatos** | Melhorar | 4d | 21/07 | 24/07 | — | | |
 | 13.1 | IaC+.1 — Dockerfile rules D011-D020 | Melhorar | 1d | 21/07 | 21/07 | — | `iac/iac_scanner.py` | 5 testes |
 | 13.2 | IaC+.2 — Kubernetes rules K013-K025 | Melhorar | 1d | 22/07 | 22/07 | 13.1 | `iac/iac_scanner.py` | 6 testes |
