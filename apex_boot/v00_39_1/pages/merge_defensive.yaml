@@ -1,0 +1,53 @@
+merge_defensive:
+  executor: SANDBOX_CODE
+  version: v00.32.1
+  opp: OPP-MAS-04
+  tier: 2
+  status: ADOPTED
+  purpose: 'Garantir que a falha de um ou mais agentes especulativos nunca colapse a sessão. O merge isola
+    agentes corrompidos, merge com sobreviventes, e tem fallback semântico para o caso extremo.
+
+    '
+  why: 'O DIFF_PARALLEL_POT executando N agentes em paralelo: um único JSON malformado quebraria todo
+    o pipeline com KeyError/TypeError sem merge defensivo. PATCH_C4: entropy_weighted_merge() era dependência
+    fantasma no v4 — causaria NameError imediato. Agora está completamente definida.
+
+    '
+  description: 'Merge tolerante a falhas de snapshots de agentes especulativos. O QUE É: Validação de
+    schema → isolamento de corrompidos → merge ponderado por entropia. O QUE NÃO É: Merge semântico via
+    LLM — é matemática Python pura. COMO FUNCIONA: Para cada snapshot → validar schema obrigatório (agent_id,
+    status, snapshot) → CORRUPTED_STATE se inválido → entropy_weighted_merge() nos válidos.
+
+    '
+  what_if_fails: 'NÍVEL 1 (1-2 corrompidos): merge com sobreviventes. merge_quality = n_valid/n_total.
+    NÍVEL 2 (maioria corrompida): merge com sobreviventes + [PARALLEL_DEGRADED]. NÍVEL 3 (TODOS corrompidos):
+    MERGE_FAILED_USE_SEMANTIC_CRITIC. LLM recebe outputs crus e faz merge semanticamente. REGRA: O merge
+    NUNCA trava. Em último caso, LLM faz merge semântico.
+
+    '
+  inject_when: parallel_pot_executor.execute_parallel() completa
+  depends_on:
+  - parallel_pot_executor
+  entropy_weighted_merge:
+    algorithm: 'w_i = min_H / (H_i + ε) — pesos inversamente proporcionais à entropia. Agente mais convergente
+      (baixa entropia) pesa mais. Agente mais incerto (alta entropia) pesa menos.
+
+      '
+    why: 'Agente convergente com baixa entropia fornece informação mais densa. Agente divergente com alta
+      entropia está mais "perdido" — deve pesar menos.
+
+      '
+    merge_confidence: soma ponderada das confidences individuais
+    merge_hypotheses: union com deduplicação por label + média ponderada para duplicatas
+    merge_anchors: union simples — todas as âncoras usadas por qualquer agente
+  api:
+  - defensive_merge(snapshot_files) → dict{merged_state, merge_quality, corrupted_agents}
+  - entropy_weighted_merge(snapshots) → dict{confidence, hypotheses, anchors_used, entropy}
+  - validate_snapshot(snap) → tuple(bool, reason)
+  fmea:
+    rpn: 1
+    mode: Todos os agentes corrompidos
+    probability: 1
+    severity: 1
+    detection: 1
+    mitigation: MERGE_FAILED_USE_SEMANTIC_CRITIC — sessão nunca colapsa completamente

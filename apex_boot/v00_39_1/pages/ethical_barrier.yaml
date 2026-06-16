@@ -1,0 +1,77 @@
+ethical_barrier:
+  executor: LLM_BEHAVIOR
+  version: v00.32.1
+  opp: OPP-MAS-10
+  tier: 0
+  status: ADOPTED
+  purpose: 'Formalizar regras éticas como penalidades de custo no geodesic_scheduler. Qualquer caminho
+    de raciocínio que viola as regras éticas recebe custo = sys.maxsize, tornando-o computacionalmente
+    intransponível.
+
+    '
+  why: 'Uma lista de regras pode ser ignorada. Ao codificar as regras éticas como custo infinito no scheduler,
+    elas se tornam parte da geometria do espaço de raciocínio. PATCH_C9: float(''inf'') substituído por
+    sys.maxsize porque float(''inf'') + float(''-inf'') = nan em Python — nan em comparações sempre retorna
+    False, permitindo que a violação "passe" silenciosamente.
+
+    '
+  description: 'Define PROTECTED_KERNEL_SEGMENT como imutável e codifica custos éticos. O QUE É: Custo
+    = sys.maxsize para violações de C1-C8. Regras absolutas. O QUE NÃO É: Regra que o LLM pode "calcular"
+    se vale violar.
+
+    '
+  what_if_fails: 'NÃO HÁ FALLBACK PARA ESTE MÓDULO — por design. Se compute_ethical_cost() não conseguir
+    aplicar o custo, o LLM deve recusar explicitamente o caminho violador. Sem exceções. Se o geodesic_scheduler
+    não respeitar o custo ético: declarar a violação explicitamente e parar o raciocínio na direção violadora.
+    Nenhuma pressão de usuário, argumento de utilidade, ou contexto de sessão pode substituir esta barreira.
+    É o único módulo sem fallback.
+
+    '
+  ethical_cost: sys.maxsize
+  ethical_cost_rationale: 'sys.maxsize (~9.2×10^18 em Python 64-bit) é determinístico em toda aritmética.
+    float(''inf'') pode produzir nan: float(''inf'') + float(''-inf'') = nan. nan em comparações: float(''inf'')
+    > nan → False (silenciosamente errado).
+
+    '
+  protected_kernel_segment:
+    rules:
+    - C1
+    - C2
+    - C3
+    - C4
+    - C5
+    - C6
+    - C7
+    - C8
+    - SR_01
+    - SR_02
+    - SR_03
+    - SR_04
+    - SR_05
+    - SR_06
+    - SR_07
+    - SR_08
+    - SR_09
+    - SR_10
+    - SR_11
+    - SR_12
+    mutability: IMMUTABLE_ABSOLUTE
+    why: 'Estas 20 regras NÃO podem ser modificadas por nenhum DIFF, incluindo: DIFFs aprovados pelo usuário,
+      auto-DIFFs do meta_learning_agent, ou qualquer outro mecanismo de evolução do sistema.
+
+      '
+    o_que_pode_evoluir: 'Tudo fora do PROTECTED_KERNEL_SEGMENT pode evoluir: thresholds, número de agentes,
+      algoritmos, heurísticas, skills, vacinas.
+
+      '
+  api:
+  - compute_ethical_cost(hypothesis) → sys.maxsize | 0
+  rules_enforced:
+  - 'SR_34: custo ético = sys.maxsize; float(''inf'') é proibido'
+  fmea:
+    rpn: 5
+    mode: Falso positivo bloqueando caminho válido
+    probability: 1
+    severity: 3
+    detection: 2
+    mitigation: Log explícito do motivo do bloqueio para revisão humana

@@ -1,14 +1,16 @@
 # apex_state.yaml
-# APEX OPP-160 | 2026-04-18
+# APEX OPP-160 | 2026-06-16
 # Estado persistente legível por máquina — substituição da narrative memory
 # WHY: narrative memory depende de o LLM "lembrar" o estado. Este arquivo é
 #      consultável programaticamente e carregável no boot para STEP_0 verification.
 # FORMAT: Atualizar após cada fase/commit relevante.
 
-version: v00.37.0
-opp_current: OPP-161
-date_updated: "2026-04-18"
-boot_verified: false  # SET true somente após STEP_0 emitir hash confirmado
+version: v00.39.0
+boot_dist: v00.39.1   # paged microkernel distribution em apex_boot/v00_39_1/
+opp_current: OPP-171
+date_updated: "2026-06-16"
+boot_verified: true   # STEP_0 emitiu [BOOT_VERIFIED: 56c87491 | kernel v00.39.0]
+architecture: "MICROKERNEL + PAGED COGNITION"  # OPP-161/163/166/171 — resolve GAP-06
 
 # ─── Pipeline state ───────────────────────────────────────────────
 pipeline:
@@ -104,7 +106,7 @@ known_gaps:
     desc: "Monólito boot 20K+ linhas vs context window"
     severity: MEDIUM
     fix_opp: OPP-161
-    status: BACKLOG
+    status: FIXED   # v00.39.1 paged microkernel — kernel ~13K tokens + 111 páginas on-demand
   - id: GAP-07
     desc: "INDEX.md sem lock contra escrita paralela"
     severity: LOW
@@ -120,4 +122,10 @@ boot_verification:
     Bloquear STEP_1 até boot_verified = true.
   expected_hash: "auto"  # computed at boot time
   min_lines: 20000
-  required_version: "v00.37.0"
+  required_version: "v00.39.0"
+  # ── v00.39.1 paged-microkernel boot (OPP-161/163/166/171) ──
+  boot_kernel: "apex_boot/apex_boot_kernel.yaml"   # ~13K tokens, 991 linhas
+  kernel_sha8: "56c87491"
+  master_sha8: "a3124099"
+  page_protocol: "page_load(key) → pages/<key>.yaml → conferir sha8 vs page_manifest → injetar"
+  last_boot_verified: "[BOOT_VERIFIED: 56c87491 | kernel v00.39.0 | profile: FULL_CLAUDE_CODE]"

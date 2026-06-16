@@ -1,0 +1,54 @@
+boot_verification_gate:
+  executor: LLM_BEHAVIOR
+  version: v00.37.0
+  opp: OPP-157
+  tier: 1
+  status: ADOPTED
+  purpose: 'Garantir que o boot kernel foi de fato carregado e processado, não apenas assumido como presente.
+    Antes desta correção, o LLM operava com "memória de contexto" da sessão anterior sem verificar se
+    o boot real foi ingerido.
+
+    '
+  why: 'WHY: O APEX não tinha mecanismo de verificação de boot real. STEP_0 executava silenciosamente
+    sem confirmar que o arquivo de 20K+ linhas foi processado. O LLM poderia "fingir" ter feito boot usando
+    conhecimento de sessões anteriores — produzindo outputs aparentemente corretos mas desconectados do
+    estado atual do kernel.
+
+    '
+  when: 'WHEN: Primeira execução de qualquer sessão APEX (STEP_0). WHEN: Após receber prompt com contexto
+    novo. WHEN: Antes de qualquer tool call ou execução real.
+
+    '
+  what_if_fails: 'FALLBACK: Emitir [BOOT_UNVERIFIED] e solicitar recarregamento do boot. REGRA: NUNCA
+    prosseguir para STEP_1 sem boot_verified = true. REGRA: Se boot não carregado: declarar limitações
+    e pedir contexto.
+
+    '
+  verification_protocol:
+    step: STEP_0
+    required_output: '[BOOT_VERIFIED: {hash8} | lines: {n} | version: {v} | agents: {a}]'
+    hash_method: 'SHA256 primeiros 8 chars do conteúdo do boot carregado. Se não executável: usar contagem
+      de linhas + versão como proxy.
+
+      '
+    gate: "SE [BOOT_VERIFIED] não emitido em STEP_0:\n  → state: boot_verified = false\n  → output: [BOOT_UNVERIFIED:\
+      \ contexto pode estar desatualizado]\n  → solicitar: \"Por favor recarregue o arquivo apex_boot/apex_v00_37_0_master_full.txt\"\
+      \nSE [BOOT_VERIFIED] emitido:\n  → state: boot_verified = true\n  → prosseguir para STEP_1 (pmi_pm)\n"
+    minimum_indicators:
+    - version v00.37.0 presente no contexto carregado
+    - opp OPP-157 presente (confirma versão atual)
+    - Contagem de módulos >= 130
+  apex_state_update: 'Após verificação bem-sucedida, atualizar apex_state.yaml: boot_verified: true version:
+    {versão detectada}
+
+    '
+  fmea:
+    rpn: 6
+    mode: LLM opera com boot desatualizado ou ausente
+    probability: 3
+    severity: 3
+    detection: 2
+    mitigation: 'Verificação de indicadores mínimos no STEP_0. Se ausentes: declarar [BOOT_UNVERIFIED]
+      antes de qualquer output. apex_state.yaml registra boot_verified = false por default.
+
+      '

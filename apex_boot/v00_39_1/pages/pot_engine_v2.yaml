@@ -1,0 +1,104 @@
+pot_engine_v2:
+  version: v00.20.2
+  tier: 1
+  replaces: pot_engine_v00.20.0
+  description: 'Motor de Program of Thought com warmup preditivo (FIX-7). Implementação concreta em Python
+    — substitui a spec abstrata do v00.20.0. Resolve o gap estrutural n=29→46 via separação WARMUP → PRODUÇÃO.
+
+    '
+  breaking_changes:
+    BC-01: 'SimState requer V_current e V_drift no estado inicial. Migração obrigatória: usar build_pipeline()
+      ou Thresholds.from_state0().
+
+      '
+    BC-02: 'Thresholds derivados de from_state0(state0) — não mais constantes globais. x_min = max(state0.x
+      * 0.001, 1e-6); y_min = max(state0.y * 0.001, 1e-6)
+
+      '
+    BC-03: 'compile_pipeline() aceita warmup_traj opcional. Sem warmup_traj: fallback x=50,y=25 — perde
+      DELTA_ERR adaptativo.
+
+      '
+  components:
+    SimState:
+      role: Contrato de estado tipado com serialização to_dict/from_dict
+      fields:
+      - n
+      - x
+      - y
+      - V0
+      - V_current
+      - V_drift
+      - epsilon
+      - alpha
+      - beta
+      - delta
+      - gamma
+      - dt
+      patch_A: 'from_dict() blindado: filtra apenas __dataclass_fields__ conhecidos. Ignora campos extras
+        silenciosamente — sem TypeError.
+
+        '
+      sr_compliance:
+      - SR_03
+      - SR_07
+    Thresholds:
+      role: FMEA guards derivados do estado inicial via from_state0()
+      fields:
+      - eps_block_stop=0.20
+      - eps_global_warn=0.30
+      - V_drift_stop=15.0
+      - x_min
+      - y_min
+      sr_compliance:
+      - SR_07
+    PoTBlockCompiler:
+      role: Gerador de PoT programs com DELTA_ERR adaptativo por bloco
+      key_method: compile_block_fn(blk, x_est, y_est)
+      delta_err_source: GeometryEstimator.delta_err() (passo duplo — FIX-7b)
+      fmea_guards_emitted:
+      - x ≤ X_MIN → COLLAPSE
+      - y ≤ Y_MIN → COLLAPSE
+      - V_drift ≥ 15% → ESCALATE
+      - n ≠ n_start → ESCALATE
+      - eps_blk ≥ 0.20 → ESCALATE dentro do loop (FIX-2/5)
+      sr_compliance:
+      - SR_07
+      - SR_09
+    FractalDecomposer:
+      role: 'Decomposição fractal: uniforme (decompose) + adaptativa (decompose_adaptive)'
+      constants:
+        MIN_SIZE: 5
+        MAX_SIZE: 30
+        DEFAULT: 30
+      key_methods:
+        decompose: Blocos uniformes de tamanho fixo
+        decompose_adaptive: FIX-7 — tamanhos pré-calculados via GeometryEstimator.optimal_block_size()
+        redecompose: FIX-3 — redecompõe a partir do n exato de falha
+  config:
+    max_pot_steps: 30
+    max_iter_per_loop: 30
+    delegation_above_steps: 30
+    fmea_guard_position: STEP_0
+    confidence_cap_on_guard_violation: 45
+    subprocess_gate_limit: 5
+    step_types:
+      FMEA_GUARD: assert condição — falha bloqueia execução
+      INIT: inicializar variáveis e estado
+      COMPUTE: operação matemática ou lógica
+      RECALL: buscar Knowledge Model ou anchor
+      INVOKE_SKILL: invocar outra Specialized Skill como sub-rotina
+      BRANCH: condicional — if/else no trace
+      LOOP: iteração controlada — max_iter obrigatório
+      EMIT: emitir evento ou hipótese
+      OUTPUT: resultado final com confidence
+  qa_evidence:
+    RK4_N200: COMPLETE | 200/200 pts | V_drift=0.000002% | gap=0 ✓
+    RK4_N500: COMPLETE | 500/500 pts | V_drift=0.000003% | gap=0 ✓
+  outputs:
+  - pot_execution_request
+  dependencies:
+  - MODULE_skills
+  - MODULE_knowledge
+  - MODULE_geometry_estimator
+  inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]

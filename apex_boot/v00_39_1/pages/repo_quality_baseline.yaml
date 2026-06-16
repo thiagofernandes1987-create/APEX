@@ -1,0 +1,106 @@
+repo_quality_baseline:
+  executor: LLM_BEHAVIOR
+  version: v00.37.0
+  opp: OPP-139
+  tier: 1
+  status: ADOPTED
+  purpose: 'Estabelecer baseline de qualidade do repositório APEX pós-UCO-debug-2026-04-11. Documentar
+    que skills status CANDIDATE não requerem executor por design, mas precisam de executor ao serem promovidas
+    para ADOPTED. Mapear domínio ''engineering'' (raiz) para o boot. Documentar gaps de agentes e INDEX.md.
+
+    '
+  why: 'WHY: UCO do repo revelou 79% das skills sem ''executor'' — isso é ESPERADO para CANDIDATE skills
+    (formato de ingestão APEX v00.33.0). Porém 19 AGENT.md estão sem campos obrigatórios. INDEX.md usa
+    path-based indexing (não skill_id fields). Domínio ''engineering'' existe no repo mas estava ausente
+    do domain_map do boot. Precisamos documentar o estado real para que o LLM não sintetize skills do
+    domínio engineering quando existem ~487 skills reais no repo.
+
+    '
+  what_if_fails: 'FALLBACK: Se skill CANDIDATE não tem executor e é solicitada via skill_resolution_chain:
+    usar executor: LLM_BEHAVIOR como default. Documentar como [CANDIDATE_SKILL: executor inferred from
+    skill_resolution_priority]. Não bloquear execução.
+
+    '
+  inject_when: STEP_0 durante skill_resolution_chain para skills CANDIDATE
+  depends_on:
+  - skill_resolution_priority
+  - forgeskills_catalog_boot
+  - apex_superrepo_v2
+  uco_debug_findings_2026_04_11:
+    boot_file:
+      bugs_fixed:
+      - 'BUG-1: skill_resolution_priority duplicado removido (204 linhas)'
+      - 'BUG-2: diff_ecosystem_v031 renomeado para diff_ecosystem_v031_legacy'
+      - 'BUG-3: qa_compliance_v031 renomeado para qa_compliance_v031_initial'
+      - 'FIX-A: apex_self_evolution_protocol.what_if_fails adicionado'
+      false_positives_confirmed:
+      - 'Âncoras {type: são JSON Schema inline — não âncoras reais'
+      - Ghost deps são sub-keys ou libs Python — não módulos faltantes
+      - Steps STEP_2/4/5/6/7 sem inject_when é OK — pipeline usa steps não-sequenciais
+      health_score_real: 72
+    repo:
+      skill_executor_absence_is_by_design: 'Skills com status CANDIDATE (79% do repo) não têm executor
+        porque foram ingeridas via OPP-133 com formato mínimo de ingestão. O executor será adicionado
+        quando a skill for promovida para ADOPTED via skill_forge_review.
+
+        '
+      default_executor_for_candidate: LLM_BEHAVIOR (inferido pelo skill_resolution_chain)
+      skill_ids_in_index: 'INDEX.md usa formato path-based (path: skills/domain/skill-name/SKILL.md) não
+        skill_id fields. A busca por skill_id usa APEX_SKILL_REGISTRY em sessão, não o INDEX.md diretamente.
+        O INDEX.md é para navegação humana.
+
+        '
+      agents_gaps: '19 AGENT.md sem campos obrigatórios. Agents anchor_destroyer, architect, bayesian_curator
+        têm apenas YAML header. Community agents têm description mas faltam tier, executor, capabilities,
+        input_schema, output_schema. Pendente: OPP-140 para normalizar agentes via agent_forge.
+
+        '
+  engineering_domain_mapping:
+    note: 'Domínio ''engineering'' (raiz) existe no repo com 487 skills mas estava ausente do domain_map
+      do boot. Mapeado abaixo.
+
+      '
+    domain: engineering
+    repo_path: skills/engineering/
+    skill_count: 487
+    sub_domains:
+    - engineering_frontend
+    - engineering_backend
+    - engineering_api
+    - engineering_cli
+    - engineering_cloud_aws
+    - engineering_cloud_azure
+    - engineering_cloud_gcp
+    - engineering_database
+    - engineering_devops
+    - engineering_git
+    - engineering_mobile
+    - engineering_security
+    - engineering_testing
+    - engineering_agentops
+    note_on_subdirs: 'O repo tem ''engineering/'' como raiz com subpastas por tecnologia. As skills engineering_*
+      do boot mapeiam para engineering/cloud/aws/, etc. O resolver deve tentar: engineering/{sub}/ antes
+      de engineering_{sub}/.
+
+      '
+  candidate_skill_promotion_criteria:
+    from_CANDIDATE_to_ADOPTED:
+    - 'Adicionar executor: LLM_BEHAVIOR (mínimo)'
+    - 'Adicionar tier: 1 (mínimo)'
+    - Adicionar what_if_fails mínimo
+    - Adicionar input_schema e output_schema (pode ser basic)
+    - 'Status: CANDIDATE → ADOPTED'
+    - 'Registrar OPP com diff_type: SKILL_PROMOTION'
+    batch_promotion_threshold: 'Skills com ≥ 5 usos em sessão passam por promoção automática via dynamic_skill_forge.
+
+      '
+  fmea:
+    rpn: 4
+    mode: LLM sintetiza skill engineering que já existe no repo (487 skills)
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: 'engineering_domain_mapping documenta path correto. skill_resolution_chain priority_1
+      busca no repo antes de sintetizar.
+
+      '

@@ -1,0 +1,61 @@
+community_validation_protocol:
+  executor: HYBRID
+  version: v00.39.0
+  opp: OPP-170
+  tier: 1
+  status: TESTING
+  purpose: 'Ciclo de validação comunitária para artefatos do ecossistema (skills, agents, DIFFs): telemetria
+    de fitness por uso real, lifecycle com promoção baseada em evidência, e export de fitness reports
+    para o superrepo — transformando o marketplace de catálogo estático em ecossistema evolutivo com seleção
+    natural mensurada.
+
+    '
+  why: 'WHY: o superrepo tem 2.752+ skills e 33 community agents — curados por ingestão (SkillQualityBar
+    OPP-94 checa FORMA), mas nada mede DESEMPENHO em uso real. Skill bem formatada pode ser inútil; skill
+    feia pode ser ouro. Sem telemetria, a curadoria é estética. WHY EXPORT: o fitness acumulado localmente
+    vale para a comunidade — publicar reports no superrepo cria o dado que futuros usuários (e futuras
+    sessões APEX) usam para escolher: voto por uso, não por opinião. WHY LIFECYCLE COM QUARENTENA: artefato
+    externo novo é risco (injection, qualidade) — entra observado, promove por evidência, nunca por confiança.
+
+    '
+  when: 'WHEN telemetria: pós-uso de qualquer skill/agent externo (STEP_13). WHEN promoção: STEP_14 (consolidação
+    OPP-168) avalia candidatos. WHEN export: sob comando do usuário (nunca automático — privacidade).
+
+    '
+  description: "O_QUE_É — LIFECYCLE: QUARANTINE → artefato recém-resolvido do tier_3 (OPP-165): roda com\n\
+    \  [QUARANTINED_ARTIFACT], confidence_cap 70, AST scan obrigatório.\nTESTING → sobreviveu 2 usos sem\
+    \ violação: telemetria ativa. COMMUNITY_VALIDATED → fitness local: uses>=5 AND success_rate>=0.8\n\
+    \  AND rollbacks=0 (mesma filosofia do SR_35 para vacinas).\nADOPTED → validado + aprovação USER_EXPLICIT\
+    \ → entra no\n  skill_provenance permanente com pin de versão.\nDEPRECATED → success_rate < 0.5 em\
+    \ 5+ usos OU [SKILL_DRIFT] não\n  re-auditado → bloqueado até revisão.\nO_QUE_NÃO_É: sistema de reputação\
+    \ social — é seleção por evidência de execução. Stars/forks do GitHub são sinal fraco admissível apenas\
+    \ como desempate, nunca como critério de promoção. COMO_FUNCIONA A TELEMETRIA (SANDBOX, SQLite tabela\
+    \ artifact_fitness): {artifact_id, kind, source_url, pin_sha, uses, successes, failures,\n rollbacks,\
+    \ avg_uco_score, last_session, lifecycle_state}\n— sucesso/falha definido pelo resultado do Error\
+    \ Evolution Loop (OPP-MAS-03) e do verification_gate, não por auto-avaliação. COMO_FUNCIONA O EXPORT\
+    \ (sob comando): gerar FITNESS_REPORT.yaml {artifact, pin, n_uses, success_rate, contexts: [domínios],\
+    \ apex_version} → commit no superrepo em community/fitness/ → futuros boots leem reports agregados\
+    \ como prior bayesiano na escolha de skills (Beta α=successes+1, β=failures+1 — conecta direto ao\
+    \ Ω_Bayes existente).\n"
+  what_if_fails: 'FALLBACK telemetria: SQLite indisponível → registrar no snapshot delta (degradado mas
+    não perdido). FALLBACK export: sem acesso git → gerar report local e instruir commit manual. NUNCA:
+    promover artefato sem evidência registrada; exportar sem comando do usuário.
+
+    '
+  inject_when: pós-uso de artefato externo (STEP_13) + STEP_14 (promoção)
+  depends_on:
+  - online_skill_library
+  - dynamic_skill_forge
+  - sqlite_snapshot_store
+  - error_evolution_loop
+  - snapshot_memory_hierarchy
+  fmea:
+    rpn: 18
+    mode: fitness inflado por tarefas triviais promove artefato fraco
+    probability: 3
+    severity: 3
+    detection: 2
+    mitigation: 'Telemetria registra modo cognitivo do uso; promoção exige >=2 usos em DEEP+ — sucesso
+      em EXPRESS não conta para COMMUNITY_VALIDATED.
+
+      '

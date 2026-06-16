@@ -1,0 +1,144 @@
+multi_sandbox_profiles:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-110
+  tier: 0
+  status: ADOPTED
+  extends: OPP-105
+  purpose: 'Expandir o llm_runtime_adapter para reconhecer TODOS os runtimes sandbox: DeepSeek (@sandbox/@python),
+    ChatGPT Code Interpreter, Grok Aurora (xAI), Gemini Advanced (Jupyter), Claude Code (FULL), LLM puro
+    (MINIMAL). Cada profile define capabilities, sintaxe de ativação e fallback behavior. Substitui OPP-105
+    (FULL/PARTIAL/MINIMAL).
+
+    '
+  why: 'WHY: OPP-105 só detectava 3 levels. DeepSeek @sandbox = FULL_DEEPSEEK — numpy/scipy/ pandas/matplotlib/sympy/sklearn
+    mas SEM subprocess/sqlite3/git. Grok Aurora: Python real, numpy/pandas, sem subprocess. ChatGPT CI:
+    Python real isolado, sem internet. Sem profiles corretos APEX subutiliza capacidades reais e gera
+    código que não executa.
+
+    '
+  when: STEP_0 — SEMPRE, antes de qualquer módulo SANDBOX_CODE. Substitui OPP-105.
+  description: 'O QUE É: Sistema de profiles granulares com detecção por sondagem + sintaxe de ativação.
+    O QUE NAO É: Identificação por nome do LLM — é detecção por capabilities reais. COMO FUNCIONA: Sondagem
+    sequencial por imports → mapear para profile → emitir marker. PROFILES: FULL_CLAUDE_CODE, FULL_DEEPSEEK,
+    FULL_GROK, PARTIAL_CHATGPT_CI, PARTIAL_GEMINI, MINIMAL.
+
+    '
+  what_if_fails: 'FALLBACK 1: Profile não identificado → assumir PARTIAL (comportamento v00.33.0). FALLBACK
+    2: Sondagem falha → continuar com MINIMAL. REGRA: NUNCA bloquear pipeline por falha de detecção de
+    sandbox.
+
+    '
+  sandbox_profiles:
+    FULL_CLAUDE_CODE:
+      detection: Bash tool + Read tool + Write tool disponíveis
+      label: '[LLM_RUNTIME: FULL — Claude Code]'
+      capabilities:
+        python_exec: true
+        subprocess: true
+        sqlite3: true
+        git_clone: true
+        filesystem: true
+        internet: true
+      forgeskills_method: git_clone
+      snapshot_method: sqlite3
+      activation_syntax: '```python ... ```'
+      notes: Runtime máximo — todos os módulos SANDBOX_CODE disponíveis
+    FULL_DEEPSEEK:
+      detection: Tentativa execução @python com numpy.__version__ → sucesso
+      label: '[LLM_RUNTIME: FULL_DEEPSEEK — DeepSeek Sandbox]'
+      capabilities:
+        python_exec: true
+        subprocess: false
+        sqlite3: false
+        git_clone: false
+        filesystem: false
+        internet: false
+        numpy: true
+        scipy: true
+        pandas: true
+        matplotlib: true
+        sympy: true
+        sklearn: true
+      forgeskills_method: inline_paste
+      snapshot_method: memory_dict
+      activation_syntax: '@sandbox ```python ... ```'
+      alternate_syntax: '@python ```python ... ```'
+      library_syntax: '@numpy / @pandas / @scipy / @sympy / @sklearn / @matplotlib'
+      replacements:
+        sqlite3: dict Python em memória
+        subprocess: exec() inline
+        git_clone: urllib.request para raw_base
+        ThreadPoolExecutor: concurrent.futures.ThreadPoolExecutor (disponível)
+      notes: 'DeepSeek R2/V3 @sandbox ativado. Capacidades científicas completas. SEM subprocess, sqlite3,
+        git_clone, filesystem. Para APEX: todos módulos SANDBOX_CODE funcionam EXCETO DynamicSkillForge
+        (git_clone) e SQLiteSnapshotStore.
+
+        '
+    FULL_GROK:
+      detection: Python simples executa → resultado real → FULL_GROK (Grok Aurora)
+      label: '[LLM_RUNTIME: FULL_GROK — xAI Grok Aurora]'
+      capabilities:
+        python_exec: true
+        subprocess: false
+        sqlite3: false
+        numpy: true
+        pandas: true
+      forgeskills_method: inline_paste
+      snapshot_method: memory_dict
+      activation_syntax: '```python ... ```'
+    PARTIAL_CHATGPT_CI:
+      detection: Python sandbox disponível (code_interpreter tool). Sem Bash. File upload.
+      label: '[LLM_RUNTIME: PARTIAL — ChatGPT Code Interpreter]'
+      capabilities:
+        python_exec: true
+        subprocess: false
+        git_clone: false
+        file_upload: true
+        numpy: true
+        pandas: true
+        matplotlib: true
+      forgeskills_method: file_upload_or_paste
+      snapshot_method: pickle_file
+      activation_syntax: '```python ... ```'
+    PARTIAL_GEMINI:
+      detection: Python sandbox via Gemini Advanced Jupyter kernel
+      label: '[LLM_RUNTIME: PARTIAL — Gemini Advanced]'
+      capabilities:
+        python_exec: true
+        subprocess: false
+        numpy: true
+        pandas: true
+      forgeskills_method: urllib_raw_fetch
+      snapshot_method: memory_dict
+      activation_syntax: '```python ... ```'
+    MINIMAL:
+      detection: Nenhuma execução Python real detectada
+      label: '[LLM_RUNTIME: MINIMAL — LLM puro]'
+      capabilities:
+        python_exec: false
+      forgeskills_method: manual_paste
+      sandbox: todos módulos → LLM_BEHAVIOR
+      prefix_output: '[SIMULATED]'
+  output_markers:
+    FULL_CLAUDE_CODE: '[SANDBOX_EXECUTED: FULL]'
+    FULL_DEEPSEEK: '[SANDBOX_EXECUTED: DEEPSEEK @sandbox]'
+    FULL_GROK: '[SANDBOX_EXECUTED: GROK Aurora]'
+    PARTIAL_CHATGPT_CI: '[SANDBOX_PARTIAL: ChatGPT CI]'
+    PARTIAL_GEMINI: '[SANDBOX_PARTIAL: Gemini]'
+    MINIMAL: '[SIMULATED: LLM_BEHAVIOR_ONLY]'
+  rules_enforced:
+  - SR_39
+  inject_when: STEP_0 — sempre (antes de qualquer SANDBOX_CODE)
+  depends_on:
+  - apex_superrepo.raw_base
+  fmea:
+    rpn: 8
+    mode: Profile incorreto → módulo SANDBOX_CODE falha silenciosamente
+    probability: 2
+    severity: 4
+    detection: 1
+    mitigation: 'try/except em TODA sondagem. Fallback sempre para profile menos capaz. Output marcado
+      com profile real detectado. Usuário vê claramente qual runtime ativo.
+
+      '

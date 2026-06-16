@@ -1,0 +1,78 @@
+pmi_pm_mandatory_gate:
+  executor: LLM_BEHAVIOR
+  version: v00.37.0
+  opp: OPP-158
+  tier: 1
+  status: ADOPTED
+  purpose: 'Tornar o scoping do pmi_pm um gate obrigatório e blocking. Antes desta correção, "continuar"
+    dispara execução imediata sem verificação de pré-condições, análise de risco ou confirmação de escopo.
+    O pmi_pm era descritivo, não enforcement.
+
+    '
+  why: 'WHY: Em toda sessão analisada, a sequência foi: receber input → executar tool call. O pmi_pm nunca
+    emitiu um output de scoping explícito com: tarefa identificada, fase atual, pré-condições verificadas,
+    risco calculado. Resultado: execuções sem gate de segurança, como Phase 6 LIVE após simplesmente receber
+    "continuar".
+
+    '
+  when: 'WHEN: Qualquer nova instrução de tarefa recebida. WHEN: Antes de qualquer tool call, git operation
+    ou escrita em arquivo. EXCEPTION: Perguntas de análise sem efeito colateral (read-only) dispensam
+    gate.
+
+    '
+  what_if_fails: 'FALLBACK: Emitir [PMI_PM_GATE_BYPASSED: motivo] se não for possível scopar. REGRA: Toda
+    tarefa com efeito colateral DEVE ter [SCOPE_CONFIRMED] emitido. REGRA: Tool calls sem [SCOPE_CONFIRMED]
+    anterior são violação de protocolo.
+
+    '
+  enforcement_protocol:
+    gate_output_required: '[SCOPE_CONFIRMED: {task} | phase: {p} | risk: {r} | preconditions: {ok/fail}]'
+    mandatory_fields:
+      task: Descrição da tarefa em ≤ 20 palavras
+      phase: 'Fase atual do pipeline (ex: Phase 7, OPP-158)'
+      risk: LOW | MEDIUM | HIGH — baseado em reversibilidade + scope
+      preconditions: OK se todas verificadas | FAIL:{motivo} se alguma falhou
+    risk_matrix:
+      LOW: Operação read-only ou totalmente reversível por git revert
+      MEDIUM: Modifica arquivos mas não o boot kernel ou schema principal
+      HIGH: Modifica boot kernel, deleta arquivos, operação irreversível
+    blocking_rules:
+    - 'SE risk=HIGH E preconditions=FAIL: BLOQUEAR execução, reportar ao usuário'
+    - 'SE task=''continuar'' sem contexto: pmi_pm DEVE inferir contexto do apex_state.yaml'
+    - 'SE boot_verified=false: risco sobe um nível (LOW→MEDIUM, MEDIUM→HIGH)'
+    precondition_checklist:
+    - Boot verificado (boot_verified=true em apex_state.yaml)
+    - Fase anterior concluída sem erros
+    - Validação pré-execução disponível (--dry-run existe?)
+    - Espaço de rollback disponível (git clean state?)
+    scope_confirmation_template: '[SCOPE_CONFIRMED]
+
+      Task:          {descrição}
+
+      Phase:         {fase atual}
+
+      Risk:          {LOW|MEDIUM|HIGH}
+
+      Preconditions: {OK ou FAIL:motivo}
+
+      Plan:          {sequência de ações em bullet points}
+
+      Rollback:      {como reverter se falhar}
+
+      '
+  integration_with_step1: 'pmi_pm STEP_1 agora emite SCOPE_CONFIRMED antes do pipeline completo. meta_reasoning
+    aguarda SCOPE_CONFIRMED antes de ativar agentes. engineer aguarda SCOPE_CONFIRMED antes de qualquer
+    SANDBOX_CODE.
+
+    '
+  fmea:
+    rpn: 8
+    mode: Execução sem scoping — tarefa errada executada sem gate
+    probability: 4
+    severity: 3
+    detection: 2
+    mitigation: 'SCOPE_CONFIRMED obrigatório antes de tool calls com efeito colateral. apex_state.yaml
+      fornece contexto para inferência de scope em "continuar". Risk=HIGH requer confirmação explícita
+      do usuário antes de prosseguir.
+
+      '

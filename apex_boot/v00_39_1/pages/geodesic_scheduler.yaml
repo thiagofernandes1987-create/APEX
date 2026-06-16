@@ -1,0 +1,48 @@
+geodesic_scheduler:
+  executor: LLM_BEHAVIOR
+  version: v00.32.1
+  opp: OPP-MAS-B7
+  tier: 3
+  status: ADOPTED_PARTIAL
+  purpose: 'Otimizar a ordem de execução dos steps baseado em razão ΔH_cognitive/tokens_expected, permitindo
+    pular steps pouco informativos e focar em steps de alto valor.
+
+    '
+  why: 'Pipeline atual executa steps em ordem fixa. Para problemas onde o MCFE já aponta direção clara,
+    pular steps redundantes economiza tokens. Versão greedy (O(k)) captura 60-70% do valor do A* completo
+    com fração do custo. A* completo requer modelo preditivo de custo que não existe com precisão suficiente.
+
+    '
+  description: 'Scheduler greedy: escolher próximo step por max(ΔH/tokens). Look-ahead de 1 step para
+    evitar ótimos locais óbvios. Rollback automático se tokens > 115% do baseline. Custo ético = sys.maxsize
+    para qualquer step com violação ética.
+
+    '
+  what_if_fails: 'FALLBACK 1 — Caminho subótimo (tokens > 115%): rollback para ordem padrão. Declarar
+    [GEODESIC_ROLLBACK]. FALLBACK 2 — ΔH não computável: usar ordem fixa padrão. REGRA: Pipeline funciona
+    sem o scheduler. Ordem fixa é sempre fallback válido.
+
+    '
+  activation_condition: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+  algorithm:
+    type: greedy
+    metric: max(ΔH_cognitive / tokens_expected)
+    lookahead: 1
+    lookahead_rationale: 'O(2) em vez de O(k) como A*. Captura maioria dos casos de ótimo local sem o
+      custo computacional do A* completo.
+
+      '
+    rollback_condition: tokens_used > 115% tokens_baseline
+  ethical_cost_integration: Integrado com ethical_barrier.compute_ethical_cost()
+  api:
+  - evaluate_steps(remaining_steps, H_cognitive, token_budget) → ordered_step_plan
+  - compute_cost(step, current_state) → float | sys.maxsize
+  rules_enforced:
+  - 'SR_34: custo ético = sys.maxsize'
+  fmea:
+    rpn: 12
+    mode: Greedy escolhe ótimo local bloqueando caminho de maior retorno
+    probability: 3
+    severity: 2
+    detection: 2
+    mitigation: Look-ahead de 1 step + rollback se tokens > 115% baseline

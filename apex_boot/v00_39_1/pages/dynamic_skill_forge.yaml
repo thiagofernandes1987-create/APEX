@@ -1,0 +1,73 @@
+dynamic_skill_forge:
+  executor: SANDBOX_CODE
+  version: v00.32.1
+  opp: OPP-72
+  tier: 3
+  status: ADOPTED
+  purpose: 'Expandir a cobertura de domínios do APEX além dos anchors pré-definidos, carregando skills
+    externas de repositórios aprovados com verificação em múltiplas camadas de segurança.
+
+    '
+  why: 'O APEX não pode conhecer todos os domínios em tempo de design. git clone + importlib.util foi
+    escolhido sobre pip install porque: (a) permite inspecionar código ANTES de executar via AST scan;
+    (b) não instala em namespace global (sem conflito com libs do APEX); (c) é auditável e reversível.
+
+    '
+  description: 'Pipeline: git clone de allowlist → AST scan → schema validation → importlib → UCO gate.
+    O QUE É: Download seguro e verificado de código de repositórios aprovados. O QUE NÃO É: Download arbitrário
+    — apenas repositórios na allowlist. O QUE NÃO É: pip install global — importlib.util de diretório
+    temporário. COMO FUNCIONA: 5 camadas de segurança independentes — qualquer uma pode bloquear.
+
+    '
+  what_if_fails: 'FALLBACK — qualquer camada de segurança bloquear: REJECTED imediato. Log da camada que
+    bloqueou e motivo. Continuar sem a skill externa. REGRA: NUNCA tentar contornar qualquer camada de
+    segurança. REGRA: Em caso de REJECTED, o APEX usa skills internas disponíveis.
+
+    '
+  inject_when: skill_requested AND repo_url IN trusted_domains
+  depends_on:
+  - uco_quality_gate
+  - diff_ast_guard
+  - sqlite_snapshot_store
+  import_whitelist:
+    allowed:
+    - numpy, scipy, pandas, sympy, sklearn, matplotlib
+    - json, math, os.path, sys, datetime, collections, itertools, functools
+    - typing, dataclasses, abc, pathlib, hashlib
+    explicitly_forbidden:
+      subprocess:
+        removed_by: OPP-77
+        reason: 'Uma skill com subprocess pode executar comandos arbitrários, contornando TODAS as camadas
+          de segurança do APEX. Orquestração de subprocessos é responsabilidade exclusiva do APEX.
+
+          '
+      tempfile:
+        removed_by: OPP-77
+        reason: Desnecessário para skills de cálculo; evita acesso desnecessário ao filesystem.
+      sqlite3:
+        removed_by: OPP-77
+        reason: Dados persistentes são gerenciados exclusivamente pelo sqlite_snapshot_store.
+    forbidden_calls:
+    - exec
+    - eval
+    - __import__
+  security_pipeline:
+    1_url_validation: HTTPS only + allowlist check — rejeita HTTP e domínios não aprovados
+    2_git_clone: depth=1 (sem histórico) + timeout 30s + HTTPS apenas
+    3_ast_scan: Importações vs. whitelist + chamadas perigosas (exec/eval/__import__)
+    4_schema_validation: Função deve aceitar >= 1 parâmetro e retornar dict
+    5_uco_gate: UCO analyze() com thresholds do modo atual antes de registrar skill
+  api:
+  - load_skill(repo_url, skill_function, trusted_domains) → dict{status, function, metadata}
+  - _ast_security_scan(file_path) → dict{safe, violations, imports_found}
+  - _validate_skill_schema(file_path, function_name) → dict{valid, reason}
+  rules_enforced:
+  - 'SR_37: AST scan obrigatório antes de qualquer exec/importlib'
+  - 'DIFF_AST_GUARD (OPP-29): whitelist de imports'
+  fmea:
+    rpn: 8
+    mode: Import malicioso em skill clonada
+    probability: 2
+    severity: 4
+    detection: 1
+    mitigation: 5 camadas independentes; subprocess/tempfile/sqlite3 removidos (OPP-77)

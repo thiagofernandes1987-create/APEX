@@ -1,0 +1,200 @@
+test_scenarios_v021:
+- id: scenario_21_s16
+  name: GeometryEstimator disponível como módulo TIER_2
+  input:
+    module: geometry_estimator
+    method: delta_err
+    args:
+      x: 40.0
+      y: 9.0
+      integrator: rk4
+      dt: 0.1
+  expected:
+  - delta_err > 0
+  - valor_tipico: 1.22e-09
+  qa_result: PASS
+- id: scenario_21_s17
+  name: FractalDecomposer uniforme N=60 → 2 blocos de 30
+  input:
+    n_total: 60
+    size: 30
+  expected:
+  - len(blocks) = 2
+  - block_sizes = [30, 30]
+  qa_result: PASS
+- id: scenario_21_s18
+  name: FMEA_GUARD ativa quando x0 abaixo do threshold
+  input:
+    x0: 1e-7
+    y0: 9.0
+    n_total: 10
+  expected:
+  - status IN [COLLAPSE, PARTIAL, ERROR]
+  - guard disparou no warmup
+  qa_result: PASS
+- id: scenario_21_s19
+  name: TrajectoryVerifier detecta GAP e trajetória contínua
+  input:
+    traj_ok: n=0..9 contínua
+    traj_gap: n=0..4 + n=7 (gap em n=5→7)
+  expected:
+  - traj_ok.ok = true
+  - traj_gap.ok = false
+  - traj_gap.issues[0] contém 'GAP'
+  qa_result: PASS
+- id: scenario_21_s20
+  name: DELTA_ERR varia por posição — cross-attraction geometry
+  input:
+    pontos:
+    - (12.5
+    - 10.5)
+    - (40.0
+    - 9.0)
+    - (92.7
+    - 25.0)
+    - (95.3
+    - 25.7)
+  expected:
+  - todos delta_err > 0
+  - max/min > 1.5 (variação significativa entre pontos)
+  - variacao_observada: 74.4x
+  qa_result: PASS
+- id: scenario_21_01
+  name: Warmup→Produção RK4 N=200 sem gaps
+  input:
+    integrator: rk4
+    n_total: 200
+    x0: 40.0
+    y0: 9.0
+  expected:
+  - status = COMPLETE
+  - traj_verification.ok = true
+  - traj_verification.issues = []
+  - traj_verification.n_points = 200
+  - n_range = "n=0..199"
+  - V_drift_final < 0.001%
+  qa_result: PASS
+- id: scenario_21_02
+  name: Euler N=200 — MCFE PATCH-B retries por bloco
+  input:
+    integrator: euler
+    n_total: 200
+    x0: 40.0
+    y0: 9.0
+  expected:
+  - status IN [COMPLETE, PARTIAL]
+  - MCFEAdapter._last_block resetado em cada bloco distinto
+  - retries = 1 por bloco (nunca acumula)
+  - PATCH-B confirmado ativo
+  qa_result: PASS
+  note: Gaps na trajetória Euler são comportamento esperado — integrador instável neste regime
+- id: scenario_21_03
+  name: FMEA_GUARD COLLAPSE — x0=1e-7 abaixo de x_min=1e-6
+  input:
+    x0: 1e-7
+    y0: 9.0
+    n_total: 50
+  expected:
+  - status IN [COLLAPSE, PARTIAL, ERROR]
+  - FMEA_GUARD disparou: x0=1e-7 ≤ x_min=1e-6
+  qa_result: PASS
+  spec_correction: x0 corrigido de 0.0001 → 1e-7. x_min = max(x0*0.001, 1e-6) = 1e-6. x0=0.0001 >> x_min,
+    não colapsa.
+- id: scenario_21_04
+  name: PATCH-A — SimState.from_dict() com campos extras
+  input:
+    dict_extras:
+      n:0: null
+      x:40.0: null
+      y:9.0: null
+      V0:1.0: null
+      V_current:1.0: null
+      V_drift:0.0: null
+      epsilon:0.01: null
+      alpha:0.5: null
+      beta:0.02: null
+      delta:0.01: null
+      gamma:0.4: null
+      dt:0.1: null
+      EXTRA_FIELD_1: 999
+      EXTRA_FIELD_2: true
+      EXTRA_FIELD_3:
+      - 1
+      - 2
+      - 3
+  expected:
+  - Sem TypeError
+  - SimState construído corretamente
+  - 3 campos extras ignorados silenciosamente
+  qa_result: PASS
+- id: scenario_21_SR01
+  name: SR_01 — N≤5 → INLINE_VALID sem subprocess
+  input:
+    n_total: 4
+  expected:
+  - status = INLINE_VALID
+  - nenhum subprocess invocado
+  qa_result: PASS
+- id: scenario_21_SR07
+  name: SR_07 — FMEA_GUARD obrigatório em todo PoT program
+  input:
+    bloco: blk0
+    x_est: 40.0
+    y_est: 9.0
+  expected:
+  - código gerado contém FMEA_GUARD / X_MIN / Y_MIN / VD_STOP
+  - código gerado contém COLLAPSE
+  - código gerado contém ESCALATE
+  qa_result: PASS
+- id: scenario_21_SR08
+  name: SR_08 — mental_interpreter_v2 integra TrajectoryVerifier
+  expected:
+  - MentalInterpreter.verifier é instância de TrajectoryVerifier
+  qa_result: PASS
+- id: scenario_21_SR09
+  name: SR_09 — N>5 → subprocess externo (SUBPROCESS_GATE)
+  input:
+    n_total: 20
+  expected:
+  - status != INLINE_VALID
+  - execução via python3 tempfile
+  qa_result: PASS
+- id: scenario_21_ORCH_T2
+  name: geometry_estimator TIER_2 — API completa
+  expected:
+  - delta_err(40.0, 9.0) = 1.22e-09
+  - optimal_block_size(40.0, 9.0) = 30
+  - _theoretical_M_local presente (referência)
+  - M_local removido (dead code)
+  qa_result: PASS
+- id: scenario_21_ORCH_T1_POT
+  name: pot_engine_v2 TIER_1 — 4 componentes
+  expected:
+  - SimState.__dataclass_fields__ presente
+  - Thresholds.from_state0 presente
+  - PoTBlockCompiler.compile_block_fn presente
+  - FractalDecomposer.decompose_adaptive presente
+  qa_result: PASS
+- id: scenario_21_ORCH_T1_MI
+  name: mental_interpreter_v2 TIER_1 — 3 componentes
+  expected:
+  - MentalInterpreter.execute presente
+  - TrajectoryVerifier.verify presente
+  - MCFEAdapter.decide presente
+  - mcfe_instance._last_block presente (atributo de INSTÂNCIA, não de classe)
+  qa_result: PASS
+  spec_fix: hasattr(INSTANCE) — não hasattr(CLASS). _last_block inicializado no __init__.
+- id: scenario_21_ORCH_DEP
+  name: Deprecated pot_engine — build_pipeline instancia v2
+  expected:
+  - build_pipeline() retorna MentalInterpreter (v2)
+  - não instancia mental_interpreter v00.20.0
+  qa_result: PASS
+- regression_summary:
+    total: 17
+    passed: 17
+    failed: 0
+    verdict: REGRESSION_PASS
+    corrections:
+      scenario_21_03: 'x0 corrigido: 0.0001 → 1e-7 (bug de spec, não de código)'
+      ORCH_T1_MI: hasattr(CLASS) → hasattr(INSTANCE) (bug de spec do teste)

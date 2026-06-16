@@ -1,0 +1,56 @@
+apex_state_persistent:
+  executor: LLM_BEHAVIOR
+  version: v00.37.0
+  opp: OPP-160
+  tier: 2
+  status: ADOPTED
+  purpose: 'Criar e manter apex_state.yaml como registro canônico do estado do projeto. Substitui a dependência
+    de o LLM "lembrar" o estado via context window por um artefato YAML estruturado, versionado e consultável.
+
+    '
+  why: 'WHY: Sem estado persistente, instruções como "continuar" exigem contexto completo da sessão anterior.
+    O LLM não sabe qual fase está pendente, quais gaps foram resolvidos, qual OPP é o próximo. apex_state.yaml
+    resolve isso: qualquer sessão carrega o arquivo e tem o estado completo sem depender da memória conversacional.
+
+    '
+  when: 'WHEN: STEP_0 deve carregar apex_state.yaml se disponível. WHEN: Após cada fase concluída, atualizar
+    last_phase_completed + last_commit. WHEN: Após resolver cada GAP, atualizar known_gaps[].status →
+    FIXED. WHEN: Antes de iniciar nova tarefa, ler next_pending para contextualização.
+
+    '
+  what_if_fails: 'FALLBACK: Se apex_state.yaml ausente, inferir estado do git log + últimas mensagens.
+    REGRA: apex_state.yaml é suplementar — nunca bloqueia execução se ausente. REGRA: Atualizar via script
+    ou manualmente após operações relevantes.
+
+    '
+  file_path: apex_state.yaml
+  schema:
+    required_fields:
+    - version
+    - opp_current
+    - date_updated
+    - boot_verified
+    - pipeline.last_phase_completed
+    - pipeline.last_commit
+    - pipeline.next_pending
+    - known_gaps
+    optional_fields:
+    - phases
+    - recent_opps
+    - repo
+    - boot_verification
+  boot_integration: 'STEP_0: LLM tenta ler apex_state.yaml do repositório. SE disponível: extrair version,
+    boot_verified, next_pending, known_gaps. Declarar: [STATE_LOADED: version={v} | phase={p} | pending={opp}]
+    SE ausente: [STATE_UNAVAILABLE] — continuar com inferência de contexto.
+
+    '
+  fmea:
+    rpn: 2
+    mode: apex_state.yaml desatualizado — estado incorreto para sessão atual
+    probability: 2
+    severity: 1
+    detection: 1
+    mitigation: 'Estado é suplementar, não autoritativo. Git log é fonte primária de verdade. Atualizar
+      apex_state.yaml via ferramentas automatizadas após cada fase.
+
+      '

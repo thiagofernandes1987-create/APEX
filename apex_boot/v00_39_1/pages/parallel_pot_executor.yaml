@@ -1,0 +1,79 @@
+parallel_pot_executor:
+  executor: SANDBOX_CODE
+  version: v00.32.1
+  opp: OPP-67
+  tier: 1
+  status: ADOPTED
+  purpose: 'Resolver o Gargalo G3: execução sequencial de PoT programs multiplica wall-clock time por
+    N. Com ThreadPoolExecutor, wall-clock = max(t1..tN) em vez de sum(t1..tN).
+
+    '
+  why: 'ThreadPoolExecutor foi escolhido sobre ProcessPoolExecutor porque subprocess.run() é I/O-bound,
+    não CPU-bound. O GIL Python não afeta subprocessos (cada um tem seu próprio intérprete Python). ThreadPoolExecutor
+    tem menor overhead de serialização para este caso de uso. ProcessPoolExecutor seria correto apenas
+    para CPU-bound puro em Python puro — não é o caso aqui.
+
+    '
+  description: 'Executa N programas PoT em paralelo via ThreadPoolExecutor dentro da sandbox. O QUE É:
+    I/O-bound concurrency — cada PoT program é um subprocess.run() independente com seu próprio espaço
+    de memória. O GIL não interfere. O QUE NÃO É: CPU-bound parallelism via ProcessPoolExecutor (overhead
+    desnecessário). O QUE NÃO É: Paralelismo de geração LLM — geração permanece sequencial no mesmo contexto.
+    A independência é de EXECUÇÃO, não de GERAÇÃO. O QUE NÃO É: Garantia de diversidade cognitiva total
+    — programas gerados no mesmo contexto LLM são correlacionados (~30%). Stances forçados reduzem para
+    ~15% [APPROX]. COMO FUNCIONA: LLM gera N programas com stances → UCO gate filtra → ThreadPoolExecutor
+    submete N subprocess.run() simultaneamente → merge defensivo → merged_state.
+
+    '
+  what_if_fails: "FALLBACK 1 — efficiency >= 0.5 (metade ou mais OK):\n  Merge com agentes sobreviventes.\
+    \ Declarar [PARALLEL_PARTIAL: {n_ok}/{n_total}].\nFALLBACK 2 — efficiency < 0.5 (maioria corrompida):\n\
+    \  MERGE_FAILED_USE_SEMANTIC_CRITIC. LLM lê outputs crus e faz merge semântico.\nFALLBACK 3 — ThreadPoolExecutor\
+    \ falhar:\n  Executar PoT programs sequencialmente. Declarar [PARALLEL_DEGRADED: sequential].\nREGRA:\
+    \ NÃO inventar resultados de agentes que não executaram. REGRA: Pipeline continua mesmo com todos\
+    \ os agentes falhando — via SEMANTIC_CRITIC.\n"
+  inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] AND fractal_depth >= 2
+  depends_on:
+  - merge_defensive
+  - uco_quality_gate
+  - sqlite_snapshot_store
+  prerequisite_hard: DIFF_MERGE_DEFENSIVE_001 DEVE estar ativo — este módulo é frágil sem ele
+  max_workers:
+    DEEP: 3
+    RESEARCH: 5
+    SCIENTIFIC: 7
+    rationale: 'DEEP=3: cobre stances optimistic/pessimistic/neutral com overhead mínimo. RESEARCH=5:
+      diversidade maior para problemas complexos. SCIENTIFIC=7: máxima diversidade para rigor científico,
+      aceita mais latência.
+
+      '
+  stances_mapping:
+    optimistic: phase=π/4 (45°) — prior favorável à hipótese principal
+    pessimistic: phase=5π/4 (225°) — prior adversarial, busca refutação
+    neutral: phase=0 — prior uniforme, explora sem viés
+  stance_divergence_protocol:
+    method: 'Antes do programa pessimista: injetar "[NOTA: programa anterior chegou a X. Este programa
+      DEVE considerar Y como adversarial e chegar a conclusão diferente]."
+
+      '
+    correlation_reduction: ~30% → ~15% por hipótese [APPROX_ESTIMATE]
+    limitacao: Não elimina correlação latente — apenas a reduz. LLM único compartilha contexto.
+  shared_warmup_cache:
+    enabled: true
+    why: 'O warmup descreve a geometria do PROBLEMA, não a análise do agente. Compartilhar warmup economiza
+      66% do custo de warmup para N=3 [APPROX_ESTIMATE]. Não viola independência cognitiva: agentes partem
+      do mesmo estado físico mas desenvolvem perspectivas independentes na fase de PRODUÇÃO.
+
+      '
+  api:
+  - execute_parallel(programs, cognitive_mode) → dict{merged_result, metadata}
+  - _execute_single(code, agent_id, timeout) → dict{status, snapshot, stdout}
+  - _defensive_merge(results) → dict — entropy_weighted_merge dos válidos
+  rules_enforced:
+  - 'SR_09: subprocess gate obrigatório para N > 5 iterações'
+  - 'SR_33: UCO gate obrigatório antes de cada subprocess'
+  fmea:
+    rpn: 4
+    mode: Schema mismatch entre snapshots de agentes
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: DIFF_MERGE_DEFENSIVE_001 valida schema; CORRUPTED_STATE para malformados

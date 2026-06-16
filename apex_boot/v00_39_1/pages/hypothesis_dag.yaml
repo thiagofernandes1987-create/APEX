@@ -1,0 +1,61 @@
+hypothesis_dag:
+  executor: HYBRID
+  version: v00.32.1
+  opp: OPP-MAS-01
+  tier: 1
+  status: ADOPTED
+  purpose: 'Rastrear explicitamente dependências entre hipóteses, âncoras e evidências. Quando uma âncora
+    é destruída, o DAG propaga invalidação automaticamente a todos os nós dependentes via BFS O(V+E).
+
+    '
+  why: 'Sem o DAG, hipóteses "órfãs" sobrevivem ao pipeline mesmo após suas premissas serem refutadas
+    — o LLM não rastreia todas as dependências em sessões densas. PATCH_C1: serialização edge-only (15-30
+    tokens) em vez de nós completos (8000-15000 tokens) — nós já existem no hypothesis_tracker.
+
+    '
+  description: 'Grafo Acíclico Dirigido de dependências entre hipóteses, âncoras e findings. PARTE LLM:
+    registrar nós, interpretar [DAG_CASCADE_INVALIDATED], ler suspects. PARTE SANDBOX: DFS acyclicity
+    check antes de inserir aresta, serialização, SQLite. O QUE É: dict Python com arestas + BFS para cascata
+    + DFS para acyclicidade. O QUE NÃO É: Banco de dados externo — é estrutura in-memory serializada no
+    SQLite. SNAPSHOT: apenas arestas {src, dst, type} + lista de suspects. Nós no hypothesis_tracker.
+
+    '
+  what_if_fails: "FALLBACK 1 — Ciclo detectado ao inserir aresta:\n  Rejeitar a aresta. Emitir [DAG_CYCLE_REJECTED:\
+    \ node_id={id}]. Continuar.\nFALLBACK 2 — DAG muito grande (> 200 nós):\n  Resetar para DAG vazio.\
+    \ Emitir [DAG_RESET]. Continuar com nova árvore.\nFALLBACK 3 — hypothesis_tracker indisponível:\n\
+    \  Operar sem DAG. Declarar [DAG_UNAVAILABLE]. Pipeline continua sem cascata.\n"
+  inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+  depends_on:
+  - hypothesis_tracker
+  - sqlite_snapshot_store
+  snapshot_serialization:
+    format: '{edges: [{src, dst, type}], suspects: [ids], invalidated: [ids]}'
+    tokens_estimate: 15-30 tokens para sessão com 40 hipóteses [APPROX_ESTIMATE]
+    nodes_location: hypothesis_tracker no context window — NÃO duplicar no snapshot
+    rationale: Nós completos = 8000-15000 tokens. Arestas = 15-30 tokens. -99% de tokens.
+  cascade_algorithm:
+    complexity: O(V+E) — BFS com visited_set obrigatório
+    visited_set_why: 'Sem visited_set, em DAGs com fan-out alto, o BFS revisitaria nós. Com 10 nós habilitando
+      o mesmo finding, sem visited_set o finding seria processado 10 vezes — O(V×fanout) em vez de O(V+E).
+
+      '
+  acyclicity_check:
+    algorithm: DFS pré-inserção de aresta
+    why: 'Um ciclo A→B→A tornaria a cascata de invalidação não terminante. DFS detecta o ciclo antes de
+      inserir, mantendo o DAG sempre acíclico.
+
+      '
+  api:
+  - register(node_id, node_type, anchors_used, phase, confidence) → bool
+  - add_edge(src, dst, edge_type) → bool — False se criaria ciclo
+  - invalidate_cascade(node_id) → set(affected_ids)
+  - compress_for_snapshot() → dict{edges, suspects, invalidated}
+  rules_enforced:
+  - 'SR_32: acyclicity check DFS ANTES de registrar nó'
+  fmea:
+    rpn: 6
+    mode: Ciclo no DAG por validação incompleta
+    probability: 2
+    severity: 3
+    detection: 1
+    mitigation: DFS pré-inserção; aresta rejeitada se criaria ciclo

@@ -1,0 +1,319 @@
+forgeskills_true_autoboot:
+  executor: HYBRID
+  version: v00.35.0
+  opp: OPP-124
+  tier: 0
+  status: ADOPTED
+  purpose: 'Implementa o boot automatico real do ForgeSkills via INDEX.md parsing. apex_superrepo_boot
+    (OPP-104) e forgeskills_rapid_reader (OPP-106) foram declarados mas nunca tiveram o bloco executavel
+    que realiza o boot. Fornece o codigo Python concreto que o LLM executa em STEP_0 para carregar skills
+    do repositorio real em APEX_SKILL_REGISTRY.
+
+    '
+  why: 'WHY: INDEX.md do repositorio esta acessivel (confirmado: 79.744 chars, 1.775 linhas, 225 skills
+    mapeadas). O forge_method esta em APEX_SESSION_CAPS. O que faltava era o bloco de codigo que EXECUTA
+    o boot — o LLM sabia que devia bootar mas nao tinha o codigo para fazer isso automaticamente. SEM
+    ESTE OPP: Em toda sessao, o LLM inicia sem skills do repo. ForgeSkills so carrega quando usuario menciona
+    dominio especifico e LLM lembra de fazer fetch manual. COM ESTE OPP: STEP_0 executa boot automaticamente.
+
+    '
+  when: 'WHEN: STEP_0 — apos apex_runtime_probe confirmar APEX_SESSION_CAPS. WHEN: APEX_SESSION_CAPS["forge_method"]
+    IN ["urllib_fetch","git_clone"]. WHEN: Session nova (skill_registry vazio) OU dominio nao coberto.
+
+    '
+  what_if_fails: 'FALLBACK 1: urllib timeout -> continuar com skills do prompt base. FALLBACK 2: INDEX.md
+    malformado -> usar domain_map embutido. FALLBACK 3: forge_method == "inline_paste" -> skip auto-boot.
+    REGRA: Boot falho NUNCA bloqueia a sessao.
+
+    '
+  inject_when: STEP_0 apos apex_runtime_probe
+  depends_on:
+  - apex_runtime_probe
+  - apex_superrepo_boot
+  boot_code: "# APEX FORGESKILLS AUTOBOOT v00.35.0 — STEP_0\n# Executar apos apex_runtime_probe. Requer\
+    \ APEX_SESSION_CAPS definido.\n# DeepSeek: @sandbox antes deste bloco.\n\nimport urllib.request, re\n\
+    \nRAW_BASE = \"https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/\"\nBOOT_TIMEOUT\
+    \ = 15\nMAX_SKILLS_PER_BOOT = 15\n\nsession_skill_registry = {}\nboot_log = []\n\nforge_method = APEX_SESSION_CAPS.get(\"\
+    forge_method\",\"inline_paste\")\n\nif forge_method in (\"urllib_fetch\",\"git_clone\"):\n    try:\n\
+    \        with urllib.request.urlopen(RAW_BASE+\"INDEX.md\",timeout=BOOT_TIMEOUT) as r:\n         \
+    \   index_content = r.read().decode(\"utf-8\")\n        boot_log.append(f\"INDEX.md: {len(index_content)}\
+    \ chars\")\n\n        # Parse simples — nao requer PyYAML\n        skills = {}\n        current_domain\
+    \ = None\n        domain_pat = re.compile(r'^  ([A-Z_]{3,}):$')\n        skill_pat   = re.compile(r'path:\\\
+    s*(skills/[^\\s]+/SKILL\\.md)')\n\n        for line in index_content.splitlines():\n            dm\
+    \ = domain_pat.match(line)\n            if dm:\n                current_domain = dm.group(1)\n   \
+    \             if current_domain not in skills:\n                    skills[current_domain] = []\n\
+    \            pm = skill_pat.search(line)\n            if pm and current_domain:\n                path\
+    \ = pm.group(1)\n                if path not in [s[\"path\"] for s in skills[current_domain]]:\n \
+    \                   skills[current_domain].append({\"path\": path})\n\n        total = 0\n       \
+    \ for domain, skl in skills.items():\n            for sk in skl[:3]:\n                if total >=\
+    \ MAX_SKILLS_PER_BOOT: break\n                session_skill_registry[sk[\"path\"]] = {\n         \
+    \           \"domain\": domain, \"status\": \"PROVISIONAL\", \"path\": sk[\"path\"]\n            \
+    \    }\n                total += 1\n\n        boot_log.append(f\"Skills: {total} | Domains: {len(skills)}\"\
+    )\n        print(f\"[APEX_FORGESKILLS_BOOT_COMPLETE]\")\n        print(f\"  Domains: {len(skills)}\
+    \ | Skills registered: {total}\")\n        print(f\"  Top domains: {list(skills.keys())[:8]}\")\n\n\
+    \    except Exception as e:\n        print(f\"[APEX_FORGESKILLS_BOOT_FAILED: {e}]\")\nelse:\n    print(f\"\
+    [APEX_FORGESKILLS_BOOT_SKIP: forge_method={forge_method}]\")\n\nAPEX_SKILL_REGISTRY = session_skill_registry\n\
+    APEX_BOOT_LOG = boot_log\n"
+  on_demand_fetch: '# Quando dominio detectado na tarefa:
+
+    # paths = [p for p,m in APEX_SKILL_REGISTRY.items() if m["domain"] == "LEGAL"]
+
+    # for path in paths[:2]:
+
+    #   with urllib.request.urlopen(RAW_BASE + path, timeout=10) as r:
+
+    #       skill_content = r.read().decode("utf-8")
+
+    #   # injetar skill_content no contexto
+
+    '
+  fmea:
+    rpn: 6
+    mode: Boot falha silenciosamente -> session sem skills do repositorio
+    probability: 2
+    severity: 3
+    detection: 1
+    mitigation: 'Timeout 15s. Falha declarada com [APEX_FORGESKILLS_BOOT_FAILED]. Skills do prompt base
+      sempre disponiveis como fallback.
+
+      '
+  sr42_integrity_checker:
+    version: v1.0.0
+    opp: OPP-125
+    executor: SANDBOX_CODE
+    tier: CORE
+    status: ACTIVE
+    description: SHA-256 integrity verification for ForgeSkills fetched files
+    why: Detectar comprometimento de repositório externo antes de executar código clonado
+    when: Após urllib.request.urlopen() ou git clone, antes de qualquer uso do conteúdo
+    what_if_fails: 'Se hashlib indisponível: bloquear tudo com [SECURITY: hashlib_unavailable]. Se hash
+      ausente no registry: registrar como PROVISIONAL com nota. Se hash não confere: BLOQUEAR com [SECURITY_ALERT:
+      HASH_MISMATCH].
+
+      '
+    code: "import hashlib\nimport urllib.request\n\nAPEX_HASH_REGISTRY = {}  # Populado no boot com hashes\
+      \ dos arquivos core\n\ndef verify_integrity(content_bytes, expected_sha256):\n    # WHY: Detectar\
+      \ comprometimento de repositório externo (supply chain attack)\n    # WHEN: Após fetch, antes de\
+      \ registrar skill ou executar código\n    # HOW: SHA-256 do conteúdo bytes vs hash esperado no registry\n\
+      \    # WHAT_IF_FAILS: Retornar False — caller bloqueia execução\n    if not expected_sha256:\n \
+      \       return False\n    try:\n        actual = hashlib.sha256(content_bytes).hexdigest()\n   \
+      \     return actual == expected_sha256\n    except Exception:\n        return False\n\ndef forge_skill_with_integrity(url,\
+      \ hash_registry=None):\n    # WHY: Wraps ForgeSkills fetch com verificação SR_42\n    # WHEN: Substitui\
+      \ urllib direto em ForgeSkills boot para recursos externos\n    # HOW: Fetch → SHA-256 → verify\
+      \ → parsear OU bloquear\n    # WHAT_IF_FAILS: Retornar dict [SECURITY_ALERT] — nunca silencioso\n\
+      \    if hash_registry is None:\n        hash_registry = APEX_HASH_REGISTRY\n\n    TRUSTED_DOMAINS\
+      \ = [\n        \"https://raw.githubusercontent.com/thiagofernandes1987-create/\",\n        \"https://github.com/thiagofernandes1987-create/\"\
+      ,\n    ]\n    if not any(url.startswith(d) for d in TRUSTED_DOMAINS):\n        return {\n      \
+      \      \"status\": \"BLOCKED\",\n            \"reason\": \"URL nao esta em trusted_domains\",\n\
+      \            \"url\": url,\n            \"nota\": \"[SECURITY_ALERT: UNTRUSTED_DOMAIN — G6_VIOLATION]\"\
+      \n        }\n\n    try:\n        with urllib.request.urlopen(url, timeout=10) as r:\n          \
+      \  content_bytes = r.read()\n    except Exception as e:\n        return {\"status\": \"ERROR\",\
+      \ \"reason\": f\"Fetch falhou: {e}\",\n                \"nota\": \"[ERROR: FORGESKILLS_FETCH_FAILED]\"\
+      }\n\n    expected_hash = hash_registry.get(url, \"\")\n    if not expected_hash:\n        return\
+      \ {\n            \"status\": \"PROVISIONAL\",\n            \"content\": content_bytes.decode(\"\
+      utf-8\", errors=\"replace\"),\n            \"nota\": \"[SECURITY_NOTICE: hash nao cadastrado — skill\
+      \ PROVISIONAL]\"\n        }\n\n    if not verify_integrity(content_bytes, expected_hash):\n    \
+      \    return {\n            \"status\": \"BLOCKED\",\n            \"reason\": \"SHA-256 mismatch\
+      \ — possivel comprometimento\",\n            \"url\": url,\n            \"nota\": \"[SECURITY_ALERT:\
+      \ HASH_MISMATCH — SR_42_TRIGGERED]\"\n        }\n\n    return {\n        \"status\": \"OK\",\n \
+      \       \"content\": content_bytes.decode(\"utf-8\", errors=\"replace\"),\n        \"nota\": \"\
+      [INTEGRITY_VERIFIED: SHA-256 OK]\"\n    }\n"
+  sr43_approval_validator:
+    version: v1.0.0
+    opp: OPP-126
+    executor: LLM_BEHAVIOR
+    tier: CORE
+    status: ACTIVE
+    description: Validação de approval_required para contextos críticos do kernel APEX
+    why: Prevenir mudanças críticas sem gate humano — corrupção silenciosa do kernel
+    when: Avaliado em toda criação ou modificação de OPP antes de aprovação
+    what_if_fails: 'Se validador não detectar contexto crítico: revisor humano como segunda linha. Se
+      OPP aprovado erroneamente: rollback via OPP de reverção com SR_43 explícito.
+
+      '
+    behavior: "CRITICAL_CONTEXTS:\n  - kernel.inviolable_rules\n  - trusted_domains\n  - security.mitigation\n\
+      \  - executor_permissions\n  - opp_quality_bar\n  - forgeskills_true_autoboot\n  - apex_runtime_probe\n\
+      \  - sr42_integrity_checker\n  - sr43_approval_validator\n\nREGRA SR_43:\n  Para cada OPP em criação\
+      \ ou modificação:\n    1. Verificar se qualquer item em changes[].section está em CRITICAL_CONTEXTS\n\
+      \    2. SE SIM E approval_required == false:\n       → status: REJECTED\n       → reason: \"SR_43_VIOLATION:\
+      \ modifica contexto critico sem approval_required true\"\n       → Log: [SR_43_VIOLATION: OPP-XXX]\n\
+      \    3. SE NÃO: continuar validação normal\n\n  NOTA: approval_required true não garante qualidade\
+      \ da revisão.\n  Garante apenas que revisão humana foi declarada.\n"
+  sr44_fmea_completeness:
+    version: v1.0.0
+    opp: OPP-127
+    executor: LLM_BEHAVIOR
+    tier: CORE
+    status: ACTIVE
+    description: Gate de completude de FMEA por tipo de OPP
+    why: FMEA com 1 modo trivial equivale a nenhum FMEA — elimina ilusão de governança
+    when: Validado no OPPQualityBar antes de aprovação
+    what_if_fails: 'OPP rejeitado com mensagem listando quantos modos válidos faltam. Autor completa FMEA
+      e resubmete sem nova aprovação se só FMEA mudou.
+
+      '
+    behavior: "MINIMUMS_BY_TYPE:\n  SANDBOX_CODE: 3\n  HYBRID: 3\n  security: 4        # sobrepõe executor_type\n\
+      \  feature_breaking: 3  # feature + breaking_changes true\n  default: 2\n\nREGRA SR_44:\n  Para\
+      \ cada OPP em validação:\n    1. Contar modos VALIDOS em what_if_fails.\n       MODO INVALIDO SE:\n\
+      \         - mitigation: ausente ou vazio\n         - fallback: ausente ou vazio\n         - mode:\
+      \ texto trivial (\"se falhar nao aplicar\" etc)\n         - probability OU severity OU detection:\
+      \ ausentes\n    2. Determinar minimum por tipo (tabela acima)\n    3. SE count_valid < minimum:\n\
+      \       → status: REJECTED\n       → reason: \"SR_44: {count_valid} modos validos de {minimum} necessarios\"\
+      \n"
+  sr45_ghost_dependency_blocker:
+    version: v1.0.0
+    opp: OPP-128
+    executor: HYBRID
+    tier: CORE
+    status: ACTIVE
+    description: Bloqueio de OPPs com depends_on referenciando módulos inexistentes
+    why: 13 ghost dependencies em v00.34.0 — prevenir reincidência (SR_45)
+    when: Validado no OPPQualityBar E no apex_runtime_probe boot
+    what_if_fails: 'Se defined_modules desatualizado: apex_runtime_probe recalcula em cada boot. Se módulo
+      existe no repo mas não no prompt: aceito com aviso repo_only_dependency. Fuzzy match sugere nomes
+      similares para erros de digitação.
+
+      '
+    code: "def check_ghost_dependencies(depends_on, defined_modules, repo_modules=None):\n    # WHY: Prevenir\
+      \ OPPs com dependencias para modulos inexistentes (SR_45)\n    # WHEN: Validacao de OPP antes de\
+      \ aprovacao e no boot do apex_runtime_probe\n    # HOW: Set difference entre depends_on e (defined_modules\
+      \ | repo_modules)\n    # WHAT_IF_FAILS: Retornar lista de ghosts — caller bloqueia aprovacao\n \
+      \   if not depends_on:\n        return {\"status\": \"OK\", \"ghosts\": [], \"repo_only\": []}\n\
+      \n    all_known = set(defined_modules)\n    if repo_modules:\n        all_known |= set(repo_modules)\n\
+      \n    ghosts = []\n    repo_only = []\n\n    for dep in depends_on:\n        if dep in defined_modules:\n\
+      \            continue\n        elif repo_modules and dep in repo_modules:\n            repo_only.append(dep)\n\
+      \        else:\n            ghosts.append(dep)\n\n    if ghosts:\n        suggestions = {}\n   \
+      \     for ghost in ghosts:\n            best = None\n            best_score = 0\n            for\
+      \ known in all_known:\n                s1, s2 = set(ghost), set(known)\n                score =\
+      \ len(s1 & s2) / max(len(s1 | s2), 1)\n                if score > best_score and score > 0.5:\n\
+      \                    best_score = score\n                    best = known\n            if best:\n\
+      \                suggestions[ghost] = best\n\n        return {\n            \"status\": \"BLOCKED\"\
+      ,\n            \"ghosts\": ghosts,\n            \"suggestions\": suggestions,\n            \"repo_only\"\
+      : repo_only,\n            \"action\": f\"Definir modulos {ghosts} antes de aprovar este OPP\",\n\
+      \            \"nota\": \"[SR_45_VIOLATION: GHOST_DEPENDENCIES_DETECTED]\"\n        }\n\n    result\
+      \ = {\"status\": \"OK\", \"ghosts\": [], \"repo_only\": repo_only}\n    if repo_only:\n        result[\"\
+      nota\"] = f\"[SR_45_NOTICE: {repo_only} existem no repo mas nao no prompt]\"\n    return result\n"
+  community_agent_normalization:
+    version: v1.0.0
+    opp: OPP-129
+    executor: LLM_BEHAVIOR
+    tier: CORE
+    status: ACTIVE
+    description: Campos de governança APEX adicionados aos 8 agentes community
+    why: 8 agentes community sem position_in_pipeline, depends_on, rule_reference — pipeline não-determinístico
+    when: Aplicado aos agentes community no repositório e no roster
+    normalization_fields: "Campos adicionados a TODOS os agentes community_*:\n\ntier: COMMUNITY\nposition_in_pipeline:\
+      \ STEP_3\nactivates_in: [FAST, DEEP, RESEARCH]\nrule_reference: [SR_40]\ndepends_on: [pmi_pm, architect]\n\
+      fallback_agent: null\nfailure_modes:\n  - condition: \"input fora do dominio do agente\"\n    action:\
+      \ \"Retornar handoff para agente de dominio correto\"\n    escalation: \"pmi_pm para re-scoping\"\
+      \n  - condition: \"tools do agente indisponiveis no runtime atual\"\n    action: \"Declarar limitacao,\
+      \ executar com capacidades disponiveis\"\n    escalation: \"nenhuma — continuar degradado\"\n\n\
+      Agentes normalizados:\n  - community_security_code_reviewer\n  - community_data_analyst\n  - community_legal_advisor\n\
+      \  - community_finance_analyst\n  - community_hr_specialist\n  - community_marketing_strategist\n\
+      \  - community_sales_coach\n  - community_product_manager\n\nNOTA: normalizacao adiciona SOMENTE\
+      \ campos de governanca APEX.\nNao altera comportamento, tools ou prompts originais do agente.\n"
+  duplicate_plugins_skills_fix:
+    version: v1.0.0
+    opp: OPP-130
+    executor: DOCUMENTATION
+    tier: CORE
+    status: ACTIVE
+    description: Duplicata apex_internals/plugins/skills/ removida — tipo Plugin descontinuado
+    why: apex_internals/plugins/skills/SKILL.md era duplicata com origem create-cowork-plugin
+    action_taken: "REMOVIDO: skills/apex_internals/plugins/skills/SKILL.md\nCRIADO: skills/apex_internals/plugins/REDIRECT.md\n\
+      \  Conteúdo: \"Tipo plugin descontinuado em APEX v00.33.0. Use Skills.\n             Skill canonica:\
+      \ skills/apex_internals/forgeskills/SKILL.md\n             Guia: APEX_CREATION_GUIDE.md s2.3\"\n\
+      \nREGRA: Todo artefato tipo plugin encontrado deve ser:\n  1. Convertido para Skill com OPP de migracao,\
+      \ OU\n  2. Marcado DEPRECATED com REDIRECT para skill equivalente\n"
+  apex_creation_guide:
+    version: v1.0.0
+    opp: OPP-131
+    executor: DOCUMENTATION
+    tier: CORE
+    status: ACTIVE
+    file: APEX_CREATION_GUIDE.md
+    raw_url: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/APEX_CREATION_GUIDE.md
+    description: 'Guia canonico de criacao e evolucao de artefatos APEX v1.0.0. Sintese de analise estrutural:
+      19 agentes, 50+ skills, 124 OPPs, simulacao comportamental. Cobre: agentes, skills, diffs, algoritmos,
+      seguranca, portabilidade multi-LLM, quality gates, anti-padroes e templates.
+
+      '
+    when_to_use: 'Quando criando novo agente, skill, OPP, algoritmo ou integracao. Quando auditando qualidade
+      de artefato existente. Quando verificando security checklist antes de ACTIVE. Quando treinando qualquer
+      LLM em padroes APEX.
+
+      '
+    anchors:
+    - creation_guide
+    - canonical_patterns
+    - como_criar_agente
+    - como_criar_skill
+    - quality_gate
+    - anti_patterns
+    - security_rules
+    - error_handling
+    - portabilidade_llm
+    - apex_standard
+    note: 'DOCUMENTATION — nao e regra inviolavel (SR). Em conflito entre guia e prompt master_full: prompt
+      tem precedencia. Revisado a cada versao APEX nova que altere padroes.
+
+      '
+    fetch_behavior: "SE url_access == true:\n  Fetch: raw_url acima\n  Parse: markdown\n  Registrar como\
+      \ recurso de referencia disponivel\nSE url_access == false:\n  Usar copia do repositorio local se\
+      \ disponivel\n  Nota: verificar versao — pode estar desatualizado\n"
+  security_logger:
+    version: v1.0.0
+    opp: OPP-132
+    executor: SANDBOX_CODE
+    tier: CORE
+    status: ACTIVE
+    description: Logger estruturado com redacao automatica de PII para modulos APEX
+    why: Modulos APEX sem padrao de logging expoe risco de PII no contexto do LLM
+    when: 'Importado por qualquer modulo com data_access: restricted ou full'
+    what_if_fails: 'Se regex PII nao captura variacao: extensivel via OPP de patch. Se json.dumps falha:
+      fallback string simples — log degradado nao quebrado. Se estrutura circular em dict: depth limit
+      5 previne recursao infinita.
+
+      '
+    code: "import re\nimport json\nfrom datetime import datetime\n\n_PII_PATTERNS = [\n    (re.compile(r'\\\
+      b\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2}\\b'), '[CPF_REDACTED]'),\n    (re.compile(r'\\b[A-Za-z0-9._%+\\\
+      -]+@[A-Za-z0-9.\\-]+\\.[A-Z|a-z]{2,}\\b'), '[EMAIL_REDACTED]'),\n    (re.compile(r'(\\+55\\s?)?(\\\
+      (?\\d{2}\\)?\\s?)(\\d{4,5}[\\-\\s]?\\d{4})'), '[PHONE_REDACTED]'),\n    (re.compile(r'Bearer\\s+[A-Za-z0-9\\\
+      -._~+/]+=*', re.IGNORECASE), 'Bearer [TOKEN_REDACTED]'),\n    (re.compile(r'\\b\\d{4}[\\s\\-]?\\\
+      d{4}[\\s\\-]?\\d{4}[\\s\\-]?\\d{4}\\b'), '[CARD_REDACTED]'),\n    (re.compile(r'\\b[A-Fa-f0-9]{40,}\\\
+      b'), '[HEX_TOKEN_REDACTED]'),\n]\n\n_BLOCKED_KEYS = frozenset([\n    'password', 'senha', 'secret',\
+      \ 'token', 'api_key', 'apikey',\n    'authorization', 'credential', 'private_key', 'access_token',\n\
+      \    'refresh_token', 'client_secret', 'bearer'\n])\n\ndef _redact_string(text):\n    # WHY: Remover\
+      \ PII de strings antes de qualquer saida de log\n    # WHEN: Chamado em toda mensagem antes de escrever\n\
+      \    # HOW: Regex patterns em sequencia — mais especifico primeiro\n    # WHAT_IF_FAILS: Retornar\
+      \ mensagem de supressao\n    if not isinstance(text, str):\n        return str(text)\n    try:\n\
+      \        for pattern, replacement in _PII_PATTERNS:\n            text = pattern.sub(replacement,\
+      \ text)\n        return text\n    except Exception:\n        return '[REDACTION_FAILED: conteudo\
+      \ suprimido por seguranca]'\n\ndef _redact_dict(data, depth=0):\n    # WHY: Redacao recursiva em\
+      \ dicts — APIs retornam estruturas aninhadas\n    # WHEN: Log de responses de API ou dados estruturados\n\
+      \    # HOW: Recursivo ate depth 5 — previne stack overflow\n    # WHAT_IF_FAILS: Retornar erro estruturado\
+      \ — nunca expor dados\n    if depth > 5:\n        return {'_truncated': 'max_depth_reached'}\n \
+      \   try:\n        result = {}\n        for key, value in data.items():\n            if str(key).lower()\
+      \ in _BLOCKED_KEYS:\n                result[key] = '[BLOCKED_KEY_REDACTED]'\n            elif isinstance(value,\
+      \ dict):\n                result[key] = _redact_dict(value, depth + 1)\n            elif isinstance(value,\
+      \ list):\n                result[key] = [\n                    _redact_dict(v, depth + 1) if isinstance(v,\
+      \ dict)\n                    else _redact_string(str(v)) for v in value\n                ]\n   \
+      \         elif isinstance(value, str):\n                result[key] = _redact_string(value)\n  \
+      \          else:\n                result[key] = value\n        return result\n    except Exception:\n\
+      \        return {'_error': 'REDACTION_ERROR — conteudo suprimido'}\n\nclass ApexLogger:\n    # WHY:\
+      \ Logger unificado APEX com redacao automatica de PII\n    # WHEN: Usar em qualquer modulo APEX\
+      \ com data_access restricted ou full\n    # HOW: Wrapper sobre print com timestamp, nivel e redacao\
+      \ obrigatoria\n    # WHAT_IF_FAILS: Fallback para print simples se json.dumps falhar\n    # SECURITY_LEVEL:\
+      \ HIGH\n\n    def __init__(self, module_id, data_access='none'):\n        self.module_id = module_id\n\
+      \        self.data_access = data_access\n\n    def _format(self, level, message, data=None):\n \
+      \       ts = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')\n        safe_msg = _redact_string(message)\n\
+      \        entry = {'ts': ts, 'level': level, 'module': self.module_id, 'msg': safe_msg}\n       \
+      \ if data is not None:\n            entry['data'] = _redact_dict(data) if isinstance(data, dict)\
+      \ else _redact_string(str(data))\n        try:\n            return json.dumps(entry, ensure_ascii=False)\n\
+      \        except Exception:\n            return f'{ts} [{level}] {self.module_id}: {safe_msg}'\n\n\
+      \    def info(self, message, data=None):\n        print(self._format('INFO', message, data))\n\n\
+      \    def warn(self, message, data=None):\n        print(self._format('WARN', message, data))\n\n\
+      \    def error(self, message, data=None):\n        print(self._format('ERROR', message, data))\n\
+      \n    def security(self, event, data=None):\n        # Eventos de seguranca — sempre logados independente\
+      \ de nivel\n        print(self._format('SECURITY', f'[SECURITY_EVENT] {event}', data))\n\napex_log\
+      \ = ApexLogger(module_id='apex.default', data_access='none')\n"

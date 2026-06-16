@@ -1,0 +1,72 @@
+test_scenarios_v020:
+- id: scenario_20_01
+  name: Agente Matemático com Skill Chain
+  input:
+    agent: theorist
+    problem: Crescimento populacional logístico com perturbação estocástica
+    anchors:
+    - logistic_growth
+    - hypothesis_generation
+    - scientific_method
+  expected:
+  - 'skill_hierarchy resolve: teorist → matematica_avancada → [integracao_euler, metodos_probabilisticos]'
+  - 'cross_attraction ativa: euler + metodos_probabilisticos → pipeline de 2 skills'
+  - PoT executado para integracao_euler com FMEA_GUARD no STEP_0
+  - mental_interpreter produz trace completo
+  - hypothesis_filter_outputs filtram hipótese de "crescimento ilimitado"
+  - 'FHC executa: hypothesis "crescimento ilimitado" REFUTED_BY_SKILL'
+- id: scenario_20_02
+  name: Fractal Knowledge Indexing em DEEP mode
+  input:
+    cognitive_mode: DEEP
+    problem: Arquitetura de microserviços com alta disponibilidade
+    fractal_depth: 2
+  expected:
+  - 'STEP_2: apenas macro anchors injetados (SOLID, first_principles)'
+  - 'STEP_5 meso: metodologias adicionadas (TDD, CI_CD, DDD)'
+  - 'STEP_5 micro: padrões específicos adicionados (circuit_breaker, saga)'
+  - Nano não carregado em DEEP mode (depth < 3)
+  - '[FKI_LEVEL_LOADED: meso] emitido'
+- id: scenario_20_03
+  name: PoT guard violation
+  input:
+    skill: integracao_euler
+    pot_params:
+      dt: -0.1
+      x0: 10
+  expected:
+  - POT_GUARD_VIOLATED emitido
+  - confidence_cap reduzido para 45
+  - '[POT_GUARD_VIOLATED: euler | guard: dt > 0 | value: dt=-0.1]'
+  - Execução abortada — sem trace posterior
+- id: scenario_20_04
+  name: Fractal Hypothesis Compression — dominance filter
+  input:
+    hypotheses:
+    - id: H1
+      confidence: 75
+      evidence_level: INFERENTIAL
+    - id: H2
+      confidence: 60
+      evidence_level: INFERENTIAL
+    - id: H3
+      confidence: 55
+      evidence_level: SPECULATIVE
+  expected:
+  - H1 domina H2 (75 > 60+10? Não, 75=60+15 > 60+10) → H2 DOMINATED
+  - H1 domina H3 (75 > 55+10=65 ✓ E INFERENTIAL >= SPECULATIVE ✓) → H3 DOMINATED
+  - 'Resultado: apenas H1 sobrevive'
+  - min_hypotheses_preserved = 2 → H2 reativado como segunda hipótese
+  - '[FHC_COMPRESSED: before=3 | after=2 | dominated=1 | merged=0]'
+- id: scenario_20_05
+  name: Cross-attraction entre Specialized Skills
+  input:
+    problem: Modelo probabilístico de crescimento com incerteza temporal
+    initial_skills:
+    - integracao_euler
+  expected:
+  - integracao_euler.cross_attraction detecta metodos_probabilisticos
+  - 'Condição: "problema tem componente estocástico" → TRUE'
+  - 'Pipeline expandido: [integracao_euler, metodos_probabilisticos]'
+  - Ambas executadas em sequência
+  - 'Outputs combinados: confidence média com phase interference'

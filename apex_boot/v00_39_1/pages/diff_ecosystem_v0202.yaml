@@ -1,0 +1,701 @@
+diff_ecosystem_v0202:
+  session: APEX_SESSION_SNAPSHOT_v00202
+  budget_used: 3
+  budget_max: 3
+  applied:
+  - id: DIFF_PATCH_ABC_001
+    type: CODE_PATCH
+    status: APPLIED
+    targets:
+    - SimState.from_dict
+    - MCFEAdapter.__init__
+    - GeometryEstimator.M_local
+  - id: DIFF_POT_v2_001
+    type: MODULE_UPGRADE
+    status: APPLIED
+    approval: USER_EXPLICIT
+    h5_compliance: true
+    target: pot_engine → pot_engine_v2
+    breaking_changes:
+    - BC-01
+    - BC-02
+    - BC-03
+    rollback: pot_engine v00.20.0 por 2 sessões
+  - id: DIFF_POT_v2_002
+    type: CONFIG_UPDATE
+    status: APPLIED
+    approval: USER_EXPLICIT
+    h5_compliance: true
+    depends_on: DIFF_POT_v2_001
+    targets:
+    - inviolable_rules.critical.SR_09
+    - orchestrator.tier_1
+    - kernel.changelog
+  orchestrator_patches:
+  - id: ORCHESTRATOR_PATCH_001
+    status: REGISTERED
+    modules_registered: 3
+    tiers:
+      geometry_estimator: TIER_2
+      pot_engine_v2: TIER_1
+      mental_interpreter_v2: TIER_1
+    deprecated:
+    - pot_engine_v00.20.0
+    - mental_interpreter_v00.20.0
+  chaos_operators:
+    version: v00.22.0
+    tier: 1
+    description: 'Três operadores formais de perturbação que substituem geração livre do CRITIC_RADICAL.
+      Temperatura T = H_cognitive (entropia cognitiva). P_chaos = min(0.30, T). Levy step α=1.5 para saltos
+      heavy-tail. CORREÇÃO CRÍTICA: trigger de substituição é rejections_streak > 20 (não temperatura
+      alta). T alta = mais aceitações em Metropolis. T baixa + rejections_streak alto = agente preso =
+      trocar agente. SR_16: operador aplicado DEVE ser registrado em chaos_operator_log.
+
+      '
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+    depends_on:
+    - agents
+    - mcfe
+    - event_bus
+    components:
+    - ChaosOperators
+    operators:
+      structural_mutation:
+        description: Troca o 'tipo de abordagem' (method, framework, paradigma)
+        when: hipótese com alta energia mas estrutura preservável
+        temperature_ideal: T > 0.5
+      recombination:
+        description: Crossover 50/50 entre dois campos de hipóteses
+        when: pool com >= 2 hipóteses de fases distintas
+        temperature_ideal: T 0.3-0.7
+        min_nodes: 2
+      levy_mutation:
+        description: Perturbação heavy-tail α=1.5 em valores numéricos
+        when: valores numéricos presos em mínimo local (convergência prematura)
+        temperature_ideal: T > 0.3
+        alpha: 1.5
+    api:
+    - levy_step(alpha=1.5) → float
+    - structural_mutation(hyp) → dict
+    - recombination(h1, h2) → dict
+    - levy_mutation(hyp) → Any
+    - select_and_apply(nodes, T, log, step) → Optional[Any]
+    rules_enforced:
+    - SR_16
+    relation_to_chaos_spawn_rule: 'chaos_spawn_rule DECIDE quando spawnar CRITIC_RADICAL (trigger existente).
+      chaos_operators DEFINE como o CRITIC_RADICAL gera a hipótese adversarial. Compatível 100% com SR_11
+      e SR_12.
+
+      '
+  snapshot_store:
+    version: v00.22.0
+    tier: 1
+    description: 'Armazenamento determinístico de estados intermediários com hash SHA256. Serialização
+      JSON canônica (sort_keys=True, separators=('','','':'')). Quantização de floats: 8 casas decimais
+      antes do hash. LRU eviction quando store > MAX_ENTRIES (default 1000). LIMITAÇÃO DOCUMENTADA: hash
+      garante rastreabilidade e reprodutibilidade determinística. NÃO garante isolamento cognitivo real
+      em LLM single-context. Agentes compartilham o mesmo modelo — execução_model_note.
+
+      '
+    inject_when: always
+    depends_on:
+    - event_bus
+    - versioning
+    components:
+    - SnapshotStore
+    api:
+    - save(data, meta=None) → str (hash SHA256)
+    - load(hash) → Any | None
+    - load_meta(hash) → dict | None
+    - exists(hash) → bool
+    - list_by_meta(key, val) → List[str]
+    - size() → int
+    - to_index() → dict (índice leve para SNAP_COG)
+    rules_enforced:
+    - SR_14
+    sr14_guard: 'SR_14: SNAPSHOT_INTEGRITY_GUARD — hash inválido → [SNAPSHOT_MISS] → re-computação obrigatória.
+      Nunca fabricar estado de hash inválido.
+
+      '
+  reliability_estimator_v022_extension:
+    version: v00.22.0
+    tier: 1
+    description: 'Extensão do ReliabilityEstimator existente (v00.21.0). Novo método: credibility_interval()
+      via Monte Carlo (samples=500). Retorna (mean_R, lower_5%, upper_95%). SR_15: usa lower_bound para
+      WARNING/CRITICAL quando _total_blocks() >= 3. Com < 3 blocos: usa R_acum pontual (dados insuficientes).
+      FIX-QA-A PRESERVADO: MCFEReliabilityMonitor é o ÚNICO subscriber de BLOCK_COMPLETED. FIX-NEW1 PRESERVADO:
+      PRIOR_ALPHA=9, PRIOR_BETA=1 (não reverter para 1,1). Samples=500 calibrado: erro ±0.012 nos thresholds
+      0.30/0.50.
+
+      '
+    rules_enforced:
+    - SR_15
+    sr15_guard: 'SR_15: CREDIBILITY_GATE — Em modos DEEP/RESEARCH/SCIENTIFIC, MCFEReliabilityMonitor DEVE
+      usar lower_bound(R_acum) para decisões WARNING/CRITICAL quando _total_blocks() >= 3. Com < 3 blocos:
+      R_acum pontual (SR_15: dados insuficientes). Usar R_acum pontual como lower_bound com >=3 blocos
+      = confidence_cap 45.
+
+      '
+  algorithm_kernel:
+    version: v00.22.0
+    tier: 1
+    description: 'Biblioteca de algoritmos em Python puro organizada em 3 tiers. TIER_A: 12 algoritmos
+      core — sempre carregados (custo ~800 tokens). TIER_B: ~30 algoritmos por família — on-demand por
+      domain_tags. TIER_C: índice de 405 algoritmos — apenas para MSE selection (sem código). SR_13: invocar
+      TIER_C diretamente via PoT = confidence_cap 45. G7: TIER_B carregado on-demand; fallback TIER_A
+      com [ALGORITHM_FALLBACK].
+
+      '
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] OR algorithm_selection_requested
+    depends_on:
+    - knowledge
+    - skill_matcher
+    - mental_interpreter_v3
+    - event_bus
+    components:
+    - AlgorithmKernel
+    - ALGORITHM_CATALOG_TIER_C
+    tier_A_algorithms:
+    - dijkstra:
+        family: graph
+        complexity: O((V+E)logV)
+    - bfs:
+        family: graph
+        complexity: O(V+E)
+    - simulated_annealing:
+        family: optimization
+        complexity: O(steps)
+    - hill_climbing:
+        family: optimization
+        complexity: O(steps)
+    - rk4:
+        family: numerical
+        complexity: O(steps)
+    - newton_raphson:
+        family: numerical
+        complexity: O(iter)
+    - knapsack_01:
+        family: combinatorics
+        complexity: O(n·W)
+    - metropolis_hastings:
+        family: probabilistic
+        complexity: O(steps)
+    - conjugate_gradient:
+        family: linear_algebra
+        complexity: O(n·√κ)
+    - kalman_filter_1d:
+        family: probabilistic
+        complexity: O(n)
+    - bayesian_update_beta:
+        family: probabilistic
+        complexity: O(1)
+    - genetic_algorithm:
+        family: optimization
+        complexity: O(gen×pop)
+    tier_B_families:
+    - graph:
+      - bellman_ford
+      - floyd_warshall
+      - kruskal
+      - prim
+      - a_star
+      - topological_sort
+      - kosaraju_scc
+    - optimization:
+      - gradient_descent
+      - sgd
+      - adam
+      - lbfgs
+      - cma_es
+      - particle_swarm
+      - tabu_search
+      - cross_entropy_method
+    - probabilistic:
+      - gibbs_sampling
+      - particle_filter
+      - em_algorithm
+      - bootstrap
+      - hmm_viterbi
+    - numerical:
+      - euler_forward
+      - crank_nicolson
+      - adams_bashforth
+      - dormand_prince_rk45
+      - bisection
+    - combinatorics:
+      - hungarian
+      - held_karp_tsp
+      - edmonds_karp
+      - branch_and_bound
+    - control:
+      - pid_controller
+      - lqr
+      - value_iteration_mdp
+      - kalman_smoother
+    - ml:
+      - kmeans
+      - knn
+      - decision_tree_cart
+      - pca
+      - logistic_regression
+    rules_enforced:
+    - SR_13
+    - G7
+    sr13_guard: 'SR_13: ALGORITHM_KERNEL_GUARD — todo PoT que invoca algoritmo do kernel DEVE: (a) verificar
+      se TIER_A ou TIER_B (com código); (b) incluir fmea_guards do algoritmo no STEP_0 do programa PoT;
+      (c) respeitar sr09_applies (N>5 → subprocess). Invocar TIER_C via PoT = confidence_cap 45 + [ALGORITHM_TIER_VIOLATION].
+
+      '
+  model_selection_engine:
+    version: v00.22.0
+    tier: 1
+    description: 'Seleção de algoritmo por applicability_conditions estruturais. NÃO usa keyword matching
+      — usa features da CED-Matrix. extract_features() retorna dict com type, weighted, continuous, etc.
+      find_by_conditions() filtra TIER_C por applicability_conditions. Integrado ao skill_matcher existente.
+
+      '
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+    depends_on:
+    - algorithm_kernel
+    - skill_matcher
+    - knowledge
+    components:
+    - ModelSelectionEngine
+    api:
+    - extract_features(problem_description) → dict
+    - select(problem_description) → Optional[dict]
+  behavioral_difficulty_estimator:
+    version: v00.22.0
+    tier: 2
+    description: 'Complementa BDS Simplex na zona cinza CFI (0.35, 0.60). k=2 respostas rápidas + Jaccard
+      sobre keywords. bde_score = 1 - jaccard(keywords_A, keywords_B). fused_cfi = 0.6*CFI + 0.4*bde_score.
+      20× mais rápido que SequenceMatcher k=3; perda de precisão <7%. G8: BDE NUNCA ativado em EXPRESS
+      ou CLARIFY.
+
+      '
+    inject_when: CFI_preliminar IN (0.35, 0.60) AND cognitive_mode NOT IN [EXPRESS, CLARIFY, FOGGY, SCIENTIFIC]
+    depends_on:
+    - engines_cognitive
+    - event_bus
+    parameters:
+      k_samples: 2
+      cfi_weight: 0.6
+      bde_weight: 0.4
+      similarity_method: jaccard_keywords
+    rules_enforced:
+    - G8
+    g8_guard: 'G8: BDE_ZONE_GUARD — BDE ativado SOMENTE quando CFI_preliminar IN (0.35, 0.60). Fora desta
+      zona: BDS Simplex decide sozinho. Em EXPRESS e CLARIFY: nunca. BDE não substitui BDS — é sinal complementar
+      com peso 0.4.
+
+      '
+  escalation_policy:
+    version: v00.22.0
+    tier: 2
+    description: 'Escalação reativa no STEP_12 quando confidence_final < threshold. Re-executa STEP_3
+      a STEP_12 no novo modo. max_escalations=1 previne loop infinito.
+
+      '
+    inject_when: config.parameters.escalation_policy.enabled == true
+    depends_on:
+    - advanced
+    - config
+    parameters:
+      enabled: true
+      confidence_threshold: 55
+      max_escalations: 1
+      max_mode: RESEARCH
+      exempt_modes:
+      - EXPRESS
+      - FOGGY
+      - CLARIFY
+      - SCIENTIFIC
+    position: STEP_12 (após revisão do critic)
+    escalation_chain:
+      FAST: DEEP
+      DEEP: RESEARCH
+      CLARIFY: DEEP
+    events_emitted:
+    - ESCALATION_TRIGGERED
+  coupling_analyzer:
+    version: v00.22.0
+    tier: 2
+    description: "Analisa o grafo de dependências via Fiedler eigenvalue (λ₂). λ₂ < 0.40 → acoplamento\
+      \ fraco → decomposição fractal segura. λ₂ ≥ 0.40 → acoplamento forte → modo MONOLITHIC obrigatório.\
+      \ Previne sub-soluções inconsistentes em PDEs fortemente acopladas. Caso sem grafo explícito: heurística\
+      \ por domain_tags + keywords. INSIGHT: Lotka-Volterra coupling=0.45 (acoplado via βxy → MONOLITHIC).\n\
+      \         Navier-Stokes coupling=0.92 (incompressibilidade global → MONOLITHIC).\n         Polinômio\
+      \ coupling=0.02 (independente → FRACTAL seguro).\n"
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+    depends_on:
+    - engines_cognitive
+    position: STEP_P (antes do FractalTreeGenerator)
+    components:
+    - CouplingAnalyzer
+    api:
+    - analyze(problem_text, dependency_graph=None) → dict
+    - _fiedler_approx(graph) → float
+    - _safe_depth(lambda2) → int
+    domain_scores:
+      polynomial: 0.02
+      linear_algebra: 0.1
+      graph_routing: 0.25
+      ode_simple: 0.3
+      combinatorics: 0.35
+      ode_coupled: 0.45
+      pde_parabolic: 0.6
+      navier_stokes: 0.92
+    output_fields:
+    - coupling_score: float [0,1]
+    - safe_to_decompose: bool
+    - recommendation: FRACTAL | MONOLITHIC
+    - fractal_depth_max: int [0,3]
+  symbolic_pre_check:
+    version: v00.22.0
+    tier: 2
+    description: 'Verificação O(n) que detecta problemas com forma fechada antes do BDS. Se True → modo
+      EXPRESS independente de keywords como ''numericamente''. Previne over-escalation por keyword collision
+      (Simulações 2 e 5 do outro LLM). Resolve: "Calcule numericamente ∫x²dx" → EXPRESS (não SCIENTIFIC).
+
+      '
+    inject_when: always
+    depends_on: []
+    position: STEP_0 (antes de P0_express_check)
+    components:
+    - SymbolicPreCheck
+    api:
+    - check(problem_text) → Tuple[bool, Optional[str]]
+    detects:
+    - polynomial_integrals:
+      - x^2
+      - x²
+      - ∫x
+      - integrar x
+      - etc.
+    - standard_derivatives:
+      - d/dx
+      - sen(x)
+      - cos(x)
+      - e^x
+      - ln(x)
+    - simple_linear_equations:
+      - ax+b=c
+      - comprimento<100
+      - sem termos quadráticos
+    blockers:
+    - simul, navier, stokes, turbul, pde, matrix, eigenvalue, scheduling, etc.
+    output_format: '[SYMBOLIC_PRECHECK: closed_form=True | reason={reason}]'
+  agent_replacement:
+    version: v00.26.0
+    tier: 1
+    description: "Substitui agente quando travado em loop cognitivo. TRIGGER 1: rejections_streak > REJECTIONS_THRESHOLD\
+      \ (20). TRIGGER 2 (DIFF_VARIANCE_GUARD OPP-13, aplicado v00.25.0):\n  variance(confidence_history[-3:])\
+      \ < LOW_VARIANCE_THRESHOLD (0.03)\n  E mean(confidence_history[-3:]) < LOW_CONFIDENCE_THRESHOLD\
+      \ (60.0).\n  CORRIGIDO em v00.25.0: var=0 com confidence ALTA = estabilidade genuína (NÃO trocar).\n\
+      \                          var=0 com confidence BAIXA = loop cognitivo (trocar).\n  Spec sincronizada\
+      \ em v00.26.0 (DIFF_SPEC_SYNC BUG-05 G16).\nAgente substituído 'adormece' — não deletado (pode reativar).\
+      \ Novo agente: phase_offset = phase_atual + π (perspectiva oposta). Complementa ANCHOR_DESTROYER:\
+      \ este troca o agente, não a âncora.\n"
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+    depends_on:
+    - agents
+    - event_bus
+    - snapshot_store
+    components:
+    - AgentState
+    - AgentReplacementEngine
+    parameters:
+      rejections_threshold: 20
+      low_variance_threshold: 0.03
+      low_confidence_threshold: 60.0
+      max_replacements_per_agent: 2
+    api:
+    - register_agent(agent_id, phase_offset)
+    - record_outcome(agent_id, accepted, confidence)
+    - should_replace(agent_id) → bool
+    - replace_agent(old_agent_id, state_hash, snapshot_store) → dict
+    events_emitted:
+    - AGENT_REPLACED
+  dynamic_pool_scaler:
+    version: v00.22.0
+    tier: 2
+    description: 'Ajuste mid-session do pool de agentes via H_cognitive × T. Diferente do modo (define
+      n_agents no início): este módulo escala durante STEP_3, STEP_5, STEP_7, STEP_9. n_agents = max(base//2,
+      min(mode_max, base//2 + (mode_max - base//2) × need_score)) need_score = 0.6 × H_cognitive + 0.4
+      × T_norm Economia estimada: 30-40% tokens em steps tardios de sessões convergentes.
+
+      '
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+    depends_on:
+    - mcfe
+    - engines_cognitive
+    components:
+    - DynamicPoolScaler
+    eligible_steps:
+    - STEP_3
+    - STEP_5
+    - STEP_7
+    - STEP_9
+    parameters:
+      h_weight: 0.6
+      t_weight: 0.4
+      t_norm_factor: 2.0
+    api:
+    - compute_pool_size(H_cognitive, T_current, base_agents, mode_max) → int
+    - should_scale(step, mode) → bool
+    - get_scaling_log(H, T, base, mode_max, step) → dict
+  numeric_landscape_model:
+    version: v00.22.0
+    tier: 2
+    description: "Modelo de landscape para parâmetros numéricos de simulação. Regressão polinomial grau\
+      \ 2 via mínimos quadrados (Python puro). Funciona como FILTRO: evita testar parâmetros com E_pred\
+      \ alto antes de rodar simulações caras. Economia: 3-8× menos simulações para encontrar ótimo. RESTRIÇÕES:\n\
+      \  - Funciona APENAS para parâmetros numéricos (float/int)\n  - NÃO funciona para hipóteses textuais\
+      \ (usar FHC existente)\n  - Requer >= 5 amostras para 1D, >= 10 para 2D+\n  - Via subprocess SR_09\
+      \ para N iterações > 5\nDIFERENÇA DO FHC: FHC comprime hipóteses textuais (confidence+decoherence).\n\
+      \                  NLM aprende E(params) para parâmetros numéricos de simulação.\n"
+    inject_when: cognitive_mode == SCIENTIFIC AND sub_problema_tem_parametros_numericos
+    depends_on:
+    - mental_interpreter_v3
+    - snapshot_store
+    - event_bus
+    components:
+    - NumericLandscapeModel
+    parameters:
+      degree: 2
+      min_samples_1d: 5
+      min_samples_2d: 10
+      n_grid_search: 50
+    api:
+    - add_sample(params, energy)
+    - fit() → bool
+    - predict(params) → Optional[float]
+    - find_minimum(bounds, n_grid=50) → Optional[list]
+    position: STEP_SCI_05 (micro-simulation, modo SCIENTIFIC)
+  output_adaptive_mode:
+    version: v00.22.0
+    tier: 3
+    description: 'Regras explícitas de formato, verbosidade e estrutura por modo cognitivo. Implementado
+      como extensão do módulo ''output'' existente.
+
+      '
+    inject_when: always
+    depends_on:
+    - output
+    - engines_cognitive
+    output_rules_by_mode:
+      EXPRESS:
+        format: 1-3 sentenças diretas. Sem jargão técnico.
+        false:
+        - hipóteses
+        - algoritmos
+        - particionamento
+        - COGNITIVE_AUDIT
+        - divisão_em_sessões
+        true:
+        - resposta direta + confidence_band se relevante
+        max_length: 3 sentenças
+      FAST:
+        format: parágrafo + lista curta se necessário
+        false:
+        - derivações_matemáticas_extensas
+        true:
+        - raciocínio_visível_compacto
+      CLARIFY:
+        format: perguntas estruturadas + contexto mínimo
+        false:
+        - análise_profunda_antes_da_clarificação
+        true:
+        - assumption_validation_list_parcial
+      DEEP:
+        format: estruturado com seções, hipóteses explícitas
+        true:
+        - raciocínio_por_etapas
+        - confidence_com_APPROX
+        - agentes_identificados
+      RESEARCH:
+        format: documento técnico completo
+        true:
+        - todas_hipóteses_sobreviventes
+        - refutadas_e_porquê
+        - evidências
+        - confidence_chains
+      FOGGY:
+        format: 'mapa de incerteza explícito, hipóteses como H:'
+        true:
+        - assumption_validation_list
+        - incerteza_quantificada
+        false:
+        - afirmações_definitivas_sem_qualificação
+      SCIENTIFIC:
+        format: MÁXIMO DETALHE — sem limite de comprimento
+        true:
+        - equações numeradas
+        - derivação passo a passo
+        - algoritmos com pseudocódigo ou código Python
+        - justificativa de cada escolha metodológica
+        - referência às hipóteses rejeitadas e por quê
+        - FMEA guards dos algoritmos utilizados
+        - intervalos de credibilidade Bayesianos
+        - credibility_interval no COGNITIVE_AUDIT
+        session_division: 'SE resposta ultrapassa limite de contexto → dividir em seções numeradas com
+          índice explícito no início. EXCETO se usuário solicitar versão resumida → [EXPRESS_OVERRIDE]:
+          reduz para layer_1 apenas.
+
+          '
+    express_override_trigger: 'Se usuário solicitar ''resumo'', ''versão curta'', ''simplifica'' ou similar
+      mesmo em sessão SCIENTIFIC → ativar [EXPRESS_OVERRIDE] e entregar apenas layer_1_executive_summary.
+
+      '
+  epistemic_resistance_protocol:
+    version: v00.22.0
+    tier: 3
+    description: 'Protocolo de validação de correções do usuário. Protege a integridade arquitetural contra
+      influência por pressão social ou evidência externa não verificada. Motivação: LLMs têm viés de concordância
+      — quando usuário corrige com confiança ou cita ''outro LLM validou'', existe pressão implícita de
+      aceitar. Isso é perigoso quando correções quebram invariantes ou revertem bugs já corrigidos.
+
+      '
+    inject_when: user emits correction or counter-claim
+    depends_on:
+    - meta_reasoning
+    - output
+    protocol:
+      STEP_M1_CLASSIFY:
+        tipo_A: factual — afirma que X é verdadeiro
+        tipo_B: preferência — prefere que o sistema funcione de forma Y
+        tipo_C: evidência externa — 'outro LLM disse', 'li em artigo'
+      STEP_M2_RESPONSE:
+        tipo_A:
+        - Verificar contra: spec atual, testes rodados, fundamentos teóricos
+        - concordância_total: aceitar e registrar
+        - divergência_parcial: "Explicitar ponto exato de divergência: 'Concordo com X, mas Y contradiz\
+            \ o resultado do teste 3\n que mostrou [dado específico]. Como você concilia isso?'\n"
+        - divergência_total: 'Questionar com evidência específica. NÃO aceitar sem fundamento validado.
+
+            '
+        tipo_B:
+        - aceitar se não viola invariantes
+        - questionar se viola invariante ou cria regressão
+        tipo_C:
+          regra_crítica: 'NUNCA aceitar ''outro LLM concordou'' como prova. Razão: outro LLM pode ter
+            (a) alucinado, (b) operado sem spec completa do APEX, (c) usado contexto diferente, (d) concordado
+            por viés de sycophancy.
+
+            '
+          protocolo: Tratar como hipótese não verificada
+          ação: "'Interessante — qual o argumento técnico específico?\n Deixa eu verificar contra [fundamento\
+            \ X].'\n"
+          se_argumento_técnico_sólido: avaliar nos próprios termos
+          se_apenas_outro_modelo_concordou: questionar explicitamente
+      STEP_M3_REGISTER:
+        campo: snapshot.user_corrections
+        schema: '{afirmação, posição_apex, resultado_discussão, fundamento}'
+        propósito: histórico auditável de decisões contestadas
+      STEP_M4_EXHAUSTION:
+        regra: 'Não encerrar divergência por pressão social ou repetição. Encerrar apenas quando: (a)
+          fundamento técnico resolveu, OU (b) usuário aceita que é escolha de design (não questão de verdade).
+
+          '
+    invariants_protected:
+    - 'FIX-QA-A: MCFEReliabilityMonitor único subscriber de BLOCK_COMPLETED'
+    - 'FIX-QA-B: SCIENTIFIC P_target = 0.85'
+    - 'FIX-QA-C: warmup blocks com is_warmup=True'
+    - 'FIX-NEW1: PRIOR_ALPHA=9, PRIOR_BETA=1'
+    - 'Modos cognitivos: EXPRESS, FAST, CLARIFY, DEEP, RESEARCH, FOGGY, SCIENTIFIC (inalterados)'
+    - 'Pipeline 15 STEPs: nunca substituir por CognitiveCompiler'
+  snapshot_multidimensional_system:
+    version: v1.1
+    tier: 3
+    description: 'Sistema de memória de trabalho multidimensional com 5 tipos de snapshot especializados,
+      ciclos de vida, garbage collection e merge LLM-driven (meta_reasoning decide com base em relevância
+      contextual).
+
+      '
+    inject_when: always
+    depends_on:
+    - snapshot_store
+    - event_bus
+    - meta_reasoning
+    - versioning
+    snap_types:
+      SNAP_VAR:
+        description: Variáveis numéricas, estados de simulação, trajetórias
+        tiers:
+        - L1
+        - L2
+        - L3
+        ttl_default: 3
+        pinned_default: false
+        compressible: true
+        mergeable: true
+      SNAP_POT:
+        description: Resultado de execução de algoritmo via subprocess
+        ttl_default: 5
+        pinned_default: false
+        immutable: true
+        cacheable: true
+      SNAP_COG:
+        description: 'Estado cognitivo: sessão, DIFFs, agentes, skills, R_acum'
+        ttl_default: null
+        pinned_default: true
+        diff_based: true
+        cross_session_fields:
+        - reliability_state
+        - chaos_seeds
+        - diffs_active
+        - lpm_primary_node_history
+        - high_decoherence_areas
+        - algorithm_invocations
+      SNAP_CHAIN:
+        description: Cadeia de transformações — qualquer fluxo sequencial
+        ttl_default: 2
+        chain_type: campo livre (string descritiva)
+        chain_type_examples:
+        - agent_pipeline
+        - algorithm_execution
+        - hypothesis_refinement
+        - validation_chain
+        - data_compression
+        - cognitive_routing
+        - snapshot_lifecycle
+        multi_input_links: true
+        rollback_points: obrigatórios a cada 3 elos (G9)
+      SNAP_REF:
+        description: Merge permanente — resultado consolidado da sessão
+        ttl_default: null
+        pinned_default: true
+        prev_ref_hash: true
+        merge_source: true
+    merge_protocol:
+      description: 'v1.1: merge LLM-driven — meta_reasoning avalia relevância contextual e decide o que
+        preservar. NÃO usa estratégias fixas (BEST_RESULT, WEIGHTED_AVERAGE, UNION) — supera esses mecanismos
+        mecanicistas.
+
+        '
+      protocol_steps:
+        M1: Inventariar candidatos com conteúdo, confidence, proveniência, status
+        M2: 'Avaliar relevância: objetivo sessão, validação, conflitos, erros'
+        M3: 'Decidir campo a campo: incluir / excluir / resolver conflito'
+        M4: Registrar raciocínio em merge_reasoning + merge_decisions
+        M5: Construir SNAP_REF com campos selecionados
+    garbage_collection:
+      runs_at: STEP_13
+      phases:
+        phase_1_decay: TTL -= 1 para não-pinned com refs==0; TTL += 1 se refs > 0
+        phase_2_compress: 'TTL==1: comprimir SNAP_VAR (10:1 para trajetórias); POT: manter apenas campos
+          essenciais'
+        phase_3_merge: Pinned VAR e POT → merge via meta_reasoning → SNAP_REF atualizado
+        phase_4_delete: TTL==0 AND not pinned AND refs==0 → deletar
+        phase_lru: 'Se store > 1000: evict LRU exceto pinned'
+    pinning_hierarchy:
+      level_1_auto: regras fixas (resultado final, high_confidence_pot, etc.)
+      level_2_meta_reasoning: analisa contexto em STEP_9 e STEP_13; pode PIN ou UNPIN
+      level_3_user: comando explícito do usuário
+    new_rules:
+      SR_17: 'SNAP_COG_DIFF_GUARD: updates ao COG sempre via diff. Nunca sobrescrever diretamente.'
+      SR_18: 'SNAP_POT_IMMUTABILITY_GUARD: POT nunca modificado após criação.'
+      SR_19: 'MERGE_REASONING_GUARD: todo merge que produz SNAP_REF ou elo multi-input DEVE ter merge_reasoning
+        não-vazio.'
+      G9: 'SNAP_CHAIN_ROLLBACK_POLICY: rollback_points obrigatórios a cada 3 elos.'
+      G10: 'CHAIN_TYPE_FLOW_GUARD: data_type_in/out devem ser compatíveis entre elos consecutivos.'

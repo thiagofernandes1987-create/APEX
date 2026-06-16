@@ -1,0 +1,33 @@
+patch_event_bus:
+  new_events:
+  - POT_EXECUTION_STARTED, POT_EXECUTION_COMPLETED, POT_GUARD_VIOLATED
+  - SKILL_INVOKED, SKILL_EXECUTION_DONE
+  - HYPOTHESIS_PRUNED_BY_SKILL, HYPOTHESIS_AMPLIFIED_BY_SKILL
+  - HYPOTHESIS_SPAWN_SUGGESTED
+  - FHC_COMPRESSED, FHC_DOMINATED, FHC_MERGED, FHC_ABSURD
+  - FKI_LEVEL_LOADED
+  new_subscriptions:
+    mental_interpreter:
+      events:
+      - SKILL_INVOKED
+      action: Push execution frame
+    fractal_hypothesis_compression:
+      events:
+      - HYPOTHESIS_PRUNED_BY_SKILL
+      - POT_EXECUTION_COMPLETED
+      action: Avaliar compression
+    fractal_knowledge_indexing:
+      events:
+      - MCFE_GEAR_CHANGED
+      action: Carregar próximo nível de anchors
+    skill_registry:
+      events:
+      - SKILL_EXECUTION_DONE
+      action: Atualizar fitness score
+  new_prefix_routing:
+    POT_: pot_engine
+    SKILL_: specialized_skill_engine
+    FHC_: fractal_hypothesis_compression
+    FKI_: fractal_knowledge_indexing
+    HYPOTHESIS_PRUNED_: fractal_hypothesis_compression
+    HYPOTHESIS_AMPLIFIED_: advanced.hypothesis_tracker

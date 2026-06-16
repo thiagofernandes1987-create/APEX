@@ -1,0 +1,220 @@
+diff_ecosystem_v026:
+  registered_diffs:
+  - id: DIFF_VERIFIER_V2
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - trajectory_verifier
+    rules_new:
+    - SR_28
+    - SR_29
+    fixes:
+    - BUG-01
+    - BUG-02
+    breaking_changes: verify([]) agora retorna ok=False. Callers que assumiam ok=True para lista vazia
+      DEVEM tratar o resultado.
+  - id: DIFF_MSE_GUARD
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - model_selection_engine.select
+    rules_new: []
+    fixes:
+    - BUG-03
+    breaking_changes: none
+  - id: DIFF_LQR_DARE
+    type: MODULE_REPLACE
+    status: ADOPTED
+    modules_modified:
+    - algorithm_kernel.tier_b.lqr
+    rules_new: []
+    fixes:
+    - BUG-04
+    - BUG-04b
+    breaking_changes: P_final converge (não mais diverge). Resultado LQR agora matematicamente correto.
+  - id: DIFF_AUDITCHAIN_AUTOPIN
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - audit_chain.add_link
+    - audit_chain.finalize
+    rules_new: []
+    fixes:
+    - BUG-06
+    breaking_changes: add_link recebe snapshot_store como parâmetro opcional. Sem breaking para callers
+      existentes.
+  - id: DIFF_FIEDLER_FIX
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - coupling_analyzer._fiedler_approx
+    rules_new:
+    - SR_31
+    fixes:
+    - BUG-07
+    breaking_changes: 'Resultado pode mudar: λ_MAX/n (errado) → λ₂ (correto). Grafos podem mudar FRACTAL↔MONOLITHIC.'
+  - id: DIFF_EMIT_VLEVEL
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mental_interpreter._emit_block_completed
+    rules_new:
+    - SR_30
+    fixes:
+    - GAP-01
+    breaking_changes: none
+  - id: DIFF_BDE_PYTHON
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - behavioral_difficulty_estimator
+    rules_new:
+    - SR_32
+    fixes:
+    - GAP-05
+    breaking_changes: DIFF_v22_004 reclassificado de SPEC_ONLY para ADOPTED com código real.
+  - id: DIFF_MENTAL_INTERPRETER_WIRES
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mental_interpreter.__init__
+    - mental_interpreter._step_0_init
+    - mental_interpreter._step_13_snapshot
+    rules_new:
+    - G13
+    - G14
+    fixes:
+    - GAP-02
+    - GAP-04
+    - GAP-06
+    breaking_changes: AuditChain inicializado para ELIGIBLE_MODES. _step_13_snapshot agora persiste no
+      SnapshotStore.
+  - id: DIFF_CALIBRATOR_WIRE
+    type: MODULE_REPLACE
+    status: ADOPTED
+    modules_modified:
+    - mcfe_reliability_monitor
+    rules_new:
+    - G15
+    fixes:
+    - GAP-03
+    - GAP-08
+    - GAP-10
+    breaking_changes: '_replanning_done removido — substituído por _replanning_count + _last_replanning_block.
+      check_reliability() usa _last_lower_5 em vez de R_acum direto. get_state() retorna campos adicionais
+      (replanning_count, last_lower_5, calibration).
+
+      '
+  - id: DIFF_ADAPTIVE_NREL
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - fractal_decomposer.decompose_adaptive_reliability
+    rules_new: []
+    fixes:
+    - GAP-11
+    breaking_changes: Blocos tardios podem ter tamanho menor (mais conservativo). Correto.
+  - id: DIFF_MULTI_REPLANNING_RUN
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mental_interpreter._run_production
+    rules_new: []
+    fixes:
+    - GAP-10
+    breaking_changes: none
+  - id: DIFF_NLM_MINIMIZE
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - numeric_landscape_model.find_minimum
+    rules_new: []
+    fixes:
+    - GAP-07
+    breaking_changes: none
+  - id: DIFF_LYAPUNOV_AUGMENTED
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - lyapunov_maximal
+    rules_new: []
+    fixes:
+    - BUG-08
+    breaking_changes: method retornado muda de 'scipy_RK45' para 'scipy_RK45_augmented'.
+  - id: DIFF_SYMBOLIC_PRECHECK_V3
+    type: MODULE_REPLACE
+    status: ADOPTED
+    modules_modified:
+    - symbolic_pre_check.SymbolicPreCheckV2
+    rules_new: []
+    fixes:
+    - BUG-09
+    breaking_changes: 3 casos antes True → agora False (correto). Sistema 2×2, FFT+x^2, optimize EN.
+  - id: DIFF_CRITIC_GATE_DEEP
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - critic_gate.ELIGIBLE_MODES
+    rules_new: []
+    fixes:
+    - GAP-09
+    breaking_changes: DEEP e RESEARCH agora elegíveis → CriticGate pode retornar FAIL nesses modos.
+  - id: DIFF_MERGE_API
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - merge_reason_validator.validate
+    rules_new: []
+    fixes:
+    - GAP-12
+    breaking_changes: none
+  - id: DIFF_MUTATION_CONFIDENCE
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - chaos_operators.structural_mutation
+    rules_new: []
+    fixes:
+    - GAP-13
+    breaking_changes: confidence reduzida em 10 após mutação. Hipóteses mutadas terão confiança menor.
+  - id: DIFF_SPEC_SYNC
+    type: CONFIG_UPDATE
+    status: ADOPTED
+    modules_modified:
+    - agent_replacement_spec
+    - mode_conflict_resolution_policy
+    rules_new:
+    - G16
+    fixes:
+    - BUG-05
+    - GAP-15
+    breaking_changes: none
+  - id: DIFF_TRIGRAM_DIM
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - embed_text_trigram
+    rules_new: []
+    fixes:
+    - GAP-14
+    breaking_changes: dim 128→256. Vetores antigos no MemoryIndex em disco são incompatíveis. Limpar índice
+      após atualização.
+  - id: DIFF_CFI_EN_CONNECTORS
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - cfi_feature_extractor.extract
+    rules_new: []
+    fixes:
+    - GAP-16
+    breaking_changes: none
+  - id: DIFF_SUBPROCESS_ERRCLASSIFY
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mental_interpreter._subprocess
+    - mental_interpreter._classify_error
+    rules_new: []
+    fixes:
+    - OPP-20
+    breaking_changes: _subprocess retorna dict com campo 'error_type' adicional.

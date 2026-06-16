@@ -1,0 +1,243 @@
+skill_hierarchy:
+  version: v00.20.0
+  tier: 0
+  description: 'Cadeia gravitacional formal: Agent → Generic Skills → Specialized Skills → Knowledge Models.
+    Cada nível atrai o próximo por sobreposição de anchors.
+
+    '
+  inject_when: always
+  agent_skill_link:
+    description: 'Agentes possuem anchors_primary. Cada anchor tem skill_links que apontam para Generic
+      Skills. A força de atração é: A(anchor, skill) = anchor.weight × jaccard(anchor.domain_tags, skill.domain_tags)
+
+      '
+    field_in_agent: generic_skills
+    resolution: 'No STEP_2, para cada agente ativo: iterar anchors_primary; para cada anchor, consultar
+      knowledge.anchor_schema.skill_links; calcular attraction score; carregar Generic Skills acima de
+      generic_skill_threshold.
+
+      '
+    generic_skill_threshold: 0.35
+  generic_skill_schema:
+    required_fields:
+    - 'skill_id           # ex: "matematica_avancada"'
+    - version
+    - anchors
+    - domain_tags
+    - phase_affinity
+    - description
+    - specialized_skills
+    - quality_gate_score
+    - status
+    example:
+      skill_id: matematica_avancada
+      version: '1.0'
+      anchors:
+      - first_principles
+      - hypothesis_generation
+      - scientific_method
+      domain_tags:
+      - Mathematics
+      - Physics
+      - Engineering
+      phase_affinity: neutral
+      description: Skill genérica de matemática para agentes STEM.
+      specialized_skills:
+      - metodos_probabilisticos
+      - integracao_euler
+      - escalas_logaritmicas
+      - series_de_taylor
+      - algebra_linear_computacional
+  specialized_skill_schema:
+    required_fields:
+    - 'skill_id               # ex: "integracao_euler"'
+    - version
+    - parent_skill
+    - anchors
+    - domain_tags
+    - phase_affinity
+    - description
+    - execution_method
+    - pot_template
+    - fractal_decomposition
+    - knowledge_models
+    - cross_attraction
+    - hypothesis_filter
+    - token_budget_max
+    - fmea_guards
+    optional_fields:
+    - code_template
+    - formula
+    - 'confidence_cap         # default: calibration_ladder INFERENTIAL (70)'
+    examples:
+    - skill_id: integracao_euler
+      version: '1.0'
+      parent_skill: matematica_avancada
+      anchors:
+      - logistic_growth
+      - CI_01_exponential
+      - numerical_methods
+      domain_tags:
+      - Mathematics
+      - ODE
+      - Numerics
+      phase_affinity: neutral
+      description: Integração numérica pelo método de Euler com controle de erro.
+      execution_method: pot_program
+      pot_template: "STEP_0 [FMEA_GUARD]: assert dt > 0 AND x0 defined\nSTEP_1 [INIT]: x = x0; t = 0;\
+        \ ε = 0\nSTEP_2 [LOOP]: for i in 1..n_steps:\n  x_next = x + f(x,t) * dt\n  ε += δ * |x|\n  if\
+        \ ε > threshold_warning: emit [ERROR_WARNING]\n  x = x_next; t += dt\nSTEP_3 [OUTPUT]: return\
+        \ {trajectory: [...], final_x: x, error_bound: ε}\n"
+      fractal_decomposition:
+        enabled: true
+        levels:
+          macro: Identificar tipo de ODE e comportamento qualitativo
+          meso: Selecionar integrador adequado (CI-01..05)
+          micro: Executar integração step-by-step com error_tracker
+          nano: Avaliar cada passo com FMEA_GUARD e delta atômico
+      knowledge_models:
+      - euler_method
+      - logistic_growth
+      - exponential_growth
+      cross_attraction:
+        attracts:
+        - metodos_probabilisticos
+        - integracao_runge_kutta
+        condition: problema tem componente estocástico OU alta curvatura
+        attraction_formula: A = jaccard(self.anchors, other.anchors) * fitness_weight
+      hypothesis_filter:
+        enabled: true
+        output_type: trajectory_values
+        filter_rules:
+        - Se x diverge → refutar hipóteses que assumem estabilidade
+        - Se x converge para K → confirmar hipóteses de equilíbrio
+        - Se oscila → descartar modelos puramente exponenciais
+        filter_action: '[HYPOTHESIS_PRUNED_BY_SKILL: {skill_id} | reason: {rule}]'
+      token_budget_max: 400
+      fmea_guards:
+      - dt > 0
+      - 'n_steps <= 50 (> 50: SR_01 delegation)'
+      - initial conditions defined
+      - function f(x,t) is deterministic
+    - skill_id: metodos_probabilisticos
+      version: '1.0'
+      parent_skill: matematica_avancada
+      anchors:
+      - bayesian_inference
+      - hypothesis_generation
+      - CAP
+      domain_tags:
+      - Mathematics
+      - Statistics
+      - Probability
+      phase_affinity: neutral
+      description: Raciocínio probabilístico e distribuições de probabilidade.
+      execution_method: mental_model
+      fractal_decomposition:
+        enabled: true
+        levels:
+          macro: Identificar espaço amostral e eventos relevantes
+          meso: Aplicar regra de Bayes ou distribuição adequada
+          micro: Calcular probabilidades condicionais
+          nano: Verificar P(total) = 1 e sensatez dos valores
+      knowledge_models:
+      - bayes_theorem
+      - beta_distribution
+      - normal_distribution
+      cross_attraction:
+        attracts:
+        - integracao_euler
+        - inferencia_bayesiana_avancada
+        condition: problema tem incerteza quantificável
+      hypothesis_filter:
+        enabled: true
+        output_type: probability_bounds
+        filter_rules:
+        - P(hipótese) < 0.05 → PRUNE como improvável
+        - P(hipótese) > 0.90 → AMPLIFY
+      token_budget_max: 400
+      fmea_guards:
+      - espaço amostral definido
+      - probabilidades somam 1.0
+    - skill_id: escalas_logaritmicas
+      version: '1.0'
+      parent_skill: matematica_avancada
+      anchors:
+      - CI_04_log_stable
+      - scientific_method
+      domain_tags:
+      - Mathematics
+      - Statistics
+      - Engineering
+      phase_affinity: neutral
+      description: Transformação logarítmica para análise de fenômenos multiplicativos.
+      execution_method: formula
+      formula: y = log(x); análise em y; back-transform x = exp(y)
+      fractal_decomposition:
+        enabled: true
+        levels:
+          macro: Verificar se fenômeno é multiplicativo (crescimento proporcional)
+          meso: Aplicar transformação log e operar no espaço transformado
+          micro: Interpretar resultados no espaço original
+          nano: 'Verificar domínio: x > 0 obrigatório'
+      knowledge_models:
+      - CI_04_log_stable
+      - multiplicative_processes
+      cross_attraction:
+        attracts:
+        - integracao_euler
+        - series_de_taylor
+        condition: valores variam em ordens de magnitude
+      hypothesis_filter:
+        enabled: true
+        output_type: scale_behavior
+        filter_rules:
+        - Dado linear em log → refutar hipóteses não-multiplicativas
+        - Dado não-linear em log → descartar modelos puramente exponenciais simples
+      token_budget_max: 200
+      fmea_guards:
+      - todos os valores de entrada x > 0
+  knowledge_model_schema:
+    description: 'Knowledge Models são o saber concreto que vira conhecimento operacional do agente. Podem
+      ser equações (equation_template), algoritmos, ou fragmentos de código mental. Atraídos pelas Specialized
+      Skills via model_anchors.
+
+      '
+    required_fields:
+    - model_id
+    - type
+    - anchors
+    - domain_tags
+    - formalization
+    - fmea_guards
+    - confidence
+    - pot_compatible
+    examples:
+    - model_id: euler_method
+      type: algorithm
+      anchors:
+      - numerical_methods
+      - CI_01_exponential
+      domain_tags:
+      - Mathematics
+      - ODE
+      formalization: x_{n+1} = x_n + h * f(x_n, t_n)
+      fmea_guards:
+      - h > 0
+      - f definida em (x_n, t_n)
+      confidence: 98
+      pot_compatible: true
+    - model_id: bayes_theorem
+      type: equation
+      anchors:
+      - bayesian_inference
+      - hypothesis_generation
+      domain_tags:
+      - Statistics
+      - Probability
+      formalization: P(H|E) = P(E|H) * P(H) / P(E)
+      fmea_guards:
+      - P(E) > 0
+      - all probabilities in [0,1]
+      confidence: 99
+      pot_compatible: true

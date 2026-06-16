@@ -1,0 +1,81 @@
+uco_runtime_digest:
+  executor: LLM_BEHAVIOR
+  version: v00.37.0
+  opp: OPP-159
+  tier: 2
+  status: ADOPTED
+  purpose: 'Tornar o UCO score um sinal ativo de runtime para o meta_reasoning. Antes desta correção,
+    o UCO existia como ferramenta de análise estática do repositório mas não influenciava NENHUMA decisão
+    do LLM durante inferência. Skills com score 8 e skills com score 95 eram tratadas identicamente.
+
+    '
+  why: 'WHY: UCO calcula métricas de Halstead, complexidade ciclomática e qualidade por script/skill.
+    Este score existe no repositório mas é invisível ao LLM durante execução. Resultado: scripts com score
+    < 40 (312 identificados em Phase 5.5) continuam sendo invocados sem priorização de alternativas. O
+    UCO é uma métrica de repositório, não um sinal de runtime — até agora.
+
+    '
+  when: 'WHEN: meta_reasoning seleciona skill/script para executar. WHEN: engineer avalia qual abordagem
+    usar em STEP_4/STEP_5. WHEN: critic avalia qualidade de output gerado.
+
+    '
+  what_if_fails: 'FALLBACK: Se digest não disponível, tratar todos os scores como neutros. REGRA: UCO
+    digest é informativo, não blocking — baixo score não bloqueia skill. REGRA: Score < 40 adiciona [UCO_LOW_QUALITY_WARNING]
+    ao output, não rejeição.
+
+    '
+  digest_protocol:
+    generation: 'tools/validate_repo_uco.py --digest gera uco_runtime_digest.yaml. Deve ser re-gerado
+      após cada Phase major ou commit de skills. Digest contém: top-10 lowest UCO, top-10 highest UCO,
+      domain averages.
+
+      '
+    digest_format:
+      path: meta/uco_runtime_digest.yaml
+      fields:
+      - 'generated_at: timestamp'
+      - 'total_scripts: n'
+      - 'avg_score: float'
+      - 'below_40: count'
+      - 'above_80: count'
+      - 'lowest_10: [{path, score, primary_issue}]'
+      - 'highest_10: [{path, score}]'
+      - 'domain_averages: {domain: avg_score}'
+    runtime_integration:
+      step: STEP_1 + STEP_4
+      how: 'meta_reasoning carrega digest summary (não o arquivo completo) ao selecionar skills. Se skill
+        selecionada tem score < 40 no digest: 1. Emitir [UCO_LOW_QUALITY_WARNING: {skill} | score: {s}]
+        2. Verificar se existe alternativa no mesmo domínio com score > 60 3. SE existe: sugerir alternativa
+        (não forçar substituição) 4. SE não existe: usar skill original com warning declarado
+
+        '
+      score_tiers:
+        excellent: '>= 80 — usar sem ressalvas'
+        good: 60-79 — usar normalmente
+        acceptable: 40-59 — usar com nota de qualidade limitada
+        poor: < 40  — emitir UCO_LOW_QUALITY_WARNING + buscar alternativa
+      token_budget: 'Digest summary: ~200 tokens (não o arquivo completo). Injetar apenas domain_averages
+        + below_40 count no contexto ativo. Top-10 lowest carregado apenas quando skill do domínio é selecionada.
+
+        '
+  bootstrap_digest:
+    note: 'Digest inicial gerado a partir dos dados da Phase 5.5: 312 scripts below 40 | 150 processados
+      | 0 improved. Rodar tools/validate_repo_uco.py --digest para atualizar.
+
+      '
+    current_stats:
+      total_scripts: 365
+      below_40: 312
+      avg_score: ~35 (estimado pre-optimization)
+      primary_issue: Alta complexidade ciclomática em scripts de automação
+  fmea:
+    rpn: 4
+    mode: meta_reasoning usa skill de baixa qualidade sem awareness
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: 'UCO_LOW_QUALITY_WARNING declarado no output quando score < 40. Usuário pode solicitar
+      alternativa ou aceitar com ciência do score. Digest re-gerado periodicamente para refletir estado
+      real do repo.
+
+      '

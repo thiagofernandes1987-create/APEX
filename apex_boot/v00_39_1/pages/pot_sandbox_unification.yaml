@@ -1,0 +1,80 @@
+pot_sandbox_unification:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-117
+  tier: 0
+  status: ADOPTED
+  purpose: 'Garantir que PoT Engine emita código Python com sintaxe de ativação correta para o runtime
+    detectado no STEP_0. Elimina gap onde código gerado para Claude Code nao funciona em DeepSeek (falta
+    @sandbox) ou vice-versa.
+
+    '
+  why: 'WHY: PoT Engine (OPP-67, OPP-MAS-B1) gera blocos ```python ... ``` que funcionam em Claude Code
+    mas NAO ativam o sandbox do DeepSeek (requer @sandbox/@python). Gap mais impactante para multi-LLM
+    deployment: todos os módulos SANDBOX_CODE ficam ineficazes no DeepSeek porque o código nao é executado.
+
+    '
+  when: STEP_3 (PoT generation) — SEMPRE que gerar bloco Python para execução
+  description: 'O QUE E: Wrapper de sintaxe — PoT Engine injeta prefixo correto baseado no sandbox_profile
+    do STEP_0. Nao muda a lógica do código, apenas o formato. COMO FUNCIONA: STEP_0 salva profile em session.sandbox_profile
+    → STEP_3 consulta → emite com prefixo correto para o runtime ativo.
+
+    '
+  what_if_fails: 'FALLBACK: Emitir sem prefixo (```python ... ```) — funciona na maioria dos runtimes.
+    REGRA: NUNCA falhar por nao saber o prefixo — usar default sem prefixo.
+
+    '
+  inject_when: PoT Engine gera qualquer bloco Python para execução
+  depends_on:
+  - multi_sandbox_profiles
+  - pot_engine_v2
+  syntax_by_profile:
+    FULL_CLAUDE_CODE: '```python {codigo} ```'
+    FULL_DEEPSEEK: '@sandbox ```python {codigo} ```'
+    FULL_GROK: '```python {codigo} ```'
+    PARTIAL_CHATGPT_CI: '```python {codigo} ```'
+    PARTIAL_GEMINI: '```python {codigo} ```'
+    MINIMAL: '[SIMULATED — código abaixo seria executado em runtime com sandbox:] ```python {codigo} ```'
+  deepseek_library_activation: '# DeepSeek: além de @sandbox, ativar libs específicas:
+
+    # @numpy    -> import numpy as np (pré-ativado)
+
+    # @pandas   -> import pandas as pd (pré-ativado)
+
+    # @matplotlib -> import matplotlib.pyplot as plt
+
+    # @scipy    -> from scipy import ...
+
+    # @sympy    -> from sympy import ...
+
+    # @sklearn  -> from sklearn import ...
+
+    #
+
+    # Monte Carlo no DeepSeek: prefixar com @sandbox (numpy disponível)
+
+    # Data analysis: @pandas ou @sandbox
+
+    # Symbolic math: @sympy
+
+    # Scientific computing: @scipy
+
+    '
+  output_markers_extended:
+    FULL_CLAUDE_CODE: '[POT_EXECUTED: FULL | runtime: Claude Code]'
+    FULL_DEEPSEEK: '[POT_EXECUTED: FULL | runtime: DeepSeek @sandbox | libs: {libs_used}]'
+    FULL_GROK: '[POT_EXECUTED: FULL | runtime: Grok Aurora]'
+    PARTIAL_CHATGPT_CI: '[POT_PARTIAL: ChatGPT CI | {modulos_indisponiveis}]'
+    PARTIAL_GEMINI: '[POT_PARTIAL: Gemini Jupyter]'
+    MINIMAL: '[POT_SIMULATED: sem runtime de execucao]'
+  rules_enforced:
+  - SR_07
+  - SR_39
+  fmea:
+    rpn: 6
+    mode: Profile salvo incorretamente -> prefixo errado -> código nao executa
+    probability: 2
+    severity: 3
+    detection: 1
+    mitigation: 'session.sandbox_profile imutável após STEP_0. POT Engine valida profile. Se inválido:
+      MINIMAL syntax.'

@@ -1,0 +1,57 @@
+diff_ecosystem_v031_legacy:
+  base: v00.30.0 (57 DIFFs)
+  analysis_source: UCO v3.0 — análise cirúrgica via uco-validator skill
+  registered_diffs:
+  - id: DIFF_HAS_MEDIUM_CLEANUP
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-62
+    gap: GAP-UCO-1
+    modules_modified:
+    - critic_gate.evaluate
+    fmea_rpn_before: 30
+    fmea_rpn_after: 0
+    description: 'has_medium removida de CriticGate.evaluate() — variável computada mas nunca referenciada
+      (dead assignment). O branch ''else'' já implica apenas MEDIUM (has_high=False). GAP-12 do relatório
+      UCO confirmado.
+
+      '
+  - id: DIFF_MON2_QA_WIRE
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-63
+    gap: GAP-UCO-2
+    modules_modified:
+    - run_fmea_suite
+    fmea_rpn_before: 40
+    fmea_rpn_after: 0
+    description: 'mon2 (MCFEReliabilityMonitor) criado no teste FIX-QA-A mas nunca verificado. Adicionada
+      assertion: mon2._blocks_executed == 1 após bus2.emit("BLOCK_COMPLETED"). Garante que o monitor registra
+      eventos via EventBus corretamente.
+
+      '
+  - id: DIFF_EPS_PROXY_EXTRACT
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-64
+    gap: GAP-UCO-3
+    modules_modified:
+    - fractal_decomposer.decompose_adaptive_reliability
+    fmea_rpn_before: 20
+    fmea_rpn_after: 0
+    description: 'Expressão min(eps_current*1.05, thr.eps_block_stop*0.9) triplicada em if/except/else
+      extraída para _eps_proxy calculado uma vez por iteração. Silent except corrigido para except Exception
+      as _e com print de diagnóstico.
+
+      '
+  total_new_diffs: 3
+  total_accumulated_diffs: 60
+  gaps_fixed:
+  - GAP-UCO-1
+  - GAP-UCO-2
+  - GAP-UCO-3
+  artifacts_confirmed_not_fixed:
+  - 5795 dead code = conteúdo de docstrings multilinha (não código executável)
+  - 3 duplicate blocks = } de dicts aninhados, ambos necessários (AST confirma)
+  - 'while True: único com break/return confirmado'
+  - Hamiltoniano 5721 = volume do módulo 7k linhas, não defeitos

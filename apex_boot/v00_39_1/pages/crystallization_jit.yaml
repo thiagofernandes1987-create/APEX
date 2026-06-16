@@ -1,0 +1,57 @@
+crystallization_jit:
+  executor: HYBRID
+  version: v00.32.1
+  opp: OPP-MAS-05
+  tier: 2
+  status: ADOPTED
+  purpose: 'Substituir descarte por regras temporais arbitrárias (manter últimas N entradas) por descarte
+    baseado em variação informacional real (ΔH de Shannon).
+
+    '
+  why: 'Regras temporais descartam informação valiosa quando o sistema é estável e preservam informação
+    redundante quando muda. ΔH mede mudança informacional diretamente. PATCH_C5: Thresholds diferenciados
+    por tipo porque class_1 muda lentamente (~0.02/sessão) e precisa de threshold menor; class_3 muda
+    mais abruptamente.
+
+    '
+  description: 'Seleciona o que cristalizar no SQLite baseado em delta de entropia de Shannon. PARTE SANDBOX:
+    computar ΔH, comparar thresholds, salvar no SQLite. PARTE LLM: interpretar o que foi/não foi cristalizado.
+    O QUE É: Filtro informacional — preserva mudanças reais, descarta ruído. O QUE NÃO É: Compressão lossy
+    — dados descartados são informativamente insignificantes.
+
+    '
+  what_if_fails: 'FALLBACK 1 — ΔH não computável: cristalizar de qualquer forma. Mais seguro cristalizar
+    desnecessariamente do que perder dados importantes. FALLBACK 2 — SQLite indisponível: operar sem cristalização
+    (modo legado). REGRA: Em dúvida, cristalizar. Custo de espaço < custo de perder informação.
+
+    '
+  inject_when: STEP_13
+  depends_on:
+  - sqlite_snapshot_store
+  - bayesian_curator
+  thresholds:
+    bayesian_class_1: 0.02
+    bayesian_class_1_rationale: class_1 (beta_binomial) muda ~0.01-0.03/sessão — 0.02 captura mudanças
+      reais
+    bayesian_class_2: 0.05
+    bayesian_class_2_rationale: class_2 (normal_vi) mais volátil — 0.05 evita noise
+    bayesian_class_3: 0.08
+    bayesian_class_3_rationale: class_3 (HMC) tem maior variância — 0.08 para mudanças significativas
+    resolution_cache: 0.05
+    code_genetics: 0.0
+    code_genetics_rationale: SEMPRE cristalizar — cada padrão é informação nova por definição
+    hypothesis_dag: 0.0
+    hypothesis_dag_rationale: SEMPRE cristalizar mudanças de status — são eventos discretos
+    reliability_state: 0.03
+  api:
+  - crystallize_session_data(session_data, prev_snapshot) → crystallized_dict
+  - should_crystallize(current, previous, component_type) → bool
+  rules_enforced:
+  - 'SR_36: thresholds diferenciados por classe — threshold único viola a especificação'
+  fmea:
+    rpn: 8
+    mode: Threshold alto descarta atualizações válidas de class_1
+    probability: 2
+    severity: 2
+    detection: 2
+    mitigation: Threshold 0.02 para class_1 (conservador); monitorar 5 sessões iniciais

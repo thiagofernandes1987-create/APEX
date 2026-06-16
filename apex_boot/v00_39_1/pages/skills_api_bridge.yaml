@@ -1,0 +1,95 @@
+skills_api_bridge:
+  executor: HYBRID
+  version: v00.34.0
+  opp: OPP-115
+  tier: 2
+  status: ADOPTED
+  purpose: 'Integrar a Anthropic Skills API (beta.skills.*) ao DynamicSkillForge como método alternativo
+    de carregamento: complementa git_clone (FULL), urllib_raw_fetch (PARTIAL), inline_paste (MINIMAL).
+    Permite criar, listar, executar e validar skills via API.
+
+    '
+  why: 'WHY: APEX_SKILLS_INTEGRATION_REPORT.md documenta a API completa em skill_utils.py: client.beta.skills.create(),
+    .list(source="custom"), .retrieve(skill_id), .versions.create(). Container: container={"skills": [{"type":
+    "anthropic", "skill_id": "xlsx"}]} Headers beta: "code-execution-2025-08-25,skills-2025-10-02". Skills
+    de 8MB podem ser upadas e reutilizadas via API sem re-clone. DynamicSkillForge atual só faz git_clone/urllib_fetch
+    — Skills API completamente ignorada.
+
+    '
+  when: 'WHEN: DynamicSkillForge ativado E runtime == FULL_CLAUDE_CODE E ANTHROPIC_API_KEY disponível.
+    WHEN: Skill solicitada tem skill_id no formato "anthropic:xlsx" ou "custom:skill_abc123". WHEN: Usuário
+    solicita criação/publicação de nova skill.
+
+    '
+  description: 'O QUE E: Wrapper sobre Anthropic Skills API para CRUD skills via HTTP. O QUE NAO E: Substituição
+    do git_clone — é caminho alternativo para skills API-managed. LIMITE: 8 MB por skill (validate_skill_directory()).
+    BETA HEADERS: "code-execution-2025-08-25,files-api-2025-04-14,skills-2025-10-02"
+
+    '
+  what_if_fails: 'FALLBACK 1: ANTHROPIC_API_KEY nao disponível → usar git_clone se repo URL disponível.
+    FALLBACK 2: beta.skills API nao acessível → declarar [SKILLS_API_UNAVAILABLE]. FALLBACK 3: skill >
+    8MB → ingerir apenas SKILL.md + arquivos <= 100KB. REGRA: Nunca bloquear pipeline por Skills API indisponível.
+
+    '
+  inject_when: 'DynamicSkillForge.load_skill() com skill_id prefixo anthropic:/custom:'
+  depends_on:
+  - dynamic_skill_forge
+  - multi_sandbox_profiles
+  api_methods:
+    create_skill:
+      endpoint: POST /skills
+      input: skill_path (dir com SKILL.md) + display_title
+      output: '{skill_id, latest_version, created_at}'
+    list_skills:
+      endpoint: GET /skills?source=custom
+      output: '[{skill_id, display_title, latest_version}]'
+    retrieve_skill:
+      endpoint: GET /skills/{skill_id}
+      output: '{skill_id, name, description, directory, latest_version}'
+    execute_via_container:
+      method: 'messages.create(container={skills: [{type, skill_id, version}]})'
+      required_tools:
+      - code_execution_20250825
+    validate_skill:
+      checks:
+      - SKILL.md presente com frontmatter name + description
+      - frontmatter <= 1024 chars
+      - Total directory size <= 8 MB
+  skill_id_format:
+    anthropic_official: anthropic:{skill_name}
+    custom: custom:{skill_uuid}
+    apex_internal: '{domain}.{name}'
+  python_implementation: "class SkillsAPIBridge:\n    BETA_HEADERS = {\n        \"anthropic-beta\": \"\
+    code-execution-2025-08-25,files-api-2025-04-14,skills-2025-10-02\"\n    }\n\n    def __init__(self,\
+    \ api_key=None):\n        self._available = False\n        try:\n            import anthropic\n  \
+    \          self.client = anthropic.Anthropic(\n                api_key=api_key,\n                default_headers=self.BETA_HEADERS\n\
+    \            )\n            self._available = True\n        except Exception:\n            pass  #\
+    \ FALLBACK: git_clone\n\n    def load_skill(self, skill_id):\n        if not self._available:\n  \
+    \          return {\"error\": \"SKILLS_API_UNAVAILABLE\", \"fallback\": \"git_clone\"}\n        try:\n\
+    \            prefix, sid = skill_id.split(\":\", 1)\n            skill = self.client.beta.skills.retrieve(sid)\n\
+    \            return {\"status\": \"LOADED_VIA_API\", \"skill_id\": skill_id,\n                   \
+    \ \"name\": skill.name, \"version\": skill.latest_version}\n        except Exception as e:\n     \
+    \       return {\"error\": f\"SKILLS_API_ERROR:{e}\", \"fallback\": \"git_clone\"}\n\n    def create_skill(self,\
+    \ skill_path, title):\n        if not self._available:\n            return {\"error\": \"SKILLS_API_UNAVAILABLE\"\
+    }\n        try:\n            from anthropic.lib import files_from_dir\n            skill = self.client.beta.skills.create(\n\
+    \                files=files_from_dir(skill_path),\n                display_title=title\n        \
+    \    )\n            return {\"skill_id\": f\"custom:{skill.skill_id}\", \"version\": skill.latest_version}\n\
+    \        except Exception as e:\n            return {\"error\": f\"CREATE_FAILED:{e}\"}\n\n    def\
+    \ execute_with_skill(self, skill_ids, prompt, model=\"claude-opus-4-6\"):\n        if not self._available:\n\
+    \            return {\"error\": \"SKILLS_API_UNAVAILABLE\"}\n        container_skills = [\n      \
+    \      {\"type\": \"anthropic\" if s.startswith(\"anthropic:\") else \"custom\",\n             \"\
+    skill_id\": s.split(\":\", 1)[1], \"version\": \"latest\"}\n            for s in skill_ids\n     \
+    \   ]\n        return self.client.beta.messages.create(\n            model=model, max_tokens=4096,\n\
+    \            container={\"skills\": container_skills},\n            tools=[{\"type\": \"code_execution_20250825\"\
+    , \"name\": \"code_execution\"}],\n            messages=[{\"role\": \"user\", \"content\": prompt}]\n\
+    \        )\n"
+  fmea:
+    rpn: 8
+    mode: Skills API em beta — endpoints podem mudar
+    probability: 2
+    severity: 4
+    detection: 1
+    mitigation: 'Fallback para git_clone sempre disponível. try/except em todos os calls. Declarar [SKILLS_API_BETA_USED]
+      em todo output que usa esta via.
+
+      '

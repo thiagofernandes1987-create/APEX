@@ -1,0 +1,170 @@
+undefined_modules_scaffold:
+  executor: LLM_BEHAVIOR
+  version: v00.35.0
+  opp: OPP-121
+  tier: 0
+  status: ADOPTED
+  purpose: 'Define formalmente os 7 modulos referenciados em depends_on mas inexistentes ate v00.34.0.
+    Estabelece contratos de interface minimos — implementacoes completas em OPPs futuros. Elimina comportamento
+    nao-deterministico de depends_on fantasma.
+
+    '
+  why: 'WHY: Grep confirmou: 13 referencias em depends_on apontando para modulos inexistentes. Quando
+    o LLM segue depends_on para um modulo inexistente, ou inventa comportamento (alucinacao) ou ignora
+    a dependencia silenciosamente. Ambos sao falhas criticas.
+
+    '
+  what_if_fails: Scaffolds minimos — nao ha modo de falha critico
+  inject_when: Leitura inicial do prompt — antes de STEP_0
+  depends_on: []
+  module_definitions:
+    apex_superrepo_boot:
+      executor: LLM_BEHAVIOR
+      opp: OPP-104
+      purpose: 'Boot do repositorio APEX no GitHub. Le INDEX.md via urllib.request (ou git clone). Popula
+        session.skill_registry com skills descobertas. Registra catalog_files no mcp_bridge. Emite [APEX_BOOT_COMPLETE:
+        N skills].
+
+        '
+      raw_base: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/
+      index_path: INDEX.md
+      timeout_sec: 20
+      invocation: 'STEP_0: verificar APEX_SESSION_CAPS["forge_method"] -> executar forgeskills_true_autoboot
+        (OPP-124) que contem o boot code Python real.
+
+        '
+      fallback: Continuar sem boot. Usar skills conhecidas do prompt base.
+    forgeskills_rapid_reader:
+      executor: LLM_BEHAVIOR
+      opp: OPP-106
+      purpose: 'Pipeline 4-estagios para ingestion rapida de skills. E1: Fetch INDEX.md. E2: Filtrar por
+        ancoras ativas. E3: Fetch SKILL.md relevantes. E4: Injetar no contexto como PROVISIONAL.
+
+        '
+      stages:
+        E1_index: Fetch INDEX.md -> parse domain_map YAML -> extrair paths
+        E2_filter: Comparar anchors com session.active_anchors -> selecionar top-K
+        E3_fetch: Fetch SKILL.md para cada path via forge_method
+        E4_inject: Registrar em session.skill_registry com status PROVISIONAL
+      max_skills_per_boot: 10
+      fallback: 'Se INDEX.md inacessivel: usar skills embutidas no prompt base'
+    hyperbolic_anchor_map:
+      executor: LLM_BEHAVIOR
+      opp: OPP-107
+      purpose: 'Mapa de ancoras para ativacao cross-domain. attraction_engine.compute() usa pesos dos
+        bridges para selecionar skills.
+
+        '
+      base_bridges:
+        legal_math:
+          a:
+          - legal
+          - contrato
+          - obrigacao
+          b:
+          - juros
+          - calculo
+          - IGPM
+          strength: 0.95
+        finance_legal:
+          a:
+          - equity
+          - DCF
+          - valuation
+          b:
+          - compliance
+          - sec_edgar
+          strength: 0.65
+        science_math:
+          a:
+          - hypothesis
+          - bayesian
+          b:
+          - statistics
+          - probability
+          strength: 0.85
+        healthcare_sci:
+          a:
+          - clinical
+          - medicine
+          b:
+          - genomics
+          - drug_discovery
+          strength: 0.75
+        engineering_math:
+          a:
+          - algorithm
+          - optimization
+          b:
+          - calculus
+          - gradient
+          strength: 0.65
+      usage: attraction_engine.compute(query_anchors) -> select skills highest bridge activation
+    dynamic_agent_roster:
+      executor: LLM_BEHAVIOR
+      opp: OPP-116
+      purpose: 'Registro dinamico de agentes ativos na sessao. Agentes base sempre presentes. Community
+        agents ativados por meta_reasoning.
+
+        '
+      base_agents:
+      - pmi_pm
+      - architect
+      - engineer
+      - critic
+      - researcher
+      - meta_reasoning
+      - scientist_agent
+      - bayesian_curator
+      - anchor_destroyer
+      - diff_governance
+      optional: community_agent_roster (OPP-116) — ativados por dominio
+      activation: meta_reasoning.select_agents(task_domain) -> roster ativo
+      max_concurrent: 4
+    mcp_bridge_v2:
+      executor: LLM_BEHAVIOR
+      opp: OPP-96
+      purpose: 'Registry de MCP servers por dominio. forgeskills_catalog_boot popula em STEP_0. Consultar
+        para obter URLs de servers relevantes ao dominio atual.
+
+        '
+      server_registry: {}
+      lookup: mcp_bridge_v2.get_servers(domain) -> [{name, url}]
+      trusted_domains:
+      - https://raw.githubusercontent.com/thiagofernandes1987-create/
+    subprocess_engine:
+      executor: SANDBOX_CODE
+      opp: OPP-67
+      purpose: 'Wrapper sobre subprocess.run() para execucao segura de PoT programs. Aplica timeout, captura
+        stderr, valida exit code.
+
+        '
+      available_when: APEX_SESSION_CAPS['capabilities']['subprocess'] == True
+      fallback: exec() inline se subprocess indisponivel
+      api: run(code_str, timeout=30) -> {stdout, stderr, exit_code, success}
+    diff_ast_guard:
+      executor: LLM_BEHAVIOR
+      opp: OPP-77
+      purpose: 'Guard que verifica se DIFF candidato nao introduz modulos proibidos na IMPORT_WHITELIST
+        do DynamicSkillForge.
+
+        '
+      check: AST scan de todo codigo em DIFF antes de aplicar
+      forbidden:
+      - subprocess
+      - tempfile
+      - sqlite3
+      - os.system
+      - eval
+      - exec
+      action: DIFF REJECTED se forbidden import detectado
+  fmea:
+    rpn: 9
+    mode: Modulo referenciado mas nao definido -> LLM inventa comportamento
+    probability: 3
+    severity: 3
+    detection: 1
+    mitigation: 'Scaffolds estabelecem contrato de interface. Implementacoes completas em OPPs futuros.
+      Pos-aplicacao: grep de depends_on deve retornar zero undefined refs.
+
+      '

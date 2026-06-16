@@ -1,0 +1,25 @@
+qa_compliance_v027:
+  base: v00.26.0 (33 QA tests — 17 base + 16 novos)
+  new_qa_tests_v027:
+    QA_OPP33_01: MCFEAdapter._root_id('prod_0_r0_r2') == 'prod_0'
+    QA_OPP33_02: _run_production com depth=7 retorna status='HALT_MAX_DEPTH'
+    QA_OPP33_03: Singularidade não causa RecursionError — MAX_RETRIES atingido via root_id
+    QA_OPP29_01: _ast_guard('import os') retorna erro AST_BLOCKED_IMPORT
+    QA_OPP29_02: _ast_guard('import math; x=1') retorna None (aprovado)
+    QA_OPP29_03: _subprocess com script bloqueado retorna rc=-3
+    QA_OPP28_01: 'MCFEState após 60 blocos p=0.02: R_acum=0.98^20 (janela)≈0.668 (OK)'
+    QA_OPP28_02: 'MCFEState após 4 blocos p=0.2626: R_acum=0.7374^4≈0.295 (WARNING,não EARLY_EXIT direto)'
+    QA_OPP35_01: _run_production com rc=1 SyntaxError → status='ERROR_LOGIC_ERROR'
+    QA_OPP35_02: _run_production com rc=-3 AST_BLOCKED → status='ERROR_AST_BLOCKED'
+    QA_OPP30_01: 'isotropic_es([0.0,0.0], cost_func=lambda x: sum(v**2 for v in x)) → converge'
+    QA_OPP30_02: cma_es == isotropic_es (alias funciona)
+    QA_OPP30_03: MSE.select com features isotropic=True retorna isotropic_es
+    QA_OPP31_01: commit_cycle() com dangling pin → pin removido do set
+    QA_OPP34_01: _fiedler_approx com n=600 → usa heurística (não OOM)
+    QA_OPP32_01: levy_mutation({'confidence':95}) → confidence sempre em [0,100]
+    QA_G17_01: '[DIMENSIONAL_INCONSISTENCY] emitido quando kg + m/s em SCIENTIFIC'
+    QA_G18_01: âncoras macro não carregadas quando incerteza < 0.65
+    QA_REGRESSION_V026: 33/33 testes v00.26 preservados
+  fmea_rpn_max: 0
+  session: APEX-LIVE-2026-03-19
+  acceptance_flag: PASS

@@ -1,0 +1,209 @@
+anchor_expansion_v2:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-114
+  tier: 1
+  status: ADOPTED
+  extends: OPP-107
+  purpose: 'Expandir hyperbolic_anchor_map (OPP-107) com anchors e cross-domain bridges para os 12 novos
+    domínios de integração: legal, quantum, marketing, healthcare, finance, engineering (NASA, CFD, CAD).
+    Integra com forgeskills_catalog_boot para mapeamento domínio → CATALOG.md correto.
+
+    '
+  why: 'WHY: OPP-107 definiu 7 bridges originais. Após ingestion, 12 novos domínios ficaram sem âncoras
+    no attraction_engine. Usuário pede "análise quântica" → sem âncora quantum_computing nao há bridge
+    para Qiskit. Usuário pede "Google Ads" → sem anchor google_ads nao carrega integrations/marketing-mcp/CATALOG.md.
+
+    '
+  when: 'WHEN: attraction_engine.compute() no STEP_P — antes de selecionar skills ativas. WHEN: forgeskills_catalog_boot
+    mapeando domínio para CATALOG.md.
+
+    '
+  what_if_fails: 'FALLBACK: Âncoras sem bridges degradam recall mas nao quebram pipeline. REGRA: Nunca
+    bloquear pipeline por anchor nao resolvida.
+
+    '
+  inject_when: attraction_engine.compute() + forgeskills_catalog_boot
+  depends_on:
+  - hyperbolic_anchor_map
+  - attraction_engine
+  - forgeskills_catalog_boot
+  new_anchors:
+    legal_domain:
+      case_law:
+        mcp: courtlistener
+        path: integrations/legal-mcp/
+      patents:
+        mcp: uspto_patents
+        path: integrations/legal-mcp/
+      sec_edgar:
+        mcp: sec_edgar
+        path: integrations/legal-mcp/
+      govinfo:
+        mcp: govinfo
+        path: integrations/legal-mcp/
+      contract_review:
+        skill_path: skills/legal/knowledge-work/
+      compliance:
+        skill_path: skills/legal/
+    quantum_physics:
+      quantum_computing:
+        mcp: qiskit_ibm
+        path: integrations/science-physics-mcp/
+      quantum_simulation:
+        mcp: psianimator
+        path: integrations/science-physics-mcp/
+      arxiv:
+        mcp: arxiv
+        path: integrations/science-physics-mcp/
+      materials_science:
+        mcp: mcp_science
+        path: integrations/science-physics-mcp/
+      wolfram:
+        mcp: wolfram_language
+        path: integrations/science-physics-mcp/
+      cfd:
+        mcp: openfoam
+        path: integrations/engineering-mcp/
+    marketing_domain:
+      seo:
+        mcp: semrush
+        path: integrations/marketing-mcp/
+      google_ads:
+        mcp: google_ads_official
+        path: integrations/marketing-mcp/
+      meta_ads:
+        mcp: meta_ads
+        path: integrations/marketing-mcp/
+      tiktok_ads:
+        mcp: tiktok_ads
+        path: integrations/marketing-mcp/
+      linkedin_ads:
+        mcp: linkedin_ads
+        path: integrations/marketing-mcp/
+      crm:
+        mcp: hubspot
+        path: integrations/marketing-mcp/
+      campaign:
+        skill_path: skills/marketing/
+    healthcare_domain:
+      cms_coverage:
+        mcp: cms-coverage
+        path: integrations/healthcare-plugins/
+      npi_registry:
+        mcp: npi-registry
+        path: integrations/healthcare-plugins/
+      icd10:
+        mcp: icd10-codes
+        path: integrations/healthcare-plugins/
+      clinical_trials:
+        mcp: clinical-trials
+        path: integrations/life-sciences-plugins/
+      drug_discovery:
+        mcp: open-targets
+        path: integrations/life-sciences-plugins/
+      genomics:
+        mcp: 10x-genomics
+        path: integrations/life-sciences-plugins/
+    finance_domain:
+      morningstar:
+        mcp: morningstar
+        path: integrations/financial-services/
+      factset:
+        mcp: factset
+        path: integrations/financial-services/
+      moodys:
+        mcp: moodys
+        path: integrations/financial-services/
+      equity_research:
+        skill_path: skills/finance/equity-research/
+      investment_banking:
+        skill_path: skills/finance/investment-banking/
+    engineering_domain:
+      nasa:
+        mcp: nasa_apis
+        path: integrations/engineering-mcp/
+      openfoam:
+        mcp: openfoam_cfd
+        path: integrations/engineering-mcp/
+      openscad:
+        mcp: openscad_cad
+        path: integrations/engineering-mcp/
+      aws_cloud:
+        skill_path: skills/engineering/cloud/aws/
+      azure_cloud:
+        skill_path: skills/engineering/cloud/azure/
+  new_cross_domain_bridges:
+    bridge_legal_finance:
+      anchor_a:
+      - legal
+      - compliance
+      - contract_review
+      anchor_b:
+      - sec_edgar
+      - equity_research
+      - investment_banking
+      strength: 0.65
+      activation_formula: A(legal, finance) = tanh(2 x fw_legal x fw_finance)
+      rationale: Contratos financeiros, due diligence M&A, compliance SEC.
+    bridge_quantum_materials:
+      anchor_a:
+      - quantum_computing
+      - quantum_simulation
+      - statistical_physics
+      anchor_b:
+      - materials_science
+      - molecular_dynamics
+      - genomics
+      strength: 0.7
+      activation_formula: A(quantum, materials) = tanh(2.5 x fw_q x fw_m)
+      rationale: Computação quântica para simulação molecular (VQE) e DFT.
+    bridge_marketing_data:
+      anchor_a:
+      - seo
+      - google_ads
+      - meta_ads
+      - campaign
+      - analytics
+      anchor_b:
+      - data_analysis
+      - sql
+      - visualization
+      - dashboard
+      strength: 0.6
+      activation_formula: A(marketing, data) = tanh(2 x fw_mkt x fw_data)
+      rationale: Marketing analytics requer SQL/Python para análise de dados.
+    bridge_healthcare_science:
+      anchor_a:
+      - healthcare
+      - medicine
+      - clinical_trials
+      - icd10
+      anchor_b:
+      - genomics
+      - bioinformatics
+      - drug_discovery
+      strength: 0.75
+      activation_formula: A(health, science) = tanh(3 x fw_h x fw_s)
+      rationale: Medicina clínica e ciências da vida sao naturalmente inseparáveis.
+    bridge_engineering_hpc:
+      anchor_a:
+      - aws_cloud
+      - azure_cloud
+      - kubernetes
+      - ci_cd
+      anchor_b:
+      - nasa
+      - openfoam
+      - simulation
+      - cad
+      strength: 0.45
+      activation_formula: A(cloud_eng, sci_eng) = tanh(1.5 x fw_c x fw_s)
+      rationale: Engenharia cloud e científica para workloads HPC.
+  fmea:
+    rpn: 4
+    mode: Anchor bridge com peso incorreto — over/under-ativação de skills
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: Fórmula bounded por tanh (max=1.0). Meta_reasoning audita ativações no STEP_P.

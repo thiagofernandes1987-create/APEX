@@ -1,0 +1,6 @@
+patch_step_2:
+  addition: 'Após radial_loading de anchors: invocar fractal_knowledge_indexing para filtrar anchors carregados
+    por nível macro (nível inicial). Carregar generic_skills de cada agente ativo. Invocar specialized_skill_engine.resolve_initial_skills()
+    para pré-carregar Specialized Skills relevantes sem ainda executar.
+
+    '

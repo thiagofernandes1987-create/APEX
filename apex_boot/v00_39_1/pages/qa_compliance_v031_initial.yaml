@@ -1,0 +1,29 @@
+qa_compliance_v031_initial:
+  base: v00.30.0 (96 QA tests accumulated)
+  new_qa_tests_v031:
+    QA_OPP62_01: has_medium not present in CriticGate.evaluate()
+    QA_OPP62_02: 'evaluate() logic preserved: else branch = escalate (MEDIUM implied)'
+    QA_OPP63_01: mon2._blocks_executed == 1 after bus2.emit BLOCK_COMPLETED
+    QA_OPP63_02: run_fmea_suite test FIX-QA-A includes mon2 assertion
+    QA_OPP64_01: _eps_proxy computed once per iteration (not 3x)
+    QA_OPP64_02: eps_callback except uses print diagnostic (not silent pass)
+    QA_REGRESSION_V030: 96/96 tests from v00.30 preserved
+  uco_v3_analysis:
+    hamiltonian: 5721.1166
+    status: CRITICAL
+    cc: 494
+    unreachable_nodes_real: 4
+    dead_code_real: 0
+    halstead_bugs_estimated: 89.34
+    halstead_difficulty: 101.68
+    dsm_cyclic_ratio: 0.2354
+    non_trivial_sccs: 16
+    python_block_lines: 7034
+    ast_parse: PASS
+    note: 'Hamiltoniano CRITICAL é artefato de volume do módulo (7k linhas, YAML embutido). Os 3 gaps
+      reais foram corrigidos (OPP-62/63/64). Artefatos DSL confirmados como não-defeitos via análise AST
+      cirúrgica.
+
+      '
+  acceptance_flag: PASS
+  session: APEX-LIVE-2026-03-20

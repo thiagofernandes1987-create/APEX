@@ -1,0 +1,28 @@
+page_loader:
+  executor: LLM_BEHAVIOR
+  version: v00.38.0
+  opp: OPP-163
+  tier: 0
+  status: ADOPTED
+  purpose: 'Protocolo de carregamento de páginas do kernel compilado, com verificação de hash e honestidade
+    epistêmica sobre o que NÃO está carregado.
+
+    '
+  why: 'WHY: paginação sem disciplina vira alucinação — o LLM "lembra" do conteúdo de uma página de sessões
+    anteriores e opera com versão desatualizada (mesmo modo de falha do fake boot/OPP-157, agora no nível
+    de página).
+
+    '
+  when: Sempre que um módulo não-residente for necessário.
+  llm_behavior: "PROTOCOLO PAGE_LOAD (executar em toda necessidade de módulo paginado):\n1. CONSULTAR\
+    \ page_manifest do kernel: a chave existe?\n   NÃO → skill_resolution_chain (OPP-137).\n2. SANDBOX\
+    \ disponível? → ler pages/<key>.yaml, calcular sha8,\n   conferir contra manifest.\n   MATCH → injetar\
+    \ conteúdo + emitir [PAGE_LOADED: {key} | {sha8}]\n   MISMATCH → [PAGE_CORRUPT: {key}] → recarregar\
+    \ do master.\n3. SANDBOX indisponível (MINIMAL)? → solicitar ao usuário o paste\n   da página OU operar\
+    \ declarando [PAGE_ASSUMED: {key} | conteúdo\n   de memória de treino/sessão — confidence_cap 60].\n\
+    REGRA ABSOLUTA: NUNCA afirmar conteúdo específico de página não\ncarregada sem o marcador [PAGE_ASSUMED].\
+    \ Página não carregada =\nconhecimento não verificado.\n"
+  what_if_fails: 'FALLBACK: cadeia completa OPP-137 (online → cache → prompt → synthesize). NUNCA falhar
+    sessão por página ausente.
+
+    '

@@ -1,0 +1,59 @@
+pipeline_v022_modifications:
+  STEP_0:
+    additions:
+    - 'snapshot_store.initialize(): restaura ou cria store; registra entradas do SNAP_REF anterior'
+    - 'symbolic_pre_check(problem_text): se closed_form=True → modo EXPRESS forçado independente de keywords'
+    - 'chaos_operator_log = []: inicializa log de operadores de caos'
+    - '[LOG] [SNAPSHOT_STORE: entries={n} | max=1000]'
+  STEP_P:
+    additions:
+    - 'coupling_analyzer.analyze(problem): se coupling > 0.40 → fractal_depth = 0 (MONOLITHIC)'
+    - 'Se CFI IN (0.35,0.60): behavioral_difficulty_estimator.estimate(problem, cfi_preliminary) → bde_result'
+    - fused_cfi = bde_result['fused_cfi'] se bde_result['active'] else cfi_preliminary
+    - '[LOG] [COUPLING: score={c} | recommendation={r} | depth_max={d}]'
+    - '[LOG] [BDE: active={a} | bde_score={b} | fused_cfi={f} | ref={r}] quando active=True'
+  STEP_2:
+    additions:
+    - 'algorithm_kernel.load_tier_A(): TIER_A sempre disponível'
+    - 'algorithm_kernel.load_tier_B(domain_tags): carrega família relevante'
+    - '[LOG] [ALGORITHM_KERNEL: tier_A=loaded | tier_B={familia}={n}]'
+  STEP_3:
+    additions:
+    - model_selection_engine.select(sub_problem) para sub-problemas com domain_tags algorítmicos
+    - dynamic_pool_scaler.compute_pool_size(H_cognitive, T, base, mode_max) → ajuste do pool
+    - '[LOG] [POOL_SCALED: H={h} T={t} n_agents={n}]'
+  STEP_3_5:
+    modifications:
+    - 'ANTES: CRITIC_RADICAL gera hipótese adversarial livre'
+    - 'DEPOIS: chaos_operators.select_and_apply(nodes, T=H_cognitive, log, step) → operador estruturado'
+    - 'Output registrado em chaos_operator_log: {operator, T, seed_id}'
+  STEP_5:
+    additions:
+    - algorithm_kernel.execute_if_applicable(fractal_level, sub_problem)
+    - snapshot_store.save(result, meta={algo, level}) após cada execução
+    - snapshot checkpoint após cada bloco de produção OK
+  STEP_7:
+    modifications:
+    - chaos_seed_mutation usa chaos_operators.levy_mutation ou structural_mutation conforme operador da
+      seed
+    - Temperatura T = H_cognitive@STEP_7
+    - agent_replacement_engine.should_replace() verificado para cada agente
+  STEP_9:
+    additions:
+    - 'meta_reasoning_pinning_review(store): avaliar relevância e ajustar pinning'
+  STEP_10:
+    additions:
+    - snapshot_store.exists(h) para todos os hashes referenciados em findings
+    - 'Se hash inválido: [SNAPSHOT_MISS] + re-computação (SR_14)'
+  STEP_12:
+    additions:
+    - 'escalation_policy gate: se confidence_final < 55 AND not exempt → re-escalar'
+    - '[LOG] [ESCALATION: {old}→{new} | confidence={c}]'
+  STEP_13:
+    additions:
+    - 'SMS GC: 4 fases (decay → compress → merge → delete)'
+    - 'meta_reasoning_merge(): criar/atualizar SNAP_REF com reasoning completo (SR_19)'
+    - snapshot_store.evict_lru(max_entries=1000)
+    - chaos_operator_log serializado para snapshot
+    - credibility_interval_final computado e salvo no snapshot
+    - user_corrections log serializado se não vazio

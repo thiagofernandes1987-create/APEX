@@ -1,0 +1,26 @@
+mental_interpreter:
+  version: v00.20.0
+  tier: 1
+  status: DEPRECATED
+  replaced_by: mental_interpreter_v2
+  sunset_sessions: 2
+  sunset_trigger: SR_08 violation em modo DEEP+
+  description: '[DEPRECATED v00.20.2] Interpreter LLM puro — substituído por mental_interpreter_v2. Mantido
+    como fallback por 2 sessões. Não usar para novos desenvolvimentos.
+
+    '
+  config:
+    working_memory:
+      stack_depth_max: 5
+      variables_per_frame: 20
+      frame_isolation: true
+    execution:
+      mode: sequential_symbolic
+      numeric_approximation: true
+      error_propagation: error_tracker
+      trace_verbosity: FULL
+  dependencies:
+  - MODULE_pot_engine
+  - MODULE_error_tracker
+  - MODULE_advanced
+  inject_when: DEPRECATED — usar mental_interpreter_v2

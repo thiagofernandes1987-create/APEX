@@ -1,0 +1,35 @@
+adaptive_ode_block:
+  executor: SANDBOX_CODE
+  version: v00.32.1
+  opp: OPP-MAS-B2
+  tier: 4
+  status: ADOPTED_PARTIAL
+  purpose: 'Substituir RK4 de passo fixo por RK45 adaptativo para sistemas dinâmicos, reduzindo iterações
+    em regiões suaves e aumentando precisão em regiões rígidas.
+
+    '
+  why: 'RK4 fixo usa o mesmo passo em regiões suaves (desperdício) e rígidas (imprecisão). scipy.integrate.solve_ivp
+    com RK45 adapta o passo automaticamente. scipy está pré-instalado. Fallback para RK4 garante que o
+    módulo nunca falha.
+
+    '
+  description: 'scipy.integrate.solve_ivp com método RK45 para EDOs e sistemas dinâmicos. O QUE É: Integrador
+    adaptativo real com controle de erro. O QUE NÃO É: Simulação simbólica — é integração numérica real.
+    COMO FUNCIONA: Se RK45 rejeitar >= 3 passos consecutivos → fallback para RK4 fixo.
+
+    '
+  what_if_fails: 'FALLBACK 1 — RK45 >= 3 rejeições: usar RK4 fixo com passo conservador. Emitir [ODE_FALLBACK_RK4].
+    Resultado menos eficiente mas correto. FALLBACK 2 — scipy indisponível: RK4 em Python puro. Declarar
+    [SCIPY_UNAVAILABLE].
+
+    '
+  activation_condition: cognitive_mode == SCIENTIFIC AND problem_type IN [ode, pde, dynamical_system]
+  api:
+  - decompose_with_ode_feedback(problem, fractal_level) → sub_problems
+  fmea:
+    rpn: 16
+    mode: solve_ivp diverge em sistema stiff com parâmetros ruins
+    probability: 2
+    severity: 4
+    detection: 2
+    mitigation: Fallback RK4 OBRIGATÓRIO se RK45 rejeita >= 3 passos

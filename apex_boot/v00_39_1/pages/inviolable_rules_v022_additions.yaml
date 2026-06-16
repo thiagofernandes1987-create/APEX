@@ -1,0 +1,65 @@
+inviolable_rules_v022_additions:
+  critical:
+  - 'SR_13: [ALGORITHM_KERNEL_GUARD] Todo PoT que invoca algoritmo do algorithm_kernel DEVE: (a) verificar
+    tier A ou B (com código); (b) incluir fmea_guards no STEP_0; (c) respeitar sr09_applies. Invocar TIER_C
+    = confidence_cap 45 + [ALGORITHM_TIER_VIOLATION].'
+  - 'SR_14: [SNAPSHOT_INTEGRITY_GUARD] Todo estado referenciado por hash DEVE ser verificável. load(hash)==None
+    → [SNAPSHOT_MISS] → re-computação obrigatória. Nunca fabricar estado de hash inválido.'
+  - 'SR_15: [CREDIBILITY_GATE] Em DEEP/RESEARCH/SCIENTIFIC, MCFEReliabilityMonitor DEVE usar lower_bound(R_acum)
+    para WARNING/CRITICAL quando _total_blocks() >= 3. Com < 3 blocos: pontual (dados insuficientes).
+    Usar pontual com >= 3 blocos = confidence_cap 45.'
+  - 'SR_16: [CHAOS_OPERATOR_GUARD] Quando chaos_operators ativados: (a) operador DEVE ser registrado em
+    chaos_operator_log com {operator, T, seed_id}; (b) levy_mutation NUNCA aplicada a campos não-numéricos
+    sem conversão; (c) recombination NUNCA gera campos None em chaves obrigatórias. SR_11 ainda se aplica
+    (validação >= 2 agentes base).'
+  - 'SR_17: [SNAP_COG_DIFF_GUARD] Todo update ao SNAP_COG DEVE ser registrado como COG_DIFF. Nunca sobrescrever
+    SNAP_COG diretamente. Estado reconstruível via replay de diffs.'
+  - 'SR_18: [SNAP_POT_IMMUTABILITY_GUARD] SNAP_POT nunca modificado após criação. Se mesmo algoritmo +
+    mesmo input: retornar snap existente (cache hit). Novos parâmetros = novo SNAP_POT.'
+  - 'SR_19: [MERGE_REASONING_GUARD] Todo merge que produz SNAP_REF ou elo SNAP_CHAIN com múltiplos inputs
+    DEVE ter campo merge_reasoning não-vazio. Merge sem reasoning = output inválido + [MERGE_NO_REASONING].'
+  - 'SR_28: [VERIFIER_EMPTY_GUARD] TrajectoryVerifier.verify([]) DEVE retornar ok=False. Trajetória vazia
+    não constitui execução COMPLETE. Pipeline que recebe ok=True de lista vazia = status COMPLETE inválido.
+    Enforcement: TrajectoryVerifier (código Python), meta_reasoning (output validation).'
+  - 'SR_29: [VERIFIER_DIVERGENCE_GUARD] TrajectoryVerifier.verify() DEVE detectar divergência física:
+    x_max/x_initial > DIVERGENCE_RATIO (100) ou y_max/y_initial > DIVERGENCE_RATIO. Trajetória divergente
+    = COMPLETE inválido. DIVERGENCE_RATIO=100 calibrado para LV.'
+  - 'SR_30: [EMIT_VLEVEL_GUARD] _emit_block_completed() DEVE incluir verification_level no payload BLOCK_COMPLETED.
+    Valores válidos: "EXECUTED" (subprocess RC=0), "PARTIAL" (ESCALATE), "SYNTHETIC" (sem subprocess).
+    Omissão = OPP-12 inativa = R_acum inflado artificialmente.'
+  - 'SR_31: [FIEDLER_FALLBACK_GUARD] CouplingAnalyzer com dependency_graph: scipy disponível → usar scipy.sparse.linalg.eigsh
+    para λ₂ real (k=2, SM). scipy indisponível → usar _heuristic_score() (mais confiável que _fiedler_approx
+    original que calculava λ_MAX). A /n da implementação anterior era matematicamente incorreta e é removida.'
+  - 'SR_32: [BDE_IMPLEMENTATION_GUARD] DIFF_v22_004 (BDE) reclassificado para ADOPTED após implementação
+    de BehavioralDifficultyEstimator em Python (v00.26.0). G8 preservado: BDE ativado SOMENTE quando CFI_preliminar
+    IN (0.35, 0.60). fused_cfi = 0.6*CFI + 0.4*bde_score.'
+  guard:
+  - 'G7: [ALGORITHM_TIER_LOADING] TIER_A sempre carregado com o módulo. TIER_B on-demand por domain_tags.
+    TIER_C apenas índice para MSE. Se TIER_B indisponível: fallback TIER_A com [ALGORITHM_FALLBACK: {domínio}
+    → TIER_A].'
+  - 'G8: [BDE_ZONE_GUARD] BDE ativado SOMENTE quando CFI_preliminar IN (0.35, 0.60). Fora desta zona:
+    BDS Simplex decide. Em EXPRESS e CLARIFY: nunca. Peso BDE = 0.4 (complementar, não substituto).'
+  - 'G9: [SNAP_CHAIN_ROLLBACK_POLICY] SNAP_CHAIN deve ter rollback_points a cada 3 elos. Se SNAP_CHAIN.status
+    == FAILED: tentar rollback antes de criar nova chain. Rollback_points não podem apontar para hashes
+    com TTL < 2.'
+  - 'G10: [CHAIN_TYPE_FLOW_GUARD] data_type_in/out devem ser compatíveis entre elos consecutivos de SNAP_CHAIN.
+    Incompatibilidade → [CHAIN_TYPE_MISMATCH] + notificação ao meta_reasoning.'
+  - 'G13: [AUDITCHAIN_WIRE_GUARD] Em modos SCIENTIFIC/RESEARCH/DEEP, MentalInterpreter.__init__() DEVE
+    instanciar AuditChain com session_id UUID. _step_13_snapshot() DEVE chamar _audit_chain.finalize(store=self.snapshots).
+    AuditChain sem finalize = SR_23 violada = confidence_cap 55.'
+  - 'G14: [COMMIT_CYCLE_GUARD] _step_0_init() DEVE chamar self.snapshots.commit_cycle() no início de cada
+    execução. SNAP_SCRATCH com TTL decrescente mas sem commit_cycle = lixo cognitivo acumulado indefinidamente.'
+  - 'G15: [CALIBRATOR_WIRE_GUARD] ThresholdCalibrator instanciado em MCFEReliabilityMonitor.__init__().
+    A cada CALIBRATION_INTERVAL (50) blocos, calibrator.calibrate() atualiza warning_thr e critical_thr
+    SE confidence != LOW. Calibração LOW mantém defaults. Inspecionável via [CALIBRATION_REPORT] em get_state().'
+  - 'G16: [SPEC_SYNC_GUARD] Toda classe Python corrigida por OPP DEVE ter spec YAML correspondente atualizada
+    na MESMA sessão. Divergência entre spec YAML e código Python = risco de re-introdução do bug. meta_reasoning
+    verifica consistência em STEP_11.'
+  - 'G17: [DIMENSIONAL_CONSISTENCY_GUARD] Em modo SCIENTIFIC, antes de emitir resultado numérico, o agente
+    DEVE verificar consistência dimensional das equações utilizadas. Operações entre grandezas de unidades
+    incompatíveis (ex: kg + m/s) DEVEM ser marcadas [DIMENSIONAL_INCONSISTENCY] e confidence_cap 45 aplicado.
+    Enforcement: meta_reasoning (STEP_11). Nota: verificação é cognitiva — não via biblioteca Python (constraint
+    LLM Puro).'
+  - 'G18: [LAZY_ANCHOR_THRESHOLD_GUARD] knowledge.radial_loading DEVE ativar carregamento de âncoras macro
+    SOMENTE quando incerteza epistêmica do bayesian_curator > τ=0.65 (OPP-27 threshold dinâmico). Abaixo
+    do threshold: âncoras micro e meso são suficientes. Enforcement: STEP_2, verificado por meta_reasoning.'

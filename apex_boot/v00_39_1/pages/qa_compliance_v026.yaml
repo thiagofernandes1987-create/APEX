@@ -1,0 +1,36 @@
+qa_compliance_v026:
+  base: v00.25.0 (17/17 regressão base preservada)
+  regression_suite_v026: 17/17 PASS + 16 novos testes adicionados
+  total_diffs_applied: 21
+  total_bugs_fixed: 9
+  total_gaps_closed: 16
+  total_opps_applied: 5
+  new_rules: 9
+  fixes_preserved_from_v025:
+    FIX-QA-A: MCFEReliabilityMonitor único subscriber de BLOCK_COMPLETED
+    FIX-QA-B: SCIENTIFIC P_target = 0.85
+    FIX-QA-C: warmup blocks com is_warmup=True
+    FIX-QA-D: n_warm = N_WARM_BLOCKS × DEFAULT
+    FIX-QA-E: ReliabilityEstimator.from_dict preserva tipo dos buckets
+    FIX-NEW1: PRIOR_ALPHA=9, PRIOR_BETA=1
+    OPP-13: DIFF_VARIANCE_GUARD — is_low_var AND mean_h < 60.0
+  new_qa_tests_v026:
+    QA_SR28_01: verify([]) → ok=False
+    QA_SR29_01: verify(traj_div) → PHYSICAL_DIVERGENCE detectada
+    QA_OPP24_01: select(None) → None (sem crash)
+    QA_OPP17_01: LQR DARE P converge (scipy path)
+    QA_OPP22_01: rollback_point pinado automaticamente
+    QA_SR31_01: CouplingAnalyzer path-4 → MONOLITHIC (λ₂=0.586)
+    QA_BUG09_01: sistema x+y=5, x-y=1 → False
+    QA_BUG09_02: FFT sinal x^2 → False
+    QA_BUG09_03: Optimize x^2 → False (EN blocker)
+    QA_SR30_01: _emit_block_completed inclui verification_level
+    QA_SR32_01: BDE ativo para CFI=0.45, bde_score=0.55
+    QA_OPP21_01: find_minimum usa L-BFGS-B (não grid)
+    QA_GAP08_01: check_reliability usa lower_5 (WARNING com R_acum=0.55)
+    QA_OPP19_01: 'can_replan: MAX=3, COOLDOWN=5'
+    QA_OPP18_01: n_rel recalculado por bloco com epsilon crescente
+    QA_REGRESSION_BASE: 17/17 cenários base preservados
+  fmea_rpn_max: 0
+  session: APEX-LIVE-2026-03-19
+  acceptance_flag: PASS

@@ -1,0 +1,69 @@
+sklearn_self_difficulty:
+  executor: SANDBOX_CODE
+  version: v00.32.1
+  opp: OPP-71
+  tier: 2
+  status: ADOPTED
+  purpose: 'Dar ao APEX consciência dos seus próprios limites de competência. Se o problema é muito diferente
+    do que o sistema já resolveu bem (OOD score alto), alertar ANTES de gastar tokens em análise que provavelmente
+    será imprecisa.
+
+    '
+  why: 'TF-IDF + cosine_similarity foram escolhidos sobre embeddings de LLM porque: sklearn está pré-instalado
+    (zero dependências extras); TF-IDF captura ~70-80% da informação semântica relevante para vocabulário
+    técnico de engenharia; embeddings requerem download de modelo (~400MB — inviável na sandbox). Performance:
+    <10ms para corpus de 200 sessões.
+
+    '
+  description: 'Modelo TF-IDF sobre corpus de sessões históricas no SQLite. O QUE É: Similaridade textual
+    via TF-IDF + cosine_similarity — determinístico. O QUE NÃO É: Embedding semântico profundo (é bag-of-words
+    com IDF weighting). O QUE NÃO É: Garantia de qualidade — é predição por similaridade histórica. COMO
+    FUNCIONA: STEP_0 → predict(problem_text) → busca 10 sessões mais similares → ood_score = 1 - max_similarity
+    → se > 0.6: recomendar ESCALATE_TO_HUMAN. AUTO-MELHORIA: update_corpus() no STEP_13 adiciona sessão
+    atual ao corpus.
+
+    '
+  what_if_fails: "FALLBACK 1 — Corpus vazio (< 5 sessões):\n  Retornar PROCEED_WITH_CAUTION. Normal para\
+    \ sessões iniciais.\nFALLBACK 2 — sklearn não disponível:\n  Pular prediction. Declarar [SELF_DIFFICULTY_UNAVAILABLE].\
+    \ Continuar normalmente.\nFALLBACK 3 — Corpus corrompido:\n  Rebuild do SQLite. Se indisponível: pular\
+    \ prediction.\nREGRA: Este módulo NUNCA bloqueia o pipeline. É informativo, não um gate.\n"
+  inject_when: STEP_0 — antes de qualquer análise do problema
+  depends_on:
+  - sqlite_snapshot_store
+  - sklearn_library
+  min_sessions_required: 5
+  vectorizer_config:
+    max_features: 500
+    stop_words: english
+    ngram_range:
+    - 1
+    - 2
+    rationale: 'max_features=500: suficiente para vocabulário técnico sem overhead. ngram_range=[1,2]:
+      captura bigramas como "machine learning" vs. unigrams separados.
+
+      '
+  ood_classification:
+    ood_lt_0.3:
+      quality: HIGH
+      recommendation: PROCEED
+    ood_0.3_0.6:
+      quality: MEDIUM
+      recommendation: PROCEED_WITH_CAUTION
+    ood_gt_0.6:
+      quality: LOW
+      recommendation: ESCALATE_TO_HUMAN
+    rationale: '0.3: max_similarity > 0.7 → problema bem coberto pelo histórico. 0.6: max_similarity <
+      0.4 → domínio pouco representado no histórico.
+
+      '
+  api:
+  - predict(problem_text) → dict{ood_score, expected_quality, recommendation, n_similar_sessions}
+  - _build_corpus() → bool — True se corpus >= min_sessions_required
+  - update_corpus() → None — adicionar sessão atual (chamado no STEP_13)
+  fmea:
+    rpn: 4
+    mode: Corpus desatualizado entre sessões
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: update_corpus() obrigatório no STEP_13; rebuild completo do SQLite se necessário

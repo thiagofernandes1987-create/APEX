@@ -1,0 +1,79 @@
+apex_runtime_probe:
+  executor: SANDBOX_CODE
+  version: v00.35.0
+  opp: OPP-119
+  tier: 0
+  status: ADOPTED
+  position: PRIMEIRO bloco executado em qualquer sessao APEX
+  purpose: 'Bloco Python executavel no STEP_0 que realiza sondagem REAL das capacidades do runtime (13
+    testes) e armazena resultados em APEX_SESSION_CAPS. Elimina deteccao declarativa (YAML interpretation)
+    por prova empirica. Todos os modulos SANDBOX_CODE consultam APEX_SESSION_CAPS em vez de assumir perfil.
+
+    '
+  why: 'WHY: multi_sandbox_profiles (OPP-110) descreve como detectar runtimes em YAML, mas NUNCA executa
+    codigo. O LLM lê a descricao e ASSUME perfil — raciocinio probabilistico que o APEX tenta superar.
+    Deteccao real requer EXECUCAO, nao interpretacao. WHY CRITICO: Todos os modulos SANDBOX_CODE dependem
+    do profile correto. Profile errado = todos os modulos operam no perfil errado. Este e o ponto de falha
+    raiz de toda integracao multi-LLM.
+
+    '
+  when: STEP_0 — OBRIGATORIO, antes de qualquer modulo SANDBOX_CODE ou decisao de perfil
+  description: 'O QUE E: Bloco Python de diagnostico com 13 testes de capacidades reais. O QUE NAO E:
+    Substituicao do multi_sandbox_profiles — e o mecanismo de deteccao real que o multi_sandbox_profiles
+    descreve mas nao implementa. COMO FUNCIONA: Executar bloco probe -> capturar resultados -> mapear
+    para profile -> armazenar em APEX_SESSION_CAPS -> todos os modulos consultam APEX_SESSION_CAPS.
+
+    '
+  what_if_fails: 'FALLBACK 1: Probe falha totalmente -> assumir MINIMAL (safe default). FALLBACK 2: Sondagem
+    parcial -> usar capacidades confirmadas + desativar nao confirmadas. REGRA: NUNCA falhar sessao por
+    falha de probe. Probe e diagnostico, nao requisito.
+
+    '
+  inject_when: STEP_0 — antes de todos os outros modulos
+  depends_on: []
+  probe_code: "# APEX RUNTIME PROBE v00.35.0 — STEP_0 MANDATORIO\n# Execute este bloco no inicio de cada\
+    \ sessao.\n# DeepSeek: prefixar com @sandbox\nimport sys, time\n\ncaps = {\n    \"python_exec\": True,\n\
+    \    \"numpy\": False, \"scipy\": False, \"pandas\": False,\n    \"sympy\": False, \"sklearn\": False,\
+    \ \"matplotlib\": False,\n    \"sqlite3\": False, \"subprocess\": False, \"git_available\": False,\n\
+    \    \"urllib_internet\": False, \"ThreadPoolExecutor\": False,\n    \"orjson\": False, \"ast_module\"\
+    : False,\n}\n\nfor lib in [\"numpy\",\"scipy\",\"pandas\",\"sympy\",\"matplotlib\"]:\n    try:\n \
+    \       m = __import__(lib)\n        caps[lib] = getattr(m, \"__version__\", True)\n    except ImportError:\
+    \ pass\n\ntry:\n    from sklearn import __version__ as skv; caps[\"sklearn\"] = skv\nexcept ImportError:\
+    \ pass\n\ntry:\n    import sqlite3\n    c = sqlite3.connect(\":memory:\")\n    c.execute(\"CREATE\
+    \ TABLE t(x INTEGER)\"); c.close()\n    caps[\"sqlite3\"] = True\nexcept Exception: pass\n\ntry:\n\
+    \    import subprocess as sp\n    r = sp.run([sys.executable,\"-c\",\"print('ok')\"],capture_output=True,timeout=3,text=True)\n\
+    \    caps[\"subprocess\"] = (r.stdout.strip()==\"ok\")\nexcept Exception: pass\n\ntry:\n    import\
+    \ subprocess as sp\n    r = sp.run([\"git\",\"--version\"],capture_output=True,timeout=3,text=True)\n\
+    \    caps[\"git_available\"] = r.returncode == 0\nexcept Exception: pass\n\ntry:\n    from concurrent.futures\
+    \ import ThreadPoolExecutor\n    with ThreadPoolExecutor(max_workers=2) as ex:\n        f = ex.submit(lambda:\
+    \ 42)\n    caps[\"ThreadPoolExecutor\"] = (f.result() == 42)\nexcept Exception: pass\n\ntry:\n   \
+    \ import orjson; caps[\"orjson\"] = True\nexcept ImportError: pass\n\ntry:\n    import ast; ast.parse(\"\
+    x=1\"); caps[\"ast_module\"] = True\nexcept Exception: pass\n\ntry:\n    import urllib.request\n \
+    \   with urllib.request.urlopen(\"https://httpbin.org/get\", timeout=5) as r:\n        caps[\"urllib_internet\"\
+    ] = (r.status == 200)\nexcept Exception: pass\n\ndef detect_profile(c):\n    if c[\"subprocess\"]\
+    \ and c[\"sqlite3\"] and c[\"git_available\"]:\n        return \"FULL_CLAUDE_CODE\"\n    elif c[\"\
+    numpy\"] and not c[\"subprocess\"]:\n        if c[\"sqlite3\"]: return \"PARTIAL_CHATGPT_CI\"\n  \
+    \      elif c[\"ThreadPoolExecutor\"]: return \"FULL_DEEPSEEK\"\n        else: return \"PARTIAL_GEMINI\"\
+    \n    elif c[\"numpy\"] and c[\"subprocess\"] and not c[\"sqlite3\"]:\n        return \"FULL_GROK\"\
+    \n    return \"MINIMAL\"\n\nprofile = detect_profile(caps)\nsci = [k for k in [\"numpy\",\"scipy\"\
+    ,\"pandas\",\"sympy\",\"sklearn\",\"matplotlib\"] if caps[k]]\n\nAPEX_SESSION_CAPS = {\n    \"profile\"\
+    : profile, \"capabilities\": caps,\n    \"sci_libs_available\": sci,\n    \"uco_executable\": caps[\"\
+    ast_module\"],\n    \"uco_real_loaded\": False,\n    \"pot_real\": True,\n    \"forge_method\": \"\
+    git_clone\" if caps[\"git_available\"] else\n                    \"urllib_fetch\" if caps[\"urllib_internet\"\
+    ] else \"inline_paste\",\n    \"snapshot_method\": \"sqlite3\" if caps[\"sqlite3\"] else \"memory_dict\"\
+    ,\n}\n\nprint(f\"[APEX_RUNTIME_PROBE_COMPLETE]\")\nprint(f\"Profile: {profile} | Sci: {sci}\")\nprint(f\"\
+    sub={caps['subprocess']} sqlite={caps['sqlite3']} git={caps['git_available']}\")\nprint(f\"UCO_exec={caps['ast_module']}\
+    \ forge={APEX_SESSION_CAPS['forge_method']}\")\nprint(f\"internet={caps['urllib_internet']} threads={caps['ThreadPoolExecutor']}\"\
+    )\n"
+  deepseek_activation: '@sandbox [colar probe_code acima]'
+  fmea:
+    rpn: 10
+    mode: Profile incorreto por falha de probe -> todos SANDBOX_CODE operam com perfil errado
+    probability: 2
+    severity: 5
+    detection: 1
+    mitigation: '13 testes independentes — falha de 1 nao invalida os outros. Fallback MINIMAL e sempre
+      seguro. Re-executar probe se comportamento inconsistente.
+
+      '
+    _fix: OPP-161 — severity corrigido de 8→5 (máx escala 1-5); rpn recalculado 2×5×1=10

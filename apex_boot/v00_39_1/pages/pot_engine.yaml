@@ -1,0 +1,33 @@
+pot_engine:
+  version: v00.20.0
+  tier: 1
+  status: DEPRECATED
+  replaced_by: pot_engine_v2
+  sunset_sessions: 2
+  sunset_trigger: traj_verification.issues > 0 em RK4
+  description: '[DEPRECATED v00.20.2] Motor PoT abstrato — substituído por pot_engine_v2. Mantido como
+    fallback por 2 sessões. Não usar para novos desenvolvimentos.
+
+    '
+  config:
+    max_pot_steps: 30
+    max_iter_per_loop: 30
+    delegation_above_steps: 30
+    fmea_guard_position: STEP_0
+    confidence_cap_on_guard_violation: 45
+    step_types:
+      FMEA_GUARD: assert condição — falha bloqueia execução
+      INIT: inicializar variáveis e estado
+      COMPUTE: operação matemática ou lógica
+      RECALL: buscar Knowledge Model ou anchor
+      INVOKE_SKILL: invocar outra Specialized Skill como sub-rotina
+      BRANCH: condicional — if/else no trace
+      LOOP: iteração controlada — max_iter obrigatório
+      EMIT: emitir evento ou hipótese
+      OUTPUT: resultado final com confidence
+  outputs:
+  - pot_execution_request
+  dependencies:
+  - MODULE_skills
+  - MODULE_knowledge
+  inject_when: DEPRECATED — usar pot_engine_v2

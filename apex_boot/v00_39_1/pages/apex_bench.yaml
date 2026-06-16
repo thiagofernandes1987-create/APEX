@@ -1,0 +1,43 @@
+apex_bench:
+  executor: SANDBOX_CODE
+  version: v00.38.0
+  opp: OPP-167
+  tier: 1
+  status: TESTING
+  purpose: 'Harness de benchmark empírico: suite fixa de tarefas com gabarito verificável por código,
+    executada em duas condições (APEX kernel carregado vs prompt vanilla), produzindo o primeiro número
+    REAL de efetividade do APEX.
+
+    '
+  why: 'WHY: todos os números de qualidade do APEX até v00.37 (FMEA RPNs, QA PASS, confidences) são gerados
+    pelo próprio LLM sobre si mesmo — fiação epistêmica circular. Sem A/B com gabarito objetivo, não há
+    como saber se o APEX melhora, não muda, ou PIORA o output (overhead de atenção é um custo real). Este
+    módulo converte a pergunta "o APEX funciona?" de opinião em medição.
+
+    '
+  when: Pós-release de cada versão; pré-adoção de DIFFs tier 0.
+  description: 'O_QUE_É: runner + suite de 24 tarefas em 4 categorias com gabarito verificável: (a) numérica-iterativa
+    (testa SR_01/09/PoT), (b) engenharia com restrições conflitantes (testa V_conflict/pre-mortem), (c)
+    calibração (perguntas com resposta conhecida — mede ECE entre confidence declarada e acerto real),
+    (d) resolução de skill (testa OPP-137/165 — encontra e aplica a skill certa?). O_QUE_NÃO_É: benchmark
+    de LLM — é benchmark do DELTA que o APEX causa no mesmo LLM. COMO_FUNCIONA: cada tarefa tem verify(output)->score
+    em código; runner executa N=3 repetições por condição; reporta delta_médio ± desvio por categoria
+    + tokens consumidos por condição → custo-benefício real.
+
+    '
+  what_if_fails: 'FALLBACK: sem API para rodar condição B → modo manual: gerar os prompts das duas condições
+    para o usuário executar e colar outputs; verify() roda igual. NUNCA: reportar score sem verify() executado.
+
+    '
+  inject_when: fora de sessão (ferramenta de build, como o compilador)
+  depends_on:
+  - toolchain_validation_gate
+  - apex_compiler
+  metrics:
+    primary: delta_accuracy = score(APEX) - score(vanilla) por categoria
+    calibration: ECE — |confidence_declarada - taxa_de_acerto| média
+    cost: tokens_apex / tokens_vanilla (overhead real)
+    decision_rule: 'delta <= 0 em alguma categoria por 2 releases consecutivos → abrir OPP de investigação
+      na cadeia de módulos daquela categoria.
+
+      '

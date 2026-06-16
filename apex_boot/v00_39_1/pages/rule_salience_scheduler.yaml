@@ -1,0 +1,47 @@
+rule_salience_scheduler:
+  executor: LLM_BEHAVIOR
+  version: v00.38.0
+  opp: OPP-166
+  tier: 0
+  status: ADOPTED
+  purpose: 'Selecionar dinamicamente as top-K regras invioláveis RELEVANTES para a tarefa corrente e mantê-las
+    no attention scratchpad (OPP-MAS-08), em vez de esperar aderência uniforme a 45+ regras simultâneas.
+
+    '
+  why: 'WHY: LLMs degradam aderência conforme o número de instruções cresce — com 45+ regras o modelo
+    segue as ~10-15 mais salientes e "amostra" o resto, sem controle sobre QUAIS. Este módulo torna a
+    seleção explícita e auditável: as regras certas para a tarefa certa, sempre no fim do contexto (zona
+    de máxima atenção). WHY NÃO REDUZIR AS REGRAS: cada regra existe por um modo de falha real; o problema
+    não é o catálogo, é a janela de atenção. Paging resolve sem perder cobertura.
+
+    '
+  when: STEP_0 (após classificação de modo) + re-seleção a cada mudança de fase.
+  llm_behavior: "PROTOCOLO DE SALIÊNCIA (SR_47):\n1. SEMPRE ATIVAS (núcleo fixo, 6 regras): C1 (partition),\
+    \ C3/C4\n   (confidence caps + APPROX), H5 (never auto-apply DIFF),\n   SR_34 (ethical cost), SR_46\
+    \ (toolchain validation).\n2. SELEÇÃO POR CONTEXTO (top-K adicional, K=6..10 por modo):\n   - tarefa\
+    \ numérica/iterativa → SR_01, SR_09, SR_07, SR_33\n   - modo SCIENTIFIC → SR_02..SR_06, SR_36\n  \
+    \ - skill externa envolvida → SR_37, G6, OPP-165.pinning\n   - sessão incremental → C5, C6, SR_32,\
+    \ SR_35\n   - claim formal/matemática → C8, SR_38\n   - runtime MINIMAL/PARTIAL → SR_39, page_loader\
+    \ rules\n3. INJETAR no attention scratchpad (500 tokens, OPP-MAS-08):\n   \"[ACTIVE_RULES: {ids}]\
+    \ + 1 linha de essência por regra\"\n4. RE-SELEÇÃO: mudança de STEP major (0→P→3→9→11) → reavaliar.\n\
+    5. AUDITORIA: meta_reasoning em pre_STEP_11 confere APENAS as\n   regras ativas (verificação focada\
+    \ > varredura diluída) +\n   amostra aleatória de 3 regras não-ativas (detecção de gap).\nREGRA: [ACTIVE_RULES]\
+    \ ausente em modos DEEP+ = output inválido,\nconfidence_cap 55.\n"
+  what_if_fails: 'FALLBACK: seleção incerta → incluir o núcleo fixo + TODAS as regras do modo corrente
+    (comportamento pré-OPP-166). Custo maior, cobertura garantida. NUNCA operar sem o núcleo fixo de 6.
+
+    '
+  inject_when: STEP_0 pós-classificação; residente no boot kernel
+  depends_on:
+  - attention_anchors_module
+  - inviolable_rules
+  fmea:
+    rpn: 18
+    mode: regra relevante não selecionada → violação não detectada
+    probability: 3
+    severity: 3
+    detection: 2
+    mitigation: 'Núcleo fixo cobre violações catastróficas; amostra aleatória de não-ativas em pre_STEP_11
+      detecta gaps de seleção; apex_bench (OPP-167) mede taxa de violação A/B para calibrar K.
+
+      '

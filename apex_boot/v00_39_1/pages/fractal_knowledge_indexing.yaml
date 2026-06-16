@@ -1,0 +1,98 @@
+fractal_knowledge_indexing:
+  version: v00.20.0
+  tier: 1
+  description: 'Indexa anchors e Knowledge Models por nível de resolução fractal. Evita carregar conhecimento
+    nano em níveis macro — reduz ruído cognitivo e token waste. Estende (não substitui) lazy_loading_policy.
+
+    '
+  config:
+    levels:
+      macro:
+        description: Princípios, frameworks, leis gerais
+        anchor_categories:
+        - principle
+        - framework
+        - theorem
+        specificity_range:
+        - 0.0
+        - 0.3
+        examples:
+        - SOLID
+        - first_principles
+        - scientific_method
+        - meta_cognition
+      meso:
+        description: Metodologias, padrões, estratégias de domínio
+        anchor_categories:
+        - methodology
+        - pattern
+        - standard
+        specificity_range:
+        - 0.3
+        - 0.6
+        examples:
+        - TDD
+        - DSM
+        - Ishikawa
+        - DDD
+        - FMEA
+      micro:
+        description: Técnicas específicas, fórmulas nomeadas, algoritmos
+        anchor_categories:
+        - equation_template
+        - methodology
+        specificity_range:
+        - 0.6
+        - 0.85
+        examples:
+        - logistic_growth
+        - CI_01_exponential
+        - euler_method
+        - bayes_theorem
+      nano:
+        description: Valores exatos, código, implementações específicas
+        anchor_categories:
+        - equation_template
+        - code_template
+        specificity_range:
+        - 0.85
+        - 1.0
+        examples:
+        - exact_constants
+        - code_fragments
+        - numerical_recipes
+    indexing_algorithm:
+      assign_level:
+        max_centrality_definition: max_centrality = max(anchor.centrality_score for all anchors in knowledge.knowledge_graph)
+        max_centrality_fallback: 5.0
+        formula: specificity = 1 - (anchor.centrality_score / max_centrality)
+        map_to_level: 'specificity in [0.0, 0.3) → macro; specificity in [0.3, 0.6) → meso; specificity
+          in [0.6, 0.85) → micro; specificity in [0.85, 1.0] → nano
+
+          '
+      override: anchor.fractal_level field (novo) tem precedência sobre cálculo
+    injection_policy:
+      at_fractal_start: carregar apenas macro
+      at_meso_expansion: adicionar meso anchors para nós expandidos
+      at_micro_expansion: adicionar micro anchors — max 3 por nó
+      at_nano_execution: carregar nano apenas via INVOKE_SKILL no PoT
+      policy_note: 'Estende lazy_loading_policy: não substitui. Se lazy_loading já carregou um anchor,
+        fractal_knowledge_indexing marca seu nível mas não recarrega.
+
+        '
+    query_interface:
+      get_anchors_for_level:
+        input:
+        - fractal_level
+        - domain_tags
+        output:
+        - anchor_list filtered by level and domain
+      promote_anchor:
+        description: Promove anchor de nível nano para micro se usado com sucesso em ≥3 sessões
+        condition: usage_success_rate > 0.8 AND usage_count >= 3
+  outputs:
+  - level_indexed_anchor_set
+  dependencies:
+  - MODULE_knowledge
+  - MODULE_fractal_tree_generator
+  inject_when: fractal_depth > 1 OR cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]

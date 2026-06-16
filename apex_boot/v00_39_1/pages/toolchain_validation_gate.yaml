@@ -1,0 +1,57 @@
+toolchain_validation_gate:
+  executor: SANDBOX_CODE
+  version: v00.38.0
+  opp: OPP-162
+  tier: 0
+  status: ADOPTED
+  purpose: 'Validação ferramental REAL (yaml.safe_load + ast.parse + schema mínimo) executada como gate
+    bloqueante no DIFF_REVIEW_GATE e antes de qualquer release de master. Substitui QA auto-declarado
+    por QA executado.
+
+    '
+  why: 'WHY: A autópsia de 2026-06-11 encontrou o master v00.37.0 sintaticamente inválido em 9 pontos
+    — incluindo corrupção de indentação DENTRO de inviolable_rules.enforcement_source — apesar de rodapés
+    declarando "boot stress-tested" e "QA PASS". Todo o QA era auto-reportado pelo LLM. Um yaml.safe_load
+    de 1 segundo teria detectado tudo. Este é o mesmo modo de falha que OPP-157 combate (fake boot), no
+    nível meta (fake QA).
+
+    '
+  when: 'WHEN: Todo DIFF_REVIEW_GATE (antes de aprovar qualquer DIFF). WHEN: Antes de declarar qualquer
+    versão como release. WHEN: apex_compiler FASE 1 (compilação aborta se falhar).
+
+    '
+  description: 'O_QUE_É: gate que executa parsers reais sobre o artefato modificado. O_QUE_NÃO_É: substituto
+    do FMEA/QA cognitivo — é a camada sintática que o QA cognitivo assumia existir e não existia. COMO_FUNCIONA:
+    (1) yaml.safe_load no arquivo completo; (2) ast.parse em todo bloco python_source/probe_code/code;
+    (3) checagem de schema mínimo nos módulos novos (executor/purpose/why/when/what_if_fails — enforce
+    SR_40); (4) emitir [TOOLCHAIN_VALIDATED: yaml=OK | py={n}/{n}] ou [TOOLCHAIN_REJECTED: {erros}].
+
+    '
+  what_if_fails: 'FALLBACK: Sandbox indisponível (runtime MINIMAL) → marcar DIFF como [PENDING_TOOLCHAIN_VALIDATION]
+    e NÃO promover a ADOPTED até validação em runtime FULL. NUNCA aprovar DIFF estrutural sem parse real.
+
+    '
+  inject_when: DIFF_REVIEW_GATE — antes da aprovação USER_EXPLICIT
+  depends_on:
+  - apex_runtime_probe
+  - llm_runtime_adapter
+  validator_code: "# WHY: parser real em vez de auto-avaliacao do LLM\n# WHEN: DIFF_REVIEW_GATE e pre-release\n\
+    import yaml, ast, re, sys\n\ndef toolchain_validate(path):\n    errors = []\n    content = open(path,\
+    \ encoding=\"utf-8\").read()\n    try:\n        doc = yaml.safe_load(content)\n    except yaml.YAMLError\
+    \ as e:\n        mark = getattr(e, \"problem_mark\", None)\n        errors.append(f\"YAML@{mark.line+1\
+    \ if mark else '?'}: \"\n                      f\"{str(e).splitlines()[0][:100]}\")\n        return\
+    \ {\"status\": \"REJECTED\", \"errors\": errors}\n    nblocks, nok = 0, 0\n    for m in re.finditer(r\"\
+    ^( +)(?:python_source|probe_code|code|\"\n                         r\"validator_code): \\|\\n((?:\\\
+    1  .*\\n|\\n)+)\",\n                         content, re.M):\n        ind = len(m.group(1)) + 2\n\
+    \        src = \"\\n\".join(l[ind:] if len(l) > ind else \"\"\n                        for l in m.group(2).split(\"\
+    \\n\"))\n        nblocks += 1\n        try:\n            ast.parse(src); nok += 1\n        except\
+    \ SyntaxError as e:\n            errors.append(f\"PY bloco {nblocks} L{e.lineno}: {e.msg}\")\n   \
+    \ status = \"VALIDATED\" if not errors else \"REJECTED\"\n    return {\"status\": status, \"yaml\"\
+    : \"OK\",\n            \"python\": f\"{nok}/{nblocks}\", \"errors\": errors}\n"
+  fmea:
+    rpn: 8
+    mode: DIFF estruturalmente inválido aprovado por QA auto-reportado
+    probability: 2
+    severity: 4
+    detection: 1
+    mitigation: Parser real bloqueante. Detecção quase certa (D=1).

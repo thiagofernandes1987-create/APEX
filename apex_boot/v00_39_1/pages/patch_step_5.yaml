@@ -1,0 +1,9 @@
+patch_step_5:
+  addition_at_each_level: "Em cada expansão de nível fractal (meso, micro, nano):\n  1. fractal_knowledge_indexing\
+    \ injeta anchors do novo nível\n  2. specialized_skill_engine invoca skills do novo nível\n  3. mental_interpreter\
+    \ executa PoTs para o nível atual\n  4. fractal_hypothesis_compression executa (todos os métodos)\n\
+    \  5. MCFE recalcula H_cognitive com n_after/n_initial atualizado\n"
+  log_format: '''[FRACTAL_LEVEL_{level}: skills_executed={n} | hypotheses_compressed={c} | H_cognitive={H}
+    | gear={G}]''
+
+    '

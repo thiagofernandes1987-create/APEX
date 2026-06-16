@@ -1,0 +1,21 @@
+dsl_module_template:
+  _note: Template OBRIGATÓRIO para todo novo módulo. Campos marcados com * são obrigatórios.
+  template: "nome_do_modulo:\n  executor: LLM_BEHAVIOR | SANDBOX_CODE | DOCUMENTATION | HYBRID  # * obrigatório\n\
+    \  version: v00.37.x  # exemplo — usar versão atual do sistema\n  opp: OPP-XX\n  tier: 0|1|2|3|4\n\
+    \  status: ADOPTED | ADOPTED_PARTIAL | EXPERIMENTAL\n\n  purpose: >             # * O QUE RESOLVE\
+    \ — problema específico que este módulo ataca\n    Uma frase clara descrevendo qual problema existia\
+    \ antes e como este módulo o resolve.\n\n  why: >                 # * POR QUE ESTA ABORDAGEM — justificativa\
+    \ da escolha técnica\n    Por que esta implementação específica, e não outra alternativa.\n    Por\
+    \ que esta biblioteca, este algoritmo, este threshold.\n\n  description: >         # * O QUE FAZ —\
+    \ preciso e sem ambiguidade\n    O QUE É: descrição exata do que o módulo faz em termos técnicos.\n\
+    \    O QUE NÃO É: o que pode ser confundido com este módulo mas não é.\n    COMO FUNCIONA: sequência\
+    \ de operações do módulo.\n\n  what_if_fails: >       # * FALLBACKS — o que fazer se cada componente\
+    \ falhar\n    FALLBACK 1 — caso mais provável de falha: ação específica.\n    FALLBACK 2 — caso alternativo:\
+    \ ação específica.\n    REGRA GERAL: o pipeline NUNCA para por falha deste módulo.\n\n  inject_when:\
+    \ \"condição de ativação\"\n  depends_on: [lista_de_dependencias]\n\n  api:                   # Para\
+    \ SANDBOX_CODE e HYBRID\n    - \"metodo(params: tipos) → tipo_retorno — descrição em uma linha\"\n\
+    \n  fmea:                  # * Análise de falha — obrigatória\n    rpn: 0               # Risk Priority\
+    \ Number = probability × severity × detection (0=tbd)\n    mode: \"Modo de falha mais provável\"\n\
+    \    probability: 1-5     # 1=rarissimo, 5=frequente\n    severity: 1-5        # 1=imperceptível,\
+    \ 5=catastrófico\n    detection: 1-5       # 1=detectado automaticamente, 5=indetectável\n    mitigation:\
+    \ \"Como foi mitigado\"\n"

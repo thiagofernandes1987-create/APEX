@@ -1,0 +1,54 @@
+semantic_gravity_engine:
+  executor: HYBRID
+  version: v00.39.0
+  opp: OPP-169
+  tier: 0
+  status: ADOPTED
+  purpose: 'Computar a gravidade semântica de verdade (TF-IDF + cosine na sandbox, sklearn OPP-71) sobre
+    3 corpora unificados: páginas do kernel, skills do superrepo online (CATALOG.md/SKILL.md) e memórias
+    do snapshot. Substitui a estimativa intuída do OPP-138 mantendo seu vocabulário e fallbacks.
+
+    '
+  why: 'WHY: OPP-138 formalizou o vocabulário (gravity, attraction_radius, gravity_field) mas a fórmula
+    cosine_similarity(query_embedding, anchor_embedding) era inexecutável — o LLM não acessa embeddings.
+    O debug de 2026-04-11 mediu cobertura de 38%: sintoma direto de gravidade "vibed". A sandbox tem sklearn
+    desde OPP-71 — a peça existia, faltava a conexão. PoC validada em 2026-06-11: queries em PT-BR resolvem
+    para os módulos corretos com scores reais. WHY TF-IDF (não neural): zero dependência de rede/modelo
+    externo, determinístico, auditável, roda em runtime PARTIAL. Upgrade futuro para embeddings neurais
+    é troca de vetorizador, não de arquitetura.
+
+    '
+  when: 'WHEN: toda resolução de skill/página/memória (OPP-137 priority_1, page_loader passo 1, memory
+    recall OPP-168). WHEN build: apex_compiler pós-paginação reconstrói o índice.
+
+    '
+  description: 'O_QUE_É: ferramenta apex_semantic_index.py (build + query) com índice persistido (pickle)
+    cobrindo {page:*, skill:*, memory:*}. O_QUE_NÃO_É: substituto do attention_anchors_module — anchors
+    continuam sendo a camada L3 manual/curada; o engine é a camada computada que os complementa e os encontra.
+    COMO_FUNCIONA: build varre pages/ + CATALOG.md + apex_memory.db → TF-IDF(1,2)-grams, 20K features
+    → query retorna top-K com [SEARCH_GRAVITY: {id} | score={s} | COMPUTED]. O marcador COMPUTED distingue
+    do fallback [GRAVITY_APPROX] do LLM.
+
+    '
+  what_if_fails: 'FALLBACK 1: sklearn ausente (MINIMAL) → protocolo LLM_BEHAVIOR do OPP-138 com marcador
+    obrigatório [GRAVITY_APPROX] e attraction_radius relaxado (não há score real para comparar). FALLBACK
+    2: índice stale (master recompilado sem rebuild) → [INDEX_STALE] → rebuild automático se sandbox FULL,
+    senão operar com aviso. FALLBACK 3: corpus online inacessível → indexar só pages + memórias locais.
+
+    '
+  inject_when: STEP_0 (disponibilizar engine) + toda resolução semântica
+  depends_on:
+  - sklearn_self_difficulty
+  - hyperbolic_search_completeness
+  - apex_compiler
+  - online_skill_library
+  thresholds:
+    attraction_radius_computed: 0.12
+    rationale: 'TF-IDF cosine em corpus técnico multilíngue produz scores absolutos menores que embeddings
+      neurais; PoC mostrou matches corretos na faixa 0.08-0.20. O 0.65 do OPP-138 era calibrado para embeddings
+      hipotéticos — inaplicável. Valor 0.12 é [APPROX_ESTIMATE] até calibração via apex_bench categoria
+      (d).
+
+      '
+    relaxed_radius: 0.06
+    neighbor_coload: score > max_score * 0.7

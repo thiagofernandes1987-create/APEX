@@ -1,0 +1,57 @@
+external_critic_profile:
+  executor: HYBRID
+  version: v00.32.1
+  opp: OPP-70
+  tier: 2
+  status: ADOPTED
+  purpose: 'Mitigar o Gargalo G6 (autoavaliação circular): confrontar o meta_reasoning com evidência histórica
+    objetiva do SQLite — fora do context window — ANTES da avaliação.
+
+    '
+  why: 'O meta_reasoning só detecta erros que o LLM "sabe que comete". O External Critic detecta erros
+    que o sistema JÁ cometeu antes, via hash MD5 e difflib.SequenceMatcher. É independente porque: (a)
+    vive no SQLite, fora do context window; (b) usa código determinístico, não LLM; (c) é ativado ANTES
+    do meta_reasoning — o LLM não pode racionalizar depois de ver a evidência.
+
+    '
+  description: 'Analisa outputs do APEX contra perfil histórico de erros no SQLite. PARTE SANDBOX: lookup
+    no SQLite via hash exato e difflib similaridade textual. PARTE LLM: interpretar o [EXTERNAL_CRITIC]
+    injection e ajustar avaliação. O QUE É: Lookup de padrões históricos concretos — determinístico. O
+    QUE NÃO É: Crítico universal que detecta erros novos (unknown unknowns). O QUE NÃO É: Outro LLM fazendo
+    análise — é código Python puro. COMO FUNCIONA: STEP_12 → analyze_output() ANTES do meta_reasoning
+    → se padrão encontrado → injeta [EXTERNAL_CRITIC] no contexto → meta_reasoning vê evidência histórica
+    antes de formar avaliação.
+
+    '
+  what_if_fails: "FALLBACK 1 — SQLite não disponível:\n  Pular External Critic. Declarar [EXTERNAL_CRITIC_UNAVAILABLE].\n\
+    \  Continuar com meta_reasoning normal.\nFALLBACK 2 — Sem padrões históricos (primeira sessão):\n\
+    \  Retornar CLEAN. [EXTERNAL_CRITIC_CLEAN: histórico insuficiente] é normal.\nFALLBACK 3 — Query lenta\
+    \ > 500ms:\n  Limitar a LIMIT 20 padrões e continuar.\nREGRA: External Critic NUNCA bloqueia o pipeline.\
+    \ É enriquecimento, não gate.\n"
+  inject_when: STEP_12 — OBRIGATÓRIO antes do meta_reasoning
+  depends_on:
+  - sqlite_snapshot_store
+  detection_methods:
+    exact_match: MD5(output_code) → lookup O(1) no error_profile.pattern_hash
+    similar_pattern: difflib.SequenceMatcher ratio > 0.7 → padrão similar
+    why_0.7: '0.7 = similaridade mínima para relevância. Abaixo de 0.7, a similaridade pode ser coincidência
+      textual sem relação semântica real.
+
+      '
+  limits_honest:
+  - Só detecta padrões JÁ vistos. Unknown unknowns são invisíveis por definição.
+  - Perfil vazio (primeiras sessões) é inútil — cresce com o uso.
+  api:
+  - analyze_output(output_code, output_text, claimed_confidence) → dict{status, injection, findings}
+  - record_error(code, error_type, domain, traceback, resolved, resolution) → None
+  - _lookup_exact(code_hash) → row|None
+  - _lookup_similar(text, limit=5) → List[dict]
+  rules_enforced:
+  - 'SR_38: analyze_output() DEVE ser invocado ANTES do meta_reasoning no STEP_12'
+  fmea:
+    rpn: 8
+    mode: Query lenta com muitos padrões históricos
+    probability: 2
+    severity: 2
+    detection: 2
+    mitigation: LIMIT 50 + índice por pattern_hash; timeout 500ms → fallback silencioso

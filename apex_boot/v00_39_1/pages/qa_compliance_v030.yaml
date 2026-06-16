@@ -1,0 +1,32 @@
+qa_compliance_v030:
+  base: v00.29.0 (74 QA tests accumulated)
+  new_qa_tests_v030:
+    QA_BUG1_01: ast.parse() on Python block PASSES — no SyntaxError
+    QA_BUG1_02: _eps_ref[0] updated in _run_production after block OK
+    QA_BUG2_01: '_on_block_completed at block 50: _recalibrate() called, no AttributeError'
+    QA_BUG2_02: ThresholdCalibrator has no 'calibrate' method (only _recalibrate)
+    QA_BUG3_01: AGENT_REQUIRED_FIELDS defined before AgentContractValidator
+    QA_BUG3_02: validate('critic', {}) → missing_fields=['findings','confidence','objections']
+    QA_BUG4_01: cosine_similarity_pure defined before MemoryIndex (L~5950)
+    QA_BUG4_02: cosine_similarity_pure([1,0],[1,0]) == 1.0
+    QA_BUG5_01: FIX-NEW1 lambda uses real on_block_completed() not __class__ chain
+    QA_BUG5_02: abs(global_p_after_1_ok - 1/11) < 1e-9
+    QA_GAP1_01: 8 silent excepts replaced with diagnostic logging
+    QA_GAP1_02: 'no remaining ''except X: pass'' in hot code paths'
+    QA_GAP2_01: MCFEState.survival_history is deque(maxlen=20)
+    QA_GAP2_02: EventBus.event_log is deque(maxlen=20)
+    QA_GAP2_03: lbfgs s_list/y_list are deque(maxlen=m)
+    QA_GAP2_04: edmonds_karp queue.popleft() not pop(0)
+    QA_GAP10_01: HMCStepSizeAdapter docstring contains DEPRECATION NOTE
+    QA_GAP11_01: GeometryEstimator._lv_dynamics() static method exists
+    QA_GAP11_02: _theoretical_M_local uses _lv_dynamics not inline _f_lv
+    QA_GAP11_03: delta_err uses _lv_dynamics not inline _f_lv
+    QA_GAP15_01: eps_fn returns _eps_ref[0] updated after each block
+    QA_REGRESSION_V029: 74/74 tests from v00.29 preserved
+  fmea_rpn_summary:
+    v028_rpn: 964
+    v029_rpn: 84
+    v030_rpn: 0
+    total_improvement_from_v028: 100%
+  acceptance_flag: PASS
+  session: APEX-LIVE-2026-03-19

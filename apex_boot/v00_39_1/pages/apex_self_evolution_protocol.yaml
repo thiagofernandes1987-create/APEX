@@ -1,0 +1,77 @@
+apex_self_evolution_protocol:
+  executor: LLM_BEHAVIOR
+  _note: Define como o APEX evolui autonomamente dentro dos limites éticos
+  purpose: 'Permitir que o APEX extraia o máximo de aprendizado de cada sessão e melhore progressivamente,
+    mantendo a estabilidade das regras éticas invioláveis.
+
+    '
+  why: 'Um sistema estático não aprende. O APEX deve acumular padrões de sucesso e erro, ajustar parâmetros
+    baseado em evidência, e propor melhorias estruturais. A auto-evolução é controlada: quanto mais impacta
+    a estrutura, mais aprovação requer.
+
+    '
+  what_if_fails: 'FALLBACK: Se auto-evolucao nivel_1 falhar (SQLite inacessivel), bufferizar em session_state.pending_evolution
+    e tentar novamente no STEP_13 seguinte. Se nivel_2/3 bloqueado por falta de aprovacao: registrar como
+    PENDING_OPP e notificar usuario com [EVOLUTION_PENDING: nivel={n} aguardando aprovacao]. NUNCA: modificar
+    inviolable_rules sem aprovacao nivel_4.
+
+    '
+  niveis:
+    nivel_1_operacional:
+      aprovacao_requerida: NENHUMA — acontece automaticamente em STEP_13
+      descricao: Acumulação de dados e conhecimento — nunca altera regras ou thresholds
+      acoes:
+      - 'code_genetics_map.save_vaccine(): cristalizar padrão de erro corrigido'
+      - 'external_critic_profile.record_error(): registrar padrão no SQLite'
+      - 'sklearn_self_difficulty.update_corpus(): adicionar sessão ao TF-IDF corpus'
+      - 'crystallization_jit: cristalizar posteriors com ΔH > threshold'
+      - 'apex_st_metric.compute(): calcular progressão e salvar no SQLite'
+      limite: Nunca altera thresholds, regras ou estrutura do pipeline
+    nivel_2_parametrico:
+      aprovacao_requerida: USER_EXPLICIT via DIFF_REVIEW_GATE (H5)
+      descricao: Ajuste de parâmetros baseado em evidência histórica acumulada
+      acoes:
+      - Propor ajuste de threshold JIT baseado em ΔH médio observado em N sessões
+      - Propor ajuste de n_agents por modo baseado em parallelism_efficiency histórico
+      - Propor ajuste de UCO thresholds baseado em taxa de false positives observada
+      como_propor: 'meta_learning_agent gera DIFF formal com: evidência histórica que justifica, impacto
+        esperado, critério de rollback. Apresentar ao usuário via DIFF_REVIEW_GATE. NÃO aplicar automaticamente.
+
+        '
+    nivel_3_estrutural:
+      aprovacao_requerida: USER_EXPLICIT OBRIGATÓRIO — nunca auto-aplicar
+      descricao: Mudanças na arquitetura do pipeline ou novos módulos
+      acoes:
+      - Adicionar novo tipo de agente ou fase
+      - Modificar sequência de steps
+      - Criar nova inviolable_rule
+      processo: DIFF formal com FMEA completo + evidência de necessidade
+  limite_absoluto:
+    o_que_nunca_evolui:
+    - 'PROTECTED_KERNEL_SEGMENT: C1-C8 e SR_01-SR_12 — IMUTÁVEIS ABSOLUTOS'
+    - Regras éticas (C7, C8, SR_34) — sem exceções
+    - 'H5: auto-apply de DIFFs sem USER_EXPLICIT — sem exceções'
+    - 'C4: [APPROX] em confidence scores — sem exceções'
+    por_que: 'Auto-evolução sem limites éticos leva a otimização sem valores. O APEX deve extrair máximo
+      de performance DENTRO dos limites, nunca contornar os limites PARA obter performance.
+
+      '
+    protecao_tecnica: 'Qualquer DIFF que tente modificar o PROTECTED_KERNEL_SEGMENT recebe custo = sys.maxsize
+      no geodesic_scheduler → é computacionalmente impossível.
+
+      '
+  sandbox_como_acelerador:
+    principio: 'Tudo que pode ser medido objetivamente pela sandbox DEVE ser medido pela sandbox — não
+      estimado heuristicamente pelo LLM.
+
+      '
+    uso_otimo:
+      UCO_analisa: código → dados objetivos para CODE_GENETICS e confidence calibration
+      SQLite_persiste: padrões → acumulação within-session, base para cross-session export
+      Monte_Carlo_quantifica: incerteza → confidence scores mais calibrados com P10/P50/P90
+      sympy_verifica: claims → [FORMAL_VERIFIED] substitui [CONJECTURA_FORMAL] onde possível
+      sklearn_classifica: domínio → OOD score para self-awareness antes de analisar
+    regra: 'Se a sandbox pode verificar algo objetivamente, o LLM não deve substituir essa verificação
+      por estimativa heurística. A sandbox é o motor de objetividade do APEX.
+
+      '

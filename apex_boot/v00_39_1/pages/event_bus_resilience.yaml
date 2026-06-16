@@ -1,0 +1,34 @@
+event_bus_resilience:
+  executor: LLM_BEHAVIOR
+  version: v00.35.0
+  opp: OPP-122
+  tier: 0
+  status: ADOPTED
+  patch_target: kernel.modules.event_bus (v00.19.0)
+  patch_type: AUGMENT — adiciona campos faltantes, nao substitui
+  purpose: 'Adiciona executor e what_if_fails ao event_bus (v00.19.0). O event_bus e referenciado por
+    15+ modulos mas nao tinha executor declarado nem fallback — violacao direta de SR_40.
+
+    '
+  why: 'WHY: SR_40 exige what_if_fails em todo modulo SANDBOX_CODE. Event_bus sem executor viola a convencao
+    DSL. Em MINIMAL runtime, sem estado compartilhado entre chamadas, o LLM nao sabia como substituir
+    o bus por chamadas diretas.
+
+    '
+  what_if_fails: 'FALLBACK 1 — Runtime MINIMAL: chamadas diretas entre modulos. Ordem: pmi_pm -> architect
+    -> engineer -> critic -> meta_reasoning. Declarar [EVENT_BUS_DEGRADED: direct_calls]. FALLBACK 2 —
+    Subscriber ausente: ignorar silenciosamente. FALLBACK 3 — Overflow (>100 eventos): FIFO discard. Logar
+    [EVENT_BUS_OVERFLOW]. REGRA: Falha no event_bus NUNCA bloqueia pipeline principal.
+
+    '
+  resilience_mode:
+    FULL: Python dict in-process — eventos sao chamadas de funcao
+    PARTIAL: Simulated — LLM mantem log de eventos em context
+    MINIMAL: Direct calls — modulos chamados em sequencia sem mediacao
+  fmea:
+    rpn: 4
+    mode: event_bus falha silenciosamente — 15+ modulos sem tratamento
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: Fallback direct_calls sempre viavel. Event bus e opcional.

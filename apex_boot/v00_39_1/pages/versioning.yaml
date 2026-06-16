@@ -1,0 +1,112 @@
+versioning:
+  version: v00.19.0
+  tier: 1
+  config:
+    memory_system:
+      store:
+      - patterns
+      - architecture_decisions
+      - mistakes
+      - optimizations
+      - successful_strategies
+      - agent_effectiveness
+      - hypothesis_history
+      - anchor_usage_success
+      - user_feedback
+      - domain_gap_registry
+      - partition_breach_history
+      - phase_coherence_history
+      - decoherence_history
+      - evolution_history
+      - cross_scale_patterns
+      - evolution_fitness_trajectory
+      - bds_trajectory_history
+      - diff_ecosystem_state
+      - cfi_history_by_domain
+      - substitution_savings
+      - formalism_warnings
+      - mcfe_state
+      - anchor_destroyer_log
+      - branch_collapse_log
+      - scientific_state
+      - skill_registry_state
+    snapshot_schema:
+      mandatory_fields:
+      - session_fingerprint
+      - apex_version
+      - bds_trajectory
+      - effective_cfi_history
+      - skills_delta
+      - calibration_delta
+      - diff_ecosystem_state
+      - cfi_history_by_domain
+      - lpm_primary_node_history
+      conditional_fields:
+      - domain_gaps_triggered
+      - constitution_drifts
+      - mutations_applied
+      - manifold_results
+      - high_decoherence_areas
+      - scope_drift_detected
+      - formalism_warnings
+      - substitution_savings
+      - mcfe_state
+      - branch_collapse_log
+      - anchor_destroyer_log
+      - scientific_state
+      - skill_registry_state
+      v013_new_fields:
+        capabilities:
+          url_access: boolean
+          default: false
+        bayesian_posteriors:
+          class_1:
+            component_success: dict
+            anchor_success: dict
+            hypothesis_success: dict
+          class_2:
+            anchor_weights: dict
+            agent_weights_by_bds: dict
+            eq_class_weights: dict
+          class_3:
+            chaos_threshold_by_bds: dict
+            diff_d06_threshold: dict
+            error_tracker: dict
+        resolution_cache: list
+        last_session_timestamp: string
+        instructions: string
+      bayesian_updates: list
+      retention: 20
+    mutation_tracker:
+      format: '[MUTATION_N/3: descrição_da_mutação]'
+      trigger_diff_review: Cada [MUTATION_N/3] gera artefato [DIFF_REVIEW] se Impact_score > σ
+      max_per_cycle: 3
+    diff_ecosystem:
+      reference: MODULE_skills.tiered_differential_evolution
+      log_fields_per_diff:
+        diff_id: string
+        description: string
+        proposed_in_session: string
+        track:
+        - autonomous
+        - governed
+        status:
+        - PROPOSED
+        - TESTING
+        - ADOPTED
+        - OBSOLETE
+        - CONFLICTING
+        fitness_scores: list
+        trajectory:
+        - IMPROVING
+        - STABLE
+        - DECLINING
+        sessions_in_testing: int
+        conflict_with: string
+        obsoleted_by: string
+        rollback_available: boolean
+    kernel_rules_reference:
+      note: KERNEL.inviolable_rules é lista documental. Enforcement ativo está nesta hierarquia.
+      sync_policy: Toda regra adicionada ao KERNEL deve ter entry correspondente nesta hierarquia.
+      sync_policy_verifier: meta_reasoning verifica antes do STEP_11.
+  inject_when: always
