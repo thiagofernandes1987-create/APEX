@@ -5,6 +5,85 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.1.2] — 2026-06-16 — IaC+ FASE 8 (rule expansion + Ansible/Pulumi/CDK)
+
+### Adicionado — IaC+ FASE 8 (WBS 13.1-13.4)
+
+#### WBS 13.1-13.3 — Rule expansion (`iac/iac_scanner.py`)
+
+- **48 → 102 regras** (+54), target ≥100 ✓
+- **5 → 8 scanners** (Dockerfile, Compose, K8s, Terraform, Helm, **Ansible**, **Pulumi**, **CDK**)
+
+| Scanner | v3.1.0 | **v3.1.2** | Δ |
+|---|---:|---:|---:|
+| Dockerfile | 10 | **20** | +10 (D011-D020) |
+| Compose | 8 | 8 | — |
+| Kubernetes | 12 | **25** | +13 (K013-K025) |
+| Terraform | 12 | **25** | +13 (T013-T025) |
+| Helm | 6 | 6 | — |
+| Ansible 🆕 | — | **8** | A001-A008 |
+| Pulumi 🆕 | — | **5** | P001-P005 |
+| AWS CDK 🆕 | — | **5** | CDK001-CDK005 |
+| **TOTAL** | **48** | **102** | **+54** |
+
+**Dockerfile (D011-D020):** apt-get sem `--no-install-recommends`, `curl|sh` supply-chain risk, `wget` sem checksum, `WORKDIR` relativo, `sudo` em RUN, `chmod 777`, registry não oficial, múltiplos RUN (layer bloat), `COPY . .` sem `.dockerignore`, `FROM x:latest AS …`.
+
+**Kubernetes (K013-K025):** sem liveness/readiness probe, automount default true, ClusterRoleBinding a cluster-admin (CRITICAL), sem PDB, `imagePullPolicy: Never`, sem NetworkPolicy, Ingress sem TLS, sem resource requests, sem seccompProfile / AppArmor annotation, `emptyDir` para dados persistentes, replicas par para stateful.
+
+**Terraform (T013-T025):** CloudFront `allow-all`, Lambda sem VPC, RDS sem backup, S3 sem encryption, EC2 IMDSv1 (`http_tokens=optional`), KMS sem rotation, CloudTrail single-region, GuardDuty ausente, SG egress 0.0.0.0/0, ALB sem access logs, SNS sem KMS, DynamoDB sem SSE, ALB/CloudFront público sem WAF.
+
+#### WBS 13.4 — Novos scanners (`iac/iac_scanner.py`)
+
+**Ansible (A001-A008, 8 regras):**
+- `become: yes` sem `become_user` (HIGH)
+- senhas/tokens em vars sem `no_log` (CRITICAL)
+- credenciais AWS/GCP inline sem ansible-vault (HIGH)
+- `shell`/`command` sem `changed_when` (MEDIUM)
+- `mode: '0777'` world-writable (MEDIUM)
+- `validate_certs: no` em uri/network (MEDIUM)
+- `no_log: false` em tasks com secrets (LOW)
+- package install sem `state:` explícito (LOW)
+
+**Pulumi (P001-P005, 5 regras):**
+- `publicReadAccess: true` em S3 Bucket (HIGH)
+- credenciais hardcoded em código TS/JS (CRITICAL)
+- SecurityGroup com `cidrBlocks: ["0.0.0.0/0"]` (HIGH)
+- IAM Policy com `Action: '*'` ou `Resource: '*'` (MEDIUM)
+- `Pulumi.yaml` sem `description:` (LOW)
+
+**AWS CDK (CDK001-CDK005, 5 regras):**
+- `new s3.Bucket(...)` sem `enforceSSL: true` (HIGH)
+- `new s3.Bucket(...)` sem `encryption:` (HIGH)
+- PolicyStatement com `resources: ['*']` (CRITICAL)
+- `addIngressRule(Peer.anyIpv4(), ...)` (HIGH)
+- `new lambda.Function(...)` sem `logRetention` (MEDIUM)
+
+**Dispatcher + content sniffers:**
+- `_dispatch` reconhece `Pulumi.yaml`, `Pulumi.<stack>.yaml`, `cdk.json`, `playbook.yml`, `site.yml`, `main.yml`
+- `_looks_like_ansible` — heurística "lista de plays com hosts + tasks/roles/become"
+- `_looks_like_pulumi` — detecta `@pulumi/` / `pulumi.Config` / `pulumi.StackReference`
+- `_looks_like_cdk` — detecta `aws-cdk-lib` / `@aws-cdk/` / `aws_cdk`
+- `_scan_cdk` faz checagem cruzada de absence (enforceSSL/encryption/logRetention) no mesmo arquivo
+- `_SKIP_DIRS` agora ignora `cdk.out/`
+
+#### WBS 13.4 — Testes (`tests/test_marco_m25.py`)
+
+- **31 testes TI01-TI30 + 1 inventory guard (todos verdes)**
+  - TI01-TI06: Dockerfile D011-D020 (positive + negative case D018)
+  - TI07-TI14: K8s K013-K025 (probes, RBAC, ingress TLS, emptyDir, replicas)
+  - TI15-TI20: Terraform T013-T025 (CloudFront/RDS/IMDS/KMS + GuardDuty absence + suppress)
+  - TI21-TI24: Ansible (become/mode/validate_certs + content-sniffer dispatch)
+  - TI25-TI27: Pulumi (publicReadAccess, hardcoded secret, YAML description)
+  - TI28-TI30: CDK (Bucket+enforceSSL, suppression, addIngressRule anyIpv4)
+- `pyproject.toml` — versão `3.1.1` → `3.1.2`, `test_marco_m25.py` registrado
+- `SensorConfig.version` → `"3.1.2"`
+
+**Resultado: 890/890 marco-tests PASS — suíte 100% verde.**
+
+**Próximo marco:** AFix+ — 4→12 autofix transforms → v3.1.3
+
+---
+
 ## [3.1.1] — 2026-06-16 — SCA+ FASE 8 (CVE expansion + 3 new ecosystems)
 
 ### Adicionado — SCA+ FASE 8 (WBS 12.1-12.3)

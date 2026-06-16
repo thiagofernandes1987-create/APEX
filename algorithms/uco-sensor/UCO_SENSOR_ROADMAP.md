@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-16  
-> **Versão atual:** v3.1.1 (SCA+ FASE 8 entregue — 205 CVEs / 12 ecossistemas) · Próximo: IaC+ → v3.1.2  
+> **Versão atual:** v3.1.2 (IaC+ FASE 8 entregue — 102 regras / 8 scanners) · Próximo: AFix+ → v3.1.3  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -682,11 +682,11 @@ SPRINT 10 (Aug 10 – Aug 21):
 | 12.1 | SCA+.1 — pip expansion (+22 CVEs: Werkzeug, Celery, SQLAlchemy, FastAPI, urllib3, jinja2, ...) ✅ | Melhorar | 1d | 16/07 | 16/07 | 2.9 | `sca/cve_database.py` | TS31-TS34, TS40 |
 | 12.2 | SCA+.2 — npm/maven/cargo/go/gem/composer/nuget expansion ✅ | Melhorar | 1d | 17/07 | 17/07 | 12.1 | `sca/cve_database.py` | TS35-TS39 |
 | 12.3 | SCA+.3 — 3 novos ecossistemas (swift/pub/hex) + 4 parsers de manifesto ✅ | Melhorar | 1d | 20/07 | 20/07 | 12.2 | `sca/cve_database.py`, `sca/vulnerability_scanner.py`, `tests/test_marco_m24.py` | TS41-TS60 (20 testes) |
-| 13.0 | **IaC+ — Expansão para 100+ regras + 3 novos formatos** | Melhorar | 4d | 21/07 | 24/07 | — | | |
-| 13.1 | IaC+.1 — Dockerfile rules D011-D020 | Melhorar | 1d | 21/07 | 21/07 | — | `iac/iac_scanner.py` | 5 testes |
-| 13.2 | IaC+.2 — Kubernetes rules K013-K025 | Melhorar | 1d | 22/07 | 22/07 | 13.1 | `iac/iac_scanner.py` | 6 testes |
-| 13.3 | IaC+.3 — Terraform rules T013-T025 | Melhorar | 1d | 23/07 | 23/07 | 13.2 | `iac/iac_scanner.py` | 6 testes |
-| 13.4 | IaC+.4 — Ansible + Pulumi + CDK scanners | Criar | 1d | 24/07 | 24/07 | 13.3 | `iac/iac_scanner.py` | 6 testes |
+| 13.0 | **IaC+ — Expansão para 100+ regras + 3 novos formatos** ✅ entregue 2026-06-16 → v3.1.2 | Melhorar | 4d | 21/07 | 24/07 | — | | |
+| 13.1 | IaC+.1 — Dockerfile rules D011-D020 ✅ | Melhorar | 1d | 21/07 | 21/07 | — | `iac/iac_scanner.py` | TI01-TI06 |
+| 13.2 | IaC+.2 — Kubernetes rules K013-K025 ✅ | Melhorar | 1d | 22/07 | 22/07 | 13.1 | `iac/iac_scanner.py` | TI07-TI14 |
+| 13.3 | IaC+.3 — Terraform rules T013-T025 ✅ | Melhorar | 1d | 23/07 | 23/07 | 13.2 | `iac/iac_scanner.py` | TI15-TI20 |
+| 13.4 | IaC+.4 — Ansible + Pulumi + CDK scanners (18 regras) ✅ | Criar | 1d | 24/07 | 24/07 | 13.3 | `iac/iac_scanner.py`, `tests/test_marco_m25.py` | TI21-TI30 + guard |
 | 14.0 | **AFix+ — AutoFix Engine Expansion** | Melhorar | 4d | 27/07 | 30/07 | 6.x, 4.x | | |
 | 14.1 | AFix+.1 — Transforms 5-8: extract_method, remove_mutable_default, add_context_manager, replace_bare_except | Criar | 2d | 27/07 | 28/07 | 6.2 | `sensor_core/autofix/transforms/*.py` | 8 testes |
 | 14.2 | AFix+.2 — Transforms 9-12: add_docstring, simplify_comparison, replace_string_concat_loop, add_type_hints | Criar | 2d | 29/07 | 30/07 | 14.1 | `sensor_core/autofix/transforms/*.py` | 8 testes |
