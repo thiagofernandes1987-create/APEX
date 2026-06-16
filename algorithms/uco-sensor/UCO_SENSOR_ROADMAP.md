@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-16  
-> **Versão atual:** v3.1.2 (IaC+ FASE 8 entregue — 102 regras / 8 scanners) · Próximo: AFix+ → v3.1.3  
+> **Versão atual:** v3.1.3 (FASE 8 COMPLETA — SCA+/IaC+/AFix+) · Próximo: M9.0 Tree-Sitter Multi-Lang SAST → v3.2.0  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -687,9 +687,9 @@ SPRINT 10 (Aug 10 – Aug 21):
 | 13.2 | IaC+.2 — Kubernetes rules K013-K025 ✅ | Melhorar | 1d | 22/07 | 22/07 | 13.1 | `iac/iac_scanner.py` | TI07-TI14 |
 | 13.3 | IaC+.3 — Terraform rules T013-T025 ✅ | Melhorar | 1d | 23/07 | 23/07 | 13.2 | `iac/iac_scanner.py` | TI15-TI20 |
 | 13.4 | IaC+.4 — Ansible + Pulumi + CDK scanners (18 regras) ✅ | Criar | 1d | 24/07 | 24/07 | 13.3 | `iac/iac_scanner.py`, `tests/test_marco_m25.py` | TI21-TI30 + guard |
-| 14.0 | **AFix+ — AutoFix Engine Expansion** | Melhorar | 4d | 27/07 | 30/07 | 6.x, 4.x | | |
-| 14.1 | AFix+.1 — Transforms 5-8: extract_method, remove_mutable_default, add_context_manager, replace_bare_except | Criar | 2d | 27/07 | 28/07 | 6.2 | `sensor_core/autofix/transforms/*.py` | 8 testes |
-| 14.2 | AFix+.2 — Transforms 9-12: add_docstring, simplify_comparison, replace_string_concat_loop, add_type_hints | Criar | 2d | 29/07 | 30/07 | 14.1 | `sensor_core/autofix/transforms/*.py` | 8 testes |
+| 14.0 | **AFix+ — AutoFix Engine Expansion (12 → 16 transforms)** ✅ entregue 2026-06-16 → v3.1.3 | Melhorar | 4d | 27/07 | 30/07 | 6.x, 4.x | | |
+| 14.1 | AFix+.1 — Transforms 5-12 (M8.1, já entregue em v2.7.0): mutable_default, bare_except, simplify_comparison, docstring, context_manager, extract_method, string_concat, type_hints ✅ | Criar | 2d | 27/07 | 28/07 | 6.2 | `sensor_core/autofix/transforms/*.py` | M18 (tl17-tl24) |
+| 14.2 | AFix+.2 — Transforms 13-16 (segurança): replace_weak_hash, replace_insecure_random, add_loop_guard, replace_format_string ✅ | Criar | 2d | 29/07 | 30/07 | 14.1 | `sensor_core/autofix/transforms/*.py`, `tests/test_marco_m26.py` | TX01-TX30 |
 | **FASE 9 — TREE-SITTER MULTI-LANGUAGE SAST** | | | | | | | | |
 | 15.0 | **M9.0 — Tree-Sitter Multi-Language SAST** | Criar | 10d | 03/08 | 14/08 | 2.x, 5.x | | |
 | 15.1 | M9.0.1 — `lang_adapters/tree_sitter_bridge.py` — base adapter | Criar | 2d | 03/08 | 04/08 | 5.7 | `lang_adapters/tree_sitter_bridge.py` (novo) | 4 testes |

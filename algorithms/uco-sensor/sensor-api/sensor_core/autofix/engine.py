@@ -59,6 +59,10 @@ from sensor_core.autofix.transforms.add_context_manager import ContextManagerAdv
 from sensor_core.autofix.transforms.extract_method import ExtractMethodAdvisor
 from sensor_core.autofix.transforms.replace_string_concat_loop import StringConcatLoopAdvisor
 from sensor_core.autofix.transforms.add_type_hints import TypeHintAdder
+from sensor_core.autofix.transforms.replace_weak_hash import WeakHashReplacer
+from sensor_core.autofix.transforms.replace_insecure_random import InsecureRandomReplacer
+from sensor_core.autofix.transforms.add_loop_guard import LoopGuardAdvisor
+from sensor_core.autofix.transforms.replace_format_string import FormatStringModernizer
 
 
 # ── AutofixResult ─────────────────────────────────────────────────────────────
@@ -132,6 +136,10 @@ _DEFAULT_PIPELINE: List[Type[BaseTransform]] = [
     ExtractMethodAdvisor,         # 10. LOC>50/CC>10 refactoring hint (suggestion)  [M8.1]
     StringConcatLoopAdvisor,      # 11. s+=x in loop → list+join (suggestion)       [M8.1]
     TypeHintAdder,                # 12. add : Any annotations + import              [M8.1]
+    WeakHashReplacer,             # 13. hashlib.md5/sha1 → sha256                   [AFix+]
+    InsecureRandomReplacer,       # 14. random.choice → secrets.choice + advisory  [AFix+]
+    LoopGuardAdvisor,             # 15. while True without break (suggestion)       [AFix+]
+    FormatStringModernizer,       # 16. "%s" % x → f-string (suggestion)           [AFix+]
 ]
 
 

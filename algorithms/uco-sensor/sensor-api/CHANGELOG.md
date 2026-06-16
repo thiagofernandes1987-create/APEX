@@ -5,6 +5,63 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.1.3] — 2026-06-16 — AFix+ FASE 8 (4 security autofix transforms)
+
+### Adicionado — AFix+ FASE 8 (WBS 14.1-14.2)
+
+#### WBS 14 — AutoFix engine: 12 → 16 transforms
+
+Completa a meta original "16+ transforms" da análise de gaps (§2.4), somando
+os 4 transforms de segurança que faltavam aos 12 já entregues (M5.2 + M8.1):
+
+| # | Transform | Tipo | Ação |
+|---|---|---|---|
+| 13 | `WeakHashReplacer` | rewrite | `hashlib.md5/sha1` → `hashlib.sha256` (CWE-327) |
+| 14 | `InsecureRandomReplacer` | rewrite + advisory | `random.choice` → `secrets.choice` + injeta `import secrets`; advisory para `randint/random/…` (CWE-330) |
+| 15 | `LoopGuardAdvisor` | advisory | `while True:` sem `break`/`return`/`raise` (CWE-835) |
+| 16 | `FormatStringModernizer` | advisory | `"%s" % x` → f-string / str.format |
+
+**WeakHashReplacer** (`replace_weak_hash.py`):
+- Forma 1: `hashlib.md5(...)` / `hashlib.sha1(...)` → `hashlib.sha256(...)`
+- Forma 2: `hashlib.new("md5")` / `hashlib.new("SHA1")` → `hashlib.new("sha256")`
+- Preserva número/ordem de argumentos; ignora `md5()` bare (proveniência desconhecida)
+
+**InsecureRandomReplacer** (`replace_insecure_random.py`):
+- Rewrite seguro 1:1: `random.choice(seq)` → `secrets.choice(seq)` (mesma assinatura)
+- Injeta `import secrets` após o último import (uma vez só, se ainda não presente)
+- Advisory (sem mutação, preserva código válido) para `random.{random,randint,randrange,uniform,getrandbits,sample,shuffle}` — não há equivalente drop-in em `secrets`
+
+**LoopGuardAdvisor** (`add_loop_guard.py`):
+- Detecta `while True:` cujo corpo (sem descer em funções/classes aninhadas) não contém `break`/`return`/`raise`
+- Advisory puro — nunca insere guard automaticamente (mudaria a semântica)
+
+**FormatStringModernizer** (`replace_format_string.py`):
+- Detecta `BinOp(Mod)` com operando esquerdo string-literal contendo conversion specifier printf (`%s`, `%d`, `%r`, `%f`, `%x`, …)
+- Ignora `%` numérico (`10 % 3`) e strings sem specifier (`'100 percent'`)
+- Advisory — rewrite de `%`→f-string é error-prone (format-spec, `%%`, mapping)
+
+**Integração:**
+- Registrados em `transforms/__init__.py` (`__all__`) e no engine
+- `_DEFAULT_PIPELINE` estendido de 12 → **16 transforms** (rewrites antes dos advisories)
+- Todos os rewrites produzem AST válido (`ast.unparse` round-trip testado)
+
+#### WBS 14.2 — Testes (`tests/test_marco_m26.py`)
+
+- **30 testes TX01-TX30 (todos verdes)**
+  - TX01-TX08: WeakHashReplacer (md5/sha1/new-form, sha256 untouched, bare untouched, args preserved, CWE)
+  - TX09-TX16: InsecureRandomReplacer (choice rewrite, import inject/dedup, advisory, bare untouched, validity)
+  - TX17-TX22: LoopGuardAdvisor (break/return/raise suppress, non-True ignored, no mutation)
+  - TX23-TX27: FormatStringModernizer (%s/%d flagged, no-spec/numeric-mod ignored, no mutation)
+  - TX28-TX30: engine integration (16-transform pipeline, end-to-end security fix valid, idempotence on clean code)
+- `pyproject.toml` — versão `3.1.2` → `3.1.3`, `test_marco_m26.py` registrado
+- `SensorConfig.version` → `"3.1.3"`
+
+**Resultado: 920/920 marco-tests PASS — suíte 100% verde.**
+
+**FASE 8 COMPLETA** (SCA+ + IaC+ + AFix+). **Próximo marco:** M9.0 — Tree-Sitter Multi-Language SAST (JS/TS/Java/Go) → v3.2.0
+
+---
+
 ## [3.1.2] — 2026-06-16 — IaC+ FASE 8 (rule expansion + Ansible/Pulumi/CDK)
 
 ### Adicionado — IaC+ FASE 8 (WBS 13.1-13.4)
