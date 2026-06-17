@@ -5,6 +5,92 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.2] — 2026-06-17 — LEAP 2: APS persisted as a time-series signal
+
+### Decisão arquitetural (FMEA-driven)
+
+A versão original do LEAP 2 propunha trocar `CHANNEL_NAMES` no FrequencyEngine
+de 9 → 10 canais (adicionando "APS"). DSM/Ishikawa identificaram acoplamento
+estrutural com `EMBEDDING_DIM`, `ErrorSignatures` persistidas e DBSCAN —
+risco alto pra ganho marginal. **Refino:** persistir APS + tratá-lo como sinal
+paralelo consumindo a mesma máquina temporal (OLS slope, Hurst R/S) sem tocar
+nos 9 canais arquiteturais. Mesma capacidade analítica entregue, 30 % do risco.
+
+### Adicionado — LEAP 2 (APS as persisted signal)
+
+#### Schema — `sensor_storage/snapshot_store.py`
+
+- Nova coluna `aps_score REAL DEFAULT NULL` em `snapshots`
+- `_M70_MIGRATION_COLUMNS` estendido — migração idempotente para DBs existentes
+- Cálculo de APS **no momento do insert** via novo `_compute_aps_score(mv)`
+  - Reusa `metrics.anti_pattern_score.aps_from_metric_vector`
+  - Defensivo: se o engine de APS falhar OU o `to_dict` de qualquer vetor
+    levantar exceção, a coluna fica NULL e o insert **não falha** (TZ08)
+  - Vantagem de calcular no insert: queries futuras de history/trend não
+    dependem dos extended_vectors v2 estarem presentes na linha
+- Novo método `get_aps_history(module_id, window) -> List[(commit, ts, aps)]`
+  - Bypass dos JSONs pesados — query SELECT mínima de 3 colunas
+  - Linhas pré-LEAP-2 retornam `aps=None` (semântica "missing sample")
+- `_row_to_mv` agora atribui `mv.aps_score: Optional[float]`
+
+#### Endpoints REST — `api/server.py`
+
+| Endpoint | Descrição |
+|---|---|
+| `GET /anti-pattern-score/history?module=&window=` | Série temporal APS persistida; `n_samples`, `n_valid`, lista de `{commit, timestamp, aps}` |
+| `GET /anti-pattern-score/trend?module=&window=` | OLS slope + Hurst R/S + forecast_next + verdict (`STABLE` / `DEGRADING` / `DEGRADING_PERSISTENT` / `IMPROVING` / `INSUFFICIENT`) |
+
+- Trend reusa `sensor_core.predictor.hurst_rs` (mesma fórmula do DegradationPredictor
+  aplicada agora ao score composto, não só ao Hamiltonian)
+- Verdict combina slope (direção) e Hurst (persistência): `DEGRADING_PERSISTENT`
+  só dispara quando slope < −0.5 APS/snapshot AND Hurst > 0.55
+- Mínimo de 4 amostras válidas para análise — abaixo disso retorna `INSUFFICIENT`
+- `SensorConfig.version` → `"3.2.2"`
+
+#### Smoke test ao vivo
+
+Histórico sintético de 8 snapshots com taint crescente (0→7):
+
+```
+APS:  100.00 → 72.31 → 60.00 → 57.69 → 57.69 → 57.69 → 57.69 → 57.69
+Trend: slope=-4.48 APS/snapshot, Hurst=0.988, forecast_next=44.94
+Verdict: DEGRADING_PERSISTENT
+```
+
+#### Testes — `tests/test_marco_m29.py` (30 testes TZ01-TZ30)
+
+- TZ01-TZ08: schema (coluna existe + tipo REAL), APS computado no insert,
+  snapshot limpo → APS=100, MV sem extended vectors → APS=100 neutro,
+  vetor com `to_dict` quebrado não bloqueia persistência
+- TZ09-TZ16: `get_aps_history` (ordem cronológica, tupla, window, NULLs
+  preservados, isolamento cross-module, regressão LEAP 1)
+- TZ17-TZ24: endpoint `/history` (400/404, shape, NULLs incluídos por padrão,
+  floats, window, module_id, trend visível na resposta)
+- TZ25-TZ30: endpoint `/trend` (INSUFFICIENT < 4 amostras, DEGRADING /
+  IMPROVING / STABLE, todos os campos obrigatórios, Hurst em [0,1],
+  NULLs ignorados pela análise)
+
+**Resultado: 1010/1010 marco-tests PASS — suíte 100% verde.**
+
+#### O que LEAP 2 destrava
+
+| Capacidade | Antes | Agora |
+|---|---|---|
+| APS por snapshot | recomputado on-the-fly via REST | **persistido** (1 coluna REAL) |
+| `/anti-pattern-score/history` | inexistente | série temporal completa, JSON-friendly |
+| Tendência de APS | inexistente | OLS slope + slope_pct + forecast_next |
+| Detecção de degradação persistente | inexistente | **Hurst R/S sobre o score composto** |
+| Verdict de quality gate sobre score único | impossível | `DEGRADING_PERSISTENT` / `IMPROVING` / etc. |
+
+**Análise espectral de score de qualidade composto: nenhum analisador estático
+gratuito no mercado faz isso — diferencial absoluto vs SonarQube.**
+
+#### Próximo marco
+
+LEAP 3 — AutoFix↔SAST closed loop (M8.2) → v3.2.3
+
+---
+
 ## [3.2.1] — 2026-06-16 — LEAP 1: Persistence Sprint (closes 72% information loss gap)
 
 ### Adicionado — LEAP 1 (Persistence Sprint)

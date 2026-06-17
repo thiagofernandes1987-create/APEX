@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS snapshots (
     advanced_vector_json     TEXT DEFAULT NULL,
     diagnostic_vector_json   TEXT DEFAULT NULL,
     extended_vectors_v2_json TEXT DEFAULT NULL,
+    aps_score                REAL DEFAULT NULL,
     UNIQUE(module_id, commit_hash)
 );
 """
@@ -93,11 +94,17 @@ CREATE TABLE IF NOT EXISTS snapshots (
 # reliability, maintainability, performance, architecture, test_quality,
 # thread_safety.  Backward-compat: DEFAULT NULL — old rows load with each
 # vector = None, identical to today's behaviour.
+#
+# LEAP 2 (APS as a persisted signal) appends ``aps_score`` REAL.  Computed at
+# insert time via metrics.anti_pattern_score.aps_from_metric_vector when the
+# extended vectors are attached; otherwise stays NULL.  Old rows: NULL ⇒
+# /anti-pattern-score/history treats them as missing samples.
 _M70_MIGRATION_COLUMNS = [
     ("extended_vectors_json",     "TEXT DEFAULT NULL"),
     ("advanced_vector_json",      "TEXT DEFAULT NULL"),
     ("diagnostic_vector_json",    "TEXT DEFAULT NULL"),
     ("extended_vectors_v2_json",  "TEXT DEFAULT NULL"),   # LEAP 1
+    ("aps_score",                 "REAL DEFAULT NULL"),   # LEAP 2
 ]
 
 _DDL_ANOMALIES = """
@@ -317,11 +324,12 @@ class SnapshotStore:
         M7.0: serializes AdvancedVector + Halstead/StructuralVector JSON blobs
         into the three new extended-vector columns when present on the mv.
         """
-        # ── M7.0 + LEAP 1: serialize extended vectors ────────────────────────
+        # ── M7.0 + LEAP 1 + LEAP 2: serialize extended vectors + APS ─────────
         extended_json     = self._serialize_extended(mv)
         advanced_json     = self._serialize_advanced(mv)
         diagnostic_json   = self._serialize_diagnostic(mv)
         extended_v2_json  = self._serialize_extended_v2(mv)   # LEAP 1
+        aps_score         = self._compute_aps_score(mv)       # LEAP 2
 
         sql = """
         INSERT OR REPLACE INTO snapshots (
@@ -333,10 +341,10 @@ class SnapshotStore:
             n_functions, n_classes, max_methods_per_class,
             cc_hotspot_ratio, max_function_cc,
             extended_vectors_json, advanced_vector_json, diagnostic_vector_json,
-            extended_vectors_v2_json
+            extended_vectors_v2_json, aps_score
         ) VALUES (
             ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-            ?, ?, ?, ?
+            ?, ?, ?, ?, ?
         )
         """
         values = (
@@ -364,6 +372,7 @@ class SnapshotStore:
             advanced_json,
             diagnostic_json,
             extended_v2_json,   # LEAP 1
+            aps_score,          # LEAP 2
         )
         with self._lock:
             self._get_conn().execute(sql, values)
@@ -448,6 +457,33 @@ class SnapshotStore:
         "thread_safety",
     )
 
+    # ── LEAP 2 — APS persisted at insert time ─────────────────────────────────
+    # We compute APS ONCE at insert so subsequent /aps/history queries do not
+    # depend on having every extended vector still attached (defense-in-depth
+    # against extended_vectors_v2_json being silently lost via migration).
+    @staticmethod
+    def _compute_aps_score(mv: Any) -> Optional[float]:
+        """
+        Compute the Anti-Pattern Score for *mv* (0–100, higher = better).
+
+        Returns ``None`` (column stays NULL) when no APS-contributing signal
+        is attached — which is identical to today's "old row" semantics.
+        Any failure in the APS engine is swallowed so persistence cannot
+        fail because of a metrics-module issue.
+        """
+        try:
+            from metrics.anti_pattern_score import aps_from_metric_vector
+        except Exception:
+            return None
+        try:
+            result = aps_from_metric_vector(mv)
+            raw = result.get("aps") if isinstance(result, dict) else None
+            if raw is None:
+                return None
+            return float(raw)
+        except Exception:
+            return None
+
     @classmethod
     def _serialize_extended_v2(cls, mv: Any) -> Optional[str]:
         """
@@ -505,7 +541,7 @@ class SnapshotStore:
             n_functions, n_classes, max_methods_per_class,
             cc_hotspot_ratio, max_function_cc,
             extended_vectors_json, advanced_vector_json, diagnostic_vector_json,
-            extended_vectors_v2_json
+            extended_vectors_v2_json, aps_score
         FROM snapshots
         WHERE module_id = ?
         ORDER BY timestamp DESC
@@ -517,6 +553,39 @@ class SnapshotStore:
         # Reverter para ordem ASC (mais antigo primeiro — correto para FrequencyEngine)
         rows = list(reversed(rows))
         return [self._row_to_mv(r) for r in rows]
+
+    # ── LEAP 2 — APS time-series helper ──────────────────────────────────────
+
+    def get_aps_history(
+        self,
+        module_id: str,
+        window: int = 100,
+    ) -> List[Tuple[str, float, Optional[float]]]:
+        """
+        Return ``(commit_hash, timestamp, aps_score)`` tuples for a module,
+        ordered chronologically ascending.  Rows predating LEAP 2 carry
+        ``aps_score = None`` — callers should filter those out before
+        running OLS / Hurst on the series.
+
+        Cheaper than ``get_history`` (skips all the JSON deserialization),
+        designed for the ``/anti-pattern-score/history`` and ``/trend``
+        endpoints that only need the score time-series.
+        """
+        sql = """
+        SELECT commit_hash, timestamp, aps_score
+        FROM snapshots
+        WHERE module_id = ?
+        ORDER BY timestamp DESC
+        LIMIT ?
+        """
+        with self._lock:
+            rows = self._get_conn().execute(sql, (module_id, window)).fetchall()
+        rows = list(reversed(rows))
+        return [
+            (str(r[0]), float(r[1]),
+             float(r[2]) if r[2] is not None else None)
+            for r in rows
+        ]
 
     # ─── Baseline ────────────────────────────────────────────────────────────
 
@@ -893,6 +962,10 @@ class SnapshotStore:
         previously dropped on every scan — security, velocity, flow,
         reliability, maintainability, performance, architecture,
         test_quality, thread_safety.
+
+        LEAP 2: attaches the persisted aps_score to ``mv.aps_score`` (None
+        for legacy rows predating LEAP 2 — callers must treat None as
+        "missing sample", not as zero).
         """
         (
             module_id, commit_hash, timestamp,
@@ -904,6 +977,7 @@ class SnapshotStore:
             cc_hr, max_fn_cc,
             extended_json, advanced_json, diagnostic_json,
             extended_v2_json,                                       # LEAP 1
+            aps_score,                                              # LEAP 2
         ) = row
 
         mv = MetricVector(
@@ -977,6 +1051,9 @@ class SnapshotStore:
                 mv.diagnostic = DiagnosticVector.from_dict(json.loads(diagnostic_json))
             except Exception:
                 pass
+
+        # ── LEAP 2 — attach persisted APS (None for legacy rows) ─────────────
+        mv.aps_score = float(aps_score) if aps_score is not None else None
 
         # ── LEAP 1 — restore the nine previously dropped vectors ─────────────
         if extended_v2_json:

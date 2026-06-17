@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-16  
-> **Versão atual:** v3.2.1 (LEAP 1 — Persistence Sprint: 100 % dos canais formais agora persistem) · Próximo: LEAP 2 — APS canal espectral → v3.2.2  
+> **Versão atual:** v3.2.2 (LEAP 2 — APS persistido + endpoints history/trend com Hurst R/S sobre score composto) · Próximo: LEAP 3 — AutoFix↔SAST closed loop → v3.2.3  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -27,6 +27,7 @@
 | AFix+ | 12 → 16 transforms (4 de segurança: hash / random / loop / format) | v3.1.3 | ✅ |
 | M9.0 | Tree-Sitter Multi-Language SAST (JS / TS / Java / Go) — 28 → 58 regras | v3.2.0 | ✅ |
 | **LEAP 1** | **Persistence Sprint — 100 % dos canais persistem (revoga 72 % de perda silenciosa)** | **v3.2.1** | **✅** |
+| **LEAP 2** | **APS persistido + endpoints history/trend (Hurst R/S sobre score composto)** | **v3.2.2** | **✅** |
 
 **Métricas atuais (v3.2.1):**
 
@@ -43,7 +44,7 @@
 | # | Sprint | Esforço | Versão | Justificativa |
 |---|---|---:|---|---|
 | ~~LEAP 1~~ | ~~Persistence Sprint~~ | ~~2d~~ | **v3.2.1** ✅ | **Entregue 2026-06-16** |
-| LEAP 2 | APS persistido + 10º canal espectral | 1d | v3.2.2 | APS como canal de FrequencyEngine → análise espectral de score composto |
+| ~~LEAP 2~~ | ~~APS persistido + endpoints history/trend (refino arquitetural FMEA: sinal paralelo em vez de 10º canal)~~ | ~~1d~~ | **v3.2.2** ✅ | **Entregue 2026-06-17** |
 | LEAP 3 | AutoFix↔SAST closed loop (M8.2) | 2d | v3.2.3 | Realiza valor dos 16 transforms + 58 SAST rules — orchestration only |
 | LEAP 4 | Predictor/Trend persistidos | 1d | v3.2.4 | Meta-análise de confidence histórico — sinal exclusivo no mercado |
 | M9.1 | Research Signals (Shannon + TCI + CC Churn + Invariant Density) | 5d | v3.3.0 | Release final — score competitivo ≥89/100 vs SonarQube |

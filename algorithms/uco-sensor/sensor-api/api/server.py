@@ -197,7 +197,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.2.1"
+    version:      str   = "3.2.2"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -316,7 +316,9 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/metrics/test-quality",    "auth": True,   "desc": "TestQualityVector — 8-channel test-suite posture for a module (?module=) [M7.6]"},
             {"method": "POST",   "path": "/scan-thread-safety",      "auth": True,   "desc": "Concurrency-correctness analysis — 6 channels, ThreadSafetyVector (M7.7)"},
             {"method": "GET",    "path": "/metrics/thread-safety",   "auth": True,   "desc": "ThreadSafetyVector — 6-channel concurrency posture for a module (?module=) [M7.7]"},
-            {"method": "GET",    "path": "/anti-pattern-score",      "auth": True,   "desc": "Anti-Pattern Score — composite 0-100 across 17 signals (?module=) [M7.7]"},
+            {"method": "GET",    "path": "/anti-pattern-score",          "auth": True,   "desc": "Anti-Pattern Score — composite 0-100 across 17 signals (?module=) [M7.7]"},
+            {"method": "GET",    "path": "/anti-pattern-score/history",  "auth": True,   "desc": "APS time-series persisted per snapshot (?module=&window=) [LEAP 2]"},
+            {"method": "GET",    "path": "/anti-pattern-score/trend",    "auth": True,   "desc": "APS OLS slope + Hurst R/S verdict (?module=&window=) [LEAP 2]"},
             {"method": "POST",   "path": "/monitor/start",           "auth": True,   "desc": "Start real-time FileWatcher on a directory tree (M8.0)"},
             {"method": "POST",   "path": "/monitor/stop",            "auth": True,   "desc": "Stop the running FileWatcher (M8.0)"},
             {"method": "GET",    "path": "/monitor/status",          "auth": True,   "desc": "Watcher status: files watched, polls, alerts (M8.0)"},
@@ -2437,6 +2439,141 @@ def handle_anti_pattern_score(
     }
 
 
+# ── LEAP 2 — APS as a persisted time-series signal ───────────────────────────
+
+def handle_anti_pattern_score_history(
+    module_id: Optional[str], window: int = 100,
+) -> Tuple[int, Dict]:
+    """
+    GET /anti-pattern-score/history?module=<id>[&window=<n>]  (LEAP 2)
+
+    Returns the chronological APS series persisted at insert time.
+
+    Old rows predating LEAP 2 carry ``aps_score = null`` — they appear in the
+    response as ``"aps": null`` so the caller can decide whether to interpolate
+    or skip.  Set ``compact=1`` to drop NULL samples server-side.
+
+    Response::
+        {
+          "module_id": "auth.login",
+          "n_samples": 24,
+          "n_valid":   22,
+          "samples": [
+            {"commit": "abc", "timestamp": 1000.0, "aps": 92.4},
+            {"commit": "def", "timestamp": 1100.0, "aps": null},
+            ...
+          ]
+        }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    raw = _store.get_aps_history(module_id, window=window)
+    if not raw:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    samples = [
+        {"commit": c, "timestamp": ts, "aps": aps}
+        for c, ts, aps in raw
+    ]
+    return 200, {
+        "module_id":  module_id,
+        "n_samples":  len(samples),
+        "n_valid":    sum(1 for s in samples if s["aps"] is not None),
+        "samples":    samples,
+    }
+
+
+def handle_anti_pattern_score_trend(
+    module_id: Optional[str], window: int = 100,
+) -> Tuple[int, Dict]:
+    """
+    GET /anti-pattern-score/trend?module=<id>[&window=<n>]  (LEAP 2)
+
+    Runs OLS slope + Hurst R/S analysis over the persisted APS time-series.
+    Same machinery as ``/trend`` and the DegradationPredictor, but applied
+    directly to the composite quality score.
+
+    Requires at least ``min_samples = 4`` non-null APS values.
+
+    Response::
+        {
+          "module_id":     "auth.login",
+          "n_samples":     22,
+          "latest_aps":    78.4,
+          "latest_rating": "C",
+          "slope":         -1.32,        # APS units / snapshot
+          "slope_pct":     -0.018,       # slope / mean
+          "forecast_next": 77.1,
+          "hurst":         0.72,         # >0.55 → persistent degradation
+          "verdict":       "DEGRADING_PERSISTENT" | "STABLE" | "IMPROVING" | "INSUFFICIENT"
+        }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    raw = _store.get_aps_history(module_id, window=window)
+    if not raw:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    series = [aps for _, _, aps in raw if aps is not None]
+    if len(series) < 4:
+        return 200, {
+            "module_id":  module_id,
+            "n_samples":  len(series),
+            "verdict":    "INSUFFICIENT",
+            "min_required": 4,
+        }
+
+    n      = len(series)
+    mean   = sum(series) / n
+    xs     = list(range(n))
+    # OLS slope on the APS series (units per snapshot)
+    x_mean = (n - 1) / 2.0
+    num = sum((xs[i] - x_mean) * (series[i] - mean) for i in range(n))
+    den = sum((xs[i] - x_mean) ** 2 for i in range(n)) or 1.0
+    slope = num / den
+    intercept = mean - slope * x_mean
+    forecast_next = slope * n + intercept
+    slope_pct = (slope / mean) if mean else 0.0
+
+    # Hurst R/S (reuse the predictor's implementation; falls back to 0.5)
+    try:
+        from sensor_core.predictor import hurst_rs
+        hurst = hurst_rs(series)
+    except Exception:
+        hurst = 0.5
+
+    # Verdict: APS DECREASE is bad (lower score = more anti-patterns)
+    if slope < -0.5 and hurst > 0.55:
+        verdict = "DEGRADING_PERSISTENT"
+    elif slope < -0.5:
+        verdict = "DEGRADING"
+    elif slope > 0.5:
+        verdict = "IMPROVING"
+    else:
+        verdict = "STABLE"
+
+    latest_aps = series[-1]
+    try:
+        from metrics.anti_pattern_score import rate_aps
+        latest_rating = rate_aps(latest_aps)
+    except Exception:
+        latest_rating = "?"
+
+    return 200, {
+        "module_id":     module_id,
+        "n_samples":     n,
+        "latest_aps":    round(latest_aps, 2),
+        "latest_rating": latest_rating,
+        "slope":         round(slope, 4),
+        "slope_pct":     round(slope_pct, 4),
+        "forecast_next": round(forecast_next, 2),
+        "hurst":         round(hurst, 4),
+        "verdict":       verdict,
+    }
+
+
 # ─── M8.0 Real-Time Monitoring endpoints ─────────────────────────────────────
 
 def handle_monitor_start(data: Dict) -> Tuple[int, Dict]:
@@ -2925,6 +3062,14 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
                 code, data = handle_anti_pattern_score(module_id, window=window_n)
+            elif path == "/anti-pattern-score/history":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_anti_pattern_score_history(module_id, window=window_n)
+            elif path == "/anti-pattern-score/trend":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_anti_pattern_score_trend(module_id, window=window_n)
             elif path == "/monitor/status":
                 code, data = handle_monitor_status()
             elif path == "/lsp/diagnostics":
