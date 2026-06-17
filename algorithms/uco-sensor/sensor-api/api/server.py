@@ -197,7 +197,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.2.3"
+    version:      str   = "3.2.4"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -320,6 +320,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/anti-pattern-score",          "auth": True,   "desc": "Anti-Pattern Score — composite 0-100 across 17 signals (?module=) [M7.7]"},
             {"method": "GET",    "path": "/anti-pattern-score/history",  "auth": True,   "desc": "APS time-series persisted per snapshot (?module=&window=) [LEAP 2]"},
             {"method": "GET",    "path": "/anti-pattern-score/trend",    "auth": True,   "desc": "APS OLS slope + Hurst R/S verdict (?module=&window=) [LEAP 2]"},
+            {"method": "GET",    "path": "/predictor/history",           "auth": True,   "desc": "Persisted predictor outputs per snapshot + forecast_error vs actual (?module=&window=) [LEAP 4]"},
+            {"method": "GET",    "path": "/predictor/accuracy",          "auth": True,   "desc": "Forecast-accuracy summary: MAE, RMSE, bias, n_evaluated (?module=&window=) [LEAP 4]"},
             {"method": "POST",   "path": "/monitor/start",           "auth": True,   "desc": "Start real-time FileWatcher on a directory tree (M8.0)"},
             {"method": "POST",   "path": "/monitor/stop",            "auth": True,   "desc": "Stop the running FileWatcher (M8.0)"},
             {"method": "GET",    "path": "/monitor/status",          "auth": True,   "desc": "Watcher status: files watched, polls, alerts (M8.0)"},
@@ -2626,6 +2628,118 @@ def handle_anti_pattern_score_trend(
     }
 
 
+# ── LEAP 4 — Predictor persistence endpoints ─────────────────────────────────
+
+def handle_predictor_history(
+    module_id: Optional[str], window: int = 100,
+) -> Tuple[int, Dict]:
+    """
+    GET /predictor/history?module=<id>[&window=<n>]  (LEAP 4)
+
+    Returns the predictor's persisted output per snapshot, plus
+    ``forecast_error`` (= actual_h[t+1] − forecast_h_at_t) for every row
+    that has a successor.  Rows predating LEAP 4 carry ``hurst=null``
+    etc. — they are returned as-is so the caller can decide what to do.
+
+    Response::
+        {
+          "module_id":  "auth.login",
+          "n_samples":  8,
+          "n_forecasts": 4,
+          "samples": [
+            {"commit": "c00", "timestamp": 0.0, "hamiltonian": 1.0,
+             "hurst": null, "slope_pct": null, "forecast_next": null,
+             "confidence": null, "forecast_error": null},
+            ...
+            {"commit": "c04", "timestamp": 4.0, "hamiltonian": 4.10,
+             "hurst": 0.5, "slope_pct": 22.33, "forecast_next": 6.28,
+             "confidence": 0.198, "forecast_error": -0.78},
+            ...
+          ]
+        }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    samples = _store.get_predictor_history(module_id, window=window)
+    if not samples:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    n_forecasts = sum(1 for s in samples if s.get("forecast_next") is not None)
+    return 200, {
+        "module_id":   module_id,
+        "n_samples":   len(samples),
+        "n_forecasts": n_forecasts,
+        "samples":     samples,
+    }
+
+
+def handle_predictor_accuracy(
+    module_id: Optional[str], window: int = 100,
+) -> Tuple[int, Dict]:
+    """
+    GET /predictor/accuracy?module=<id>[&window=<n>]  (LEAP 4)
+
+    Summary stats of how well the persisted forecasts match what actually
+    happened next:
+
+      mae  : mean absolute error (|actual - forecast|)
+      rmse : root mean squared error
+      bias : signed mean error (actual - forecast); positive = predictor
+             undershoots, negative = predictor overshoots
+      n_evaluated : pairs where both forecast and successor actual exist
+
+    A ``verdict`` field classifies the result::
+        "INSUFFICIENT"   < 3 pairs — cannot evaluate
+        "ACCURATE"       MAE < 10% of mean H
+        "BIASED_UP"      |bias| > MAE/2 and bias > 0 (consistent undershoot)
+        "BIASED_DOWN"    |bias| > MAE/2 and bias < 0 (consistent overshoot)
+        "NOISY"          MAE >= 10% of mean H but bias near zero
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    samples = _store.get_predictor_history(module_id, window=window)
+    if not samples:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    pairs = [s["forecast_error"] for s in samples
+             if s["forecast_error"] is not None]
+    if len(pairs) < 3:
+        return 200, {
+            "module_id":   module_id,
+            "n_evaluated": len(pairs),
+            "verdict":     "INSUFFICIENT",
+            "min_required": 3,
+        }
+
+    # MAE / RMSE / bias on the forecast_error series (actual - forecast)
+    n      = len(pairs)
+    mae    = sum(abs(e) for e in pairs) / n
+    rmse   = (sum(e * e for e in pairs) / n) ** 0.5
+    bias   = sum(pairs) / n
+    mean_h = sum(s["hamiltonian"] for s in samples) / len(samples)
+    mae_rel = mae / mean_h if mean_h else mae
+
+    if mae_rel < 0.10:
+        verdict = "ACCURATE"
+    elif abs(bias) > mae / 2:
+        verdict = "BIASED_UP" if bias > 0 else "BIASED_DOWN"
+    else:
+        verdict = "NOISY"
+
+    return 200, {
+        "module_id":   module_id,
+        "n_evaluated": n,
+        "mae":         round(mae,    4),
+        "rmse":        round(rmse,   4),
+        "bias":        round(bias,   4),
+        "mae_relative": round(mae_rel, 4),
+        "mean_hamiltonian": round(mean_h, 4),
+        "verdict":     verdict,
+    }
+
+
 # ─── M8.0 Real-Time Monitoring endpoints ─────────────────────────────────────
 
 def handle_monitor_start(data: Dict) -> Tuple[int, Dict]:
@@ -3122,6 +3236,14 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["100"])[0])
                 code, data = handle_anti_pattern_score_trend(module_id, window=window_n)
+            elif path == "/predictor/history":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_predictor_history(module_id, window=window_n)
+            elif path == "/predictor/accuracy":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_predictor_accuracy(module_id, window=window_n)
             elif path == "/monitor/status":
                 code, data = handle_monitor_status()
             elif path == "/lsp/diagnostics":

@@ -80,6 +80,10 @@ CREATE TABLE IF NOT EXISTS snapshots (
     diagnostic_vector_json   TEXT DEFAULT NULL,
     extended_vectors_v2_json TEXT DEFAULT NULL,
     aps_score                REAL DEFAULT NULL,
+    predictor_hurst          REAL DEFAULT NULL,
+    predictor_slope_pct      REAL DEFAULT NULL,
+    predictor_forecast_next  REAL DEFAULT NULL,
+    predictor_confidence     REAL DEFAULT NULL,
     UNIQUE(module_id, commit_hash)
 );
 """
@@ -105,6 +109,14 @@ _M70_MIGRATION_COLUMNS = [
     ("diagnostic_vector_json",    "TEXT DEFAULT NULL"),
     ("extended_vectors_v2_json",  "TEXT DEFAULT NULL"),   # LEAP 1
     ("aps_score",                 "REAL DEFAULT NULL"),   # LEAP 2
+    # LEAP 4 — Predictor/Trend persisted at insert time.  Each snapshot
+    # carries the forecast the DegradationPredictor produced from history
+    # PRIOR to its own write — enabling later forecast-accuracy analysis
+    # (predicted_next at row[t] vs actual hamiltonian at row[t+1]).
+    ("predictor_hurst",           "REAL DEFAULT NULL"),
+    ("predictor_slope_pct",       "REAL DEFAULT NULL"),
+    ("predictor_forecast_next",   "REAL DEFAULT NULL"),
+    ("predictor_confidence",      "REAL DEFAULT NULL"),
 ]
 
 _DDL_ANOMALIES = """
@@ -324,12 +336,14 @@ class SnapshotStore:
         M7.0: serializes AdvancedVector + Halstead/StructuralVector JSON blobs
         into the three new extended-vector columns when present on the mv.
         """
-        # ── M7.0 + LEAP 1 + LEAP 2: serialize extended vectors + APS ─────────
+        # ── M7.0 + LEAP 1 + LEAP 2 + LEAP 4: serialize extras + APS + forecast
         extended_json     = self._serialize_extended(mv)
         advanced_json     = self._serialize_advanced(mv)
         diagnostic_json   = self._serialize_diagnostic(mv)
         extended_v2_json  = self._serialize_extended_v2(mv)   # LEAP 1
         aps_score         = self._compute_aps_score(mv)       # LEAP 2
+        forecast          = self._compute_forecast(mv)        # LEAP 4
+        (p_hurst, p_slope_pct, p_forecast_next, p_confidence) = forecast
 
         sql = """
         INSERT OR REPLACE INTO snapshots (
@@ -341,10 +355,13 @@ class SnapshotStore:
             n_functions, n_classes, max_methods_per_class,
             cc_hotspot_ratio, max_function_cc,
             extended_vectors_json, advanced_vector_json, diagnostic_vector_json,
-            extended_vectors_v2_json, aps_score
+            extended_vectors_v2_json, aps_score,
+            predictor_hurst, predictor_slope_pct,
+            predictor_forecast_next, predictor_confidence
         ) VALUES (
             ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-            ?, ?, ?, ?, ?
+            ?, ?, ?, ?, ?,
+            ?, ?, ?, ?
         )
         """
         values = (
@@ -373,6 +390,10 @@ class SnapshotStore:
             diagnostic_json,
             extended_v2_json,   # LEAP 1
             aps_score,          # LEAP 2
+            p_hurst,            # LEAP 4
+            p_slope_pct,        # LEAP 4
+            p_forecast_next,    # LEAP 4
+            p_confidence,       # LEAP 4
         )
         with self._lock:
             self._get_conn().execute(sql, values)
@@ -484,6 +505,45 @@ class SnapshotStore:
         except Exception:
             return None
 
+    # ── LEAP 4 — Predictor/Trend persisted at insert time ─────────────────────
+    # We run the DegradationPredictor on the history PRIOR to the row being
+    # written.  Each snapshot stores what the predictor knew at the time of
+    # its own write — enabling later forecast-accuracy analysis (predicted
+    # at row[t] vs actual hamiltonian at row[t+1]).
+    def _compute_forecast(self, mv: Any) -> Tuple[
+        Optional[float], Optional[float], Optional[float], Optional[float]
+    ]:
+        """
+        Run the DegradationPredictor on the history strictly PRIOR to ``mv``.
+
+        Returns
+        -------
+        (hurst, slope_pct, forecast_next, confidence) — all Optional[float].
+        Any failure (insufficient history, predictor import error, …) yields
+        ``(None, None, None, None)`` so the snapshot still writes.
+        """
+        try:
+            from sensor_core.predictor import DegradationPredictor
+        except Exception:
+            return (None, None, None, None)
+        try:
+            module_id = getattr(mv, "module_id", None)
+            if not module_id:
+                return (None, None, None, None)
+            # Look at the history WITHOUT the row we're about to write.
+            history = self.get_history(module_id, window=100)
+            if len(history) < 4:
+                return (None, None, None, None)
+            forecast = DegradationPredictor().predict(history, module_id=module_id)
+            return (
+                float(forecast.hurst_exponent),
+                float(forecast.slope_pct),
+                float(getattr(forecast, "predicted_h", 0.0) or 0.0),
+                float(forecast.confidence),
+            )
+        except Exception:
+            return (None, None, None, None)
+
     @classmethod
     def _serialize_extended_v2(cls, mv: Any) -> Optional[str]:
         """
@@ -541,7 +601,9 @@ class SnapshotStore:
             n_functions, n_classes, max_methods_per_class,
             cc_hotspot_ratio, max_function_cc,
             extended_vectors_json, advanced_vector_json, diagnostic_vector_json,
-            extended_vectors_v2_json, aps_score
+            extended_vectors_v2_json, aps_score,
+            predictor_hurst, predictor_slope_pct,
+            predictor_forecast_next, predictor_confidence
         FROM snapshots
         WHERE module_id = ?
         ORDER BY timestamp DESC
@@ -586,6 +648,60 @@ class SnapshotStore:
              float(r[2]) if r[2] is not None else None)
             for r in rows
         ]
+
+    # ── LEAP 4 — Predictor time-series helper ────────────────────────────────
+
+    def get_predictor_history(
+        self,
+        module_id: str,
+        window: int = 100,
+    ) -> List[Dict[str, Any]]:
+        """
+        Return ``[{commit, timestamp, hamiltonian, hurst, slope_pct,
+                   forecast_next, confidence, forecast_error}]``
+        ordered chronologically ASC.  ``forecast_error`` is the gap between
+        the forecast THIS row made (``forecast_next``) and the actual
+        ``hamiltonian`` of the NEXT row — i.e. the predictor's accuracy on
+        each step.  The last row has ``forecast_error = None``.
+
+        Rows predating LEAP 4 carry predictor_* = None; their dict entries
+        are also None and ``forecast_error`` is None for the row before them
+        (because we cannot compare against a missing forecast).
+        """
+        sql = """
+        SELECT commit_hash, timestamp, hamiltonian,
+               predictor_hurst, predictor_slope_pct,
+               predictor_forecast_next, predictor_confidence
+        FROM snapshots
+        WHERE module_id = ?
+        ORDER BY timestamp DESC
+        LIMIT ?
+        """
+        with self._lock:
+            rows = self._get_conn().execute(sql, (module_id, window)).fetchall()
+        rows = list(reversed(rows))
+
+        out: List[Dict[str, Any]] = []
+        for r in rows:
+            commit, ts, ham, hurst, slope, fcst, conf = r
+            out.append({
+                "commit":        str(commit),
+                "timestamp":     float(ts),
+                "hamiltonian":   float(ham),
+                "hurst":         float(hurst) if hurst is not None else None,
+                "slope_pct":     float(slope) if slope is not None else None,
+                "forecast_next": float(fcst)  if fcst  is not None else None,
+                "confidence":    float(conf)  if conf  is not None else None,
+                "forecast_error": None,
+            })
+        # Backfill forecast_error: row[i].forecast_next vs row[i+1].hamiltonian
+        for i in range(len(out) - 1):
+            fcst = out[i]["forecast_next"]
+            if fcst is not None:
+                out[i]["forecast_error"] = round(
+                    out[i + 1]["hamiltonian"] - fcst, 6
+                )
+        return out
 
     # ─── Baseline ────────────────────────────────────────────────────────────
 
@@ -966,6 +1082,10 @@ class SnapshotStore:
         LEAP 2: attaches the persisted aps_score to ``mv.aps_score`` (None
         for legacy rows predating LEAP 2 — callers must treat None as
         "missing sample", not as zero).
+
+        LEAP 4: attaches predictor_hurst, predictor_slope_pct,
+        predictor_forecast_next, predictor_confidence to ``mv.predictor_*``
+        — the predictor's view at the moment this snapshot was written.
         """
         (
             module_id, commit_hash, timestamp,
@@ -978,6 +1098,7 @@ class SnapshotStore:
             extended_json, advanced_json, diagnostic_json,
             extended_v2_json,                                       # LEAP 1
             aps_score,                                              # LEAP 2
+            p_hurst, p_slope_pct, p_forecast_next, p_confidence,    # LEAP 4
         ) = row
 
         mv = MetricVector(
@@ -1054,6 +1175,12 @@ class SnapshotStore:
 
         # ── LEAP 2 — attach persisted APS (None for legacy rows) ─────────────
         mv.aps_score = float(aps_score) if aps_score is not None else None
+
+        # ── LEAP 4 — attach persisted predictor outputs ──────────────────────
+        mv.predictor_hurst         = float(p_hurst)         if p_hurst         is not None else None
+        mv.predictor_slope_pct     = float(p_slope_pct)     if p_slope_pct     is not None else None
+        mv.predictor_forecast_next = float(p_forecast_next) if p_forecast_next is not None else None
+        mv.predictor_confidence    = float(p_confidence)    if p_confidence    is not None else None
 
         # ── LEAP 1 — restore the nine previously dropped vectors ─────────────
         if extended_v2_json:

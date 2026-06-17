@@ -5,6 +5,121 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.4] — 2026-06-17 — LEAP 4: Predictor/Trend persistidos + forecast-accuracy
+
+### Adicionado
+
+A reavaliação completa (2026-06-16) identificou que `hurst_exponent`,
+`slope_pct`, `forecast_next` e `confidence` do `DegradationPredictor` só
+viviam na resposta REST — descartados a cada nova chamada. **LEAP 4
+persiste essas saídas POR SNAPSHOT** no momento do insert, então cada linha
+guarda "o que o predictor sabia naquele momento".
+
+Consequência prática nova: a partir da row `t+1`, é possível **comparar
+o forecast feito em `t` com o `hamiltonian` real em `t+1`** — meta-análise
+de acurácia do próprio predictor, capacidade que nenhum analisador
+gratuito oferece.
+
+#### Schema — `sensor_storage/snapshot_store.py`
+
+Quatro novas colunas REAL DEFAULT NULL, migração idempotente:
+
+| Coluna | Origem |
+|---|---|
+| `predictor_hurst` | `DegradationForecast.hurst_exponent` |
+| `predictor_slope_pct` | `DegradationForecast.slope_pct` |
+| `predictor_forecast_next` | `DegradationForecast.predicted_h` |
+| `predictor_confidence` | `DegradationForecast.confidence` |
+
+Cálculo no `_compute_forecast(mv)` rodado **antes** do INSERT:
+1. Pega `get_history(module_id)` (snapshots ANTES desta linha)
+2. Se < 4 amostras → retorna `(None, None, None, None)` (predictor não dispara)
+3. Senão → `DegradationPredictor().predict(history)` e extrai os 4 campos
+4. Qualquer exceção do predictor → todos os campos NULL, insert prossegue
+
+`_row_to_mv` atribui os 4 valores em `mv.predictor_{hurst,slope_pct,forecast_next,confidence}` (None para linhas legadas pré-LEAP 4).
+
+#### Helper — `get_predictor_history(module_id, window)`
+
+Retorna `List[Dict]` ordenado ASC com chaves:
+`commit, timestamp, hamiltonian, hurst, slope_pct, forecast_next, confidence, forecast_error`
+
+`forecast_error` é backfilled na função: para cada linha `i`,
+`error[i] = hamiltonian[i+1] − forecast_next[i]`.
+Última linha tem `forecast_error = None` (não há sucessor).
+
+#### Endpoints REST — `api/server.py`
+
+| Endpoint | Descrição |
+|---|---|
+| `GET /predictor/history?module=&window=` | Série temporal completa + `forecast_error` por linha; `n_samples`, `n_forecasts` |
+| `GET /predictor/accuracy?module=&window=` | Sumário MAE, RMSE, bias, mae_relative + verdict (`ACCURATE` / `BIASED_UP` / `BIASED_DOWN` / `NOISY` / `INSUFFICIENT`) |
+
+**Veredito de acurácia** (na função `handle_predictor_accuracy`):
+- `INSUFFICIENT`: < 3 pares avaliáveis
+- `ACCURATE`: MAE < 10 % da média do Hamiltoniano
+- `BIASED_UP`: |bias| > MAE/2 e bias > 0 (predictor subestima — code degrades faster than predicted)
+- `BIASED_DOWN`: |bias| > MAE/2 e bias < 0 (predictor superestima — overshoots)
+- `NOISY`: MAE alto mas bias quase zero (variância sem viés sistemático)
+
+`SensorConfig.version` → `"3.2.4"`.
+
+#### Smoke test ao vivo
+
+Série degradante de 8 snapshots (H crescendo geometricamente):
+
+```
+commit    ham    hurst   slope%     fcst   conf      err
+c00      1.00        -        -        -      -        -
+c01      1.50        -        -        -      -        -
+c02      2.20        -        -        -      -        -
+c03      3.00        -        -        -      -        -
+c04      4.10    0.500   22.333    6.280  0.198   -0.780
+c05      5.50    0.986   18.780    7.750  0.245   -0.750
+c06      7.00    1.000   16.156    9.548  0.290   -0.548
+c07      9.00    1.000   14.235   11.443  0.338        -
+```
+
+Predictor identificou degradação persistente (Hurst → 1.0), mas
+**está superestimando** (bias negativo consistente em todos os pares).
+Verdict esperado: `BIASED_DOWN` — sinal acionável que antes era invisível.
+
+#### Testes — `tests/test_marco_m31.py` (30 testes TF01-TF30)
+
+- TF01-TF06: schema (4 colunas REAL, DEFAULT NULL, migração idempotente,
+  LEAP 1 e LEAP 2 ainda round-tripping)
+- TF07-TF14: insert-time forecast (primeiras 4 linhas NULL, 5ª em diante
+  preenchida, forecasts > 0 para série positiva, Hurst ∈ [0,1],
+  confidence ∈ [0,1], módulo vazio não crasha, slope_pct persiste,
+  cross-module isolation)
+- TF15-TF22: `get_predictor_history` (vazio → [], ordem ASC,
+  forecast_error correto, última linha sem error, shape do dict,
+  legacy NULL propaga, semântica do error, window limita rows)
+- TF23-TF26: endpoint `/predictor/history` (400/404, shape, campo
+  `forecast_error` em cada sample)
+- TF27-TF30: endpoint `/predictor/accuracy` (INSUFFICIENT < 3 pares,
+  campos MAE/RMSE/bias/mae_relative/mean_hamiltonian/verdict/n_evaluated,
+  verdict em valor canônico, 404 em módulo desconhecido)
+
+**Resultado: 1070/1070 marco-tests PASS — suíte 100% verde.**
+
+#### O que LEAP 4 destrava
+
+| Capacidade | Antes | Agora |
+|---|---|---|
+| Forecast accuracy real | impossível medir (forecasts não persistidos) | **MAE / RMSE / bias por módulo, com verdict acionável** |
+| "Predictor está overshootando aqui" | invisível | `BIASED_DOWN` no endpoint accuracy |
+| Hurst-de-Hursts (estabilidade do exp.) | impossível | basta consumir `samples[].hurst` |
+| Confidence drift | impossível | `samples[].confidence` ao longo do tempo |
+| Acoplamento com APS history (LEAP 2) | inexistente | módulo com `BIASED_DOWN` + APS `DEGRADING_PERSISTENT` = alerta máximo |
+
+#### Próximo marco
+
+M9.1 — Research Signals (Shannon entropy, Temporal Coupling Index,
+CC Churn, Invariant Density) → **v3.3.0 (release final)**
+
+---
+
 ## [3.2.3] — 2026-06-17 — LEAP 3: AutoFix ↔ SAST closed loop (M8.2)
 
 ### Adicionado
