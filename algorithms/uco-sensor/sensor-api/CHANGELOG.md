@@ -5,6 +5,144 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.3] — 2026-06-17 — LEAP 3: AutoFix ↔ SAST closed loop (M8.2)
+
+### Adicionado
+
+Conecta as duas capacidades que já existiam mas estavam **desconectadas**:
+30 regras SAST com campo `suggested_fix` (desde M8.1) + 16 AutoFix transforms
+(M5.2/M8.1/AFix+). LEAP 3 fecha o loop com um orquestrador que escolhe os
+transforms certos automaticamente a partir do rule_id detectado pelo SAST,
+aplica em uma única passada, e re-roda o SAST para reportar quais findings
+foram remediadas e quais permanecem residuais.
+
+#### Novo módulo — `sensor_core/autofix/sast_remediation.py`
+
+- `SAST_TO_TRANSFORM: Dict[str, Type[BaseTransform]]` — tabela de mapeamento
+  (única fonte da verdade; adicionar regra = 1 linha)
+
+  | Rule | Title | Transform |
+  |---|---|---|
+  | SAST006 | Weak Cryptographic Algorithm | `WeakHashReplacer` |
+  | SAST007 | Insecure Randomness | `InsecureRandomReplacer` |
+  | SAST038 | Exception Swallowing (bare except) | `BareExceptReplacer` |
+  | SAST039 | Mutable Default Argument | `MutableDefaultRemover` |
+
+  Apenas **rewrites de alta confiança** (saída sintaticamente válida,
+  semântica preservada por design). Advisories como `LoopGuardAdvisor` e
+  `FormatStringModernizer` **não** participam — o orquestrador deixa essas
+  decisões para revisão humana.
+
+- `RemediationResult` dataclass:
+  ```
+  patched_source, is_valid, transforms_applied,
+  findings_before, findings_after, fixed_rules, fixed_count, residual_count
+  ```
+
+- `auto_remediate(source, module_id) -> RemediationResult`:
+  1. `sast.scan(source)` → coleta rule IDs presentes
+  2. `_select_transforms(rule_ids)` → seleciona deduplicadamente os
+     transforms mapeados (ordem determinística para reprodutibilidade)
+  3. `AutofixEngine(transforms=...).apply(source)` — única passada com
+     apenas os transforms necessários (mais rápido que o pipeline default)
+  4. Re-`sast.scan(patched_source)` → calcula `fixed = before − after`,
+     reporta residuais
+  - Nunca lança: parse errors, transforms quebrados, scan vazios são
+    tratados graciosamente retornando um resultado identity
+
+#### Novo endpoint REST — `api/server.py`
+
+`POST /apex/auto-remediate`
+
+Request:
+```json
+{"code": "<python source>", "module_id": "audit.crypto"}
+```
+
+Response (200):
+```json
+{
+  "module_id": "audit.crypto",
+  "patched_source": "...",
+  "is_valid": true,
+  "transforms_applied": ["WeakHashReplacer", "MutableDefaultRemover"],
+  "findings_before": ["SAST006", "SAST039"],
+  "findings_after": [],
+  "fixed_rules": ["SAST006", "SAST039"],
+  "fixed_count": 2,
+  "residual_count": 0
+}
+```
+
+#### Smoke test ao vivo
+
+Código vulnerável (md5 + random.choice + mutable default + bare except):
+
+```
+findings_before  = [SAST006, SAST007, SAST039]
+transforms       = [InsecureRandomReplacer, MutableDefaultRemover, WeakHashReplacer]
+fixed_rules      = [SAST006, SAST007, SAST039]
+findings_after   = []
+fixed_count = 3   residual = 0   is_valid = True
+```
+
+Patched source (válido, executável):
+```python
+import hashlib, random, secrets
+
+def f(items=None):
+    if items is None:
+        items = []
+    try:
+        x = hashlib.sha256(b'data').hexdigest()
+        y = secrets.choice(items)
+        return x + y
+    except:
+        return None
+```
+
+#### Testes — `tests/test_marco_m30.py` (30 testes TY01-TY30)
+
+- TY01-TY06: integridade da tabela (não-vazia, chaves "SAST*", valores
+  são subclasses de `BaseTransform`, mapeamentos canônicos)
+- TY07-TY14: remediação por regra única (md5/sha1, random.choice,
+  mutable default; `transforms_applied` correto; patched compila)
+- TY15-TY20: multi-rule + identidade (3 findings/1 passada/0 residuais,
+  código limpo → identidade, regras não-mapeadas não disparam transform,
+  `_select_transforms` determinístico e deduplicado)
+- TY21-TY25: reporte de residuais + resiliência (SyntaxError → identity,
+  source vazio → identity, `residual_count == len(findings_after)`,
+  `to_dict()` carrega todas as chaves)
+- TY26-TY30: endpoint (400 sem code, 400 com code vazio, 200 + payload
+  completo + module_id ecoado, fix real persiste no `patched_source`,
+  SyntaxError não derruba o handler)
+
+**Resultado: 1040/1040 marco-tests PASS — suíte 100% verde.**
+
+#### Significado estratégico
+
+| Antes (v3.2.2) | Agora (v3.2.3) |
+|---|---|
+| 30 SAST findings com `suggested_fix` em texto | findings são **executavelmente fixáveis** |
+| 16 AutoFix transforms — usuário aplica manualmente em arquivo inteiro | transforms acionados **por rule_id**, focados |
+| Sem closed loop SAST→Fix→re-scan | **fixed_rules** computado automaticamente; residuais explicitados |
+| Sem endpoint de "fix this code" | `POST /apex/auto-remediate` — IDE/CI-ready |
+
+#### Extensibilidade
+
+Adicionar um novo SAST↔Transform = 1 linha em `SAST_TO_TRANSFORM`:
+```python
+SAST_TO_TRANSFORM["SAST040"] = MyNewTransform
+```
++ um teste TY no `test_marco_m30.py`. O orquestrador descobre o transform
+automaticamente quando a regra fizer fire.
+
+#### Próximo marco
+
+LEAP 4 — Predictor/Trend persistidos → v3.2.4
+
+---
+
 ## [3.2.2] — 2026-06-17 — LEAP 2: APS persisted as a time-series signal
 
 ### Decisão arquitetural (FMEA-driven)

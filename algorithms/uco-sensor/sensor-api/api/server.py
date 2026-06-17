@@ -197,7 +197,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.2.2"
+    version:      str   = "3.2.3"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -297,7 +297,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/report",        "auth": True,   "desc": "Relatório HTML standalone (?module=)"},
             {"method": "GET",    "path": "/badge",         "auth": False,  "desc": "Badge SVG (?score=87&status=STABLE ou ?module=)"},
             {"method": "POST",   "path": "/diff",          "auth": True,   "desc": "Diff UCO entre 2 commits (before/after)"},
-            {"method": "POST",   "path": "/apex/fix",      "auth": True,   "desc": "Fix bidirecional: APEX envia comando corretivo"},
+            {"method": "POST",   "path": "/apex/fix",            "auth": True,   "desc": "Fix bidirecional: APEX envia comando corretivo"},
+            {"method": "POST",   "path": "/apex/auto-remediate", "auth": True,   "desc": "AutoFix↔SAST closed loop — scan, fix mapped rules, re-scan, return patched source [LEAP 3]"},
             {"method": "GET",    "path": "/predict",          "auth": True,   "desc": "Degradation forecast para um módulo (?module=&horizon=)"},
             {"method": "GET",    "path": "/predict/all",      "auth": True,   "desc": "Fleet forecast — todos os módulos, ordenado por risco"},
             {"method": "POST",   "path": "/scan-incremental", "auth": True,   "desc": "Incremental scan — apenas arquivos alterados (M6.1)"},
@@ -832,6 +833,57 @@ def handle_apex_fix(data: Dict) -> Tuple[int, Dict]:
             f"transforms={transforms_applied}"
         ),
     }
+
+
+# ── LEAP 3 — AutoFix ↔ SAST closed loop ──────────────────────────────────────
+
+def handle_apex_auto_remediate(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /apex/auto-remediate  (LEAP 3 / M8.2)
+
+    Closes the AutoFix ↔ SAST loop: scans the source for SAST findings, runs
+    only the AutoFix transforms whose mapping table targets a rule that fired,
+    then re-scans the patched source to report which findings were actually
+    fixed and which remain residual.
+
+    Request body
+    ------------
+    {
+      "code":      str  — Python source code (required)
+      "module_id": str  — identifier for debug (optional)
+    }
+
+    Response schema
+    ---------------
+    {
+      "module_id":          str,
+      "patched_source":     str,           — the rewritten code
+      "is_valid":           bool,          — patched_source compiles
+      "transforms_applied": [str],         — transform names that changed code
+      "findings_before":    [rule_id],     — SAST rules present originally
+      "findings_after":     [rule_id],     — SAST rules still present after fix
+      "fixed_rules":        [rule_id],     — rules eliminated by the loop
+      "fixed_count":        int,
+      "residual_count":     int
+    }
+    """
+    try:
+        from sensor_core.autofix.sast_remediation import auto_remediate
+    except ImportError as exc:
+        return 503, {"error": f"AutoFix↔SAST loop not available: {exc}"}
+
+    source    = data.get("code", "")
+    module_id = data.get("module_id", "<anonymous>")
+
+    if not source or not source.strip():
+        return 400, {"error": "Field 'code' is required and must be non-empty"}
+
+    try:
+        result = auto_remediate(source, module_id=module_id)
+    except Exception as exc:
+        return 500, {"error": f"auto-remediate failed: {exc}"}
+
+    return 200, {"module_id": module_id, **result.to_dict()}
 
 
 def handle_apex_status() -> Tuple[int, Dict]:
@@ -3129,6 +3181,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_sast(body)
             elif path == "/apex/fix":
                 code, data = handle_apex_fix(body)
+            elif path == "/apex/auto-remediate":
+                code, data = handle_apex_auto_remediate(body)
             elif path == "/scan-incremental":
                 code, data = handle_scan_incremental(body)
             elif path == "/scan-sca":
