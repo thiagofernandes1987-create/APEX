@@ -356,6 +356,12 @@ class SecurityVector:
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
 
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "SecurityVector":
+        """Deserialize from a JSON-compatible dict (LEAP 1 SnapshotStore round-trip)."""
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in d.items() if k in known})
+
     def __repr__(self) -> str:
         return (
             f"SecurityVector(rating={self.sast_security_rating}, "
@@ -500,6 +506,12 @@ class VelocityVector:
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "VelocityVector":
+        """Deserialize from a JSON-compatible dict (LEAP 1 SnapshotStore round-trip)."""
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in d.items() if k in known})
 
     def __repr__(self) -> str:
         return (

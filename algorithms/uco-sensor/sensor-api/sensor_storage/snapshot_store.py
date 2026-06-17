@@ -75,9 +75,10 @@ CREATE TABLE IF NOT EXISTS snapshots (
     max_methods_per_class INTEGER NOT NULL DEFAULT 0,
     cc_hotspot_ratio REAL   NOT NULL DEFAULT 0.0,
     max_function_cc  INTEGER NOT NULL DEFAULT 0,
-    extended_vectors_json  TEXT DEFAULT NULL,
-    advanced_vector_json   TEXT DEFAULT NULL,
-    diagnostic_vector_json TEXT DEFAULT NULL,
+    extended_vectors_json    TEXT DEFAULT NULL,
+    advanced_vector_json     TEXT DEFAULT NULL,
+    diagnostic_vector_json   TEXT DEFAULT NULL,
+    extended_vectors_v2_json TEXT DEFAULT NULL,
     UNIQUE(module_id, commit_hash)
 );
 """
@@ -86,10 +87,17 @@ CREATE TABLE IF NOT EXISTS snapshots (
 # Uses try/except because SQLite does not support IF NOT EXISTS on ADD COLUMN
 # before version 3.37 (2021-11-27).  The except branch is intentionally silent
 # — the column simply already exists.
+#
+# LEAP 1 (Persistence Sprint) appends ``extended_vectors_v2_json`` carrying
+# nine vectors previously DROPPED on every scan: security, velocity, flow,
+# reliability, maintainability, performance, architecture, test_quality,
+# thread_safety.  Backward-compat: DEFAULT NULL — old rows load with each
+# vector = None, identical to today's behaviour.
 _M70_MIGRATION_COLUMNS = [
-    ("extended_vectors_json",  "TEXT DEFAULT NULL"),
-    ("advanced_vector_json",   "TEXT DEFAULT NULL"),
-    ("diagnostic_vector_json", "TEXT DEFAULT NULL"),
+    ("extended_vectors_json",     "TEXT DEFAULT NULL"),
+    ("advanced_vector_json",      "TEXT DEFAULT NULL"),
+    ("diagnostic_vector_json",    "TEXT DEFAULT NULL"),
+    ("extended_vectors_v2_json",  "TEXT DEFAULT NULL"),   # LEAP 1
 ]
 
 _DDL_ANOMALIES = """
@@ -309,10 +317,11 @@ class SnapshotStore:
         M7.0: serializes AdvancedVector + Halstead/StructuralVector JSON blobs
         into the three new extended-vector columns when present on the mv.
         """
-        # ── M7.0: serialize extended vectors ─────────────────────────────────
-        extended_json  = self._serialize_extended(mv)
-        advanced_json  = self._serialize_advanced(mv)
-        diagnostic_json = self._serialize_diagnostic(mv)
+        # ── M7.0 + LEAP 1: serialize extended vectors ────────────────────────
+        extended_json     = self._serialize_extended(mv)
+        advanced_json     = self._serialize_advanced(mv)
+        diagnostic_json   = self._serialize_diagnostic(mv)
+        extended_v2_json  = self._serialize_extended_v2(mv)   # LEAP 1
 
         sql = """
         INSERT OR REPLACE INTO snapshots (
@@ -323,10 +332,11 @@ class SnapshotStore:
             language, lines_of_code, status,
             n_functions, n_classes, max_methods_per_class,
             cc_hotspot_ratio, max_function_cc,
-            extended_vectors_json, advanced_vector_json, diagnostic_vector_json
+            extended_vectors_json, advanced_vector_json, diagnostic_vector_json,
+            extended_vectors_v2_json
         ) VALUES (
             ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-            ?, ?, ?
+            ?, ?, ?, ?
         )
         """
         values = (
@@ -353,6 +363,7 @@ class SnapshotStore:
             extended_json,
             advanced_json,
             diagnostic_json,
+            extended_v2_json,   # LEAP 1
         )
         with self._lock:
             self._get_conn().execute(sql, values)
@@ -419,6 +430,52 @@ class SnapshotStore:
         except Exception:
             return None
 
+    # ── LEAP 1 — Persistence Sprint ───────────────────────────────────────────
+    # The nine vectors below were attached to ``mv`` since M7.2-M7.7 but
+    # dropped on every scan because the SnapshotStore never knew about them.
+    # We pack them into one JSON object keyed by attribute name.  Missing
+    # vectors (e.g. non-Python language) are skipped — round-trip preserves
+    # exactly the keys that were present at insert time.
+    _EXTENDED_V2_ATTRS: tuple = (
+        "security",
+        "velocity",
+        "flow",
+        "reliability",
+        "maintainability",
+        "performance",
+        "architecture",
+        "test_quality",
+        "thread_safety",
+    )
+
+    @classmethod
+    def _serialize_extended_v2(cls, mv: Any) -> Optional[str]:
+        """
+        JSON-serialize the nine LEAP-1 extended vectors that are present on *mv*.
+
+        Returns
+        -------
+        Optional[str]
+            JSON object string keyed by attribute name, or ``None`` if no
+            LEAP-1 vector is attached (so the column stays NULL).
+        """
+        payload: Dict[str, Any] = {}
+        for attr in cls._EXTENDED_V2_ATTRS:
+            vec = getattr(mv, attr, None)
+            if vec is None:
+                continue
+            try:
+                payload[attr] = vec.to_dict()
+            except Exception:
+                # A single bad vector must NOT block persistence of the others.
+                continue
+        if not payload:
+            return None
+        try:
+            return json.dumps(payload, default=str)
+        except Exception:
+            return None
+
     # ─── Get history ─────────────────────────────────────────────────────────
 
     def get_history(
@@ -447,7 +504,8 @@ class SnapshotStore:
             language, lines_of_code, status,
             n_functions, n_classes, max_methods_per_class,
             cc_hotspot_ratio, max_function_cc,
-            extended_vectors_json, advanced_vector_json, diagnostic_vector_json
+            extended_vectors_json, advanced_vector_json, diagnostic_vector_json,
+            extended_vectors_v2_json
         FROM snapshots
         WHERE module_id = ?
         ORDER BY timestamp DESC
@@ -830,6 +888,11 @@ class SnapshotStore:
         M7.0: also deserializes extended_vectors_json, advanced_vector_json,
         and diagnostic_vector_json back into their respective vector objects
         (HalsteadVector, StructuralVector, AdvancedVector, DiagnosticVector).
+
+        LEAP 1: also deserializes extended_vectors_v2_json into nine vectors
+        previously dropped on every scan — security, velocity, flow,
+        reliability, maintainability, performance, architecture,
+        test_quality, thread_safety.
         """
         (
             module_id, commit_hash, timestamp,
@@ -840,6 +903,7 @@ class SnapshotStore:
             n_fn, n_cls, max_meth,
             cc_hr, max_fn_cc,
             extended_json, advanced_json, diagnostic_json,
+            extended_v2_json,                                       # LEAP 1
         ) = row
 
         mv = MetricVector(
@@ -911,6 +975,37 @@ class SnapshotStore:
             try:
                 from metrics.extended_vectors import DiagnosticVector
                 mv.diagnostic = DiagnosticVector.from_dict(json.loads(diagnostic_json))
+            except Exception:
+                pass
+
+        # ── LEAP 1 — restore the nine previously dropped vectors ─────────────
+        if extended_v2_json:
+            try:
+                from metrics.extended_vectors import (
+                    SecurityVector, VelocityVector, FlowVector,
+                    ReliabilityVector, MaintainabilityVector,
+                    PerformanceVector, ArchitectureVector,
+                    TestQualityVector, ThreadSafetyVector,
+                )
+                _CLASSES = {
+                    "security":        SecurityVector,
+                    "velocity":        VelocityVector,
+                    "flow":            FlowVector,
+                    "reliability":     ReliabilityVector,
+                    "maintainability": MaintainabilityVector,
+                    "performance":     PerformanceVector,
+                    "architecture":    ArchitectureVector,
+                    "test_quality":    TestQualityVector,
+                    "thread_safety":   ThreadSafetyVector,
+                }
+                payload = json.loads(extended_v2_json)
+                for attr, cls in _CLASSES.items():
+                    if attr in payload:
+                        try:
+                            setattr(mv, attr, cls.from_dict(payload[attr]))
+                        except Exception:
+                            # One bad vector must not poison the row.
+                            continue
             except Exception:
                 pass
 

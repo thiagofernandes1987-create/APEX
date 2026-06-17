@@ -1,7 +1,56 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-16  
-> **Versão atual:** v3.2.0 (M9.0 Tree-Sitter Multi-Lang SAST — 5 linguagens, 58 regras SAST) · Próximo: M9.1 Research Signals → v3.3.0 (release final)  
+> **Versão atual:** v3.2.1 (LEAP 1 — Persistence Sprint: 100 % dos canais formais agora persistem) · Próximo: LEAP 2 — APS canal espectral → v3.2.2  
 > Documento vivo — atualizar após cada marco concluído
+
+---
+
+## 📊 Estado consolidado pós-reavaliação (auditoria 2026-06-16)
+
+**Marcos entregues** (em ordem cronológica):
+
+| ID | Marco | Versão | Status |
+|---|---|---|:---:|
+| M0 → M6.4 | Foundation, Advanced Metrics, Governance, SARIF, M4 WebUI, SAST básico, SCA, IaC, Extended Vectors v1 | v0.6.0 → v2.2.0 | ✅ |
+| M7.0 | Formalizar sinais informais (AdvancedVector + DiagnosticVector) | v2.3.0 | ✅ |
+| M7.1 | SAST Expansion Round 1 (+15 regras) | v2.4.0 | ✅ |
+| M7.3 | ReliabilityVector + MaintainabilityVector | v2.5.0 | ✅ |
+| M7.2 | Taint Analysis + FlowVector | v2.6.0 | ✅ |
+| M8.1 | IDE/LSP + AutoFix Round 2 (8 transforms) | v2.7.0 | ✅ |
+| M7.4 | PerformanceVector | v2.8.0 | ✅ |
+| M7.5 | ArchitectureVector | v2.9.0 | ✅ |
+| M7.6 | TestQualityVector | v2.9.1 | ✅ |
+| M7.7 | ThreadSafetyVector + APS (release major) | v3.0.0 | ✅ |
+| M8.0 | Real-Time Monitoring + SSE | v3.1.0 | ✅ |
+| SCA+ | 65 → 205 CVEs, 9 → 12 ecossistemas (swift / pub / hex) | v3.1.1 | ✅ |
+| IaC+ | 44 → 102 regras + Ansible / Pulumi / CDK | v3.1.2 | ✅ |
+| AFix+ | 12 → 16 transforms (4 de segurança: hash / random / loop / format) | v3.1.3 | ✅ |
+| M9.0 | Tree-Sitter Multi-Language SAST (JS / TS / Java / Go) — 28 → 58 regras | v3.2.0 | ✅ |
+| **LEAP 1** | **Persistence Sprint — 100 % dos canais persistem (revoga 72 % de perda silenciosa)** | **v3.2.1** | **✅** |
+
+**Métricas atuais (v3.2.1):**
+
+- **96 canais formais** atravessando o tempo (era 27 / 96 antes de LEAP 1)
+- **58 regras SAST** em 5 linguagens (Python AST + JS/TS/Java/Go via tree-sitter)
+- **205 CVEs SCA** em 12 ecossistemas
+- **102 regras IaC** em 8 famílias (Dockerfile / Compose / K8s / Terraform / Helm / Ansible / Pulumi / CDK)
+- **16 transforms AutoFix** (12 + 4 de segurança)
+- **17 sinais APS** agregados em score 0-100 com rating A-E
+- **980 marco-tests** verdes (M1 → M28)
+
+**Próximos passos restantes (planejamento revisto):**
+
+| # | Sprint | Esforço | Versão | Justificativa |
+|---|---|---:|---|---|
+| ~~LEAP 1~~ | ~~Persistence Sprint~~ | ~~2d~~ | **v3.2.1** ✅ | **Entregue 2026-06-16** |
+| LEAP 2 | APS persistido + 10º canal espectral | 1d | v3.2.2 | APS como canal de FrequencyEngine → análise espectral de score composto |
+| LEAP 3 | AutoFix↔SAST closed loop (M8.2) | 2d | v3.2.3 | Realiza valor dos 16 transforms + 58 SAST rules — orchestration only |
+| LEAP 4 | Predictor/Trend persistidos | 1d | v3.2.4 | Meta-análise de confidence histórico — sinal exclusivo no mercado |
+| M9.1 | Research Signals (Shannon + TCI + CC Churn + Invariant Density) | 5d | v3.3.0 | Release final — score competitivo ≥89/100 vs SonarQube |
+
+**Total restante até v3.3.0:** ~9 dias úteis (vs 5 do plano antigo) — porém com infraestrutura de persistência ativa cobrindo retroativamente M7.2-M9.0 (~50 % mais valor por sprint).
+
+---
 
 ---
 

@@ -5,6 +5,92 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.1] — 2026-06-16 — LEAP 1: Persistence Sprint (closes 72% information loss gap)
+
+### Adicionado — LEAP 1 (Persistence Sprint)
+
+Identificado pela reavaliação completa de canais/sinais: **9 vetores attached em
+`mv` desde M7.2-M7.7 mas DROPPED a cada scan** porque o `SnapshotStore` nunca foi
+estendido depois de M7.0. Resultado: 69 dos 96 canais formais (72 %) eram
+recomputados toda vez e perdidos antes de chegar à camada de história /
+governança / FrequencyEngine. LEAP 1 fecha esse gap com **uma única coluna JSON**.
+
+#### Schema — `sensor_storage/snapshot_store.py`
+
+- Nova coluna `extended_vectors_v2_json TEXT DEFAULT NULL` em `snapshots`
+- `_M70_MIGRATION_COLUMNS` estendido — migração idempotente para DBs existentes
+  (try/except em `ALTER TABLE`); rows antigos seguem válidos com a coluna NULL
+- Payload JSON tipo objeto, chaveado pelo nome do atributo em `mv`:
+  ```json
+  {"security": {...}, "velocity": {...}, "flow": {...},
+   "reliability": {...}, "maintainability": {...}, "performance": {...},
+   "architecture": {...}, "test_quality": {...}, "thread_safety": {...}}
+  ```
+  Vetores ausentes (e.g. não-Python) são omitidos do JSON — o round-trip preserva
+  exatamente o conjunto de chaves presente no insert.
+
+#### Serialização + deserialização
+
+- Novo `_serialize_extended_v2(mv)` — itera o tuplo canônico `_EXTENDED_V2_ATTRS`,
+  serializa via `to_dict()` cada vetor presente; falha em um vetor isolado **não
+  bloqueia** os outros (defense in depth FMEA)
+- Novo bloco no `_row_to_mv` que reconstrói os 9 vetores via `from_dict`,
+  defensivo contra vetores corrompidos individualmente (TP20) e contra chaves
+  futuras desconhecidas (TP30 — robustez à evolução de schema)
+- Tupla canônica `SnapshotStore._EXTENDED_V2_ATTRS` exposta como contrato
+
+#### `metrics/extended_vectors.py` — fechamento de assimetria
+
+- `SecurityVector.from_dict()` adicionado (estava faltando — só tinha `to_dict`)
+- `VelocityVector.from_dict()` adicionado (idem)
+- Agora todos os 13 vetores têm contrato simétrico `to_dict ⇄ from_dict`
+
+#### Resultados imediatos liberados pelo LEAP 1
+
+| Capacidade | Antes | Agora |
+|---|---|---|
+| Canais formais persistidos | 27 / 96 (28 %) | **96 / 96 (100 %)** |
+| `/anti-pattern-score?module=` em histórico | recomputado on-the-fly, sem trend | **APS de cada snapshot recuperável** → trend, forecast, change-point |
+| Sinais SAST/Sec/Perf/Rel/Thread/Arch/Test para Quality Gate | invisíveis | **disponíveis na história** |
+| Findings SAST multi-linguagem (M9.0) | persisted-as-counts (via SecurityVector) | **também restaurados via LEAP 1** |
+| Vetores M7.2-M7.7 retroativamente valorizados | computação descartada | sinais vivos cruzando o tempo |
+
+#### Testes — `tests/test_marco_m28.py` (30 testes TP01-TP30)
+
+- TP01-TP09: round-trip individual de cada um dos 9 vetores LEAP-1
+- TP10-TP15: invariantes de schema, migração idempotente, regressão M7.0
+- TP16-TP20: backward-compat (rows antigos, payload parcial, ordem cronológica,
+  isolamento cross-module, resiliência a vetor corrompido)
+- TP21-TP25: **APS history agora computável** — 3 snapshots → 3 APS persistidos,
+  trend de degradação detectável, componentes do APS idênticos pré/pós-store,
+  thread-safety contribui para o score após persistência
+- TP26-TP30: edge cases de serializer (vazio → NULL, payload parcial, futuras
+  chaves desconhecidas ignoradas)
+
+**Resultado: 980/980 marco-tests PASS — suíte 100% verde.**
+**Smoke test ao vivo: APS in-memory == APS pós-persistência (36.54 == 36.54).**
+
+#### Mudanças de versão
+
+- `pyproject.toml` 3.2.0 → 3.2.1 (test_marco_m28 registrado)
+- `SensorConfig.version` → `"3.2.1"`
+- Bump patch porque LEAP 1 é correção de gap, não nova capacidade
+  (semver: API pública intacta, comportamento de roundtrip corrigido)
+
+#### O que LEAP 1 destrava nas próximas atividades
+
+- **LEAP 2 — APS como canal espectral**: agora APS existe persistido por snapshot,
+  pode virar o 10º canal do FrequencyEngine para análise espectral
+- **LEAP 3 — AutoFix↔SAST closed loop**: findings SAST persistidos permitem
+  medir "fix-effectiveness" ao longo de commits
+- **M9.1 Research Signals**: Shannon entropy / TCI / CC Churn agora podem ser
+  alimentadas pelos sinais de Reliability/Performance/Thread-safety persistidos
+- **Quality Gate baseado em APS**: política sobre score composto vira viável
+
+**Próximo marco:** LEAP 2 — APS persistido + 10º canal espectral → v3.2.2
+
+---
+
 ## [3.2.0] — 2026-06-16 — M9.0 Tree-Sitter Multi-Language SAST (RELEASE MINOR)
 
 ### Adicionado — M9.0 FASE 9 (WBS 15.1-15.5)
