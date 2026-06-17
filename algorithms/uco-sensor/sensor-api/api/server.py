@@ -197,7 +197,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.2.4"
+    version:      str   = "3.2.5"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -322,6 +322,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/anti-pattern-score/trend",    "auth": True,   "desc": "APS OLS slope + Hurst R/S verdict (?module=&window=) [LEAP 2]"},
             {"method": "GET",    "path": "/predictor/history",           "auth": True,   "desc": "Persisted predictor outputs per snapshot + forecast_error vs actual (?module=&window=) [LEAP 4]"},
             {"method": "GET",    "path": "/predictor/accuracy",          "auth": True,   "desc": "Forecast-accuracy summary: MAE, RMSE, bias, n_evaluated (?module=&window=) [LEAP 4]"},
+            {"method": "GET",    "path": "/alerts/compound",             "auth": True,   "desc": "Per-module compound risk (APS×Predictor cross-correlation) — RED/AMBER/YELLOW/GREEN (?module=&window=) [Sprint A]"},
+            {"method": "GET",    "path": "/alerts/repo",                 "auth": True,   "desc": "Repo-wide compound-alert ranking + tier histogram (?window=&top_k=&include_green=) [Sprint A]"},
             {"method": "POST",   "path": "/monitor/start",           "auth": True,   "desc": "Start real-time FileWatcher on a directory tree (M8.0)"},
             {"method": "POST",   "path": "/monitor/stop",            "auth": True,   "desc": "Stop the running FileWatcher (M8.0)"},
             {"method": "GET",    "path": "/monitor/status",          "auth": True,   "desc": "Watcher status: files watched, polls, alerts (M8.0)"},
@@ -2740,6 +2742,96 @@ def handle_predictor_accuracy(
     }
 
 
+# ── Sprint A — Compound Alert endpoints ──────────────────────────────────────
+
+def handle_compound_alert(
+    module_id: Optional[str], window: int = 100,
+) -> Tuple[int, Dict]:
+    """
+    GET /alerts/compound?module=<id>[&window=<n>]  (Sprint A)
+
+    Cross-correlates the persisted APS trend (LEAP 2) and the predictor
+    accuracy summary (LEAP 4) into one actionable tier (RED / AMBER /
+    YELLOW / GREEN) with priority_score and human-readable reasons.
+
+    Response::
+        {
+          "module_id":      "auth.login",
+          "n_samples":      18,
+          "tier":           "RED",
+          "priority_score": 94.32,
+          "reasons":        [
+            "APS degrading persistently (Hurst > 0.55, slope < 0)",
+            "Predictor consistently undershoots — actual fall steeper than forecast"
+          ],
+          "aps":       {"verdict": "DEGRADING_PERSISTENT", ...},
+          "predictor": {"verdict": "BIASED_DOWN", ...}
+        }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    try:
+        from governance.compound_alert import compute_compound_alert
+    except ImportError as exc:
+        return 503, {"error": f"compound alert not available: {exc}"}
+
+    alert = compute_compound_alert(_store, module_id, window=window)
+    return 200, alert.to_dict()
+
+
+def handle_repo_alerts(
+    window: int = 100,
+    top_k: Optional[int] = None,
+    include_green: bool = False,
+) -> Tuple[int, Dict]:
+    """
+    GET /alerts/repo?[window=&top_k=&include_green=]  (Sprint A)
+
+    Runs the compound alert over every module the store knows about and
+    returns:
+
+      * ``alerts``    — full list sorted by priority_score DESC (worst first)
+      * ``histogram`` — {RED, AMBER, YELLOW, GREEN} counts BEFORE the
+                        ``include_green`` filter and the ``top_k`` cap
+      * ``top_module``— the worst module (or None when everything is GREEN)
+
+    Designed for repo dashboards and CI PR gates.
+    """
+    try:
+        from governance.compound_alert import (
+            repo_compound_alerts, repo_tier_histogram, compute_compound_alert,
+        )
+    except ImportError as exc:
+        return 503, {"error": f"compound alert not available: {exc}"}
+
+    # Compute the un-filtered set first so the histogram counts all GREENs
+    all_modules = list(_store.list_modules())
+    all_alerts  = [
+        compute_compound_alert(_store, m, window=window) for m in all_modules
+    ]
+    histogram   = repo_tier_histogram(all_alerts)
+
+    # Now apply the user's filter + cap
+    filtered = (
+        all_alerts if include_green
+        else [a for a in all_alerts if a.tier != "GREEN"]
+    )
+    filtered.sort(key=lambda a: a.priority_score, reverse=True)
+    if top_k is not None and top_k > 0:
+        filtered = filtered[:top_k]
+
+    top_module = filtered[0].module_id if filtered else None
+    return 200, {
+        "n_modules":     len(all_modules),
+        "histogram":     histogram,
+        "top_module":    top_module,
+        "alerts":        [a.to_dict() for a in filtered],
+        "window":        window,
+        "include_green": include_green,
+    }
+
+
 # ─── M8.0 Real-Time Monitoring endpoints ─────────────────────────────────────
 
 def handle_monitor_start(data: Dict) -> Tuple[int, Dict]:
@@ -3244,6 +3336,16 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["100"])[0])
                 code, data = handle_predictor_accuracy(module_id, window=window_n)
+            elif path == "/alerts/compound":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_compound_alert(module_id, window=window_n)
+            elif path == "/alerts/repo":
+                window_n      = int(params.get("window", ["100"])[0])
+                top_k_raw     = params.get("top_k", [None])[0]
+                top_k         = int(top_k_raw) if top_k_raw else None
+                include_green = params.get("include_green", ["0"])[0].lower() in ("1", "true", "yes")
+                code, data    = handle_repo_alerts(window=window_n, top_k=top_k, include_green=include_green)
             elif path == "/monitor/status":
                 code, data = handle_monitor_status()
             elif path == "/lsp/diagnostics":

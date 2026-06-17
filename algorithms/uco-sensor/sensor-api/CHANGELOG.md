@@ -5,6 +5,105 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.5] — 2026-06-17 — Sprint A: Compound Alert (APS × Predictor)
+
+### Adicionado
+
+Identificado pela reavaliação pós-LEAP-4 como o **maior salto de ROI imediato**.
+Cruza dois sinais que só agora vivem persistidos:
+
+- **LEAP 2** — APS trend com Hurst R/S
+- **LEAP 4** — Predictor accuracy com bias/MAE
+
+Resultado: a primeira métrica composta de "qualidade caindo MAIS RÁPIDO do que
+o modelo é capaz de ver" — um sinal que **nenhum analisador estático gratuito
+ou pago no mercado expõe** porque nenhum persiste ambas as séries.
+
+#### Novo módulo — `governance/compound_alert.py`
+
+`CompoundAlert` dataclass + 4-tier risk ladder:
+
+| Tier | Critério | Significado |
+|---|---|---|
+| **RED** | APS `DEGRADING_PERSISTENT` **AND** Predictor `BIASED_DOWN` | Qualidade caindo persistente E predictor subestimando velocidade |
+| **AMBER** | APS degrading **OR** Predictor BIASED_* (apenas um dos dois) | Um sinal forte, atenção |
+| **YELLOW** | APS slope < 0 **AND** Predictor MAE > 10 % de mean H | Sinal fraco composto |
+| **GREEN** | nada disso | Sob controle |
+
+`priority_score ∈ [0, 100]` refina o tier base com a intensidade dos sinais
+(slope negativo extra, MAE relativo acima do floor). Sorting determinístico
+para o ranking repo-wide.
+
+**API pública:**
+
+- `compute_compound_alert(store, module_id, window=100) -> CompoundAlert`
+  - Pure read-only: consome `store.get_aps_history` (LEAP 2) e
+    `store.get_predictor_history` (LEAP 4)
+  - Lógica de trend (slope/Hurst/verdict) e accuracy (MAE/bias/verdict) replicada
+    *sem* depender dos handlers REST (que usam `_store` global) — testes podem
+    isolar via `_fresh_store()`
+  - Nunca lança; insufficient data → tier GREEN com priority 5.0
+- `repo_compound_alerts(store, window, top_k=None, include_green=False)`
+  - Roda para todos os módulos em `store.list_modules()`
+  - Filtra GREEN por padrão (foca em ações)
+  - Sort por priority_score DESC
+- `repo_tier_histogram(alerts) -> {RED, AMBER, YELLOW, GREEN}` — contagem por tier
+
+#### Endpoints REST — `api/server.py`
+
+| Endpoint | Descrição |
+|---|---|
+| `GET /alerts/compound?module=&window=` | Compound alert de um módulo — tier, priority_score, reasons, APS subdict, Predictor subdict |
+| `GET /alerts/repo?window=&top_k=&include_green=` | Ranking repo-wide + histograma de tiers + `top_module` (pior) |
+
+`SensorConfig.version` → `"3.2.5"`.
+
+#### Smoke test ao vivo (3 módulos em 1 repositório sintético)
+
+```
+auth.login    AMBER  priority=65.58   APS:DEGRADING_PERSISTENT  Pred:BIASED_UP
+billing.api   RED    priority=100.00  APS:DEGRADING_PERSISTENT  Pred:BIASED_DOWN
+static.utils  GREEN  priority= 5.00   APS:STABLE                Pred:ACCURATE
+
+Repo histogram: {RED: 1, AMBER: 1, YELLOW: 0, GREEN: 1}
+Actionable rank: [billing.api, auth.login]
+```
+
+**Diagnóstico que era impossível em qualquer versão até 3.2.4**: `billing.api`
+tem o pior compound score porque **tanto a qualidade está caindo persistentemente
+quanto o predictor consistentemente erra a velocidade (BIASED_DOWN = real cai
+mais rápido que previsto)**.  É um sinal acionável para priorizar code review.
+
+#### Testes — `tests/test_marco_m32.py` (30 testes TC01-TC30)
+
+- TC01-TC06: classifier (RED two-signal, AMBER single, YELLOW weak compound,
+  GREEN clean, RED preempts AMBER)
+- TC07-TC14: per-module compute (insufficient/clean/degrading, sub-dict
+  presence, unknown module GREEN, to_dict round-trip, n_samples)
+- TC15-TC20: repo ranking (worst-first sort, default GREEN filter,
+  include_green keeps them, top_k cap, histogram canonical keys, empty repo)
+- TC21-TC26: priority bounded [0,100], tier ordering invariant
+  (RED>AMBER>YELLOW>GREEN), RED reasons describe both signals, dataclass defaults
+- TC27-TC30: endpoints `/alerts/compound` (400 sem module, shape) e
+  `/alerts/repo` (histogram + filtro + include_green)
+
+**Resultado: 1100/1100 marco-tests PASS — suíte 100% verde.**
+
+#### O que Sprint A destrava
+
+| Uso | Como |
+|---|---|
+| **CI PR gate** | `GET /alerts/repo?top_k=5` → rejeita PR se algum módulo RED novo aparecer |
+| **Dashboard de risco** | Histograma {RED, AMBER, YELLOW, GREEN} por commit principal |
+| **Priorização de code review** | `priority_score` sorteia o backlog de refactoring |
+| **Detecção precoce de "blind spot"** | RED = "o predictor não consegue acompanhar a degradação" → revisar arquitetura |
+
+#### Próximo marco
+
+Sprint B — Repo-level meta-score + outliers (APS Z-score) → v3.2.6
+
+---
+
 ## [3.2.4] — 2026-06-17 — LEAP 4: Predictor/Trend persistidos + forecast-accuracy
 
 ### Adicionado
