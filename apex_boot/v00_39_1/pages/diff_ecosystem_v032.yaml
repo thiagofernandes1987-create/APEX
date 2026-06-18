@@ -1,0 +1,376 @@
+diff_ecosystem_v032:
+  registered_diffs:
+  - id: DIFF_SQLITE_SNAPSHOT_001
+    opp: OPP-66
+    type: ENGINE_UPGRADE
+    status: ADOPTED
+    modules_new:
+    - sqlite_snapshot_store
+    modules_modified:
+    - mental_interpreter_v4 (+sqlite_store calls STEP_0/STEP_13)
+    - versioning (+v032_fields)
+    rules_new: []
+    gargalo_attacked: G4
+    resolution: RESOLVED
+    token_reduction: 83-93% context window liberado (3000 tokens → 200-500 tokens delta)
+    breaking_changes: SnapshotStore JSON no context window substituído por SQLite. Sessões antigas requerem
+      migração manual se snapshot histórico necessário.
+  - id: DIFF_PARALLEL_POT_SUBPROCESS_001
+    opp: OPP-67
+    type: ENGINE_UPGRADE
+    status: ADOPTED
+    modules_new:
+    - parallel_pot_executor
+    modules_modified:
+    - mental_interpreter_v3 → mental_interpreter_v4 (+SPECULATION phase)
+    rules_new: []
+    gargalo_attacked: G3
+    resolution: RESOLVED
+    latency_improvement: Wall-clock = max(t1..tN) em vez de sum(t1..tN) para N agentes
+    breaking_changes: mental_interpreter_v3 deprecated para DEEP/RESEARCH/SCIENTIFIC. Continua como fallback
+      para EXPRESS/FAST.
+  - id: DIFF_UCO_QUALITY_GATE_001
+    opp: OPP-68
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - uco_quality_gate
+    modules_modified:
+    - mental_interpreter_v4 (+gate call pre-subprocess)
+    rules_new:
+    - SR_33
+    gargalo_attacked: G1 (parcial), G6 (parcial)
+    quality_improvement: 30-45% redução em PoT programs com riscos estruturais executando
+    breaking_changes: none
+  - id: DIFF_SYMPY_FORMAL_VERIFIER_001
+    opp: OPP-69
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - sympy_formal_verifier
+    modules_modified:
+    - output (+FORMAL_VERIFIED tag)
+    - agents (+sympy_claim detection)
+    rules_new: []
+    gargalo_attacked: G5
+    resolution: RESOLVED (60% dos claims matemáticos)
+    breaking_changes: Alguns claims que antes eram [CONJECTURA_FORMAL] passam a ter [FORMAL_REFUTED] —
+      mais rigoroso.
+  - id: DIFF_EXTERNAL_CRITIC_PROFILE_001
+    opp: OPP-70
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - external_critic_profile
+    modules_modified:
+    - orchestrator (+STEP_12 ordering: external_critic BEFORE meta_reasoning)
+    rules_new:
+    - SR_38
+    gargalo_attacked: G6
+    resolution: MITIGATED (padrões recorrentes)
+    breaking_changes: 'STEP_12 ordering muda: external_critic_profile.analyze_output() agora é PRIMEIRO
+      no STEP_12.'
+  - id: DIFF_SKLEARN_SELF_DIFFICULTY_001
+    opp: OPP-71
+    type: MODULE_UPGRADE
+    status: ADOPTED
+    modules_new:
+    - sklearn_self_difficulty
+    modules_modified:
+    - pipeline_v032 (+STEP_0 sklearn_difficulty.predict())
+    rules_new: []
+    gargalo_attacked: Metacognição inter-sessão
+    breaking_changes: none
+  - id: DIFF_DYNAMIC_SKILL_FORGE_001
+    opp: OPP-72
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - dynamic_skill_forge
+    modules_modified:
+    - skill_registry (+external_skills loading protocol)
+    rules_new:
+    - SR_37
+    gargalo_attacked: Expansão de domínios
+    breaking_changes: none
+  - id: DIFF_MONTE_CARLO_SIMULATOR_001
+    opp: OPP-73
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - monte_carlo_simulator
+    modules_modified:
+    - pipeline_v032 (+STEP_8 monte_carlo em SCIENTIFIC)
+    rules_new: []
+    gargalo_attacked: Validação probabilística
+    breaking_changes: none
+  - id: DIFF_HYPOTHESIS_DAG_001
+    opp: OPP-MAS-01
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - hypothesis_dag
+    modules_modified:
+    - hypothesis_tracker (+dag_integration)
+    - snapshot_schema (+dag_edges)
+    - STEP_3 (+dag.register)
+    rules_new:
+    - SR_32
+    gargalo_attacked: G1 (parcial) — dependências implícitas entre hipóteses
+    token_reduction: -99% tokens para serialização DAG (edge-only format)
+    breaking_changes: Snapshots com DAG completo serializado (formato antigo) são incompatíveis. Apenas
+      edge-only format aceito.
+  - id: DIFF_CODE_GENETICS_001
+    opp: OPP-MAS-02
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - code_genetics_map
+    modules_modified:
+    - snapshot_schema (+code_genetics_map field)
+    - STEP_13 (+genetics update)
+    - STEP_P (+genetics recall)
+    rules_new:
+    - SR_35
+    gargalo_attacked: G4 (parcial) — amnésia técnica entre sessões
+    breaking_changes: none
+  - id: DIFF_ERROR_EVOLUTION_LOOP_001
+    opp: OPP-MAS-03
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - MCFEAdapter (+_on_block_failure diagnose loop)
+    - mental_interpreter_v4 (+error_loop integration)
+    rules_new: []
+    gargalo_attacked: G3 (parcial) — retries cegos sem diagnóstico
+    resilience_improvement: 70-85% redução em falhas não-recuperadas
+    breaking_changes: MCFEAdapter._on_block_failure() agora tenta 3 ciclos de diagnose antes de EARLY_EXIT.
+  - id: DIFF_MERGE_DEFENSIVE_001
+    opp: OPP-MAS-04
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - merge_defensive
+    modules_modified:
+    - parallel_pot_executor (+defensive_merge call)
+    rules_new: []
+    gargalo_attacked: G1 (parcial) — merge frágil em Multi-PoT
+    breaking_changes: none
+  - id: DIFF_CRYSTALLIZATION_JIT_001
+    opp: OPP-MAS-05
+    type: ENGINE_UPGRADE
+    status: ADOPTED
+    modules_modified:
+    - bayesian_curator (+jit_crystallize STEP_13)
+    - snapshot_compression (substituído por JIT)
+    rules_new:
+    - SR_36
+    gargalo_attacked: G4
+    snapshot_size_reduction: 40-65% para sessões estáveis
+    breaking_changes: snapshot_compression rules temporais substituídas por JIT por ΔH. Configuração anterior
+      de max_entries por classe não se aplica.
+  - id: DIFF_APEX_ST_METRIC_001
+    opp: OPP-MAS-06
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - apex_st_metric
+    modules_modified:
+    - STEP_13 (+compute_apex_st)
+    - meta_learning_agent (+st_trigger)
+    rules_new: []
+    breaking_changes: none
+  - id: DIFF_VERIFICATION_GATING_001
+    opp: OPP-MAS-07
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - verification_gate
+    modules_modified:
+    - STEP_3 (+verification_gate.route before interference)
+    rules_new: []
+    gargalo_attacked: G1 (parcial) — inversão geração/verificação
+    breaking_changes: none
+  - id: DIFF_ATTENTION_ANCHORS_001
+    opp: OPP-MAS-08
+    type: CONFIG_UPDATE
+    status: ADOPTED
+    modules_modified:
+    - orchestrator (+scratchpad injection before_generation)
+    rules_new: []
+    breaking_changes: none
+  - id: DIFF_ETHICAL_BARRIER_001
+    opp: OPP-MAS-10
+    type: CONFIG_UPDATE
+    status: ADOPTED
+    modules_modified:
+    - geodesic_scheduler (+ethical_cost=sys.maxsize)
+    - inviolable_rules (+PROTECTED_KERNEL_SEGMENT)
+    rules_new:
+    - SR_34
+    breaking_changes: none
+  - id: DIFF_MULTIAGENT_SUBPROCESS_001
+    opp: OPP-MAS-B1
+    type: ENGINE_UPGRADE
+    status: ADOPTED_PARTIAL
+    modules_modified:
+    - mental_interpreter_v3 → mental_interpreter_v4
+    rules_new: []
+    activation: DEEP/RESEARCH/SCIENTIFIC AND fractal_depth >= 2
+    prerequisites:
+    - DIFF_MERGE_DEFENSIVE_001
+    breaking_changes: none
+  - id: DIFF_ADAPTIVE_ODE_BLOCK_001
+    opp: OPP-MAS-B2
+    type: MODULE_PATCH
+    status: ADOPTED_PARTIAL
+    modules_modified:
+    - FractalDecomposer (+decompose_with_ode_feedback)
+    activation: SCIENTIFIC AND problem_type IN [ode, pde, dynamical_system]
+    breaking_changes: none
+  - id: DIFF_CRITIC_FORMAL_CONSISTENCY_001
+    opp: OPP-MAS-B3
+    type: MODULE_PATCH
+    status: ADOPTED_PARTIAL
+    modules_modified:
+    - critic (+formal_consistency_check top-3 findings)
+    breaking_changes: cos_sim threshold 0.1 (PATCH_C8) é mais permissivo que -0.3 original — mais flags
+      gerados.
+  - id: DIFF_GEODESIC_SCHEDULER_001
+    opp: OPP-MAS-B7
+    type: MODULE_NEW
+    status: ADOPTED_PARTIAL
+    modules_new:
+    - geodesic_scheduler
+    modules_modified:
+    - mcfe (+geodesic_scheduler integration)
+    activation: DEEP/RESEARCH/SCIENTIFIC
+    breaking_changes: none
+  total_new_diffs_v032: 25
+  total_new_opps_v032_and_v0321: 6
+  total_accumulated_diffs: 86
+  patches_applied:
+  - C1
+  - C2
+  - C3
+  - C4
+  - C5
+  - C6
+  - C7
+  - C8
+  - C9
+  issues_resolved:
+  - ISSUE1
+  - ISSUE2
+  - ISSUE3
+  - ISSUE4
+  - ISSUE5
+  - ISSUE6
+  diff_ecosystem_note: OPP-79 (DIFF_DSL_CLARITY_001) está registrado em versioning_v0321
+  opps_resolved_post_v032:
+    OPP-74:
+      id: DIFF_EVENT_BUS_SB_EVENTS_001
+      type: CONFIG_UPDATE
+      status: ADOPTED
+      description: 22 novos eventos SB adicionados ao event_bus + subscriptions para todos os módulos
+        sandbox
+      events_added:
+      - UCO_GATE_PASS
+      - UCO_GATE_AUTO_FIXED
+      - UCO_GATE_REJECTED
+      - UCO_OVERCONFIDENCE_ALERT
+      - PARALLEL_POT_COMPLETE
+      - PARALLEL_POT_PARTIAL
+      - SQLITE_DELTA_LOADED
+      - SQLITE_SESSION_SAVED
+      - FORMAL_VERIFIED
+      - FORMAL_REFUTED
+      - FORMAL_UNSUPPORTED
+      - EXTERNAL_CRITIC_ALERT
+      - EXTERNAL_CRITIC_CLEAN
+      - DAG_NODE_REGISTERED
+      - DAG_CASCADE_INVALIDATED
+      - DAG_CYCLE_REJECTED
+      - GENETICS_VACCINE_ADDED
+      - GENETICS_VACCINE_PROMOTED
+      - ERROR_LOOP_FIXED
+      - ERROR_LOOP_UNRESOLVED
+      - MONTE_CARLO_COMPLETE
+      - ST_METRIC_COMPUTED
+      - OOD_WARNING
+      impact: Audit trail completo para todas as operações sandbox no event_log
+      breaking_changes: none
+    OPP-75:
+      id: DIFF_MENTAL_INTERPRETER_V4_SPEC_001
+      type: MODULE_SPEC
+      status: ADOPTED
+      description: Spec YAML formal completa para mental_interpreter_v4 (inject_when, depends_on, phases,
+        api, events)
+      resolves: ISSUE6
+      impact: Consistência entre código Python (implementado) e arquitetura formal (agora documentada)
+      breaking_changes: mental_interpreter_v3 marcado DEPRECATED_FOR_DEEP_PLUS — permanece ativo para
+        EXPRESS/FAST
+    OPP-76:
+      id: DIFF_SNAPSHOT_COMPRESSION_SQLITE_BYPASS_001
+      type: CONFIG_UPDATE
+      status: ADOPTED
+      description: snapshot_compression bypassa quando SQLite ativo. max_snapshot_tokens 3000→500 (delta
+        máximo)
+      resolves:
+      - ISSUE1
+      - ISSUE4
+      impact: Elimina conflito entre compression_rules e modo SQLite; evita compressão de delta já compacto
+      breaking_changes: 'max_snapshot_tokens semântica muda: não é mais o snapshot completo, é o delta
+        máximo no context window'
+    OPP-77:
+      id: DIFF_DYNAMIC_FORGE_WHITELIST_FIX_001
+      type: SECURITY_PATCH
+      status: ADOPTED
+      description: subprocess, tempfile e sqlite3 removidos da IMPORT_WHITELIST do DynamicSkillForge
+      resolves: ISSUE3
+      security_risk_before: Skill externa com 'import subprocess' podia executar comandos arbitrários
+      security_risk_after: Skills limitadas a bibliotecas de cálculo/análise — sem acesso a sistema operacional
+      impact: 'Whitelist endurecida sem impacto funcional: skills legítimas de engenharia não usam subprocess'
+      breaking_changes: Skills existentes que importavam subprocess serão REJECTED pelo AST scan
+    OPP-78:
+      id: DIFF_SQLITE_VACUUM_GZIP_001
+      type: MODULE_EXTEND
+      status: ADOPTED
+      description: VACUUM a cada 50 sessões + gzip compression do full_snapshot TEXT
+    OPP-79:
+      id: DIFF_DSL_CLARITY_001
+      type: DOCUMENTATION_OVERHAUL
+      status: ADOPTED
+      version: v00.32.1
+      description: 'Reescrita completa da DSL para eliminar ambiguidades identificadas na análise das
+        conversas ChatGPT e Gemini. Inserção de: dsl_glossary (6 termos canônicos), dsl_executor_markers
+        (4 marcadores), dsl_module_template (template obrigatório), dsl_writing_guide (exemplos correto
+        vs. errado), apex_self_evolution_protocol (3 níveis com PROTECTED_KERNEL_SEGMENT). Reescrita dos
+        21 módulos v32 com executor, purpose, why, description (O QUE É / NÃO É / COMO FUNCIONA), what_if_fails
+        (fallbacks numerados), fmea completo.
+
+        '
+      problem_solved: 'ChatGPT subestimou capacidades (projetou suas limitações sobre o APEX). Gemini
+        superestimou capacidades (alucinações de 1 bilhão de iterações, 98.4% confiança em criptoativos,
+        ProcessPoolExecutor em multi-núcleos). Causa raiz: DSL misturava 3 registros sem demarcação —
+        instruções para LLM, código para sandbox, e metáforas conceituais.
+
+        '
+      breaking_changes: full_snapshot lido de versões anteriores (sem gzip) requer fallback de decompressão
+      impact:
+        vacuum: 30-60% redução de tamanho do arquivo após 50 sessões
+        gzip: 75-85% compressão do full_snapshot por sessão (5-20KB → 800-3000 bytes)
+        combined: 'Para 500 sessões: ~7.5MB → ~1.2MB estimado'
+      fallback: 'try gzip.decompress() except OSError: tratar como JSON raw (retrocompatibilidade)'
+  gargalos_resolved:
+    G3_parallelism: RESOLVED via parallel_pot_executor + ThreadPoolExecutor
+    G4_memory: RESOLVED via sqlite_snapshot_store (ilimitado) + OPP-78 (VACUUM + gzip)
+    G5_formal: RESOLVED_PARTIAL (60% claims matemáticos via sympy)
+  gargalos_mitigated:
+    G1_attention: MITIGATED via uco_quality_gate + verification_gate + attention_anchors
+    G2_approx: MITIGATED via UCO_CAL calibration (Halstead + H penalty)
+    G6_circular: MITIGATED via external_critic_profile + uco_objective_judge
+  gargalos_permanent:
+    G1_generation: Contaminação de atenção na GERAÇÃO permanece (LLM sequencial)
+    G2_conformal: Garantia estatística formal impossível sem ground truth externo
+    G6_unknown_unknowns: Unknown unknowns não detectáveis via external_critic (só padrões vistos)

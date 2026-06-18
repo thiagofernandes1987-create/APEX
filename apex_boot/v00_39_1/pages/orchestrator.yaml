@@ -1,0 +1,139 @@
+orchestrator:
+  version: v00.19.0
+  tier: 0-3
+  phases:
+  - name: Preparation
+    steps:
+    - STEP_0
+    - STEP_P
+    phase: 1
+  - name: Analysis
+    steps:
+    - STEP_0_4
+    - STEP_1
+    - STEP_2
+    - STEP_3
+    - STEP_3_5
+    phase: 2
+  - name: Scientific Analysis
+    steps:
+    - STEP_SCI_01: Equation analysis (equation_analyzer)
+    - STEP_SCI_02: Closed‑form detection (closed_form_detector)
+    - STEP_SCI_03: Symbolic execution attempt (symbolic_executor)
+    - STEP_SCI_04: Integrator selection (cognitive_integrator_library + equation_analyzer)
+    - STEP_SCI_05: Micro‑simulation (micro_simulator + error_tracker)
+    - STEP_SCI_06: Functional identification (local_model_builder)
+    - STEP_SCI_07: Macro extrapolation (macro_extrapolator)
+    - STEP_SCI_08: Error monitoring (error_monitor)
+    - STEP_SCI_09: Model evolution (scientific_engine)
+    - STEP_SCI_10: Validation (validation_4layers)
+    phase: 2.5
+  - name: Synthesis
+    steps:
+    - STEP_4
+    - STEP_5
+    - STEP_6
+    - STEP_7
+    - STEP_8
+    - STEP_9
+    phase: 3
+  - name: Validation
+    steps:
+    - STEP_10
+    - STEP_11
+    - STEP_12
+    - STEP_13
+    phase: 4
+  module_load_order:
+  - MODULE_config          (TIER_0)
+  - MODULE_engines_cognitive (TIER_0)
+  - MODULE_knowledge       (TIER_0 — lazy)
+  - MODULE_skills          (TIER_0 — lazy)
+  - MODULE_skill_hierarchy (TIER_0 — always)
+  - MODULE_mcfe            (TIER_0 — sempre ativo)
+  - MODULE_geometry_estimator (TIER_2 — eager, antes pot_engine_v2)
+  - MODULE_bayesian_inference (TIER_2)
+  - MODULE_error_tracker   (TIER_2 — RESEARCH/SCIENTIFIC)
+  - MODULE_agents          (TIER_1)
+  - MODULE_anchor_destroyer (TIER_1 — spawn-only via MCFE)
+  - MODULE_event_bus       (TIER_1)
+  - MODULE_versioning      (TIER_1)
+  - MODULE_symbolic_executor (TIER_1 — DEEP/RESEARCH/SCIENTIFIC)
+  - MODULE_pot_engine_v2   (TIER_1 — DEEP/RESEARCH/SCIENTIFIC) ← NOVO v00.20.2
+  - MODULE_mental_interpreter_v2 (TIER_1 — DEEP/RESEARCH/SCIENTIFIC) ← NOVO v00.20.2
+  - MODULE_pot_engine      (TIER_1 — DEPRECATED, sunset 2 sessões)
+  - MODULE_mental_interpreter (TIER_1 — DEPRECATED, sunset 2 sessões)
+  - MODULE_specialized_skill_engine (TIER_1)
+  - MODULE_fractal_hypothesis_compression (TIER_1)
+  - MODULE_fractal_knowledge_indexing (TIER_1)
+  - MODULE_pot_engine_v2   (TIER_1) — após symbolic_executor
+  - MODULE_mental_interpreter_v4 (TIER_1) — após pot_engine_v2
+  - MODULE_specialized_skill_engine (TIER_1) — após mental_interpreter_v4
+  - MODULE_fractal_hypothesis_compression (TIER_1) — após specialized_skill_engine
+  - MODULE_fractal_knowledge_indexing (TIER_1) — após fractal_tree_generator
+  - MODULE_skill_hierarchy (TIER_0) — após knowledge e skills
+  - MODULE_cognitive_integrator_library (TIER_2 — RESEARCH/SCIENTIFIC)
+  - MODULE_validation_4layers (TIER_2 — RESEARCH/SCIENTIFIC)
+  - MODULE_marketplace     (TIER_2 — condicional)
+  - MODULE_planner         (TIER_2 — always)
+  - MODULE_advanced        (TIER_2 — DEEP/RESEARCH/SCIENTIFIC)
+  - MODULE_output          (TIER_3)
+  - MODULE_diff_governance (TIER_3)
+  - MODULE_meta_learning_agent (TIER_3)
+  - MODULE_scientific_engine (TIER_3 — SCIENTIFIC)
+  - MODULE_strategy_library (TIER_3 — SCIENTIFIC/RESEARCH)
+  - MODULE_skill_registry  (TIER_3)
+  - MODULE_skill_matcher   (TIER_3)
+  - MODULE_attraction_engine (TIER_3)
+  - MODULE_mcp_bridge (TIER_1 — desativado)
+  - MODULE_bayesian_inference (TIER_2)
+  - MODULE_marketplace (TIER_2)
+  - MODULE_planner (TIER_2)
+  - MODULE_fractal_tree_generator (TIER_2)
+  - MODULE_scope_drift_detector (TIER_2)
+  - MODULE_constitution_generator (TIER_2)
+  - MODULE_advanced (TIER_2)
+  - MODULE_symbolic_executor (TIER_1)
+  - MODULE_cognitive_integrator_library (TIER_1)
+  - MODULE_fractal_cognitive_simulator (TIER_1)
+  - MODULE_error_tracker (TIER_1)
+  - MODULE_scientific_engine (TIER_1)
+  - MODULE_validation_4layers (TIER_2)
+  - MODULE_skill_registry (TIER_1)
+  - MODULE_skill_matcher (TIER_1)
+  - MODULE_attraction_engine (TIER_1)
+  - MODULE_strategy_library (TIER_1)
+  - MODULE_output (TIER_3)
+  - ORCHESTRATOR (TIER_3)
+  inject_when_policy:
+    tier_0:
+      rule: always
+      modules:
+      - config
+      - engines_cognitive
+      - knowledge
+      - skills
+      - agents
+      - versioning
+      - output
+      - mcfe
+    tier_1:
+      rule: on_demand OR when_referenced_by_active_step
+      modules:
+      - event_bus
+      - anchor_destroyer
+      - symbolic_executor
+      - cognitive_integrator_library
+      - fractal_cognitive_simulator
+      - error_tracker
+      - scientific_engine
+      - skill_registry
+      - skill_matcher
+      - attraction_engine
+      - strategy_library
+      - pot_engine_v2
+      - mental_interpreter_v4
+      - specialized_skill_engine
+      - fractal_hypothesis_compression
+      - fractal_knowledge_indexing
+    note: 'OPT-A: inject_when implícito — módulos sem declaração herdam política do tier'

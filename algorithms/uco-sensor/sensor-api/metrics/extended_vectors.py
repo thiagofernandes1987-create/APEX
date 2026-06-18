@@ -356,6 +356,12 @@ class SecurityVector:
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
 
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "SecurityVector":
+        """Deserialize from a JSON-compatible dict (LEAP 1 SnapshotStore round-trip)."""
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in d.items() if k in known})
+
     def __repr__(self) -> str:
         return (
             f"SecurityVector(rating={self.sast_security_rating}, "
@@ -500,6 +506,12 @@ class VelocityVector:
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "VelocityVector":
+        """Deserialize from a JSON-compatible dict (LEAP 1 SnapshotStore round-trip)."""
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in d.items() if k in known})
 
     def __repr__(self) -> str:
         return (
@@ -1566,4 +1578,233 @@ class ArchitectureVector:
             f"cbo={self.coupling_between_objects}, "
             f"rfc={self.response_for_class}, "
             f"lcom={self.lack_of_cohesion:.3f})"
+        )
+
+
+# ─── TestQualityVector (M7.6) ────────────────────────────────────────────────
+
+@dataclass
+class TestQualityVector:
+    """
+    8-channel test-suite quality vector — M7.6.
+
+    Note
+    ----
+    ``__test__ = False`` tells pytest this is a data container, not a test
+    class — without it pytest emits a collection warning whenever this
+    module is imported by a test file.
+
+    Channels
+    --------
+    n_test_functions      : int   — count of ``def test_*`` discovered
+    assertion_density     : float — assertions per test function (target ≥ 2.0)
+    test_complexity       : float — mean cyclomatic CC per test (target < 3.0)
+    mock_overuse_ratio    : float — mocks / total calls in test scope (target < 0.3)
+    test_isolation_score  : float — 1 − polluting_tests/n_tests   (target > 0.8)
+    flaky_test_risk       : int   — tests touching time/random/uuid (target 0)
+    parameterized_ratio   : float — @parametrize|@given share     (target > 0.3)
+    test_naming_quality   : float — share of tests with ≥3 name tokens (target > 0.7)
+    dead_test_count       : int   — tests without any assertion   (target 0)
+
+    Quality rating (A–E)
+    --------------------
+    A — zero issues (all 8 channels within healthy thresholds)
+    B — 1 threshold violation OR 1 dead/flaky test
+    C — 2–3 violations
+    D — 4–5 violations
+    E — 6+ violations OR dead_test_count ≥ 5
+    """
+    __test__ = False  # pytest: data container, not a test class
+
+    # ── channels ─────────────────────────────────────────────────────────────
+    n_test_functions:     int   = 0
+    assertion_density:    float = 0.0
+    test_complexity:      float = 0.0
+    mock_overuse_ratio:   float = 0.0
+    test_isolation_score: float = 1.0
+    flaky_test_risk:      int   = 0
+    parameterized_ratio:  float = 0.0
+    test_naming_quality:  float = 0.0
+    dead_test_count:      int   = 0
+
+    # ── metadata ─────────────────────────────────────────────────────────────
+    module_id: str = ""
+    language:  str = "python"
+
+    # ── Derived properties ────────────────────────────────────────────────────
+
+    def _threshold_violations(self) -> int:
+        """Number of channels outside healthy thresholds (used for rating)."""
+        if self.n_test_functions == 0:
+            return 0
+        return sum([
+            self.assertion_density    < 2.0,
+            self.test_complexity      > 3.0,
+            self.mock_overuse_ratio   > 0.3,
+            self.test_isolation_score < 0.8,
+            self.flaky_test_risk      > 0,
+            self.parameterized_ratio  < 0.3,
+            self.test_naming_quality  < 0.7,
+            self.dead_test_count      > 0,
+        ])
+
+    def test_quality_rating(self) -> str:
+        """A–E grade. ``A`` for empty test files (vacuously perfect)."""
+        if self.n_test_functions == 0:
+            return "A"
+        v = self._threshold_violations()
+        if v >= 6 or self.dead_test_count >= 5: return "E"
+        if v >= 4:                              return "D"
+        if v >= 2:                              return "C"
+        if v >= 1:                              return "B"
+        return "A"
+
+    # ── Constructors ──────────────────────────────────────────────────────────
+
+    @classmethod
+    def from_analyzer(
+        cls,
+        result: Any,          # TestQualityResult (avoid circular import)
+        module_id: str = "",
+        language:  str = "python",
+    ) -> "TestQualityVector":
+        """Build a TestQualityVector from a TestQualityResult."""
+        return cls(
+            n_test_functions     = result.n_test_functions,
+            assertion_density    = result.assertion_density,
+            test_complexity      = result.test_complexity,
+            mock_overuse_ratio   = result.mock_overuse_ratio,
+            test_isolation_score = result.test_isolation_score,
+            flaky_test_risk      = result.flaky_test_risk,
+            parameterized_ratio  = result.parameterized_ratio,
+            test_naming_quality  = result.test_naming_quality,
+            dead_test_count      = result.dead_test_count,
+            module_id            = module_id,
+            language             = language,
+        )
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "TestQualityVector":
+        """Deserialize from a JSON-compatible dict (SnapshotStore round-trip)."""
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in d.items() if k in known})
+
+    # ── Serialisation ─────────────────────────────────────────────────────────
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["test_quality_rating"] = self.test_quality_rating()
+        d["threshold_violations"] = self._threshold_violations()
+        return d
+
+    def __repr__(self) -> str:
+        return (
+            f"TestQualityVector("
+            f"rating={self.test_quality_rating()}, "
+            f"tests={self.n_test_functions}, "
+            f"asserts/test={self.assertion_density:.2f}, "
+            f"dead={self.dead_test_count}, "
+            f"flaky={self.flaky_test_risk})"
+        )
+
+
+# ─── ThreadSafetyVector (M7.7) ───────────────────────────────────────────────
+
+@dataclass
+class ThreadSafetyVector:
+    """
+    6-channel concurrency-correctness vector — M7.7.
+
+    Channels
+    --------
+    global_shared_state_count : int — ``global X`` mutated in Thread target  (CWE-362)
+    lock_missing_count        : int — shared mutation without Lock primitive (CWE-362)
+    daemon_thread_risk        : int — ``daemon=True`` Thread without .join() (CWE-366)
+    queue_unbounded_risk      : int — ``Queue()`` without ``maxsize=``       (CWE-400)
+    asyncio_blocking_call     : int — blocking I/O inside ``async def``      (CWE-557)
+    shared_mutable_default    : int — module collection mutated in Thread    (CWE-362)
+
+    Rating (A–E)
+    ------------
+    A — zero issues across all 6 channels
+    B — total_issues == 1
+    C — total_issues in {2, 3} OR any channel > 0 that involves Lock
+    D — total_issues in {4, 5}
+    E — total_issues ≥ 6 OR lock_missing_count ≥ 3 (concurrency-critical)
+    """
+    __test__ = False  # pytest: data container, not a test class
+
+    # ── channels ─────────────────────────────────────────────────────────────
+    global_shared_state_count: int = 0
+    lock_missing_count:        int = 0
+    daemon_thread_risk:        int = 0
+    queue_unbounded_risk:      int = 0
+    asyncio_blocking_call:     int = 0
+    shared_mutable_default:    int = 0
+
+    # ── metadata ─────────────────────────────────────────────────────────────
+    module_id: str = ""
+    language:  str = "python"
+
+    # ── Derived properties ────────────────────────────────────────────────────
+
+    @property
+    def total_issues(self) -> int:
+        return (
+            self.global_shared_state_count
+            + self.lock_missing_count
+            + self.daemon_thread_risk
+            + self.queue_unbounded_risk
+            + self.asyncio_blocking_call
+            + self.shared_mutable_default
+        )
+
+    def thread_safety_rating(self) -> str:
+        t = self.total_issues
+        if t >= 6 or self.lock_missing_count >= 3: return "E"
+        if t >= 4:                                  return "D"
+        if t >= 2:                                  return "C"
+        if t == 1:                                  return "B"
+        return "A"
+
+    # ── Constructors ──────────────────────────────────────────────────────────
+
+    @classmethod
+    def from_analyzer(
+        cls,
+        result: Any,          # ThreadSafetyResult (avoid circular import)
+        module_id: str = "",
+        language:  str = "python",
+    ) -> "ThreadSafetyVector":
+        return cls(
+            global_shared_state_count = result.global_shared_state_count,
+            lock_missing_count        = result.lock_missing_count,
+            daemon_thread_risk        = result.daemon_thread_risk,
+            queue_unbounded_risk      = result.queue_unbounded_risk,
+            asyncio_blocking_call     = result.asyncio_blocking_call,
+            shared_mutable_default    = result.shared_mutable_default,
+            module_id                 = module_id,
+            language                  = language,
+        )
+
+    @classmethod
+    def from_dict(cls, d: Dict[str, Any]) -> "ThreadSafetyVector":
+        known = set(cls.__dataclass_fields__)
+        return cls(**{k: v for k, v in d.items() if k in known})
+
+    # ── Serialisation ─────────────────────────────────────────────────────────
+
+    def to_dict(self) -> Dict[str, Any]:
+        d = asdict(self)
+        d["thread_safety_rating"] = self.thread_safety_rating()
+        d["total_issues"]         = self.total_issues
+        return d
+
+    def __repr__(self) -> str:
+        return (
+            f"ThreadSafetyVector("
+            f"rating={self.thread_safety_rating()}, "
+            f"issues={self.total_issues}, "
+            f"lock_missing={self.lock_missing_count}, "
+            f"daemon={self.daemon_thread_risk})"
         )

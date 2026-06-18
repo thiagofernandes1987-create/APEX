@@ -1,0 +1,126 @@
+uco_v4_analyzer:
+  executor: SANDBOX_CODE
+  version: v00.35.0
+  opp: OPP-120
+  tier: 1
+  status: ADOPTED
+  purpose: 'Define formalmente o uco_v4_analyzer — dependencia declarada em uco_quality_gate.depends_on
+    mas INEXISTENTE no prompt ate v00.34.0. Dois modos: (1) UCO REAL: universal_code_optimizer_v4.py (4.152
+    linhas) via ForgeSkills. (2) UCO INLINE: implementacao ast stdlib para runtimes sem acesso ao repo.
+
+    '
+  why: 'WHY: uco_quality_gate (OPP-68) declara depends_on: [uco_v4_analyzer] mas esse modulo nunca foi
+    definido. Resultado: o LLM simulava metricas AST via probabilidade — exatamente a circularidade (G6)
+    que o UCO foi criado para eliminar. SR_33 exige gate() antes de todo PoT em DEEP+. Sem uco_v4_analyzer,
+    SR_33 era impossivel de cumprir honestamente.
+
+    '
+  when: 'WHEN: uco_quality_gate.gate() e invocado. WHEN: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+    + PoT gerado. WHEN: APEX_SESSION_CAPS["uco_executable"] == True.
+
+    '
+  description: 'MODO PREFERENCIAL: UCO REAL via ForgeSkills (4.152 linhas — AST+CFG+DSM+Halstead+HMC+SA).
+    MODO FALLBACK: UCO INLINE (ast stdlib) quando repo inacessivel. LATENCIA UCO REAL: quick_optimize()
+    < 50ms para PoT < 100 linhas (sem numpy). LATENCIA UCO INLINE: < 10ms (apenas ast parse).
+
+    '
+  what_if_fails: 'FALLBACK: APEX_SESSION_CAPS["uco_executable"] == False -> [UCO_GATE_UNAVAILABLE]. FALLBACK:
+    SyntaxError no codigo PoT -> REJECTED imediato. REGRA: Nunca simular resultado do UCO se uco_executable
+    == False.
+
+    '
+  inject_when: uco_quality_gate.gate() invocado
+  depends_on:
+  - apex_runtime_probe
+  uco_real_file:
+    repository_path: algorithms/uco/universal_code_optimizer_v4.py
+    raw_url: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/algorithms/uco/universal_code_optimizer_v4.py
+    lines: 4152
+    size_kb: 170
+    entry_class: UniversalCodeOptimizer
+    key_methods:
+      analyze: analyze(code, language_hint=None) -> AnalysisResult — AST+Halstead+CFG
+      quick_optimize: quick_optimize(code) -> EngineOutput — Greedy sem numpy (~50ms)
+      optimize_fast: optimize_fast(code, n_steps=50) -> EngineOutput — SA com numpy
+      optimize: optimize(code) -> EngineOutput — HMC completo (requer numpy)
+    numpy_required: APENAS para optimize() HMC. quick_optimize() e analyze() = stdlib only
+    availability:
+      FULL_CLAUDE_CODE: git_clone algorithms/uco/ -> import -> uco.quick_optimize()
+      FULL_DEEPSEEK: urllib_fetch raw_url -> exec() inline -> uco.quick_optimize()
+      FULL_GROK: urllib_fetch raw_url -> exec() inline
+      PARTIAL_CHATGPT_CI: file_upload universal_code_optimizer_v4.py -> import
+      MINIMAL: Usar implementacao inline (ast stdlib) abaixo
+  loading_protocol: '# PASSO 1: UCO real via urllib (runtimes sem git)
+
+    # if APEX_SESSION_CAPS["forge_method"] in ("git_clone","urllib_fetch"):
+
+    #   import urllib.request, types
+
+    #   UCO_URL = "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/algorithms/uco/universal_code_optimizer_v4.py"
+
+    #   with urllib.request.urlopen(UCO_URL, timeout=20) as r:
+
+    #       uco_source = r.read().decode("utf-8")
+
+    #   uco_mod = types.ModuleType("uco_v4")
+
+    #   exec(compile(uco_source,"uco_v4","exec"), uco_mod.__dict__)
+
+    #   _UCO = uco_mod.UniversalCodeOptimizer()
+
+    #   APEX_SESSION_CAPS["uco_real_loaded"] = True
+
+    # else:
+
+    #   _UCO = UCOv4Analyzer()  # implementacao inline abaixo
+
+    #   APEX_SESSION_CAPS["uco_real_loaded"] = False
+
+    '
+  python_inline_fallback: "# UCO INLINE — ast stdlib apenas (fallback quando repo inacessivel)\nimport\
+    \ ast, math\n\nclass UCOv4Analyzer:\n    def analyze(self, code):\n        r = {\"syntax_ok\":False,\"\
+    H\":0.0,\"loop_risk\":0.0,\"dead_code\":0,\"bugs\":0.0,\"issues\":[]}\n        try:\n            tree\
+    \ = ast.parse(code); r[\"syntax_ok\"] = True\n        except SyntaxError as e:\n            r[\"issues\"\
+    ].append(f\"SyntaxError:{e}\"); return r\n\n        ops,ands,N1,N2 = set(),set(),0,0\n        for\
+    \ n in ast.walk(tree):\n            if isinstance(n, ast.BinOp):\n                ops.add(type(n.op).__name__);\
+    \ N1+=1\n            elif isinstance(n, ast.Compare):\n                [ops.add(type(c).__name__)\
+    \ for c in n.ops]; N1+=len(n.ops)\n            elif isinstance(n, ast.Name):\n                ands.add(n.id);\
+    \ N2+=1\n            elif isinstance(n, ast.Constant):\n                ands.add(str(n.value)); N2+=1\n\
+    \        N,n = N1+N2, len(ops)+len(ands)\n        if n>1 and N>0:\n            V = N*math.log2(n)\n\
+    \            r[\"H\"] = round(V/10,1); r[\"bugs\"] = round(V/3000,3)\n\n        loops,risky = 0,0\n\
+    \        for n in ast.walk(tree):\n            if isinstance(n,(ast.While,ast.For)):\n           \
+    \     loops+=1\n                if isinstance(n,ast.While):\n                    wt = isinstance(n.test,ast.Constant)\
+    \ and n.test.value==True\n                    if wt and not any(isinstance(x,ast.Break) for x in ast.walk(n)):\n\
+    \                        risky+=1; r[\"issues\"].append(\"while True sem break\")\n        r[\"loop_risk\"\
+    ] = round(risky/loops,2) if loops else 0.0\n\n        dead = 0\n        for n in ast.walk(tree):\n\
+    \            if isinstance(n,(ast.FunctionDef,ast.AsyncFunctionDef,ast.Module)):\n               \
+    \ for i,s in enumerate(n.body):\n                    if isinstance(s,(ast.Return,ast.Raise)) and i<len(n.body)-1:\n\
+    \                        dead += len(n.body)-i-1; break\n        r[\"dead_code\"] = dead\n       \
+    \ return r\n\n    def gate(self, pot_code, cognitive_mode, claimed_confidence=None):\n        T =\
+    \ {\"EXPRESS\":{\"H\":50,\"loop\":0.30,\"dead\":5,\"bugs\":2.0},\n             \"FAST\":   {\"H\"\
+    :30,\"loop\":0.20,\"dead\":3,\"bugs\":1.5},\n             \"DEEP\":   {\"H\":20,\"loop\":0.10,\"dead\"\
+    :1,\"bugs\":1.0},\n             \"RESEARCH\":{\"H\":15,\"loop\":0.05,\"dead\":0,\"bugs\":0.5},\n \
+    \            \"SCIENTIFIC\":{\"H\":10,\"loop\":0.00,\"dead\":0,\"bugs\":0.3}\n            }.get(cognitive_mode,{\"\
+    H\":30,\"loop\":0.20,\"dead\":3,\"bugs\":1.5})\n        m = self.analyze(pot_code)\n        if not\
+    \ m[\"syntax_ok\"]:\n            return {\"decision\":\"REJECTED\",\"code\":pot_code,\"uco_metrics\"\
+    :m,\n                    \"uco_feedback\":f\"[UCO_GATE: SyntaxError] {m['issues']}\"}\n        v =\
+    \ []\n        if m[\"H\"]>T[\"H\"]: v.append(f\"H={m['H']}>={T['H']}\")\n        if m[\"loop_risk\"\
+    ]>T[\"loop\"]: v.append(f\"loop_risk={m['loop_risk']}\")\n        if m[\"dead_code\"]>T[\"dead\"]:\
+    \ v.append(f\"dead_code={m['dead_code']}\")\n        if m[\"bugs\"]>T[\"bugs\"]: v.append(f\"bugs={m['bugs']}\"\
+    )\n        cal = f\" [UCO_CAL: H={m['H']:.1f} bugs={m['bugs']:.3f}]\"\n        if not v:\n       \
+    \     return {\"decision\":\"PASS\",\"code\":pot_code,\"uco_metrics\":m,\n                    \"uco_feedback\"\
+    :f\"[UCO_GATE_PASS]{cal}\"}\n        return {\"decision\":\"REJECTED\",\"code\":pot_code,\"uco_metrics\"\
+    :m,\n                \"uco_feedback\":f\"[UCO_GATE_REJECTED]{cal} Violations:{v}\"}\n\n_UCO_INLINE\
+    \ = UCOv4Analyzer()\ndef uco_gate(pot_code, cognitive_mode, claimed_confidence=None):\n    return\
+    \ _UCO_INLINE.gate(pot_code, cognitive_mode, claimed_confidence)\n"
+  fmea:
+    rpn: 16
+    mode: uco_v4_analyzer nao definido -> SR_33 impossivel -> UCO = LLM simulation
+    probability: 4
+    severity: 4
+    detection: 1
+    mitigation: 'UCO REAL via ForgeSkills (4.152 linhas, ast+numpy opcional). UCO INLINE fallback usa
+      apenas ast (stdlib) — zero deps externas. Confirmar com APEX_SESSION_CAPS["uco_executable"] antes
+      de usar.
+
+      '

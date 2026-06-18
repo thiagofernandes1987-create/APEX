@@ -1,0 +1,80 @@
+attention_anchors_module:
+  executor: LLM_BEHAVIOR
+  version: v00.32.1
+  opp: OPP-MAS-08
+  tier: 0
+  status: ADOPTED
+  purpose: 'Explorar viés de recência dos LLMs (Liu et al. 2024 "Lost in the Middle"): LLMs prestam mais
+    atenção ao início e ao FIM do contexto. Injetando scratchpad nos últimos ~500 tokens, regras críticas
+    ficam na posição de maior atenção.
+
+    '
+  why: 'O prompt mestre de 700KB+ tem regras críticas no meio — "zona fria" para o LLM. Mover regras de
+    lugar (Context Order Reordering) foi rejeitado por risco de quebrar few-shot implícito na estrutura.
+    Injetar referências ao FINAL é mais seguro e eficaz. O prompt mestre permanece IMUTÁVEL.
+
+    '
+  description: 'Scratchpad [WORKING_MEMORY] injetado ao final do contexto antes de cada geração. O QUE
+    É: Template determinístico por lookup — não é gerado pelo LLM. O QUE NÃO É: Código Python — é instrução
+    cognitiva para o LLM. COMO FUNCIONA: lookup em step_active_rules[current_step] → top 3 âncoras por
+    relevância → suspects do DAG → vacinas do code_genetics → injetar como [WORKING_MEMORY]. Geração por
+    lookup OBRIGATÓRIA — se LLM gerar o scratchpad, pode incluir regras incorretas para o step atual.
+
+    '
+  what_if_fails: "FALLBACK 1 — step não encontrado em step_active_rules:\n  Injetar scratchpad com apenas\
+    \ [C1, C4, H5] (regras globais).\nFALLBACK 2 — DAG ou code_genetics indisponível:\n  Omitir as seções\
+    \ indisponíveis. Scratchpad parcial > nenhum scratchpad.\n"
+  inject_when: before_each_generation_turn
+  prompt_master_immutability: GARANTIDA — injeção apenas no final, NUNCA reordenação
+  step_active_rules:
+    STEP_3:
+    - C1
+    - C4
+    - SR_09
+    - SR_12
+    - SR_33
+    STEP_5:
+    - SR_10
+    - SR_11
+    - C4
+    - SR_32
+    STEP_11:
+    - C4
+    - C8
+    - formalism_gate
+    - SR_34
+    STEP_12:
+    - C4
+    - SR_38
+    STEP_13:
+    - C5
+    - C6
+    - H5
+    - SR_35
+    - SR_36
+    DEFAULT:
+    - C1
+    - C4
+    - H5
+  scratchpad_format: '[WORKING_MEMORY — STEP_{current_step}]
+
+    Regras críticas ativas: {active_rules}
+
+    Âncoras mais relevantes: {top_3_anchors}
+
+    Hipóteses SUSPECT (DAG): {suspect_hypotheses}
+
+    Vacinas CODE_GENETICS: {relevant_vaccines}
+
+    [FIM WORKING_MEMORY]
+
+    '
+  api:
+  - generate_scratchpad(current_step, problem_anchors, suspect_nodes, vaccines) → str (~500 tokens)
+  fmea:
+    rpn: 1
+    mode: Scratchpad muito grande consumindo tokens
+    probability: 1
+    severity: 1
+    detection: 1
+    mitigation: max_anchors=3, max_suspects=5, max_vaccines=3; monitorar após 5 sessões

@@ -1,0 +1,37 @@
+patch_snapshot_schema:
+  new_conditional_fields:
+  - specialized_skill_state
+  - pot_execution_log
+  - fhc_history
+  - fki_level_state
+  v0202_new_conditional_fields:
+    pot_warmup_traj_last:
+      description: Últimos 60 pontos da trajetória de warmup
+      retention: últimas 3 sessões
+    geometry_estimator_cache:
+      description: DELTA_ERR por (x_bucket, y_bucket) — evita recálculo
+      retention: sessão corrente
+    trajectory_verification_history:
+      description: Últimas 5 execuções do TrajectoryVerifier
+      fields:
+      - status
+      - n_range
+      - n_points
+      - issues_count
+  v0210_new_conditional_fields:
+    reliability_state:
+      description: 'Serialização do ReliabilityEstimator: buckets (ok/fail por faixa de tamanho) e global_p.
+        Permite aprendizado contínuo entre sessões.
+
+        '
+      retention: acumulativo — nunca descartado (comprimido apenas via média de bucket)
+      populated_at: STEP_13
+      restored_at: STEP_0
+    mcfe_reliability_state:
+      description: 'Estado do MCFEReliabilityMonitor: R_acum_final, early_exit, early_exit_reason, reliability_history
+        (últimas 10 entradas).
+
+        '
+      retention: sessão corrente + 3 anteriores
+      populated_at: STEP_13
+      restored_at: STEP_0 (informativo — R_acum sempre reseta para 1.0)

@@ -1,0 +1,41 @@
+apex_compiler:
+  executor: SANDBOX_CODE
+  version: v00.38.0
+  opp: OPP-163
+  tier: 0
+  status: ADOPTED
+  purpose: 'Compilar o master (~300K tokens) num MICROKERNEL bootável (~12-18K tokens) + páginas lazy-load
+    com hash SHA256 em manifest. O master nunca mais é o boot file: é o repositório-fonte.
+
+    '
+  why: 'WHY: v00.17 tinha 32.9K tokens; v00.37 tem ~300K — crescimento 10x em 20 versões por acreção append-only.
+    O boot excede a janela de 200K do Claude padrão e consome 30% de 1M. Atenção dilui ("lost in the middle"),
+    aderência às regras degrada, e o custo por sessão explode. WHY MICROKERNEL: só 4 estruturas são consultadas
+    todo turno (executor markers, kernel, regras, pipeline); o resto é esporádico e paginável — o próprio
+    APEX já tem a infraestrutura de resolução (OPP-137/138) para carregar sob demanda.
+
+    '
+  when: Após todo DIFF aprovado no master → recompilar → novo boot kernel.
+  description: 'O_QUE_É: pipeline de build com 4 fases — validar (SR_46), paginar, montar microkernel,
+    verificar artefatos. O_QUE_NÃO_É: compressão lossy — toda informação do master permanece acessível
+    via page_load; nada é descartado. COMO_FUNCIONA: ver arquivo apex_compiler.py no repositório. Chaves
+    KERNEL_KEYS ficam residentes; HOISTED_MODULES são içados (probe, boot gate, adapter, resolution, salience,
+    library, page_loader); todo o resto vira pages/<key>.yaml com sha8 no page_manifest.
+
+    '
+  what_if_fails: 'FALLBACK 1: compilador indisponível → usar último kernel compilado + declarar [KERNEL_STALE:
+    master modificado sem recompilar]. FALLBACK 2: página ausente/corrompida → recarregar do master (fonte
+    da verdade) → recompilar. NUNCA operar com página de hash divergente.
+
+    '
+  inject_when: build-time (fora de sessão) — artefato resultante é o boot
+  depends_on:
+  - toolchain_validation_gate
+  token_economics:
+    master_v037: ~300K tokens [APPROX] — inviável como boot
+    kernel_v038: ~12-18K tokens [APPROX] — 95% do contexto liberado
+    page_avg: ~2-8K tokens por página, carga sob demanda
+    rationale: 'Liberar contexto não é só economia: é qualidade. Aderência a instruções e recall degradam
+      com prompts massivos; um kernel enxuto + páginas relevantes supera um monólito completo.
+
+      '

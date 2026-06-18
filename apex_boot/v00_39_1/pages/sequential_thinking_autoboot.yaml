@@ -1,0 +1,68 @@
+sequential_thinking_autoboot:
+  executor: LLM_BEHAVIOR
+  version: v00.35.0
+  opp: OPP-123
+  tier: 1
+  status: ADOPTED
+  purpose: 'Ativar sequential_thinking MCP automaticamente nos modos DEEP, RESEARCH, SCIENTIFIC. OPP-103
+    declarou o modulo mas nunca estabeleceu regra de auto-ativacao.
+
+    '
+  why: 'WHY: sequential_thinking (thoughtNumber/isRevision/branchFromThought) permite raciocinio revisavel.
+    Em modos DEEP+, revisao de hipoteses e essencial. Sem auto-boot: o modulo existe mas nunca e ativado
+    automaticamente. Em problemas SCIENTIFIC 8+ steps, sequential_thinking reduz erros ~30%.
+
+    '
+  when: 'WHEN: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] -> ativar automaticamente. WHEN: Problema
+    com > 5 passos de raciocinio -> ativar mesmo em FAST. WHEN: meta_reasoning detecta "revisao necessaria"
+    mid-step -> ativar retroativamente.
+
+    '
+  what_if_fails: 'FALLBACK: MCP indisponivel -> raciocinio linear padrao. FALLBACK: Runtime MINIMAL ->
+    simular via pensamentos numerados. REGRA: Nunca bloquear modo DEEP+ por sequential_thinking indisponivel.
+
+    '
+  inject_when: MCFE.select_mode() retorna DEEP | RESEARCH | SCIENTIFIC
+  depends_on:
+  - mcfe
+  - mental_interpreter_v4
+  activation_rule: '# SE cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]:
+
+    #   session.sequential_thinking_active = True
+
+    #   Todos os thoughts usam formato:
+
+    #   {
+
+    #     "thoughtNumber": N,
+
+    #     "thought": "...",
+
+    #     "isRevision": False,
+
+    #     "revisesThought": None,
+
+    #     "branchFromThought": None,
+
+    #     "branchId": None,
+
+    #     "totalThoughts": estimated_N,
+
+    #     "nextThoughtNeeded": True
+
+    #   }
+
+    # SE problema > 5 steps AND cognitive_mode == FAST:
+
+    #   session.sequential_thinking_active = True  # upgrade pontual
+
+    '
+  mcp_server_path: algorithms/mcp-servers-impl/src/src/sequentialthinking/
+  available_in_repo: true
+  fmea:
+    rpn: 4
+    mode: DEEP+ sem revisao estruturada -> erros de raciocinio encadeado
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: Auto-boot e aditivo. Fallback trivial para raciocinio linear.

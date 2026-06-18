@@ -1,6 +1,68 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
-> **APEX SCIENTIFIC MODE** · Gerado em 2026-04-26 · Baseline: v2.2.0 (M6.4)  
+> **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-16  
+> **Versão atual:** v3.2.6 (Sprint B — Repo Meta-Score: 1 número único por commit + outliers Z-score + history time-series) · Próximo: Sprint C — Auto-fix telemetry → v3.2.7  
 > Documento vivo — atualizar após cada marco concluído
+
+---
+
+## 📊 Estado consolidado pós-reavaliação (auditoria 2026-06-16)
+
+**Marcos entregues** (em ordem cronológica):
+
+| ID | Marco | Versão | Status |
+|---|---|---|:---:|
+| M0 → M6.4 | Foundation, Advanced Metrics, Governance, SARIF, M4 WebUI, SAST básico, SCA, IaC, Extended Vectors v1 | v0.6.0 → v2.2.0 | ✅ |
+| M7.0 | Formalizar sinais informais (AdvancedVector + DiagnosticVector) | v2.3.0 | ✅ |
+| M7.1 | SAST Expansion Round 1 (+15 regras) | v2.4.0 | ✅ |
+| M7.3 | ReliabilityVector + MaintainabilityVector | v2.5.0 | ✅ |
+| M7.2 | Taint Analysis + FlowVector | v2.6.0 | ✅ |
+| M8.1 | IDE/LSP + AutoFix Round 2 (8 transforms) | v2.7.0 | ✅ |
+| M7.4 | PerformanceVector | v2.8.0 | ✅ |
+| M7.5 | ArchitectureVector | v2.9.0 | ✅ |
+| M7.6 | TestQualityVector | v2.9.1 | ✅ |
+| M7.7 | ThreadSafetyVector + APS (release major) | v3.0.0 | ✅ |
+| M8.0 | Real-Time Monitoring + SSE | v3.1.0 | ✅ |
+| SCA+ | 65 → 205 CVEs, 9 → 12 ecossistemas (swift / pub / hex) | v3.1.1 | ✅ |
+| IaC+ | 44 → 102 regras + Ansible / Pulumi / CDK | v3.1.2 | ✅ |
+| AFix+ | 12 → 16 transforms (4 de segurança: hash / random / loop / format) | v3.1.3 | ✅ |
+| M9.0 | Tree-Sitter Multi-Language SAST (JS / TS / Java / Go) — 28 → 58 regras | v3.2.0 | ✅ |
+| **LEAP 1** | **Persistence Sprint — 100 % dos canais persistem (revoga 72 % de perda silenciosa)** | **v3.2.1** | **✅** |
+| **LEAP 2** | **APS persistido + endpoints history/trend (Hurst R/S sobre score composto)** | **v3.2.2** | **✅** |
+| **LEAP 3** | **AutoFix↔SAST closed loop — `auto_remediate(source)` + `POST /apex/auto-remediate`** | **v3.2.3** | **✅** |
+| **LEAP 4** | **Predictor/Trend persistidos — `predictor_*` columns + `/predictor/{history,accuracy}` with `forecast_error` backfill** | **v3.2.4** | **✅** |
+| **Sprint A** | **Compound Alert (APS × Predictor) — `compound_alert.py` + tiers RED/AMBER/YELLOW/GREEN + `/alerts/{compound,repo}` + ranking** | **v3.2.5** | **✅** |
+| **Sprint B** | **Repo Meta-Score — LOC-weighted APS + RED penalty + Z-score outliers + history time-series** | **v3.2.6** | **✅** |
+
+**Métricas atuais (v3.2.1):**
+
+- **96 canais formais** atravessando o tempo (era 27 / 96 antes de LEAP 1)
+- **58 regras SAST** em 5 linguagens (Python AST + JS/TS/Java/Go via tree-sitter)
+- **205 CVEs SCA** em 12 ecossistemas
+- **102 regras IaC** em 8 famílias (Dockerfile / Compose / K8s / Terraform / Helm / Ansible / Pulumi / CDK)
+- **16 transforms AutoFix** (12 + 4 de segurança)
+- **17 sinais APS** agregados em score 0-100 com rating A-E
+- **980 marco-tests** verdes (M1 → M28)
+
+**Próximos passos restantes (planejamento revisto):**
+
+| # | Sprint | Esforço | Versão | Justificativa |
+|---|---|---:|---|---|
+| ~~LEAP 1~~ | ~~Persistence Sprint~~ | ~~2d~~ | **v3.2.1** ✅ | **Entregue 2026-06-16** |
+| ~~LEAP 2~~ | ~~APS persistido + endpoints history/trend (refino arquitetural FMEA: sinal paralelo em vez de 10º canal)~~ | ~~1d~~ | **v3.2.2** ✅ | **Entregue 2026-06-17** |
+| ~~LEAP 3~~ | ~~AutoFix↔SAST closed loop (M8.2)~~ | ~~2d~~ | **v3.2.3** ✅ | **Entregue 2026-06-17 — SAST_TO_TRANSFORM + auto_remediate + POST /apex/auto-remediate** |
+| ~~LEAP 4~~ | ~~Predictor/Trend persistidos + forecast accuracy~~ | ~~1d~~ | **v3.2.4** ✅ | **Entregue 2026-06-17 — 4 colunas predictor_* + forecast_error backfill + /predictor/accuracy** |
+| ~~Sprint A~~ | ~~Compound Alert (APS × Predictor cross-correlation)~~ | ~~1d~~ | **v3.2.5** ✅ | **Entregue 2026-06-17 — RED/AMBER/YELLOW/GREEN tiers + priority_score + /alerts/{compound,repo}** |
+| ~~Sprint B~~ | ~~Repo-level meta-score + outliers (APS Z-score)~~ | ~~1d~~ | **v3.2.6** ✅ | **Entregue 2026-06-17 — `RepoMetaScore` + outliers + history + /repo/{health-score,aps-outliers,health-history}** |
+| Sprint C | Auto-fix telemetry (`remediations` table) | 1d | v3.2.7 | Fecha loop LEAP 3 — efetividade ao longo do tempo |
+| Sprint D | AutoFix↔SAST mapeamento expandido | 0.5d | v3.2.8 | +5 regras mapeadas (SAST014, 022, 024, 027, 037) |
+| Sprint E | Snapshot-diff vector | 1d | v3.2.9 | "Qual canal mudou em cada commit" |
+| Sprint F | Spectral analysis full de APS | 1d | v3.2.10 | PSD bandada + wavelet sobre APS |
+| LEAP 4 | Predictor/Trend persistidos | 1d | v3.2.4 | Meta-análise de confidence histórico — sinal exclusivo no mercado |
+| M9.1 | Research Signals (Shannon + TCI + CC Churn + Invariant Density) | 5d | v3.3.0 | Release final — score competitivo ≥89/100 vs SonarQube |
+
+**Total restante até v3.3.0:** ~9 dias úteis (vs 5 do plano antigo) — porém com infraestrutura de persistência ativa cobrindo retroativamente M7.2-M9.0 (~50 % mais valor por sprint).
+
+---
 
 ---
 
@@ -660,42 +722,42 @@ SPRINT 10 (Aug 10 – Aug 21):
 | 8.4 | M7.5.4 — RFC, abstraction_level, circular_import DFS | Criar | 1d | 18/06 | 18/06 | 8.3 | `metrics/extended_vectors.py` | 3 testes |
 | 8.5 | M7.5.5 — Endpoint `/metrics/architecture` + CHANGELOG [2.9.0] + 30 testes | Modificar | 1d | 19/06 | 19/06 | 8.4 | `api/server.py`, `tests/test_marco_m17.py`, `CHANGELOG.md` | 30 testes total |
 | **FASE 6 — TEST QUALITY + THREAD SAFETY + APS** | | | | | | | | |
-| 9.0 | **M7.6 — TestQualityVector** | Criar | 3d | 22/06 | 24/06 | 4.x | | |
-| 9.1 | M7.6.1 — TestQualityVector dataclass (8 canais) + AST visitor | Criar | 2d | 22/06 | 23/06 | 4.4 | `metrics/extended_vectors.py`, `sensor_core/uco_bridge.py` | 8 testes TQ01-TQ08 |
-| 9.2 | M7.6.2 — Endpoint `/metrics/test-quality` + CHANGELOG | Criar | 1d | 24/06 | 24/06 | 9.1 | `api/server.py`, `CHANGELOG.md` | inline |
-| 10.0 | **M7.7 — ThreadSafetyVector + APS** | Criar | 5d | 25/06 | 01/07 | 4.x, 5.x | | |
-| 10.1 | M7.7.1 — ThreadSafetyVector dataclass (6 canais) | Criar | 1d | 25/06 | 25/06 | 5.7 | `metrics/extended_vectors.py` | 3 testes |
-| 10.2 | M7.7.2 — AST visitor thread safety patterns | Criar | 2d | 26/06 | 29/06 | 10.1 | `sensor_core/uco_bridge.py` | 5 testes |
-| 10.3 | M7.7.3 — `metrics/anti_pattern_score.py` (APS) | Criar | 1d | 30/06 | 30/06 | 10.2 | `metrics/anti_pattern_score.py` (novo) | 4 testes |
-| 10.4 | M7.7.4 — Endpoint `/anti-pattern-score` + CHANGELOG [3.0.0] + 30 testes | Criar | 1d | 01/07 | 01/07 | 10.3 | `api/server.py`, `tests/test_marco_m18.py`, `CHANGELOG.md` | 30 testes total |
+| 9.0 | **M7.6 — TestQualityVector** ✅ entregue 2026-05-31 → v2.9.1 | Criar | 3d | 22/06 | 24/06 | 4.x | | |
+| 9.1 | M7.6.1 — TestQualityVector dataclass (8 canais) + AST visitor ✅ | Criar | 2d | 22/06 | 23/06 | 4.4 | `metrics/extended_vectors.py`, `metrics/test_quality_analyzer.py` (novo), `sensor_core/uco_bridge.py` | 30 testes TQ01-TQ30 |
+| 9.2 | M7.6.2 — Endpoints `/scan-test-quality` + `/metrics/test-quality` + CHANGELOG ✅ | Criar | 1d | 24/06 | 24/06 | 9.1 | `api/server.py`, `CHANGELOG.md`, `pyproject.toml` | inline |
+| 10.0 | **M7.7 — ThreadSafetyVector + APS** ✅ entregue 2026-05-31 → v3.0.0 | Criar | 5d | 25/06 | 01/07 | 4.x, 5.x | | |
+| 10.1 | M7.7.1 — ThreadSafetyVector dataclass (6 canais) ✅ | Criar | 1d | 25/06 | 25/06 | 5.7 | `metrics/extended_vectors.py` | TT01-TT05 |
+| 10.2 | M7.7.2 — AST visitor thread safety patterns ✅ | Criar | 2d | 26/06 | 29/06 | 10.1 | `metrics/thread_safety_analyzer.py` (novo), `sensor_core/uco_bridge.py` | TT06-TT20 |
+| 10.3 | M7.7.3 — `metrics/anti_pattern_score.py` (APS) ✅ | Criar | 1d | 30/06 | 30/06 | 10.2 | `metrics/anti_pattern_score.py` (novo) | TT26-TT30 |
+| 10.4 | M7.7.4 — Endpoints `/scan-thread-safety` + `/metrics/thread-safety` + `/anti-pattern-score` + CHANGELOG [3.0.0] ✅ | Criar | 1d | 01/07 | 01/07 | 10.3 | `api/server.py`, `tests/test_marco_m22.py`, `CHANGELOG.md` | TT21-TT25, TT30 |
 | **FASE 7 — REAL-TIME MONITORING** | | | | | | | | |
-| 11.0 | **M8.0 — Real-Time Monitoring Mode** | Criar | 8d | 06/07 | 15/07 | 1.x, 5.x | | |
-| 11.1 | M8.0.1 — `monitor/file_watcher.py` — FileSystem polling watcher | Criar | 2d | 06/07 | 07/07 | 1.3 | `monitor/__init__.py`, `monitor/file_watcher.py` (novos) | 4 testes |
-| 11.2 | M8.0.2 — Delta engine: ΔH, ΔCC, Δsecurity, Δreliability | Criar | 2d | 08/07 | 09/07 | 11.1 | `monitor/delta_engine.py` (novo) | 4 testes |
-| 11.3 | M8.0.3 — Alert thresholds + rule engine (ΔH>20%, nova SAST, ILR>0.7) | Criar | 1d | 10/07 | 10/07 | 11.2 | `monitor/alert_rules.py` (novo) | 3 testes |
-| 11.4 | M8.0.4 — SSE stream: `GET /monitor/stream` (Server-Sent Events) | Criar | 1d | 13/07 | 13/07 | 11.3 | `api/server.py` | 3 testes |
-| 11.5 | M8.0.5 — Endpoints `POST /monitor/start`, `POST /monitor/stop` | Criar | 1d | 14/07 | 14/07 | 11.4 | `api/server.py` | 3 testes |
-| 11.6 | M8.0.6 — CHANGELOG [3.1.0] + 30 testes consolidados | Docs+Test | 1d | 15/07 | 15/07 | 11.5 | `tests/test_marco_m19.py`, `CHANGELOG.md` | 30 testes total |
+| 11.0 | **M8.0 — Real-Time Monitoring Mode** ✅ entregue 2026-06-11 → v3.1.0 | Criar | 8d | 06/07 | 15/07 | 1.x, 5.x | | |
+| 11.1 | M8.0.1 — `monitor/file_watcher.py` — FileSystem polling watcher ✅ | Criar | 2d | 06/07 | 07/07 | 1.3 | `monitor/__init__.py`, `monitor/file_watcher.py` (novos) | TM01-TM08 |
+| 11.2 | M8.0.2 — Delta engine: ΔH, ΔCC, Δsecurity, Δreliability ✅ | Criar | 2d | 08/07 | 09/07 | 11.1 | `monitor/delta_engine.py` (novo) | TM09-TM16 |
+| 11.3 | M8.0.3 — Alert thresholds + rule engine (ΔH>20%, nova SAST, ILR>0.7) ✅ | Criar | 1d | 10/07 | 10/07 | 11.2 | `monitor/alert_rules.py` (novo) | TM17-TM24 |
+| 11.4 | M8.0.4 — SSE stream: `GET /monitor/stream` + ThreadingHTTPServer + `monitor/service.py` ✅ | Criar | 1d | 13/07 | 13/07 | 11.3 | `monitor/service.py` (novo), `api/server.py` | TM25-TM27, TM30 |
+| 11.5 | M8.0.5 — Endpoints `POST /monitor/start`, `POST /monitor/stop`, `GET /monitor/status` ✅ | Criar | 1d | 14/07 | 14/07 | 11.4 | `api/server.py` | TM28-TM29 |
+| 11.6 | M8.0.6 — CHANGELOG [3.1.0] + 30 testes consolidados + fix test_TS30 (M7.1 stale) ✅ | Docs+Test | 1d | 15/07 | 15/07 | 11.5 | `tests/test_marco_m23.py`, `CHANGELOG.md` | 30 testes (829/829 suíte verde) |
 | **FASE 8 — EXPANSÕES (SCA, IaC, AutoFix)** | | | | | | | | |
-| 12.0 | **SCA+ — Expansão CVE Database para 200+** | Melhorar | 3d | 16/07 | 20/07 | 2.x | | |
-| 12.1 | SCA+.1 — pip expansion (+22 CVEs: Werkzeug, Celery, SQLAlchemy, FastAPI) | Melhorar | 1d | 16/07 | 16/07 | 2.9 | `sca/cve_database.py` | 4 testes |
-| 12.2 | SCA+.2 — npm expansion (+30 CVEs: express, jsonwebtoken, socket.io) | Melhorar | 1d | 17/07 | 17/07 | 12.1 | `sca/cve_database.py` | 4 testes |
-| 12.3 | SCA+.3 — maven/cargo/go/gem/nuget expansion + 3 novos ecossistemas | Melhorar | 1d | 20/07 | 20/07 | 12.2 | `sca/cve_database.py`, `sca/vulnerability_scanner.py` | 8 testes |
-| 13.0 | **IaC+ — Expansão para 100+ regras + 3 novos formatos** | Melhorar | 4d | 21/07 | 24/07 | — | | |
-| 13.1 | IaC+.1 — Dockerfile rules D011-D020 | Melhorar | 1d | 21/07 | 21/07 | — | `iac/iac_scanner.py` | 5 testes |
-| 13.2 | IaC+.2 — Kubernetes rules K013-K025 | Melhorar | 1d | 22/07 | 22/07 | 13.1 | `iac/iac_scanner.py` | 6 testes |
-| 13.3 | IaC+.3 — Terraform rules T013-T025 | Melhorar | 1d | 23/07 | 23/07 | 13.2 | `iac/iac_scanner.py` | 6 testes |
-| 13.4 | IaC+.4 — Ansible + Pulumi + CDK scanners | Criar | 1d | 24/07 | 24/07 | 13.3 | `iac/iac_scanner.py` | 6 testes |
-| 14.0 | **AFix+ — AutoFix Engine Expansion** | Melhorar | 4d | 27/07 | 30/07 | 6.x, 4.x | | |
-| 14.1 | AFix+.1 — Transforms 5-8: extract_method, remove_mutable_default, add_context_manager, replace_bare_except | Criar | 2d | 27/07 | 28/07 | 6.2 | `sensor_core/autofix/transforms/*.py` | 8 testes |
-| 14.2 | AFix+.2 — Transforms 9-12: add_docstring, simplify_comparison, replace_string_concat_loop, add_type_hints | Criar | 2d | 29/07 | 30/07 | 14.1 | `sensor_core/autofix/transforms/*.py` | 8 testes |
+| 12.0 | **SCA+ — Expansão CVE Database para 200+** ✅ entregue 2026-06-16 → v3.1.1 | Melhorar | 3d | 16/07 | 20/07 | 2.x | | |
+| 12.1 | SCA+.1 — pip expansion (+22 CVEs: Werkzeug, Celery, SQLAlchemy, FastAPI, urllib3, jinja2, ...) ✅ | Melhorar | 1d | 16/07 | 16/07 | 2.9 | `sca/cve_database.py` | TS31-TS34, TS40 |
+| 12.2 | SCA+.2 — npm/maven/cargo/go/gem/composer/nuget expansion ✅ | Melhorar | 1d | 17/07 | 17/07 | 12.1 | `sca/cve_database.py` | TS35-TS39 |
+| 12.3 | SCA+.3 — 3 novos ecossistemas (swift/pub/hex) + 4 parsers de manifesto ✅ | Melhorar | 1d | 20/07 | 20/07 | 12.2 | `sca/cve_database.py`, `sca/vulnerability_scanner.py`, `tests/test_marco_m24.py` | TS41-TS60 (20 testes) |
+| 13.0 | **IaC+ — Expansão para 100+ regras + 3 novos formatos** ✅ entregue 2026-06-16 → v3.1.2 | Melhorar | 4d | 21/07 | 24/07 | — | | |
+| 13.1 | IaC+.1 — Dockerfile rules D011-D020 ✅ | Melhorar | 1d | 21/07 | 21/07 | — | `iac/iac_scanner.py` | TI01-TI06 |
+| 13.2 | IaC+.2 — Kubernetes rules K013-K025 ✅ | Melhorar | 1d | 22/07 | 22/07 | 13.1 | `iac/iac_scanner.py` | TI07-TI14 |
+| 13.3 | IaC+.3 — Terraform rules T013-T025 ✅ | Melhorar | 1d | 23/07 | 23/07 | 13.2 | `iac/iac_scanner.py` | TI15-TI20 |
+| 13.4 | IaC+.4 — Ansible + Pulumi + CDK scanners (18 regras) ✅ | Criar | 1d | 24/07 | 24/07 | 13.3 | `iac/iac_scanner.py`, `tests/test_marco_m25.py` | TI21-TI30 + guard |
+| 14.0 | **AFix+ — AutoFix Engine Expansion (12 → 16 transforms)** ✅ entregue 2026-06-16 → v3.1.3 | Melhorar | 4d | 27/07 | 30/07 | 6.x, 4.x | | |
+| 14.1 | AFix+.1 — Transforms 5-12 (M8.1, já entregue em v2.7.0): mutable_default, bare_except, simplify_comparison, docstring, context_manager, extract_method, string_concat, type_hints ✅ | Criar | 2d | 27/07 | 28/07 | 6.2 | `sensor_core/autofix/transforms/*.py` | M18 (tl17-tl24) |
+| 14.2 | AFix+.2 — Transforms 13-16 (segurança): replace_weak_hash, replace_insecure_random, add_loop_guard, replace_format_string ✅ | Criar | 2d | 29/07 | 30/07 | 14.1 | `sensor_core/autofix/transforms/*.py`, `tests/test_marco_m26.py` | TX01-TX30 |
 | **FASE 9 — TREE-SITTER MULTI-LANGUAGE SAST** | | | | | | | | |
-| 15.0 | **M9.0 — Tree-Sitter Multi-Language SAST** | Criar | 10d | 03/08 | 14/08 | 2.x, 5.x | | |
-| 15.1 | M9.0.1 — `lang_adapters/tree_sitter_bridge.py` — base adapter | Criar | 2d | 03/08 | 04/08 | 5.7 | `lang_adapters/tree_sitter_bridge.py` (novo) | 4 testes |
-| 15.2 | M9.0.2 — JavaScript/TypeScript adapter (XSS, prototype pollution, eval) | Criar | 2d | 05/08 | 06/08 | 15.1 | `lang_adapters/javascript_ts_sast.py` (novo) | 6 testes |
-| 15.3 | M9.0.3 — Java adapter (null deref, Spring Security misconfig, thread safety) | Criar | 2d | 07/08 | 10/08 | 15.1 | `lang_adapters/java_sast.py` (novo) | 6 testes |
-| 15.4 | M9.0.4 — Go adapter (goroutine leaks, channel deadlocks, defer in loop) | Criar | 2d | 11/08 | 12/08 | 15.1 | `lang_adapters/go_sast.py` (novo) | 6 testes |
-| 15.5 | M9.0.5 — CHANGELOG [3.2.0] + 30 testes consolidados M9.0 | Docs+Test | 2d | 13/08 | 14/08 | 15.4 | `tests/test_marco_m20.py`, `CHANGELOG.md` | 30 testes total |
+| 15.0 | **M9.0 — Tree-Sitter Multi-Language SAST** ✅ entregue 2026-06-16 → v3.2.0 | Criar | 10d | 03/08 | 14/08 | 2.x, 5.x | | |
+| 15.1 | M9.0.1 — `lang_adapters/tree_sitter_bridge.py` — bridge + regex fallback ✅ | Criar | 2d | 03/08 | 04/08 | 5.7 | `lang_adapters/tree_sitter_bridge.py` (novo) | TG01-TG04 |
+| 15.2 | M9.0.2 — JS/TS SAST JS01-JS10 (XSS, proto pollution, eval, child_process) ✅ | Criar | 2d | 05/08 | 06/08 | 15.1 | `sast/multilang_scanner.py` (novo) | TG05-TG14 |
+| 15.3 | M9.0.3 — Java SAST JV01-JV10 (Runtime.exec, XXE, deserialização, TLS, CORS) ✅ | Criar | 2d | 07/08 | 10/08 | 15.1 | `sast/multilang_scanner.py` | TG15-TG22 |
+| 15.4 | M9.0.4 — Go SAST GO01-GO10 (exec, SQL Sprintf, InsecureSkipVerify, defer-in-loop) ✅ | Criar | 2d | 11/08 | 12/08 | 15.1 | `sast/multilang_scanner.py` | TG23-TG28 |
+| 15.5 | M9.0.5 — Integração REST (`/sast` dispatch + `/sast/rules`) + CHANGELOG [3.2.0] ✅ | Docs+Test | 2d | 13/08 | 14/08 | 15.4 | `api/server.py`, `tests/test_marco_m27.py`, `CHANGELOG.md` | TG29-TG30 (30 testes total) |
 | **FASE 10 — RESEARCH & ADVANCED SIGNALS** | | | | | | | | |
 | 16.0 | **M9.1 — Research Signals** | Criar | 5d | 17/08 | 21/08 | 15.x | | |
 | 16.1 | M9.1.1 — Shannon entropy module (`metrics/entropy.py`) | Criar | 1d | 17/08 | 17/08 | 15.5 | `metrics/entropy.py` (novo) | 3 testes |

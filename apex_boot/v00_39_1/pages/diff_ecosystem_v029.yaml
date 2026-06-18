@@ -1,0 +1,87 @@
+diff_ecosystem_v029:
+  base: v00.28.0 (41 DIFFs)
+  registered_diffs:
+  - id: DIFF_NLM_MCFE_WIRE
+    type: MULTI_MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-45
+    fmea_rpn_before: 100+180+80+140=500
+    fmea_rpn_after: 0+0+0+0=0
+    modules_modified:
+    - mcfe_adapter.record_block_energy
+    - build_pipeline
+    - mental_interpreter._run_production
+    - mental_interpreter.execute
+    bugs_fixed:
+      BUG_A: NumericLandscapeModel(n_params=1) → TypeError — n_params não existe em NLM.__init__
+      BUG_B: 'nlm._total_samples() → AttributeError — método não existe; correto: len(nlm.samples)'
+      BUG_C: record_block_energy nunca chamado em _run_production → NLM.is_fitted sempre False
+      BUG_D: eps_callback nunca passado em execute() → proxy eps*=1.05 hardcoded sempre
+    breaking_changes: '_run_production agora chama mcfe.record_block_energy() após cada bloco OK. execute()
+      define eps_fn closure e passa eps_callback=eps_fn a decompose. NLM aprende automaticamente após
+      ≥5 blocos executados com sucesso.
+
+      '
+    python_implementation: '# BUG-A: NumericLandscapeModel() — sem n_params
+
+      # BUG-B: len(self.nlm.samples) >= 5 em vez de nlm._total_samples()
+
+      # BUG-C: self.mcfe.record_block_energy(blk.size, state_out.epsilon) no loop rc==0
+
+      # BUG-D: _eps_ref=[eps_now]; eps_fn=lambda idx: _eps_ref[0]; eps_callback=eps_fn
+
+      '
+  - id: DIFF_SNAPSHOT_LRU_ORDERDICT
+    type: MODULE_REPLACE
+    status: ADOPTED
+    opp: OPP-46
+    fmea_rpn_before: 224+150=374
+    fmea_rpn_after: 0+0=0
+    modules_modified:
+    - snapshot_store
+    bugs_fixed:
+      LRU_N2: _evict_lru list.remove() em loop → O(N²); list pop(i) → O(N)
+      SAVE_ON: 'save()/load()/pin(): ''h in _access_order'' → O(N) membership'
+    breaking_changes: '_access_order List[str] substituído por _lru OrderedDict[str,None]. _disk_load/_disk_save
+      serializa/deserializa _lru como lista para retrocompat. Performance: 8.4× mais rápido medido empiricamente
+      (1000 entries, 1000 saves). Callers que acessavam _access_order diretamente devem usar _lru.keys().
+
+      '
+    python_implementation: '# from collections import OrderedDict as _OD
+
+      # self._lru: _OD[str,None] = _OD()
+
+      # save(): _lru.move_to_end(h) ou _lru[h]=None → O(1)
+
+      # load(): _lru.move_to_end(h) → O(1)
+
+      # _evict_lru: next(iter(_lru.items())) + _lru.pop(h) → O(1)
+
+      # commit_cycle: _lru.pop(h, None) → O(1)
+
+      '
+  - id: DIFF_VERSION_CONSTANT
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-47
+    fmea_rpn_before: 90
+    fmea_rpn_after: 0
+    modules_modified:
+    - mental_interpreter._step_13_snapshot
+    bugs_fixed:
+      VERSION_STALE: '''apex_version'': ''v00.26.0'' hardcoded em v00.29.0 → metadata incorreto'
+    breaking_changes: none
+    python_implementation: '# "apex_version": "v00.29.0"  (literal atualizado; futuras versões devem manter
+      sync)
+
+      '
+  total_new_diffs: 3
+  total_accumulated_diffs: 44
+  new_opps:
+  - OPP-45
+  - OPP-46
+  - OPP-47
+  fmea_rpn_improvement:
+    before_v029: 964
+    after_v029: 0
+    reduction_pct: 100%

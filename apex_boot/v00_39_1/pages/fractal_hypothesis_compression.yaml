@@ -1,0 +1,56 @@
+fractal_hypothesis_compression:
+  version: v00.20.0
+  tier: 1
+  description: 'Poda o espaço de hipóteses em cada transição de nível fractal. Usa outputs de Specialized
+    Skills para descartar hipóteses absurdas e reduzir o espaço de busca antes do próximo nível.
+
+    '
+  config:
+    execution_point: APÓS STEP_5 (pós interferência), ANTES de MCFE recalcular H_cognitive
+    min_hypotheses_preserved: 2
+    compression_floor_confidence: 40
+    methods:
+      dominance_filter:
+        description: Remove hipóteses dominadas por outra em todas as dimensões.
+        condition: 'H_A domina H_B se: H_A.confidence > H_B.confidence + 10 AND H_A.evidence_level >=
+          H_B.evidence_level AND H_A não contraditado por nenhum skill output
+
+          '
+        action: Marcar H_B como [DOMINATED] → state = REFUTED
+        label: '[HYPOTHESIS_COMPRESSED: {id} | reason: dominated_by={dominator_id}]'
+      similarity_merge:
+        description: Funde hipóteses muito similares em uma mais forte.
+        semantic_similarity_definition: semantic_similarity(H_A, H_B) = jaccard(H_A.anchors, H_B.anchors)
+          — proxy de similaridade semântica via sobreposição de âncoras
+        condition: 'semantic_similarity(H_A, H_B) > 0.80 AND mesmo nível fractal AND diferença de confidence
+          < 15
+
+          '
+        action: Criar H_merged com max(confidence) + 5; descartar H_A e H_B
+        label: '[HYPOTHESIS_MERGED: {id_a} + {id_b} → {merged_id}]'
+      skill_refutation_filter:
+        description: Descarta hipóteses contraditadas por Specialized Skill outputs.
+        input: mental_interpreter.hypothesis_filter_outputs
+        condition: HYPOTHESIS_PRUNED_BY_SKILL event para esta hipótese
+        action: 'Reduzir confidence em 20 pontos. Se confidence < compression_floor_confidence: marcar
+          REFUTED_BY_SKILL.
+
+          '
+        label: '[HYPOTHESIS_REFUTED_BY_SKILL: {id} | skill: {skill_id} | reason: {rule}]'
+      absurdity_prune:
+        description: Remove hipóteses que violam invariantes físicos/lógicos detectados por skills.
+        trigger: HYPOTHESIS_PRUNED_BY_SKILL com reason = 'invariant_violation'
+        action: Descarte imediato — sem reduction gradual
+        label: '[HYPOTHESIS_ABSURD: {id} | invariant: {violated}]'
+    compression_report:
+      format: "[FHC@STEP_{N}: before={n_before} | after={n_after} |\n dominated={d} | merged={m} | skill_refuted={r}\
+        \ | absurd={a}]\n"
+      feeds_into: mcfe.H_survival (recalculado com n_after/n_initial)
+  outputs:
+  - compressed_hypothesis_set
+  - compression_report
+  dependencies:
+  - MODULE_advanced
+  - MODULE_specialized_skill_engine
+  - MODULE_mcfe
+  inject_when: fractal_depth > 0 AND hypotheses_active > 1

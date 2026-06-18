@@ -37,7 +37,9 @@ import json
 import time
 import threading
 import traceback
-from http.server import BaseHTTPRequestHandler, HTTPServer
+# M8.0 FMEA: ThreadingHTTPServer — long-lived SSE connections must not
+# block other requests (single-thread HTTPServer would stall the API).
+from http.server import BaseHTTPRequestHandler, HTTPServer, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 from typing import Any, Dict, Optional, Tuple, List
 from dataclasses import dataclass
@@ -62,6 +64,22 @@ from report.html_report import generate_html_report
 from report.badge import generate_badge_svg, generate_status_badge_svg
 from apex_integration.templates import get_template, render_prompt, fix_action_for, all_error_types
 from sast.scanner import scan as sast_scan, RULES as SAST_RULES
+
+# M9.0 — multi-language SAST (JS/TS, Java, Go)
+try:
+    from sast.multilang_scanner import (
+        scan_multilang as _scan_multilang,
+        language_for_extension as _ml_language_for_extension,
+        rule_count as _ml_rule_count,
+        _ALL_RULES as _ML_RULES,
+    )
+    _MULTILANG_SAST_AVAILABLE = True
+except ImportError:
+    _scan_multilang = None              # type: ignore[assignment]
+    _ml_language_for_extension = None   # type: ignore[assignment]
+    _ml_rule_count = None               # type: ignore[assignment]
+    _ML_RULES = []                      # type: ignore[assignment]
+    _MULTILANG_SAST_AVAILABLE = False
 from governance.policy_engine import (
     evaluate_policy, load_default_policy, policy_from_dict, mv_to_metrics_dict,
 )
@@ -130,6 +148,46 @@ except ImportError:
     _ArchitectureVector   = None  # type: ignore[assignment,misc]
     _ARCHITECTURE_AVAILABLE = False
 
+# M7.6 — TestQualityAnalyzer + TestQualityVector
+try:
+    from metrics.test_quality_analyzer import TestQualityAnalyzer as _TestQualityAnalyzer
+    from metrics.extended_vectors import TestQualityVector as _TestQualityVector
+    _TEST_QUALITY_AVAILABLE = True
+except ImportError:
+    _TestQualityAnalyzer = None  # type: ignore[assignment,misc]
+    _TestQualityVector   = None  # type: ignore[assignment,misc]
+    _TEST_QUALITY_AVAILABLE = False
+
+# M7.7 — ThreadSafetyAnalyzer + ThreadSafetyVector + APS
+try:
+    from metrics.thread_safety_analyzer import ThreadSafetyAnalyzer as _ThreadSafetyAnalyzer
+    from metrics.extended_vectors import ThreadSafetyVector as _ThreadSafetyVector
+    from metrics.anti_pattern_score import (
+        compute_aps as _compute_aps,
+        rate_aps as _rate_aps,
+        aps_from_metric_vector as _aps_from_mv,
+        APS_COMPONENTS as _APS_COMPONENTS,
+    )
+    _THREAD_SAFETY_AVAILABLE = True
+    _APS_AVAILABLE           = True
+except ImportError:
+    _ThreadSafetyAnalyzer = None  # type: ignore[assignment,misc]
+    _ThreadSafetyVector   = None  # type: ignore[assignment,misc]
+    _compute_aps          = None  # type: ignore[assignment]
+    _rate_aps             = None  # type: ignore[assignment]
+    _aps_from_mv          = None  # type: ignore[assignment]
+    _APS_COMPONENTS       = {}    # type: ignore[assignment]
+    _THREAD_SAFETY_AVAILABLE = False
+    _APS_AVAILABLE           = False
+
+# M8.0 — MonitorService (real-time monitoring)
+try:
+    from monitor.service import MonitorService as _MonitorService
+    _MONITOR_AVAILABLE = True
+except ImportError:
+    _MonitorService = None  # type: ignore[assignment,misc]
+    _MONITOR_AVAILABLE = False
+
 
 # ─── Configuração ────────────────────────────────────────────────────────────
 
@@ -139,7 +197,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "2.9.0"
+    version:      str   = "3.2.6"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -161,6 +219,10 @@ _bridge    = UCOBridge(mode=_config.engine_mode)
 _engine    = FrequencyEngine(verbose=_config.verbose)
 _router    = SignalOutputRouter()
 _connector = get_connector()        # ApexConnector — null mode até configurado via env
+
+# M8.0 — one MonitorService at a time (guarded by lock for start/stop races)
+_monitor: Optional[Any] = None
+_monitor_lock = threading.Lock()
 
 
 # ─── Auth middleware ─────────────────────────────────────────────────────────
@@ -235,7 +297,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/report",        "auth": True,   "desc": "Relatório HTML standalone (?module=)"},
             {"method": "GET",    "path": "/badge",         "auth": False,  "desc": "Badge SVG (?score=87&status=STABLE ou ?module=)"},
             {"method": "POST",   "path": "/diff",          "auth": True,   "desc": "Diff UCO entre 2 commits (before/after)"},
-            {"method": "POST",   "path": "/apex/fix",      "auth": True,   "desc": "Fix bidirecional: APEX envia comando corretivo"},
+            {"method": "POST",   "path": "/apex/fix",            "auth": True,   "desc": "Fix bidirecional: APEX envia comando corretivo"},
+            {"method": "POST",   "path": "/apex/auto-remediate", "auth": True,   "desc": "AutoFix↔SAST closed loop — scan, fix mapped rules, re-scan, return patched source [LEAP 3]"},
             {"method": "GET",    "path": "/predict",          "auth": True,   "desc": "Degradation forecast para um módulo (?module=&horizon=)"},
             {"method": "GET",    "path": "/predict/all",      "auth": True,   "desc": "Fleet forecast — todos os módulos, ordenado por risco"},
             {"method": "POST",   "path": "/scan-incremental", "auth": True,   "desc": "Incremental scan — apenas arquivos alterados (M6.1)"},
@@ -250,6 +313,24 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/metrics/performance",     "auth": True,   "desc": "PerformanceVector — 8-channel performance posture for a module (?module=) [M7.4]"},
             {"method": "POST",   "path": "/scan-architecture",       "auth": True,   "desc": "Architecture coupling/cohesion analysis — 8 channels, ArchitectureVector (M7.5)"},
             {"method": "GET",    "path": "/metrics/architecture",    "auth": True,   "desc": "ArchitectureVector — 8-channel architecture posture for a module (?module=) [M7.5]"},
+            {"method": "POST",   "path": "/scan-test-quality",       "auth": True,   "desc": "Test-suite quality analysis — 8 channels, TestQualityVector (M7.6)"},
+            {"method": "GET",    "path": "/metrics/test-quality",    "auth": True,   "desc": "TestQualityVector — 8-channel test-suite posture for a module (?module=) [M7.6]"},
+            {"method": "POST",   "path": "/scan-thread-safety",      "auth": True,   "desc": "Concurrency-correctness analysis — 6 channels, ThreadSafetyVector (M7.7)"},
+            {"method": "GET",    "path": "/metrics/thread-safety",   "auth": True,   "desc": "ThreadSafetyVector — 6-channel concurrency posture for a module (?module=) [M7.7]"},
+            {"method": "GET",    "path": "/anti-pattern-score",          "auth": True,   "desc": "Anti-Pattern Score — composite 0-100 across 17 signals (?module=) [M7.7]"},
+            {"method": "GET",    "path": "/anti-pattern-score/history",  "auth": True,   "desc": "APS time-series persisted per snapshot (?module=&window=) [LEAP 2]"},
+            {"method": "GET",    "path": "/anti-pattern-score/trend",    "auth": True,   "desc": "APS OLS slope + Hurst R/S verdict (?module=&window=) [LEAP 2]"},
+            {"method": "GET",    "path": "/predictor/history",           "auth": True,   "desc": "Persisted predictor outputs per snapshot + forecast_error vs actual (?module=&window=) [LEAP 4]"},
+            {"method": "GET",    "path": "/predictor/accuracy",          "auth": True,   "desc": "Forecast-accuracy summary: MAE, RMSE, bias, n_evaluated (?module=&window=) [LEAP 4]"},
+            {"method": "GET",    "path": "/alerts/compound",             "auth": True,   "desc": "Per-module compound risk (APS×Predictor cross-correlation) — RED/AMBER/YELLOW/GREEN (?module=&window=) [Sprint A]"},
+            {"method": "GET",    "path": "/alerts/repo",                 "auth": True,   "desc": "Repo-wide compound-alert ranking + tier histogram (?window=&top_k=&include_green=) [Sprint A]"},
+            {"method": "GET",    "path": "/repo/health-score",           "auth": True,   "desc": "Single repo health number (LOC-weighted APS − RED penalty) + breakdown (?window=) [Sprint B]"},
+            {"method": "GET",    "path": "/repo/aps-outliers",           "auth": True,   "desc": "Modules whose APS is k σ below the repo mean (?k=2.0&window=) [Sprint B]"},
+            {"method": "GET",    "path": "/repo/health-history",         "auth": True,   "desc": "Time-series of the weighted-APS repo score across all commits (?window=&step=) [Sprint B]"},
+            {"method": "POST",   "path": "/monitor/start",           "auth": True,   "desc": "Start real-time FileWatcher on a directory tree (M8.0)"},
+            {"method": "POST",   "path": "/monitor/stop",            "auth": True,   "desc": "Stop the running FileWatcher (M8.0)"},
+            {"method": "GET",    "path": "/monitor/status",          "auth": True,   "desc": "Watcher status: files watched, polls, alerts (M8.0)"},
+            {"method": "GET",    "path": "/monitor/stream",          "auth": True,   "desc": "SSE stream of metric_change/alert events (?max_events=&timeout_s=) [M8.0]"},
             {"method": "GET",    "path": "/lsp/diagnostics",         "auth": True,   "desc": "LSP-format diagnostics (publishDiagnostics) from stored vectors (?module=) [M8.1]"},
         ],
         "analyze_body": {
@@ -759,6 +840,57 @@ def handle_apex_fix(data: Dict) -> Tuple[int, Dict]:
             f"transforms={transforms_applied}"
         ),
     }
+
+
+# ── LEAP 3 — AutoFix ↔ SAST closed loop ──────────────────────────────────────
+
+def handle_apex_auto_remediate(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /apex/auto-remediate  (LEAP 3 / M8.2)
+
+    Closes the AutoFix ↔ SAST loop: scans the source for SAST findings, runs
+    only the AutoFix transforms whose mapping table targets a rule that fired,
+    then re-scans the patched source to report which findings were actually
+    fixed and which remain residual.
+
+    Request body
+    ------------
+    {
+      "code":      str  — Python source code (required)
+      "module_id": str  — identifier for debug (optional)
+    }
+
+    Response schema
+    ---------------
+    {
+      "module_id":          str,
+      "patched_source":     str,           — the rewritten code
+      "is_valid":           bool,          — patched_source compiles
+      "transforms_applied": [str],         — transform names that changed code
+      "findings_before":    [rule_id],     — SAST rules present originally
+      "findings_after":     [rule_id],     — SAST rules still present after fix
+      "fixed_rules":        [rule_id],     — rules eliminated by the loop
+      "fixed_count":        int,
+      "residual_count":     int
+    }
+    """
+    try:
+        from sensor_core.autofix.sast_remediation import auto_remediate
+    except ImportError as exc:
+        return 503, {"error": f"AutoFix↔SAST loop not available: {exc}"}
+
+    source    = data.get("code", "")
+    module_id = data.get("module_id", "<anonymous>")
+
+    if not source or not source.strip():
+        return 400, {"error": "Field 'code' is required and must be non-empty"}
+
+    try:
+        result = auto_remediate(source, module_id=module_id)
+    except Exception as exc:
+        return 500, {"error": f"auto-remediate failed: {exc}"}
+
+    return 200, {"module_id": module_id, **result.to_dict()}
 
 
 def handle_apex_status() -> Tuple[int, Dict]:
@@ -1340,26 +1472,54 @@ def handle_sast(data: Dict) -> Tuple[int, Dict]:
     if not file_ext.startswith("."):
         file_ext = f".{file_ext}"
 
+    # M9.0: route JS/TS/Java/Go to the multi-language scanner; Python keeps AST.
+    if (
+        _MULTILANG_SAST_AVAILABLE
+        and _ml_language_for_extension(file_ext) is not None
+    ):
+        result = _scan_multilang(code, file_extension=file_ext)
+        out = result.to_dict()
+        out["language"] = _ml_language_for_extension(file_ext)
+        out["engine"]   = "multilang"
+        return 200, out
+
     result = sast_scan(code, file_extension=file_ext)
     return 200, result.to_dict()
 
 
 def handle_sast_rules() -> Tuple[int, Dict]:
-    """GET /sast/rules — list all SAST rules with metadata."""
+    """GET /sast/rules — list all SAST rules (Python AST + M9.0 multi-language)."""
+    py_rules = [
+        {
+            "rule_id":    r.rule_id,
+            "title":      r.title,
+            "cwe_id":     r.cwe_id,
+            "owasp":      r.owasp,
+            "severity":   r.severity,
+            "description": r.description,
+            "remediation": r.remediation,
+            "languages":  ["python"],
+        }
+        for r in SAST_RULES
+    ]
+    ml_rules = [
+        {
+            "rule_id":    r.rule_id,
+            "title":      r.title,
+            "cwe_id":     r.cwe_id,
+            "owasp":      r.owasp,
+            "severity":   r.severity,
+            "description": r.title,
+            "remediation": r.remediation,
+            "languages":  list(r.languages),
+        }
+        for r in _ML_RULES
+    ] if _MULTILANG_SAST_AVAILABLE else []
     return 200, {
-        "rules": [
-            {
-                "rule_id":    r.rule_id,
-                "title":      r.title,
-                "cwe_id":     r.cwe_id,
-                "owasp":      r.owasp,
-                "severity":   r.severity,
-                "description": r.description,
-                "remediation": r.remediation,
-            }
-            for r in SAST_RULES
-        ],
-        "count": len(SAST_RULES),
+        "rules": py_rules + ml_rules,
+        "count": len(py_rules) + len(ml_rules),
+        "python_rules":     len(py_rules),
+        "multilang_rules":  len(ml_rules),
     }
 
 
@@ -2113,6 +2273,700 @@ def handle_metrics_architecture(
     }
 
 
+# ─── M7.6 Test-Quality endpoints ─────────────────────────────────────────────
+
+def handle_scan_test_quality(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /scan-test-quality  (M7.6)
+
+    Run test-suite quality analysis on a Python source snippet.
+    Returns TestQualityVector + per-channel counts + rating.
+
+    Request body
+    ------------
+    {
+      "code":      str  — Python source code (required)
+      "module_id": str  — identifier for the module (optional)
+    }
+
+    Response schema
+    ---------------
+    {
+      "module_id":            str,
+      "test_quality_vector": {TestQualityVector.to_dict()},
+      "summary": {
+        "n_test_functions":    int,
+        "assertion_density":   float,
+        "test_complexity":     float,
+        "mock_overuse_ratio":  float,
+        "test_isolation_score": float,
+        "flaky_test_risk":     int,
+        "parameterized_ratio": float,
+        "test_naming_quality": float,
+        "dead_test_count":     int,
+        "test_quality_rating": str
+      }
+    }
+    """
+    if not _TEST_QUALITY_AVAILABLE:
+        return 503, {"error": "Test-quality analyzer not available (metrics.test_quality_analyzer missing)"}
+
+    source    = data.get("code", "")
+    module_id = data.get("module_id", "<anonymous>")
+
+    if not source or not source.strip():
+        return 400, {"error": "Field 'code' is required and must be non-empty"}
+
+    try:
+        result = _TestQualityAnalyzer().analyze(source, module_id=module_id)
+    except Exception as exc:
+        return 500, {"error": f"Test-quality analysis failed: {exc}"}
+
+    tqv = _TestQualityVector.from_analyzer(result, module_id=module_id)
+
+    return 200, {
+        "module_id":           module_id,
+        "test_quality_vector": tqv.to_dict(),
+        "summary": {
+            "n_test_functions":     result.n_test_functions,
+            "assertion_density":    result.assertion_density,
+            "test_complexity":      result.test_complexity,
+            "mock_overuse_ratio":   result.mock_overuse_ratio,
+            "test_isolation_score": result.test_isolation_score,
+            "flaky_test_risk":      result.flaky_test_risk,
+            "parameterized_ratio":  result.parameterized_ratio,
+            "test_naming_quality":  result.test_naming_quality,
+            "dead_test_count":      result.dead_test_count,
+            "test_quality_rating":  tqv.test_quality_rating(),
+        },
+    }
+
+
+def handle_metrics_test_quality(
+    module_id: Optional[str], window: int = 50,
+) -> Tuple[int, Dict]:
+    """
+    GET /metrics/test-quality?module=<id>[&window=<n>]  (M7.6)
+
+    Returns the most-recent persisted TestQualityVector for a module.
+
+    Response schema
+    ---------------
+    {
+      "module_id":            str,
+      "history_size":         int,
+      "last_commit":          str,
+      "last_timestamp":       float,
+      "test_quality_vector": {TestQualityVector.to_dict()} | null,
+      "test_quality_rating":  str   — A–E (top-level convenience)
+    }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    if not _TEST_QUALITY_AVAILABLE:
+        return 503, {"error": "TestQualityVector not available (test_quality_analyzer missing)"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]
+    tqv    = getattr(latest, "test_quality", None)
+    tqv_dict   = tqv.to_dict()              if tqv is not None else None
+    tqv_rating = tqv.test_quality_rating()  if tqv is not None else "N/A"
+
+    return 200, {
+        "module_id":           module_id,
+        "history_size":        len(history),
+        "last_commit":         latest.commit_hash,
+        "last_timestamp":      latest.timestamp,
+        "test_quality_vector": tqv_dict,
+        "test_quality_rating": tqv_rating,
+    }
+
+
+# ─── M7.7 Thread-Safety endpoints ────────────────────────────────────────────
+
+def handle_scan_thread_safety(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /scan-thread-safety  (M7.7)
+
+    Run concurrency-correctness analysis on a Python source snippet.
+    Returns ThreadSafetyVector + per-channel counts + rating.
+
+    Request body
+    ------------
+    {
+      "code":      str  — Python source code (required)
+      "module_id": str  — identifier for the module (optional)
+    }
+    """
+    if not _THREAD_SAFETY_AVAILABLE:
+        return 503, {"error": "Thread-safety analyzer not available (metrics.thread_safety_analyzer missing)"}
+
+    source    = data.get("code", "")
+    module_id = data.get("module_id", "<anonymous>")
+
+    if not source or not source.strip():
+        return 400, {"error": "Field 'code' is required and must be non-empty"}
+
+    try:
+        result = _ThreadSafetyAnalyzer().analyze(source, module_id=module_id)
+    except Exception as exc:
+        return 500, {"error": f"Thread-safety analysis failed: {exc}"}
+
+    tsv = _ThreadSafetyVector.from_analyzer(result, module_id=module_id)
+
+    return 200, {
+        "module_id":            module_id,
+        "thread_safety_vector": tsv.to_dict(),
+        "summary": {
+            "global_shared_state_count": result.global_shared_state_count,
+            "lock_missing_count":        result.lock_missing_count,
+            "daemon_thread_risk":        result.daemon_thread_risk,
+            "queue_unbounded_risk":      result.queue_unbounded_risk,
+            "asyncio_blocking_call":     result.asyncio_blocking_call,
+            "shared_mutable_default":    result.shared_mutable_default,
+            "total_issues":              tsv.total_issues,
+            "thread_safety_rating":      tsv.thread_safety_rating(),
+        },
+    }
+
+
+def handle_metrics_thread_safety(
+    module_id: Optional[str], window: int = 50,
+) -> Tuple[int, Dict]:
+    """
+    GET /metrics/thread-safety?module=<id>[&window=<n>]  (M7.7)
+    Returns the most-recent persisted ThreadSafetyVector for a module.
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    if not _THREAD_SAFETY_AVAILABLE:
+        return 503, {"error": "ThreadSafetyVector not available (thread_safety_analyzer missing)"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]
+    tsv    = getattr(latest, "thread_safety", None)
+    tsv_dict   = tsv.to_dict()                if tsv is not None else None
+    tsv_rating = tsv.thread_safety_rating()   if tsv is not None else "N/A"
+
+    return 200, {
+        "module_id":            module_id,
+        "history_size":         len(history),
+        "last_commit":          latest.commit_hash,
+        "last_timestamp":       latest.timestamp,
+        "thread_safety_vector": tsv_dict,
+        "thread_safety_rating": tsv_rating,
+    }
+
+
+def handle_anti_pattern_score(
+    module_id: Optional[str], window: int = 50,
+) -> Tuple[int, Dict]:
+    """
+    GET /anti-pattern-score?module=<id>[&window=<n>]  (M7.7)
+
+    Computes the composite Anti-Pattern Score (APS) [0-100] from the
+    latest persisted MetricVector of a module.  Aggregates seventeen
+    signals across security, reliability, performance, maintainability
+    and thread-safety dimensions.
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    if not _APS_AVAILABLE:
+        return 503, {"error": "Anti-Pattern Score not available (metrics.anti_pattern_score missing)"}
+
+    history = _store.get_history(module_id, window=window)
+    if not history:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    latest = history[-1]
+    aps    = _aps_from_mv(latest)
+    return 200, {
+        "module_id":      module_id,
+        "history_size":   len(history),
+        "last_commit":    latest.commit_hash,
+        "last_timestamp": latest.timestamp,
+        **aps,
+    }
+
+
+# ── LEAP 2 — APS as a persisted time-series signal ───────────────────────────
+
+def handle_anti_pattern_score_history(
+    module_id: Optional[str], window: int = 100,
+) -> Tuple[int, Dict]:
+    """
+    GET /anti-pattern-score/history?module=<id>[&window=<n>]  (LEAP 2)
+
+    Returns the chronological APS series persisted at insert time.
+
+    Old rows predating LEAP 2 carry ``aps_score = null`` — they appear in the
+    response as ``"aps": null`` so the caller can decide whether to interpolate
+    or skip.  Set ``compact=1`` to drop NULL samples server-side.
+
+    Response::
+        {
+          "module_id": "auth.login",
+          "n_samples": 24,
+          "n_valid":   22,
+          "samples": [
+            {"commit": "abc", "timestamp": 1000.0, "aps": 92.4},
+            {"commit": "def", "timestamp": 1100.0, "aps": null},
+            ...
+          ]
+        }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    raw = _store.get_aps_history(module_id, window=window)
+    if not raw:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    samples = [
+        {"commit": c, "timestamp": ts, "aps": aps}
+        for c, ts, aps in raw
+    ]
+    return 200, {
+        "module_id":  module_id,
+        "n_samples":  len(samples),
+        "n_valid":    sum(1 for s in samples if s["aps"] is not None),
+        "samples":    samples,
+    }
+
+
+def handle_anti_pattern_score_trend(
+    module_id: Optional[str], window: int = 100,
+) -> Tuple[int, Dict]:
+    """
+    GET /anti-pattern-score/trend?module=<id>[&window=<n>]  (LEAP 2)
+
+    Runs OLS slope + Hurst R/S analysis over the persisted APS time-series.
+    Same machinery as ``/trend`` and the DegradationPredictor, but applied
+    directly to the composite quality score.
+
+    Requires at least ``min_samples = 4`` non-null APS values.
+
+    Response::
+        {
+          "module_id":     "auth.login",
+          "n_samples":     22,
+          "latest_aps":    78.4,
+          "latest_rating": "C",
+          "slope":         -1.32,        # APS units / snapshot
+          "slope_pct":     -0.018,       # slope / mean
+          "forecast_next": 77.1,
+          "hurst":         0.72,         # >0.55 → persistent degradation
+          "verdict":       "DEGRADING_PERSISTENT" | "STABLE" | "IMPROVING" | "INSUFFICIENT"
+        }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    raw = _store.get_aps_history(module_id, window=window)
+    if not raw:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    series = [aps for _, _, aps in raw if aps is not None]
+    if len(series) < 4:
+        return 200, {
+            "module_id":  module_id,
+            "n_samples":  len(series),
+            "verdict":    "INSUFFICIENT",
+            "min_required": 4,
+        }
+
+    n      = len(series)
+    mean   = sum(series) / n
+    xs     = list(range(n))
+    # OLS slope on the APS series (units per snapshot)
+    x_mean = (n - 1) / 2.0
+    num = sum((xs[i] - x_mean) * (series[i] - mean) for i in range(n))
+    den = sum((xs[i] - x_mean) ** 2 for i in range(n)) or 1.0
+    slope = num / den
+    intercept = mean - slope * x_mean
+    forecast_next = slope * n + intercept
+    slope_pct = (slope / mean) if mean else 0.0
+
+    # Hurst R/S (reuse the predictor's implementation; falls back to 0.5)
+    try:
+        from sensor_core.predictor import hurst_rs
+        hurst = hurst_rs(series)
+    except Exception:
+        hurst = 0.5
+
+    # Verdict: APS DECREASE is bad (lower score = more anti-patterns)
+    if slope < -0.5 and hurst > 0.55:
+        verdict = "DEGRADING_PERSISTENT"
+    elif slope < -0.5:
+        verdict = "DEGRADING"
+    elif slope > 0.5:
+        verdict = "IMPROVING"
+    else:
+        verdict = "STABLE"
+
+    latest_aps = series[-1]
+    try:
+        from metrics.anti_pattern_score import rate_aps
+        latest_rating = rate_aps(latest_aps)
+    except Exception:
+        latest_rating = "?"
+
+    return 200, {
+        "module_id":     module_id,
+        "n_samples":     n,
+        "latest_aps":    round(latest_aps, 2),
+        "latest_rating": latest_rating,
+        "slope":         round(slope, 4),
+        "slope_pct":     round(slope_pct, 4),
+        "forecast_next": round(forecast_next, 2),
+        "hurst":         round(hurst, 4),
+        "verdict":       verdict,
+    }
+
+
+# ── LEAP 4 — Predictor persistence endpoints ─────────────────────────────────
+
+def handle_predictor_history(
+    module_id: Optional[str], window: int = 100,
+) -> Tuple[int, Dict]:
+    """
+    GET /predictor/history?module=<id>[&window=<n>]  (LEAP 4)
+
+    Returns the predictor's persisted output per snapshot, plus
+    ``forecast_error`` (= actual_h[t+1] − forecast_h_at_t) for every row
+    that has a successor.  Rows predating LEAP 4 carry ``hurst=null``
+    etc. — they are returned as-is so the caller can decide what to do.
+
+    Response::
+        {
+          "module_id":  "auth.login",
+          "n_samples":  8,
+          "n_forecasts": 4,
+          "samples": [
+            {"commit": "c00", "timestamp": 0.0, "hamiltonian": 1.0,
+             "hurst": null, "slope_pct": null, "forecast_next": null,
+             "confidence": null, "forecast_error": null},
+            ...
+            {"commit": "c04", "timestamp": 4.0, "hamiltonian": 4.10,
+             "hurst": 0.5, "slope_pct": 22.33, "forecast_next": 6.28,
+             "confidence": 0.198, "forecast_error": -0.78},
+            ...
+          ]
+        }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    samples = _store.get_predictor_history(module_id, window=window)
+    if not samples:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    n_forecasts = sum(1 for s in samples if s.get("forecast_next") is not None)
+    return 200, {
+        "module_id":   module_id,
+        "n_samples":   len(samples),
+        "n_forecasts": n_forecasts,
+        "samples":     samples,
+    }
+
+
+def handle_predictor_accuracy(
+    module_id: Optional[str], window: int = 100,
+) -> Tuple[int, Dict]:
+    """
+    GET /predictor/accuracy?module=<id>[&window=<n>]  (LEAP 4)
+
+    Summary stats of how well the persisted forecasts match what actually
+    happened next:
+
+      mae  : mean absolute error (|actual - forecast|)
+      rmse : root mean squared error
+      bias : signed mean error (actual - forecast); positive = predictor
+             undershoots, negative = predictor overshoots
+      n_evaluated : pairs where both forecast and successor actual exist
+
+    A ``verdict`` field classifies the result::
+        "INSUFFICIENT"   < 3 pairs — cannot evaluate
+        "ACCURATE"       MAE < 10% of mean H
+        "BIASED_UP"      |bias| > MAE/2 and bias > 0 (consistent undershoot)
+        "BIASED_DOWN"    |bias| > MAE/2 and bias < 0 (consistent overshoot)
+        "NOISY"          MAE >= 10% of mean H but bias near zero
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    samples = _store.get_predictor_history(module_id, window=window)
+    if not samples:
+        return 404, {"error": f"No history found for module '{module_id}'"}
+
+    pairs = [s["forecast_error"] for s in samples
+             if s["forecast_error"] is not None]
+    if len(pairs) < 3:
+        return 200, {
+            "module_id":   module_id,
+            "n_evaluated": len(pairs),
+            "verdict":     "INSUFFICIENT",
+            "min_required": 3,
+        }
+
+    # MAE / RMSE / bias on the forecast_error series (actual - forecast)
+    n      = len(pairs)
+    mae    = sum(abs(e) for e in pairs) / n
+    rmse   = (sum(e * e for e in pairs) / n) ** 0.5
+    bias   = sum(pairs) / n
+    mean_h = sum(s["hamiltonian"] for s in samples) / len(samples)
+    mae_rel = mae / mean_h if mean_h else mae
+
+    if mae_rel < 0.10:
+        verdict = "ACCURATE"
+    elif abs(bias) > mae / 2:
+        verdict = "BIASED_UP" if bias > 0 else "BIASED_DOWN"
+    else:
+        verdict = "NOISY"
+
+    return 200, {
+        "module_id":   module_id,
+        "n_evaluated": n,
+        "mae":         round(mae,    4),
+        "rmse":        round(rmse,   4),
+        "bias":        round(bias,   4),
+        "mae_relative": round(mae_rel, 4),
+        "mean_hamiltonian": round(mean_h, 4),
+        "verdict":     verdict,
+    }
+
+
+# ── Sprint A — Compound Alert endpoints ──────────────────────────────────────
+
+def handle_compound_alert(
+    module_id: Optional[str], window: int = 100,
+) -> Tuple[int, Dict]:
+    """
+    GET /alerts/compound?module=<id>[&window=<n>]  (Sprint A)
+
+    Cross-correlates the persisted APS trend (LEAP 2) and the predictor
+    accuracy summary (LEAP 4) into one actionable tier (RED / AMBER /
+    YELLOW / GREEN) with priority_score and human-readable reasons.
+
+    Response::
+        {
+          "module_id":      "auth.login",
+          "n_samples":      18,
+          "tier":           "RED",
+          "priority_score": 94.32,
+          "reasons":        [
+            "APS degrading persistently (Hurst > 0.55, slope < 0)",
+            "Predictor consistently undershoots — actual fall steeper than forecast"
+          ],
+          "aps":       {"verdict": "DEGRADING_PERSISTENT", ...},
+          "predictor": {"verdict": "BIASED_DOWN", ...}
+        }
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+
+    try:
+        from governance.compound_alert import compute_compound_alert
+    except ImportError as exc:
+        return 503, {"error": f"compound alert not available: {exc}"}
+
+    alert = compute_compound_alert(_store, module_id, window=window)
+    return 200, alert.to_dict()
+
+
+def handle_repo_alerts(
+    window: int = 100,
+    top_k: Optional[int] = None,
+    include_green: bool = False,
+) -> Tuple[int, Dict]:
+    """
+    GET /alerts/repo?[window=&top_k=&include_green=]  (Sprint A)
+
+    Runs the compound alert over every module the store knows about and
+    returns:
+
+      * ``alerts``    — full list sorted by priority_score DESC (worst first)
+      * ``histogram`` — {RED, AMBER, YELLOW, GREEN} counts BEFORE the
+                        ``include_green`` filter and the ``top_k`` cap
+      * ``top_module``— the worst module (or None when everything is GREEN)
+
+    Designed for repo dashboards and CI PR gates.
+    """
+    try:
+        from governance.compound_alert import (
+            repo_compound_alerts, repo_tier_histogram, compute_compound_alert,
+        )
+    except ImportError as exc:
+        return 503, {"error": f"compound alert not available: {exc}"}
+
+    # Compute the un-filtered set first so the histogram counts all GREENs
+    all_modules = list(_store.list_modules())
+    all_alerts  = [
+        compute_compound_alert(_store, m, window=window) for m in all_modules
+    ]
+    histogram   = repo_tier_histogram(all_alerts)
+
+    # Now apply the user's filter + cap
+    filtered = (
+        all_alerts if include_green
+        else [a for a in all_alerts if a.tier != "GREEN"]
+    )
+    filtered.sort(key=lambda a: a.priority_score, reverse=True)
+    if top_k is not None and top_k > 0:
+        filtered = filtered[:top_k]
+
+    top_module = filtered[0].module_id if filtered else None
+    return 200, {
+        "n_modules":     len(all_modules),
+        "histogram":     histogram,
+        "top_module":    top_module,
+        "alerts":        [a.to_dict() for a in filtered],
+        "window":        window,
+        "include_green": include_green,
+    }
+
+
+# ── Sprint B — Repo-level meta-score + APS outliers ──────────────────────────
+
+def handle_repo_health_score(window: int = 100) -> Tuple[int, Dict]:
+    """
+    GET /repo/health-score?[window=]  (Sprint B)
+
+    Single number ∈ [0, 100] capturing the repo's current health:
+    LOC-weighted mean of the latest persisted APS per module, minus
+    5 points per RED compound-alert module (Sprint A integration).
+    """
+    try:
+        from governance.repo_meta_score import compute_repo_meta_score
+    except ImportError as exc:
+        return 503, {"error": f"repo meta-score not available: {exc}"}
+    meta = compute_repo_meta_score(_store, window=window)
+    return 200, meta.to_dict()
+
+
+def handle_repo_aps_outliers(
+    window: int = 100, k: float = 2.0,
+) -> Tuple[int, Dict]:
+    """
+    GET /repo/aps-outliers?[k=2.0&window=]  (Sprint B)
+
+    Modules whose latest APS is ≥ k σ BELOW the repo mean.  Only the
+    bad-news direction is flagged (low APS = many anti-patterns).
+    """
+    try:
+        from governance.repo_meta_score import compute_aps_outliers
+    except ImportError as exc:
+        return 503, {"error": f"repo meta-score not available: {exc}"}
+    outliers = compute_aps_outliers(_store, window=window, k=k)
+    return 200, {
+        "k":          k,
+        "window":     window,
+        "n_modules":  len(list(_store.list_modules())),
+        "n_outliers": len(outliers),
+        "outliers":   [o.to_dict() for o in outliers],
+    }
+
+
+def handle_repo_health_history(
+    window: int = 50, step: int = 1,
+) -> Tuple[int, Dict]:
+    """
+    GET /repo/health-history?[window=&step=]  (Sprint B)
+
+    Time-series of the LOC-weighted APS view of the repo across all unique
+    commit timestamps in the store, ascending.  Downsample with ``step``.
+    """
+    try:
+        from governance.repo_meta_score import repo_meta_score_history
+    except ImportError as exc:
+        return 503, {"error": f"repo meta-score not available: {exc}"}
+    series = repo_meta_score_history(_store, window=window, step=step)
+    return 200, {
+        "n_points": len(series),
+        "window":   window,
+        "step":     step,
+        "samples":  series,
+    }
+
+
+# ─── M8.0 Real-Time Monitoring endpoints ─────────────────────────────────────
+
+def handle_monitor_start(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /monitor/start  (M8.0)
+
+    Start a FileWatcher + analysis pipeline on a directory tree.
+
+    Request body
+    ------------
+    {
+      "root":        str — directory to watch (required, must exist)
+      "interval_ms": int — poll interval (optional, default 500, min 10)
+    }
+
+    Only one MonitorService runs at a time; starting while one is
+    running returns 409.
+    """
+    global _monitor
+    if not _MONITOR_AVAILABLE:
+        return 503, {"error": "Monitor not available (monitor.service missing)"}
+
+    root        = data.get("root", "")
+    interval_ms = int(data.get("interval_ms", 500))
+
+    if not root or not os.path.isdir(root):
+        return 400, {"error": f"Field 'root' must be an existing directory (got {root!r})"}
+
+    with _monitor_lock:
+        if _monitor is not None and _monitor.running:
+            return 409, {"error": "Monitor already running", "status": _monitor.status()}
+        _monitor = _MonitorService(root=root, interval_ms=interval_ms)
+        _monitor.start()
+        return 200, {"started": True, "status": _monitor.status()}
+
+
+def handle_monitor_stop(data: Dict) -> Tuple[int, Dict]:
+    """POST /monitor/stop  (M8.0) — stop the running watcher (idempotent)."""
+    global _monitor
+    if not _MONITOR_AVAILABLE:
+        return 503, {"error": "Monitor not available (monitor.service missing)"}
+
+    with _monitor_lock:
+        if _monitor is None:
+            return 200, {"stopped": False, "reason": "no monitor was running"}
+        status = _monitor.status()
+        _monitor.stop()
+        _monitor = None
+        return 200, {"stopped": True, "final_status": status}
+
+
+def handle_monitor_status() -> Tuple[int, Dict]:
+    """GET /monitor/status  (M8.0) — watcher status snapshot."""
+    if not _MONITOR_AVAILABLE:
+        return 503, {"error": "Monitor not available (monitor.service missing)"}
+    with _monitor_lock:
+        if _monitor is None:
+            return 200, {"running": False}
+        return 200, _monitor.status()
+
+
+def _sse_format(event: str, payload: Dict) -> bytes:
+    """Encode one Server-Sent Event frame (event: + data: lines)."""
+    return (
+        f"event: {event}\n"
+        f"data: {json.dumps(payload, default=str)}\n\n"
+    ).encode("utf-8")
+
+
 # ─── M8.1 LSP endpoint ───────────────────────────────────────────────────────
 
 # LSP severity constants (Microsoft Language Server Protocol)
@@ -2427,6 +3281,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
         if not ok:
             return self._send_json(401, {"error": "Invalid or missing API key"})
 
+        # M8.0: SSE stream escreve direto no socket — não passa por _send_json
+        if path == "/monitor/stream":
+            return self._serve_monitor_stream(params)
+
         try:
             if path == "/modules":
                 code, data = handle_modules()
@@ -2516,6 +3374,57 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
                 code, data = handle_metrics_architecture(module_id, window=window_n)
+            elif path == "/metrics/test-quality":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_metrics_test_quality(module_id, window=window_n)
+            elif path == "/metrics/thread-safety":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_metrics_thread_safety(module_id, window=window_n)
+            elif path == "/anti-pattern-score":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["50"])[0])
+                code, data = handle_anti_pattern_score(module_id, window=window_n)
+            elif path == "/anti-pattern-score/history":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_anti_pattern_score_history(module_id, window=window_n)
+            elif path == "/anti-pattern-score/trend":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_anti_pattern_score_trend(module_id, window=window_n)
+            elif path == "/predictor/history":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_predictor_history(module_id, window=window_n)
+            elif path == "/predictor/accuracy":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_predictor_accuracy(module_id, window=window_n)
+            elif path == "/alerts/compound":
+                module_id = params.get("module", [None])[0]
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_compound_alert(module_id, window=window_n)
+            elif path == "/alerts/repo":
+                window_n      = int(params.get("window", ["100"])[0])
+                top_k_raw     = params.get("top_k", [None])[0]
+                top_k         = int(top_k_raw) if top_k_raw else None
+                include_green = params.get("include_green", ["0"])[0].lower() in ("1", "true", "yes")
+                code, data    = handle_repo_alerts(window=window_n, top_k=top_k, include_green=include_green)
+            elif path == "/repo/health-score":
+                window_n   = int(params.get("window", ["100"])[0])
+                code, data = handle_repo_health_score(window=window_n)
+            elif path == "/repo/aps-outliers":
+                window_n   = int(params.get("window", ["100"])[0])
+                k_val      = float(params.get("k", ["2.0"])[0])
+                code, data = handle_repo_aps_outliers(window=window_n, k=k_val)
+            elif path == "/repo/health-history":
+                window_n   = int(params.get("window", ["50"])[0])
+                step_val   = max(1, int(params.get("step", ["1"])[0]))
+                code, data = handle_repo_health_history(window=window_n, step=step_val)
+            elif path == "/monitor/status":
+                code, data = handle_monitor_status()
             elif path == "/lsp/diagnostics":
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["50"])[0])
@@ -2573,6 +3482,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_sast(body)
             elif path == "/apex/fix":
                 code, data = handle_apex_fix(body)
+            elif path == "/apex/auto-remediate":
+                code, data = handle_apex_auto_remediate(body)
             elif path == "/scan-incremental":
                 code, data = handle_scan_incremental(body)
             elif path == "/scan-sca":
@@ -2585,6 +3496,14 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_scan_performance(body)
             elif path == "/scan-architecture":
                 code, data = handle_scan_architecture(body)
+            elif path == "/scan-test-quality":
+                code, data = handle_scan_test_quality(body)
+            elif path == "/scan-thread-safety":
+                code, data = handle_scan_thread_safety(body)
+            elif path == "/monitor/start":
+                code, data = handle_monitor_start(body)
+            elif path == "/monitor/stop":
+                code, data = handle_monitor_stop(body)
             elif path == "/auth/keys":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
@@ -2655,6 +3574,69 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    # ── M8.0: Server-Sent Events stream ───────────────────────────────────────
+
+    def _serve_monitor_stream(self, params: Dict) -> None:
+        """
+        GET /monitor/stream?max_events=<n>&timeout_s=<t>  (M8.0)
+
+        Streams ``connected`` / ``metric_change`` / ``alert`` / ``heartbeat``
+        events in SSE format, then closes.
+
+        FMEA PROCESS guard: the stream is bounded by BOTH ``max_events``
+        (default 100, cap 10000) and ``timeout_s`` (default 30, cap 300) so a
+        client can never hold a server thread forever.
+        """
+        if not _MONITOR_AVAILABLE:
+            return self._send_json(503, {"error": "Monitor not available"})
+
+        with _monitor_lock:
+            svc = _monitor
+        if svc is None or not svc.running:
+            return self._send_json(409, {"error": "No monitor running — POST /monitor/start first"})
+
+        max_events = min(10_000, max(1, int(params.get("max_events", ["100"])[0])))
+        timeout_s  = min(300.0,  max(0.1, float(params.get("timeout_s", ["30"])[0])))
+        heartbeat_every_s = 5.0
+
+        self.send_response(200)
+        self.send_header("Content-Type", "text/event-stream")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Connection", "close")
+        self.send_header("X-UCO-Sensor-Version", _config.version)
+        self.end_headers()
+
+        try:
+            self.wfile.write(_sse_format("connected", {
+                "root":      svc.root,
+                "timestamp": time.time(),
+                **svc.status(),
+            }))
+            self.wfile.flush()
+
+            sent       = 0
+            deadline   = time.time() + timeout_s
+            next_beat  = time.time() + heartbeat_every_s
+            while sent < max_events and time.time() < deadline:
+                events = svc.drain_events(max_events=max_events - sent)
+                for ev in events:
+                    name = ev.get("event", "metric_change")
+                    self.wfile.write(_sse_format(name, ev))
+                    sent += 1
+                if events:
+                    self.wfile.flush()
+                elif time.time() >= next_beat:
+                    self.wfile.write(_sse_format("heartbeat", {
+                        "timestamp": time.time(),
+                        **svc.status(),
+                    }))
+                    self.wfile.flush()
+                    next_beat = time.time() + heartbeat_every_s
+                else:
+                    time.sleep(0.1)
+        except (BrokenPipeError, ConnectionResetError):
+            pass  # client disconnected — normal SSE lifecycle
+
 
 # ─── Entrypoint CLI ───────────────────────────────────────────────────────────
 
@@ -2695,7 +3677,8 @@ if __name__ == "__main__":
         ))
         _config.apex_enabled = True
 
-    server = HTTPServer((args.host, args.port), UCOSensorHandler)
+    # M8.0: ThreadingHTTPServer — SSE long-poll must not block other requests
+    server = ThreadingHTTPServer((args.host, args.port), UCOSensorHandler)
     print(f"[UCO-Sensor v{_config.version}] Rodando em http://{args.host}:{args.port}")
     print(f"[UCO-Sensor] DB: {args.db} | Auth: {_config.auth_enabled} | Verbose: {args.verbose}")
     print(f"[UCO-Sensor] Linguagens: {', '.join(get_registry().supported_languages())}")

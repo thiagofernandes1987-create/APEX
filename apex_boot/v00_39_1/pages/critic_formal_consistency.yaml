@@ -1,0 +1,37 @@
+critic_formal_consistency:
+  executor: HYBRID
+  version: v00.32.1
+  opp: OPP-MAS-B3
+  tier: 3
+  status: ADOPTED_PARTIAL
+  purpose: 'Detectar findings apresentados como complementares mas semanticamente ortogonais (não relacionados)
+    — indicando inconsistência estrutural na síntese.
+
+    '
+  why: 'PATCH_C8: threshold original -0.3 (antinomia) nunca dispararia — cos_sim < -0.3 entre findings
+    do mesmo domínio é extremamente rara. Threshold correto: < 0.1 (ortogonalidade) — detecta claims não
+    relacionados apresentados como complementares. Muito mais comum e útil.
+
+    '
+  description: 'Verifica similaridade de cosseno entre top-3 findings por confidence. threshold: 0.1 —
+    abaixo = POTENTIALLY_UNRELATED. flag_action: Critic deve justificar a relação explicitamente.
+
+    '
+  what_if_fails: 'FALLBACK — falha no cálculo: pular silenciosamente. Nunca bloqueia a sessão.
+
+    '
+  activation_condition: STEP_12 para top-3 findings por confidence
+  threshold: 0.1
+  threshold_rationale: '0.1 = ortogonalidade. cos_sim < 0.1 → quase nenhuma semântica compartilhada. -0.3
+    = antinomia explícita — rara, não útil como threshold rotineiro.
+
+    '
+  api:
+  - check(findings_top3, anchors) → dict{flags, potentially_unrelated}
+  fmea:
+    rpn: 4
+    mode: Falso positivo flagando findings válidos de sub-domínios diferentes
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: flag como aviso, não bloqueio; Critic tem palavra final

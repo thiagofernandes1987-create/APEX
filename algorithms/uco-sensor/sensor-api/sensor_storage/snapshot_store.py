@@ -75,9 +75,15 @@ CREATE TABLE IF NOT EXISTS snapshots (
     max_methods_per_class INTEGER NOT NULL DEFAULT 0,
     cc_hotspot_ratio REAL   NOT NULL DEFAULT 0.0,
     max_function_cc  INTEGER NOT NULL DEFAULT 0,
-    extended_vectors_json  TEXT DEFAULT NULL,
-    advanced_vector_json   TEXT DEFAULT NULL,
-    diagnostic_vector_json TEXT DEFAULT NULL,
+    extended_vectors_json    TEXT DEFAULT NULL,
+    advanced_vector_json     TEXT DEFAULT NULL,
+    diagnostic_vector_json   TEXT DEFAULT NULL,
+    extended_vectors_v2_json TEXT DEFAULT NULL,
+    aps_score                REAL DEFAULT NULL,
+    predictor_hurst          REAL DEFAULT NULL,
+    predictor_slope_pct      REAL DEFAULT NULL,
+    predictor_forecast_next  REAL DEFAULT NULL,
+    predictor_confidence     REAL DEFAULT NULL,
     UNIQUE(module_id, commit_hash)
 );
 """
@@ -86,10 +92,31 @@ CREATE TABLE IF NOT EXISTS snapshots (
 # Uses try/except because SQLite does not support IF NOT EXISTS on ADD COLUMN
 # before version 3.37 (2021-11-27).  The except branch is intentionally silent
 # — the column simply already exists.
+#
+# LEAP 1 (Persistence Sprint) appends ``extended_vectors_v2_json`` carrying
+# nine vectors previously DROPPED on every scan: security, velocity, flow,
+# reliability, maintainability, performance, architecture, test_quality,
+# thread_safety.  Backward-compat: DEFAULT NULL — old rows load with each
+# vector = None, identical to today's behaviour.
+#
+# LEAP 2 (APS as a persisted signal) appends ``aps_score`` REAL.  Computed at
+# insert time via metrics.anti_pattern_score.aps_from_metric_vector when the
+# extended vectors are attached; otherwise stays NULL.  Old rows: NULL ⇒
+# /anti-pattern-score/history treats them as missing samples.
 _M70_MIGRATION_COLUMNS = [
-    ("extended_vectors_json",  "TEXT DEFAULT NULL"),
-    ("advanced_vector_json",   "TEXT DEFAULT NULL"),
-    ("diagnostic_vector_json", "TEXT DEFAULT NULL"),
+    ("extended_vectors_json",     "TEXT DEFAULT NULL"),
+    ("advanced_vector_json",      "TEXT DEFAULT NULL"),
+    ("diagnostic_vector_json",    "TEXT DEFAULT NULL"),
+    ("extended_vectors_v2_json",  "TEXT DEFAULT NULL"),   # LEAP 1
+    ("aps_score",                 "REAL DEFAULT NULL"),   # LEAP 2
+    # LEAP 4 — Predictor/Trend persisted at insert time.  Each snapshot
+    # carries the forecast the DegradationPredictor produced from history
+    # PRIOR to its own write — enabling later forecast-accuracy analysis
+    # (predicted_next at row[t] vs actual hamiltonian at row[t+1]).
+    ("predictor_hurst",           "REAL DEFAULT NULL"),
+    ("predictor_slope_pct",       "REAL DEFAULT NULL"),
+    ("predictor_forecast_next",   "REAL DEFAULT NULL"),
+    ("predictor_confidence",      "REAL DEFAULT NULL"),
 ]
 
 _DDL_ANOMALIES = """
@@ -309,10 +336,14 @@ class SnapshotStore:
         M7.0: serializes AdvancedVector + Halstead/StructuralVector JSON blobs
         into the three new extended-vector columns when present on the mv.
         """
-        # ── M7.0: serialize extended vectors ─────────────────────────────────
-        extended_json  = self._serialize_extended(mv)
-        advanced_json  = self._serialize_advanced(mv)
-        diagnostic_json = self._serialize_diagnostic(mv)
+        # ── M7.0 + LEAP 1 + LEAP 2 + LEAP 4: serialize extras + APS + forecast
+        extended_json     = self._serialize_extended(mv)
+        advanced_json     = self._serialize_advanced(mv)
+        diagnostic_json   = self._serialize_diagnostic(mv)
+        extended_v2_json  = self._serialize_extended_v2(mv)   # LEAP 1
+        aps_score         = self._compute_aps_score(mv)       # LEAP 2
+        forecast          = self._compute_forecast(mv)        # LEAP 4
+        (p_hurst, p_slope_pct, p_forecast_next, p_confidence) = forecast
 
         sql = """
         INSERT OR REPLACE INTO snapshots (
@@ -323,10 +354,14 @@ class SnapshotStore:
             language, lines_of_code, status,
             n_functions, n_classes, max_methods_per_class,
             cc_hotspot_ratio, max_function_cc,
-            extended_vectors_json, advanced_vector_json, diagnostic_vector_json
+            extended_vectors_json, advanced_vector_json, diagnostic_vector_json,
+            extended_vectors_v2_json, aps_score,
+            predictor_hurst, predictor_slope_pct,
+            predictor_forecast_next, predictor_confidence
         ) VALUES (
             ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-            ?, ?, ?
+            ?, ?, ?, ?, ?,
+            ?, ?, ?, ?
         )
         """
         values = (
@@ -353,6 +388,12 @@ class SnapshotStore:
             extended_json,
             advanced_json,
             diagnostic_json,
+            extended_v2_json,   # LEAP 1
+            aps_score,          # LEAP 2
+            p_hurst,            # LEAP 4
+            p_slope_pct,        # LEAP 4
+            p_forecast_next,    # LEAP 4
+            p_confidence,       # LEAP 4
         )
         with self._lock:
             self._get_conn().execute(sql, values)
@@ -419,6 +460,118 @@ class SnapshotStore:
         except Exception:
             return None
 
+    # ── LEAP 1 — Persistence Sprint ───────────────────────────────────────────
+    # The nine vectors below were attached to ``mv`` since M7.2-M7.7 but
+    # dropped on every scan because the SnapshotStore never knew about them.
+    # We pack them into one JSON object keyed by attribute name.  Missing
+    # vectors (e.g. non-Python language) are skipped — round-trip preserves
+    # exactly the keys that were present at insert time.
+    _EXTENDED_V2_ATTRS: tuple = (
+        "security",
+        "velocity",
+        "flow",
+        "reliability",
+        "maintainability",
+        "performance",
+        "architecture",
+        "test_quality",
+        "thread_safety",
+    )
+
+    # ── LEAP 2 — APS persisted at insert time ─────────────────────────────────
+    # We compute APS ONCE at insert so subsequent /aps/history queries do not
+    # depend on having every extended vector still attached (defense-in-depth
+    # against extended_vectors_v2_json being silently lost via migration).
+    @staticmethod
+    def _compute_aps_score(mv: Any) -> Optional[float]:
+        """
+        Compute the Anti-Pattern Score for *mv* (0–100, higher = better).
+
+        Returns ``None`` (column stays NULL) when no APS-contributing signal
+        is attached — which is identical to today's "old row" semantics.
+        Any failure in the APS engine is swallowed so persistence cannot
+        fail because of a metrics-module issue.
+        """
+        try:
+            from metrics.anti_pattern_score import aps_from_metric_vector
+        except Exception:
+            return None
+        try:
+            result = aps_from_metric_vector(mv)
+            raw = result.get("aps") if isinstance(result, dict) else None
+            if raw is None:
+                return None
+            return float(raw)
+        except Exception:
+            return None
+
+    # ── LEAP 4 — Predictor/Trend persisted at insert time ─────────────────────
+    # We run the DegradationPredictor on the history PRIOR to the row being
+    # written.  Each snapshot stores what the predictor knew at the time of
+    # its own write — enabling later forecast-accuracy analysis (predicted
+    # at row[t] vs actual hamiltonian at row[t+1]).
+    def _compute_forecast(self, mv: Any) -> Tuple[
+        Optional[float], Optional[float], Optional[float], Optional[float]
+    ]:
+        """
+        Run the DegradationPredictor on the history strictly PRIOR to ``mv``.
+
+        Returns
+        -------
+        (hurst, slope_pct, forecast_next, confidence) — all Optional[float].
+        Any failure (insufficient history, predictor import error, …) yields
+        ``(None, None, None, None)`` so the snapshot still writes.
+        """
+        try:
+            from sensor_core.predictor import DegradationPredictor
+        except Exception:
+            return (None, None, None, None)
+        try:
+            module_id = getattr(mv, "module_id", None)
+            if not module_id:
+                return (None, None, None, None)
+            # Look at the history WITHOUT the row we're about to write.
+            history = self.get_history(module_id, window=100)
+            if len(history) < 4:
+                return (None, None, None, None)
+            forecast = DegradationPredictor().predict(history, module_id=module_id)
+            return (
+                float(forecast.hurst_exponent),
+                float(forecast.slope_pct),
+                float(getattr(forecast, "predicted_h", 0.0) or 0.0),
+                float(forecast.confidence),
+            )
+        except Exception:
+            return (None, None, None, None)
+
+    @classmethod
+    def _serialize_extended_v2(cls, mv: Any) -> Optional[str]:
+        """
+        JSON-serialize the nine LEAP-1 extended vectors that are present on *mv*.
+
+        Returns
+        -------
+        Optional[str]
+            JSON object string keyed by attribute name, or ``None`` if no
+            LEAP-1 vector is attached (so the column stays NULL).
+        """
+        payload: Dict[str, Any] = {}
+        for attr in cls._EXTENDED_V2_ATTRS:
+            vec = getattr(mv, attr, None)
+            if vec is None:
+                continue
+            try:
+                payload[attr] = vec.to_dict()
+            except Exception:
+                # A single bad vector must NOT block persistence of the others.
+                continue
+        if not payload:
+            return None
+        try:
+            return json.dumps(payload, default=str)
+        except Exception:
+            return None
+
     # ─── Get history ─────────────────────────────────────────────────────────
 
     def get_history(
@@ -447,7 +600,10 @@ class SnapshotStore:
             language, lines_of_code, status,
             n_functions, n_classes, max_methods_per_class,
             cc_hotspot_ratio, max_function_cc,
-            extended_vectors_json, advanced_vector_json, diagnostic_vector_json
+            extended_vectors_json, advanced_vector_json, diagnostic_vector_json,
+            extended_vectors_v2_json, aps_score,
+            predictor_hurst, predictor_slope_pct,
+            predictor_forecast_next, predictor_confidence
         FROM snapshots
         WHERE module_id = ?
         ORDER BY timestamp DESC
@@ -459,6 +615,93 @@ class SnapshotStore:
         # Reverter para ordem ASC (mais antigo primeiro — correto para FrequencyEngine)
         rows = list(reversed(rows))
         return [self._row_to_mv(r) for r in rows]
+
+    # ── LEAP 2 — APS time-series helper ──────────────────────────────────────
+
+    def get_aps_history(
+        self,
+        module_id: str,
+        window: int = 100,
+    ) -> List[Tuple[str, float, Optional[float]]]:
+        """
+        Return ``(commit_hash, timestamp, aps_score)`` tuples for a module,
+        ordered chronologically ascending.  Rows predating LEAP 2 carry
+        ``aps_score = None`` — callers should filter those out before
+        running OLS / Hurst on the series.
+
+        Cheaper than ``get_history`` (skips all the JSON deserialization),
+        designed for the ``/anti-pattern-score/history`` and ``/trend``
+        endpoints that only need the score time-series.
+        """
+        sql = """
+        SELECT commit_hash, timestamp, aps_score
+        FROM snapshots
+        WHERE module_id = ?
+        ORDER BY timestamp DESC
+        LIMIT ?
+        """
+        with self._lock:
+            rows = self._get_conn().execute(sql, (module_id, window)).fetchall()
+        rows = list(reversed(rows))
+        return [
+            (str(r[0]), float(r[1]),
+             float(r[2]) if r[2] is not None else None)
+            for r in rows
+        ]
+
+    # ── LEAP 4 — Predictor time-series helper ────────────────────────────────
+
+    def get_predictor_history(
+        self,
+        module_id: str,
+        window: int = 100,
+    ) -> List[Dict[str, Any]]:
+        """
+        Return ``[{commit, timestamp, hamiltonian, hurst, slope_pct,
+                   forecast_next, confidence, forecast_error}]``
+        ordered chronologically ASC.  ``forecast_error`` is the gap between
+        the forecast THIS row made (``forecast_next``) and the actual
+        ``hamiltonian`` of the NEXT row — i.e. the predictor's accuracy on
+        each step.  The last row has ``forecast_error = None``.
+
+        Rows predating LEAP 4 carry predictor_* = None; their dict entries
+        are also None and ``forecast_error`` is None for the row before them
+        (because we cannot compare against a missing forecast).
+        """
+        sql = """
+        SELECT commit_hash, timestamp, hamiltonian,
+               predictor_hurst, predictor_slope_pct,
+               predictor_forecast_next, predictor_confidence
+        FROM snapshots
+        WHERE module_id = ?
+        ORDER BY timestamp DESC
+        LIMIT ?
+        """
+        with self._lock:
+            rows = self._get_conn().execute(sql, (module_id, window)).fetchall()
+        rows = list(reversed(rows))
+
+        out: List[Dict[str, Any]] = []
+        for r in rows:
+            commit, ts, ham, hurst, slope, fcst, conf = r
+            out.append({
+                "commit":        str(commit),
+                "timestamp":     float(ts),
+                "hamiltonian":   float(ham),
+                "hurst":         float(hurst) if hurst is not None else None,
+                "slope_pct":     float(slope) if slope is not None else None,
+                "forecast_next": float(fcst)  if fcst  is not None else None,
+                "confidence":    float(conf)  if conf  is not None else None,
+                "forecast_error": None,
+            })
+        # Backfill forecast_error: row[i].forecast_next vs row[i+1].hamiltonian
+        for i in range(len(out) - 1):
+            fcst = out[i]["forecast_next"]
+            if fcst is not None:
+                out[i]["forecast_error"] = round(
+                    out[i + 1]["hamiltonian"] - fcst, 6
+                )
+        return out
 
     # ─── Baseline ────────────────────────────────────────────────────────────
 
@@ -830,6 +1073,19 @@ class SnapshotStore:
         M7.0: also deserializes extended_vectors_json, advanced_vector_json,
         and diagnostic_vector_json back into their respective vector objects
         (HalsteadVector, StructuralVector, AdvancedVector, DiagnosticVector).
+
+        LEAP 1: also deserializes extended_vectors_v2_json into nine vectors
+        previously dropped on every scan — security, velocity, flow,
+        reliability, maintainability, performance, architecture,
+        test_quality, thread_safety.
+
+        LEAP 2: attaches the persisted aps_score to ``mv.aps_score`` (None
+        for legacy rows predating LEAP 2 — callers must treat None as
+        "missing sample", not as zero).
+
+        LEAP 4: attaches predictor_hurst, predictor_slope_pct,
+        predictor_forecast_next, predictor_confidence to ``mv.predictor_*``
+        — the predictor's view at the moment this snapshot was written.
         """
         (
             module_id, commit_hash, timestamp,
@@ -840,6 +1096,9 @@ class SnapshotStore:
             n_fn, n_cls, max_meth,
             cc_hr, max_fn_cc,
             extended_json, advanced_json, diagnostic_json,
+            extended_v2_json,                                       # LEAP 1
+            aps_score,                                              # LEAP 2
+            p_hurst, p_slope_pct, p_forecast_next, p_confidence,    # LEAP 4
         ) = row
 
         mv = MetricVector(
@@ -911,6 +1170,46 @@ class SnapshotStore:
             try:
                 from metrics.extended_vectors import DiagnosticVector
                 mv.diagnostic = DiagnosticVector.from_dict(json.loads(diagnostic_json))
+            except Exception:
+                pass
+
+        # ── LEAP 2 — attach persisted APS (None for legacy rows) ─────────────
+        mv.aps_score = float(aps_score) if aps_score is not None else None
+
+        # ── LEAP 4 — attach persisted predictor outputs ──────────────────────
+        mv.predictor_hurst         = float(p_hurst)         if p_hurst         is not None else None
+        mv.predictor_slope_pct     = float(p_slope_pct)     if p_slope_pct     is not None else None
+        mv.predictor_forecast_next = float(p_forecast_next) if p_forecast_next is not None else None
+        mv.predictor_confidence    = float(p_confidence)    if p_confidence    is not None else None
+
+        # ── LEAP 1 — restore the nine previously dropped vectors ─────────────
+        if extended_v2_json:
+            try:
+                from metrics.extended_vectors import (
+                    SecurityVector, VelocityVector, FlowVector,
+                    ReliabilityVector, MaintainabilityVector,
+                    PerformanceVector, ArchitectureVector,
+                    TestQualityVector, ThreadSafetyVector,
+                )
+                _CLASSES = {
+                    "security":        SecurityVector,
+                    "velocity":        VelocityVector,
+                    "flow":            FlowVector,
+                    "reliability":     ReliabilityVector,
+                    "maintainability": MaintainabilityVector,
+                    "performance":     PerformanceVector,
+                    "architecture":    ArchitectureVector,
+                    "test_quality":    TestQualityVector,
+                    "thread_safety":   ThreadSafetyVector,
+                }
+                payload = json.loads(extended_v2_json)
+                for attr, cls in _CLASSES.items():
+                    if attr in payload:
+                        try:
+                            setattr(mv, attr, cls.from_dict(payload[attr]))
+                        except Exception:
+                            # One bad vector must not poison the row.
+                            continue
             except Exception:
                 pass
 

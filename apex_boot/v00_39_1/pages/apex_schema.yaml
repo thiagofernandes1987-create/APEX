@@ -1,0 +1,293 @@
+apex_schema:
+  version: v00.19.0
+  description: Strict JSON output schema for APEX.
+  session_envelope:
+    type: object
+    required:
+    - apex_session
+    - pmi_charter
+    - top_recommendations
+    - composite_confidence_summary
+    - diff_proposals
+    - session_snapshot_id
+    properties:
+      apex_session:
+        type: object
+        required:
+        - id
+        - mode
+        - audience
+        - pre_mortem_result
+        - cognitive_mode
+        - agents_used
+        - token_usage
+        properties:
+          id:
+            type: string
+            pattern: APEX-SNAP-\d{4}-\d{2}-\d{2}-.+$
+          mode:
+            type: string
+            enum:
+            - FAST
+            - DEEP
+            - RESEARCH
+            - FOGGY
+            - CLARIFY
+            - SCIENTIFIC
+          audience:
+            type: string
+            enum:
+            - senior_engineer
+            - CTO_executive
+            - engineering_team
+            - investor_board
+            - product_manager
+          pre_mortem_result:
+            type: string
+            enum:
+            - CLEAR
+            - GOAL_MISFRAMING
+            - SCOPE_ERROR
+            - ASSUMPTION_DEPENDENCY
+          session_type:
+            type: string
+            enum:
+            - fresh
+            - incremental
+          cognitive_mode:
+            type: string
+          agents_used:
+            type: integer
+            minimum: 2
+            maximum: 15
+          token_usage:
+            type: integer
+          fractal_depth_achieved:
+            type: integer
+            minimum: 0
+            maximum: 4
+          skill_synthesis_triggered:
+            type: boolean
+          partition_breach_count:
+            type: integer
+            minimum: 0
+          lpm_primary_node:
+            type: object
+            properties:
+              anchor_id: string
+              centrality_score: number
+              out_degree: integer
+          chaos_spawn_result:
+            type: object
+            properties:
+              triggered: boolean
+              consensus_invalidated: boolean
+              rounds_executed: integer
+              final_confidence: number
+          convergence_velocity:
+            type: string
+            enum:
+            - HIGH
+            - MEDIUM
+            - LOW
+            - N_A
+          formalism_gate_summary:
+            type: object
+            properties:
+              activated: boolean
+              claims_flagged: integer
+              claims_corrected_in_sweep: integer
+          substitution_summary:
+            type: object
+            properties:
+              active: boolean
+              sub_domains_substituted: array
+              tokens_saved_estimate: integer
+          snapshot_compressed:
+            type: boolean
+          mode_conflict_applied:
+            type: string
+            nullable: true
+          mcfe_summary:
+            type: object
+            properties:
+              H_cognitive_initial:
+                type: string
+                pattern: ^[0-9.]+ \[APPROX_HEURISTIC\]$
+              H_cognitive_final:
+                type: string
+                pattern: ^[0-9.]+ \[APPROX_HEURISTIC\]$
+              gear_trajectory:
+                type: array
+              early_exit_triggered: boolean
+              early_exit_at_step: string
+              collapse_triggered: boolean
+              anchor_destroyer_triggered: boolean
+              tokens_saved_estimate: integer
+              gear_override_density_applied: boolean
+          scientific_summary:
+            type: object
+            properties:
+              symbolic_execution_used: boolean
+              closed_form_found: boolean
+              integrator_used: string
+              fractal_simulation_performed: boolean
+              extrapolation_quality: string
+              error_tracker_final: number
+              validation_layers:
+                type: object
+                properties:
+                  dsm: object
+                  ishikawa: object
+                  pareto: object
+                  fmea: object
+          skill_attraction_summary:
+            type: object
+            properties:
+              pipelines_proposed: integer
+              strategy_library_hits: integer
+      pmi_charter:
+        type: object
+        required:
+        - scope
+        - priority_areas
+        - agents_spawned
+        properties:
+          scope:
+            type: string
+            maxLength: 200
+          priority_areas:
+            type: array
+            minItems: 1
+            maxItems: 3
+          agents_spawned:
+            type: array
+            items:
+              type: string
+      top_recommendations:
+        type: array
+        minItems: 1
+        maxItems: 5
+        items:
+          type: object
+          required:
+          - rank
+          - finding
+          - confidence
+          - anchor
+          - action
+          properties:
+            rank:
+              type: integer
+              minimum: 1
+            finding:
+              type: string
+            confidence:
+              type: string
+              pattern: ^\d{2,3} \[APPROX\]$
+            confidence_band:
+              type: string
+              enum:
+              - HIGH
+              - MEDIUM
+              - LOW
+            anchor:
+              type: string
+              pattern: \[ANCHOR:.+\]
+            action:
+              type: string
+            effort:
+              type: string
+              enum:
+              - LOW
+              - MEDIUM
+              - HIGH
+              - CRITICAL
+            impact:
+              type: string
+              enum:
+              - LOW
+              - MEDIUM
+              - HIGH
+              - CRITICAL
+            low_composite_flag:
+              type: boolean
+            formalism_status:
+              type: string
+              enum:
+              - THEOREM_CITED
+              - DERIVED
+              - CONJECTURA_FORMAL
+              - NAO_APLICAVEL
+              default: NAO_APLICAVEL
+      composite_confidence_summary:
+        type: object
+        required:
+        - mean
+        - coherence
+        properties:
+          mean:
+            type: string
+            pattern: ^\d{2,3} \[APPROX\]$
+          low_composite_count:
+            type: integer
+            minimum: 0
+          coherence:
+            type: string
+            enum:
+            - all_constructive
+            - mixed
+            - majority_destructive
+          decoherence_warnings:
+            type: integer
+            minimum: 0
+          formalism_warnings_count:
+            type: integer
+            minimum: 0
+      diff_proposals:
+        type: array
+        items:
+          type: object
+          required:
+          - diff_id
+          - target_module
+          - urgency
+          - regression_risk
+          - status
+          properties:
+            diff_id:
+              type: string
+              pattern: DIFF-\d+|DIFF_[A-Z]+_\d+
+            target_module:
+              type: string
+            urgency:
+              type: string
+              enum:
+              - CRITICAL
+              - HIGH
+              - MEDIUM
+              - LOW
+            regression_risk:
+              type: string
+              enum:
+              - LOW
+              - MEDIUM
+              - HIGH
+            status:
+              type: string
+              enum:
+              - PROPOSED
+              - AUTHORIZED
+              - IMPLEMENTED
+              - ROLLBACK_REQUESTED
+            auto_apply_eligible:
+              type: boolean
+              const: false
+      session_snapshot_id:
+        type: string
+        pattern: APEX-SNAP-.+
+  session:
+    apex_version:
+      type: string
+      source: KERNEL.kernel.identity.version_tag
+      validation: Must match pattern v00.\d+.\d+

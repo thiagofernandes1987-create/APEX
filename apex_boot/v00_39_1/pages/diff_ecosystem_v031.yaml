@@ -1,0 +1,72 @@
+diff_ecosystem_v031:
+  base: v00.30.0 (57 DIFFs)
+  analysis_tool: Universal Code Optimizer v3.0 (UCO)
+  analysis_date: '2026-03-20'
+  registered_diffs:
+  - id: DIFF_HAS_MEDIUM_CLEANUP
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-62
+    gap: GAP-UCO-1
+    modules_modified:
+    - critic_gate.evaluate
+    fmea_rpn_before: 30
+    fmea_rpn_after: 0
+    uco_finding: 'python_unused_var_detector: has_medium computed never referenced'
+    description: 'has_medium = any(f["severity"] == "MEDIUM" for f in failures) removida. Variável computada
+      mas nunca usada no fluxo de decisão (branch else implicitamente cobre apenas MEDIUM quando has_high=False).
+      Diagnóstico UCO: GAP-12 (variável morta) confirmado.
+
+      '
+  - id: DIFF_MON2_QA_WIRE
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-63
+    gap: GAP-UCO-2
+    modules_modified:
+    - run_fmea_suite
+    fmea_rpn_before: 20
+    fmea_rpn_after: 0
+    uco_finding: 'python_unused_var_detector: mon2 created never queried'
+    description: 'mon2 = MCFEReliabilityMonitor(...) criado mas sem assertion de verificação. Adicionado:
+      t("FIX-QA-A: mon2 blocks_executed via bus2") verificando mon2._blocks_executed == 1 após bus2.emit().
+      Garante que MCFEReliabilityMonitor subscreve corretamente via EventBus e processa o bloco emitido.
+
+      '
+  - id: DIFF_EPS_PROXY_EXTRACT
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-64
+    gap: GAP-UCO-3
+    modules_modified:
+    - fractal_decomposer.decompose_adaptive_reliability
+    fmea_rpn_before: 12
+    fmea_rpn_after: 0
+    uco_finding: 'padrões no-op detectados: eps_current=min(eps_current*1.05,...) triplicado'
+    description: 'Expressão min(eps_current*1.05, thr.eps_block_stop*0.9) estava em 3 branches independentes
+      (if/except/else). Extraída para _eps_proxy calculado uma vez antes do if. Comportamento idêntico,
+      sem duplicação. Adicionalmente: except Exception silencioso → except Exception as _e: print(...)
+      (também OPP-55 pattern aplicado a este ponto residual).
+
+      '
+  total_new_diffs: 3
+  total_accumulated_diffs: 60
+  uco_analysis:
+    tool: UCO v3.0
+    hamiltonian_v030: 5721.1166
+    hamiltonian_v031: 5731.9162
+    delta_h: 10.7996
+    delta_note: 'Incremento de +10.8 é esperado: 3 patches adicionaram ~18 linhas de comentários/documentação.
+      Métricas funcionais (CC, loop_risk, DSM) inalteradas. Zero regressão de qualidade.
+
+      '
+    artifacts_confirmed_not_bugs:
+    - 5807 dead code lines = docstrings multilinha (artefato DSL)
+    - 3 duplicate blocks = } de dicts aninhados (ambos necessários)
+    - 'while True: único com exit confirmado (L3510)'
+    - Hamiltonian 5731 = volume de módulo 7034 linhas
+  bugs_fixed_this_version: []
+  gaps_fixed_this_version:
+  - GAP-UCO-1
+  - GAP-UCO-2
+  - GAP-UCO-3

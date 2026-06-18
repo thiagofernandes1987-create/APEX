@@ -1,0 +1,78 @@
+mental_interpreter_v2:
+  version: v00.20.2
+  tier: 1
+  replaces: mental_interpreter_v00.20.0
+  description: 'Orquestrador principal warmup→produção. Interpreta e executa PoT programs via subprocess
+    externo (SR_09). Implementa separação estrutural WARMUP/PLANNING/PRODUCTION que resolve o gap n=29→46
+    do v3.
+
+    '
+  components:
+    MentalInterpreter:
+      role: Orquestrador das 3 fases de execução
+      phases:
+        WARMUP:
+          description: N_WARM_BLOCKS(2) × 30 iters — observa geometria do campo
+          output: warmup_traj (60 pts) + warm_state
+          method: _run_simple()
+        PLANNING:
+          description: FIX-7 — decompose_adaptive() calcula tamanhos ANTES de executar
+          input: warmup_traj
+          output: prod_blocks (pipeline fixo, sem ESCALATE estrutural)
+        PRODUCTION:
+          description: Pipeline fixo via subprocess — sem gaps por design
+          fallback: MCFEAdapter se ESCALATE inesperado (sistema não-linear surpresa)
+          method: _run_production()
+      sr_compliance:
+      - SR_01
+      - SR_08
+      - SR_09
+    TrajectoryVerifier:
+      role: Validação de continuidade da trajetória (FIX-4)
+      checks:
+      - GAP
+      - DUPLICATE
+      - RETROGRADE
+      - x_negativo
+      - y_negativo
+      output: '{ok, n_points, n_range, issues}'
+    MCFEAdapter:
+      role: Fallback ESCALATE — retry por bloco (PATCH-B)
+      patch_B: '_last_block rastreia bloco corrente (atributo de instância, não de classe). Retries resetados
+        automaticamente ao mudar de bloco. Evita esgotamento prematuro em múltiplos blocos distintos.
+
+        '
+      constants:
+        MAX_RETRIES: 4
+        MIN_PROGRESS: 0.15
+  config:
+    working_memory:
+      stack_depth_max: 5
+      variables_per_frame: 20
+      frame_isolation: true
+    execution:
+      mode: subprocess_external
+      sr01_limit: 5
+      n_warm_blocks: 2
+      trace_verbosity: FULL
+    output_format:
+      trace: lista de {step_id, type, input, output, confidence, error_bound}
+      traj_verification: '{ok, n_points, n_range, issues}'
+      final_result: valor ou objeto resultado
+      confidence: float [APPROX]
+      guard_violations: list
+  qa_evidence:
+    T01_SR09: N=3 → INLINE_VALID | N=10 → subprocess ✓
+    T04_warmup: RK4 N=200 → 200/200 pts sem gaps | V_drift=0.000002% ✓
+    T06_PATCHB: 13 ESCALATEs em blocos distintos → retry=1/4 sempre ✓
+    T08_verifier: gap detectado | trajetória contínua ok ✓
+  outputs:
+  - execution_trace
+  - traj_verification
+  - hypothesis_filter_outputs
+  dependencies:
+  - MODULE_pot_engine_v2
+  - MODULE_error_tracker
+  - MODULE_advanced
+  - MODULE_geometry_estimator
+  inject_when: pot_engine_v2.execution_requested OR cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]

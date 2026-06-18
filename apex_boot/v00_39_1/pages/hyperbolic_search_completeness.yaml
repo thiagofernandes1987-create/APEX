@@ -1,0 +1,133 @@
+hyperbolic_search_completeness:
+  executor: LLM_BEHAVIOR
+  version: v00.37.0
+  opp: OPP-138
+  tier: 0
+  status: ADOPTED
+  purpose: 'Consolidar as implementações existentes de busca semântica por atração hiperbólica (attention_anchors_module
+    + anchor_expansion_v2 + forgeskills_catalog_boot) em regras LLM_BEHAVIOR explícitas e verificáveis.
+    Documentar o vocabulário canônico de busca para que o LLM resolva skills/agentes corretamente por
+    qualquer ponto de entrada semântico.
+
+    '
+  why: 'WHY: O debug 2026-04-11 revelou cobertura hiperbólica de 38% (7/18 termos). Os módulos attention_anchors_module
+    e anchor_expansion_v2 EXISTEM mas não há regra LLM_BEHAVIOR explícita que una os conceitos de gravidade
+    semântica, attraction_radius, similarity_weights e search_gravity em procedimento único. Sem a regra
+    unificada, o LLM pode não saber QUANDO e COMO ativar a busca hiperbólica vs busca direta por nome.
+
+    '
+  what_if_fails: 'FALLBACK: Se attraction_engine não disponível, usar busca direta por anchor (attention_anchors_module.find_by_anchor).
+    Se anchor também não resolver, usar skill_resolution_priority (OPP-137): online → cache → prompt →
+    synthesize. NUNCA: falhar por falta de mecanismo de busca. Sempre há um fallback.
+
+    '
+  inject_when: STEP_0 após forgeskills_true_autoboot E skill_resolution_priority
+  depends_on:
+  - attention_anchors_module
+  - anchor_expansion_v2
+  - forgeskills_catalog_boot
+  - skill_resolution_priority
+  hyperbolic_vocabulary:
+    hyperbolic_search_gravity: 'A força de atração semântica entre a query do usuário e os anchors registrados.
+      Calculada como: gravity = cosine_similarity(query_embedding, anchor_embedding) * weight
+
+      '
+    semantic_gravity: 'Versão normalizada de hyperbolic_search_gravity para comparação cross-domain.
+
+      '
+    attraction_radius: 'Distância máxima semântica aceita para considerar um anchor como match. Default:
+      0.65 (cosine). Abaixo: usar skill_resolution_chain priority_4_synthesize.
+
+      '
+    gravity_field: 'Conjunto de anchors ativos numa query — os que estão dentro do attraction_radius.
+
+      '
+    similarity_weights: 'Pesos por tipo de anchor: {skill_anchor: 1.0, domain_anchor: 0.8, cross_domain_bridge:
+      0.7, mcp_anchor: 0.6, community_anchor: 0.5}
+
+      '
+    gravity_score: 'Score final de relevância: gravity_score = sum(gravity_i * weight_i) / len(gravity_field)
+
+      '
+    semantic_anchor: 'Anchor que representa um conceito semântico amplo (≥ 3 skills mapeadas).
+
+      '
+    hyperbolic_attraction: 'Processo completo: query → embedding → gravity_field → gravity_score → skill_match
+
+      '
+    search_gravity: 'Sinônimo operacional de hyperbolic_search_gravity para uso em logs. Marker: [SEARCH_GRAVITY:
+      anchor={a} score={s}]
+
+      '
+    embedding_gravity: 'Componente de hiperbólica que usa distâncias hiperbólicas (não euclidianas). Aplicado
+      quando cosine_similarity > 0.9 para clusters muito próximos.
+
+      '
+    neighbor_radius: 'Raio de vizinhança para skills relacionadas: skills com gravity_score > (max_score
+      * 0.8) são co-carregadas como contexto complementar.
+
+      '
+  llm_behavior: "REGRA DE BUSCA HIPERBÓLICA (executar em toda consulta de skill/domínio):\n\n1. EXTRAÇÃO\
+    \ DE ANCHORS:\n   Identificar todas as palavras-chave semânticas na query do usuário.\n   Mapear via\
+    \ attention_anchors_module.weights e anchor_expansion_v2.new_anchors.\n   Calcular gravity para cada\
+    \ anchor encontrado.\n\n2. GRAVITY FIELD:\n   Construir lista de skills/domínios com gravity_score\
+    \ >= attraction_radius (0.65).\n   Se gravity_field vazio → reduzir attraction_radius para 0.45 (modo\
+    \ relaxado).\n   Se ainda vazio → ativar skill_resolution_chain (OPP-137).\n\n3. SELECTION:\n   Selecionar\
+    \ skill com max(gravity_score).\n   Co-carregar skills vizinhas (neighbor_radius) como contexto.\n\
+    \   Emitir: [SEARCH_GRAVITY: anchor={a} score={s:.2f} match={skill_id}]\n\n4. FALLBACK CHAIN:\n  \
+    \ gravity_score < 0.45 → buscar por nome direto em APEX_SKILL_REGISTRY\n   nome não encontrado → skill_resolution_chain\
+    \ (OPP-137)\n   offline → priority_4_synthesize\n\nREGRA ABSOLUTA: O APEX nunca retorna \"não encontrei\
+    \ skill\" sem antes\ntentar toda a cadeia de busca hiperbólica + resolution chain.\n"
+  ghost_dep_registry:
+    note: 'Os seguintes depends_on são VÁLIDOS mas referenciam sub-keys dentro de módulos (não top-level
+      keys) ou bibliotecas externas Python. Não são bugs — são referências intencionais a componentes
+      internos ou dependências de runtime.
+
+      '
+    internal_sub_keys:
+      event_bus: sub-key de modules.cognitive_mode_router (não top-level)
+      config: sub-key de modules (não top-level)
+      reliability_config: sub-key de implementation_module (não top-level)
+      bucket_stats: sub-key de implementation_module (não top-level)
+      reliability_estimator: sub-key de implementation_module (não top-level)
+      mcfe_state_reliability: sub-key de implementation_module (não top-level)
+      agents: referência a modules.agents (não top-level key)
+      mcfe: sub-sistema dentro de implementation_module
+      knowledge: sub-sistema do APEX (não módulo YAML)
+      skill_matcher: função interna do dynamic_skill_forge
+      mental_interpreter_v3: versão descontinuada — v2 e v4 existem
+      mental_interpreter_v4: versão experimental não publicada
+      algorithm_kernel: sub-key de kernel
+      engines_cognitive: sub-key de implementation_module
+      advanced: referência genérica — context-specific
+      snapshot_store: alias para sqlite_snapshot_store
+      output: referência ao output do pipeline (não módulo)
+      meta_reasoning: capacidade nativa do LLM — não módulo YAML
+      apex_superrepo_boot: alias para apex_superrepo_v2
+      mcp_bridge_v2: integração futura — não implementada nesta versão
+      forgeskills_rapid_reader: sub-função de forgeskills_true_autoboot
+      hyperbolic_anchor_map: sub-key de anchor_expansion_v2
+      attraction_engine: sub-key de anchor_expansion_v2
+      dynamic_agent_roster: sub-key de community_agent_roster
+      pmi_pm: sub-key de modules.agents
+      architect: sub-key de modules.agents
+      diff_ast_guard: sub-key de uco_quality_gate
+      hypothesis_tracker: sub-key de hypothesis_dag
+      subprocess_engine: alias para multi_sandbox_profiles
+      bayesian_curator: agente em agents/bayesian_curator/
+      apex_superrepo_dot_raw_base: campo dentro de apex_superrepo_v2
+    external_python_libs:
+      sympy_library: sympy — biblioteca Python (pip install sympy)
+      sklearn_library: scikit-learn — biblioteca Python (pip install scikit-learn)
+      numpy_library: numpy — biblioteca Python (pip install numpy)
+      scipy_stats: scipy.stats — biblioteca Python (pip install scipy)
+  fmea:
+    rpn: 6
+    mode: LLM não ativa busca hiperbólica e vai direto para synthesize
+    probability: 3
+    severity: 2
+    detection: 1
+    mitigation: 'hyperbolic_search_completeness.llm_behavior define regra explícita. marker [SEARCH_GRAVITY:
+      ...] detectável pelo output_integrity_checker (OPP-134).
+
+      '

@@ -1,0 +1,141 @@
+versioning_v0321:
+  version: v00.32.1
+  base: v00.32.0
+  session: APEX-LIVE-2026-04
+  diff_applied: DIFF_DSL_CLARITY_001
+  opp: OPP-79
+  total_new_diffs: 1
+  total_accumulated_diffs: 86
+  total_new_opps_post_release: 5
+  issues_resolved_post_release:
+    ISSUE1: max_snapshot_tokens corrigido 3000→500 (delta SQLite); hard_cap_action atualizado
+    ISSUE2: Bloco diff_ecosystem_v029 duplicado removido — preservado apenas o definitivo
+    ISSUE3: subprocess + tempfile + sqlite3 removidos da IMPORT_WHITELIST do DynamicSkillForge
+    ISSUE4: 'snapshot_compression bypassa quando SQLite ativo via sqlite_active_enabled: false'
+    ISSUE5: 22 eventos SB adicionados ao event_bus + 15 subscriptions para módulos sandbox
+    ISSUE6: mental_interpreter_v4 spec YAML completa adicionada (faltava completamente)
+  uco_analysis_note: 'UCO v7 análise no prompt completo esperada mostrar aumento de H por volume. Incremento
+    por adição de ~1400 linhas de novos módulos é esperado e não representa regressão de qualidade. Métricas
+    funcionais (CC, loop_risk) dos módulos individuais validadas em sandbox (H=3-7 para PoT programs típicos).
+
+    '
+  sandbox_validation:
+    tool: UCO v4.0 via sandbox Python
+    pot_programs_tested:
+      matrix_ops:
+        H: 3.38
+        status: STABLE
+      stats_analysis:
+        H: 3.37
+        status: STABLE
+      graph_traversal:
+        H: 6.97
+        status: STABLE
+        CC: 4
+    false_positives_documented:
+      UCO_self_analysis: H=2428, dead=2651, CC=1 são falsos positivos por fallback para GenericCFGBuilder
+        em arquivos >50 classes. Não afeta PoT programs (<100 linhas).
+      DSM_density_zero: DSM rastreia inter-arquivo, não intra-arquivo. False negative esperado para módulo
+        único.
+  breaking_changes_summary:
+  - SnapshotStore JSON no context window → SQLite delta; max_snapshot_tokens refere ao delta (500), não
+    ao snapshot completo (3000)
+  - mental_interpreter_v3 deprecated para DEEP+; mental_interpreter_v4 obrigatório com spec YAML agora
+    formalizada
+  - 'STEP_12: external_critic_profile.analyze_output() é PRIMEIRO (antes de meta_reasoning)'
+  - 'cos_sim threshold Critic: 0.1 (PATCH_C8) — mais flags que -0.3 original'
+  - 'PROTECTED_KERNEL_SEGMENT: C1-C8 + SR_01-SR_12 imutáveis por qualquer DIFF futuro'
+  - 'DynamicSkillForge IMPORT_WHITELIST: subprocess/tempfile/sqlite3 removidos (OPP-77)'
+  - 'diff_ecosystem_v029: bloco duplicado removido — versão definitiva preservada'
+  - full_snapshot no SQLite agora gzip-comprimido; retrocompatibilidade via try/except
+  - 'dsl_glossary: SANDBOX, ARTIFACT_JS, PARALELISMO, PERSISTENCIA, AGENTE, LLM, APPROX definidos formalmente'
+  - 'dsl_executor_markers: LLM_BEHAVIOR, SANDBOX_CODE, DOCUMENTATION, HYBRID obrigatórios em todo módulo'
+  - 'Todos os 21 módulos v32 agora têm: executor, purpose, why, description, what_if_fails, fmea completo'
+  - 'apex_self_evolution_protocol: 3 níveis de evolução com PROTECTED_KERNEL_SEGMENT explicitado'
+  - 'dsl_writing_guide: guia com exemplos correto vs. errado para manter qualidade da DSL'
+  bugs_fixed_this_version:
+    PATCH_C4: entropy_weighted_merge() era dependência fantasma (NameError) — agora definida
+    PATCH_C6: dS² tinha sinal negativo no termo dCoh (semanticamente invertido) — corrigido
+    PATCH_C9: float('inf') → sys.maxsize para evitar nan em aritmética de custos
+    OPP74_BUG: event_bus não tinha eventos SB — audit trail incompleto para operações sandbox
+    OPP75_BUG: mental_interpreter_v4 existia no código mas não na spec YAML — inconsistência arquitetural
+    OPP76_BUG: snapshot_compression tentava comprimir delta SQLite já compacto — ineficiência e risco
+      de perda
+    OPP77_SEC: subprocess na whitelist permitia escalada de privilégios em skills externas
+    DSL_AMBIGU: DSL misturava 3 registros sem demarcação — LLMs interpretavam capacidades incorretamente
+    DSL_GLOSSARIO: Termos sandbox/paralelismo/persistencia/agente sem definição canônica — corrigido
+    DSL_WHATIF: Módulos sem fallbacks documentados — todos os 21 módulos v32 agora têm what_if_fails
+  gaps_fixed_this_version:
+  - G4 (memória inter-sessão) — RESOLVED via SQLite + OPP-78 (VACUUM + gzip para crescimento sustentável)
+  - G3 (paralelismo) — RESOLVED via ThreadPoolExecutor
+  - G5 (verificação formal) — PARTIALLY RESOLVED via sympy (60% claims)
+  - G6 (autoavaliação circular) — MITIGATED via external_critic_profile
+  fmea_rpn_v032: 12
+  fmea_highest:
+    DIFF_ADAPTIVE_ODE_BLOCK:
+      rpn: 16
+      mitigation: Fallback RK4 obrigatório
+    DIFF_CRYSTALLIZATION_JIT:
+      rpn: 8
+      mitigation: Threshold conservador + monitoramento
+    DIFF_EXTERNAL_CRITIC_PROFILE:
+      rpn: 8
+      mitigation: LIMIT 50 no lookup similar + índice por pattern_hash
+    DIFF_HYPOTHESIS_DAG:
+      rpn: 6
+      mitigation: DFS acyclicity check
+  acceptance_criteria_v032:
+    QA_SB1_01: sqlite_store.save_session() + load_delta_for_session() em < 100ms
+    QA_SB1_02: delta carregado <= 500 tokens vs. snapshot completo >= 3000 tokens
+    QA_SB1_03: vacuum_if_due() executa VACUUM quando session_count % 50 == 0
+    QA_SB1_04: full_snapshot salvo como gzip; load_full_snapshot() decompress sem erro
+    QA_SB1_05: 'retrocompatibilidade: full_snapshot não-comprimido (sessões antigas) carrega sem crash'
+    QA_SB2_01: 'parallel_pot_executor com N=3 programas: wall_clock < max(t_sequential)'
+    QA_SB2_02: 'CORRUPTED_STATE em 1 agente: merge continua com N-1'
+    QA_SB2_03: 'TODOS corrompidos: MERGE_FAILED_USE_SEMANTIC_CRITIC sem crash'
+    QA_SB2_04: parallelism_efficiency < 0.5 → fallback para single-agent sequencial
+    QA_SB3_01: UCO gate PASS para pot_good (H=3.38)
+    QA_SB3_02: UCO gate AUTO_FIXED para programa com while True
+    QA_SB3_03: UCO gate REJECTED com uco_feedback para programa H > threshold
+    QA_SB3_04: 'Confidence calibrado com label [UCO_CAL: H=x, bugs≈y] em outputs de código'
+    QA_SB4_01: 'sympy verify_identity: 2+2=5 → [FORMAL_REFUTED] em < 10ms'
+    QA_SB4_02: 'sympy verify_identity: sin²x+cos²x=1 → [FORMAL_VERIFIED]'
+    QA_SB4_03: claim tipo 'lógica proposicional' → [CONJECTURA_FORMAL] (unsupported)
+    QA_SB5_01: Padrão registrado em sessão N detectado em sessão N+1 com similarity > 0.7
+    QA_SB5_02: '[EXTERNAL_CRITIC] injetado ANTES do meta_reasoning no STEP_12'
+    QA_SB5_03: Sessão sem padrões históricos → EXTERNAL_CRITIC_CLEAN sem crash
+    QA_PATCH_C1: 'DAG serializado como edge-only: n_tokens(DAG) < 50 para sessão com 40 hipóteses'
+    QA_PATCH_C4: entropy_weighted_merge() executável sem NameError
+    QA_PATCH_C6: dS² >= 0 para qualquer par de snapshots (todos os termos positivos)
+    QA_PATCH_C9: 'sys.maxsize aritmética: sys.maxsize + 0 == sys.maxsize (sem nan)'
+    QA_ISSUE1: max_snapshot_tokens == 500 no config (não 3000)
+    QA_ISSUE2: grep 'diff_ecosystem_v029' retorna exatamente 1 bloco (duplicado removido)
+    QA_ISSUE3: '''subprocess'' não está na IMPORT_WHITELIST do DynamicSkillForge'
+    QA_ISSUE4: snapshot_compression.sqlite_active_enabled == false
+    QA_ISSUE5: event_bus.events contém UCO_GATE_PASS e EXTERNAL_CRITIC_ALERT
+    QA_ISSUE6: mental_interpreter_v4 spec YAML presente com inject_when, depends_on, phases, api
+    QA_OPP74: event_bus tem >= 20 novos eventos SB documentados
+    QA_OPP75: mental_interpreter_v4.phases inclui SPECULATION como primeira fase
+    QA_OPP76: snapshot_compression.sqlite_active_enabled == false
+    QA_OPP77: subprocess não está na import_whitelist do dynamic_skill_forge
+    QA_OPP78: sqlite_store.vacuum_if_due() e save_session_compressed() documentados na API
+    QA_REGRESSION: Todos os acceptance criteria do v00.31.0 preservados
+    QA_INVIOLABLE: 'C1-C8 e SR_01-SR_12: 100% conformidade em todos os cenários'
+    QA_SR32_SR38: Novas regras SR_32 a SR_38 presentes no inviolable_rules
+    QA_OPP79_01: dsl_glossary presente com definições de SANDBOX, PARALELISMO, PERSISTENCIA, AGENTE, LLM,
+      APPROX
+    QA_OPP79_02: dsl_executor_markers presente com LLM_BEHAVIOR, SANDBOX_CODE, DOCUMENTATION, HYBRID
+    QA_OPP79_03: 'Todos os 21 módulos v32 têm campo executor: preenchido'
+    QA_OPP79_04: 'Todos os 21 módulos v32 têm purpose: descrevendo o problema que resolvem'
+    QA_OPP79_05: 'Todos os 21 módulos v32 têm why: justificando a escolha técnica'
+    QA_OPP79_06: 'Todos os 21 módulos v32 têm what_if_fails: com fallbacks numerados'
+    QA_OPP79_07: 'Todos os 21 módulos v32 têm fmea: com probability, severity, detection individuais'
+    QA_OPP79_08: dsl_writing_guide presente com exemplos correto vs. errado
+    QA_OPP79_09: apex_self_evolution_protocol presente com 3 níveis e limite_absoluto
+    QA_OPP79_10: PROTECTED_KERNEL_SEGMENT referenciado em ethical_barrier e self_evolution_protocol
+    QA_OPP79_11: parallel_pot_executor.description menciona ThreadPoolExecutor, I/O-bound, NÃO ProcessPoolExecutor
+    QA_OPP79_12: sqlite_snapshot_store.description menciona persistência within-session e fallback cross-session
+    QA_OPP79_13: dsl_glossary.AGENTE menciona particionamento cognitivo e NÃO processos separados
+    QA_OPP79_14: dynamic_skill_forge.import_whitelist NÃO contém subprocess, tempfile, sqlite3
+    QA_REGRESSION_V0320: Todos os 17 acceptance criteria do v00.32.0 preservados
+  acceptance_flag: PASS

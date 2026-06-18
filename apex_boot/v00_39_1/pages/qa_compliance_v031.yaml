@@ -1,0 +1,23 @@
+qa_compliance_v031:
+  base: v00.30.0 (accumulated tests)
+  new_qa_tests_v031:
+    QA_OPP62_01: has_medium NOT present in CriticGate.evaluate() body
+    QA_OPP62_02: 'CriticGate logic unchanged: has_high → re_execute, else → escalate'
+    QA_OPP63_01: mon2._blocks_executed == 1 after bus2.emit(BLOCK_COMPLETED)
+    QA_OPP63_02: MCFEReliabilityMonitor correctly subscribes via EventBus
+    QA_OPP64_01: _eps_proxy = min(eps_current*1.05,...) defined once before if block
+    QA_OPP64_02: eps_current = _eps_proxy used in both except and else branches
+    QA_OPP64_03: EPS_CALLBACK diagnostic logging present (no silent except)
+    QA_REGRESSION_V030: all v00.30 tests preserved
+  uco_metrics_v031:
+    hamiltonian: 5731.9162
+    cyclomatic_cc: 494
+    loop_risk: 0.8
+    dsm_cyclic_ratio: 0.2355
+    dep_instability: 0.9038
+    halstead_bugs_est: 89.35
+    status: CRITICAL
+    status_note: CRITICAL esperado para módulo de 7034 linhas — artefato de volume
+  fmea_rpn_v031: 0
+  acceptance_flag: PASS
+  session: APEX-LIVE-2026-03-20

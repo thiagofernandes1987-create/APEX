@@ -1,0 +1,65 @@
+verification_gate:
+  executor: HYBRID
+  version: v00.32.1
+  opp: OPP-MAS-07
+  tier: 2
+  status: ADOPTED
+  purpose: 'Viabilizar inversão da proporção geração/verificação (P≠NP insight) sem explodir o budget
+    de tokens. O MCFE atua como roteador: apenas hipóteses arriscadas passam pela verificação cara.
+
+    '
+  why: 'Verificar todas as hipóteses em SCIENTIFIC com confidence < 80 pode consumir 25-33% do budget
+    de 12.000 tokens. PATCH_C7: budget_gate=0.25 limita a 25%, priorizando hipóteses com maior ΔH. Poda
+    prematura: falha no Teste 1 → não executar Testes 2 e 3 — economia imediata.
+
+    '
+  description: 'PARTE LLM: decidir quais hipóteses passam pelo gate com base nos thresholds. PARTE SANDBOX:
+    executar verificação via PoT subprocess para hipóteses selecionadas. O QUE É: Filtro antes da interferência
+    — hipóteses arriscadas verificadas antes. O QUE NÃO É: Verificação de todas as hipóteses — seria muito
+    caro.
+
+    '
+  what_if_fails: 'FALLBACK 1 — Sandbox indisponível: pular verificação. Declarar [VERIFICATION_GATE_SKIPPED].
+    FALLBACK 2 — Budget esgotado: parar. Declarar [VERIFICATION_BUDGET_EXHAUSTED]. REGRA: O gate NUNCA
+    bloqueia todas as hipóteses. Em falha, continuar sem filtro.
+
+    '
+  inject_when: STEP_3 (antes da interferência)
+  depends_on:
+  - mcfe
+  - pot_engine_v2
+  routing_rules:
+    EXPRESS:
+      enabled: false
+    FAST:
+      enabled: false
+    CLARIFY:
+      enabled: false
+    DEEP:
+      enabled: true
+      trigger: ΔH > 0.15 AND confidence < 65
+      max_verify: 3
+    RESEARCH:
+      enabled: true
+      trigger: ΔH > 0.10 OR confidence < 70
+      max_verify: 5
+    SCIENTIFIC:
+      enabled: true
+      trigger: all hypotheses with confidence < 80
+      max_verify: unlimited
+      budget_gate: 0.25
+      budget_gate_rationale: 25% de 12.000 tokens = 3.000 tokens máx para verificação
+    FOGGY:
+      enabled: true
+      trigger: ΔH > 0.20
+      max_verify: 2
+  api:
+  - route(hypotheses, cognitive_mode, token_budget) → dict{verify_list, skip_list}
+  - verify_hypothesis(hypothesis, anchors) → dict{passed, score, rejected_at_test}
+  fmea:
+    rpn: 4
+    mode: Explosão de tokens em SCIENTIFIC com muitas hipóteses
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: budget_gate=0.25; poda prematura em Teste 1

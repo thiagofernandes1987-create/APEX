@@ -5,6 +5,1171 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.6] — 2026-06-17 — Sprint B: Repo Meta-Score + APS outliers
+
+### Adicionado
+
+Agrega todos os módulos em **um único número de saúde do repositório por commit**,
+com detecção de outliers via Z-score sobre a distribuição de APS. Habilita um
+**Quality Gate de PR operável** (delta do meta-score) e dashboards de repo.
+
+#### Novo módulo — `governance/repo_meta_score.py`
+
+`RepoMetaScore` dataclass com 11 campos:
+`score, rating, n_modules, n_modules_valid, raw_score, weighted_aps,
+mean_aps, median_aps, penalty_red, n_red, n_amber`
+
+`APSOutlier` dataclass: `module_id, aps, z_score, threshold, deviation`
+
+**Fórmula do meta-score:**
+```
+raw_score   = LOC-weighted mean of latest APS per module
+penalty_red = 5 × count(Sprint-A RED modules)
+score       = max(0, min(100, raw_score − penalty_red))
+rating      = A ≥ 90, B 80-89, C 60-79, D 40-59, E < 40
+```
+
+**Decisões arquiteturais:**
+- LOC weighting: módulos grandes têm peso proporcional ao tamanho (módulos
+  com LOC=0 caem em weight=1 para não sumirem). Reflete a realidade: um
+  bug crítico em código de 10K linhas pesa mais que em utilitário de 50.
+- RED penalty: integra Sprint A diretamente no número. Qualquer módulo RED
+  derruba o repo em 5 pontos, mesmo que sua APS isolada não mexa a média.
+  AMBER não pune (é monitorado, não bloqueado) — política conservadora.
+- Outliers: SÓ direção bad-news (z ≤ −k). Módulos acima da média não são
+  flagged. Z-score requer ≥3 módulos e σ > 0.
+- History: replay LOC-weighted APS sobre união dos timestamps; downsample
+  com `step`. RED penalty **não** aplicado historicamente (replay de
+  Sprint-A tiers seria O(N² × W) — custo desproporcional).
+
+**API pública:**
+- `compute_repo_meta_score(store, window=100) -> RepoMetaScore`
+- `compute_aps_outliers(store, window=100, k=2.0) -> List[APSOutlier]`
+  (sorted worst-first by z_score; empty on k ≤ 0, < 3 modules, ou σ = 0)
+- `repo_meta_score_history(store, window=50, step=1) -> List[Dict]`
+
+#### Endpoints REST — `api/server.py`
+
+| Endpoint | Descrição |
+|---|---|
+| `GET /repo/health-score?window=` | Número único + breakdown completo |
+| `GET /repo/aps-outliers?k=2.0&window=` | Módulos ≥ k σ abaixo da média APS do repo |
+| `GET /repo/health-history?window=&step=` | Time-series do meta-score (LOC-weighted) |
+
+`SensorConfig.version` → `"3.2.6"`.
+
+#### Smoke test ao vivo (6 módulos, repo realista)
+
+```
+/repo/health-score:
+  score             : 65.92      ← LOC-weighted mean − 0 penalty
+  rating            : C
+  weighted_aps      : 65.92      ← billing.api (2500 LOC) puxa down
+  mean_aps          : 72.18      ← unweighted
+  median_aps        : 58.84      ← reveals skewed distribution
+  n_red             : 0
+  n_amber           : 6          ← todos os 6 são candidatos a atenção
+```
+
+Diagnóstico que se revelou imediatamente: `mean > weighted > median`
+significa que **módulos GRANDES pioram o repo mais que os pequenos** — uma
+inferência só possível pelo Sprint B.
+
+#### Testes — `tests/test_marco_m33.py` (30 testes TS01-TS30)
+
+- TS01-TS06: rating ladder + dataclass invariantes + empty repo
+- TS07-TS14: meta-score logic (queda com taint, LOC pulling, latest APS,
+  n_modules, bounds [0,100], RED penalty math, NULL skip, median LOC-agnóstico)
+- TS15-TS20: outliers (< 3 → [], σ = 0 → [], módulo ruim flagged,
+  k ≤ 0 → [], sorted worst-first, only below-mean)
+- TS21-TS25: history (empty → [], ASC order, shape, step downsample,
+  multi-module aggregation)
+- TS26-TS30: REST endpoints (shape de todos os 3, k customizado, step)
+
+**Resultado: 1130/1130 marco-tests PASS — suíte 100% verde.**
+
+#### O que Sprint B destrava
+
+| Uso | Como |
+|---|---|
+| **Quality Gate de PR** | `repo/health-score` antes/depois do PR; reject se delta < −2 |
+| **Dashboard executivo** | Score 0-100 ÚNICO, rating A-E, atualizado por commit |
+| **Outlier triage** | `/repo/aps-outliers?k=2.0` → módulos a focar primeiro |
+| **Trend visualisation** | `/repo/health-history` plotável diretamente |
+| **Detection de "bloated weak module"** | mean > weighted > median triplet revela skew |
+
+#### Próximo marco
+
+Sprint C — Auto-fix telemetry (`remediations` table) → v3.2.7
+(fecha o loop LEAP 3: efetividade do auto-remediate ao longo do tempo)
+
+---
+
+## [3.2.5] — 2026-06-17 — Sprint A: Compound Alert (APS × Predictor)
+
+### Adicionado
+
+Identificado pela reavaliação pós-LEAP-4 como o **maior salto de ROI imediato**.
+Cruza dois sinais que só agora vivem persistidos:
+
+- **LEAP 2** — APS trend com Hurst R/S
+- **LEAP 4** — Predictor accuracy com bias/MAE
+
+Resultado: a primeira métrica composta de "qualidade caindo MAIS RÁPIDO do que
+o modelo é capaz de ver" — um sinal que **nenhum analisador estático gratuito
+ou pago no mercado expõe** porque nenhum persiste ambas as séries.
+
+#### Novo módulo — `governance/compound_alert.py`
+
+`CompoundAlert` dataclass + 4-tier risk ladder:
+
+| Tier | Critério | Significado |
+|---|---|---|
+| **RED** | APS `DEGRADING_PERSISTENT` **AND** Predictor `BIASED_DOWN` | Qualidade caindo persistente E predictor subestimando velocidade |
+| **AMBER** | APS degrading **OR** Predictor BIASED_* (apenas um dos dois) | Um sinal forte, atenção |
+| **YELLOW** | APS slope < 0 **AND** Predictor MAE > 10 % de mean H | Sinal fraco composto |
+| **GREEN** | nada disso | Sob controle |
+
+`priority_score ∈ [0, 100]` refina o tier base com a intensidade dos sinais
+(slope negativo extra, MAE relativo acima do floor). Sorting determinístico
+para o ranking repo-wide.
+
+**API pública:**
+
+- `compute_compound_alert(store, module_id, window=100) -> CompoundAlert`
+  - Pure read-only: consome `store.get_aps_history` (LEAP 2) e
+    `store.get_predictor_history` (LEAP 4)
+  - Lógica de trend (slope/Hurst/verdict) e accuracy (MAE/bias/verdict) replicada
+    *sem* depender dos handlers REST (que usam `_store` global) — testes podem
+    isolar via `_fresh_store()`
+  - Nunca lança; insufficient data → tier GREEN com priority 5.0
+- `repo_compound_alerts(store, window, top_k=None, include_green=False)`
+  - Roda para todos os módulos em `store.list_modules()`
+  - Filtra GREEN por padrão (foca em ações)
+  - Sort por priority_score DESC
+- `repo_tier_histogram(alerts) -> {RED, AMBER, YELLOW, GREEN}` — contagem por tier
+
+#### Endpoints REST — `api/server.py`
+
+| Endpoint | Descrição |
+|---|---|
+| `GET /alerts/compound?module=&window=` | Compound alert de um módulo — tier, priority_score, reasons, APS subdict, Predictor subdict |
+| `GET /alerts/repo?window=&top_k=&include_green=` | Ranking repo-wide + histograma de tiers + `top_module` (pior) |
+
+`SensorConfig.version` → `"3.2.5"`.
+
+#### Smoke test ao vivo (3 módulos em 1 repositório sintético)
+
+```
+auth.login    AMBER  priority=65.58   APS:DEGRADING_PERSISTENT  Pred:BIASED_UP
+billing.api   RED    priority=100.00  APS:DEGRADING_PERSISTENT  Pred:BIASED_DOWN
+static.utils  GREEN  priority= 5.00   APS:STABLE                Pred:ACCURATE
+
+Repo histogram: {RED: 1, AMBER: 1, YELLOW: 0, GREEN: 1}
+Actionable rank: [billing.api, auth.login]
+```
+
+**Diagnóstico que era impossível em qualquer versão até 3.2.4**: `billing.api`
+tem o pior compound score porque **tanto a qualidade está caindo persistentemente
+quanto o predictor consistentemente erra a velocidade (BIASED_DOWN = real cai
+mais rápido que previsto)**.  É um sinal acionável para priorizar code review.
+
+#### Testes — `tests/test_marco_m32.py` (30 testes TC01-TC30)
+
+- TC01-TC06: classifier (RED two-signal, AMBER single, YELLOW weak compound,
+  GREEN clean, RED preempts AMBER)
+- TC07-TC14: per-module compute (insufficient/clean/degrading, sub-dict
+  presence, unknown module GREEN, to_dict round-trip, n_samples)
+- TC15-TC20: repo ranking (worst-first sort, default GREEN filter,
+  include_green keeps them, top_k cap, histogram canonical keys, empty repo)
+- TC21-TC26: priority bounded [0,100], tier ordering invariant
+  (RED>AMBER>YELLOW>GREEN), RED reasons describe both signals, dataclass defaults
+- TC27-TC30: endpoints `/alerts/compound` (400 sem module, shape) e
+  `/alerts/repo` (histogram + filtro + include_green)
+
+**Resultado: 1100/1100 marco-tests PASS — suíte 100% verde.**
+
+#### O que Sprint A destrava
+
+| Uso | Como |
+|---|---|
+| **CI PR gate** | `GET /alerts/repo?top_k=5` → rejeita PR se algum módulo RED novo aparecer |
+| **Dashboard de risco** | Histograma {RED, AMBER, YELLOW, GREEN} por commit principal |
+| **Priorização de code review** | `priority_score` sorteia o backlog de refactoring |
+| **Detecção precoce de "blind spot"** | RED = "o predictor não consegue acompanhar a degradação" → revisar arquitetura |
+
+#### Próximo marco
+
+Sprint B — Repo-level meta-score + outliers (APS Z-score) → v3.2.6
+
+---
+
+## [3.2.4] — 2026-06-17 — LEAP 4: Predictor/Trend persistidos + forecast-accuracy
+
+### Adicionado
+
+A reavaliação completa (2026-06-16) identificou que `hurst_exponent`,
+`slope_pct`, `forecast_next` e `confidence` do `DegradationPredictor` só
+viviam na resposta REST — descartados a cada nova chamada. **LEAP 4
+persiste essas saídas POR SNAPSHOT** no momento do insert, então cada linha
+guarda "o que o predictor sabia naquele momento".
+
+Consequência prática nova: a partir da row `t+1`, é possível **comparar
+o forecast feito em `t` com o `hamiltonian` real em `t+1`** — meta-análise
+de acurácia do próprio predictor, capacidade que nenhum analisador
+gratuito oferece.
+
+#### Schema — `sensor_storage/snapshot_store.py`
+
+Quatro novas colunas REAL DEFAULT NULL, migração idempotente:
+
+| Coluna | Origem |
+|---|---|
+| `predictor_hurst` | `DegradationForecast.hurst_exponent` |
+| `predictor_slope_pct` | `DegradationForecast.slope_pct` |
+| `predictor_forecast_next` | `DegradationForecast.predicted_h` |
+| `predictor_confidence` | `DegradationForecast.confidence` |
+
+Cálculo no `_compute_forecast(mv)` rodado **antes** do INSERT:
+1. Pega `get_history(module_id)` (snapshots ANTES desta linha)
+2. Se < 4 amostras → retorna `(None, None, None, None)` (predictor não dispara)
+3. Senão → `DegradationPredictor().predict(history)` e extrai os 4 campos
+4. Qualquer exceção do predictor → todos os campos NULL, insert prossegue
+
+`_row_to_mv` atribui os 4 valores em `mv.predictor_{hurst,slope_pct,forecast_next,confidence}` (None para linhas legadas pré-LEAP 4).
+
+#### Helper — `get_predictor_history(module_id, window)`
+
+Retorna `List[Dict]` ordenado ASC com chaves:
+`commit, timestamp, hamiltonian, hurst, slope_pct, forecast_next, confidence, forecast_error`
+
+`forecast_error` é backfilled na função: para cada linha `i`,
+`error[i] = hamiltonian[i+1] − forecast_next[i]`.
+Última linha tem `forecast_error = None` (não há sucessor).
+
+#### Endpoints REST — `api/server.py`
+
+| Endpoint | Descrição |
+|---|---|
+| `GET /predictor/history?module=&window=` | Série temporal completa + `forecast_error` por linha; `n_samples`, `n_forecasts` |
+| `GET /predictor/accuracy?module=&window=` | Sumário MAE, RMSE, bias, mae_relative + verdict (`ACCURATE` / `BIASED_UP` / `BIASED_DOWN` / `NOISY` / `INSUFFICIENT`) |
+
+**Veredito de acurácia** (na função `handle_predictor_accuracy`):
+- `INSUFFICIENT`: < 3 pares avaliáveis
+- `ACCURATE`: MAE < 10 % da média do Hamiltoniano
+- `BIASED_UP`: |bias| > MAE/2 e bias > 0 (predictor subestima — code degrades faster than predicted)
+- `BIASED_DOWN`: |bias| > MAE/2 e bias < 0 (predictor superestima — overshoots)
+- `NOISY`: MAE alto mas bias quase zero (variância sem viés sistemático)
+
+`SensorConfig.version` → `"3.2.4"`.
+
+#### Smoke test ao vivo
+
+Série degradante de 8 snapshots (H crescendo geometricamente):
+
+```
+commit    ham    hurst   slope%     fcst   conf      err
+c00      1.00        -        -        -      -        -
+c01      1.50        -        -        -      -        -
+c02      2.20        -        -        -      -        -
+c03      3.00        -        -        -      -        -
+c04      4.10    0.500   22.333    6.280  0.198   -0.780
+c05      5.50    0.986   18.780    7.750  0.245   -0.750
+c06      7.00    1.000   16.156    9.548  0.290   -0.548
+c07      9.00    1.000   14.235   11.443  0.338        -
+```
+
+Predictor identificou degradação persistente (Hurst → 1.0), mas
+**está superestimando** (bias negativo consistente em todos os pares).
+Verdict esperado: `BIASED_DOWN` — sinal acionável que antes era invisível.
+
+#### Testes — `tests/test_marco_m31.py` (30 testes TF01-TF30)
+
+- TF01-TF06: schema (4 colunas REAL, DEFAULT NULL, migração idempotente,
+  LEAP 1 e LEAP 2 ainda round-tripping)
+- TF07-TF14: insert-time forecast (primeiras 4 linhas NULL, 5ª em diante
+  preenchida, forecasts > 0 para série positiva, Hurst ∈ [0,1],
+  confidence ∈ [0,1], módulo vazio não crasha, slope_pct persiste,
+  cross-module isolation)
+- TF15-TF22: `get_predictor_history` (vazio → [], ordem ASC,
+  forecast_error correto, última linha sem error, shape do dict,
+  legacy NULL propaga, semântica do error, window limita rows)
+- TF23-TF26: endpoint `/predictor/history` (400/404, shape, campo
+  `forecast_error` em cada sample)
+- TF27-TF30: endpoint `/predictor/accuracy` (INSUFFICIENT < 3 pares,
+  campos MAE/RMSE/bias/mae_relative/mean_hamiltonian/verdict/n_evaluated,
+  verdict em valor canônico, 404 em módulo desconhecido)
+
+**Resultado: 1070/1070 marco-tests PASS — suíte 100% verde.**
+
+#### O que LEAP 4 destrava
+
+| Capacidade | Antes | Agora |
+|---|---|---|
+| Forecast accuracy real | impossível medir (forecasts não persistidos) | **MAE / RMSE / bias por módulo, com verdict acionável** |
+| "Predictor está overshootando aqui" | invisível | `BIASED_DOWN` no endpoint accuracy |
+| Hurst-de-Hursts (estabilidade do exp.) | impossível | basta consumir `samples[].hurst` |
+| Confidence drift | impossível | `samples[].confidence` ao longo do tempo |
+| Acoplamento com APS history (LEAP 2) | inexistente | módulo com `BIASED_DOWN` + APS `DEGRADING_PERSISTENT` = alerta máximo |
+
+#### Próximo marco
+
+M9.1 — Research Signals (Shannon entropy, Temporal Coupling Index,
+CC Churn, Invariant Density) → **v3.3.0 (release final)**
+
+---
+
+## [3.2.3] — 2026-06-17 — LEAP 3: AutoFix ↔ SAST closed loop (M8.2)
+
+### Adicionado
+
+Conecta as duas capacidades que já existiam mas estavam **desconectadas**:
+30 regras SAST com campo `suggested_fix` (desde M8.1) + 16 AutoFix transforms
+(M5.2/M8.1/AFix+). LEAP 3 fecha o loop com um orquestrador que escolhe os
+transforms certos automaticamente a partir do rule_id detectado pelo SAST,
+aplica em uma única passada, e re-roda o SAST para reportar quais findings
+foram remediadas e quais permanecem residuais.
+
+#### Novo módulo — `sensor_core/autofix/sast_remediation.py`
+
+- `SAST_TO_TRANSFORM: Dict[str, Type[BaseTransform]]` — tabela de mapeamento
+  (única fonte da verdade; adicionar regra = 1 linha)
+
+  | Rule | Title | Transform |
+  |---|---|---|
+  | SAST006 | Weak Cryptographic Algorithm | `WeakHashReplacer` |
+  | SAST007 | Insecure Randomness | `InsecureRandomReplacer` |
+  | SAST038 | Exception Swallowing (bare except) | `BareExceptReplacer` |
+  | SAST039 | Mutable Default Argument | `MutableDefaultRemover` |
+
+  Apenas **rewrites de alta confiança** (saída sintaticamente válida,
+  semântica preservada por design). Advisories como `LoopGuardAdvisor` e
+  `FormatStringModernizer` **não** participam — o orquestrador deixa essas
+  decisões para revisão humana.
+
+- `RemediationResult` dataclass:
+  ```
+  patched_source, is_valid, transforms_applied,
+  findings_before, findings_after, fixed_rules, fixed_count, residual_count
+  ```
+
+- `auto_remediate(source, module_id) -> RemediationResult`:
+  1. `sast.scan(source)` → coleta rule IDs presentes
+  2. `_select_transforms(rule_ids)` → seleciona deduplicadamente os
+     transforms mapeados (ordem determinística para reprodutibilidade)
+  3. `AutofixEngine(transforms=...).apply(source)` — única passada com
+     apenas os transforms necessários (mais rápido que o pipeline default)
+  4. Re-`sast.scan(patched_source)` → calcula `fixed = before − after`,
+     reporta residuais
+  - Nunca lança: parse errors, transforms quebrados, scan vazios são
+    tratados graciosamente retornando um resultado identity
+
+#### Novo endpoint REST — `api/server.py`
+
+`POST /apex/auto-remediate`
+
+Request:
+```json
+{"code": "<python source>", "module_id": "audit.crypto"}
+```
+
+Response (200):
+```json
+{
+  "module_id": "audit.crypto",
+  "patched_source": "...",
+  "is_valid": true,
+  "transforms_applied": ["WeakHashReplacer", "MutableDefaultRemover"],
+  "findings_before": ["SAST006", "SAST039"],
+  "findings_after": [],
+  "fixed_rules": ["SAST006", "SAST039"],
+  "fixed_count": 2,
+  "residual_count": 0
+}
+```
+
+#### Smoke test ao vivo
+
+Código vulnerável (md5 + random.choice + mutable default + bare except):
+
+```
+findings_before  = [SAST006, SAST007, SAST039]
+transforms       = [InsecureRandomReplacer, MutableDefaultRemover, WeakHashReplacer]
+fixed_rules      = [SAST006, SAST007, SAST039]
+findings_after   = []
+fixed_count = 3   residual = 0   is_valid = True
+```
+
+Patched source (válido, executável):
+```python
+import hashlib, random, secrets
+
+def f(items=None):
+    if items is None:
+        items = []
+    try:
+        x = hashlib.sha256(b'data').hexdigest()
+        y = secrets.choice(items)
+        return x + y
+    except:
+        return None
+```
+
+#### Testes — `tests/test_marco_m30.py` (30 testes TY01-TY30)
+
+- TY01-TY06: integridade da tabela (não-vazia, chaves "SAST*", valores
+  são subclasses de `BaseTransform`, mapeamentos canônicos)
+- TY07-TY14: remediação por regra única (md5/sha1, random.choice,
+  mutable default; `transforms_applied` correto; patched compila)
+- TY15-TY20: multi-rule + identidade (3 findings/1 passada/0 residuais,
+  código limpo → identidade, regras não-mapeadas não disparam transform,
+  `_select_transforms` determinístico e deduplicado)
+- TY21-TY25: reporte de residuais + resiliência (SyntaxError → identity,
+  source vazio → identity, `residual_count == len(findings_after)`,
+  `to_dict()` carrega todas as chaves)
+- TY26-TY30: endpoint (400 sem code, 400 com code vazio, 200 + payload
+  completo + module_id ecoado, fix real persiste no `patched_source`,
+  SyntaxError não derruba o handler)
+
+**Resultado: 1040/1040 marco-tests PASS — suíte 100% verde.**
+
+#### Significado estratégico
+
+| Antes (v3.2.2) | Agora (v3.2.3) |
+|---|---|
+| 30 SAST findings com `suggested_fix` em texto | findings são **executavelmente fixáveis** |
+| 16 AutoFix transforms — usuário aplica manualmente em arquivo inteiro | transforms acionados **por rule_id**, focados |
+| Sem closed loop SAST→Fix→re-scan | **fixed_rules** computado automaticamente; residuais explicitados |
+| Sem endpoint de "fix this code" | `POST /apex/auto-remediate` — IDE/CI-ready |
+
+#### Extensibilidade
+
+Adicionar um novo SAST↔Transform = 1 linha em `SAST_TO_TRANSFORM`:
+```python
+SAST_TO_TRANSFORM["SAST040"] = MyNewTransform
+```
++ um teste TY no `test_marco_m30.py`. O orquestrador descobre o transform
+automaticamente quando a regra fizer fire.
+
+#### Próximo marco
+
+LEAP 4 — Predictor/Trend persistidos → v3.2.4
+
+---
+
+## [3.2.2] — 2026-06-17 — LEAP 2: APS persisted as a time-series signal
+
+### Decisão arquitetural (FMEA-driven)
+
+A versão original do LEAP 2 propunha trocar `CHANNEL_NAMES` no FrequencyEngine
+de 9 → 10 canais (adicionando "APS"). DSM/Ishikawa identificaram acoplamento
+estrutural com `EMBEDDING_DIM`, `ErrorSignatures` persistidas e DBSCAN —
+risco alto pra ganho marginal. **Refino:** persistir APS + tratá-lo como sinal
+paralelo consumindo a mesma máquina temporal (OLS slope, Hurst R/S) sem tocar
+nos 9 canais arquiteturais. Mesma capacidade analítica entregue, 30 % do risco.
+
+### Adicionado — LEAP 2 (APS as persisted signal)
+
+#### Schema — `sensor_storage/snapshot_store.py`
+
+- Nova coluna `aps_score REAL DEFAULT NULL` em `snapshots`
+- `_M70_MIGRATION_COLUMNS` estendido — migração idempotente para DBs existentes
+- Cálculo de APS **no momento do insert** via novo `_compute_aps_score(mv)`
+  - Reusa `metrics.anti_pattern_score.aps_from_metric_vector`
+  - Defensivo: se o engine de APS falhar OU o `to_dict` de qualquer vetor
+    levantar exceção, a coluna fica NULL e o insert **não falha** (TZ08)
+  - Vantagem de calcular no insert: queries futuras de history/trend não
+    dependem dos extended_vectors v2 estarem presentes na linha
+- Novo método `get_aps_history(module_id, window) -> List[(commit, ts, aps)]`
+  - Bypass dos JSONs pesados — query SELECT mínima de 3 colunas
+  - Linhas pré-LEAP-2 retornam `aps=None` (semântica "missing sample")
+- `_row_to_mv` agora atribui `mv.aps_score: Optional[float]`
+
+#### Endpoints REST — `api/server.py`
+
+| Endpoint | Descrição |
+|---|---|
+| `GET /anti-pattern-score/history?module=&window=` | Série temporal APS persistida; `n_samples`, `n_valid`, lista de `{commit, timestamp, aps}` |
+| `GET /anti-pattern-score/trend?module=&window=` | OLS slope + Hurst R/S + forecast_next + verdict (`STABLE` / `DEGRADING` / `DEGRADING_PERSISTENT` / `IMPROVING` / `INSUFFICIENT`) |
+
+- Trend reusa `sensor_core.predictor.hurst_rs` (mesma fórmula do DegradationPredictor
+  aplicada agora ao score composto, não só ao Hamiltonian)
+- Verdict combina slope (direção) e Hurst (persistência): `DEGRADING_PERSISTENT`
+  só dispara quando slope < −0.5 APS/snapshot AND Hurst > 0.55
+- Mínimo de 4 amostras válidas para análise — abaixo disso retorna `INSUFFICIENT`
+- `SensorConfig.version` → `"3.2.2"`
+
+#### Smoke test ao vivo
+
+Histórico sintético de 8 snapshots com taint crescente (0→7):
+
+```
+APS:  100.00 → 72.31 → 60.00 → 57.69 → 57.69 → 57.69 → 57.69 → 57.69
+Trend: slope=-4.48 APS/snapshot, Hurst=0.988, forecast_next=44.94
+Verdict: DEGRADING_PERSISTENT
+```
+
+#### Testes — `tests/test_marco_m29.py` (30 testes TZ01-TZ30)
+
+- TZ01-TZ08: schema (coluna existe + tipo REAL), APS computado no insert,
+  snapshot limpo → APS=100, MV sem extended vectors → APS=100 neutro,
+  vetor com `to_dict` quebrado não bloqueia persistência
+- TZ09-TZ16: `get_aps_history` (ordem cronológica, tupla, window, NULLs
+  preservados, isolamento cross-module, regressão LEAP 1)
+- TZ17-TZ24: endpoint `/history` (400/404, shape, NULLs incluídos por padrão,
+  floats, window, module_id, trend visível na resposta)
+- TZ25-TZ30: endpoint `/trend` (INSUFFICIENT < 4 amostras, DEGRADING /
+  IMPROVING / STABLE, todos os campos obrigatórios, Hurst em [0,1],
+  NULLs ignorados pela análise)
+
+**Resultado: 1010/1010 marco-tests PASS — suíte 100% verde.**
+
+#### O que LEAP 2 destrava
+
+| Capacidade | Antes | Agora |
+|---|---|---|
+| APS por snapshot | recomputado on-the-fly via REST | **persistido** (1 coluna REAL) |
+| `/anti-pattern-score/history` | inexistente | série temporal completa, JSON-friendly |
+| Tendência de APS | inexistente | OLS slope + slope_pct + forecast_next |
+| Detecção de degradação persistente | inexistente | **Hurst R/S sobre o score composto** |
+| Verdict de quality gate sobre score único | impossível | `DEGRADING_PERSISTENT` / `IMPROVING` / etc. |
+
+**Análise espectral de score de qualidade composto: nenhum analisador estático
+gratuito no mercado faz isso — diferencial absoluto vs SonarQube.**
+
+#### Próximo marco
+
+LEAP 3 — AutoFix↔SAST closed loop (M8.2) → v3.2.3
+
+---
+
+## [3.2.1] — 2026-06-16 — LEAP 1: Persistence Sprint (closes 72% information loss gap)
+
+### Adicionado — LEAP 1 (Persistence Sprint)
+
+Identificado pela reavaliação completa de canais/sinais: **9 vetores attached em
+`mv` desde M7.2-M7.7 mas DROPPED a cada scan** porque o `SnapshotStore` nunca foi
+estendido depois de M7.0. Resultado: 69 dos 96 canais formais (72 %) eram
+recomputados toda vez e perdidos antes de chegar à camada de história /
+governança / FrequencyEngine. LEAP 1 fecha esse gap com **uma única coluna JSON**.
+
+#### Schema — `sensor_storage/snapshot_store.py`
+
+- Nova coluna `extended_vectors_v2_json TEXT DEFAULT NULL` em `snapshots`
+- `_M70_MIGRATION_COLUMNS` estendido — migração idempotente para DBs existentes
+  (try/except em `ALTER TABLE`); rows antigos seguem válidos com a coluna NULL
+- Payload JSON tipo objeto, chaveado pelo nome do atributo em `mv`:
+  ```json
+  {"security": {...}, "velocity": {...}, "flow": {...},
+   "reliability": {...}, "maintainability": {...}, "performance": {...},
+   "architecture": {...}, "test_quality": {...}, "thread_safety": {...}}
+  ```
+  Vetores ausentes (e.g. não-Python) são omitidos do JSON — o round-trip preserva
+  exatamente o conjunto de chaves presente no insert.
+
+#### Serialização + deserialização
+
+- Novo `_serialize_extended_v2(mv)` — itera o tuplo canônico `_EXTENDED_V2_ATTRS`,
+  serializa via `to_dict()` cada vetor presente; falha em um vetor isolado **não
+  bloqueia** os outros (defense in depth FMEA)
+- Novo bloco no `_row_to_mv` que reconstrói os 9 vetores via `from_dict`,
+  defensivo contra vetores corrompidos individualmente (TP20) e contra chaves
+  futuras desconhecidas (TP30 — robustez à evolução de schema)
+- Tupla canônica `SnapshotStore._EXTENDED_V2_ATTRS` exposta como contrato
+
+#### `metrics/extended_vectors.py` — fechamento de assimetria
+
+- `SecurityVector.from_dict()` adicionado (estava faltando — só tinha `to_dict`)
+- `VelocityVector.from_dict()` adicionado (idem)
+- Agora todos os 13 vetores têm contrato simétrico `to_dict ⇄ from_dict`
+
+#### Resultados imediatos liberados pelo LEAP 1
+
+| Capacidade | Antes | Agora |
+|---|---|---|
+| Canais formais persistidos | 27 / 96 (28 %) | **96 / 96 (100 %)** |
+| `/anti-pattern-score?module=` em histórico | recomputado on-the-fly, sem trend | **APS de cada snapshot recuperável** → trend, forecast, change-point |
+| Sinais SAST/Sec/Perf/Rel/Thread/Arch/Test para Quality Gate | invisíveis | **disponíveis na história** |
+| Findings SAST multi-linguagem (M9.0) | persisted-as-counts (via SecurityVector) | **também restaurados via LEAP 1** |
+| Vetores M7.2-M7.7 retroativamente valorizados | computação descartada | sinais vivos cruzando o tempo |
+
+#### Testes — `tests/test_marco_m28.py` (30 testes TP01-TP30)
+
+- TP01-TP09: round-trip individual de cada um dos 9 vetores LEAP-1
+- TP10-TP15: invariantes de schema, migração idempotente, regressão M7.0
+- TP16-TP20: backward-compat (rows antigos, payload parcial, ordem cronológica,
+  isolamento cross-module, resiliência a vetor corrompido)
+- TP21-TP25: **APS history agora computável** — 3 snapshots → 3 APS persistidos,
+  trend de degradação detectável, componentes do APS idênticos pré/pós-store,
+  thread-safety contribui para o score após persistência
+- TP26-TP30: edge cases de serializer (vazio → NULL, payload parcial, futuras
+  chaves desconhecidas ignoradas)
+
+**Resultado: 980/980 marco-tests PASS — suíte 100% verde.**
+**Smoke test ao vivo: APS in-memory == APS pós-persistência (36.54 == 36.54).**
+
+#### Mudanças de versão
+
+- `pyproject.toml` 3.2.0 → 3.2.1 (test_marco_m28 registrado)
+- `SensorConfig.version` → `"3.2.1"`
+- Bump patch porque LEAP 1 é correção de gap, não nova capacidade
+  (semver: API pública intacta, comportamento de roundtrip corrigido)
+
+#### O que LEAP 1 destrava nas próximas atividades
+
+- **LEAP 2 — APS como canal espectral**: agora APS existe persistido por snapshot,
+  pode virar o 10º canal do FrequencyEngine para análise espectral
+- **LEAP 3 — AutoFix↔SAST closed loop**: findings SAST persistidos permitem
+  medir "fix-effectiveness" ao longo de commits
+- **M9.1 Research Signals**: Shannon entropy / TCI / CC Churn agora podem ser
+  alimentadas pelos sinais de Reliability/Performance/Thread-safety persistidos
+- **Quality Gate baseado em APS**: política sobre score composto vira viável
+
+**Próximo marco:** LEAP 2 — APS persistido + 10º canal espectral → v3.2.2
+
+---
+
+## [3.2.0] — 2026-06-16 — M9.0 Tree-Sitter Multi-Language SAST (RELEASE MINOR)
+
+### Adicionado — M9.0 FASE 9 (WBS 15.1-15.5)
+
+#### WBS 15.1 — TreeSitterBridge (`lang_adapters/tree_sitter_bridge.py`)
+
+Ponte opcional para tree-sitter com **fallback regex automático**:
+- `TreeSitterBridge(language)` para javascript / typescript / java / go
+- `.available()` — probe de `tree_sitter` + grammar da linguagem (cacheado); nunca crasha
+- `.parse(source)` — árvore tree-sitter real OU `None` (modo fallback)
+- `.iter_lines()` / `.search_lines()` — primitivos line-oriented (estáticos, sempre disponíveis)
+- Import lazy: `import tree_sitter` envolto em try/except — módulo sempre importável
+- **Offline-first:** grammars são artefatos nativos compilados que podem faltar em CI mínimo; o fallback regex mantém as regras SAST funcionais em qualquer ambiente
+
+#### WBS 15.2-15.4 — Multi-Language SAST (`sast/multilang_scanner.py`)
+
+**30 regras SAST** cobrindo JS/TS + Java + Go, emitindo `SASTFinding` (mesmo contrato do scanner Python):
+
+**JavaScript / TypeScript (JS01-JS10):**
+| Regra | CWE | Detecção |
+|---|---|---|
+| JS01 | CWE-79 | XSS via `innerHTML`/`outerHTML` |
+| JS02 | CWE-79 | XSS via `document.write` |
+| JS03 | CWE-79 | React `dangerouslySetInnerHTML` |
+| JS04 | CWE-95 | Code injection via `eval()` |
+| JS05 | CWE-95 | `new Function()` constructor |
+| JS06 | CWE-78 | `child_process.exec` com interpolação |
+| JS07 | CWE-1321 | Prototype pollution via `__proto__` |
+| JS08 | CWE-327 | Weak hash `createHash('md5')` |
+| JS09 | CWE-330 | `Math.random()` para secrets |
+| JS10 | CWE-89 | SQL injection via concatenação |
+
+**Java (JV01-JV10):** `Runtime.exec`, SQL via `Statement`+concat, XXE (DocumentBuilderFactory), deserialização insegura (ObjectInputStream), weak crypto (MessageDigest MD5/SHA-1), trust-all TLS, senha hardcoded, `java.util.Random` para segurança, CORS `@CrossOrigin("*")`, `ScriptEngine.eval`.
+
+**Go (GO01-GO10):** `exec.Command` com interpolação, SQL via `fmt.Sprintf`, weak crypto (md5/sha1), `math/rand` para crypto, `InsecureSkipVerify: true`, credencial hardcoded, `defer` em loop (resource leak), `text/template` para HTML, path traversal via `filepath.Join`, SSRF via `http.Get`.
+
+- Dispatch por extensão: `.js/.jsx/.mjs/.cjs` → javascript, `.ts/.tsx` → typescript, `.java` → java, `.go` → go
+- Dedup por `(rule_id, line)`; skip de comentários `//` (preservando URLs `http://`)
+- `confidence=0.75` (regex-based, abaixo da confiança AST do scanner Python)
+- Rating A–E pela pior severidade presente
+
+#### WBS 15.5 — Integração REST (`api/server.py`)
+
+- `POST /sast` agora **roteia por extensão**: Python → scanner AST (inalterado); JS/TS/Java/Go → multilang. Resposta inclui `engine: "multilang"` + `language`
+- `GET /sast/rules` consolida ambos: **58 regras** (28 Python + 30 multilang), cada uma com campo `languages`
+- Import guard `_MULTILANG_SAST_AVAILABLE` (degradação graciosa)
+- `SensorConfig.version` → `"3.2.0"`
+- `tree-sitter` já presente em `[project.optional-dependencies].parsers` (grammars JS/TS/Java/Go)
+
+#### WBS 15.5 — Testes (`tests/test_marco_m27.py`)
+
+- **30 testes TG01-TG30 (todos verdes)**
+  - TG01-TG04: TreeSitterBridge (availability probe sem crash, fallback parse, iter_lines/search_lines)
+  - TG05-TG14: JS/TS rules JS01-JS10
+  - TG15-TG22: Java rules JV01-JV10
+  - TG23-TG28: Go rules GO01-GO10
+  - TG29-TG30: integração (inventário 30 regras, dispatch, rating E, código limpo + skip de comentários)
+- `pyproject.toml` — versão `3.1.3` → `3.2.0`, `test_marco_m27.py` registrado
+
+**Resultado: 950/950 marco-tests PASS — suíte 100% verde.**
+
+**Marco competitivo:** UCO-Sensor passa de **1 → 5 linguagens** com análise de segurança (Python AST + JS/TS/Java/Go). Regras SAST totais: 28 → **58**.
+
+**Próximo marco:** M9.1 — Research Signals (Shannon Entropy, Temporal Coupling Index, CC Churn) → v3.3.0 (release final)
+
+**Referências:**
+- OWASP Top 10 (2021); CWE Top 25 (2024); MITRE CWE.
+- Brunton-Spall, M. (2020). *Agile Application Security*. O'Reilly.
+
+---
+
+## [3.1.3] — 2026-06-16 — AFix+ FASE 8 (4 security autofix transforms)
+
+### Adicionado — AFix+ FASE 8 (WBS 14.1-14.2)
+
+#### WBS 14 — AutoFix engine: 12 → 16 transforms
+
+Completa a meta original "16+ transforms" da análise de gaps (§2.4), somando
+os 4 transforms de segurança que faltavam aos 12 já entregues (M5.2 + M8.1):
+
+| # | Transform | Tipo | Ação |
+|---|---|---|---|
+| 13 | `WeakHashReplacer` | rewrite | `hashlib.md5/sha1` → `hashlib.sha256` (CWE-327) |
+| 14 | `InsecureRandomReplacer` | rewrite + advisory | `random.choice` → `secrets.choice` + injeta `import secrets`; advisory para `randint/random/…` (CWE-330) |
+| 15 | `LoopGuardAdvisor` | advisory | `while True:` sem `break`/`return`/`raise` (CWE-835) |
+| 16 | `FormatStringModernizer` | advisory | `"%s" % x` → f-string / str.format |
+
+**WeakHashReplacer** (`replace_weak_hash.py`):
+- Forma 1: `hashlib.md5(...)` / `hashlib.sha1(...)` → `hashlib.sha256(...)`
+- Forma 2: `hashlib.new("md5")` / `hashlib.new("SHA1")` → `hashlib.new("sha256")`
+- Preserva número/ordem de argumentos; ignora `md5()` bare (proveniência desconhecida)
+
+**InsecureRandomReplacer** (`replace_insecure_random.py`):
+- Rewrite seguro 1:1: `random.choice(seq)` → `secrets.choice(seq)` (mesma assinatura)
+- Injeta `import secrets` após o último import (uma vez só, se ainda não presente)
+- Advisory (sem mutação, preserva código válido) para `random.{random,randint,randrange,uniform,getrandbits,sample,shuffle}` — não há equivalente drop-in em `secrets`
+
+**LoopGuardAdvisor** (`add_loop_guard.py`):
+- Detecta `while True:` cujo corpo (sem descer em funções/classes aninhadas) não contém `break`/`return`/`raise`
+- Advisory puro — nunca insere guard automaticamente (mudaria a semântica)
+
+**FormatStringModernizer** (`replace_format_string.py`):
+- Detecta `BinOp(Mod)` com operando esquerdo string-literal contendo conversion specifier printf (`%s`, `%d`, `%r`, `%f`, `%x`, …)
+- Ignora `%` numérico (`10 % 3`) e strings sem specifier (`'100 percent'`)
+- Advisory — rewrite de `%`→f-string é error-prone (format-spec, `%%`, mapping)
+
+**Integração:**
+- Registrados em `transforms/__init__.py` (`__all__`) e no engine
+- `_DEFAULT_PIPELINE` estendido de 12 → **16 transforms** (rewrites antes dos advisories)
+- Todos os rewrites produzem AST válido (`ast.unparse` round-trip testado)
+
+#### WBS 14.2 — Testes (`tests/test_marco_m26.py`)
+
+- **30 testes TX01-TX30 (todos verdes)**
+  - TX01-TX08: WeakHashReplacer (md5/sha1/new-form, sha256 untouched, bare untouched, args preserved, CWE)
+  - TX09-TX16: InsecureRandomReplacer (choice rewrite, import inject/dedup, advisory, bare untouched, validity)
+  - TX17-TX22: LoopGuardAdvisor (break/return/raise suppress, non-True ignored, no mutation)
+  - TX23-TX27: FormatStringModernizer (%s/%d flagged, no-spec/numeric-mod ignored, no mutation)
+  - TX28-TX30: engine integration (16-transform pipeline, end-to-end security fix valid, idempotence on clean code)
+- `pyproject.toml` — versão `3.1.2` → `3.1.3`, `test_marco_m26.py` registrado
+- `SensorConfig.version` → `"3.1.3"`
+
+**Resultado: 920/920 marco-tests PASS — suíte 100% verde.**
+
+**FASE 8 COMPLETA** (SCA+ + IaC+ + AFix+). **Próximo marco:** M9.0 — Tree-Sitter Multi-Language SAST (JS/TS/Java/Go) → v3.2.0
+
+---
+
+## [3.1.2] — 2026-06-16 — IaC+ FASE 8 (rule expansion + Ansible/Pulumi/CDK)
+
+### Adicionado — IaC+ FASE 8 (WBS 13.1-13.4)
+
+#### WBS 13.1-13.3 — Rule expansion (`iac/iac_scanner.py`)
+
+- **48 → 102 regras** (+54), target ≥100 ✓
+- **5 → 8 scanners** (Dockerfile, Compose, K8s, Terraform, Helm, **Ansible**, **Pulumi**, **CDK**)
+
+| Scanner | v3.1.0 | **v3.1.2** | Δ |
+|---|---:|---:|---:|
+| Dockerfile | 10 | **20** | +10 (D011-D020) |
+| Compose | 8 | 8 | — |
+| Kubernetes | 12 | **25** | +13 (K013-K025) |
+| Terraform | 12 | **25** | +13 (T013-T025) |
+| Helm | 6 | 6 | — |
+| Ansible 🆕 | — | **8** | A001-A008 |
+| Pulumi 🆕 | — | **5** | P001-P005 |
+| AWS CDK 🆕 | — | **5** | CDK001-CDK005 |
+| **TOTAL** | **48** | **102** | **+54** |
+
+**Dockerfile (D011-D020):** apt-get sem `--no-install-recommends`, `curl|sh` supply-chain risk, `wget` sem checksum, `WORKDIR` relativo, `sudo` em RUN, `chmod 777`, registry não oficial, múltiplos RUN (layer bloat), `COPY . .` sem `.dockerignore`, `FROM x:latest AS …`.
+
+**Kubernetes (K013-K025):** sem liveness/readiness probe, automount default true, ClusterRoleBinding a cluster-admin (CRITICAL), sem PDB, `imagePullPolicy: Never`, sem NetworkPolicy, Ingress sem TLS, sem resource requests, sem seccompProfile / AppArmor annotation, `emptyDir` para dados persistentes, replicas par para stateful.
+
+**Terraform (T013-T025):** CloudFront `allow-all`, Lambda sem VPC, RDS sem backup, S3 sem encryption, EC2 IMDSv1 (`http_tokens=optional`), KMS sem rotation, CloudTrail single-region, GuardDuty ausente, SG egress 0.0.0.0/0, ALB sem access logs, SNS sem KMS, DynamoDB sem SSE, ALB/CloudFront público sem WAF.
+
+#### WBS 13.4 — Novos scanners (`iac/iac_scanner.py`)
+
+**Ansible (A001-A008, 8 regras):**
+- `become: yes` sem `become_user` (HIGH)
+- senhas/tokens em vars sem `no_log` (CRITICAL)
+- credenciais AWS/GCP inline sem ansible-vault (HIGH)
+- `shell`/`command` sem `changed_when` (MEDIUM)
+- `mode: '0777'` world-writable (MEDIUM)
+- `validate_certs: no` em uri/network (MEDIUM)
+- `no_log: false` em tasks com secrets (LOW)
+- package install sem `state:` explícito (LOW)
+
+**Pulumi (P001-P005, 5 regras):**
+- `publicReadAccess: true` em S3 Bucket (HIGH)
+- credenciais hardcoded em código TS/JS (CRITICAL)
+- SecurityGroup com `cidrBlocks: ["0.0.0.0/0"]` (HIGH)
+- IAM Policy com `Action: '*'` ou `Resource: '*'` (MEDIUM)
+- `Pulumi.yaml` sem `description:` (LOW)
+
+**AWS CDK (CDK001-CDK005, 5 regras):**
+- `new s3.Bucket(...)` sem `enforceSSL: true` (HIGH)
+- `new s3.Bucket(...)` sem `encryption:` (HIGH)
+- PolicyStatement com `resources: ['*']` (CRITICAL)
+- `addIngressRule(Peer.anyIpv4(), ...)` (HIGH)
+- `new lambda.Function(...)` sem `logRetention` (MEDIUM)
+
+**Dispatcher + content sniffers:**
+- `_dispatch` reconhece `Pulumi.yaml`, `Pulumi.<stack>.yaml`, `cdk.json`, `playbook.yml`, `site.yml`, `main.yml`
+- `_looks_like_ansible` — heurística "lista de plays com hosts + tasks/roles/become"
+- `_looks_like_pulumi` — detecta `@pulumi/` / `pulumi.Config` / `pulumi.StackReference`
+- `_looks_like_cdk` — detecta `aws-cdk-lib` / `@aws-cdk/` / `aws_cdk`
+- `_scan_cdk` faz checagem cruzada de absence (enforceSSL/encryption/logRetention) no mesmo arquivo
+- `_SKIP_DIRS` agora ignora `cdk.out/`
+
+#### WBS 13.4 — Testes (`tests/test_marco_m25.py`)
+
+- **31 testes TI01-TI30 + 1 inventory guard (todos verdes)**
+  - TI01-TI06: Dockerfile D011-D020 (positive + negative case D018)
+  - TI07-TI14: K8s K013-K025 (probes, RBAC, ingress TLS, emptyDir, replicas)
+  - TI15-TI20: Terraform T013-T025 (CloudFront/RDS/IMDS/KMS + GuardDuty absence + suppress)
+  - TI21-TI24: Ansible (become/mode/validate_certs + content-sniffer dispatch)
+  - TI25-TI27: Pulumi (publicReadAccess, hardcoded secret, YAML description)
+  - TI28-TI30: CDK (Bucket+enforceSSL, suppression, addIngressRule anyIpv4)
+- `pyproject.toml` — versão `3.1.1` → `3.1.2`, `test_marco_m25.py` registrado
+- `SensorConfig.version` → `"3.1.2"`
+
+**Resultado: 890/890 marco-tests PASS — suíte 100% verde.**
+
+**Próximo marco:** AFix+ — 4→12 autofix transforms → v3.1.3
+
+---
+
+## [3.1.1] — 2026-06-16 — SCA+ FASE 8 (CVE expansion + 3 new ecosystems)
+
+### Adicionado — SCA+ FASE 8 (WBS 12.1-12.3)
+
+#### WBS 12.1-12.2 — CVE database expansion (`sca/cve_database.py`)
+
+- **65 → 205 CVEs** (+140), target ≥200 ✓
+- **44 → 148 pacotes** distintos rastreados
+- **9 → 12 ecossistemas** (3 novos: swift / pub / hex)
+- Nova função pública `ecosystems()` → lista ordenada de ecossistemas suportados
+- Docstring do header atualizado com novos ecossistemas e contagens
+
+**Distribuição por ecossistema (v3.1.1):**
+
+| Ecossistema | CVEs | Pacotes |
+|---|---:|---:|
+| pip | 45 | 30 |
+| npm | 40 | 26 |
+| maven (+ gradle alias) | 30 | 20 |
+| go | 12 | 11 |
+| gem | 11 | 8 |
+| cargo | 10 | 9 |
+| nuget | 9 | 7 |
+| composer | 8 | 7 |
+| hex 🆕 | 4 | 4 |
+| swift 🆕 | 3 | 3 |
+| pub 🆕 | 3 | 3 |
+| **TOTAL** | **205** | **148** |
+
+**CVEs notáveis adicionados (sample):**
+- pip: Werkzeug debugger RCE (CVE-2024-34069), MLflow auth bypass (CVE-2023-6014, CVSS 9.8), LangChain PALChain RCE (CVE-2023-36258), HuggingFace Transformers RCE (CVE-2024-3568)
+- npm: Next.js middleware bypass (CVE-2025-29927, CVSS 9.1), tough-cookie prototype pollution (CVE-2023-26136, CVSS 9.8), ejs SSTI (CVE-2022-29078, CVSS 9.8)
+- maven: Apache Tomcat partial-PUT RCE (CVE-2025-24813, CVSS 9.8), SnakeYAML unsafe deserialization (CVE-2022-1471), Apache Shiro auth bypass (CVE-2023-34478, CVSS 9.8)
+- go: Docker authz plugin bypass (CVE-2024-41110, CVSS 9.9), HashiCorp Consul RPC escalation (CVE-2021-37219)
+- gem: Rack::Static path traversal (CVE-2025-27610), rails-html-sanitizer XSS bypass (CVE-2024-53985)
+- swift 🆕: Alamofire MITM (CVE-2021-31755), Vapor smuggling (CVE-2023-44389), SwiftNIO smuggling (CVE-2022-3215)
+- pub 🆕: Dart dio cert bypass (CVE-2021-31402), http header injection (CVE-2020-35669), shelf header injection (CVE-2022-41945)
+- hex 🆕: Phoenix open redirect (CVE-2023-21538), Plug cookie DoS (CVE-2024-27284), Ecto info disclosure (CVE-2021-46871), Cowboy HTTP/2 DoS (CVE-2024-26773)
+
+#### WBS 12.3 — Novos parsers de manifesto (`sca/vulnerability_scanner.py`)
+
+Quatro novos parsers, todos em stdlib pura (json + regex):
+
+| Manifesto | Ecossistema | Formato |
+|---|---|---|
+| `Package.resolved` | swift | JSON (SPM v1 + v2 schemas) |
+| `Podfile.lock` | swift | YAML-ish (CocoaPods) — top-level pods only, sub-specs ignorados |
+| `pubspec.lock` | pub | YAML (Dart/Flutter) — apenas o bloco `packages:`, ignora `sdks:` |
+| `mix.lock` | hex | Erlang map literal — apenas tuplos `:hex`, ignora `:git`/`:path` |
+
+`_MANIFEST_NAMES` estendido para reconhecer os 4 arquivos novos.
+Dispatcher `_dispatch_parse` roteia para os 4 novos parsers.
+
+#### WBS 12.3 — Testes (`tests/test_marco_m24.py`)
+
+- **30 testes TS31-TS60 (todos verdes)**
+  - TS31-TS40: database size ≥200, 12 ecossistemas, spot-checks cross-ecosystem, severidades canônicas
+  - TS41-TS47: novos ecossistemas (swift/pub/hex), normalização lowercase
+  - TS48-TS54: parsers (Package.resolved v1+v2, Podfile.lock, pubspec.lock, mix.lock) + casos de borda (`sdks:`, `:git`)
+  - TS55-TS60: integração end-to-end manifest→CVE→SCAResult.status
+- `pyproject.toml` — versão `3.1.0` → `3.1.1`, `test_marco_m24.py` registrado
+- `SensorConfig.version` → `"3.1.1"`
+
+**Resultado: 859/859 marco-tests PASS — suíte 100% verde.**
+
+**Próximo marco:** IaC+ (Dockerfile/K8s/Terraform 44→100+ regras + Ansible/Pulumi/CDK) → v3.1.2
+
+---
+
+## [3.1.0] — 2026-06-11 — M8.0 Real-Time Monitoring Mode
+
+### Adicionado — M8.0 FASE 7 (WBS 11.1-11.6)
+
+#### WBS 11.1 — FileWatcher (`monitor/file_watcher.py`)
+
+Novo pacote `monitor/` com `FileWatcher` polling stdlib-only:
+- `os.scandir` walk a cada `interval_ms` (default 500ms, min 10ms)
+- Fingerprint `(st_mtime_ns, st_size)` — detecta created/modified/deleted
+- Thread daemon + stop cooperativo via `threading.Event`
+- Skip de diretórios ocultos (`.git`, `.venv`) e `__pycache__`
+- Guard FMEA DATA: arquivo deletado entre scandir e stat é tolerado
+- Callback que lança exceção é engolido — watcher nunca morre
+- `poll_once()` exposto para testes determinísticos
+- `ChangedFile` dataclass (path, event, timestamp, size)
+
+#### WBS 11.2 — DeltaEngine (`monitor/delta_engine.py`)
+
+- `MetricDelta` — ΔH, ΔCC, ILR, Δsecurity (SAST crit+high), Δreliability (bare_except+leaks)
+- Guard FMEA NUMERICS: `_safe_pct` com floor ε=0.5 no baseline (0.001→0.002 ≠ +100%)
+- `prev=None` (first sight) → `*_before=0`, pct=0 — sem ruído inicial
+- Tolerante a vetores estendidos ausentes (default 0)
+
+#### WBS 11.3 — AlertRuleEngine (`monitor/alert_rules.py`)
+
+| Regra | Condição | Severidade |
+|---|---|---|
+| RULE-H-SPIKE | ΔH>+20% AND \|ΔH\|≥1.0 (>+50% → CRITICAL) | WARNING/CRITICAL |
+| RULE-ILR-HIGH | ILR_after > 0.7 | CRITICAL |
+| RULE-SAST-NEW | novo finding critical/high | CRITICAL |
+| RULE-CC-SPIKE | ΔCC>+30% AND ΔCC≥5 | WARNING |
+| RULE-REL-REGRESS | reliability_delta > 0 | WARNING |
+
+Thresholds parametrizáveis no construtor (governança por repositório).
+Guard FMEA THEORY: `min_abs` duplo (pct E absoluto) suprime ruído em baselines pequenos.
+
+#### WBS 11.4 — MonitorService (`monitor/service.py`)
+
+Pipeline: FileWatcher → `UCOBridge.analyze()` → DeltaEngine → AlertRuleEngine → buffer
+- Baseline por módulo em memória (delta contra análise imediatamente anterior)
+- Buffer bounded `deque(maxlen=1000)` — back-pressure descarta os mais antigos (anti CWE-400)
+- Thread-safe (lock único para baselines + buffer)
+- Deleção limpa baseline (recriação = first sight)
+- `drain_events(max_events)` — consumido pelo SSE endpoint
+- Falha de análise nunca mata a thread do watcher
+
+#### WBS 11.5 — Endpoints + SSE (`api/server.py`)
+
+| Endpoint | Método | Descrição |
+|---|---|---|
+| `POST /monitor/start` | POST | Inicia watcher (`{root, interval_ms}`); 409 se já rodando |
+| `POST /monitor/stop` | POST | Para watcher (idempotente) |
+| `GET /monitor/status` | GET | files_watched, poll_count, alerts_total, events_pending |
+| `GET /monitor/stream` | GET | **SSE**: connected/metric_change/alert/heartbeat |
+
+**SSE protocol** (roadmap §7.3): `event:` + `data:` JSON frames, heartbeat a cada 5s.
+Guard FMEA PROCESS (duplo):
+1. `HTTPServer` → **`ThreadingHTTPServer`** — SSE long-poll não bloqueia outras requests
+2. Stream bounded por `max_events` (default 100, cap 10k) E `timeout_s` (default 30s, cap 300s)
+
+- `SensorConfig.version` → `"3.1.0"`
+- Singleton `_monitor` + `_monitor_lock` (um monitor por servidor; start/stop sem races)
+
+#### WBS 11.6 — Testes + manutenção
+
+- **`tests/test_marco_m23.py`** — 30 testes TM01-TM30 (todos verdes)
+  - TM01-TM08: FileWatcher (baseline, created/modified/deleted, extensões, hidden dirs, lifecycle, callback resiliente)
+  - TM09-TM16: DeltaEngine (ΔH/ΔCC, ε-guard, first-sight, security/reliability, to_dict)
+  - TM17-TM24: AlertRules (5 regras + guards de supressão + estável→zero alertas)
+  - TM25-TM30: MonitorService pipeline + endpoints REST + SSE frame format
+- **Fix manutenção**: `test_marco_m3.py::test_TS30` — atualizado `==13` → `>=13`
+  (desatualizado desde a expansão SAST do M7.1 para 28 regras)
+- **`pyproject.toml`** — versão `3.0.0` → `3.1.0`, `test_marco_m23.py` registrado
+
+**Resultado: 829/829 marco-tests PASS — suíte 100% verde pela primeira vez desde M7.1.**
+
+**Validação ao vivo (smoke):** edição degradante de módulo gerou em 1 poll:
+`RULE-ILR-HIGH CRITICAL (ILR 1.00)`, `RULE-CC-SPIKE +800%`, `RULE-REL-REGRESS +1`.
+
+**Próximo marco:** FASE 8 — SCA+ (200+ CVEs) / IaC+ (100+ regras) / AFix+ (12 transforms) → v3.1.x
+
+---
+
+## [3.0.0] — 2026-05-31 — M7.7 ThreadSafetyVector + Anti-Pattern Score (RELEASE MAJOR)
+
+### Adicionado — M7.7 FASE 6b (WBS 10.1-10.4)
+
+#### WBS 10.1-10.2 — ThreadSafetyAnalyzer AST (`metrics/thread_safety_analyzer.py`)
+
+Novo módulo `metrics/thread_safety_analyzer.py` com `ThreadSafetyAnalyzer`:
+- AST-only, stdlib pura, sem dependências externas
+- `_collect_thread_targets()` — varre `Thread/Process/Timer(target=fn)` e coleta nomes
+- `_function_mutates_global()` — detecta `global X` + assignment a X
+- `_function_has_lock_synchronisation()` — detecta `Lock/RLock/Semaphore/Condition/Event` e `with lock:`
+- `_function_mutates_module_collection()` — detecta `.append/.extend/.update/.add/...` em collections de módulo
+- `_collect_module_level_collections()` — coleta names atribuídos a `[]`/`{}`/`set()` no top-level
+- `_count_async_blocking()` — varre `async def` por `time.sleep`, `requests.*`, `socket.*`, `subprocess.*`
+- `_count_daemon_threads()` — `Thread(daemon=True)` sem `.join()` no módulo
+- `_count_unbounded_queues()` — `Queue/LifoQueue/PriorityQueue/SimpleQueue` sem `maxsize=`
+- `ThreadSafetyResult` — dataclass com 6 contadores
+
+#### WBS 10.1 — ThreadSafetyVector dataclass (`metrics/extended_vectors.py`)
+
+Nova classe `ThreadSafetyVector` com **6 canais** de concurrency-correctness:
+
+| Canal | CWE | Detecção |
+|---|---|---|
+| `global_shared_state_count` | CWE-362 | `global X` mutado em Thread target |
+| `lock_missing_count` | CWE-362 | Mutação compartilhada sem primitivo de sync |
+| `daemon_thread_risk` | CWE-366 | `Thread(daemon=True)` sem `.join()` |
+| `queue_unbounded_risk` | CWE-400 | `Queue()` sem `maxsize=` |
+| `asyncio_blocking_call` | CWE-557 | I/O bloqueante dentro de `async def` |
+| `shared_mutable_default` | CWE-362 | Collection de módulo mutada em Thread target |
+
+**Métodos auxiliares:**
+- `thread_safety_rating()` — grade A–E (E forçado se `lock_missing_count ≥ 3`)
+- `total_issues` — soma dos 6 canais
+- `from_analyzer(result)`, `from_dict(d)`, `to_dict()`
+
+#### WBS 10.3 — Anti-Pattern Score (`metrics/anti_pattern_score.py`)
+
+Novo módulo `metrics/anti_pattern_score.py` agregando **17 sinais** em score 0-100:
+
+| Dimensão | Peso | Sinais |
+|---|---:|---|
+| Security        | 60 | taint_path_count(30), injection_surface(15), sca_vulnerable_deps(10), iac_misconfig_count(5) |
+| Reliability     | 20 | bare_except(5), resource_leak(5), mutable_default(5), inconsistent_return(5) |
+| Performance     | 15 | n_plus_one(5), quadratic_nested(5), string_concat(5) |
+| Maintainability | 15 | docstring(5), long_function(5), cognitive_hotspot(5) |
+| Thread safety   | 20 | lock_missing(10), asyncio_blocking(5), global_shared(5) |
+| **TOTAL**       | **130** | 17 sinais |
+
+**Fórmula:** `APS = 100 × (1 − Σ(weight_i × min(1, raw_i/threshold_i)) / 130)`
+
+**Grade SonarQube-style:** A≥90, B 80-89, C 60-79, D 40-59, E<40
+
+**API:**
+- `compute_aps(signals)` — score 0-100 puro
+- `rate_aps(score)` — A-E
+- `aps_from_metric_vector(mv)` — extração + score em uma chamada; retorna `{aps, rating, components, signals}`
+- `APS_COMPONENTS` — tabela de pesos (frozen)
+- `APS_WEIGHT_SUM` — 130
+
+#### WBS 10.4 — Endpoints + integração (`api/server.py`)
+
+| Endpoint | Método | Descrição |
+|---|---|---|
+| `POST /scan-thread-safety` | POST | Análise concurrency em código Python fornecido |
+| `GET /metrics/thread-safety` | GET | ThreadSafetyVector persistido (`?module=`) |
+| `GET /anti-pattern-score` | GET | APS composto 0-100 + components dict (`?module=`) |
+
+- `SensorConfig.version` atualizado para `"3.0.0"`
+- `metrics/__init__.py` atualizado com `ThreadSafetyVector`, `compute_aps`, `rate_aps`, `aps_from_metric_vector`, `APS_COMPONENTS`, `APS_WEIGHT_SUM`
+- Wired em `sensor_core/uco_bridge.py` → `mv.thread_safety = ThreadSafetyVector.from_analyzer(...)`
+- Fail-silent: análise nunca quebra o pipeline principal
+
+#### WBS 10.4 — Testes + CHANGELOG
+
+- **`tests/test_marco_m22.py`** — 30 testes TT01-TT30 (todos verdes)
+  - TT01-TT05: dataclass basics + round-trip
+  - TT06-TT10: global_shared + lock_missing (Thread/Process + Lock variants)
+  - TT11-TT15: daemon_thread_risk + queue_unbounded
+  - TT16-TT20: asyncio_blocking + shared_mutable_default
+  - TT21-TT25: rating ladder + repr + REST endpoint
+  - TT26-TT30: APS (table, compute, grade, mv-extraction)
+- **`pyproject.toml`** — versão `2.9.1` → `3.0.0`, `test_marco_m22.py` adicionado a `python_files`
+- `__test__ = False` em `ThreadSafetyResult` e `ThreadSafetyVector`
+
+**Resultado:** 798/799 marco-tests pass (M7.7 + APS + M2.x→M7.6 regressão completa). 1 falha preexistente M7.1 não relacionada.
+
+**Impacto na competitividade vs SonarQube:**
+- ✅ Thread Safety (M7.7) — UCO agora cobre **paridade com SonarQube Enterprise** neste eixo
+- ✅ APS — métrica composta única, **nenhum analisador gratuito oferece equivalente**
+- 📊 Score competitivo estimado: 56/100 (v2.2.0) → **~75/100 (v3.0.0)** [APPROX]
+
+**Próximo marco:** M8.0 — Real-Time Monitoring Mode (SSE stream) → v3.1.0
+
+**Referências:**
+- Lea, D.   (1999). *Concurrent Programming in Java*. Addison-Wesley.
+- Goetz, B. (2006). *Java Concurrency in Practice*. Addison-Wesley.
+- PEP 492   — Coroutines with `async` and `await` syntax.
+- CWE-362, CWE-366, CWE-400, CWE-557 — MITRE Common Weakness Enumeration.
+
+---
+
+## [2.9.1] — 2026-05-31 — M7.6 TestQualityVector
+
+### Adicionado — M7.6 FASE 6a (WBS 9.1-9.2)
+
+#### WBS 9.1 — TestQualityAnalyzer AST (`metrics/test_quality_analyzer.py`)
+
+Novo módulo `metrics/test_quality_analyzer.py` com `TestQualityAnalyzer`:
+- AST-only, stdlib pura, sem dependências externas
+- `_collect_test_functions()` — descobre `def test_*` (top-level e em classes)
+- `_function_cc()` — McCabe cyclomatic complexity per test
+- `_is_assertion()` — reconhece `assert` + `self.assert*` + `self.fail()`
+- `_is_mock_construction()` — detecta `Mock`/`MagicMock`/`AsyncMock`/`patch`/`PropertyMock`/`create_autospec`/`mock_open`
+- `_is_flaky_call()` — detecta `time.sleep|time|monotonic|perf_counter`, `datetime.now|utcnow|today`, `uuid.uuid1|uuid4`, `random.*`, `os.urandom`
+- `_is_polluting_test()` — detecta `global`/`nonlocal` + mutação de atributo de módulo importado
+- `_is_parameterized()` — `@pytest.mark.parametrize`, `@parameterized.expand`, `@given` (hypothesis), `@ddt.data`
+- `_name_quality_ok()` — exige ≥3 tokens snake_case após `test_`
+- `TestQualityResult` — dataclass com 9 contadores brutos (canais + n_test_functions)
+
+#### WBS 9.1 — TestQualityVector dataclass (`metrics/extended_vectors.py`)
+
+Nova classe `TestQualityVector` com **8 canais** de qualidade de suíte de testes:
+
+| Canal | Tipo | Threshold saudável | Descrição |
+|---|---|---|---|
+| `assertion_density` | `float` | ≥ 2.0 | Assertions / total de tests |
+| `test_complexity` | `float` | < 3.0 | CC médio por test (McCabe) |
+| `mock_overuse_ratio` | `float` | < 0.3 | Mocks / total Call nodes |
+| `test_isolation_score` | `float` | > 0.8 | 1 − polluting/total |
+| `flaky_test_risk` | `int` | 0 | Tests tocando `time`/`random`/`uuid`/`datetime.now` |
+| `parameterized_ratio` | `float` | > 0.3 | Share com `@parametrize`/`@given` |
+| `test_naming_quality` | `float` | > 0.7 | Share com ≥3 tokens descritivos |
+| `dead_test_count` | `int` | 0 | Tests sem nenhum `assert` |
+
+**Métodos auxiliares:**
+- `test_quality_rating()` — grade A–E baseada em contagem de thresholds violados (A=0 violações, E=6+ ou dead≥5)
+- `_threshold_violations()` — contador interno usado pelo rating
+- `from_analyzer(result)`, `from_dict(d)`, `to_dict()`
+
+**Integração:**
+- Wired em `sensor_core/uco_bridge.py` → `mv.test_quality = TestQualityVector.from_analyzer(...)`
+- Guard de importação M7.6 adicionado (`_TEST_QUALITY_ANALYZER_AVAILABLE`)
+- Falha silenciosa: análise de qualidade de testes nunca quebra o pipeline principal
+
+#### WBS 9.2 — Endpoints + integração (`api/server.py`)
+
+| Endpoint | Método | Descrição |
+|---|---|---|
+| `POST /scan-test-quality` | POST | Análise de qualidade de testes em código Python fornecido |
+| `GET /metrics/test-quality` | GET | TestQualityVector persistido para um módulo (`?module=`) |
+
+- `SensorConfig.version` atualizado para `"2.9.1"`
+- `metrics/__init__.py` atualizado com `TestQualityVector`
+- Endpoints registrados em `do_GET` e `do_POST` do `UCOSensorHandler`
+- Lista de endpoints em `_API_ENDPOINTS_INFO` atualizada
+
+#### WBS 9.2 — Testes + CHANGELOG
+
+- **`tests/test_marco_m21.py`** — 30 testes TQ01-TQ30 (todos verdes)
+  - TQ01-TQ05: dataclass basics e round-trip
+  - TQ06-TQ10: descoberta de tests + assertion_density
+  - TQ11-TQ15: test_complexity + mock_overuse_ratio
+  - TQ16-TQ20: test_isolation_score + flaky_test_risk
+  - TQ21-TQ25: parameterized_ratio + test_naming_quality + dead_test_count
+  - TQ26-TQ30: rating, edge cases, REST endpoint
+- **`CHANGELOG.md`** — entrada `[2.9.1]`
+- **`pyproject.toml`** — versão `2.9.0` → `2.9.1`, `test_marco_m21.py` adicionado a `python_files`
+- `__test__ = False` em `TestQualityResult` e `TestQualityVector` (silencia warning de coleta pytest)
+
+**Resultado de regressão:** 439/439 tests pass (M7.6 + M2.x→M7.5) em 1.65s.
+
+**Próximo marco:** M7.7 — ThreadSafetyVector (6 canais) + APS Anti-Pattern Score → v3.0.0
+
+**Referências:**
+- Meszaros, G. (2007). *xUnit Test Patterns: Refactoring Test Code*. Addison-Wesley.
+- Beck, K.    (2002). *Test-Driven Development By Example*. Addison-Wesley.
+- Fowler, M.  (2007). *Mocks Aren't Stubs*. martinfowler.com.
+- McCabe, T.J. (1976). A complexity measure. *IEEE TSE*, 2(4), 308-320.
+
+---
+
 ## [2.9.0] — 2026-04-28 — M7.5 ArchitectureVector
 
 ### Adicionado — M7.5 FASE 5b (WBS 8.1-8.5)

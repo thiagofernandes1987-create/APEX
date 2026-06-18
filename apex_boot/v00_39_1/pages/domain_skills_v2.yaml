@@ -1,0 +1,131 @@
+domain_skills_v2:
+  executor: DOCUMENTATION
+  version: v00.34.0
+  opp: OPP-113
+  tier: 0
+  status: ADOPTED
+  purpose: 'Atualizar MODULE_domain_skills_ingestion (OPP-102) para refletir catálogo completo de 2.752
+    skills ingeridas de 56 repositórios. Prover ao ForgeSkills mapeamento exato de onde encontrar skills
+    por domínio.
+
+    '
+  why: 'WHY: OPP-102 documentava apenas antigravity (1.342) + 189 institucionais. Após ingestion v00.34.0:
+    2.752 SKILL.md de 56 repos incluindo awesome-claude-skills (60), claude-skills-main (236), skills-main
+    (176), marketingskills (35), awesome-claude-code-toolkit (35), financial-services (56), knowledge-work
+    (124). Sem mapa atualizado, ForgeSkills nao sabe onde buscar skills de marketing/engineering.
+
+    '
+  what_if_fails: DOCUMENTATION — sem modo de falha
+  inject_when: SkillIndexer.discover() + ForgeSkills boot
+  depends_on:
+  - apex_superrepo_v2
+  complete_ingestion_map:
+    P0_institutional:
+      count: 189
+      sources:
+      - 'financial-services-plugins-main: 56 skills (equity-research, IB, PE, WM)'
+      - 'knowledge-work-plugins-main: 124 skills (legal, marketing, engineering, HR, sales)'
+      - 'healthcare-main: 3 skills (clinical-trial, FHIR, prior-auth)'
+      - 'life-sciences-main: 6 skills (RNA-seq, nextflow, allotrope, trials)'
+    P1_quality_verified:
+      count: 2113
+      sources:
+      - 'awesome-claude-skills-master: 60 skills (artifacts-builder, brand, canvas-design)'
+      - 'claude-skills-main: 236 skills (cross-platform, Azure AI Agents)'
+      - 'skills-main: 176 skills (Azure AI Agents, cloud patterns)'
+      - 'marketingskills-main: 35 skills'
+      - 'awesome-claude-code-toolkit: 35 skills (WCAG, api-design, auth, AWS, CI/CD)'
+      - 'x-cmd-X: 25 skills (CLI/shell tools)'
+      - 'cherry-studio: 13 skills'
+      - 'antigravity-awesome-skills: 1391 unique (after dedup)'
+      - 'anthropic-official: 91 skills'
+      - 'github-mcp-server, claude-code-cli, etc: 41 skills'
+    P2_candidate:
+      count: 450
+      sources:
+      - 'community/general: 414 unclassified (CANDIDATE)'
+      - 'community/openclaw-index: 32 skill references'
+    domain_index:
+      engineering:
+        path: skills/engineering/
+        sub_domains:
+        - cloud/azure
+        - cloud/aws
+        - cloud/gcp
+        - devops
+        - frontend
+        - backend
+        - api
+        - security
+        - database
+        - testing
+        - mobile
+        - cli
+        - git
+        total: ~450
+      ai_ml:
+        path: skills/ai-ml/
+        sub_domains:
+        - llm
+        - agents
+        - ml
+        - rag
+        total: ~280
+      marketing:
+        path: skills/marketing/
+        sub_domains:
+        - seo
+        - campaigns
+        - content
+        - ads
+        - brand
+        - analytics
+        total: ~150
+      finance:
+        path: skills/finance/
+        sub_domains:
+        - equity-research
+        - financial-analysis
+        - investment-banking
+        - wealth-management
+        - private-equity
+        total: ~100
+      design:
+        path: skills/design/
+        total: ~90
+      data_science:
+        path: skills/data-science/
+        total: ~60
+      business:
+        path: skills/business/
+        sub_domains:
+        - sales
+        - human-resources
+        - customer-support
+        - operations
+        - productivity
+        - content
+        total: ~130
+      healthcare:
+        path: skills/healthcare/
+        total: ~15
+      science:
+        path: skills/science/
+        total: ~12
+      legal:
+        path: skills/legal/
+        sub_domains:
+        - civil-law/contracts
+        - civil-law/obligations
+        - knowledge-work
+        total: ~20
+      community:
+        path: skills/community/
+        total: ~450
+  fmea:
+    rpn: 2
+    mode: Mapa desatualizado após nova ingestion
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: Mapa gerado de apex_superrepo_v2.repo_stats; re-executar boot após nova ingestion

@@ -1,0 +1,58 @@
+sympy_formal_verifier:
+  executor: SANDBOX_CODE
+  version: v00.32.1
+  opp: OPP-69
+  tier: 2
+  status: ADOPTED
+  purpose: 'Substituir [CONJECTURA_FORMAL] por [FORMAL_VERIFIED] ou [FORMAL_REFUTED] para claims matemáticos
+    verificáveis simbolicamente. Resolve ~60% do Gargalo G5.
+
+    '
+  why: 'sympy está pré-instalado na sandbox — zero dependências externas, zero latência de instalação,
+    zero acesso à rede. Z3 requereria pip install (rede restrita, frágil). Para o domínio principal do
+    APEX (álgebra, equações, derivadas, integrais), sympy é suficiente e determinístico. Z3 fica para
+    Horizonte 3.
+
+    '
+  description: 'Verifica claims matemáticos via sympy nativo do Python. O QUE É: Verificação simbólica
+    determinística — simplify(A-B)==0 é certeza matemática. O QUE NÃO É: Verificação de lógica proposicional
+    de ordem superior (requer Z3). O QUE NÃO É: Prova por indução estrutural (requer Lean/Coq). O QUE
+    NÃO É: Solução de PDEs não-lineares (custo computacional excessivo). COBERTURA: ~60% dos claims matemáticos
+    em modo SCIENTIFIC [APPROX_ESTIMATE]. COMO FUNCIONA: theorist formata claim como dict → verify() chama
+    sympy → retorna TRUE/FALSE/UNKNOWN/UNSUPPORTED.
+
+    '
+  what_if_fails: "FALLBACK 1 — SyntaxError no parsing:\n  Retornar UNKNOWN com [CONJECTURA_FORMAL]. NÃO\
+    \ retornar TRUE falso.\nFALLBACK 2 — Timeout (expressão muito complexa):\n  Retornar UNKNOWN com [CONJECTURA_FORMAL].\n\
+    FALLBACK 3 — Claim tipo não suportado:\n  Retornar UNSUPPORTED imediatamente com [CONJECTURA_FORMAL].\n\
+    REGRA: [CONJECTURA_FORMAL] é sempre mais honesto que certeza inventada. O LLM NUNCA marca [FORMAL_VERIFIED]\
+    \ sem verify() retornar TRUE explicitamente.\n"
+  inject_when: cognitive_mode == SCIENTIFIC OR math_claim_detected
+  depends_on:
+  - sympy_library
+  claim_types_supported:
+    identity: simplify(A-B) == 0 → [FORMAL_VERIFIED]
+    equation: substituir solução e verificar resíduo == 0 → [FORMAL_VERIFIED]
+    derivative: diff(f, var) == claimed → [FORMAL_VERIFIED]
+    integral: integrate(f, var) == claimed + C → [FORMAL_VERIFIED]
+  limits_honest:
+  - Lógica proposicional de ordem superior → [CONJECTURA_FORMAL] (usar Z3 via Forge)
+  - Provas por indução estrutural → [CONJECTURA_FORMAL] (usar Lean/Coq)
+  - PDEs não-lineares → [CONJECTURA_FORMAL] (custo computacional excessivo)
+  output_tags:
+    FORMAL_VERIFIED: '[FORMAL_VERIFIED] confidence=99 — prova simbólica incluída'
+    FORMAL_REFUTED: '[FORMAL_REFUTED] confidence=99 — contraexemplo simbólico incluído'
+    CONJECTURA_FORMAL: '[CONJECTURA_FORMAL] — não verificável simbolicamente neste momento'
+  api:
+  - 'verify(claim: dict) → dict{result: TRUE|FALSE|UNKNOWN|UNSUPPORTED, tag, confidence, proof}'
+  - _verify_identity(claim) → simplify(A-B)==0
+  - _verify_derivative(claim) → diff() comparado com claimed
+  rules_enforced:
+  - 'C8: FORMALISM_GATE — [FORMAL_VERIFIED] exige verify() retornando TRUE'
+  fmea:
+    rpn: 1
+    mode: SyntaxError no parsing da expressão sympy
+    probability: 1
+    severity: 1
+    detection: 1
+    mitigation: try/except com fallback imediato para [CONJECTURA_FORMAL]

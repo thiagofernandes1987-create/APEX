@@ -1,0 +1,133 @@
+dsl_glossary:
+  _note: DEFINIÇÕES CANÔNICAS — usar estes termos de forma consistente em todo o arquivo
+  SANDBOX:
+    definicao: 'O interpretador Python real disponível via bash_tool / code interpreter. Ambiente isolado
+      com filesystem em /tmp e /home/claude, bibliotecas pré-instaladas, subprocess funcional e sqlite3
+      nativo.
+
+      '
+    o_que_e:
+    - Python 3 real com numpy, scipy, sympy, sklearn, sqlite3
+    - subprocess.run() para execução de programas externos
+    - concurrent.futures.ThreadPoolExecutor para I/O-bound concurrency
+    - 'Filesystem real: /tmp e /home/claude disponíveis durante a sessão'
+    o_que_nao_e:
+    - Simulação ou raciocínio do LLM imitando execução de código
+    - Ambiente JavaScript/HTML (Artifacts JS são separados — ver ARTIFACT_JS)
+    - Servidor externo, API, ou runtime persistente entre sessões
+    persistencia: 'Arquivos em /tmp e /home/claude persistem DURANTE a sessão atual. NÃO persiste entre
+      sessões distintas por padrão. Para cross-session: exportar snapshot ao final e reinjetar na próxima
+      sessão.
+
+      '
+    capacidades_confirmadas:
+      sqlite3: ✅ funcional — /tmp/apex_memory.db criado e lido em sessão
+      subprocess: ✅ funcional — PoT programs executam via subprocess.run()
+      numpy_scipy: ✅ pré-instalados — numpy.random, scipy.integrate disponíveis
+      sympy: ✅ pré-instalado — simplify(), diff(), integrate() funcionam
+      sklearn: ✅ pré-instalado — TfidfVectorizer, cosine_similarity disponíveis
+      threadpoolexecutor: ✅ funcional para I/O-bound subprocess orchestration
+      git_clone: ✅ funcional via subprocess — validado em sessões anteriores
+  ARTIFACT_JS:
+    definicao: 'Ambiente SEPARADO do Sandbox Python. HTML/JS rodando no navegador do usuário, com window.localStorage
+      (5MB persistente cross-session) e fetch() para APIs.
+
+      '
+    o_que_e:
+    - HTML/JS com window.storage, Pyodide opcional, fetch() para APIs externas
+    - Persistência real cross-session via localStorage
+    o_que_nao_e:
+    - O mesmo que Sandbox Python — são dois ambientes completamente distintos
+    - O ambiente padrão do APEX — a maioria dos módulos usa Sandbox Python
+    quando_usar: 'Apenas quando o usuário solicitar um Artifact HTML/JS explicitamente. Caso de uso principal:
+      persistência cross-session sem SQLite.
+
+      '
+  PARALELISMO:
+    definicao: 'No APEX, paralelismo significa execução concorrente de SUBPROCESSOS independentes via
+      ThreadPoolExecutor. É I/O-bound concurrency.
+
+      '
+    natureza_correta:
+      tipo: ThreadPoolExecutor — I/O-bound
+      por_que: 'subprocess.run() é I/O-bound: spawn de processo + wait para resultado. O GIL Python NÃO
+        afeta subprocessos (cada um tem seu próprio intérprete). ThreadPoolExecutor tem menor overhead
+        que ProcessPoolExecutor para subprocess.
+
+        '
+      resultado: wall-clock = max(t1..tN) em vez de sum(t1..tN)
+    o_que_nao_e:
+      ProcessPoolExecutor: 'Errado para subprocess orchestration. ProcessPoolExecutor serializa objetos
+        via pickle e faz fork do processo Python — overhead desnecessário quando o trabalho pesado já
+        está em subprocessos externos.
+
+        '
+      paralelismo_de_geracao_llm: 'IMPOSSÍVEL. O LLM é single-context por definição física. A geração
+        de N programas PoT acontece sequencialmente no mesmo contexto. A independência é de EXECUÇÃO (subprocessos
+        separados), não de GERAÇÃO (mesmo LLM).
+
+        '
+    implicacao: 'Programas gerados no mesmo contexto LLM são correlacionados na origem (~30%). Stances
+      forçados (optimistic/pessimistic/neutral) reduzem para ~15% [APPROX]. Independência total de raciocínio
+      requer múltiplas instâncias de LLM — fora do escopo.
+
+      '
+  PERSISTENCIA:
+    definicao: Capacidade de manter estado entre operações
+    within_session:
+      o_que_e: SQLite em /tmp/apex_memory.db existe enquanto a sessão de chat estiver ativa
+      funciona: true
+      limitacao: Arquivo em /tmp — não persiste quando a sessão termina
+    cross_session:
+      o_que_e: Dados disponíveis em sessões distintas
+      funciona_automaticamente: false
+      como_obter: 'Opção 1: Exportar snapshot como texto no output do STEP_13. Usuário copia e reinjeta
+        na próxima sessão. Opção 2: Usar Artifact JS com window.localStorage (5MB, cross-session real).
+
+        '
+    o_que_nao_e: Banco de dados permanente acessível em qualquer momento futuro sem ação do usuário
+  AGENTE:
+    definicao: 'Persona cognitiva com papel, fase e âncoras definidos, operando dentro do MESMO contexto
+      LLM sequencial via [PARTITION_ACTIVE: role].
+
+      '
+    natureza: 'Particionamento COGNITIVO — não computacional. Todos os agentes compartilham a mesma matriz
+      de atenção. A independência é de PAPEL (perspectiva), não de EXECUÇÃO (mesmo LLM).
+
+      '
+    o_que_nao_e:
+    - Processos Python separados
+    - Threads independentes
+    - Instâncias separadas do LLM
+    independencia_real: 'Para execução independente: usar parallel_pot_executor (subprocess separados).
+      Para raciocínio independente: não é possível com LLM único — usar stances forçados como proxy de
+      divergência.
+
+      '
+  LLM:
+    definicao: O modelo de linguagem que lê e executa este prompt
+    faz:
+    - Raciocínio estruturado seguindo as regras deste arquivo
+    - Geração de código Python para a sandbox executar
+    - Síntese semântica de resultados retornados pela sandbox
+    - 'Decisões de fluxo: qual step, qual modo, qual agente'
+    - Interpretação de outputs da sandbox e ajuste de confidence
+    nao_faz:
+    - Executa código diretamente — GERA código para a sandbox
+    - Tem acesso ao filesystem além do que a sandbox retorna
+    - Faz paralelismo real de raciocínio — é single-context
+    - Garante certeza matemática — todos os scores são [APPROX] por padrão
+  APPROX:
+    definicao: 'Tag obrigatória em TODOS os confidence scores gerados pelo LLM. Indica estimativa heurística,
+      não garantia estatística.
+
+      '
+    variantes:
+      APPROX: Score estimado heuristicamente pelo LLM — precisão desconhecida
+      APPROX_ESTIMATE: Estimativa de ganho/performance — não validada empiricamente
+      UCO_CAL: Score calibrado por UCO Quality Gate — mais objetivo que APPROX
+      FORMAL_VERIFIED: Verificado por sympy — certeza matemática para o claim
+    regra_c4: 'NUNCA remover [APPROX] para parecer mais preciso. Isso é violação da C4 e invalida o output.
+      A honestidade epistêmica é mais valiosa que a aparência de precisão.
+
+      '

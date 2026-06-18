@@ -1,0 +1,46 @@
+specialized_skill_engine:
+  version: v00.20.0
+  tier: 1
+  description: 'Orquestra o ciclo completo de execução de Specialized Skills: resolução da cadeia hierárquica,
+    execução via PoT/Mental Interpreter, cross-attraction, filtro de hipóteses e atualização de fitness.
+
+    '
+  config:
+    resolution_pipeline:
+    - 1. Receber agent + problem_anchors
+    - 2. Consultar skill_hierarchy.agent_skill_link → Generic Skills
+    - '3. Para cada Generic Skill: consultar specialized_skills atraídas'
+    - '4. Para cada Specialized Skill candidata: calcular attraction_score'
+    - 5. Filtrar por attraction_threshold (0.45)
+    - '6. Verificar cross_attraction: expandir pipeline se A.attracts ∩ candidates'
+    - 7. Ordenar por (attraction_score × fitness_weight) desc
+    - 8. Executar top-N skills via pot_engine + mental_interpreter
+    - 9. Coletar hypothesis_filter_outputs
+    - 10. Passar para fractal_hypothesis_compression
+    max_skills_per_step: 3
+    cross_attraction_expansion: true
+    max_pipeline_length: 4
+    token_budget_per_skill: 400
+    attraction_threshold: 0.45
+    fitness_weight_formula: fw = mean(skill.fitness_scores[-3:]) / 5.0
+    fractal_integration:
+      description: 'Specialized Skills sofrem decomposição fractal: a skill é invocada em cada nível fractal
+        com contexto correspondente.
+
+        '
+      level_context:
+        macro: problem_description + lpm_primary_node
+        meso: sub_domain + relevant_anchors
+        micro: specific_component + equation_template
+        nano: exact_value + code_fragment
+      output_feeds: fractal_hypothesis_compression
+  outputs:
+  - skill_execution_results
+  - hypothesis_filter_events
+  dependencies:
+  - MODULE_skill_hierarchy
+  - MODULE_pot_engine_v2
+  - MODULE_mental_interpreter_v4
+  - MODULE_attraction_engine
+  - MODULE_skill_registry
+  inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] OR skill_resolution_needed

@@ -1,0 +1,35 @@
+patch_config_parameters:
+  new_section: specialized_skills
+  parameters:
+    specialized_skills:
+      max_skills_per_step: 3
+      max_pipeline_length: 4
+      attraction_threshold: 0.45
+      token_budget_per_skill: 400
+      cross_attraction_enabled: true
+      fractal_decomposition_enabled: true
+      hypothesis_filter_enabled: true
+      knowledge_model_ttl_sessions: 20
+      knowledge_model_fitness_threshold: 0.5
+    pot:
+      max_pot_steps: 30
+      delegation_above_steps: 30
+      confidence_cap_guard_violation: 45
+    mental_interpreter:
+      stack_depth_max: 5
+      variables_per_frame: 20
+      frame_isolation: true
+    fractal_hypothesis_compression:
+      min_hypotheses_preserved: 2
+      compression_floor_confidence: 40
+      similarity_merge_threshold: 0.8
+      dominance_confidence_margin: 10
+    fractal_knowledge_indexing:
+      levels:
+      - macro
+      - meso
+      - micro
+      - nano
+      macro_specificity_max: 0.3
+      meso_specificity_max: 0.6
+      micro_specificity_max: 0.85

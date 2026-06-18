@@ -1,0 +1,2475 @@
+modules:
+  config:
+    version: v00.19.0
+    tier: 0
+    description: Central configuration management for APEX.
+    parameters:
+      amplification:
+        N_candidates:
+          FAST: 4
+          DEEP: 6
+          RESEARCH: 6
+          FOGGY: 4
+          SCIENTIFIC: 6
+          CLARIFY: 2
+        K_retain:
+          FAST: 2
+          DEEP: 3
+          RESEARCH: 3
+          FOGGY: 2
+          SCIENTIFIC: 3
+          CLARIFY: 1
+        iterations:
+          FAST: 1
+          DEEP: 2
+          RESEARCH: 4
+          FOGGY: 1
+          SCIENTIFIC: 3
+          CLARIFY: 1
+        budget_abort_threshold_pct: 15
+      interference:
+        constructive_threshold: 0.7
+        destructive_threshold: 0.3
+        theta_values_deg:
+        - 0
+        - 45
+        - 90
+        - 135
+        - 180
+        minimum_meaningful_delta: 10
+        phase_resolution:
+          FAST: coarse_90deg
+          DEEP: medium_45deg
+          RESEARCH: fine_22deg
+          FOGGY: coarse_90deg
+          SCIENTIFIC: fine_22deg
+          CLARIFY: coarse_90deg
+      confidence:
+        LOW_COMPOSITE_threshold: 55
+        round_to_nearest: 5
+        tag_required: '[APPROX]'
+        band_HIGH:
+        - 75
+        - 100
+        band_MEDIUM:
+        - 50
+        - 74
+        band_LOW:
+        - 0
+        - 49
+        calibration_caps:
+          measured_data: 95
+          validated_pattern: 85
+          strong_analogy: 75
+          first_principles: 65
+          speculation: 45
+          domain_extension_unvalidated: 60
+      fractal:
+        max_depth:
+          FAST: 1
+          DEEP: 2
+          RESEARCH: 3
+          FOGGY: 1
+          SCIENTIFIC: 3
+          CLARIFY: 1
+        meso_trigger_confidence_below: 65
+        micro_trigger_confidence_below: 60
+        self_similarity_threshold: 0.75
+        budget_gate_pct: 0.75
+        cross_domain_similarity_threshold: 0.7
+      agents:
+        count:
+          FAST: 5
+          DEEP: 8
+          RESEARCH: 12
+          FOGGY: 5
+          SCIENTIFIC: 8
+          CLARIFY: 3
+        max_factory_spawned_per_session: 3
+        max_total: 15
+        partition_breach_rate_penalty_above: 30
+        analysis_versions:
+          FAST: 2
+          DEEP: 3
+          RESEARCH: 3
+          FOGGY: 2
+          SCIENTIFIC: 3
+          CLARIFY: 1
+      token_budgets:
+        FAST: 6500
+        DEEP: 8000
+        RESEARCH: 15000
+        FOGGY: 5500
+        SCIENTIFIC: 12000
+        CLARIFY: 3500
+        pre_mortem_gate: 150
+        pmi_scoping_fast: 300
+        pmi_scoping_full: 600
+        skill_synthesis_max: 400
+        section_increase_cap_pct: 2
+      skills:
+        quality_gate_min_score: 4
+        quality_gate_checks: 5
+        provisional_to_candidate_sessions: 1
+        candidate_to_certified_sessions: 3
+        certified_min_fitness: 80
+        adversarial_refute_threshold: 70
+        first_principles_overuse_threshold_pct: 40
+        manifold_stability_min_pass: 4
+        manifold_stability_out_of: 6
+      pmi_pm:
+        pareto_focus_areas: 3
+        dsm_max_agents: 8
+        ishikawa_categories: 6
+        binomial_spawn_threshold: 0.6
+        swot_items_per_quadrant: 3
+        fast_mode_tools:
+        - pareto
+        - binomial
+      knowledge:
+        max_anchors_per_agent: 5
+        injection_scoring_weights:
+          domain_match: 0.4
+          confidence: 0.25
+          recency_modifier: 0.2
+          usage_success: 0.15
+        cache_max_age_days: 7
+        cache_min_similarity: 0.92
+        new_anchor_min_confidence: 70
+        outdated_threshold_years: 5
+      evolution:
+        auto_apply_enabled: false
+        max_diffs_per_session: 3
+        rollback_history_depth: 5
+        diff_review_gate_blocking: true
+        regression_revert_sessions: 2
+      agent_weights:
+        pmi_pm: 0.25
+        architect: 0.2
+        researcher: 0.15
+        theorist: 0.1
+        engineer: 0.15
+        critic: 0.1
+        meta_reasoning: 0.05
+        factory_spawned: inherits_parent_weight
+        _note: Soma base = 1.00 (0.25+0.20+0.15+0.10+0.15+0.10+0.05). factory_spawned herda peso do agente-pai.
+      chaos_spawn:
+        cfi_threshold_default: 0.45
+        confidence_floor: 30
+        confidence_gate: 40
+        max_rounds_default: 1
+        gate_schedule:
+          round_1: 30
+          round_2: 40
+          round_3: 55
+        convergence_velocity_threshold_high: 0.5
+        convergence_velocity_cfi_reduction: 0.05
+        adopted_with_chaos_caveat:
+          status_name: ADOPTED_WITH_CHAOS_CAVEAT
+          parent_status: ADOPTED
+          description: Skill passou nos criterios ADOPTED mas falhou em P6.
+          automatic_action: Adicionar adversarial_anchor automatico baseado no target_anchor que P6 usou.
+          resolution: Passar em P6 em sessao futura → status promovido para ADOPTED puro.
+      radial_loading:
+        relevance_threshold: 0.4
+        top_k_formula: max(5, ceil(Effective_CFI * 10))
+        top_k_floor: 5
+        top_k_cap: 10
+        primary_weight: 0.7
+        secondary_weight: 0.3
+        gravitational_expansion_weight: 0.5
+        max_expanded_pool: 15
+        serendipity_threshold: 0.25
+        serendipity_trigger: wE > 0.5
+        top_k_clarify_floor:
+          condition: Eff_CFI < 0.1
+          top_k: 3
+      anchor_recency:
+        decay_horizon_sessions: 50
+        recency_weight_floor: 0.5
+        formula: max(0.5, 1.0 - (current_session - last_activation_session) / 50)
+      radial_feedback:
+        positive_delta: 0.02
+        negative_delta: -0.01
+        usage_success_rate_cap: 1.0
+        usage_success_rate_floor: 0.0
+        snapshot_retention_max: 10
+      snapshot_compression:
+        sqlite_mode_active: Quando sqlite_snapshot_store.active == true, este bloco é BYPASSED.
+        sqlite_mode_behavior: 'Com SQLite ativo, o context window recebe apenas o delta (~200-500 tokens)
+          via sqlite_store.load_delta_for_session(). As compression_rules abaixo NÃO se aplicam ao delta
+          — aplicam-se apenas ao full_snapshot no banco SQLite. O max_snapshot_tokens reflete o delta
+          máximo no context window (não o snapshot completo).
+
+          '
+        enabled: true
+        sqlite_active_enabled: false
+        max_snapshot_tokens: 500
+        max_snapshot_tokens_legacy_mode: 3000
+        compression_trigger_sessions: 10
+        compression_applies_when: sqlite_snapshot_store.active == false
+        compression_rules:
+          bayesian_posteriors: manter apenas últimas 10 entradas por classe
+          resolution_cache: manter apenas entradas com omega_score > 0.6
+          diff_ecosystem: arquivar DIFFs OBSOLETE após 5 sessões sem referência
+          high_decoherence_areas: remover nós com decoherence_score < 0.3 por 3 sessões consecutivas
+          lpm_primary_node_history: manter apenas últimas 10 entradas
+          chaos_spawn_log: manter apenas últimas 5 entradas
+      trojan_detections:
+        type: list
+        max_entries: 20
+        description: 'Historico de deteccoes Trojan para calibracao do threshold. confirmed=true/false
+          alimenta auto-calibracao via meta_learning_agent.
+
+          '
+        calibration_trigger: 'confirmed_rate < 60% -> DIFF aumentando threshold em 0.05. confirmed_rate
+          > 90% -> DIFF reduzindo threshold em 0.05.
+
+          '
+      chaos_seeds_schema:
+        type: list
+        max_entries: 9
+        description: 'Seeds de sessoes anteriores com rounds_remaining > 0 e sem rejection_log completo.
+          Max 9 = 3 seeds x 3 sessoes de vida.
+
+          '
+        compression_rule: "Descartar se session_age > 3 OU rejection_log completo (AJUSTE C). FIFO por\
+          \ session_age descendente quando max_entries atingido. express_log: manter apenas últimas 20\
+          \ entradas (FIFO) chaos_seeds: >\n  Descartar seeds com session_age > 3 OU rejection_log completo\n\
+          \  (todos os agentes base rejeitaram em todas as rodadas — AJUSTE C).\n  Manter max 9 seeds\
+          \ (FIFO por session_age descendente).\n  Compressao executada antes de salvar snapshot no STEP_13.\n\
+          scientific_state: >\n  manter modelos com score > 0.6 OU (score > 0.4 E last_used_session >=\
+          \ current_session - 5)\n"
+        compression_instruction: 'A cada compression_trigger_sessions sessões: aplicar regras na ordem
+          listada.'
+        hard_cap_action: 'LEGACY (sem SQLite): Se delta > max_snapshot_tokens_legacy_mode*1.5, forçar
+          compressão imediata antes do STEP_1. COM SQLite ativo: verificar delta > 500 tokens e truncar
+          por ΔH antes de injetar no context window.'
+      chaos_seed_bank:
+        max_seeds: 3
+        rounds_remaining_initial: 2
+        decay_per_round: 1
+        min_confidence_to_seed: 20
+        label_required: '[CHAOS_SEED]'
+        seed_schema:
+          seed_id: str
+          content: str
+          phase: float
+          source_step: str
+          confidence_floor: float
+          rounds_remaining: int
+          rejection_log: list
+          accepted_by: list
+        prohibited_as_final: true
+        prohibited_blocking_consensus: true
+        note: 'Seeds sao ancoras adversariais. Estimulam divergencia mas nunca determinam output. Precisam
+          de >= 2 validacoes de agentes base para entrar na sintese principal.
+
+          '
+      express_mode:
+        cfi_threshold: 0.05
+        we_threshold: 0.3
+        wd_threshold: 0.2
+        v_conflict_threshold: 0.25
+        escalation_rate_warning: 0.15
+        auto_calibration: 'Se escalation_rate > 15% nas ultimas 20 sessoes EXPRESS, meta_learning_agent
+          propoe DIFF reduzindo cfi_threshold em 0.01.
+
+          '
+      reliability:
+        P_target:
+          FOGGY: 0.4
+          FAST: 0.5
+          CLARIFY: 0.6
+          DEEP: 0.7
+          RESEARCH: 0.8
+          SCIENTIFIC: 0.85
+        initial_global_p: 0.03
+        min_samples_per_bucket: 5
+        error_correlation_coeff: 0.5
+        enable_temporal_correlation: true
+        warning_threshold: 0.5
+        critical_threshold: 0.3
+        rollback_trigger: 'Se global_p > 0.055 em 2 sessões consecutivas no modo SCIENTIFIC, diff_governance
+          propõe reversão de P_target.SCIENTIFIC para 0.90.
+
+          '
+    inject_when: always
+  event_bus:
+    version: v00.19.0
+    tier: 1
+    executor: LLM_BEHAVIOR
+    opp_patch: OPP-122
+    description: Event bus for decoupled communication between modules.
+    what_if_fails: 'FALLBACK 1 — Runtime MINIMAL: substituir publicacao de eventos por chamadas diretas
+      entre modulos. Ordem: pmi_pm -> architect -> engineer -> critic -> meta_reasoning. Declarar [EVENT_BUS_DEGRADED:
+      direct_calls]. FALLBACK 2 — Subscriber nao registrado: ignorar evento silenciosamente. FALLBACK
+      3 — > 100 eventos pendentes: descartar mais antigos (FIFO). Logar [EVENT_BUS_OVERFLOW]. REGRA: Falha
+      no event_bus NUNCA bloqueia a pipeline principal.
+
+      '
+    resilience_mode:
+      FULL: Python dict in-process — eventos sao chamadas de funcao
+      PARTIAL: Simulated — LLM mantem log de eventos em context
+      MINIMAL: Direct calls — modulos chamados em sequencia sem mediacao
+    events:
+    - STEP_0_START .. STEP_13_END (todos os steps)
+    - BAYESIAN_UPDATE_START, BAYESIAN_UPDATE_END
+    - RESOLUTION_NEEDED, RESOLUTION_COMPLETE
+    - FALLBACK_SEMANTIC_ACTIVATED
+    - FORMALISM_GATE_TRIGGERED
+    - SNAPSHOT_COMPRESSED
+    - SKILL_PIPELINE_SUBSTITUTION
+    - MCFE_ENTROPY_COMPUTED, MCFE_GEAR_CHANGED, MCFE_EARLY_EXIT, MCFE_STALL_DETECTED, MCFE_COLLAPSE_EXPANSION
+    - SYMBOLIC_EXECUTION_COMPLETED
+    - INTEGRATOR_SELECTED
+    - MICRO_SIMULATION_DONE
+    - EXTRAPOLATION_READY
+    - ERROR_THRESHOLD_WARNING, ERROR_THRESHOLD_STOP
+    - SKILL_ATTRACTED
+    - VALIDATION_4LAYERS_COMPLETED
+    - BLOCK_COMPLETED
+    - RELIABILITY_WARNING
+    - RELIABILITY_CRITICAL
+    - UCO_GATE_PASS
+    - UCO_GATE_AUTO_FIXED
+    - UCO_GATE_REJECTED
+    - UCO_OVERCONFIDENCE_ALERT
+    - PARALLEL_POT_COMPLETE
+    - PARALLEL_POT_PARTIAL
+    - SQLITE_DELTA_LOADED
+    - SQLITE_SESSION_SAVED
+    - FORMAL_VERIFIED
+    - FORMAL_REFUTED
+    - FORMAL_UNSUPPORTED
+    - EXTERNAL_CRITIC_ALERT
+    - EXTERNAL_CRITIC_CLEAN
+    - DAG_NODE_REGISTERED
+    - DAG_CASCADE_INVALIDATED
+    - DAG_CYCLE_REJECTED
+    - GENETICS_VACCINE_ADDED
+    - GENETICS_VACCINE_PROMOTED
+    - ERROR_LOOP_FIXED
+    - ERROR_LOOP_UNRESOLVED
+    - MONTE_CARLO_COMPLETE
+    - ST_METRIC_COMPUTED
+    - OOD_WARNING
+    subscriptions:
+      event_observer:
+        events: ALL
+        action: Registrar em mcfe_state.event_log (últimas 20)
+      mcfe:
+        events:
+        - STEP_3_END
+        - STEP_5_END
+        - STEP_7_END
+        action: Calcular H_cognitive e R_t
+      bayesian_curator:
+        events:
+        - STEP_13_START
+        - BAYESIAN_UPDATE_START
+        action: Executar bayesian_update_protocol
+      meta_learning_agent:
+        events:
+        - STEP_13_END
+        action: Verificar triggers hierárquicos
+      anchor_destroyer:
+        events:
+        - MCFE_STALL_DETECTED
+        action: Spawnar ANCHOR_DESTROYER
+      marketplace:
+        events:
+        - RESOLUTION_NEEDED
+        action: Iniciar bundle_resolution protocol
+      diff_governance:
+        events:
+        - STEP_13_START
+        action: Verificar DIFFs pendentes
+      scientific_engine:
+        events:
+        - MICRO_SIMULATION_DONE
+        - EXTRAPOLATION_READY
+        - VALIDATION_4LAYERS_COMPLETED
+        action: Atualizar modelo e biblioteca
+      error_tracker:
+        events:
+        - ERROR_THRESHOLD_WARNING
+        - ERROR_THRESHOLD_STOP
+        action: Disparar delegação
+      skill_registry:
+        events:
+        - SKILL_ATTRACTED
+        action: Registrar atração e atualizar fitness
+      reliability_estimator:
+        events:
+        - BLOCK_COMPLETED
+        action: on_block_completed() — atualiza bucket stats e global_p
+      mcfe_reliability_monitor:
+        events:
+        - BLOCK_COMPLETED
+        action: _on_block_completed() — atualiza R_acum e verifica SR_10
+      sqlite_snapshot_store:
+        events:
+        - STEP_0_START
+        action: load_delta_for_session() → injetar delta no context
+      sqlite_snapshot_store_save:
+        events:
+        - STEP_13_END
+        action: save_session() + vacuum_if_due()
+      uco_quality_gate:
+        events:
+        - pre_subprocess_execution
+        action: gate() → PASS|AUTO_FIXED|REJECTED
+      parallel_pot_executor:
+        events:
+        - STEP_3_END
+        action: execute_parallel() se fractal_depth >= 2 e modo DEEP+
+      hypothesis_dag:
+        events:
+        - DAG_NODE_REGISTERED
+        action: validate_acyclicity() + update_edges()
+      hypothesis_dag_cascade:
+        events:
+        - ANCHOR_DESTROYED
+        - EVIDENCE_REFUTED
+        action: invalidate_cascade()
+      code_genetics_map:
+        events:
+        - ERROR_LOOP_FIXED
+        action: save_vaccine() → sqlite_store
+      code_genetics_map_recall:
+        events:
+        - STEP_P_START
+        action: recall(domain_tags) → vacinas ativas
+      external_critic_profile:
+        events:
+        - pre_STEP_12
+        action: analyze_output() → [EXTERNAL_CRITIC] injection
+      external_critic_record:
+        events:
+        - ERROR_LOOP_UNRESOLVED
+        action: record_error() → error_profile
+      sympy_formal_verifier:
+        events:
+        - MATH_CLAIM_DETECTED
+        action: verify() → [FORMAL_VERIFIED|REFUTED]
+      monte_carlo_simulator:
+        events:
+        - STEP_8_SCIENTIFIC
+        action: simulate() → distribuição P10/P50/P90
+      apex_st_metric:
+        events:
+        - STEP_13_START
+        action: compute_apex_st() → dS²
+        curvature: null
+      apex_st_stagnation:
+        events:
+        - ST_METRIC_COMPUTED
+        action: se trigger_meta_learning → ativar meta_learning_agent
+      sklearn_difficulty:
+        events:
+        - STEP_0_START
+        action: predict() → ood_score + recommendation
+      sklearn_difficulty_update:
+        events:
+        - SQLITE_SESSION_SAVED
+        action: update_corpus() → rebuild TF-IDF
+      event_observer_sb:
+        events:
+        - UCO_GATE_PASS
+        - UCO_GATE_AUTO_FIXED
+        - UCO_GATE_REJECTED
+        - PARALLEL_POT_COMPLETE
+        - SQLITE_DELTA_LOADED
+        - FORMAL_VERIFIED
+        - FORMAL_REFUTED
+        - EXTERNAL_CRITIC_ALERT
+        - DAG_CASCADE_INVALIDATED
+        - GENETICS_VACCINE_ADDED
+        - ERROR_LOOP_FIXED
+        - ERROR_LOOP_UNRESOLVED
+        - MONTE_CARLO_COMPLETE
+        - ST_METRIC_COMPUTED
+        - OOD_WARNING
+        action: Registrar em mcfe_state.event_log
+    inject_when: always
+    subscription_policy:
+      auto_prefix_routing:
+        enabled: true
+        prefix_map:
+          MCFE_: mcfe
+          BAYESIAN_: bayesian_curator
+          RESOLUTION_: marketplace
+          SKILL_: skills
+          SNAPSHOT_: versioning
+          SYMBOLIC_: symbolic_executor
+          INTEGRATOR_: cognitive_integrator_library
+          MICRO_: fractal_cognitive_simulator
+          ERROR_: error_tracker
+          VALIDATION_: validation_4layers
+          STEP_: event_observer
+  reliability_config:
+    version: v00.21.0
+    tier: 0
+    description: 'Configuração central do sistema de confiabilidade. Define P_target por modo, thresholds
+      WARNING/CRITICAL, alpha de correlação temporal e parâmetros de calibração.
+
+      '
+    inject_when: always
+    depends_on:
+    - config
+    components:
+    - ReliabilityConfig
+    api:
+    - get_p_target(mode)
+    config_reference: MODULE_config.parameters.reliability
+  bucket_stats:
+    version: v00.21.0
+    tier: 0
+    description: 'Dataclass de estatísticas por faixa de tamanho de bloco. Propriedades calculadas: total,
+      fail_rate. Suporta serialização to_dict/from_dict para snapshot. SIZE_BUCKETS: [5-9, 10-14, 15-19,
+      20-24, 25-30].
+
+      '
+    inject_when: always
+    depends_on:
+    - reliability_config
+    components:
+    - BucketStats
+  reliability_estimator:
+    version: v00.21.0
+    tier: 1
+    description: 'Estima a probabilidade de falha de blocos por faixa de tamanho. Alimentado por BLOCK_COMPLETED
+      via on_block_completed(). Cold start: fórmula analítica n = ln(P_target)/ln(1-p_global). Com dados
+      (>= min_samples por bucket): busca empírica. Correlação temporal: p_eff = p_base + α·ε. Nota: mede
+      P_fail por BLOCO OBSERVADO — não por passo lógico interno (passos Python em subprocess são determinísticos).
+
+      '
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+    depends_on:
+    - event_bus
+    - bucket_stats
+    - reliability_config
+    components:
+    - ReliabilityEstimator
+    api:
+    - register_block(size, success)
+    - on_block_completed(event_data)
+    - get_failure_rate(size, epsilon=0.0)
+    - get_success_rate(size, epsilon=0.0)
+    - optimal_size_for_target(P_target, min_size, max_size, epsilon)
+    - reliability_summary()
+    - to_dict() / from_dict()
+    persistence: snapshot.reliability_state
+    inviolable_rules_enforced:
+    - SR_10
+  mcfe_state_reliability:
+    version: v00.21.0
+    tier: 1
+    description: 'Estado estendido do MCFE com métricas de confiabilidade acumulada. current_reliability:
+      produto acumulado de (1-p_fail) por bloco. Reset no STEP_0. Histórico das últimas 20 entradas.
+
+      '
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+    depends_on:
+    - reliability_estimator
+    components:
+    - MCFEState
+    fields:
+      current_reliability: float = 1.0
+      reliability_history: List[float] — últimas 20 entradas
+      early_exit_triggered: bool = False
+      early_exit_reason: str
+    api:
+    - reset()
+    - update(p_fail_blk)
+    - to_dict()
+    persistence: snapshot.mcfe_reliability_state
+  mcfe_reliability_monitor:
+    version: v00.21.0
+    tier: 1
+    description: 'Monitor ATIVO de confiabilidade acumulada (v00.20.3 era informativo). WARNING:  R_acum
+      < 0.50 → RELIABILITY_WARNING + replanning dinâmico. CRITICAL: R_acum < 0.30 → RELIABILITY_CRITICAL
+      + EARLY_EXIT forçado. Usa estimativa de p_fail (não resultado real) para sinal suave e antecipativo.
+      Único replanning por sessão (_replanning_done flag).
+
+      '
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+    depends_on:
+    - event_bus
+    - reliability_estimator
+    - mcfe_state_reliability
+    components:
+    - MCFEReliabilityMonitor
+    api:
+    - check_reliability() -> None | "WARNING" | "EARLY_EXIT"
+    - update_reliability(p_fail_blk)
+    - reset()
+    - get_state()
+    inviolable_rules_enforced:
+    - SR_10
+    subscriptions:
+    - event: BLOCK_COMPLETED
+      handler: _on_block_completed()
+  mental_interpreter_v3:
+    version: v00.21.0
+    tier: 1
+    replaces: mental_interpreter_v2
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+    depends_on:
+    - pot_engine_v2
+    - mcfe
+    - geometry_estimator
+    - event_bus
+    - reliability_estimator
+    - mcfe_reliability_monitor
+    - mcfe_state_reliability
+    components:
+    - MentalInterpreter
+    - TrajectoryVerifier
+    - MCFEAdapter
+    phases:
+    - WARMUP
+    - PLANNING
+    - PRODUCTION
+    new_params:
+      cognitive_mode: str — define P_target via ReliabilityConfig.get_p_target()
+      reliability_state: Optional[Dict] — restaura ReliabilityEstimator do snapshot (STEP_0)
+    new_steps:
+      STEP_0: reset R_acum=1.0 · restaura reliability_state do snapshot
+      STEP_5: replanning dinâmico quando R_acum < WARNING_THRESHOLD
+      STEP_13: salva reliability_state · imprime RELIABILITY_REPORT
+    planning_formula: 'n_final = max(MIN_SIZE, min(n_num, n_rel, MAX_SIZE)) n_num via GeometryEstimator.optimal_block_size()
+      — limite numérico (curvatura) n_rel via ReliabilityEstimator.optimal_size_for_target(P_target, ε)
+      — limite estatístico
+
+      '
+    new_outputs:
+    - reliability_state: Dict — ReliabilityEstimator.to_dict()
+    - mcfe_reliability_state: Dict — MCFEReliabilityMonitor.get_state()
+    inviolable_rules_enforced:
+    - SR_08
+    - SR_09
+    - SR_10
+    status: DEPRECATED_FOR_DEEP_PLUS
+    deprecation_note: 'mental_interpreter_v3 permanece ativo para EXPRESS e FAST. Para DEEP/RESEARCH/SCIENTIFIC:
+      substituído por mental_interpreter_v4 (OPP-75).
+
+      '
+  mental_interpreter_v4:
+    version: v00.32.0
+    opp: OPP-75
+    tier: 1
+    replaces: mental_interpreter_v3
+    replaces_scope: DEEP/RESEARCH/SCIENTIFIC apenas — v3 permanece para EXPRESS/FAST/CLARIFY
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+    depends_on:
+    - pot_engine_v2
+    - mcfe
+    - geometry_estimator
+    - event_bus
+    - reliability_estimator
+    - mcfe_reliability_monitor
+    - mcfe_state_reliability
+    - sqlite_snapshot_store
+    - uco_quality_gate
+    - parallel_pot_executor
+    - merge_defensive
+    - code_genetics_map
+    - error_evolution_loop
+    components:
+    - MentalInterpreter
+    - TrajectoryVerifier
+    - MCFEAdapter
+    - SpeculationPhase
+    - UCOGateWrapper
+    - SharedWarmupCache
+    phases:
+    - SPECULATION: 'Fase nova (antes de WARMUP). Ativa apenas quando: cognitive_mode IN [DEEP, RESEARCH,
+        SCIENTIFIC] AND fractal_depth >= 2. Gera N programas PoT com stances (optimistic/pessimistic/neutral).
+        Passa cada programa pelo UCOQualityGate antes de executar. Executa via ParallelPoTExecutor (ThreadPoolExecutor).
+        Aplica entropy_weighted_merge nos snapshots resultantes. Registra hipóteses merged no hypothesis_dag.
+        Emite: PARALLEL_POT_COMPLETE ou PARALLEL_POT_PARTIAL.
+
+        '
+    - WARMUP: herdado v3 — N_WARM_BLOCKS para observar geometria do campo
+    - PLANNING: herdado v3 — n_final = max(MIN_SIZE, min(n_num, n_rel, MAX_SIZE))
+    - PRODUCTION: herdado v3 + error_evolution_loop em caso de falha
+    speculation_config:
+      n_agents_by_mode:
+        DEEP: 3
+        RESEARCH: 5
+        SCIENTIFIC: 7
+      stances:
+      - optimistic
+      - pessimistic
+      - neutral
+      stance_to_phase:
+        optimistic: π/4
+        pessimistic: 5π/4
+        neutral: '0'
+      activation_condition: fractal_depth >= 2
+      shared_warmup_cache: true
+      warmup_economy_pct: 66
+    uco_gate_integration:
+      position: ANTES de cada subprocess execution (em SPECULATION e PRODUCTION)
+      on_pass: executar normalmente
+      on_auto_fixed: usar código otimizado + emitir UCO_GATE_AUTO_FIXED
+      on_rejected: injetar uco_feedback no contexto → LLM regenera → re-gate
+      max_regen_attempts: 2
+    error_loop_integration:
+      position: em _on_block_failure() dentro de PRODUCTION
+      max_debug_depth: 3
+      rollback_condition: nenhuma tentativa reduziu len(stderr)
+      on_success: sqlite_store.save_vaccine() + emitir ERROR_LOOP_FIXED
+      on_unresolved: UNRESOLVED_PATTERN no code_genetics + emitir ERROR_LOOP_UNRESOLVED
+    sqlite_integration:
+      step_0: sqlite_store.load_delta_for_session() — injetar delta no context
+      step_13: sqlite_store.save_session() + crystallization_jit.crystallize()
+    steps_inherited_from_v3:
+      STEP_0: reset R_acum=1.0 · restaura reliability_state do snapshot · [NOVO] carrega delta SQLite
+      STEP_5: replanning dinâmico quando R_acum < WARNING_THRESHOLD
+      STEP_13: salva reliability_state · RELIABILITY_REPORT · [NOVO] save_session SQLite
+    params_inherited:
+      cognitive_mode: str — define P_target via ReliabilityConfig.get_p_target()
+      reliability_state: Optional[Dict] — restaura ReliabilityEstimator do snapshot
+    params_new_v032:
+      sqlite_store: ApexSQLiteStore — referência ao banco de dados persistente
+      uco_gate: UCOQualityGate — instância do gate de qualidade
+      parallel_executor: ParallelPoTExecutor — executor ThreadPoolExecutor
+      n_speculation_agents: int — definido por speculation_config.n_agents_by_mode
+    outputs_inherited:
+    - reliability_state: Dict — ReliabilityEstimator.to_dict()
+    - mcfe_reliability_state: Dict — MCFEReliabilityMonitor.get_state()
+    outputs_new_v032:
+    - speculation_metadata: Dict — {n_agents, n_succeeded, efficiency, merge_quality}
+    - uco_gate_summary: Dict — {passed, auto_fixed, rejected, total}
+    - error_loop_summary: Dict — {fixed_count, unresolved_count}
+    api:
+    - execute(problem, context, snapshot_store, uco_gate) → ExecutionResult
+    - _run_speculation_phase(programs, mode) → merged_state
+    - _run_production(blocks, mode) → ProductionResult
+    - _on_block_failure(code, stderr, attempt) → PatchResult
+    - _step_0_init(snapshot, sqlite_store) → void
+    - _step_13_snapshot(sqlite_store) → void
+    inviolable_rules_enforced:
+    - SR_08
+    - SR_09
+    - SR_10
+    - SR_33
+    - SR_32
+    events_emitted:
+    - PARALLEL_POT_COMPLETE
+    - PARALLEL_POT_PARTIAL
+    - UCO_GATE_PASS
+    - UCO_GATE_AUTO_FIXED
+    - UCO_GATE_REJECTED
+    - ERROR_LOOP_FIXED
+    - ERROR_LOOP_UNRESOLVED
+    - SQLITE_DELTA_LOADED
+    - SQLITE_SESSION_SAVED
+    fmea:
+      rpn: 6
+      mode: Speculation phase falha completamente (todos agentes corrompidos)
+      mitigation: Fallback para MERGE_FAILED_USE_SEMANTIC_CRITIC — sessão continua
+  bayesian_inference:
+    version: v00.19.0
+    tier: 2
+    inject_when: always
+    description: Bayesian calibration of system parameters using in‑context cognitive models.
+    config:
+      enabled: true
+      class_1:
+        models:
+        - beta_binomial
+        targets:
+        - component_success
+        - anchor_success
+        - hypothesis_success
+        update_rule: alpha += success; beta += failure
+        posterior_storage: snapshot.bayesian_posteriors.class_1
+      class_2:
+        inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+        models:
+        - normal_vi
+        targets:
+        - anchor_weights
+        - agent_weights_by_bds
+        - eq_class_weights
+        learning_rate: 0.05
+        update_instructions:
+          anchor_weights: erro = (sucesso_sessão - mu) * (1 se âncora contribuiu); mu += learning_rate
+            * erro; sigma² = (1-lr)*sigma² + lr*erro²
+          agent_weights_by_bds: se contribuição positiva, incrementar α_i; normalizar
+          eq_class_weights: similar, por classe de equação
+        posterior_storage: snapshot.bayesian_posteriors.class_2
+      class_3:
+        inject_when: bayesian_trigger_active
+        models:
+        - hmc_cognitive
+        n_candidates: 7
+        log_posterior_formula: log_prior(c) + log_likelihood(c | session_data)
+        targets:
+        - chaos_threshold_by_bds
+        - diff_d06_threshold
+        - error_tracker.delta_range
+        - error_tracker.threshold_stop
+        priors:
+          chaos_threshold_by_bds:
+            high_entropy:
+              alpha: 2
+              beta: 2
+            high_density:
+              alpha: 2
+              beta: 2
+            high_knowledge:
+              alpha: 2
+              beta: 2
+          diff_d06_threshold:
+            alpha: 2
+            beta: 2
+        posterior_storage: snapshot.bayesian_posteriors.class_3
+      triggers:
+        periodic_hmc_sessions: 30
+        change_indicators:
+        - 'name: scope_drift, source: snapshot.scope_drift_detected, condition: true, cooldown: 10'
+        - 'name: high_decoherence_persistent, source: snapshot.high_decoherence_areas, condition: len>2
+          AND persistente_por>=3, cooldown: 5'
+        - 'name: fitness_decline, source: snapshot.diff_ecosystem_state, condition: any(value.status==DECLINING),
+          cooldown: 10'
+        - 'name: user_request, source: DIFF com target bayesian_calibration, cooldown: 0'
+      hierarchical:
+        level_0: every session
+        level_1_every: 10
+        level_2_every: 30
+    dependencies:
+    - MODULE_versioning
+    - MODULE_config
+    outputs:
+    - bayesian_updates
+  marketplace:
+    version: v00.19.0
+    tier: 2
+    inject_when: component_resolution_needed AND (snapshot.capabilities.url_access OR manual_catalog_provided)
+    description: Autonomous component resolution via unified attraction field (Omega_Bayes), with semantic
+      fallback.
+    config:
+      enabled: true
+      repositories:
+      - url: https://raw.githubusercontent.com/apex-marketplace/catalog/main/index.yaml
+        type: catalog
+        cache_ttl: 86400
+      resolution:
+        model: hyperbolic_bundle_attraction
+        bayesian_filter:
+          enabled: true
+          prior_source: snapshot.bayesian_posteriors.class_1.component_success
+          threshold: kernel.defaults.bayesian.filter_threshold
+        individual_attraction:
+          formula: tanh(Σ anchor_weight * overlap)
+          anchor_weights_source: snapshot.bayesian_posteriors.class_2.anchor_weights.mu
+          overlap_measure: jaccard
+        bundle_coherence:
+          formula: jaccard(union of all component anchors)
+        omega_bayes:
+          formula: geometric_mean(individual_attractions) * bundle_coherence * geometric_mean(component_priors)
+          thresholds:
+            adopt: kernel.defaults.bayesian.omega_thresholds.adopt
+            review: kernel.defaults.bayesian.omega_thresholds.review
+        resolution_order:
+        - complete_bundle
+        - partial_bundle
+        - skill_only
+        - synthesize_local
+        output_cache: snapshot.resolution_cache
+      fallback:
+        enabled: true
+        semantic:
+          ontology_url: kernel.defaults.fallback.ontology_url
+          builtin_ontology: '...'
+          use_when: no_catalog_available AND kernel.defaults.fallback.use_semantic_fallback
+          map_anchors_to_domain: Para cada âncora ativa, comparar com palavras-chave dos domínios.
+          specialization_path: /{dominio}/{profissao}
+        manual_catalog:
+          detection_header: '#MARKETPLACE_CATALOG'
+          command: '!carregar_catalogo'
+      synthesis:
+        enabled: true
+        status_on_create: LOCAL_DRAFT
+        template_source: MODULE_skills.skill_genome_schema
+    dependencies:
+    - MODULE_versioning
+    - MODULE_skills
+    - MODULE_knowledge
+    outputs:
+    - resolution_result
+  planner:
+    version: v00.19.0
+    tier: 2
+    inject_when: always
+    description: 'Orchestrates planning services: fractal tree, scope drift, constitution.'
+    dependencies:
+    - fractal_tree_generator
+    - scope_drift_detector
+    - constitution_generator
+    methods:
+    - step_1
+    - step_9
+    - step_P
+    config:
+      fractal_expansion_threshold: 0.3
+      constitution_agents:
+      - meta_reasoning
+      - architect
+      - critic
+      drift_sessions_threshold: 3
+      drift_notification: true
+      step_1_instruction: 'Se cognitive_mode == FAST: gerar árvore fractal simplificada (profundidade
+        1); senão usar fractal_tree_generator.generate()'
+      step_9_instruction: Executar scope_drift_detector.detect(lpm_primary_node_history, drift_sessions_threshold).
+        Se drift detectado, emitir [SCOPE_DRIFT_DETECTED].
+      step_P_instruction: Executar constitution_generator.generate(problem, bds, agents=constitution_agents).
+  fractal_tree_generator:
+    version: v00.19.0
+    tier: 2
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC, FAST]
+    description: Generates fractal tree based on problem anchors and CFI. FAST uses generate_simple.
+    dependencies:
+    - engines_cognitive
+    - knowledge
+    inputs:
+    - problem_anchors
+    - cfi
+    outputs:
+    - fractal_tree
+    methods:
+    - generate
+    - generate_simple
+    config:
+      default_depth: 2
+      expansion_threshold: from planner.config.fractal_expansion_threshold
+      generate_simple_instruction: Gera árvore com profundidade 1, nós apenas no nível macro.
+  scope_drift_detector:
+    version: v00.19.0
+    tier: 2
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] AND snapshot.lpm_primary_node_history
+      is not empty
+    description: Detects scope drift by analyzing lpm_primary_node history.
+    dependencies:
+    - versioning
+    inputs:
+    - lpm_primary_node_history
+    outputs:
+    - drift_detected
+    methods:
+    - detect
+    config:
+      sessions_threshold: from planner.config.drift_sessions_threshold
+      notify: from planner.config.drift_notification
+  constitution_generator:
+    version: v00.19.0
+    tier: 2
+    inject_when: always
+    description: Generates project constitution using agents.
+    dependencies:
+    - agents
+    - engines_cognitive
+    inputs:
+    - problem
+    - bds
+    outputs:
+    - constitution
+    methods:
+    - generate
+    config:
+      agents: from planner.config.constitution_agents
+  advanced:
+    version: v00.19.0
+    tier: 2
+    inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] OR user_request
+    config:
+      reasoning_cache:
+        enabled: true
+        cache_key: hash(problem_statement + system_context + cognitive_mode + evolution_state_hash + constitution_fingerprint)
+        prohibited_contexts:
+        - cognitive_mode == RESEARCH
+        - session_type == incremental
+        - cognitive_mode == FOGGY
+        - autonomous_evolution_pending == true
+        cache_hit_protocol:
+          warning: '!! CACHE HIT — Resultados de sessão anterior (age: {age_days}d). Digite ''fresh''
+            para forçar nova análise.'
+          user_override: 'Se usuário digitar ''fresh'': invalidar cache, proceder normalmente'
+        selective_cache:
+          enabled: true
+          description: Cache por sub‑domínio individualmente avaliado.
+          granularity: sub_domain
+          rules:
+          - Sub‑domínio com skill ADOPTED fitness 5/5 E sem mudança em diff_ecosystem nas últimas 3 sessões
+            → elegível para cache
+          - Sub‑domínio com domain_gap ativo → NUNCA usar cache
+          - Sub‑domínio com decoherence FLAG ou BLOCK → NUNCA usar cache
+          - Sub‑domínio novo (<3 sessões) → NUNCA usar cache
+          cache_hit_action: 'Se sub‑domínio D é cache-hit: pular STEP_3 e STEP_4 apenas para nós de D;
+            registrar selective_cache_summary.'
+          invalidation: Qualquer DIFF ADOPTED que afete o sub‑domínio invalida seu cache imediatamente.
+        constitution_fingerprint_spec:
+          algorithm: semantic_hash_3_fields
+          fields_used:
+          - problem_reformulated
+          - scope_boundary
+          - analysis_mandate
+          computation: concat first_50_chars(problem_reformulated) + first_30_chars(scope_boundary) +
+            first_30_chars(analysis_mandate)
+      hypothesis_tracker:
+        survival_states:
+          SURVIVED: confidence_final > 70 [APPROX] AND não contradito
+          MERGED: absorvido em hipótese mais forte por interferência construtiva
+          REFUTED: destruído por interferência destrutiva
+          PHASE_REFUTED: destruído por oposição de fase (cos(Δφ) < -0.5)
+          UNCERTAIN: composite_confidence < 55 [APPROX]
+          AMPLIFIED: emergiu do STEP_7 amplification como top-K solução
+          SCALE_DEPENDENT: sobreviveu em um nível fractal mas refutado em outro
+          RE_EMERGED: Era PHASE_REFUTED em um nível mas re-emergiu em nível diferente
+      decoherence_audit:
+        description: Audit final que gera artefato estruturado PASS/FLAG/BLOCK
+        output_artifact: '[DECOHERENCE_AUDIT: {status}]'
+        status_levels:
+          PASS: Decoherence score < 0.3 em todos os findings principais
+          FLAG: Decoherence 0.3-0.6 em ≥ 1 finding — apresentar com [SCALE_DEPENDENT] warning
+          BLOCK: Decoherence > 0.6 — finding não pode ser promovido para síntese sem resolução explícita
+        high_decoherence_retroalimenta_pm: Areas com decoherence HIGH → registrar em snapshot.high_decoherence_areas
+        v010_loop_integration:
+          step_10_clearing: 'Se decoherence_score do nó < 0.3 nesta sessão E nó estava em snapshot.high_decoherence_areas:
+            remover de snapshot.high_decoherence_areas.'
+          budget_gate: 'Expansão forçada de N nós: custo_adicional = N x CFI_medio x 200 tokens. Se >30%
+            orçamento: gate usuário.'
+      domain_gap_enforcement:
+        position: STEP_8
+        first_principles_ratio:
+          description: Proporção de reasoning baseado em first_principles vs anchors do Registry
+          calculation: first_principles_claims / total_claims
+          thresholds:
+            RESEARCH_mode_minimum: 0.3
+            below_threshold_action: '[DOMAIN_GAP_WARNING: first_principles_ratio={ratio}]'
+            critical_threshold: 0.15
+            critical_action: HALT STEP_8 — solicitar skill synthesis antes de continuar
+      interactive_measurement:
+        position: STEP_6
+        trigger: uncertainty_score ≥ 70 OR composite_confidence < 55 OR user_request
+        question_limits:
+          FAST: 1
+          FOGGY: 2
+          DEEP: 2
+          RESEARCH: 3
+          SCIENTIFIC: 3
+        user_anchor_registration: Respostas do usuário registradas como user_anchors com confidence =
+          100 [APPROX]
+  agents:
+    version: v00.19.0
+    tier: 1
+    config:
+      cognitive_partitioning_protocol:
+        description: Agentes APEX executam sequencialmente em contexto único de LLM.
+        partition_active_requirement: '[PARTITION_ACTIVE: {agent_role}] OBRIGATÓRIO antes de cada bloco.'
+        per_agent_preamble: COGNITIVE PARTITION ACTIVE — Você está raciocinando exclusivamente como [AGENT_ROLE].
+          Seu phase offset é [PHASE_OFFSET].
+        enforcement:
+          partition_active_tag: '[PARTITION_ACTIVE: role] — BLOQUEANTE.'
+          anchor_grounding: Cada agente deve citar ao menos um anchor de sua própria lista no primeiro
+            bloco.
+          independence_markers:
+          - Agente deve declarar UMA preocupação original não levantada por agentes anteriores
+          - Agente deve atribuir ao menos UM score de confiança que difira ≥ 10 pontos do agente mais
+            recente
+          - Agente deve listar ao menos UMA suposição própria, não herdada do contexto
+        partition_breach_detection:
+          deference_markers:
+          - como [outro_agente] observou
+          - construindo sobre a análise de [outro_agente]
+          - concordo com [outro_agente]
+          on_breach: 'meta_reasoning flag [PARTITION_BREACH: {agent_role}]. Agente deve re-raciocinar
+            do zero.'
+          acceptable_exception: Troca de entanglement em STEP_3_5 é a única comunicação cross-agent sancionada.
+        known_limitation: Este protocolo reduz cadeias de dependência explícitas — não alcança isolamento
+          cognitivo verdadeiro.
+      squad_mandate:
+        description: Derivado da Project Constitution para cada sessão.
+        required_perspectives: Definido pela Constitution com base no BDS
+        forbidden_bias: Perspectivas que a Constitution identifica como fontes de viés
+        minimum_phase_diversity: phase_variance across active agents ≥ π/4
+        phase_diversity_spawning:
+          trigger: phase_variance < π/6
+          action: Factory spawna especialista com phase_offset = mean(current_phases) + π
+      perspective_bias_alert:
+        description: STEP_2 alerta quando phase_affinity dos anchors carregados cria viés sistemático
+        trigger: ≥ 60% dos anchors injetados têm a mesma phase_affinity
+        output: '[PERSPECTIVE_BIAS: {affinity}]'
+        action: meta_reasoning pode solicitar injeção de anchors complementares
+      base_agents:
+        pmi_pm:
+          role: Project Manager
+          generic_skills:
+          - gestao_projetos_generica
+          - analise_riscos_generica
+          phase_offset: 0.0
+          phase_affinity: neutral
+          anchors_primary:
+          - pareto
+          - binomial
+          - ishikawa
+          - dsm
+          - wbs
+        architect:
+          role: Systems Architect
+          generic_skills:
+          - engenharia_software_generica
+          - arquitetura_sistemas
+          phase_offset: 0.524
+          phase_affinity: optimistic
+          anchors_primary:
+          - SOLID
+          - DDD
+          - CQRS
+          - Event-Driven
+          - 12-Factor
+        researcher:
+          role: Research Analyst
+          generic_skills:
+          - metodos_pesquisa_genericos
+          - analise_dados_generica
+          phase_offset: 1.047
+          phase_affinity: neutral
+          anchors_primary:
+          - CAP
+          - ACID
+          - BASE
+        theorist:
+          role: Theorist – Hypothesis Generator
+          generic_skills:
+          - matematica_avancada
+          - logica_formal
+          phase_offset: 1.047
+          phase_affinity: optimistic
+          anchors_primary:
+          - meta_cognition
+          - hypothesis_generation
+          - first_principles
+          - scientific_method
+        engineer:
+          role: Senior Engineer – Implementation
+          generic_skills:
+          - engenharia_software_generica
+          - sistemas_distribuidos
+          phase_offset: 0.0
+          phase_affinity: neutral
+          anchors_primary:
+          - TDD
+          - CI_CD
+          - SRE
+          - pof
+        critic:
+          role: Adversarial Critic
+          generic_skills:
+          - analise_riscos_generica
+          - seguranca_sistemas
+          phase_offset: 3.665
+          phase_affinity: pessimistic
+          anchors_primary:
+          - OWASP
+          - STRIDE
+          - Zero-Trust
+          - fmea
+        programme_director:
+          role: Programme Director
+          invoke_when: Constitution detecta cost_benefit HIGH AND risk_zones > 5
+          phase_offset: 0.785
+          phase_affinity: neutral
+        scientist_agent:
+          role: Scientific Domain Specialist
+          generic_skills:
+          - matematica_avancada
+          - metodos_probabilisticos_genericos
+          spawn_mode: auto_spawned_in_SCIENTIFIC_mode
+          phase_offset: 'dinâmico: mean(theorist.phase + engineer.phase) / 2'
+          phase_affinity: neutral
+          anchors_primary:
+          - scientific_method
+          - hypothesis_generation
+          - logistic_growth
+          - first_principles
+          mission: Especialista em modelagem matemática e validação científica. Par de entanglement do
+            theorist.
+          token_budget_max: 1500
+          activation_step: STEP_SCI_01
+          note: Instanciado automaticamente quando cognitive_mode == SCIENTIFIC. Conta para max_factory_spawned_per_session.
+        critic_radical:
+          role: Chaos Engineer
+          alias: CRITIC_RADICAL
+          focus: Geração de hipóteses contraintuitivas plausíveis
+          phase_offset: 'dinâmico: mean(current_phases) + π'
+          phase_affinity: pessimistic
+          spawn_mode: chaos_spawn_rule only
+          anchors_selection: 2 anchors de menor usage_success_rate no dominio detectado
+          output_format:
+            hypothesis_label: CHAOS-H-{seq}
+            required_elements:
+            - 1 claim falsificavel contraintuitivo
+            - 1 anchor citado
+            - confidence [APPROX]
+            - assumption explicita que tornaria este cenario possivel
+          token_budget_max: 2500
+          single_use_per_session: true
+          budget_note: 2500 tokens = ~16% do budget RESEARCH (15000).
+        meta_reasoning:
+          role: Meta-Reasoning Orchestrator
+          generic_skills:
+          - logica_formal
+          - meta_cognition_generica
+          phase_offset: 0.0
+          phase_affinity: neutral
+          anchors_primary:
+          - meta_cognition
+          - orchestration
+          - anomaly_detection
+          responsibilities:
+          - executar Project Constitution
+          - calcular CED-Matrix e BDS
+          - verificar [PARTITION_ACTIVE]
+          - detectar partition_breach
+          - computar interference
+          - sintetizar findings
+          - verificar [FORMALISM_GATE] C8 antes de STEP_11
+          - ativar modo SCIENTIFIC e invocar scientific_engine
+        bayesian_curator:
+          role: Bayesian Calibration Curator
+          phase_affinity: neutral
+          activation_step: STEP_13
+          token_budget_max: 300
+          mission: Executar bayesian_update_protocol.
+        event_observer:
+          role: Event Bus Observer
+          phase_affinity: neutral
+          activation_step: all_steps
+          token_budget_max: 50
+          mission: Registrar todos os eventos emitidos.
+        diff_governance:
+          role: Bayesian DIFF Governance Agent
+          phase_affinity: pessimistic
+          activation_step: STEP_13
+          token_budget_max: 250
+          mission: Avaliar impacto e propor votos para DIFFs.
+          voting_threshold:
+            LOW: APPROVE automático se meta_reasoning aprovou
+            MEDIUM: Requer APPROVE de diff_governance E meta_reasoning
+            HIGH: SEMPRE DEFER — apresentar ao usuário
+        meta_learning_agent:
+          role: Bayesian Meta-Learning Agent
+          phase_affinity: optimistic
+          activation_step: STEP_13 (condicional)
+          token_budget_max: 400
+          mission: Calibrar parâmetros do sistema de calibração.
+          level_1_every: 10
+          level_2_every: 30
+      agent_factory:
+        enabled: true
+        trigger_conditions:
+        - domain_gap
+        - high_uncertainty
+        - conflict_unresolved
+        - user_request
+        - phase_diversity_gap
+        - nano_scale_analysis_needed
+        - early_consensus_in_low_coverage_domain
+        limits:
+          max_new_per_session: 4
+          max_total_agents: 18
+        creation_process:
+        - meta_reasoning identifica gap
+        - Buscar catalog por especialista compatível
+        - Se encontrado: spawnar com anchors, entanglement pairs, phase_offset do catalog
+        - Se não encontrado: definir especialista custom
+        - Aplicar cognitive_partitioning_protocol preamble
+        - Registrar na memória da sessão
+      chaos_spawn_rule:
+        description: Injeção forçada de diversidade epistêmica quando consenso emerge prematuramente.
+        trigger:
+          condition: '[CONSENSUS_LOCKED] AND Effective_CFI > 0.45 AND round_of_convergence == 1'
+          convergence_velocity_modifier: Se convergence_velocity = HIGH, reduzir DIFF_D06 threshold efetivo
+            em 0.05
+          convergence_velocity_estimation_protocol:
+            Q1: Número de findings distintos caiu >50% entre round N-1 e round N?
+            Q2: phase_spread_final < 0.5 × phase_spread_r0?
+            Q3: Todos os agentes atingiram confidence > 60 [APPROX] no mesmo round?
+            classification: 3/3 SIM → HIGH; 2/3 → MEDIUM; ≤1/3 → LOW
+        spawn_spec:
+          role: Chaos Engineer
+          alias: CRITIC_RADICAL
+          mission: Propor a hipotese mais contraintuitiva PLAUSIVEL para este dominio.
+          constraints:
+          - Hipotese DEVE ser falsificavel
+          - Hipotese DEVE citar ao menos 1 anchor de MODULE_knowledge
+          - Hipotese NAO pode ser refutacao das hipoteses existentes
+          phase_offset: mean(current_phases) + π
+          confidence_floor: 30
+          single_version_only: true
+          target_node:
+            source: lpm_primary_node
+            fallback: missão genérica
+        evaluation_gate:
+          if_confidence_gt_40:
+            action: Invalidar [CONSENSUS_LOCKED]. Re-executar interferencia com pool completo.
+            log: '[CHAOS_SPAWN: CONSENSUS_INVALIDATED — confidence {score}]'
+          if_confidence_lte_40:
+            action: Manter [CONSENSUS_LOCKED].
+            log: '[CHAOS_SPAWN: CONSENSUS_CONFIRMED — confidence {score} le 40]'
+      entanglement_graph:
+        description: Pares de agentes com correlação epistêmica
+        static_pairs:
+        - pair:
+          - architect
+          - engineer
+          type: design_implementation
+          exchange_at: STEP_3_5
+        - pair:
+          - researcher
+          - critic
+          type: evidence_adversarial
+          exchange_at: STEP_3_5
+        - pair:
+          - meta_reasoning
+          - architect
+          type: constitution_validation
+          exchange_at: STEP_P
+        - pair:
+          - theorist
+          - scientist_agent
+          type: hypothesis_transfer
+          exchange_at: STEP_SCI_01
+          condition: cognitive_mode == SCIENTIFIC AND scientist_agent.active == true
+        dynamic_entanglement:
+          trigger: Sobreposição de domínio ≥2 anchors comuns OU semantic_similarity > 0.6
+          exchange_protocol: Agente A compartilha 1 finding de alta confiança. Agente B considera mas
+            mantém partição.
+    inject_when: always
+  engines_cognitive:
+    version: v00.19.0
+    tier: 0
+    config:
+      system_reality_note: APEX agents are simulated within a single sequential LLM context. All numerical
+        outputs are structured estimates.
+      ced_matrix:
+        description: Cognitive Entropy-Dependency Matrix.
+        dsm_parsing:
+          granularity_rule: Requisito válido = qualquer dimensão que, se modificada, altera o comportamento
+            de pelo menos outro requisito.
+          validation:
+          - 1. Parse inicial
+          - 2. Reflexão — 'Quais dependências eu poderia ter perdido?'
+          - 3. Cross-check com anchors do Skill Registry
+          - 4. Se anchors sugerem entidades ausentes → adicionar com peso provisório
+          - 5. Se CFI mudou > 0.1 após augmentação → registrar [DSM_AUGMENTED]
+        vectors:
+          V_volume:
+            name: Volume de Entidades
+            measures: Quantidade de variáveis/agentes únicos no problema
+            deep_indicator: '> 7 entidades distintas'
+          S_saturation:
+            name: Saturação de Dependência
+            measures: Densidade de acoplamento lógico
+          C_conflict:
+            name: Conflito de Restrições
+            formula: C = Σ Conflito_ij / (N × (N-1) / 2)
+          E_entropy:
+            name: Entropia de Especificação
+            formula: E = -Σ p(requisito_i) × log₂(p(requisito_i))
+        cfi:
+          base_formula: CFI = Σ Dependências_Detectadas / N_entidades²
+          effective_formula: Effective_CFI = CFI × (1 - skill_coverage_rate)
+          thresholds:
+            lt_035: Baixa fricção cognitiva
+            035_to_060: Fricção moderada
+            gt_060: Alta fricção cognitiva
+        problem_anchors_extraction:
+          timing: Executa ao final da DSM parsing, antes do STEP_2
+          output_field: problem_anchors_list
+          feeds_into: MODULE_skills.radial_loading
+          empty_list_fallback:
+            trigger: problem_anchors_list vazia
+            action:
+            - 1. Identificar dominio detectado na CED-Matrix
+            - 2. Carregar top-3 anchors de maior centrality_score
+            - '3. Registrar [PROBLEM_ANCHORS_INFERRED: {domain}]'
+      bds_difficulty_simplex:
+        description: Simplex de Dificuldade Baricêntrica.
+        vertices:
+          E_entropy: Incerteza dos dados + ambiguidade do prompt
+          D_density: Acoplamento lógico entre requisitos (CFI)
+          K_knowledge: Distância entre o problema e skills ADOPTED no Registry
+        normalization: wX = X_raw / (E_raw + CFI_raw + K_raw)
+        dominant_vertex: Vértice com wX > 0.5
+        mode_selection_map:
+          EXPRESS: 'Effective_CFI < 0.05 AND wE < 0.30 AND wD < 0.20 AND V_conflict <= 0.25 (AJUSTE A)
+            AND NOT contains(input_keywords, ["contrato","clausula","calcule", "simule","prove","demonstre","analise","compare","avalie",
+            "implemente","defina formalmente","derive"])
+
+            '
+          FAST: Effective_CFI < 0.35 AND wE < 0.5
+          CLARIFY: Effective_CFI < 0.35 AND wE ≥ 0.5
+          DEEP: Effective_CFI 0.35-0.60
+          RESEARCH: Effective_CFI > 0.60 AND wE < 0.5
+          FOGGY: Effective_CFI > 0.60 AND wE ≥ 0.5
+          SCIENTIFIC: Effective_CFI > 0.50 OR wK > 0.4 OR contains(problem_keywords, ["model", "equation",
+            "simulate"])
+        mode_conflict_resolution:
+          SCIENTIFIC_AND_FOGGY: SCIENTIFIC prevalece; composite_confidence cap −10; emitir [DUAL_MODE_CAVEAT]
+          SCIENTIFIC_AND_CLARIFY: CLARIFY executa primeiro (STEP_6 antecipado); depois pipeline SCIENTIFIC
+            completo
+          SCIENTIFIC_AND_FAST: SCIENTIFIC prevalece; token_budget = 12000
+          EXPRESS_AND_ANY: 'EXPRESS perde para qualquer outro modo se V_conflict > 0.25 ou keywords_bloqueantes
+            detectadas. Fallback: FAST.
+
+            '
+          EXPRESS_ESCALATED: 'Se escape_hatch ativado mid-response: modo escalado prevalece. Registrar
+            escalation em express_log.
+
+            '
+      lpm_centrality:
+        description: Logarithmic Propagation Metric
+        formula: centrality_weight = log(1 + out_degree + in_degree) por anchor
+        primary_node_output:
+          description: O nó de maior centrality_score no grafo DSM do problema atual.
+          output_field: lpm_primary_node
+          consumers:
+          - chaos_spawn_rule
+          - fractal_tree_generator
+          - scientific_engine
+          fallback: 'Se DSM não produzir grafo (FAST mode): lpm_primary_node = None.'
+      superposition_protocol:
+        description: Cada agente gera múltiplas versões independentes com anotações de fase.
+        version_count_by_mode:
+          FAST: 2
+          FOGGY: 2
+          DEEP: 3
+          RESEARCH: 3
+          SCIENTIFIC: 3
+          CLARIFY: 1
+        version_types:
+          optimistic:
+            stance: Assuma condições favoráveis
+            base_phase: pi/4
+          pessimistic:
+            stance: Assuma condições adversariais
+            base_phase: 5*pi/4
+          neutral:
+            stance: Caso base
+            base_phase: 0
+        probability_constraint:
+          rule: Σ P(version_i) = 1.0
+          minimum_per_version: 0.2
+          distribution:
+            optimistic: P ≥ 0.2
+            pessimistic: P ≥ 0.2
+            neutral: P = 1.0 - P(optimistic) - P(pessimistic)
+          default:
+            optimistic: 0.33
+            pessimistic: 0.33
+            neutral: 0.34
+          note: Probabilidades são pesos cognitivos de atenção, não frequências — [APPROX_HEURISTIC]
+      interference_engine:
+        phase_aware_formula: amplitude_resultante = |ψ1·e^(iφ1) + ψ2·e^(iφ2)|
+        constructive: cos(Δφ) > 0.5
+        destructive: cos(Δφ) < -0.5
+        consensus_locked: SE ≥ 3 agentes convergem E phase_diff < 30° E confidence > 70 → [CONSENSUS_LOCKED]
+        partial:
+          condition: cos(Δφ) ∈ (-0.5, 0.7)
+          action: Combinar findings com peso proporcional a |cos(Δφ)|
+          formula: output_partial = |cos(Δφ)| × finding_A + (1 - |cos(Δφ)|) × finding_B
+          label: '[PARTIAL_INTERFERENCE: cos(Δφ)={value} | weight={|cos|}]'
+      precision_policy:
+        rules:
+        - Todos os confidence scores arredondados para o múltiplo de 5 mais próximo
+        - Todos os confidence scores carregam tag [APPROX]
+        - Diferenças < 10 pontos NÃO são meaningfully distintas
+      calibration_ladder:
+        levels:
+          EMPIRICAL:
+            cap: 95
+            requires: dados mensuráveis + validação externa
+          ANALYTICAL:
+            cap: 85
+            requires: raciocínio formal + anchors fortes
+          INFERENTIAL:
+            cap: 70
+            requires: inferência de padrões + analogias documentadas
+          SPECULATIVE:
+            cap: 55
+            requires: estimativa de primeira ordem
+          UNKNOWN:
+            cap: 40
+            requires: domínio não coberto pelo Skill Registry
+        approx_policy: 'Toda estimativa especulativa recebe [APPROX]. Toda estimativa fora do domínio
+          recebe [DOMAIN_GAP: nível]'
+    inject_when: always
+  knowledge:
+    version: v00.19.0
+    tier: 0
+    config:
+      lazy_loading_policy:
+        default: Carregar apenas anchors do domínio detectado pela CED-Matrix
+        trigger_full_load: wE > 0.6 OU RESEARCH mode OU domínio desconhecido OU modo SCIENTIFIC
+        macro_anchor_threshold:
+          tau: 0.65
+          metric: bayesian_curator.epistemic_uncertainty
+          enforcement: G18
+          signal: '[LAZY_ANCHOR_THRESHOLD_GUARD: macro carregado pois τ={tau} atingido]'
+          when_below: usar apenas micro + meso anchors do domínio
+          when_above: carregar macro do domínio + âncoras gravitacionais nível 1
+      anchor_schema:
+        id: string — identificador único
+        category:
+        - principle
+        - theorem
+        - methodology
+        - pattern
+        - standard
+        - framework
+        - equation_template
+        confidence: 0-100 [APPROX]
+        era: string
+        usage_count: integer
+        usage_success_rate: float
+        phase_affinity:
+        - optimistic
+        - pessimistic
+        - neutral
+        centrality_score: float
+        gravitational_links: list
+        domain_tags: list
+        adversarial_anchors: list
+        last_activation_session: integer
+        fractal_level: string — [macro, meso, micro, nano] — calculado por fractal_knowledge_indexing
+          ou declarado explicitamente
+        skill_links: list — IDs de Generic Skills atraídas por este anchor
+        knowledge_models: list — IDs de Knowledge Models associados a este anchor
+        equation_formal: string (opcional)
+        ast: object (opcional)
+        parameters: dict (opcional)
+        known_behaviors: list (opcional)
+        fmea_guards: list (opcional)
+        pot_template: string (opcional)
+      knowledge_graph:
+        architecture:
+        - id: SOLID
+          category: principle
+          domain_tags:
+          - Engineering
+          - Software
+          confidence: 95
+          era: 2000s
+          usage_count: 42
+          usage_success_rate: 0.88
+          phase_affinity: neutral
+          centrality_score: 3.2
+          gravitational_links:
+          - DDD
+          - TDD
+          - CI_CD
+          adversarial_anchors:
+          - Big_Ball_of_Mud
+          - YAGNI_Violations
+          - Tight_Coupling
+        - id: logistic_growth
+          category: equation_template
+          domain_tags:
+          - biology
+          - ecology
+          - economics
+          confidence: 98
+          equation_formal: dx/dt = r*x*(1-x/K)
+          ast:
+            op: mul
+            args:
+            - r
+            - x
+            - op: sub
+              args:
+              - 1
+              - op: div
+                args:
+                - x
+                - K
+          parameters:
+            r:
+              type: float
+              constraint: '>0'
+            K:
+              type: float
+              constraint: '>0'
+          known_behaviors:
+          - stable equilibrium at x=K
+          - unstable at x=0
+          fmea_guards:
+          - K > 0
+          - x0 > 0
+          pot_template: logistic_growth.pot
+          usage_count: 12
+          usage_success_rate: 0.92
+      injection_protocol:
+        fractal_level_aware: true
+        phase_diversity_consideration: true
+        max_anchors_per_agent: 5
+        radial_loading:
+          enabled: true
+          algorithm: relevance_score = sum(weight_primary * match_primary) + sum(weight_secondary * match_secondary)
+          threshold: 0.4
+          top_k: 5
+          gravitational_expansion: 'Se anchor X selecionado e tem gravitational_links: adicionar links
+            com weight * 0.5'
+      cross_scale_discovery:
+        enabled: true
+        promotion_threshold: padrão detectado em ≥ 2 níveis com confidence ≥ 65 [APPROX]
+    inject_when: always
+  skills:
+    version: v00.19.0
+    tier: 0
+    config:
+      taxonomy:
+        levels:
+          L1_discipline:
+          - Engineering
+          - Healthcare
+          - Finance
+          - Legal
+          - Physics
+          - Mathematics
+          L2_subdomain:
+          - Civil
+          - Software
+          - Structural
+          - Traffic
+          - Risk
+          - Compliance
+          - ODE
+          - PDE
+          - Statistics
+          L3_specialty:
+          - Traffic
+          - Foundations
+          - Cost_Estimation
+          - Microservices
+          - Legacy
+          - Logistic
+          - Exponential
+          - Oscillatory
+          L4_skill: arquivo de skill específico
+          L4_knowledge_model: modelo de conhecimento operacional — equação, algoritmo, código mental
+      skill_genome_schema:
+        required_fields:
+        - skill_id
+        - version
+        - anchors
+        - phase_affinity
+        - reasoning_protocol
+        - uncertainty_model
+        - quality_gate_score
+        - status
+        - origin
+        - validation_type
+        - centrality_impact
+        - gravitational_anchors
+        - domain_tags
+        - pipeline_substitution_eligible
+        - substitutable_steps
+        - method_type
+        - formula (opcional)
+        - pot_template (opcional)
+        optional_fields:
+        - mcp_tools
+        - omega_meta
+        - specialization_path
+      skill_pipeline_substitution:
+        description: Skills ADOPTED com fitness alto podem substituir steps completos do pipeline.
+        eligibility_criteria:
+        - status: ADOPTED
+        - quality_gate_score: 5/5
+        - fitness >= 4/5 por ≥3 sessões consecutivas
+        - pipeline_substitution_eligible: true
+        - sub-domínio sem domain_gap ativo
+        - sub-domínio sem decoherence FLAG ou BLOCK
+        substitutable_steps:
+          eligible:
+          - STEP_3
+          - STEP_4
+          - STEP_5
+          - STEP_SCI_03
+          - STEP_SCI_04
+          never_substitutable:
+          - STEP_0
+          - STEP_P
+          - STEP_6
+          - STEP_8
+          - STEP_10
+          - STEP_11
+          - STEP_12
+          - STEP_13
+          - STEP_SCI_01
+          - STEP_SCI_10
+        substitution_protocol: 'Se skill S elegível para sub-domínio D: pular steps substituíveis; usar
+          reasoning_protocol da skill; registrar substitution_savings.'
+        token_savings_estimate: 200-800 tokens por sub-domínio por sessão
+        degradation_guard: 'A cada 5 sessões com substituição ativa: executar 1 sessão completa para D;
+          se qualidade degradou >10%: desativar.'
+      quality_gate:
+        description: 5 checks executados na ordem abaixo.
+        checks:
+          check_1_consistency:
+            executor: meta_reasoning
+            verifies: Contradições diretas e pressupostos implícitos contra anchors
+            pass: Zero contradições + zero pressupostos sem suporte anchor
+            fail_action: REJECT
+          check_2_coverage:
+            executor: CRITIC
+            verifies: Skill resolve o gap que a motivou?
+            pass: Gap identificado está dentro do reasoning_protocol
+            fail_action: REJECT
+          check_3_adversarial:
+            executor: CRITIC
+            verifies: Critic tenta refutar a skill
+            pass: Critic não consegue refutar com confidence > 70
+            fail_action: PROVISIONAL
+          check_4_calibration:
+            executor: meta_reasoning
+            verifies: Confidence scores consistentes com calibration_ladder
+            pass: Scores coerentes
+            fail_action: WARN — skill adotada com confidence cap reduzido
+          check_5_regression:
+            executor: meta_reasoning via Synthetic Manifold Harness
+            verifies: Skill não degrada stability
+            pass: Estabilidade ≥ {manifold_stability_min_pass}/{manifold_stability_out_of} perturbações
+              E delta_score ≥ -0.05
+            fail_action: REJECT
+        scoring:
+          ADOPTED: Score ≥ 4/5 checks PASS
+          PROVISIONAL: Score = 3/5 — 2-3 sessões de observação
+          REJECTED: Score < 3/5 + failure_mode documentado
+      synthetic_manifold_harness:
+        description: Testa estabilidade Lipschitz local via 6 perturbações.
+        perturbation_types:
+        - 'P1 — dimensão quantitativa: valor numérico ±10%'
+        - 'P2 — dimensão temporal: prazo ±20%'
+        - 'P3 — dimensão regulatória: norma aplicável alternativa'
+        - 'P4 — dimensão de escopo: expansão ligeira do problema'
+        - 'P5 — dimensão adversarial: caso limite do domínio'
+        - 'P6 — dimensão adversarial-interna: simular CRITIC_RADICAL'
+        stability_criterion: Resposta consistente em >= manifold_stability_min_pass / manifold_stability_out_of
+          perturbacoes
+      tiered_differential_evolution:
+        description: DIFFs são hipóteses experimentais — não comandos.
+        routing_gate: LPM Impact_score determina o track. Threshold σ = 2.5.
+        default_genome:
+          diffs:
+          - 'param: fractal_depth base por domínio, description: DIFF_D01, default: 1, status: ADOPTED'
+          - 'param: decoherence threshold BLOCK/FLAG/PASS, description: DIFF_D02, default: 0.3, status:
+            ADOPTED'
+          - 'param: evolution_cycle frequency, description: DIFF_D03, default: 10, status: ADOPTED'
+          - 'param: confidence cap por nível de evidência, description: DIFF_D04, default: 95, status:
+            ADOPTED'
+          - 'param: skill_synthesis aggressiveness, description: DIFF_D05, default: BALANCED, status:
+            ADOPTED'
+          - 'param: chaos_sensitivity, description: DIFF_D06, default: 0.45, range: [0.35,0.6], step:
+            0.05, status: ADOPTED'
+          - 'param: bayesian_inference.class_2.learning_rate, description: DIFF_BAYES_01, default: 0.05,
+            range: [0.01,0.2], step: 0.01, status: ADOPTED'
+          - 'param: bayesian_inference.triggers.periodic_hmc_sessions, description: DIFF_BAYES_02, default:
+            30, range: [10,100], step: 5, status: ADOPTED'
+          - 'param: error_tracker.delta_range, description: DIFF_ERROR_01, default: {min:0.02, max:0.05},
+            range: {min: [0.01,0.03], max: [0.04,0.1]}, step: 0.01, status: ADOPTED'
+          - 'param: error_tracker.threshold_stop, description: DIFF_ERROR_02, default: 0.25, range: [0.15,0.4],
+            step: 0.05, status: ADOPTED'
+          - 'param: mcfe.stall_detector.stall_rounds, description: DIFF_MCFE_01, default: 2, range: [1,5],
+            step: 1, status: ADOPTED'
+          - 'param: mcfe.stall_detector.stall_rounds, description: DIFF_MCFE_02, default: 2, range: [1,5],
+            step: 1, status: ADOPTED'
+          - 'param: mcfe.token_to_information_ratio.R_min, description: DIFF_MCFE_03, default: 0.05, range:
+            [0.02,0.15], step: 0.01, status: ADOPTED'
+          - 'param: mcfe.gear_weights, description: DIFF_MCFE_04, default: {alpha:0.5, beta:0.3, gamma:0.2},
+            range: {alpha:[0.3,0.7], beta:[0.1,0.4], gamma:[0.1,0.3]}, step: 0.05, status: ADOPTED'
+    inject_when: always
+  symbolic_executor:
+    version: v00.19.0
+    tier: 1
+    description: Engine de execução simbólica para recorrências e ODEs simples.
+    config:
+      max_complexity: 2000
+    submodules:
+      ast_builder:
+        purpose: Constrói AST a partir de expressão.
+        supported_ops:
+        - add
+        - sub
+        - mul
+        - div
+        - pow
+        - sin
+        - cos
+        - exp
+        - log
+        - const
+        - var
+        input: string (equação)
+        output: ast (objeto hierárquico)
+      expression_composer:
+        purpose: Compõe f(f(f(x))) simbolicamente.
+        method: composição recursiva com simplificação
+        max_composition_depth: 10
+      algebraic_simplifier:
+        purpose: Simplifica expressões (expandir, fatorar, coletar termos, ordenar).
+        pipeline:
+        - expand
+        - factor
+        - collect_terms
+        - rationalize_coefficients
+        - canonical_term_sort
+      closed_form_detector:
+        purpose: Detecta se equação possui solução analítica fechada.
+        source: Instância compartilhada com fractal_cognitive_simulator.equation_analyzer
+        method: Consultar tabela de formas fechadas conhecidas (exp, logistic, linear, oscillatory)
+        output:
+          available: boolean
+          solution_template: string_or_null
+      symbolic_evaluator:
+        purpose: Avalia numericamente a expressão final.
+        method: substituição de variáveis por valores e avaliação step‑by‑step
+        config:
+          max_steps_evaluation: 1
+    inject_when: cognitive_mode IN [SCIENTIFIC, RESEARCH] OR user_request
+  cognitive_integrator_library:
+    version: v00.19.0
+    tier: 1
+    description: Biblioteca de integradores numéricos adaptados ao LLM.
+    integrators:
+      CI_01_exponential:
+        id: CI-EXP
+        equation_class: exponential_growth
+        formula: x_next = x * exp(a*dt)
+        applicability: dx/dt = a*x
+        confidence: 0.92
+        complexity: 1
+      CI_02_semi_analytic:
+        id: CI-SEMIA
+        equation_class: linear_plus_nonlinear
+        formula: x_next = exp(a*dt)*x + g(x)*dt
+        applicability: dx/dt = a*x + g(x)  with |ax| >> |g(x)|
+        confidence: 0.85
+        complexity: 3
+      CI_03_local_regression:
+        id: CI-LR
+        equation_class: unknown_dynamics
+        method: fit_local_function
+        confidence: 0.6
+        max_points: 5
+        min_points: 4
+        families:
+        - linear
+        - exponential
+        - logistic
+        - polynomial
+        fallback_method: polynomial_regression_degree2
+        complexity: 4
+      CI_04_log_stable:
+        id: CI-LOG
+        equation_class: multiplicative
+        transform: log
+        formula: y = log(x); y_next = y + log(a); x = exp(y)
+        applicability: x_{t+1} = a*x_t
+        confidence: 0.9
+        complexity: 2
+      CI_05_block_adaptive:
+        id: CI-BLOCK
+        equation_class: mixed
+        method: block_simulation
+        confidence: 0.7
+        config:
+          block_size: 5
+          reanalyze: true
+          max_blocks: 10
+        complexity: 5
+    inject_when: cognitive_mode IN [SCIENTIFIC, RESEARCH] OR user_request
+  fractal_cognitive_simulator:
+    version: v00.19.0
+    tier: 1
+    description: 'Simulação fractal: micro‑simulação → identificação funcional → extrapolação.'
+    submodules:
+      equation_analyzer:
+        purpose: Classifica equação (tipo, estabilidade, forma fechada, integrador recomendado).
+        outputs:
+        - system_type:
+          - linear
+          - logistic
+          - oscillatory
+          - stochastic
+          - chaotic
+        - stability:
+          - stable
+          - unstable
+          - conditional
+        - closed_form:
+          - available
+          - partial
+          - none
+        - integrator_recommended:
+          - CI-01
+          - CI-02
+          - CI-03
+          - CI-04
+          - CI-05
+          - euler+delegation
+        - confidence: float (0-1)
+        methods:
+        - analyze_structure
+        - check_stability
+        - detect_closed_form (via closed_form_detector — instância compartilhada com symbolic_executor)
+        - consult_knowledge_anchors
+        fallback:
+          integrator: CI-03
+          confidence: 0.4
+      structural_decomposer:
+        purpose: Separa componente linear e não‑linear.
+        method: parse_ast and split at sum of linear and nonlinear terms
+      micro_simulator:
+        purpose: Executa ≤5 steps com integrador selecionado.
+        config:
+          max_steps: 5
+          error_tracker_enabled: true
+        process:
+        - select_integrator (from integrator_recommended, respecting confidence)
+        - run_steps
+        - update_error_tracker
+      local_model_builder:
+        purpose: Identifica família funcional e estima parâmetros qualitativos.
+        method: pattern recognition on point sequence, using templates from knowledge_anchors
+        outputs:
+        - family: string
+        - 'parameters: dict (qualitative, e.g., {rate: ~0.08 per step, asymptote: ~1.0})'
+        - confidence: float
+      macro_extrapolator:
+        purpose: Projeta comportamento global (convergência, divergência, oscilação) e, opcionalmente,
+          valores numéricos com baixa confiança.
+        outputs:
+        - qualitative_behavior:
+          - converge
+          - diverge
+          - oscillate
+          - chaotic
+        - approximate_future_state:
+            time: int
+            value: float
+            confidence: float
+        policies:
+        - valores numéricos só com confidence ≤0.6
+      error_monitor:
+        purpose: Compara extrapolação com próximo bloco; recalibra se discrepância >15%, delega se >40%.
+        thresholds:
+          recalibrate: 0.15
+          delegate: 0.4
+        hysteresis: 3
+        actions:
+        - recalibrate: re‑executar local_model_builder
+        - delegate: emitir DELEGATION_NOTE
+        integrate_with: error_tracker (fornece resíduos para estimativa de δ)
+    inject_when: cognitive_mode IN [SCIENTIFIC, RESEARCH] OR user_request
+  error_tracker:
+    version: v00.19.0
+    tier: 1
+    description: Rastreamento dinâmico de erro acumulado durante iterações.
+    model: ε_{t+1} = ε_t + δ * |x_t|
+    config:
+      epsilon_initial: 0.01
+      delta_range:
+        min: 0.02
+        max: 0.05
+      threshold_warning: 0.1
+      threshold_stop: 0.25
+      hysteresis: 3
+    behavior:
+      on_warning: reduzir steps ou alertar
+      on_stop: DELEGATION_NOTE
+    methods:
+      estimate_delta_from_residuals:
+        description: Estima δ a partir de resíduos de simulações anteriores (fornecidos pelo error_monitor).
+        input: list of residuals (absolute errors)
+        output: delta_estimate = min(max(median(residuals) * 0.1, delta_range.min), delta_range.max)
+      update_epsilon:
+        formula: ε_next = ε_current + δ_estimated * |x_current|
+    inject_when: always
+  scientific_engine:
+    version: v00.19.0
+    tier: 1
+    description: Orquestra a geração, evolução e inferência de modelos matemáticos.
+    submodules:
+      hypothesis_engine:
+        purpose: Gera hipóteses (equações) a partir de domínio.
+        config:
+          initial_population: 5
+          max_population: 12
+        methods:
+        - generate_by_domain
+        - mutate_from_existing
+      evolution_engine:
+        purpose: Aplica operadores genéticos (mutação, recombinação) a modelos.
+        operators:
+        - add_term
+        - remove_term
+        - change_operator
+        - substitute_function
+        - linearize_around
+        - add_stochastic_term
+        - scale_parameter
+        selection:
+          method: tournament
+          population_size: 8
+      model_library:
+        description: Biblioteca persistente de modelos validados. Referencia e estende MODULE_knowledge.
+        storage: snapshot.scientific_state.model_library
+        index_by:
+        - domain_tags
+        - equation_class
+        - fit_confidence
+      scientific_graph:
+        description: Grafo de relações entre hipóteses, modelos e evidências. Referencia MODULE_knowledge.
+        storage: snapshot.scientific_state.scientific_graph
+        node_types:
+        - hypothesis
+        - model
+        - evidence
+        - equation
+    config:
+      max_hypotheses: 10
+      evolution_population: 8
+    inject_when: cognitive_mode IN [SCIENTIFIC, RESEARCH] OR user_request
+  validation_4layers:
+    version: v00.19.0
+    tier: 2
+    description: Validação estruturada de modelos usando DSM, Ishikawa, Pareto, FMEA.
+    layers:
+      dsm:
+        purpose: Análise de dependências entre componentes do modelo.
+        outputs:
+        - dependency_matrix
+        - critical_nodes
+      ishikawa:
+        purpose: Identificação de causas raiz de falhas.
+        categories:
+        - THEORY
+        - MODELING
+        - NUMERICS
+        - DATA
+        - HUMAN
+        - PROCESS
+        outputs:
+        - cause_effect_diagram
+        - root_causes
+      pareto:
+        purpose: Priorização dos fatores que mais impactam o erro.
+        method: 80/20 rule
+        outputs:
+        - ranked_issues
+        - top_issues
+      fmea:
+        purpose: Análise de modos de falha, efeitos e criticidade (RPN).
+        inputs:
+        - failure_modes
+        outputs:
+        - rpn_table
+        - recommended_mitigations
+        - acceptance_flag:
+          - PASS
+          - FLAG
+          - BLOCK
+    integration:
+    - ishikawa_causes -> pareto_ranking -> fmea_analysis
+    inject_when: validation_needed OR cognitive_mode IN [SCIENTIFIC, RESEARCH]
+  skill_registry:
+    version: v00.19.0
+    tier: 1
+    description: 'Registro central de skills com metadados de fitness, histórico de uso e índice de busca.
+      Fonte de verdade para skill_matcher e attraction_engine.
+
+      '
+    config:
+      storage: snapshot.skill_registry_state
+      index_fields:
+      - skill_id
+      - domain_tags
+      - anchors
+      - status
+      - fitness_scores
+      - centrality_impact
+      fitness_tracking:
+        window: 5
+        decay: 0.9
+      search_methods:
+        by_domain: Filtrar por domain_tags com jaccard ≥ 0.4
+        by_anchor: Filtrar por sobreposição de anchors ≥ 2
+        by_status: Filtrar por status [ADOPTED, CERTIFIED, PROVISIONAL]
+      registry_operations:
+        register: Adicionar skill com status LOCAL_DRAFT
+        update_fitness: Atualizar fitness_scores após cada sessão de uso
+        promote: Avançar status via lifecycle (PROVISIONAL → CANDIDATE → CERTIFIED → ADOPTED)
+        deprecate: Marcar skill como OBSOLETE após 10 sessões sem uso
+      persistence:
+        save_to: snapshot.skill_registry_state
+        load_from: snapshot.skill_registry_state
+        cold_start: 'Se snapshot.skill_registry_state vazio: inicializar com skills do tiered_differential_evolution.default_genome'
+    outputs:
+    - skill_list
+    - fitness_report
+    dependencies:
+    - MODULE_versioning
+    - MODULE_skills
+    inject_when: always
+  skill_matcher:
+    version: v00.19.0
+    tier: 1
+    description: 'Motor de correspondência semântica entre problema ativo e skills no registry. Retorna
+      candidatos ranqueados para a attraction_engine.
+
+      '
+    config:
+      matching_algorithm:
+        primary: Jaccard similarity entre problem_anchors e skill.anchors
+        secondary: Cosine similarity entre domain_tags
+        weight:
+          primary: 0.7
+          secondary: 0.3
+      match_threshold: 0.35
+      top_k_candidates: 5
+      min_status_required: PROVISIONAL
+    methods:
+      find_matches:
+        input:
+        - problem_anchors
+        - domain_tags
+        - cognitive_mode
+        output:
+        - ranked_skill_candidates
+        process:
+        - 1. Consultar skill_registry.search_methods.by_anchor
+        - 2. Calcular primary_score (Jaccard) para cada candidato
+        - 3. Calcular secondary_score (domain cosine) para cada candidato
+        - 4. final_score = 0.7 * primary + 0.3 * secondary
+        - 5. Filtrar por match_threshold
+        - 6. Retornar top_k ordenados por final_score
+      find_pipeline_matches:
+        description: 'Para scenario_12: encontrar skills que formam pipeline complementar'
+        input:
+        - problem_description
+        output:
+        - skill_pipeline_candidates
+        process:
+        - 1. Extrair keywords do problema
+        - 2. Buscar skills com domain_tags matching
+        - 3. Verificar compatibilidade (anchors compartilhados ≥ 1)
+        - 4. Propor sequências de encadeamento via attraction_engine
+    outputs:
+    - ranked_skill_candidates
+    - skill_pipeline_candidates
+    dependencies:
+    - MODULE_skill_registry
+    - MODULE_knowledge
+    inject_when: cognitive_mode IN [SCIENTIFIC, DEEP, RESEARCH] OR skill_synthesis_triggered
+  attraction_engine:
+    version: v00.19.0
+    tier: 1
+    description: 'Motor de atração gravitacional entre skills. Constrói pipelines dinâmicos baseados em
+      sobreposição de âncoras e fitness histórico.
+
+      '
+    config:
+      attraction_formula: A(s1, s2) = tanh(overlap_anchors(s1,s2) * fitness_weight(s1) * fitness_weight(s2))
+      pipeline_threshold: 0.45
+      max_pipeline_length: 4
+      fitness_weight:
+        formula: fw = mean(skill.fitness_scores[-3:]) / 5.0
+        fallback_new_skill: 0.5
+    methods:
+      compute_attraction:
+        input:
+        - skill_a
+        - skill_b
+        output: attraction_score (float 0..1)
+        process:
+        - 1. Calcular overlap = |anchors_a ∩ anchors_b| / |anchors_a ∪ anchors_b|
+        - 2. Calcular fw_a = fitness_weight(skill_a)
+        - 3. Calcular fw_b = fitness_weight(skill_b)
+        - 4. A = tanh(overlap * fw_a * fw_b)
+      propose_pipeline:
+        input:
+        - skill_candidates
+        output:
+        - ordered_skill_pipeline
+        - pipeline_coherence_score
+        process:
+        - 1. Calcular pairwise attraction_matrix para todos os candidatos
+        - 2. Selecionar par com maior atração como âncora do pipeline
+        - 3. Expandir greedy adicionando skill com maior atração ao pipeline atual
+        - 4. Parar quando pipeline_length >= max_pipeline_length OU attraction < threshold
+        - 5. Calcular pipeline_coherence = geometric_mean(pairwise attractions)
+        - 6. Emitir evento SKILL_ATTRACTED se pipeline_coherence > 0.6
+      suggest_chaining:
+        description: 'Para scenario_12: sugerir encadeamento logistic_growth + seasonal_perturbation'
+        output: '[SKILL_PIPELINE_PROPOSED: {skills} | coherence: {score}]'
+    outputs:
+    - skill_pipeline
+    - pipeline_coherence_score
+    dependencies:
+    - MODULE_skill_matcher
+    - MODULE_skill_registry
+    inject_when: cognitive_mode IN [SCIENTIFIC, RESEARCH] OR skill_synthesis_triggered
+  strategy_library:
+    version: v00.19.0
+    tier: 1
+    description: 'Biblioteca de meta-estratégias de descoberta científica acumuladas entre sessões. Implementa
+      o princípio meta_science do kernel.
+
+      '
+    config:
+      storage: snapshot.scientific_state.strategy_library
+      strategy_schema:
+        strategy_id: string
+        domain_tags: list
+        problem_pattern: string (descrição do tipo de problema)
+        approach: string (sequência de steps/módulos bem-sucedidos)
+        success_rate: float
+        session_count: integer
+        last_used_session: integer
+        confidence: float [APPROX]
+      operations:
+        record_strategy:
+          trigger: Ao final de sessão SCIENTIFIC com acceptance_flag == PASS
+          action: Serializar sequência de steps executados + módulos ativados + parâmetros
+        retrieve_strategy:
+          trigger: No STEP_P quando cognitive_mode == SCIENTIFIC
+          action: Buscar estratégias com domain_tags ∩ problem_anchors > 0 E success_rate > 0.7
+          output: '[STRATEGY_RETRIEVED: {id} | domain: {domain} | confidence: {score}]'
+        prune_strategies:
+          trigger: Snapshot compression
+          action: Remover estratégias com success_rate < 0.4 E last_used_session < current − 20
+      meta_learning_integration:
+        agent: meta_learning_agent
+        trigger: A cada 10 sessões SCIENTIFIC
+        action: Analisar strategy_library; identificar padrões; propor DIFF se abordagem recorrente
+    outputs:
+    - strategy_recommendations
+    dependencies:
+    - MODULE_versioning
+    - MODULE_scientific_engine
+    inject_when: cognitive_mode IN [SCIENTIFIC, RESEARCH]
+  output:
+    version: v00.19.0
+    tier: 3
+    config:
+      adaptive_layers:
+        layer_1_executive:
+          always_present: true
+          format: '5-7 linhas: decisão recomendada + confidence band + top 3 riscos'
+        layer_2_findings:
+          default_when: Effective_CFI ≥ 0.35
+          format: Índice por tema
+        layer_3_technical:
+          default_when: Effective_CFI > 0.60 OR cognitive_mode IN [SCIENTIFIC, RESEARCH]
+          format: Confidence chains, phase assignments, hypothesis survival, simulation results, validation
+            reports
+      cognitive_audit_section:
+        name: COGNITIVE_AUDIT
+        always_generated: true
+        content:
+          barycentric_coordinate: '{wE, wD, wK} [APPROX]'
+          dominant_vertex: E|D|K + descrição da causa
+          effective_cfi: float [APPROX] + label
+          mode_selected: FAST|CLARIFY|DEEP|RESEARCH|FOGGY|SCIENTIFIC
+          skill_coverage: domínio + coverage_rate + validation_type
+          constitution_status: CLEAR|GOAL_MISFRAMING|SCOPE_ERROR|ASSUMPTION_DEPENDENCY
+        v014_fields:
+          formalism_gate_summary: claims que receberam [CONJECTURA_FORMAL]
+          substitution_summary: tokens economizados por sub-domínio
+          snapshot_compression_applied: boolean
+          selective_cache_summary: sub-domínios que usaram cache seletivo
+        v015_fields:
+          mcfe_summary:
+            H_cognitive_initial: float [APPROX_HEURISTIC]
+            H_cognitive_final: float [APPROX_HEURISTIC]
+            gear_trajectory: list de {step, gear, motivo}
+            early_exit_triggered: boolean
+            early_exit_at: step
+            collapse_triggered: boolean
+            anchor_destroyer_triggered: boolean
+            R_t_history: list
+            tokens_saved_estimate: integer
+        v018_fields:
+          scientific_summary:
+            symbolic_execution_used: boolean
+            closed_form_found: boolean
+            integrator_used: string
+            fractal_simulation_performed: boolean
+            extrapolation_quality: string
+            error_tracker_final: float
+            validation_layers:
+              dsm: object
+              ishikawa: object
+              pareto: object
+              fmea: object
+        v019_fields:
+          skill_attraction_summary:
+            pipelines_proposed: integer
+            pipelines_adopted: integer
+            attraction_events: list
+          strategy_library_hits: integer
+          mode_conflict_applied: string_or_null
+          bugs_fixed_note: v00.19.0 — 15 bugs corrigidos (5C+5H+5G). Ver changelog.
+      output_protocol:
+        audience_filter: audience_profile atua como FILTRO ATIVO
+        confidence_display_rules:
+          senior_engineer: numérico com [APPROX], phase annotation em graus
+          CTO_executive: banda apenas
+          engineering_team: banda apenas com confiança no nível de tarefa
+          investor_board: nível de risco apenas
+          product_manager: banda apenas com enquadramento de impacto
+    inject_when: always
+  mcfe:
+    version: v00.19.0
+    tier: 0
+    description: Meta‑Controlador de Fluxo de Entropia.
+    config:
+      enabled: true
+      evaluation_points:
+      - STEP_3
+      - STEP_5
+      - STEP_7
+      - STEP_SCI_05
+      - STEP_SCI_08
+      commands:
+      - CONTINUE
+      - CHANGE_GEAR
+      - JUMP_TO_STEP_9
+      - INJECT_ANCHOR_DESTROYER
+      - COLLAPSE_EXPANSION
+      - SPAWN_SCIENTIFIC
+      compute_entropy_cognitive:
+        formula: H_cognitive = α·H_conf + β·H_phase + γ·H_surv
+        weights_source: MODULE_config.parameters.tiered_differential_evolution.DIFF_MCFE_04.default
+        weights_default:
+          alpha: 0.5
+          beta: 0.3
+          gamma: 0.2
+        components:
+          H_confidence:
+            source: composite_confidence_summary.hypotheses_active
+            formula: 'se n≤1: 0; else p_i=c_i/Σc_j; H_raw=-Σp_i log2(p_i); H_conf=H_raw/log2(n)'
+          H_phase:
+            source: phase_offsets dos agentes ativos
+            formula: phase_spread = max(phases)-min(phases); H_phase = min(1, phase_spread/π)
+          H_survival:
+            source: advanced.hypothesis_tracker
+            formula: n_active / n_initial
+      decision_table:
+        H_low:
+          range: 0.00..0.25 exclusive
+          action: JUMP_TO_STEP_9
+        H_medium:
+          range: 0.25..0.60 exclusive
+          action: CONTINUE
+        H_high:
+          range: 0.60..1.00 inclusive
+          action: CHANGE_GEAR
+      token_to_information_ratio:
+        formula: R_t = ΔConf_estimated / ΔTokens_estimated
+        collapse_trigger:
+          R_min_source: MODULE_config.parameters.tiered_differential_evolution.DIFF_MCFE_03.default
+          R_min_default: 0.05
+          steps: 2
+      gear_system:
+        gears:
+          gear_1:
+            eligible_when: H_cognitive < 0.25 AND wD ≤ 0.5
+          gear_2:
+            eligible_when: 0.25 ≤ H_cognitive < 0.60 OR (H_cognitive < 0.25 AND wD > 0.5)
+          gear_3:
+            eligible_when: H_cognitive ≥ 0.60
+        gear_override_density:
+          rule: Se wD > 0.5 → Gear 1 bloqueado
+      stall_detector:
+        stall_condition:
+          rule: variance(confidence_scores) < 5% AND ∇H ≈ 0 por {DIFF_MCFE_02} rounds
+          N_source: MODULE_config.parameters.tiered_differential_evolution.DIFF_MCFE_02.default
+          N_default: 2
+        on_stall_or_drift:
+          action: INJECT_ANCHOR_DESTROYER
+      mcfe_state:
+        fields:
+          gear_current:
+          - gear_1
+          - gear_2
+          - gear_3
+          gear_history: list
+          h_history: list
+          r_history: list
+          stall_counter: int
+          early_exit_triggered: boolean
+          early_exit_at_step: string
+          collapse_triggered: boolean
+          anchor_destroyer_activations: int
+          efficiency_log:
+            tokens_saved_estimate: int
+            confidence_final: float
+          r_calibration:
+            FAST: float
+            DEEP: float
+            RESEARCH: float
+            SCIENTIFIC: float
+            CLARIFY: float
+    inject_when: always
+  anchor_destroyer:
+    version: v00.19.0
+    tier: 1
+    description: Subtipo de emergency_agent. Identifica e invalida âncora causando loop cognitivo.
+    spawn_condition: MCFE emite INJECT_ANCHOR_DESTROYER
+    agent_spec:
+      role: Anchor Destroyer
+      alias: ANCHOR_DESTROYER
+      phase_offset: mean(current_phases) + π/2
+      phase_affinity: pessimistic
+      token_budget_max: 400
+      single_use: true
+      mission: '[PARTITION_ACTIVE: ANCHOR_DESTROYER] Identificar qual premissa-âncora está travando o
+        sistema.'
+      output_format:
+        required:
+        - '[ANCHOR_INVALIDATED: {id} | evidence_level: {nível} | reason: {motivo}]'
+        - 'anchor_substitute: {id} OR [ANCHOR_GAP]'
+        - '[ANCHOR_DESTROYER: DONE | tokens_used: {est}]'
+      lifecycle:
+        scope: execução única imediata
+        does_not_count_toward: max_new_per_session
+        registers_in_snapshot: anchor_destroyer_log
+        post_execution: meta_reasoning re-inicia raciocínio do step atual com anchor invalidada
+    inject_when: mcfe_command == INJECT_ANCHOR_DESTROYER
+  mcp_bridge:
+    version: v00.19.0
+    tier: 1
+    inject_when: never
+    description: Bridge for MCP tool invocation (placeholder, desabilitado).
+    config:
+      enabled: false
+      tools: []
+    activation_roadmap:
+      status: placeholder
+      activation_condition: MODULE_marketplace.status == IMPLEMENTED AND user_request
+      activation_diff: DIFF_MCP_01
+      estimated_phase: após marketplace público
+      steps_to_activate:
+      - 1. Definir tools[] com schemas MCP reais
+      - 2. Mudar enabled: true
+      - 3. Mudar inject_when: user_request OR mcp_tool_needed
+      - 4. Executar T07 cenário de teste

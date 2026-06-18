@@ -1,0 +1,228 @@
+community_agent_roster:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-116
+  tier: 2
+  status: ADOPTED
+  purpose: 'Integrar 33 community agents (code-archaeologist, django-api-developer, fastapi-expert, ml-data-expert,
+    tech-lead-orchestrator, etc.) e 157 subagent patterns ao dynamic_agent_roster como agentes OPTIONAL
+    — ativados pelo meta_reasoning quando o domínio bate e nenhum agente base cobre adequadamente.
+
+    '
+  why: 'WHY: Os 33 agentes de agents/community-awesome/ têm roles especializadas que nenhum agente base
+    cobre: code-archaeologist (trace execution paths), django-orm-expert, fastapi-expert (async, Pydantic),
+    ml-data-expert (ML pipelines), tech-lead-orchestrator. Sem integração ao roster, APEX usa apenas 10
+    agentes base mesmo para problemas Django/FastAPI.
+
+    '
+  when: 'WHEN: meta_reasoning detecta domínio que bate com agent category E nenhum agente base tem expertise
+    primária naquele domínio. WHEN: Usuário solicita explicitamente expertise em framework/domínio específico.
+
+    '
+  what_if_fails: 'FALLBACK: Agentes base cobrem com expertise genérica. REGRA: Community agents NUNCA
+    substituem agentes base — sao adicionais. REGRA: Máximo 2 community agents ativos por sessão (token
+    budget).
+
+    '
+  inject_when: STEP_1 (pmi_pm scoping) detecta domínio especializado
+  depends_on:
+  - dynamic_agent_roster
+  - meta_reasoning
+  - forgeskills_catalog_boot
+  community_roster:
+    tier: OPTIONAL
+    max_concurrent: 2
+    activation_gate: meta_reasoning verifica se base agents cobrem domínio
+    source_path: agents/community-awesome/
+    source_subagents: agents/community-subagents/
+    agents:
+      core:
+        code-archaeologist:
+          role: Análise de codebases — execution paths, architecture layers, dependency maps
+          activates_when:
+          - code_analysis
+          - reverse_engineering
+          - legacy_code
+          model: sonnet
+        code-reviewer:
+          role: 'Code review — 7 domínios: structure, style, security, testing, CI/CD'
+          activates_when:
+          - code_review
+          - pull_request
+          - quality_assurance
+          model: sonnet
+        documentation-specialist:
+          role: Documentação técnica — READMEs, API docs, tutorials, changelogs
+          activates_when:
+          - documentation
+          - api_docs
+          - readme
+          model: haiku
+        performance-optimizer:
+          role: Análise e otimização de performance — profiling, bottlenecks, benchmarks
+          activates_when:
+          - performance
+          - optimization
+          - profiling
+          - benchmark
+          model: sonnet
+      python:
+        django-api-developer:
+          activates_when:
+          - django
+          - django_rest
+          - drf
+          model: sonnet
+        django-orm-expert:
+          activates_when:
+          - django
+          - orm
+          - migrations
+          - querysets
+          model: sonnet
+        fastapi-expert:
+          activates_when:
+          - fastapi
+          - pydantic
+          - async_python
+          - uvicorn
+          model: sonnet
+        ml-data-expert:
+          activates_when:
+          - machine_learning
+          - sklearn
+          - feature_engineering
+          - model_eval
+          model: opus
+        python-expert:
+          activates_when:
+          - python
+          - debugging
+          - async
+          model: sonnet
+        testing-expert:
+          activates_when:
+          - pytest
+          - tdd
+          - unit_tests
+          - integration_tests
+          model: sonnet
+      orchestrators:
+        tech-lead-orchestrator:
+          role: Technical leadership — architecture decisions, trade-off analysis
+          activates_when:
+          - system_design
+          - technical_decision
+          - team_structure
+          model: opus
+        project-analyst:
+          role: Project scoping, requirements analysis, risk assessment
+          activates_when:
+          - project_planning
+          - requirements
+          - scope_analysis
+          model: sonnet
+        team-configurator:
+          role: Configurar equipe de agentes para problemas complexos
+          activates_when:
+          - multi_agent
+          - complex_problem
+          - agent_selection
+          model: sonnet
+      anthropic_community_agents:
+        note: Agentes ingeridos de repositórios Anthropic oficiais (OPP-129/133)
+      code-quality-reviewer:
+        role: Code quality assessment — maintainability, best practices, refactoring
+        activates_when:
+        - code_review
+        - quality
+        - maintainability
+        - refactoring
+        model: sonnet
+        source: agents/community_code_quality_reviewer/
+      code-reviewer-cookbooks:
+        role: Code review para notebooks, GitHub Actions e scripts Python
+        activates_when:
+        - notebook
+        - jupyter
+        - github_actions
+        - cookbook
+        model: sonnet
+        source: agents/community_code_reviewer/
+      documentation-accuracy-reviewer:
+        role: Verifica precisão e completude de documentação técnica
+        activates_when:
+        - documentation
+        - api_docs
+        - accuracy_check
+        model: haiku
+        source: agents/community_documentation_accuracy_reviewer/
+      financial-analyst:
+        role: Análise financeira — burn rate, runway, DCF, métricas de startup
+        activates_when:
+        - finance
+        - startup_metrics
+        - dcf
+        - budget
+        - burn_rate
+        model: sonnet
+        source: agents/community_financial_analyst/
+      performance-reviewer:
+        role: Análise de performance — bottlenecks, queries, profiling
+        activates_when:
+        - performance
+        - bottleneck
+        - optimization
+        - profiling
+        model: sonnet
+        source: agents/community_performance_reviewer/
+      recruiter:
+        role: Recrutamento técnico — pipeline de talentos, job descriptions
+        activates_when:
+        - recruiting
+        - hiring
+        - talent
+        - job_description
+        model: sonnet
+        source: agents/community_recruiter/
+      security-code-reviewer:
+        role: Revisão de segurança — OWASP, vulnerabilidades, validação de input
+        activates_when:
+        - security
+        - vulnerability
+        - owasp
+        - authentication
+        - injection
+        model: opus
+        source: agents/community_security_code_reviewer/
+      test-coverage-reviewer:
+        role: Revisão de cobertura de testes — casos faltantes, edge cases
+        activates_when:
+        - testing
+        - coverage
+        - edge_cases
+        - test_quality
+        model: sonnet
+        source: agents/community_test_coverage_reviewer/
+  activation_protocol: '# STEP_1 (pmi_pm) detecta domínio -> meta_reasoning verifica roster:
+
+    # 1. Extrair domínio primário da tarefa
+
+    # 2. Verificar se agente base tem expertise primária
+
+    # 3. SE nao: buscar community_roster por activates_when match
+
+    # 4. SE match: emitir [COMMUNITY_AGENT_ACTIVATED: {agent} | domain: {domain}]
+
+    # 5. Agente recebe [PARTITION_ACTIVE: {role}] e executa em STEP_N
+
+    # MAX 2 community agents: 1 domain expert + 1 orchestrator (se necessário)
+
+    '
+  fmea:
+    rpn: 2
+    mode: Community agent ativado incorretamente — expertise nao match
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: activates_when específico. meta_reasoning valida match. Base agents como fallback.

@@ -1,0 +1,274 @@
+cs_persona_roster_boot:
+  executor: LLM_BEHAVIOR
+  version: v00.37.0
+  opp: OPP-156
+  tier: 2
+  status: ADOPTED
+  purpose: 'Registrar 23 CS persona agents (OPP-154) no kernel do boot. Agentes convertidos de SKILL.md
+    → AGENT.md em OPP-148→152, agora com mapeamento completo de activates_when para ativação automática
+    pelo meta_reasoning.
+
+    '
+  why: 'WHY: Os 23 agentes cs_* (content-strategist, cs-agile-product-owner, etc.) foram convertidos para
+    AGENT.md mas nunca integrados ao pipeline de ativação. Especialistas de produto, estratégia e negócio
+    ficavam inacessíveis ao meta_reasoning.
+
+    '
+  when: 'WHEN: meta_reasoning detecta contexto de produto, estratégia, marketing ou liderança. WHEN: Usuário
+    solicita perspectiva de CEO/CTO/PM/estrategista. WHEN: Domínio da tarefa é business, product, growth
+    ou finance.
+
+    '
+  what_if_fails: 'FALLBACK: architect ou engineer cobrem contexto técnico. REGRA: CS personas são OPCIONAIS
+    — nunca bloqueiam workflow. REGRA: Máximo 1 CS persona ativa por sessão (role único).
+
+    '
+  source_file: agents/community_agent_roster.yaml
+  total_agents: 23
+  activation_gate: meta_reasoning detecta contexto business/product/strategy
+  max_concurrent: 1
+  fallback_agent: architect
+  agents:
+    content-strategist:
+      agent_id: community.content_strategist
+      activates_when:
+      - llm
+      - marketing
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_content_strategist/AGENT.md
+    cs-agile-product-owner:
+      agent_id: community.cs_agile_product_owner
+      activates_when:
+      - llm
+      - product
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_agile_product_owner/AGENT.md
+    cs-ceo-advisor:
+      agent_id: community.cs_ceo_advisor
+      activates_when:
+      - llm
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_ceo_advisor/AGENT.md
+    cs-content-creator:
+      agent_id: community.cs_content_creator
+      activates_when:
+      - ai
+      - llm
+      - marketing
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_content_creator/AGENT.md
+    cs-cto-advisor:
+      agent_id: community.cs_cto_advisor
+      activates_when:
+      - llm
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_cto_advisor/AGENT.md
+    cs-demand-gen-specialist:
+      agent_id: community.cs_demand_gen_specialist
+      activates_when:
+      - ai
+      - llm
+      - marketing
+      - sales
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_demand_gen_specialist/AGENT.md
+    cs-engineering-lead:
+      agent_id: community.cs_engineering_lead
+      activates_when:
+      - backend
+      - data
+      - frontend
+      - llm
+      - ml
+      - orchestration
+      - security
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_engineering_lead/AGENT.md
+    cs-financial-analyst:
+      agent_id: community.cs_financial_analyst
+      activates_when:
+      - finance
+      - llm
+      - orchestration
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_financial_analyst/AGENT.md
+    cs-growth-strategist:
+      agent_id: community.cs_growth_strategist
+      activates_when:
+      - analysis
+      - business
+      - llm
+      - orchestration
+      - sales
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_growth_strategist/AGENT.md
+    cs-product-analyst:
+      agent_id: community.cs_product_analyst
+      activates_when:
+      - analytics
+      - llm
+      - product
+      - testing
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_product_analyst/AGENT.md
+    cs-product-manager:
+      agent_id: community.cs_product_manager
+      activates_when:
+      - llm
+      - product
+      - sales
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_product_manager/AGENT.md
+    cs-product-strategist:
+      agent_id: community.cs_product_strategist
+      activates_when:
+      - analysis
+      - llm
+      - product
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_product_strategist/AGENT.md
+    cs-project-manager:
+      agent_id: community.cs_project_manager
+      activates_when:
+      - llm
+      - orchestration
+      - workflow
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_project_manager/AGENT.md
+    cs-quality-regulatory:
+      agent_id: community.cs_quality_regulatory
+      activates_when:
+      - llm
+      - orchestration
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_quality_regulatory/AGENT.md
+    cs-senior-engineer:
+      agent_id: community.cs_senior_engineer
+      activates_when:
+      - api
+      - devops
+      - llm
+      - orchestration
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_senior_engineer/AGENT.md
+    cs-ux-researcher:
+      agent_id: community.cs_ux_researcher
+      activates_when:
+      - analysis
+      - llm
+      - product
+      - research
+      - testing
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_ux_researcher/AGENT.md
+    cs-workspace-admin:
+      agent_id: community.cs_workspace_admin
+      activates_when:
+      - ai
+      - llm
+      - orchestration
+      - security
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_cs_workspace_admin/AGENT.md
+    devops-engineer:
+      agent_id: community.devops_engineer
+      activates_when:
+      - ai
+      - devops
+      - llm
+      - monitoring
+      - product
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_devops_engineer/AGENT.md
+    finance-lead:
+      agent_id: community.finance_lead
+      activates_when:
+      - ai
+      - finance
+      - llm
+      - startup
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_finance_lead/AGENT.md
+    growth-marketer:
+      agent_id: community.growth_marketer
+      activates_when:
+      - llm
+      - marketing
+      - startup
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_growth_marketer/AGENT.md
+    product-manager:
+      agent_id: community.product_manager
+      activates_when:
+      - business
+      - data
+      - llm
+      - product
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_product_manager/AGENT.md
+    solo-founder:
+      agent_id: community.solo_founder
+      activates_when:
+      - llm
+      - marketing
+      - product
+      - startup
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_solo_founder/AGENT.md
+    startup-cto:
+      agent_id: community.startup_cto
+      activates_when:
+      - llm
+      - startup
+      tier: 2
+      max_concurrent: 1
+      path: agents/cs_startup_cto/AGENT.md
+  activation_protocol: '# OPP-156 CS Persona Activation:
+
+    # STEP_1: pmi_pm detecta contexto business/product/marketing/strategy
+
+    # STEP_2: meta_reasoning verifica cs_persona_roster_boot.agents
+
+    #         → match por activates_when ∩ request_context
+
+    # STEP_3: [CS_PERSONA_ACTIVATED: {agent_id} | context: {context}]
+
+    # STEP_4: CS persona assume perspectiva de role específico no output
+
+    #         → MAX 1 CS persona (role único, sem conflito)
+
+    # STEP_5: SE falha: [CS_PERSONA_FALLBACK] → usar architect com business lens
+
+    '
+  fmea:
+    rpn: 2
+    mode: CS persona ativada em contexto puramente técnico
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: 'activates_when[] focado em domínios business/product. Meta_reasoning gate: SE domínio
+      é 100% técnico → não ativar CS persona.
+
+      '

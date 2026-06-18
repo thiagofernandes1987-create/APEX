@@ -1,0 +1,137 @@
+diff_ecosystem_v022:
+  registered_diffs:
+  - id: DIFF_v22_001
+    type: MODULE_NEW + MODULE_EXTEND
+    status: ADOPTED
+    modules_new:
+    - chaos_operators
+    modules_modified:
+    - agents.chaos_spawn_rule
+    rules_new:
+    - SR_16
+    breaking_changes: none
+  - id: DIFF_v22_002
+    type: MODULE_NEW + MODULE_EXTEND
+    status: ADOPTED
+    modules_new:
+    - snapshot_store
+    modules_modified:
+    - reliability_estimator (+credibility_interval)
+    - mcfe_reliability_monitor (+lower_bound)
+    - mental_interpreter_v3 (+checkpoints)
+    - versioning (+v022_fields)
+    - output (+v022_fields)
+    rules_new:
+    - SR_14
+    - SR_15
+    breaking_changes: 'MCFEReliabilityMonitor usa lower_bound para WARNING/CRITICAL (mais conservador).
+      FIX-QA-A e FIX-NEW1 preservados.
+
+      '
+  - id: DIFF_v22_003
+    type: MODULE_NEW + MODULE_EXTEND
+    status: ADOPTED
+    modules_new:
+    - algorithm_kernel
+    - model_selection_engine
+    modules_modified:
+    - skill_matcher (+find_by_conditions)
+    - knowledge (+applicability_conditions)
+    rules_new:
+    - SR_13
+    - G7
+    breaking_changes: none
+  - id: DIFF_v22_004
+    type: MODULE_NEW + MODULE_EXTEND
+    status: ADOPTED
+    modules_new:
+    - behavioral_difficulty_estimator
+    modules_modified:
+    - engines_cognitive (+bde_fusion)
+    rules_new:
+    - G8
+    breaking_changes: Pode alterar seleção de modo em CFI zona cinza. Mais preciso.
+  - id: DIFF_v22_005
+    type: CONFIG_UPDATE + MODULE_EXTEND
+    status: ADOPTED
+    modules_modified:
+    - advanced (+escalation_policy gate no STEP_12)
+    - config (+escalation_policy params)
+    - output (+escalation_history)
+    rules_new: []
+    breaking_changes: Pode aumentar custo de tokens em sessões com confidence baixa.
+  - id: DIFF_v22_006
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - coupling_analyzer
+    modules_modified:
+    - engines_cognitive (posição STEP_P)
+    rules_new: []
+    breaking_changes: Navier-Stokes e Lotka-Volterra forçados para MONOLITHIC. Correto.
+  - id: DIFF_v22_007
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - symbolic_pre_check
+    modules_modified:
+    - engines_cognitive (posição STEP_0)
+    rules_new: []
+    breaking_changes: Integral polinomial com keyword 'numericamente' → EXPRESS (não SCIENTIFIC). Correto.
+  - id: DIFF_v22_008
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - agent_replacement_engine
+    modules_modified:
+    - agents (integração no loop de agentes)
+    rules_new: []
+    breaking_changes: none
+  - id: DIFF_v22_009
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - dynamic_pool_scaler
+    modules_modified:
+    - engines_cognitive (+mid-session scaling)
+    rules_new: []
+    breaking_changes: Pode reduzir n_agents em steps tardios. Economia de tokens.
+  - id: DIFF_v22_010
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - numeric_landscape_model
+    modules_modified:
+    - scientific_engine (+STEP_SCI_05 integration)
+    rules_new: []
+    breaking_changes: none
+  - id: DIFF_v22_OUTPUT_001
+    type: SPEC_UPDATE
+    status: ADOPTED
+    modules_modified:
+    - output (+format_rules_by_mode)
+    breaking_changes: 'Output em SCIENTIFIC agora é máximo detalhe com divisão em sessões. EXPRESS_OVERRIDE
+      disponível se usuário solicitar resumo.
+
+      '
+  - id: DIFF_v22_EPISTEMIC_001
+    type: SPEC_UPDATE
+    status: ADOPTED
+    modules_modified:
+    - meta_reasoning (+user_correction_validation_protocol)
+    breaking_changes: '''Outro LLM validou'' não é prova. Correções tipo_C tratadas como hipóteses não
+      verificadas. Histórico auditável em snapshot.user_corrections.
+
+      '
+  - id: SMS_v1.1
+    type: MODULE_NEW + SPEC_UPDATE
+    status: ADOPTED
+    modules_new:
+    - snapshot_multidimensional_system
+    rules_new:
+    - SR_17
+    - SR_18
+    - SR_19
+    - G9
+    - G10
+    breaking_changes: none

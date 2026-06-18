@@ -1,0 +1,55 @@
+pot_max:
+  executor: HYBRID
+  version: v00.38.0
+  opp: OPP-164
+  tier: 1
+  status: ADOPTED
+  purpose: 'Quatro upgrades ortogonais ao pot_engine existente que aumentam confiabilidade e reduzem custo:
+    (1) result-cache por hash de programa; (2) property-based testing automático; (3) verificação dimensional
+    via sympy; (4) verificação multi-seed para programas estocásticos.
+
+    '
+  why: 'WHY CACHE: PoT programs idênticos são re-executados entre iterações e sessões — hash(programa+inputs)
+    → resultado já computado, custo zero. WHY PROPERTY-BASED: FMEA guards (SR_03) testam modos de falha
+    PREVISTOS; property-based testing encontra os imprevistos gerando inputs aleatórios e checando invariantes.
+    WHY DIMENSIONAL: sympy já está no sandbox (G5) — análise dimensional pega erros de unidade que nenhum
+    teste numérico pega. WHY MULTI-SEED: Monte Carlo/SA com 1 seed é anedota; >= 3 seeds com desvio reportado
+    é evidência.
+
+    '
+  when: 'WHEN cache: todo PoT antes de executar (lookup) e após (store). WHEN property: modos DEEP/RESEARCH/SCIENTIFIC,
+    programas com função pura identificável. WHEN dimensional: equações físicas/engenharia (modo SCIENTIFIC,
+    equation_template anchors). WHEN multi-seed: todo programa que usa random/numpy.random.
+
+    '
+  description: 'O_QUE_É: camada de verificação e economia sobre o pot_engine. O_QUE_NÃO_É: substituto
+    do uco_quality_gate (SR_33) — UCO analisa qualidade estática; pot_max verifica comportamento dinâmico.
+    COMO_FUNCIONA (LLM): gerar programa normalmente → anexar bloco de invariantes declaradas (ex: "output
+    >= 0", "monotônico em x", "unidades: kg*m/s^2"). (SANDBOX): executar com cache → rodar property tests
+    (20 inputs aleatórios nos ranges declarados) → verificar dimensões via sympy.physics.units → se estocástico,
+    rodar seeds {17, 42, 1987} e reportar média ± desvio.
+
+    '
+  what_if_fails: 'FALLBACK cache: miss → executar normal. FALLBACK property: invariante violada → [INVARIANT_VIOLATED:
+    {inv} | input={x}] → Error Evolution Loop (OPP-MAS-03). FALLBACK dimensional: sympy indisponível →
+    [DIMENSIONAL_UNCHECKED]. FALLBACK multi-seed: desvio > 20% da média → [STOCHASTIC_UNSTABLE] → aumentar
+    N ou reportar intervalo.
+
+    '
+  inject_when: pot_engine.program_validation (após SR_07, antes de SR_33)
+  depends_on:
+  - pot_engine
+  - uco_quality_gate
+  - mental_interpreter_v4
+  cache_protocol:
+    key: sha256(programa_normalizado + json(inputs))[:16]
+    store: sqlite apex_memory.db tabela pot_cache (SQLite OPP-66)
+    ttl: 30 sessões OU invalidação por mudança de skill dependente
+    expected_hit_rate: '[APPROX_ESTIMATE] 15-40% em sessões incrementais'
+  fmea:
+    rpn: 12
+    mode: cache retorna resultado de programa semanticamente diferente
+    probability: 2
+    severity: 3
+    detection: 2
+    mitigation: normalização AST antes do hash; colisão sha256 desprezível

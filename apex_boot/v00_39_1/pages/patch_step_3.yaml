@@ -1,0 +1,6 @@
+patch_step_3:
+  addition_after_superposition: "Após cada agente gerar suas versões (sub-step 3b): Para cada versão gerada\
+    \ que invoca um Knowledge Model ou equação:\n  → specialized_skill_engine invoca a Specialized Skill\
+    \ correspondente\n  → mental_interpreter executa o PoT\n  → hypothesis_filter_outputs coletados\n\
+    Antes do MCFE@STEP_3: executar fractal_hypothesis_compression (dominance_filter apenas — sem skill_refutation\
+    \ ainda, dados insuficientes)\n"

@@ -1,4 +1,4 @@
-"""AutofixEngine — transforms package  (M5.2 + M8.1)."""
+"""AutofixEngine — transforms package  (M5.2 + M8.1 + AFix+ FASE 8)."""
 # ── Original 4 transforms (M5.2) ──────────────────────────────────────────────
 from sensor_core.autofix.transforms.base import BaseTransform, TransformResult
 from sensor_core.autofix.transforms.dead_code import DeadCodeRemover
@@ -15,6 +15,12 @@ from sensor_core.autofix.transforms.add_context_manager import ContextManagerAdv
 from sensor_core.autofix.transforms.extract_method import ExtractMethodAdvisor
 from sensor_core.autofix.transforms.replace_string_concat_loop import StringConcatLoopAdvisor
 from sensor_core.autofix.transforms.add_type_hints import TypeHintAdder
+
+# ── AFix+ FASE 8 — 4 security transforms (#13-16) ─────────────────────────────
+from sensor_core.autofix.transforms.replace_weak_hash import WeakHashReplacer
+from sensor_core.autofix.transforms.replace_insecure_random import InsecureRandomReplacer
+from sensor_core.autofix.transforms.add_loop_guard import LoopGuardAdvisor
+from sensor_core.autofix.transforms.replace_format_string import FormatStringModernizer
 
 __all__ = [
     # Base
@@ -34,4 +40,9 @@ __all__ = [
     "ExtractMethodAdvisor",
     "StringConcatLoopAdvisor",
     "TypeHintAdder",
+    # AFix+ FASE 8
+    "WeakHashReplacer",
+    "InsecureRandomReplacer",
+    "LoopGuardAdvisor",
+    "FormatStringModernizer",
 ]

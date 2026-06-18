@@ -1,0 +1,98 @@
+marketplace_skill_forge:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-118
+  tier: 2
+  status: ADOPTED
+  purpose: 'Integrar o sistema de Marketplace do Claude (marketplace.json + .claude-plugin/) ao SkillIndexer
+    para descoberta de bundles de skills. Complementa ForgeSkills raw GitHub fetch com ativação coordenada
+    de conjuntos coerentes de skills.
+
+    '
+  why: 'WHY: .claude-plugin/marketplace.json em múltiplos repos define bundles de skills instaláveis como
+    grupo. skills-main tem: document-skills (xlsx+docx+pptx+pdf), example-skills (12 skills), claude-api.
+    APEX nao conhece esse sistema — trata skills individualmente. Bundles permitem ativar conjunto coerente
+    com uma âncora.
+
+    '
+  when: 'WHEN: DynamicSkillForge detecta skill_id com prefixo "bundle:". WHEN: Usuário solicita capacidade
+    que mapeia para bundle conhecido.
+
+    '
+  what_if_fails: Skill discovery individual como fallback
+  inject_when: SkillIndexer.discover() + apex_superrepo_boot
+  depends_on:
+  - skills_api_bridge
+  - dynamic_skill_forge
+  known_bundles:
+    document_skills:
+      bundle_id: bundle:document-skills
+      skills:
+      - xlsx
+      - docx
+      - pptx
+      - pdf
+      activates_when:
+      - document_processing
+      - spreadsheet
+      - presentation
+      - pdf_analysis
+      source: anthropic:xlsx, anthropic:docx, anthropic:pptx, anthropic:pdf
+    example_skills:
+      bundle_id: bundle:example-skills
+      skills:
+      - algorithmic-art
+      - canvas-design
+      - frontend-design
+      - mcp-builder
+      - skill-creator
+      - webapp-testing
+      - slack-gif-creator
+      - theme-factory
+      - claude-api
+      activates_when:
+      - creative
+      - web_development
+      - mcp_creation
+      - skill_creation
+    claude_api_bundle:
+      bundle_id: bundle:claude-api
+      skills:
+      - claude-api
+      activates_when:
+      - sdk_usage
+      - api_integration
+      - multi_language_sdk
+    finance_bundle:
+      bundle_id: bundle:financial-services
+      skills:
+      - equity-research
+      - financial-analysis
+      - investment-banking
+      - wealth-management
+      activates_when:
+      - finance
+      - equity_research
+      - investment_banking
+    knowledge_work_bundle:
+      bundle_id: bundle:knowledge-work
+      skills:
+      - legal
+      - marketing
+      - engineering
+      - hr
+      - sales
+      - data
+      - design
+      - product-management
+      activates_when:
+      - enterprise
+      - knowledge_work
+      - professional_workflow
+  fmea:
+    rpn: 2
+    mode: Bundle desatualizado — skills mudaram desde mapeamento
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: marketplace.json fetch dinâmico via apex_superrepo_boot quando possível

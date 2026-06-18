@@ -1,0 +1,83 @@
+pipeline_v032_modifications:
+  STEP_0:
+    additions_v032:
+    - sqlite_store = ApexSQLiteStore('apex_memory.db'); sqlite_store._init_schema()
+    - delta = sqlite_store.load_delta_for_session(current_domain, n_sessions=5)
+    - Injetar delta (~200-500 tokens) no context em vez de snapshot completo (~3000 tokens)
+    - sklearn_difficulty.predict(problem_text) → ood_score + recommendation
+    - 'Se ood_score > 0.7: emitir [OOD_WARNING: ESCALATE_TO_HUMAN recomendado]'
+    - apex_st_prev = sqlite_store.load_last_st_metric()
+    - 'attention_anchors: injetar scratchpad dinâmico (500 tokens) com regras críticas do step atual'
+    - '[LOG] [SQLITE_STORE: sessions={n} | db_size={kb}KB | ood_score={s}]'
+    - '[LOG] [ATTENTION_ANCHORS: active_rules={r} | vaccines_loaded={v} | suspects={s}]'
+  STEP_P:
+    additions_v032:
+    - 'hypothesis_dag.initialize(): criar DAG vazio com visited_set e acyclicity_check'
+    - code_genetics_map.recall(domain_tags) via frozenset index → vacinas em O(1)
+    - geodesic_scheduler.evaluate_steps(remaining_steps, H_cognitive) → plano otimizado
+    - '[LOG] [DAG_INIT: ready=True | acyclicity_check=enabled]'
+    - '[LOG] [GENETICS_RECALL: vaccines_found={n} | domain={d}]'
+  STEP_3:
+    additions_v032:
+    - 'Se cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] AND fractal_depth >= 2:'
+    - '  n_agents = {DEEP:3, RESEARCH:5, SCIENTIFIC:7}[cognitive_mode]'
+    - '  LLM gera n_agents programas PoT com stances forçados (optimistic/pessimistic/neutral)'
+    - '  Para cada programa: uco_quality_gate.gate(code, cognitive_mode) → PASS/AUTO_FIXED/REJECTED'
+    - '  Programas REJECTED: injetar uco_feedback no prompt → LLM regenera com diagnóstico'
+    - '  Programas PASS/AUTO_FIXED: parallel_pot_executor.execute_parallel(programs) via ThreadPoolExecutor'
+    - '  STEP_3 aguarda parallelism_efficiency > 0.5 (mínimo 50% dos agentes bem-sucedidos)'
+    - '  merge_defensive(agent_snapshots) → merged_state.json'
+    - '  hypothesis_dag.register_from_merge(merged_state) → arestas DAG'
+    - '  crystallization_jit.crystallize_session_data(merged_state, prev_snap)'
+    - '  [LOG] [PARALLEL_POT: n_agents={n} | succeeded={s} | failed={f} | efficiency={e}]'
+    - '  [LOG] [UCO_GATE: passed={p} | auto_fixed={a} | rejected={r}]'
+    - '  [LOG] [DAG: nodes_registered={n} | edges={e} | suspects={s}]'
+    - 'Senão: execução single-agent (fluxo v00.31)'
+    - verification_gate.route(hypotheses, cognitive_mode) → hipóteses para verificação PoT
+    - 'Para hipóteses aprovadas no gate: executar verificação subprocess antes de interferência'
+    - '[LOG] [VERIFICATION_GATE: verified={v} | rejected_pre_interference={r}]'
+  STEP_5:
+    additions_v032:
+    - 'Se cognitive_mode == SCIENTIFIC AND problem_type IN [ode, pde, dynamical_system]:'
+    - '  adaptive_ode_block.decompose_with_ode_feedback() com RK45 adaptativo'
+    - '  Fallback: RK4 fixo se RK45 reportar >= 3 rejeições'
+    - 'Para hipóteses com claims matemáticos: sympy_verifier.verify(claim) → [FORMAL_VERIFIED] ou [CONJECTURA_FORMAL]'
+    - 'error_evolution_loop: em caso de falha de PoT, DIAGNOSE → PATCH → REEXECUTE (MAX_DEBUG_DEPTH=3)'
+    - Rollback obrigatório se nenhuma tentativa reduziu len(stderr)
+    - Vacinas de sucesso → sqlite_store.save_vaccine() em tempo real
+    - '[LOG] [ERROR_LOOP: attempt={n} | status=FIXED|UNRESOLVED | rollback={r}]'
+    - '[LOG] [SYMPY: verified={v} | refuted={r} | unsupported={u}]'
+  STEP_8:
+    additions_v032:
+    - 'Se cognitive_mode == SCIENTIFIC AND decisão tem variáveis com incerteza quantificável:'
+    - '  monte_carlo.simulate(model_fn, input_distributions, n_iterations=10000)'
+    - '  Resultado injeta distribuição P10/P50/P90 + interpretação CV'
+    - '  [LOG] [MONTE_CARLO: n_valid={n} | mean={m} | std={s} | cv={c} | interpretation={i}]'
+  STEP_11:
+    additions_v032:
+    - uco_objective_judge.judge(output_code, claimed_confidence, agent_origin) → [UCO_JUDGMENT]
+    - 'Se overconfidence_detected: ajustar confidence para calibrated_confidence'
+    - 'Confidence scores de código: usar label [UCO_CAL: H={h}, bugs≈{b}] em vez de apenas [APPROX]'
+    - '[LOG] [UCO_JUDGMENT: H={h} | objective_score={o} | overconfidence={oc}]'
+  STEP_12:
+    additions_v032:
+    - 'ANTES do meta_reasoning: external_critic_profile.analyze_output(output_code, output_text, confidence)'
+    - 'Se PATTERNS_FOUND: injetar [EXTERNAL_CRITIC: ...] no contexto do meta_reasoning'
+    - meta_reasoning vê a evidência histórica ANTES de avaliar (não pode racionalizar depois)
+    - critic_formal_consistency.check(top_3_findings) com cos_sim threshold 0.1
+    - 'Se cos_sim < 0.1: flag POTENTIALLY_UNRELATED — Critic deve justificar relação explicitamente'
+    - '[LOG] [EXTERNAL_CRITIC: patterns_found={p} | severity={s}]'
+    - '[LOG] [FORMAL_CONSISTENCY: checked={c} | flags={f}]'
+  STEP_13:
+    additions_v032:
+    - apex_st_metric = compute_apex_st(prev_snap, curr_snap) — todos os termos positivos (PATCH_C6)
+    - 'Se apex_st_metric.trigger_meta_learning: ativar meta_learning_agent imediatamente'
+    - sqlite_store.save_session(session_id, snapshot, metrics) — transacional ACID
+    - crystallization_jit.crystallize_session_data(session_data, prev_snapshot) com thresholds por classe
+    - code_genetics_map.update() → sqlite_store.save_vaccine() para padrões da sessão
+    - external_critic_profile.record_error() para falhas da sessão (alimenta perfil histórico)
+    - hypothesis_dag.compress_for_snapshot() → edge-only format {edges, suspects, invalidated}
+    - sklearn_difficulty.update_corpus() — adicionar sessão ao corpus TF-IDF
+    - '[LOG] [ST_METRIC: dS2={d} | curvature={c} | meta_learning_triggered={t}]'
+    - '[LOG] [SQLITE_SAVE: session_id={s} | posteriors_saved={p} | vaccines_saved={v}]'
+    - '[LOG] [JIT_CRYSTALLIZED: components_saved={c} | total_delta_H={d}]'

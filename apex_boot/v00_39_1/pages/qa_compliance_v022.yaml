@@ -1,0 +1,16 @@
+qa_compliance_v022:
+  regression_suite_v02122: 17/17 PASS (compatibilidade total)
+  fixes_preserved:
+    FIX-QA-A: MCFEReliabilityMonitor único subscriber de BLOCK_COMPLETED
+    FIX-QA-B: SCIENTIFIC P_target = 0.85
+    FIX-QA-C: warmup blocks com is_warmup=True (não contaminam calibração)
+    FIX-QA-D: n_warm = N_WARM_BLOCKS × DEFAULT (não depende de n_total)
+    FIX-QA-E: ReliabilityEstimator.from_dict preserva tipo dos buckets
+    FIX-NEW1: PRIOR_ALPHA=9, PRIOR_BETA=1 (não reverter para 1,1)
+  bugs_rejected_from_v022_doc:
+    double_subscription: REJEITADO — reintroduziria FIX-QA-A
+    global_p_no_prior: REJEITADO — reintroduziria FIX-NEW1
+    modos_renomeados: REJEITADO — quebraria 17 cenários de regressão
+    cognitive_compiler: REJEITADO — descartaria arquitetura completa
+  smoke_tests_v022: 18/18 PASS (executados em Python)
+  fmea_rpn_max: 0

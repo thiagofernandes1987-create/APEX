@@ -1,0 +1,222 @@
+tests:
+  scenarios:
+  - id: scenario_1
+    name: Migração Monólito para Microserviços
+    input: Migrar sistema monolítico legado para arquitetura de microserviços mantendo SLA de 99.9%
+    expected:
+      bds_coordinate:
+        E:
+        - 0.1
+        - 0.25
+        D:
+        - 0.6
+        - 0.8
+        K:
+        - 0.05
+        - 0.2
+      mode: DEEP
+  - id: scenario_2
+    name: Sistema Legado COBOL Financeiro
+    input: Modernizar sistema COBOL de core bancário com 40 anos, zero documentação
+    expected:
+      bds_coordinate:
+        E:
+        - 0.15
+        - 0.3
+        D:
+        - 0.3
+        - 0.5
+        K:
+        - 0.35
+        - 0.55
+      mode: RESEARCH
+  - id: scenario_3
+    name: Modernização Empresarial Vaga
+    input: Quero modernizar minha empresa de tecnologia
+    expected:
+      bds_coordinate:
+        E:
+        - 0.55
+        - 0.75
+        D:
+        - 0.1
+        - 0.3
+        K:
+        - 0.05
+        - 0.25
+      mode: CLARIFY
+  - id: scenario_4
+    name: Plataforma DeFi Multi-chain
+    input: Projetar protocolo DeFi com smart contracts para staking multi-chain, liquidez cross-chain
+      e compliance em 3 jurisdições
+    expected:
+      mode: DEEP
+      effective_cfi: '> 0.45'
+      lpm_primary_node_present: true
+      chaos_spawn_eligible: true
+  - id: scenario_5
+    name: Autenticação JWT com Refresh Token
+    input: Implementar sistema de autenticação JWT com refresh token rotation, blacklisting, rate limiting,
+      OWASP
+    expected:
+      mode: DEEP
+      effective_cfi: '> 0.50'
+      convergence_velocity: HIGH
+      chaos_spawn_triggered: true
+  - id: scenario_6
+    name: Marketplace Resolution with Fallback
+    input:
+      problem: Preciso de um agente especialista em farmacocinética
+      active_anchors:
+      - PBPK
+      - ADME
+      - metabolismo
+      capabilities:
+        url_access: false
+    expected:
+    - Sistema detecta url_access false
+    - Ativa fallback semântico
+    - Cria agentes com status INFERRED
+  - id: scenario_7
+    name: Semantic Fallback from Built-in Ontology
+    input:
+      domain: engenharia civil
+      anchors:
+      - estruturas
+      - concreto
+    expected:
+    - Consulta ontologia e retorna agentes de engenharia civil
+  - id: scenario_8
+    name: Formalism Gate Activation
+    input:
+      problem: Prove formalmente que o algoritmo X tem complexidade O(n log n)
+      active_anchors: []
+      capabilities:
+        url_access: false
+    expected:
+    - C8 ativado
+    - Claim prefixado com [CONJECTURA_FORMAL]
+    - Confidence cap reduzido para 45
+    - FORMALISM_GATE_TRIGGERED emitido
+  - id: scenario_9
+    name: Skill Pipeline Substitution
+    input:
+      problem: Análise de sub-domínio D com skill ADOPTED fitness 5/5 por 3 sessões
+      substitution_candidates:
+      - D
+    expected:
+    - '[SKILL_PIPELINE_SUBSTITUTION] emitido'
+    - STEP_3 e STEP_4 pulados para D
+    - substitution_savings registrado
+  - id: scenario_10
+    name: MCFE Early Exit com simulação fractal
+    input: Modelo logístico com r=0.2, K=100, N0=10
+    expected:
+    - H_cognitive <0.25 após STEP_3
+    - local_model_builder identifica logístico
+    - macro_extrapolator prevê convergência para K
+    - confidence qualitativa >0.8
+  - id: scenario_11
+    name: Integrador exponencial para dx/dt = 0.5x
+    input: x0=1, dt=0.1, 10 passos
+    expected:
+    - closed_form_detector retorna disponível
+    - symbolic_executor calcula x(10) em uma operação
+    - erro zero
+  - id: scenario_12
+    name: Atração de skills em pipeline dinâmico
+    input: Problema de crescimento populacional com sazonalidade
+    expected:
+    - skill_matcher encontra 'logistic_growth' e 'seasonal_perturbation'
+    - attraction_engine propõe encadeamento automático
+    - '[SKILL_PIPELINE_PROPOSED] emitido com coherence > 0.6'
+  - id: scenario_13
+    name: Validação em 4 camadas de modelo logístico
+    input: modelo dx/dt = r*x*(1-x/K)
+    expected:
+    - DSM identifica dependências
+    - Ishikawa aponta causas
+    - Pareto prioriza r e K
+    - FMEA gera RPN < 100 após mitigação
+  - id: scenario_14
+    name: Error tracker adaptativo
+    input: Sistema com δ=0.01, x grande
+    expected:
+    - ε cresce lentamente; atinge warning em step 10, stop em step 25
+    - delegação acionada apenas quando necessário
+  - id: scenario_15
+    name: Regressão QA v00.19.0 — Bug fixes
+    input:
+      mode: SCIENTIFIC
+      problem: Modelo de crescimento com keyword 'simulate'
+      cognitive_mode_conflict:
+        bds_says: FOGGY
+        keywords_say: SCIENTIFIC
+    expected:
+    - SCIENTIFIC prevalece sobre FOGGY
+    - '[DUAL_MODE_CAVEAT: SCIENTIFIC+FOGGY] emitido'
+    - composite_confidence cap reduzido em 10 pontos
+    - agent_weights somam 1.00
+    - quality_gate executa 5 checks (não 6)
+    - DIFF_MCFE_02 e DIFF_MCFE_03 resolvidos com valores padrão
+    - scientist_agent spawned e entanglement com theorist ativo
+  - id: scenario_16
+    name: Agente Matemático com Skill Chain (v00.20)
+    input:
+      agent: theorist
+      problem: Crescimento populacional logístico com perturbação estocástica
+      anchors:
+      - logistic_growth
+      - hypothesis_generation
+      - scientific_method
+    expected:
+    - skill_hierarchy resolve theorist → matematica_avancada → [integracao_euler, metodos_probabilisticos]
+    - cross_attraction ativa euler + metodos_probabilisticos
+    - PoT executado com FMEA_GUARD no STEP_0
+    - hypothesis_filter descarta hipótese de crescimento ilimitado
+  - id: scenario_17
+    name: Fractal Knowledge Indexing em DEEP mode (v00.20)
+    input:
+      cognitive_mode: DEEP
+      problem: Arquitetura de microserviços com alta disponibilidade
+      fractal_depth: 2
+    expected:
+    - STEP_2 carrega apenas macro anchors
+    - STEP_5 depth_1 carrega meso; depth_2 carrega micro
+    - Nano não carregado em DEEP (fractal_depth < 3)
+    - '[FKI_LEVEL_LOADED: meso] emitido'
+  - id: scenario_18
+    name: PoT guard violation (v00.20)
+    input:
+      skill: integracao_euler
+      pot_params:
+        dt: -0.1
+        x0: 10
+    expected:
+    - '[POT_GUARD_VIOLATED: euler | guard: dt > 0]'
+    - confidence_cap reduzido para 45
+    - execucao abortada sem trace posterior
+  - id: scenario_19
+    name: FHC dominance filter (v00.20)
+    input:
+      hypotheses:
+      - id: H1
+        confidence: 75
+        evidence_level: INFERENTIAL
+      - id: H2
+        confidence: 55
+        evidence_level: SPECULATIVE
+    expected:
+    - H1 domina H2 (75 > 55+10 E INFERENTIAL >= SPECULATIVE)
+    - min_hypotheses_preserved=2 restaura H2 se compressao total
+    - '[FHC_COMPRESSED: before=2 | after=1 ou 2]'
+  - id: scenario_20
+    name: Cross-attraction entre Specialized Skills (v00.20)
+    input:
+      problem: Modelo probabilístico de crescimento com incerteza temporal
+      initial_skills:
+      - integracao_euler
+    expected:
+    - integracao_euler.cross_attraction detecta metodos_probabilisticos
+    - pipeline expandido para 2 skills
+    - outputs combinados com phase interference

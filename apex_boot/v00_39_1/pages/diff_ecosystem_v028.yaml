@@ -1,0 +1,243 @@
+diff_ecosystem_v028:
+  base: v00.27.0 (29 DIFFs)
+  registered_diffs:
+  - id: DIFF_NLM_MCFE_SIZING
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mcfe_adapter.__init__
+    - mcfe_adapter.decide
+    - mcfe_adapter.record_block_energy
+    - build_pipeline
+    fixes:
+    - OPP-36
+    fmea_rpn_before: 336
+    fmea_rpn_after: 48
+    breaking_changes: 'MCFEAdapter.__init__ aceita nlm= opcional. build_pipeline() instancia NLM e passa
+      ao MCFEAdapter. decide() consulta nlm.predict() se is_fitted. record_block_energy() novo método
+      — chamado pelo MentalInterpreter.
+
+      '
+    python_implementation: '# MCFEAdapter.__init__(decomposer, nlm=None)
+
+      # MCFEAdapter._nlm_suggest_size(excess) → Optional[int]
+
+      # MCFEAdapter.record_block_energy(block_size, error) → None
+
+      # build_pipeline: nlm_for_mcfe = NumericLandscapeModel(n_params=1)
+
+      #                 mcfe = MCFEAdapter(decomposer, nlm=nlm_for_mcfe)
+
+      '
+  - id: DIFF_ROLLBACK_RETRY_RESET
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mcfe_adapter
+    - audit_chain
+    fixes:
+    - OPP-37
+    fmea_rpn_before: 160
+    fmea_rpn_after: 32
+    breaking_changes: none
+    python_implementation: '# MCFEAdapter.reset_counters() → None
+
+      # AuditChain.rollback(mcfe_adapter=None, store=None) → Optional[str]
+
+      # rollback() chama mcfe_adapter.reset_counters() antes de retornar hash
+
+      '
+  - id: DIFF_ROOT_ID_REGEX
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mcfe_adapter._root_id
+    fixes:
+    - OPP-38
+    fmea_rpn_before: 84
+    fmea_rpn_after: 0
+    breaking_changes: none
+    python_implementation: '# _root_id: re.search(r''_r\d+'', block_id) em vez de find(''_r'')
+
+      # ''warm_result_block_3'' → ''warm_result_block_3'' (correto, sem match)
+
+      # ''prod_0_r0'' → ''prod_0'' (correto, match em ''_r0'')
+
+      '
+  - id: DIFF_SR09_ENV_CHECK
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mental_interpreter._subprocess
+    - mental_interpreter._classify_error
+    fixes:
+    - OPP-39
+    fmea_rpn_before: new
+    fmea_rpn_after: 0
+    breaking_changes: '_subprocess retorna rc=-4, error_type=''PYTHON_NOT_FOUND'' se python3 ausente.
+      _classify_error reconhece rc=-4. _subprocess usa variável _py3 (path real).
+
+      '
+    python_implementation: '# import shutil as _shutil; _py3 = _shutil.which("python3")
+
+      # if _py3 is None: return {"rc":-4, "error_type":"PYTHON_NOT_FOUND"}
+
+      # subprocess.run([_py3, tmp, state_json], ...) usa path verificado
+
+      '
+  - id: DIFF_IES_SIGMA_RULE
+    type: MODULE_REPLACE
+    status: ADOPTED
+    modules_modified:
+    - algorithm_kernel.tier_b.isotropic_es
+    fixes:
+    - OPP-40
+    fmea_rpn_before: 180
+    fmea_rpn_after: 36
+    breaking_changes: 'Sigma adaptation completamente reescrita. Comportamento muda para landscapes planos:
+      sigma agora reduz (exploitation) em vez de estagnar. Results podem diferir em ≤5% para problemas
+      bem-condicionados.
+
+      '
+    python_implementation: '# success_window: list = [] (janela deslizante de lam steps)
+
+      # n_success = sum(1 for fi in ranked_f if fi < f_centroide_prev)
+
+      # rate = sum(success_window) / (lam * lam)
+
+      # rate > 1/5 → sigma *= 1.5  |  rate < 1/5 → sigma *= 0.7
+
+      '
+  - id: DIFF_SURVIVAL_HISTORY_RENAME
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mcfe_state
+    fixes:
+    - OPP-41
+    fmea_rpn_before: 160
+    fmea_rpn_after: 16
+    breaking_changes: 'Campo reliability_history → survival_history. Semântica mudou em OPP-28: agora
+      armazena survivals individuais, não R_acum acumulado. to_dict() expõe ambos os campos (survival_history
+      + reliability_history alias) durante período de transição.
+
+      '
+    python_implementation: '# MCFEState.survival_history: List[float]  (novo campo correto)
+
+      # to_dict() retorna ambos ''survival_history'' e ''reliability_history'' (alias)
+
+      # reset() limpa survival_history
+
+      '
+  - id: DIFF_EPS_CALLBACK
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - fractal_decomposer.decompose_adaptive_reliability
+    fixes:
+    - OPP-42
+    fmea_rpn_before: 175
+    fmea_rpn_after: 35
+    breaking_changes: none
+    python_implementation: '# decompose_adaptive_reliability(... eps_callback=None)
+
+      # eps_callback(block_idx: int) → float: retorna epsilon real
+
+      # Se eps_callback=None: fallback proxy eps_current *= 1.05
+
+      '
+  - id: DIFF_CHECK_SR15_CACHE
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mcfe_reliability_monitor._check_sr15
+    - reliability_estimator.credibility_interval
+    fixes:
+    - OPP-43
+    fmea_rpn_before: 81
+    fmea_rpn_after: 9
+    breaking_changes: none
+    python_implementation: '# _check_sr15: p_sample único + n_override=n_blocks
+
+      # credibility_interval: n_override param adicionado
+
+      # if n_override is not None and len(probs)==1: probs = probs * n_override
+
+      '
+  - id: DIFF_AST_SUBMODULE_GUARD
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mental_interpreter._ast_guard
+    fixes:
+    - OPP-44
+    fmea_rpn_before: 96
+    fmea_rpn_after: 16
+    breaking_changes: 'numpy.core, scipy.io, pandas.io.clipboard agora bloqueados mesmo com root_mod (numpy/scipy/pandas)
+      em ALLOWED_IMPORTS.
+
+      '
+    python_implementation: '# SENSITIVE_SUBMODULES: frozenset de paths completos bloqueados
+
+      # Verificação: if name in SENSITIVE_SUBMODULES → AST_BLOCKED_SUBMODULE
+
+      '
+  - id: DIFF_AUDITCHAIN_SR23_CACHE
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - audit_chain.validate_sr23
+    - audit_chain.__init__
+    - audit_chain.add_link
+    fixes:
+    - FMEA-05
+    fmea_rpn_before: 75
+    fmea_rpn_after: 9
+    breaking_changes: none
+    python_implementation: '# AuditChain.__init__: _sr23_dirty=True, _sr23_cache=None
+
+      # add_link: self._sr23_dirty = True
+
+      # validate_sr23: cache hit se not _sr23_dirty and _sr23_cache exists
+
+      '
+  - id: DIFF_ROLLBACK_METHOD_AUDITCHAIN
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_modified:
+    - audit_chain
+    fixes:
+    - OPP-37 complement
+    breaking_changes: none
+    python_implementation: '# AuditChain.rollback(mcfe_adapter=None, store=None) → Optional[str]
+
+      # Retorna último rollback_point hash
+
+      # Chama mcfe_adapter.reset_counters() se fornecido
+
+      '
+  - id: DIFF_CLASSIFY_ERROR_EXTEND
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mental_interpreter._classify_error
+    fixes:
+    - OPP-39 complement
+    breaking_changes: none
+    python_implementation: '# rc=-4 → "PYTHON_NOT_FOUND"
+
+      # rc=-3 → "AST_BLOCKED"  (já existia)
+
+      '
+  total_new_diffs: 12
+  total_accumulated_diffs: 41
+  new_opps:
+  - OPP-36
+  - OPP-37
+  - OPP-38
+  - OPP-39
+  - OPP-40
+  - OPP-41
+  - OPP-42
+  - OPP-43
+  - OPP-44

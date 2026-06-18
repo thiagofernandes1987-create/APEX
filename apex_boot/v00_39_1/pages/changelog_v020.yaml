@@ -1,0 +1,23 @@
+changelog_v020:
+  version: v00.20.0
+  changes:
+  - 'NOVO: skill_hierarchy — cadeia formal Agent→Generic→Specialized→Model'
+  - 'NOVO: pot_engine — motor de Program of Thought com FMEA guards'
+  - 'NOVO: mental_interpreter — executa PoT com working_memory isolada'
+  - 'NOVO: specialized_skill_engine — orquestra execução fractal de Specialized Skills'
+  - 'NOVO: fractal_hypothesis_compression — poda hipóteses por nível fractal'
+  - 'NOVO: fractal_knowledge_indexing — indexação de anchors por resolução fractal'
+  - 'PATCH: knowledge.anchor_schema — novos campos: fractal_level, skill_links, knowledge_models'
+  - 'PATCH: agents.base_agents — novo campo generic_skills por agente'
+  - 'PATCH: pipeline STEP_2, STEP_3, STEP_5 — integração com novos módulos'
+  - 'PATCH: mcfe.H_survival — fonte atualizada para FHC.n_after'
+  - 'PATCH: config.parameters — seção specialized_skills, pot, mental_interpreter, fhc, fki'
+  - 'PATCH: event_bus — 12 novos eventos + 5 novos roteamentos'
+  - 'PATCH: inviolable_rules — SR_07 (POT_GUARD) e SR_08 (MENTAL_INTERPRETER)'
+  - 'PATCH: versioning.snapshot_schema — 4 novos campos condicionais'
+  - 'NOVO: 5 cenários de teste de regressão (scenario_20_01..05)'
+  qa_cycle:
+    dsm: PASS
+    ishikawa: PASS
+    pareto: PASS — R1+R3+R7 cobertos com mitigações embutidas
+    fmea: PASS — RPN máximo pós-mitigação = 42 < 100

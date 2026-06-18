@@ -1,0 +1,63 @@
+error_evolution_loop:
+  executor: HYBRID
+  version: v00.32.1
+  opp: OPP-MAS-03
+  tier: 1
+  status: ADOPTED
+  purpose: 'Transformar falhas de PoT programs de "retry cego" em ciclo de aprendizado. O traceback é
+    capturado, injetado como diagnóstico estruturado, um patch cirúrgico é gerado, e o par (erro, solução)
+    é cristalizado no code_genetics_map.
+
+    '
+  why: 'O MCFEAdapter existente fazia retry com MAX_RETRIES=4 de forma cega — repetir o mesmo código esperando
+    resultado diferente. O traceback completo está disponível via result.stderr, mas não era usado. Este
+    módulo fecha esse loop de forma estruturada com aprendizado real.
+
+    '
+  description: 'Ciclo DIAGNOSE → PATCH → REEXECUTE quando PoT program falha. PARTE SANDBOX: executa subprocess,
+    captura stderr, valida patches. PARTE LLM: analisa traceback via SYSTEM_EXCEPTION_HANDLER, gera patch
+    cirúrgico. O QUE É: Loop controlado até MAX_DEBUG_DEPTH=3 com rollback por progresso. O QUE NÃO É:
+    Correção automática sem LLM — o LLM DEVE gerar o patch. COMO FUNCIONA: subprocess falha → stderr →
+    SYSTEM_EXCEPTION_HANDLER → LLM gera patch → reexecutar → se sucesso: salvar vacina. Se N falhas: rollback
+    para código original.
+
+    '
+  what_if_fails: "FALLBACK 1 — MAX_DEBUG_DEPTH=3 esgotado sem sucesso:\n  Rollback para código original.\
+    \ Registrar UNRESOLVED_PATTERN no code_genetics.\n  Emitir [ERROR_LOOP_UNRESOLVED]. Continuar com\
+    \ código original (pode falhar).\nFALLBACK 2 — Patch piora (stderr cresce entre tentativas):\n  Rollback\
+    \ imediato antes de esgotar MAX_DEBUG_DEPTH.\n  Não desperdiçar tentativas em direção errada.\nREGRA:\
+    \ O sistema NUNCA apresenta código que nunca executou com sucesso. REGRA: Se o loop falhar, declarar\
+    \ explicitamente que o PoT não pôde ser corrigido.\n"
+  inject_when: block_failure AND exit_code != 0
+  depends_on:
+  - code_genetics_map
+  - subprocess_engine
+  max_debug_depth: 3
+  max_debug_depth_rationale: '3 tentativas são suficientes para erros corrigíveis. Erros que requerem
+    > 3 tentativas indicam problema estrutural no design do código — UNRESOLVED é mais honesto que continuar
+    tentando.
+
+    '
+  rollback_condition: 'Rollback IMEDIATO se len(stderr_N) >= len(stderr_N-1) — sem progresso real. Rollback
+    FINAL após MAX_DEBUG_DEPTH: código original + UNRESOLVED_PATTERN.
+
+    '
+  injection_format: '[SYSTEM_EXCEPTION_HANDLER] error_type: {error_type} traceback: {full_traceback[:500]}
+    context_at_failure: "linha {line_number}: {code_line}" ACTION: Analise o traceback. Identifique a
+    causa raiz. Gere DIFF_FIX corrigindo APENAS o problema identificado. NÃO reescrever o código completo.
+    NÃO pedir ajuda ao usuário. MAX_DEBUG_DEPTH restante: {remaining}.
+
+    '
+  api:
+  - _error_loop(original_code, original_stderr, max_depth=3) → dict{status, code, attempts}
+  - _generate_patch(code, stderr) → patched_code via SYSTEM_EXCEPTION_HANDLER
+  - _register_unresolved(code, stderr) → None via code_genetics_map
+  rules_enforced:
+  - 'SR_09: subprocess gate obrigatório para execução de patches'
+  fmea:
+    rpn: 4
+    mode: Loop de debug sem convergência (erros em cadeia)
+    probability: 2
+    severity: 2
+    detection: 1
+    mitigation: MAX_DEBUG_DEPTH=3 + rollback por progresso de stderr + rollback final ao original

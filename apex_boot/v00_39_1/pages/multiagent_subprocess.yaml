@@ -1,0 +1,40 @@
+multiagent_subprocess:
+  executor: HYBRID
+  version: v00.32.1
+  opp: OPP-MAS-B1
+  tier: 3
+  status: ADOPTED_PARTIAL
+  purpose: 'Aumentar a diversidade de hipóteses antes da interferência, gerando N programas PoT com perspectivas
+    forçadamente distintas (stances). A execução é independente via subprocessos isolados.
+
+    '
+  why: 'O APEX atual gera hipóteses com correlação latente ~30% por hipótese (mesmo contexto). Stances
+    forçados + divergência léxica explícita reduz para ~15% [APPROX]. A execução em subprocessos separados
+    garante independência numérica (resultados computacionalmente isolados), mesmo que a geração não seja.
+
+    '
+  description: 'PARTE LLM: gerar N programas com stances forçados, aplicar divergência léxica. PARTE SANDBOX:
+    executar via ThreadPoolExecutor, capturar snapshots, merge. O QUE É: Independência de EXECUÇÃO — subprocessos
+    separados. O QUE NÃO É: Independência de GERAÇÃO — mesmo contexto LLM, correlação latente.
+
+    '
+  what_if_fails: 'FALLBACK 1 — fractal_depth < 2: não ativar. Usar single-agent. FALLBACK 2 — efficiency
+    < 0.5: merge com sobreviventes + [PARALLEL_DEGRADED]. FALLBACK 3 — ThreadPoolExecutor falha: single-agent
+    sequencial.
+
+    '
+  activation_condition: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC] AND fractal_depth >= 2
+  n_agents_by_mode:
+    DEEP: 3
+    RESEARCH: 5
+    SCIENTIFIC: 7
+  prerequisites:
+  - merge_defensive
+  - uco_quality_gate
+  fmea:
+    rpn: 4
+    mode: Todos os agentes corrompidos
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: merge_defensive como pré-requisito; MERGE_FAILED_USE_SEMANTIC_CRITIC como último fallback

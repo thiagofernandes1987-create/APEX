@@ -1,0 +1,9 @@
+patch_mcfe_h_survival:
+  change: 'H_survival = (n_active_after_FHC) / n_initial Fonte: fractal_hypothesis_compression.compression_report.n_after
+    (em vez de advanced.hypothesis_tracker direto)
+
+    '
+  rationale: 'FHC pode ter comprimido hipóteses antes de MCFE calcular H_survival. Usar n_after garante
+    que FHC e MCFE não conflitem (DSM circular fix).
+
+    '

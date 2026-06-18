@@ -1,0 +1,29 @@
+qa_compliance_v029:
+  base: v00.28.0 (74 QA tests accumulated)
+  new_qa_tests_v029:
+    QA_OPP45_A01: NumericLandscapeModel() sem args → sem TypeError em build_pipeline
+    QA_OPP45_A02: NumericLandscapeModel() cria instância com degree=2, cv_folds=5
+    QA_OPP45_B01: record_block_energy chama len(nlm.samples) — sem AttributeError
+    QA_OPP45_B02: NLM não fitted com <5 samples; fitted com >=5 samples
+    QA_OPP45_C01: record_block_energy chamado em _run_production após rc==0
+    QA_OPP45_C02: 'args corretos: mcfe.record_block_energy(blk.size, state_out.epsilon)'
+    QA_OPP45_D01: eps_fn definida em execute() antes de decompose call
+    QA_OPP45_D02: eps_callback=eps_fn passado em decompose_adaptive_reliability
+    QA_OPP45_D03: _eps_ref closure retorna valor atualizado após modificação
+    QA_OPP46_01: SnapshotStore.__init__ usa OrderedDict, não List
+    QA_OPP46_02: save() usa _lru.move_to_end() — O(1)
+    QA_OPP46_03: load() usa _lru.move_to_end() — O(1)
+    QA_OPP46_04: _evict_lru usa popitem(last=False) pattern — O(1) per eviction
+    QA_OPP46_05: commit_cycle usa _lru.pop() — O(1)
+    QA_OPP46_06: _disk_save serializa list(_lru.keys()) para retrocompat
+    QA_OPP46_07: speedup >= 3× vs list implementation (hardware-dependent)
+    QA_OPP47_01: apex_version em session_snap == 'v00.29.0'
+    QA_REGRESSION_V028: 74/74 testes v00.28 preservados
+  fmea_rpn_final:
+    v026_baseline: 1500
+    v027_after: 320
+    v028_after: 964
+    v029_after: 0
+    cumulative_improvement: 100% dos RPN identificados resolvidos
+  acceptance_flag: PASS
+  session: APEX-LIVE-2026-03-19

@@ -1,0 +1,47 @@
+geometry_estimator:
+  version: v00.20.2
+  tier: 2
+  parent_module: cognitive_integrator_library
+  description: 'Estima DELTA_ERR adaptativo por bloco via estimador de resíduos (passo duplo). Subcomponente
+    de cognitive_integrator_library. Carregado ANTES dos módulos TIER_1 que dele dependem (pot_engine_v2,
+    mental_interpreter_v2).
+
+    '
+  inject_when: pot_engine_v2.active OR mental_interpreter_v2.active
+  load_before:
+  - pot_engine_v2
+  - mental_interpreter_v2
+  depends_on:
+  - event_bus
+  components:
+    GeometryEstimator:
+      api:
+        delta_err:
+          signature: (x, y, params, integrator, dt) → float
+          description: 'DELTA_ERR via passo duplo (método ativo de produção — FIX-7b): residual = |integrador(dt)
+            - integrador(dt/2)²| DELTA_ERR = residual × 0.1
+
+            '
+          use_case: Lotka-Volterra e sistemas bilineares
+          patch_C: Método ativo. M_local() foi renomeado para _theoretical_M_local().
+        optimal_block_size:
+          signature: (x, y, params, integrator, dt, eps_block_stop, min, max) → int
+          description: 'n_max = eps_block_stop / (DELTA_ERR × |x|) Clampado em [MIN_SIZE=5, MAX_SIZE=30]
+
+            '
+          use_case: FIX-7 planejamento preditivo no warmup
+        _theoretical_M_local:
+          signature: (x, y, params, eps) → float
+          status: '[NÃO USAR EM PRODUÇÃO para sistemas bilineares]'
+          description: 'PATCH-C: M_local() renomeado para _theoretical_M_local(). Dead code removido do
+            caminho de produção. Norma Frobenius da Hessiana via diferenças finitas. Correto para sistemas
+            com não-linearidade cúbica+. Para Lotka-Volterra (bilinear), usar delta_err() em produção.
+
+            '
+  qa_evidence:
+    T05_delta_err_rk4: val=1.22e-09 > 0 ✓
+    T05_euler_gt_rk4: euler=1.06e-03 > rk4=1.22e-09 ✓ (Euler menos preciso)
+    T05_dead_code: M_local removido ✓ | _theoretical_M_local presente ✓
+  outputs:
+  - delta_err_per_block
+  - optimal_block_sizes

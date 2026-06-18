@@ -1,0 +1,103 @@
+uco_quality_gate:
+  executor: SANDBOX_CODE
+  version: v00.32.1
+  opp: OPP-68
+  tier: 1
+  status: ADOPTED
+  purpose: 'Inserir juiz objetivo independente do LLM entre geração e execução de PoT programs. UCO usa
+    AST + CFG + Halstead — métricas determinísticas, zero influência probabilística do LLM — para detectar
+    código estruturalmente arriscado ANTES de executar.
+
+    '
+  why: 'O LLM pode gerar while True sem break, dead code, ou H=45 (estrutura complexa) e "achar" que o
+    código está correto. Sem este gate, código ruim entra no subprocess e consome orçamento. UCO analisa
+    em <50ms e fornece diagnóstico objetivo. É a primeira fonte de avaliação genuinamente independente
+    do LLM no pipeline. IMPACTO G6 (autoavaliação circular): quando UCO diz H=23 e meta_reasoning diz
+    "código correto", a divergência é registrada — quebrando a circularidade para código.
+
+    '
+  description: 'Analisa PoT programs via UCO v4.0 (analyze() + quick_optimize()) antes da execução. O
+    QUE É: AST real, CFG real, Halstead real — métricas objetivas, determinísticas. O QUE NÃO É: Verificação
+    de correção lógica — UCO verifica ESTRUTURA, não semântica. O QUE NÃO É: Bloqueio total — AUTO_FIX
+    tenta reparar antes de rejeitar. COMO FUNCIONA: PoT gerado → UCO.analyze() → métricas → comparar thresholds
+    por modo → PASS | AUTO_FIXED | REJECTED. AUTO_FIXED: quick_optimize() reduz H > 20% → usar código
+    otimizado. REJECTED: injetar uco_feedback no LLM → LLM regenera com diagnóstico específico. LATÊNCIA
+    REAL: <50ms para PoT programs < 100 linhas (validado em sandbox).
+
+    '
+  what_if_fails: "FALLBACK 1 — UCO não disponível (arquivo não encontrado):\n  Executar PoT sem gate.\
+    \ Declarar [UCO_GATE_UNAVAILABLE].\n  Todos os confidence scores de código: [APPROX] sem calibração\
+    \ objetiva.\nFALLBACK 2 — UCO retorna erro em SyntaxError no PoT:\n  Tratar como REJECTED imediato.\
+    \ Injetar \"[UCO_GATE: SyntaxError pré-execução]\".\nFALLBACK 3 — AUTO_FIX não melhora H (sem progresso):\n\
+    \  Rejeitar e pedir regeneração. Máximo 2 tentativas de regeneração.\nREGRA: UCO NUNCA bloqueia o\
+    \ pipeline por indisponibilidade. É enriquecimento.\n"
+  inject_when: cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]
+  depends_on:
+  - uco_v4_analyzer
+  thresholds_by_mode:
+    EXPRESS:
+      H: 50
+      loop: 0.3
+      dead: 5
+      bugs: 2.0
+    FAST:
+      H: 30
+      loop: 0.2
+      dead: 3
+      bugs: 1.5
+    DEEP:
+      H: 20
+      loop: 0.1
+      dead: 1
+      bugs: 1.0
+    RESEARCH:
+      H: 15
+      loop: 0.05
+      dead: 0
+      bugs: 0.5
+    SCIENTIFIC:
+      H: 10
+      loop: 0.0
+      dead: 0
+      bugs: 0.3
+    rationale: 'SCIENTIFIC mais rígido: sessões científicas exigem máxima rigorosidade e têm orçamento
+      de tokens que justifica a análise. EXPRESS mais permissivo: custo de análise > benefício em problemas
+      triviais.
+
+      '
+  decisions:
+    PASS: Executar normalmente. Emitir UCO_GATE_PASS com métricas.
+    AUTO_FIXED: quick_optimize() reduziu H > 20%. Usar código otimizado. Emitir UCO_GATE_AUTO_FIXED.
+    REJECTED: 'Injetar uco_feedback com violações específicas. LLM regenera com diagnóstico. NÃO executar
+      código rejeitado. NÃO simular resultado de código rejeitado.
+
+      '
+  confidence_calibration:
+    output_label: '{calibrated_confidence} [UCO_CAL: H={h:.1f}, bugs≈{bugs:.2f}]'
+    overconfidence: LLM > 80 AND H > 20 → [UCO_OVERCONFIDENCE_ALERT]
+    penalty_table:
+      halstead_bugs_0_0.5: 0
+      halstead_bugs_0.5_1: -5
+      halstead_bugs_1_3: -10
+      halstead_bugs_3_10: -20
+      halstead_bugs_gt_10: -35
+      H_10_20: -3
+      H_20_50: -8
+      H_gt_50: -15
+      loop_risk_gt_0.4: -15
+  known_limitations:
+  - UCO v7 falha com TypeError em arquivos com 50+ classes — NÃO afeta PoT programs < 100 linhas
+  - DSM density=0 para arquivos únicos — ignorar esta métrica para PoT programs
+  api:
+  - gate(pot_code, cognitive_mode, claimed_confidence=None) → dict{decision, code, uco_metrics, uco_feedback}
+  - _compute_penalty(metrics, bugs) → int
+  rules_enforced:
+  - 'SR_33: gate() DEVE ser chamado antes de todo subprocess de PoT em DEEP+'
+  fmea:
+    rpn: 2
+    mode: Falso positivo rejeitando código válido
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: AUTO_FIX via quick_optimize() antes de rejeitar; thresholds calibrados para PoT < 100
+      linhas

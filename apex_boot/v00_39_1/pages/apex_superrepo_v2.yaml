@@ -1,0 +1,50 @@
+apex_superrepo_v2:
+  executor: DOCUMENTATION
+  version: v00.34.0
+  opp: OPP-111
+  tier: 0
+  status: ADOPTED
+  purpose: 'Atualizar kernel.defaults.apex_superrepo com estatísticas reais do repositório após ingestion
+    de 56 repositórios (2 sessões). 2.752 skills, 19 agentes, 80+ MCP servers, 17 domínios de integração,
+    43 domínios de skills.
+
+    '
+  why: 'WHY: OPP-104 configurou apex_superrepo com stats v00.33.0 (1.561 skills, 5 repos). Após 2 sessões
+    de ingestion: 2.752 SKILL.md de 56 repos. ForgeSkills bootando com stats desatualizados subestima
+    capacidades e falha ao buscar domínios desconhecidos.
+
+    '
+  what_if_fails: Stats desatualizados degradam boot mas nao quebram pipeline.
+  inject_when: STEP_0 — leitura de kernel.defaults.apex_superrepo
+  depends_on:
+  - apex_superrepo_boot
+  updated_config:
+    url: https://github.com/thiagofernandes1987-create/APEX
+    raw_base: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/
+    index_path: INDEX.md
+    boot_enabled: true
+    max_skills_per_boot: 100
+    boot_timeout_sec: 20
+    repo_stats:
+      total_skill_md: 2766
+      total_agent_md: 19
+      total_files: 12350
+      last_updated: '2026-04-11'
+      ingestion_sessions: 2
+      repos_ingested: 56
+    catalog_files:
+      master_mcp: integrations/mcp-servers/MASTER_CATALOG.md
+      legal_mcp: integrations/legal-mcp/CATALOG.md
+      physics_mcp: integrations/science-physics-mcp/CATALOG.md
+      marketing_mcp: integrations/marketing-mcp/CATALOG.md
+      engineering_mcp: integrations/engineering-mcp/CATALOG.md
+      healthcare: integrations/healthcare-plugins/CATALOG.md
+      life_sciences: integrations/life-sciences-plugins/CATALOG.md
+      financial: integrations/financial-services/CATALOG.md
+  fmea:
+    rpn: 1
+    mode: DOCUMENTATION — sem impacto computacional
+    probability: 1
+    severity: 1
+    detection: 1
+    mitigation: Stats documentados; discrepância logada; boot continua

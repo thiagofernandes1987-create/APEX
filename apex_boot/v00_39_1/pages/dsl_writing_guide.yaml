@@ -1,0 +1,50 @@
+dsl_writing_guide:
+  _note: Exemplos CORRETO vs. ERRADO para manter qualidade da documentação
+  exemplo_paralelismo:
+    ERRADO: "parallel_pot_executor:\n  description: \"executa N programas PoT em paralelo real\"\n"
+    CORRETO: "parallel_pot_executor:\n  executor: SANDBOX_CODE\n  description: >\n    Executa N programas\
+      \ PoT em paralelo via ThreadPoolExecutor.\n    O QUE É: I/O-bound concurrency — cada PoT program\
+      \ é um subprocess.run()\n    independente; o GIL Python não afeta subprocessos.\n    O QUE NÃO É:\
+      \ CPU-bound parallelism via ProcessPoolExecutor.\n    O QUE NÃO É: Paralelismo de geração LLM (geração\
+      \ permanece sequencial).\n    COMO FUNCIONA: ThreadPoolExecutor submete N subprocess.run() calls\n\
+      \    simultaneamente; wall-clock = max(t1..tN) em vez de sum(t1..tN).\n  what_if_fails: >\n    Se\
+      \ ThreadPoolExecutor falhar: executar PoT programs sequencialmente.\n    Declarar [PARALLEL_DEGRADED:\
+      \ sequential_fallback]. Efficiency = 0.\n"
+  exemplo_confidence:
+    ERRADO: 'confidence: 87'
+    CORRETO: 'confidence: 87 [APPROX]
+
+      # Se calibrado por UCO: 87 [UCO_CAL: H=3.2, bugs≈0.09]
+
+      # Se verificado por sympy: 99 [FORMAL_VERIFIED]
+
+      '
+  exemplo_threshold:
+    ERRADO: 'threshold: 0.05'
+    CORRETO: "threshold: 0.05\nthreshold_rationale: >\n  0.05 = variação mínima de entropia que indica\
+      \ mudança informacional real.\n  Abaixo de 0.05: variação estatística sem aprendizado genuíno.\n\
+      \  Para class_1 (muda devagar): usar 0.02 — mais sensível.\n  Para class_3 (muda abruptamente):\
+      \ usar 0.08 — evita noise.\n"
+  exemplo_capacidade_sandbox:
+    ERRADO: 'description: "O sistema executa Monte Carlo com 10.000 iterações"
+
+      '
+    CORRETO: "executor: SANDBOX_CODE\ndescription: >\n  A sandbox executa 10.000 iterações Monte Carlo\
+      \ via numpy.random.\n  O LLM gera código com model_fn e input_distributions.\n  A sandbox retorna\
+      \ P10/P50/P90 via stdout.\n  O LLM injeta resultado com [MONTE_CARLO] tag.\n  LATÊNCIA REAL: <500ms\
+      \ para 10.000 iterações (validado em sandbox).\n  O QUE NÃO É: O LLM estimando distribuições heuristicamente.\n"
+  exemplo_failure_handling:
+    ERRADO: "fmea:\n  rpn: 4\n"
+    CORRETO: "fmea:\n  rpn: 4\n  mode: \"sqlite3 não disponível ou arquivo corrompido\"\n  probability:\
+      \ 2\n  severity: 2\n  detection: 1\n  mitigation: \"Fallback para JSON inline (modo legado); declarar\
+      \ [SQLITE_UNAVAILABLE]\"\nwhat_if_fails: >\n  FALLBACK 1: tentar /home/claude/apex_memory.db como\
+      \ path alternativo.\n  FALLBACK 2: operar com snapshot JSON no context window (modo v00.31).\n \
+      \ Declarar [SQLITE_UNAVAILABLE]. Todos os scores: [APPROX].\n  REGRA: O LLM NUNCA inventa dados\
+      \ que o SQLite não retornou.\n"
+  regras_proibidas:
+  - Estimativas sem [APPROX_ESTIMATE] se não validadas empiricamente em produção
+  - Afirmações de capacidade sem distinguir se é LLM ou Sandbox
+  - Módulos sem what_if_fails documentado
+  - float('inf') em custos numéricos — usar sys.maxsize
+  - Thresholds sem rationale explicando o valor
+  - Misturar instrução cognitiva (LLM) com código Python (SANDBOX) no mesmo campo

@@ -1,0 +1,14 @@
+patch_knowledge_anchor_schema:
+  new_fields:
+    fractal_level:
+      type: enum [macro, meso, micro, nano]
+      description: Nível fractal onde este anchor é mais relevante
+      default: calculado por fractal_knowledge_indexing.assign_level
+    skill_links:
+      type: list
+      description: IDs de Generic Skills atraídas por este anchor
+      example: '[matematica_avancada, fisica_computacional]'
+    knowledge_models:
+      type: list
+      description: IDs de Knowledge Models associados a este anchor
+      example: '[euler_method, logistic_growth]'

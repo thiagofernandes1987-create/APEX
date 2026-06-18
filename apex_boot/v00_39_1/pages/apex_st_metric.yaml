@@ -1,0 +1,50 @@
+apex_st_metric:
+  executor: HYBRID
+  version: v00.32.1
+  opp: OPP-MAS-06
+  tier: 0
+  status: ADOPTED
+  purpose: 'Medir a progressão do APEX entre sessões como distância no espaço de informação. Detecta estagnação
+    (dS²≈0 por sessões consecutivas) e triggera meta_learning_agent.
+
+    '
+  why: 'Sem esta métrica, o APEX não sabe se está progredindo ou rodando em círculos. PATCH_C6: fórmula
+    original tinha -γ·dCoh² (sinal negativo), significando que maior coerência REDUZIA a progressão —
+    semanticamente incorreto. Todos os termos devem ser positivos (distância, não deslocamento).
+
+    '
+  description: 'Computa dS² = α·|dMCFE|² + β·|dInfo|² + γ·|dCoh|² entre snapshots consecutivos. O QUE
+    É: Distância no espaço de informação — SEMPRE não-negativa. O QUE NÃO É: Deslocamento direcional —
+    não distingue "melhorou" de "piorou". FORMULA CORRETA: dS² = α·|dMCFE|² + β·|dInfo|² + γ·|dCoh|² FORMULA
+    ERRADA (nunca usar): dS² = α·dMCFE² + β·dInfo² - γ·dCoh²
+
+    '
+  what_if_fails: 'FALLBACK 1 — Primeira sessão (sem histórico): retornar dS²=0, curvature="FIRST_SESSION".
+    NÃO triggerar meta_learning_agent. FALLBACK 2 — Dados ausentes: usar valores padrão (H=0.5, confidence=50).
+    Métrica menos precisa mas não falha.
+
+    '
+  inject_when: STEP_13
+  depends_on:
+  - sqlite_snapshot_store
+  formula:
+    correct: dS² = α·|dMCFE|² + β·|dInfo|² + γ·|dCoh|²
+    parameters:
+      alpha: 1.0
+      beta: 0.5
+      gamma: 0.8
+    all_positive: dS² é SEMPRE >= 0 — é uma distância, não um deslocamento
+  curvature_classification:
+    FLAT: dS² < 0.02 — stagnação; trigger meta_learning_agent se 2+ sessões consecutivas
+    LOW: 0.02 <= dS² < 0.10 — progressão normal
+    MEDIUM: 0.10 <= dS² < 0.30 — aprendizado ativo
+    HIGH: dS² >= 0.30 — mudança rápida ou instabilidade
+  api:
+  - compute_apex_st(prev_snap, curr_snap, alpha=1.0, beta=0.5, gamma=0.8) → dict{dS2, curvature, trigger_meta_learning}
+  fmea:
+    rpn: 4
+    mode: Normalização inconsistente entre versões de snapshot
+    probability: 2
+    severity: 1
+    detection: 2
+    mitigation: Usar padrões (H=0.5, conf=50) se dados ausentes; validar contra 3 sessões mínimo

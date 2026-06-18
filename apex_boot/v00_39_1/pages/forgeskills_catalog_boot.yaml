@@ -1,0 +1,108 @@
+forgeskills_catalog_boot:
+  executor: LLM_BEHAVIOR
+  version: v00.34.0
+  opp: OPP-112
+  tier: 1
+  status: ADOPTED
+  purpose: 'Estender o ForgeSkills Rapid Reader (OPP-106) para processar: CATALOG.md de integração (MCP
+    servers), AGENT.md da community-awesome, REFERENCE.md de domínios. Resultado: APEX boot carrega MCP
+    server URLs no mcp_bridge registry e community agents no dynamic_agent_roster automaticamente por
+    domínio detectado.
+
+    '
+  why: 'WHY: APEX tem 80+ MCP server URLs em CATALOG.md que o LLM nao usa porque ForgeSkills só lê SKILL.md.
+    Usuário pede análise jurídica → APEX deveria auto-carregar GovInfo MCP. Usuário pede física quântica
+    → carregar Qiskit/PsiAnimator. Usuário pede SEO → carregar Semrush MCP. Só possível se boot também
+    processa CATALOG.md por domínio.
+
+    '
+  when: 'WHEN: STEP_0 apex_superrepo_boot — após carregar skills do INDEX.md (estágio 3). WHEN: DynamicSkillForge
+    detecta domínio sem skill interna → verificar community-awesome.
+
+    '
+  what_if_fails: 'FALLBACK 1: CATALOG.md indisponível → continuar sem MCP servers do domínio. FALLBACK
+    2: URL inválida → ignorar, logar [MCP_URL_INVALID]. FALLBACK 3: AGENT.md malformado → pular, usar
+    agents base. REGRA: Boot NUNCA bloqueia por CATALOG.md indisponível.
+
+    '
+  inject_when: STEP_0 apex_superrepo_boot — estágio 3 (após skills)
+  depends_on:
+  - apex_superrepo_boot
+  - mcp_bridge_v2
+  - forgeskills_rapid_reader
+  catalog_boot_pipeline:
+    stage_3_catalog:
+      trigger: Domínio detectado no problema atual
+      domain_to_catalog_map:
+        legal: integrations/legal-mcp/CATALOG.md
+        contract: integrations/legal-mcp/CATALOG.md
+        compliance: integrations/legal-mcp/CATALOG.md
+        patents: integrations/legal-mcp/CATALOG.md
+        quantum_physics: integrations/science-physics-mcp/CATALOG.md
+        materials: integrations/science-physics-mcp/CATALOG.md
+        arxiv: integrations/science-physics-mcp/CATALOG.md
+        marketing: integrations/marketing-mcp/CATALOG.md
+        seo: integrations/marketing-mcp/CATALOG.md
+        google_ads: integrations/marketing-mcp/CATALOG.md
+        engineering: integrations/engineering-mcp/CATALOG.md
+        nasa: integrations/engineering-mcp/CATALOG.md
+        healthcare: integrations/healthcare-plugins/CATALOG.md
+        genomics: integrations/life-sciences-plugins/CATALOG.md
+        finance: integrations/financial-services/CATALOG.md
+        equity_research: integrations/financial-services/CATALOG.md
+    stage_4_agents:
+      community_agents_path: agents/community-awesome/
+      agent_categories:
+        core:
+        - code-archaeologist
+        - code-reviewer
+        - documentation-specialist
+        - performance-optimizer
+        python:
+        - django-expert
+        - fastapi-expert
+        - ml-data-expert
+        - python-expert
+        - testing-expert
+        django:
+        - django-api-developer
+        - django-backend-expert
+        - django-orm-expert
+        laravel:
+        - laravel-backend-expert
+        - laravel-eloquent-expert
+        rails:
+        - rails-activerecord-expert
+        - rails-api-developer
+        orchestrators:
+        - project-analyst
+        - team-configurator
+        - tech-lead-orchestrator
+      activation_rule: 'Ativar community agent quando: (a) domínio bate com categoria, (b) meta_reasoning
+        detecta que nenhum agente base cobre o domínio, (c) usuário solicita explicitamente tipo de especialização.
+
+        '
+      roster_tier: OPTIONAL — nao fazem parte do pipeline base
+  mcp_auto_registration: '# Exemplo — domínio == "legal":
+
+    #   fetch: integrations/legal-mcp/CATALOG.md
+
+    #   parse: tabela Markdown com | Server | URL | Coverage |
+
+    #   extrair: {govinfo: url, courtlistener: url, uspto: url, ...}
+
+    #   registrar: mcp_bridge.server_registry["legal"] = {govinfo: url, ...}
+
+    #   emitir: [MCP_CATALOG_LOADED: legal — 8 servers registrados]
+
+    '
+  rules_enforced:
+  - G6
+  - SR_37
+  fmea:
+    rpn: 6
+    mode: CATALOG.md nao parseia — URLs incorretas no mcp_bridge
+    probability: 2
+    severity: 3
+    detection: 1
+    mitigation: Validar URL com regex antes de registrar. Logar URLs ignoradas.

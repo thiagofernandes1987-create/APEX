@@ -1,0 +1,25 @@
+patch_agents_base:
+  new_field_per_agent:
+    generic_skills:
+      type: list
+      description: 'Lista de Generic Skill IDs que este agente carrega por padrão. Complementa anchors_primary
+        — anchors atraem skills, mas este campo permite pré-carregar skills sabidas para o papel do agente.
+
+        '
+  examples:
+    matematico_agent:
+      generic_skills:
+      - matematica_avancada
+      - fisica_computacional
+    scientist_agent:
+      generic_skills:
+      - matematica_avancada
+      - metodos_probabilisticos_genericos
+    engineer:
+      generic_skills:
+      - engenharia_software_generica
+      - sistemas_distribuidos
+    theorist:
+      generic_skills:
+      - matematica_avancada
+      - logica_formal

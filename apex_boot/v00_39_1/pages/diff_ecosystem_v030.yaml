@@ -1,0 +1,200 @@
+diff_ecosystem_v030:
+  base: v00.29.0 (44 DIFFs)
+  registered_diffs:
+  - id: DIFF_SYNTAX_STEP5_FIX
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-50
+    bug: BUG-1
+    modules_modified:
+    - mental_interpreter._run_production
+    fmea_rpn_before: 1000
+    fmea_rpn_after: 0
+    description: 'BUG-1 CRITICO: comentario e if fundidos em L10253 causavam SyntaxError. Modulo nao podia
+      ser importado. Separados em linhas distintas. Simultaneamente: wiring OPP-48/GAP-15 — _eps_ref[0]
+      = state_out.epsilon adicionado dentro do loop de blocos para atualizar eps_callback dinamicamente.
+
+      '
+  - id: DIFF_CALIBRATE_FIX
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-51
+    bug: BUG-2
+    modules_modified:
+    - mcfe_reliability_monitor._on_block_completed
+    fmea_rpn_before: 540
+    fmea_rpn_after: 0
+    description: 'BUG-2 CRITICO: calibrate() nao existe em ThresholdCalibrator. Substituido por _recalibrate()
+      + leitura de warning_threshold, critical_threshold (properties) e get_report().
+
+      '
+  - id: DIFF_AGENT_REQUIRED_FIELDS
+    type: MODULE_NEW
+    status: ADOPTED
+    opp: OPP-52
+    bug: BUG-3
+    modules_modified:
+    - agent_contract_validator (module scope)
+    fmea_rpn_before: 700
+    fmea_rpn_after: 0
+    description: 'BUG-3 CRITICO: AGENT_REQUIRED_FIELDS nao definido. 0 definicoes, 2 usos em validate().
+      Dicionario com 8 roles adicionado antes da classe.
+
+      '
+  - id: DIFF_COSINE_ORDER_FIX
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-53
+    bug: BUG-4
+    modules_modified:
+    - cosine_similarity_pure
+    - build_problem_features (moved)
+    fmea_rpn_before: 120
+    fmea_rpn_after: 0
+    description: 'BUG-4: cosine_similarity_pure usada em L6024 mas definida em L10980. Forward ref valida
+      em modulo completo mas quebra imports isolados. Funcoes movidas para antes de MemoryIndex (primeiro
+      uso). Aliases mantidos no local original.
+
+      '
+  - id: DIFF_FMEA_LAMBDA_FIX
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-54
+    bug: BUG-5
+    modules_modified:
+    - run_fmea_suite FIX-NEW1 lambda
+    fmea_rpn_before: 280
+    fmea_rpn_after: 0
+    description: 'BUG-5: lambda FIX-NEW1 com __class__().__class__().__class__() or lambda. OR short-circuit:
+      RE() e truthy, lambda nunca executa. Reescrito com lambda interna que realmente chama on_block_completed().
+
+      '
+  - id: DIFF_EXCEPT_LOGGING
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-55
+    gap: GAP-1
+    modules_modified:
+    - reliability_estimator
+    - lqr
+    - nlm_predict
+    - nlm_find_minimum
+    - nlm_suggest_size
+    - hist_tracker_get_best
+    - hist_tracker_get_stats
+    fmea_rpn_before: 189
+    fmea_rpn_after: 30
+    description: '8 excepts silenciosos (except X: pass) convertidos para except X as _e: print(f"[MODULE]
+      error: {type(_e).__name__}: {_e}"). Bugs mascarados agora diagnosticaveis em producao.
+
+      '
+  - id: DIFF_DEQUE_HOTPATHS
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-56
+    gap: GAP-2+4+19
+    modules_modified:
+    - event_bus.event_log
+    - mcfe_state.survival_history
+    - agent_state.confidence_history
+    - isotropic_es.success_window
+    - tabu_search.tabu_list
+    - lbfgs.s_list+y_list
+    - edmonds_karp.queue
+    fmea_rpn_before: 168
+    fmea_rpn_after: 20
+    description: '8 ocorrencias de list.pop(0) O(N) convertidas para deque(maxlen=N) com popleft() O(1).
+      MCFEState.update() e isotropic_es sao hot-paths chamados 200+ vezes/sessao.
+
+      '
+  - id: DIFF_EPS_REF_UPDATE
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-48
+    gap: GAP-15/F-08
+    modules_modified:
+    - mental_interpreter._run_production
+    fmea_rpn_before: 84
+    fmea_rpn_after: 0
+    description: '_eps_ref[0] = state_out.epsilon adicionado em _run_production apos cada bloco OK bem-sucedido.
+      eps_fn agora retorna epsilon real do ultimo bloco, nao eps_now fixo da fase de planejamento.
+
+      '
+  - id: DIFF_BUILD_PIPELINE_PARAM
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-59
+    gap: GAP-13
+    modules_modified:
+    - build_pipeline docstring
+    description: 'n_total aceito mas nao usado documentado explicitamente. Mantido para API backward-compat.
+      Caller usa direto em execute(n_total).
+
+      '
+  - id: DIFF_ROLLBACK_STORE_DOC
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-60
+    gap: GAP-14
+    modules_modified:
+    - audit_chain.rollback docstring
+    description: 'store= documentado como parametro aceito mas nao utilizado. Limitacao de design explicada.
+      Caller deve chamar store.load(h) manualmente.
+
+      '
+  - id: DIFF_HMC_DEPRECATION
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-57
+    gap: GAP-10
+    modules_modified:
+    - hmc_step_size_adapter docstring
+    description: '0 instanciacoes detectadas. Nota de deprecacao adicionada. Mantida por retrocompatibilidade.
+      Candidata a remocao em v00.32+.
+
+      '
+  - id: DIFF_F_LV_EXTRACT
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-58
+    gap: GAP-11
+    modules_modified:
+    - geometry_estimator._lv_dynamics
+    - _theoretical_M_local
+    - delta_err
+    description: '_f_lv definida inline em 2 metodos diferentes (_theoretical_M_local e delta_err). Extraida
+      para GeometryEstimator._lv_dynamics() static method. Ambos metodos agora referenciam o helper compartilhado.
+
+      '
+  - id: DIFF_SGD_TOL_DOC
+    type: MODULE_PATCH
+    status: ADOPTED
+    opp: OPP-61
+    gap: GAP-17
+    modules_modified:
+    - sgd docstring
+    - kmeans docstring
+    description: 'tol= documentado como reservado (SGD: oscillacao estocastica impede early stop). kmeans:
+      convergencia por label equality e proxy valida; tol= para futura comparacao de deslocamento centroide.
+
+      '
+  total_new_diffs: 13
+  total_accumulated_diffs: 57
+  bugs_fixed:
+  - BUG-1
+  - BUG-2
+  - BUG-3
+  - BUG-4
+  - BUG-5
+  gaps_fixed:
+  - GAP-1
+  - GAP-2+4+19
+  - GAP-10
+  - GAP-11
+  - GAP-13
+  - GAP-14
+  - GAP-15
+  - GAP-17
+  new_opps:
+  - OPP-48
+  - OPP-50..61

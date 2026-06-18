@@ -1,0 +1,58 @@
+patch_orchestrator:
+  version: v00.20.2
+  new_module_load_order_additions:
+  - MODULE_pot_engine (TIER_1) — após symbolic_executor [DEPRECATED v00.20.2]
+  - MODULE_mental_interpreter (TIER_1) — após pot_engine [DEPRECATED v00.20.2]
+  - MODULE_specialized_skill_engine (TIER_1) — após mental_interpreter
+  - MODULE_fractal_hypothesis_compression (TIER_1) — após specialized_skill_engine
+  - MODULE_fractal_knowledge_indexing (TIER_1) — após fractal_tree_generator
+  - MODULE_skill_hierarchy (TIER_0) — após knowledge e skills
+  - MODULE_geometry_estimator (TIER_2) — eager, antes de pot_engine_v2 e mental_interpreter_v2
+  - MODULE_pot_engine_v2 (TIER_1) — após symbolic_executor e geometry_estimator
+  - MODULE_mental_interpreter_v2 (TIER_1) — após pot_engine_v2 e geometry_estimator
+  - MODULE_reliability_config (TIER_0) — após config, sempre carregado
+  - MODULE_bucket_stats (TIER_0) — após reliability_config, sempre carregado
+  - MODULE_reliability_estimator (TIER_1) — após event_bus e bucket_stats, modos DEEP/RESEARCH/SCIENTIFIC
+  - MODULE_mcfe_state_reliability (TIER_1) — após reliability_estimator
+  - MODULE_mcfe_reliability_monitor (TIER_1) — após mcfe_state_reliability e event_bus
+  - MODULE_mental_interpreter_v3 (TIER_1) — substitui mental_interpreter_v2; após todos os módulos de
+    reliability
+  new_tier_0_modules:
+  - skill_hierarchy
+  new_tier_1_modules:
+    v00200:
+    - pot_engine
+    - mental_interpreter
+    - specialized_skill_engine
+    - fractal_hypothesis_compression
+    - fractal_knowledge_indexing
+    v00202:
+    - pot_engine_v2
+    - mental_interpreter_v2
+  new_tier_2_modules:
+    v00202:
+    - geometry_estimator
+  deprecated_modules:
+  - MODULE_pot_engine v00.20.0 → sunset 2 sessões após v00.20.2
+  - MODULE_mental_interpreter v00.20.0 → sunset 2 sessões após v00.20.2
+  dependency_graph_additions_v0202:
+    geometry_estimator:
+      upstream:
+      - event_bus
+      downstream:
+      - pot_engine_v2
+      - mental_interpreter_v2
+      - cognitive_integrator_library
+    pot_engine_v2:
+      upstream:
+      - symbolic_executor
+      - geometry_estimator
+      downstream:
+      - mental_interpreter_v2
+    mental_interpreter_v2:
+      upstream:
+      - pot_engine_v2
+      - mcfe
+      - geometry_estimator
+      downstream:
+      - specialized_skill_engine

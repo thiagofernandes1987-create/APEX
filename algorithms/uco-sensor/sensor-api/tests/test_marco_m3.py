@@ -444,8 +444,12 @@ password = "secret"
 
 
 def test_TS30_rules_catalogue():
-    """RULES catalogue has 13 entries with all required fields."""
-    assert len(RULES) == 13, f"Expected 13 rules, got {len(RULES)}"
+    """RULES catalogue has at least the original 13 entries with all required fields.
+
+    M3 shipped 13 rules; M7.1 expanded the catalogue to 28 — this test
+    guards the invariant fields, not the count ceiling.
+    """
+    assert len(RULES) >= 13, f"Expected >= 13 rules, got {len(RULES)}"
     for r in RULES:
         assert r.rule_id.startswith("SAST"), f"Bad rule_id: {r.rule_id}"
         assert r.severity in ("CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO")

@@ -1,0 +1,32 @@
+qa_compliance_v028:
+  base: v00.27.0 (52 QA tests — 17 base + 35 novos)
+  new_qa_tests_v028:
+    QA_OPP36_01: MCFEAdapter.decide() com nlm fitted → retorna tamanho sugerido por NLM
+    QA_OPP36_02: MCFEAdapter.decide() com nlm=None → fallback DEFAULT//2
+    QA_OPP36_03: build_pipeline() → mcfe.nlm instanciado como NumericLandscapeModel
+    QA_OPP37_01: MCFEAdapter.reset_counters() zera retries, _last_block, _root_block
+    QA_OPP37_02: AuditChain.rollback(mcfe_adapter=mock) chama reset_counters()
+    QA_OPP38_01: _root_id('warm_result_block_3') == 'warm_result_block_3' (sem truncamento)
+    QA_OPP38_02: _root_id('prod_0_r0_r2') == 'prod_0' (sufixo numérico detectado)
+    QA_OPP38_03: _root_id('researcher_block_0') == 'researcher_block_0' (sem match)
+    QA_OPP39_01: _subprocess com python3 ausente → rc=-4, error_type='PYTHON_NOT_FOUND'
+    QA_OPP39_02: _classify_error(-4, '') == 'PYTHON_NOT_FOUND'
+    QA_OPP40_01: isotropic_es em plateau (f constante) → sigma reduz (rate < 1/5)
+    QA_OPP40_02: isotropic_es em landscape com gradiente → converge para mínimo
+    QA_OPP41_01: MCFEState.survival_history existe e atualiza com update()
+    QA_OPP41_02: MCFEState.to_dict() contém ambos survival_history e reliability_history
+    QA_OPP42_01: decompose_adaptive_reliability com eps_callback real vs proxy
+    QA_OPP43_01: credibility_interval([p], n_override=50) == credibility_interval([p]*50)
+    QA_OPP43_02: _check_sr15 usa p_sample único, não p_list multiplicado
+    QA_OPP44_01: _ast_guard('from numpy.core import ...' ) → AST_BLOCKED_SUBMODULE
+    QA_OPP44_02: _ast_guard('import numpy as np') → None (root OK, não submodule)
+    QA_FMEA05_01: AuditChain.validate_sr23() cache hit em segunda chamada sem add_link
+    QA_FMEA05_02: add_link() invalida _sr23_cache → próxima validate_sr23 recomputa
+    QA_REGRESSION_V027: 52/52 testes v00.27 preservados
+  fmea_rpn_summary:
+    before_v028_avg: 138
+    after_v028_avg: 20
+    improvement: 85%
+    remaining_rpn_max: 48
+  acceptance_flag: PASS
+  session: APEX-LIVE-2026-03-19

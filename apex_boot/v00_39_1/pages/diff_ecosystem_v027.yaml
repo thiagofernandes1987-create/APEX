@@ -1,0 +1,185 @@
+diff_ecosystem_v027:
+  base: v00.26.0 (21 DIFFs)
+  registered_diffs:
+  - id: DIFF_MCFE_DEPTH_GUARD
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mcfe_adapter
+    - mental_interpreter._run_production
+    fixes:
+    - BUG-D5-01
+    opp: OPP-33
+    breaking_changes: 'MCFEAdapter.decide() agora compara raiz do block_id (não ID completo). _run_production
+      retorna status=''HALT_MAX_DEPTH'' para depth > 6. _root_id() é método estático público.
+
+      '
+    python_implementation: '# MCFEAdapter._root_id(block_id) → extrai raiz antes de _r{k}
+
+      # MCFEAdapter.__init__: self._root_block adicionado
+
+      # MCFEAdapter.decide(): comparar self._root_block em vez de self._last_block
+
+      # MCFEAdapter.MAX_DEPTH = 6
+
+      # _run_production: if depth > MCFEAdapter.MAX_DEPTH → HALT_MAX_DEPTH
+
+      '
+  - id: DIFF_AST_GUARD
+    type: MODULE_NEW
+    status: ADOPTED
+    modules_new:
+    - mental_interpreter._ast_guard
+    modules_modified:
+    - mental_interpreter._subprocess
+    fixes:
+    - BUG-G03
+    opp: OPP-29
+    breaking_changes: 'Scripts com imports bloqueados (os, subprocess, shutil, etc.) retornam rc=-3 e
+      status=ERROR_AST_BLOCKED sem executar. ALLOWED_IMPORTS define whitelist de módulos aprovados.
+
+      '
+    python_implementation: '# _ast_guard(script: str) → Optional[str]
+
+      # Usa ast.parse() + ast.walk() — stdlib, sem dependências externas
+
+      # BLOCKED_PATTERNS: os, subprocess, shutil, pathlib, socket, http, ...
+
+      # ALLOWED_IMPORTS: math, json, sys, random, numpy, scipy, pandas, ...
+
+      # Integrado no início de _subprocess() — antes de criar tempfile
+
+      '
+  - id: DIFF_R_ACUM_HORIZON
+    type: MODULE_REPLACE
+    status: ADOPTED
+    modules_modified:
+    - mcfe_state.update
+    fixes:
+    - BUG-G01
+    opp: OPP-28
+    breaking_changes: 'MCFEState.update() agora usa janela deslizante N_HORIZON=20 em vez de produtório
+      puro. R_acum não colapsa mais em sessões longas. to_dict() inclui campos ''window_size'' e ''horizon''
+      adicionais.
+
+      '
+    python_implementation: '# MCFEState.N_HORIZON = 20
+
+      # update(p_fail_blk): appenda survival=(1-p) ao histórico,
+
+      #   mantém últimos N_HORIZON, recalcula R_acum como produto da janela.
+
+      # reliability_history agora armazena survivals (não R_acum acumulado)
+
+      '
+  - id: DIFF_ERRTYPE_WIRE
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - mental_interpreter._run_production
+    fixes:
+    - BUG-D5-04
+    opp: OPP-35
+    breaking_changes: '_run_production retorna status=f"ERROR_{error_type}" para rc não em {0,2,3}. Antes:
+      status="RUNTIME_ERROR" fixo. Agora: ERROR_LOGIC_ERROR, ERROR_TIMEOUT, ERROR_AST_BLOCKED, ERROR_RUNTIME_ERROR,
+      ERROR_UNKNOWN. Callers que verificavam status=="RUNTIME_ERROR" devem usar startswith("ERROR_").
+
+      '
+    python_implementation: '# No return final de _run_production:
+
+      # error_type = r.get("error_type", "UNKNOWN")
+
+      # return {"status": f"ERROR_{error_type}", "error_type": error_type, ...}
+
+      '
+  - id: DIFF_CMA_RENAME
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - algorithm_kernel.tier_b.isotropic_es
+    - model_selection_engine.ALGORITHM_APPLICABILITY
+    - algorithm_catalog
+    fixes:
+    - BUG-G04
+    opp: OPP-30
+    breaking_changes: 'Função renomeada: cma_es → isotropic_es. Alias cma_es mantido para retrocompatibilidade.
+      MSE condition: covariance_matrix: True → isotropic: True. Callers que usassem "covariance_matrix"
+      como feature devem usar "isotropic".
+
+      '
+    python_implementation: '# def isotropic_es(...) com docstring atualizado
+
+      # cma_es = isotropic_es  # alias retrocompat
+
+      # ALGORITHM_APPLICABILITY["isotropic_es"]["conditions"]["isotropic"] = True
+
+      # ALGORITHM_CATALOG["isotropic_es"] em vez de "cma_es"
+
+      '
+  - id: DIFF_PIN_SANITY
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - snapshot_store.commit_cycle
+    fixes:
+    - BUG-G06
+    opp: OPP-31
+    breaking_changes: none
+    python_implementation: '# No início de commit_cycle():
+
+      # dangling = self._pinned - set(self._store.keys())
+
+      # if dangling: self._pinned -= dangling; print(...)
+
+      '
+  - id: DIFF_FIEDLER_EXCEPTION_SCOPE
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - coupling_analyzer._fiedler_approx
+    fixes:
+    - BUG-D5-03
+    opp: OPP-34
+    breaking_changes: none
+    python_implementation: '# MAX_DENSE_NODES = 500 — guard antes de eigvalsh denso
+
+      # except (ImportError, MemoryError, Exception) — captura MemoryError
+
+      # Fallback heurístico garantido para qualquer exceção
+
+      # Mensagem de log inclui tipo da exceção capturada
+
+      '
+  - id: DIFF_LEVY_CLAMP
+    type: MODULE_PATCH
+    status: ADOPTED
+    modules_modified:
+    - chaos_operators.levy_mutation
+    fixes:
+    - BUG-G08
+    opp: OPP-32
+    breaking_changes: 'Campos cognitivos com nome em FIELD_BOUNDS são clampados após mutação. Antes: confidence
+      podia virar -800 ou 1500. Agora: sempre [0, 100]. Campos não listados no FIELD_BOUNDS: comportamento
+      original (sem clamp).
+
+      '
+    python_implementation: '# FIELD_BOUNDS = {''confidence'':(0,100), ''score'':(0,1), ''weight'':(0,1),
+      ...}
+
+      # levy_mutation: mutated = max(lo, min(hi, v + levy_step()))
+
+      '
+  total_new_diffs: 8
+  total_accumulated_diffs: 29
+  new_rules:
+  - G17
+  - G18
+  new_opps:
+  - OPP-28
+  - OPP-29
+  - OPP-30
+  - OPP-31
+  - OPP-32
+  - OPP-33
+  - OPP-34
+  - OPP-35

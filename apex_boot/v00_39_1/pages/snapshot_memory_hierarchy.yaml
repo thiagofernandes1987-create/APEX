@@ -1,0 +1,78 @@
+snapshot_memory_hierarchy:
+  executor: HYBRID
+  version: v00.39.0
+  opp: OPP-168
+  tier: 0
+  status: ADOPTED
+  purpose: 'Reorganizar a persistência inter-sessão em 4 camadas com papéis distintos, recall SELETIVO
+    por gravidade semântica (carregar só o relevante, não o snapshot inteiro) e fase de consolidação que
+    destila experiência bruta em conhecimento estrutural.
+
+    '
+  why: 'WHY: o snapshot atual é episódico e monolítico — carrega tudo do delta de 500 tokens ou nada.
+    Memória humana não funciona assim: trabalho/episódica/semântica/procedural têm dinâmicas próprias.
+    O APEX já tem TODAS as peças (SQLite OPP-66, KG OPP-97, code_genetics, crystallization_jit, anchors)
+    — faltava a arquitetura que as organiza e o recall seletivo que as torna escaláveis para centenas
+    de sessões. WHY RECALL SELETIVO: com 200+ sessões no SQLite, carregar tudo é impossível; carregar
+    só o último delta perde história relevante. semantic_gravity_engine (OPP-169) resolve: a tarefa corrente
+    atrai as memórias relevantes — paging de memória, mesma filosofia do page_loader (OPP-163). WHY CONSOLIDAÇÃO:
+    sessões brutas acumulam ruído; sem destilação, o SQLite vira lixão. A fase de sono converte episódico
+    → semântico (anchors/KG) e episódico → procedural (vacinas/skills), depois aplica esquecimento controlado.
+
+    '
+  when: 'WHEN recall: STEP_0 de toda sessão incremental. WHEN escrita: STEP_13 (como hoje). WHEN consolidação:
+    STEP_14 (novo, pós-snapshot) a cada N=5 sessões OU quando sqlite > 50 sessões não-consolidadas.
+
+    '
+  description: "O_QUE_É — AS 4 CAMADAS: L1 WORKING (contexto, volátil): scratchpad de atenção (OPP-MAS-08)\n\
+    \   + [ACTIVE_RULES] (SR_47) + páginas carregadas nesta sessão.\nL2 EPISODIC (SQLite apex_memory.db):\
+    \ snapshots brutos por sessão —\n   o que aconteceu, decisões, erros, trojan_detections, express_log.\n\
+    L3 SEMANTIC (Knowledge Graph OPP-97 + anchors): fatos destilados\n   e atemporais — \"lambda_scale=0.0001\
+    \ dá 10/10 feasibility em\n   RCPSP\", relações entre domínios, bridges cross-domain.\nL4 PROCEDURAL\
+    \ (code_genetics + skills cristalizadas + pot_cache):\n   COMO fazer — vacinas ADOPTED, programas\
+    \ PoT validados,\n   pipelines que funcionaram.\nO_QUE_NÃO_É: substituição do snapshot — é a organização\
+    \ dele. Formato e delta de 500 tokens permanecem; muda O QUE entra no contexto e QUANDO. COMO_FUNCIONA\
+    \ O RECALL (STEP_0): 1. (SANDBOX) semantic_gravity_engine.query(tarefa_corrente) sobre\n   corpus\
+    \ de memórias L2/L3/L4 indexadas.\n2. Carregar top-K memórias com gravity >= 0.15 [APPROX_ESTIMATE],\n\
+    \   budget máx 800 tokens de recall.\n3. Emitir [MEMORY_RECALL: {ids} | gravity_min={g} | COMPUTED].\
+    \ 4. L3/L4 relevantes têm prioridade sobre L2 (conhecimento destilado\n   vale mais que episódio bruto).\n\
+    COMO_FUNCIONA A CONSOLIDAÇÃO (STEP_14, \"fase de sono\"): 1. (LLM) Revisar sessões L2 não-consolidadas:\
+    \ extrair fatos\n   estáveis → propor anchors/KG entities (L3); extrair padrões de\n   solução recorrentes\
+    \ → propor vacinas/skills (L4).\n2. (LLM) Propostas seguem governança: [CONSOLIDATION_DIFF] com\n\
+    \   aprovação implícita se confidence>=80 e zero conflito com L3\n   existente; senão USER_EXPLICIT.\n\
+    3. (SANDBOX) Marcar sessões consolidadas; aplicar esquecimento:\n   episódios consolidados + idade\
+    \ > 30 sessões → comprimir para\n   sumário de 1 linha (gzip já existe, OPP-78). NUNCA apagar L3/L4.\n\
+    4. (SANDBOX) Reconstruir índice semântico (apex_semantic_index).\n"
+  what_if_fails: 'FALLBACK recall: índice indisponível → carregar último delta (comportamento atual) +
+    [MEMORY_RECALL_DEGRADED]. FALLBACK consolidação: sessão sem tempo/budget → adiar, contador persiste
+    em apex_state.yaml. NUNCA bloquear sessão por memória.
+
+    '
+  inject_when: STEP_0 (recall) + STEP_13 (escrita) + STEP_14 (consolidação)
+  depends_on:
+  - sqlite_snapshot_store
+  - knowledge_graph_memory
+  - code_genetics_map
+  - crystallization_jit
+  - semantic_gravity_engine
+  - apex_state_persistent
+  forgetting_curve:
+    rationale: 'Esquecimento não é perda — é compressão com taxa proporcional à irrelevância. Episódio
+      nunca recuperado por recall em 30 sessões tem gravidade ~0 para o trabalho real do usuário.
+
+      '
+    rules:
+    - L2 consolidado + 30 sessões sem recall → sumário 1 linha
+    - 'L2 não-consolidado: NUNCA esquecido (pode conter ouro não minerado)'
+    - 'L3/L4: imunes a esquecimento; sujeitos a temporal_anchor_decay apenas no PESO, nunca no conteúdo'
+    - 'recall_count por memória: incrementado a cada uso; reseta decay'
+  fmea:
+    rpn: 16
+    mode: consolidação destila fato errado para L3 (contaminação semântica)
+    probability: 2
+    severity: 4
+    detection: 2
+    mitigation: 'Consolidação com confidence<80 exige USER_EXPLICIT; L3 entries carregam provenance (session_id
+      de origem) — auditável e reversível.
+
+      '

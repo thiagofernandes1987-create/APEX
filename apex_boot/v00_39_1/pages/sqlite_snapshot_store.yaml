@@ -1,0 +1,79 @@
+sqlite_snapshot_store:
+  executor: SANDBOX_CODE
+  version: v00.32.1
+  opp: OPP-66
+  tier: 0
+  status: ADOPTED
+  purpose: 'Resolver o Gargalo G4: context window consumido por histórico comprime a memória efetiva a
+    5-15 sessões. Com SQLite, o LLM recebe apenas o delta informacional relevante (~200-500 tokens), liberando
+    83-93% do context window.
+
+    '
+  why: 'SQLite foi escolhido sobre JSON em arquivo por: queries seletivas O(log n), transações ACID, índices
+    por domínio, e zero dependências externas (stdlib Python). Um arquivo JSON exigiria deserializar tudo
+    para buscar algo — SQLite busca apenas o que é relevante sem carregar o resto.
+
+    '
+  description: 'Banco SQLite em /tmp/apex_memory.db persistido durante a sessão atual. O QUE É: sqlite3
+    stdlib; arquivo real no filesystem da sandbox; ACID; persistência within-session. O QUE NÃO É: Banco
+    permanente cross-session (arquivo está em /tmp). O QUE NÃO É: Acesso direto pelo LLM — LLM GERA código
+    Python; sandbox EXECUTA. COMO FUNCIONA: STEP_13 → save_session() → persiste tudo em SQLite. STEP_0
+    → load_delta_for_session() → retorna apenas delta relevante ao domínio atual (~300 tokens no context
+    window em vez de ~3000).
+
+    '
+  what_if_fails: "FALLBACK 1 — /tmp/apex_memory.db indisponível:\n  Tentar /home/claude/apex_memory.db\
+    \ como path alternativo.\nFALLBACK 2 — SQLite falhar completamente:\n  Operar com snapshot JSON inline\
+    \ no context window (modo v00.31 legado).\n  Declarar [SQLITE_UNAVAILABLE] no início do output.\n\
+    \  Todos os confidence scores: [APPROX] sem calibração histórica.\nFALLBACK 3 — load_delta retornar\
+    \ vazio (primeira sessão):\n  Normal. Iniciar sem contexto histórico. NÃO simular histórico inexistente.\n\
+    REGRA ABSOLUTA: O LLM NUNCA inventa dados que o SQLite não retornou.\n"
+  inject_when: always
+  depends_on:
+  - event_bus
+  db_path: /tmp/apex_memory.db
+  db_path_fallback: /home/claude/apex_memory.db
+  schema_tables:
+    snapshots: session_id PK | version | timestamp | cognitive_mode | acceptance_flag | full_snapshot
+      TEXT(gzip)
+    bayesian_posteriors: id PK | session_id FK | class INT(1|2|3) | key | alpha | beta | delta_h — IDX(session_id,class)
+    code_genetics: pattern_id PK | domain_tags JSON | symptom | root_cause | vaccine | sessions_validated
+      INT | success_rate REAL | confidence REAL — IDX(domain_tags)
+    hypothesis_dag: PK(session_id,edge_src,edge_dst) | edge_type(enables|anchors|depends_on) — IDX(session_id)
+    suspect_nodes: PK(session_id,node_id) | reason
+    reliability_state: PK(session_id,bucket) | attempts INT | failures INT | p_fail REAL
+    error_profile: id PK | pattern_hash UNIQUE | error_type | domain | traceback_signature | occurrence_count
+      | resolution | resolved — IDX(pattern_hash)
+    session_metrics: session_id PK | h_cognitive_final | composite_confidence | coherence | dS2 | curvature
+      | tokens_used | wall_time_seconds
+  api:
+  - save_session(session_id, snapshot, metrics) → None — ACID; gzip no full_snapshot; chama vacuum_if_due()
+  - load_delta_for_session(domain, n_sessions=5) → dict — apenas delta relevante ~200-500 tokens
+  - save_vaccine(vaccine_dict) → None — INSERT OR UPDATE com rolling success_rate
+  - load_last_st_metric() → dict{dS2, curvature} — última métrica de progressão
+  - record_error(code, error_type, domain, traceback, resolved, resolution) → None
+  - vacuum_if_due(session_count) → bool — VACUUM quando session_count % 50 == 0
+  - get_db_size_kb() → int — monitorar crescimento
+  - load_full_snapshot(session_id) → dict — gzip decompress com retrocompat JSON raw
+  gzip_protocol:
+    why: full_snapshot JSON raw 5-20KB/sessão; gzip level 6 reduz ~75-85% [APPROX_ESTIMATE]
+    save: gzip.compress(json.dumps(snapshot).encode(), compresslevel=6) → base64 → TEXT
+    load: 'try: gzip.decompress(base64.b64decode(row)) except OSError: json.loads(row) direto'
+    retrocompat: Sessions salvas antes do OPP-78 usam JSON puro — o except garante compatibilidade
+  vacuum_protocol:
+    trigger: session_count % 50 == 0
+    why: 'SQLite não libera páginas deletadas automaticamente após DELETE/UPDATE. Sem VACUUM, 500 sessões
+      densas podem exceder 500MB. VACUUM a cada 50 sessões reconstrói o arquivo e recupera espaço.
+
+      '
+    latencia: 100-500ms para bancos < 100MB [APPROX_ESTIMATE] — aceitável
+  rules_enforced:
+  - 'SR_14: hash SHA256 do snapshot para rastreabilidade de integridade'
+  - 'C5: save_session() obrigatório no STEP_13 — ausência invalida a sessão'
+  fmea:
+    rpn: 6
+    mode: Corrupção durante escrita ou arquivo não acessível
+    probability: 2
+    severity: 3
+    detection: 1
+    mitigation: 'Transações ACID: ou commita completo ou reverte. full_snapshot como backup íntegro.'

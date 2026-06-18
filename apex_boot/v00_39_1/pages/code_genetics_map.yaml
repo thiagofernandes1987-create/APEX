@@ -1,0 +1,61 @@
+code_genetics_map:
+  executor: HYBRID
+  version: v00.32.1
+  opp: OPP-MAS-02
+  tier: 1
+  status: ADOPTED
+  purpose: 'Transformar o APEX de "gênio amnésico" em sistema que aprende com erros técnicos. Cada padrão
+    de erro corrigido é armazenado como "vacina" e consultado antes de gerar código similar no futuro.
+
+    '
+  why: 'Sem o mapa, o APEX pode cometer o mesmo erro de NumPy broadcasting na sessão 1, corrigi-lo, e
+    repeti-lo na sessão 10. O mapa resolve isso. frozenset(domain_tags) → O(1) lookup em vez de O(n) em
+    lista. sessions_validated >= 2 AND success_rate > 0.85: 3 sessões é conservador demais para domínios
+    maduros; 2 com alta taxa de sucesso é evidência suficiente.
+
+    '
+  description: 'Mapa de padrões de código validados e vacinas contra erros recorrentes. PARTE SANDBOX:
+    persistência no SQLite, lookup O(1) via frozenset index. PARTE LLM: interpretar vacinas retornadas
+    e aplicar ao gerar novo código. O QUE É: dict indexado por frozenset(domain_tags) + SQLite para persistência.
+    COMO FUNCIONA: STEP_P → recall(domain_tags) → LLM vê vacinas relevantes → gera código evitando padrões
+    problemáticos. STEP_13 → erro resolvido → save_vaccine().
+
+    '
+  what_if_fails: 'FALLBACK 1 — recall() retornar vazio: continuar sem vacinas. Normal para domínios novos.
+    FALLBACK 2 — save_vaccine() falhar: logar e continuar. Emitir [GENETICS_SAVE_FAILED]. FALLBACK 3 —
+    Índice corrompido: rebuild via _build_index() do SQLite. REGRA: O mapa não bloqueia o pipeline. Apenas
+    enriquece quando disponível.
+
+    '
+  inject_when: STEP_P (recall) e STEP_13 (update)
+  depends_on:
+  - sqlite_snapshot_store
+  - error_evolution_loop
+  index_strategy:
+    type: frozenset(domain_tags) → List[vaccine]
+    complexity: O(1) lookup
+    why_frozenset: 'frozenset é hashável e independente de ordem: {numpy, matrix} e {matrix, numpy} mapeariam
+      para a mesma chave. Com 50+ vacinas, O(n) por sessão é perceptível.
+
+      '
+  promotion_criteria:
+    sessions_validated: '>= 2'
+    success_rate: '> 0.85'
+    rationale: '2 sessões + success_rate > 0.85: evidência suficiente para confiar na vacina. 3 sessões
+      seria conservador demais para domínios maduros.
+
+      '
+  api:
+  - recall(domain_tags) → List[vaccine] via frozenset index O(1)
+  - save_vaccine(vaccine_dict) → None via sqlite_store.save_vaccine()
+  - should_promote(vaccine) → bool — sessions_validated >= 2 AND success_rate > 0.85
+  - _build_index() → dict — rebuild frozenset index do SQLite
+  rules_enforced:
+  - 'SR_35: promoção com sessions_validated >= 2 AND success_rate > 0.85'
+  fmea:
+    rpn: 2
+    mode: Vacina incorreta cristalizada
+    probability: 1
+    severity: 2
+    detection: 1
+    mitigation: Critérios de promoção conservadores; success_rate tracked por sessão
