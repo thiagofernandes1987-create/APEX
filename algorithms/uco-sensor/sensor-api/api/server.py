@@ -199,7 +199,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.2.10"
+    version:      str   = "3.2.11"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -367,6 +367,10 @@ def handle_root() -> Tuple[int, str]:
     <section>
       <h2>Recent capabilities</h2>
       <div class="endpoints">
+        <div><span class="tag">v3.2.11</span> <strong>Sprint F — Spectral analysis of APS</strong>:
+             Welch PSD + entropy + db4 wavelet → 5-channel spectral fingerprint.</div>
+        <div><span class="tag">v3.2.10</span> <strong>Sprint G — Signal Correctness</strong>:
+             8 cirurgical fixes post-Codex audit (UNKNOWN, RED sign, Hurst gate, ON CONFLICT, tiebreak, causal fixes, persist_error, hmac).</div>
         <div><span class="tag">v3.2.9</span> <strong>Sprint E — Snapshot-diff vector</strong>:
              per-channel delta + volatility ranking (coefficient of variation).</div>
         <div><span class="tag">v3.2.8</span> <strong>Sprint D — AutoFix↔SAST expansion</strong>:
@@ -454,6 +458,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/apex/remediation/stats",   "auth": True,   "desc": "Aggregate auto-fix telemetry — success rate, top fixed rules, top transforms (?module=&top_k=) [Sprint C]"},
             {"method": "GET",    "path": "/diff/channels",            "auth": True,   "desc": "Per-channel delta between 2 snapshots (?module=&from=&to=) [Sprint E]"},
             {"method": "GET",    "path": "/diff/volatile",            "auth": True,   "desc": "Top channels by coefficient of variation over history (?module=&window=&top_k=) [Sprint E]"},
+            {"method": "GET",    "path": "/spectral/aps",             "auth": True,   "desc": "Welch PSD + entropy + db4 wavelet decomposition of APS series (?module=&window=) [Sprint F]"},
+            {"method": "GET",    "path": "/spectral/fingerprint",     "auth": True,   "desc": "Compact 5-channel spectral fingerprint for module-to-module comparison (?module=&window=) [Sprint F]"},
             {"method": "GET",    "path": "/predict",          "auth": True,   "desc": "Degradation forecast para um módulo (?module=&horizon=)"},
             {"method": "GET",    "path": "/predict/all",      "auth": True,   "desc": "Fleet forecast — todos os módulos, ordenado por risco"},
             {"method": "POST",   "path": "/scan-incremental", "auth": True,   "desc": "Incremental scan — apenas arquivos alterados (M6.1)"},
@@ -1145,6 +1151,40 @@ def handle_diff_volatile(
         "n_rows":    len(rows),
         "channels":  rows,
     }
+
+
+def handle_spectral_aps(module_id: str, window: int = 100) -> Tuple[int, Dict]:
+    """
+    GET /spectral/aps?module=<id>&window=<n>  (Sprint F)
+
+    Welch PSD + spectral entropy + wavelet (db4 ×3) decomposition over
+    the persisted APS series.  Returns 400 when module is empty.
+    """
+    if not module_id:
+        return 400, {"error": "module is required"}
+    try:
+        from metrics.spectral_aps import compute_aps_spectrum
+        result = compute_aps_spectrum(_store, module_id, window=max(3, int(window)))
+    except Exception as exc:
+        return 500, {"error": f"spectral/aps failed: {exc}"}
+    return 200, result
+
+
+def handle_spectral_fingerprint(module_id: str, window: int = 100) -> Tuple[int, Dict]:
+    """
+    GET /spectral/fingerprint?module=<id>&window=<n>  (Sprint F)
+
+    Compact 5-channel spectral fingerprint (band fractions + entropy +
+    cycle length) for module-to-module comparison and clustering.
+    """
+    if not module_id:
+        return 400, {"error": "module is required"}
+    try:
+        from metrics.spectral_aps import aps_fingerprint
+        result = aps_fingerprint(_store, module_id, window=max(3, int(window)))
+    except Exception as exc:
+        return 500, {"error": f"spectral/fingerprint failed: {exc}"}
+    return 200, result
 
 
 def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, Dict]:
@@ -3695,6 +3735,14 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 window_n  = int(params.get("window", ["50"])[0])
                 top_k_n   = int(params.get("top_k",  ["5"])[0])
                 code, data = handle_diff_volatile(module_id, window=window_n, top_k=top_k_n)
+            elif path == "/spectral/aps":
+                module_id = params.get("module", [""])[0] or ""
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_spectral_aps(module_id, window=window_n)
+            elif path == "/spectral/fingerprint":
+                module_id = params.get("module", [""])[0] or ""
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_spectral_fingerprint(module_id, window=window_n)
             elif path == "/alerts/compound":
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["100"])[0])

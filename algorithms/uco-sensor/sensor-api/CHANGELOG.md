@@ -5,6 +5,108 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.11] — 2026-06-18 — Sprint F: Spectral Analysis of APS
+
+### Adicionado
+
+Análise espectral completa sobre a série temporal de APS persistida —
+o diferencial que o produto promete ("análise espectral aplicada a
+quality signals") finalmente desce até o canal composto que vinha
+sendo tratado como número escalar.  Welch PSD + entropia + wavelet
+db4 = **assinatura espectral por módulo** comparável e clusterizável.
+
+#### Novo módulo — `metrics/spectral_aps.py`
+
+**`compute_aps_spectrum(store, module_id, window=100) -> dict`** —
+payload completo:
+
+- `status`: `OK` | `INSUFFICIENT` (< 8 samples) | `ERROR`
+- `band_powers` / `band_fractions`: low (drift lento), mid (ruído
+  processo), high (oscilação rápida) — divididos em terços de Nyquist
+- `total_power`: soma da PSD
+- `spectral_entropy ∈ [0, 1]`: 0 = pico único (regime perfeitamente
+  previsível), 1 = ruído branco
+- `dominant_frequency` + `cycle_length`: período em commits da
+  frequência dominante (= 1/f)
+- `freqs` / `psd`: arrays brutos para plotagem
+- `wavelet`: db4 multi-level (até 3) — energia por nível, **localiza
+  no tempo** mudanças de regime que a PSD agrega no espectro
+
+**`aps_fingerprint(store, module_id, window=100) -> dict`** —
+assinatura compacta de 5 canais:
+
+```
+band_low_fraction   ∈ [0, 1]
+band_mid_fraction   ∈ [0, 1]
+band_high_fraction  ∈ [0, 1]
+spectral_entropy    ∈ [0, 1]
+cycle_length        > 0 | None
+```
+
+Adequada para DBSCAN / k-means inter-módulos. Dois módulos com APS
+médio idêntico podem ter fingerprints radicalmente diferentes — os
+perigosos vivem no canto `band_high + alta_entropia`.
+
+#### Decisões técnicas
+
+- **Gate ≥ 8 samples** (mesma constante do predictor /
+  `_MIN_SAMPLES_RELIABLE` / Sprint G G.3) — abaixo disso a Welch
+  degenera matematicamente.
+- **Detrend linear** no PSD; sem subtração de média antes da wavelet
+  (a energia do nível de aproximação carrega informação do trend).
+- **Banda LOW = [0, 1/3)** de Nyquist, MID = [1/3, 2/3), HIGH = [2/3, 1].
+  Frações somam exatamente 1 (validado por TX05).
+- **Defensiva ponta-a-ponta**: scipy/pywt indisponível ou falha →
+  payload com `status="ERROR"` ou `"UNAVAILABLE"`, nunca raise.
+- **JSON-safe**: NaN/inf colapsam para `null` antes de serializar.
+
+#### Novos endpoints REST
+
+| Método | Rota | Descrição |
+|---|---|---|
+| **GET** | `/spectral/aps`           | PSD + entropia + wavelet (`?module=&window=`) |
+| **GET** | `/spectral/fingerprint`   | 5 canais para comparação inter-módulos (`?module=&window=`) |
+
+Ambos retornam `400` quando `module` vazio. `INSUFFICIENT` ou outros
+status não-OK voltam com **HTTP 200** + campo `status` — o cliente
+sempre vê algo estruturado.
+
+#### Landing page atualizada
+
+`GET /` agora destaca Sprint F (v3.2.11) e Sprint G (v3.2.10) no topo
+de "recent capabilities".
+
+### Testes — 30 novos (TX01–TX30)
+
+- TX01–TX10 — `compute_aps_spectrum`: estrutura, gate INSUFFICIENT,
+  bandas não-negativas, frações = 1, entropia ∈ [0,1], freq dominante,
+  ciclo = 1/f, ruído > seno em entropia, JSON-safe
+- TX11–TX20 — wavelet: status OK em série longa, INSUFFICIENT em < 4,
+  energia ≥ 0, aproximação + detalhes nomeados, max_level ≤ 3, série
+  zero = energia 0, n_coeffs decrescente, `compute_spectrum` carrega
+  o bloco wavelet, série constante < seno em total_power, helper
+  `_band_powers` soma correta
+- TX21–TX30 — fingerprint + REST: 5 canais, frações somam 1, herda
+  INSUFFICIENT, coerência com payload completo, handlers 200 e 400,
+  JSON-safe end-to-end, módulo desconhecido → 200 + INSUFFICIENT
+
+Regressão completa: **1483 passed, 3 skipped, 0 falhas** em 11.5s
+(+30 vs Sprint G).
+
+### O que isso destrava
+
+- **Clustering de módulos por modo de oscilação** — dois módulos com
+  APS médio igual mas fingerprint diferente exigem governança diferente;
+  agora há sinal quantitativo para isso.
+- **Detecção de regime change** via wavelet — a energia do nível de
+  detalhe mais fino é a derivada do sinal; picos isolados ali marcam
+  o commit exato onde o regime mudou.
+- **Auditoria do Compound Alert** — quando RED dispara em um módulo
+  cuja entropia espectral está baixa (regime previsível), o alerta tem
+  alta confiança; em entropia alta, está apostando em ruído.
+
+---
+
 ## [3.2.10] — 2026-06-18 — Sprint G: Signal Correctness (8 fixes cirúrgicos)
 
 ### Corrigido
