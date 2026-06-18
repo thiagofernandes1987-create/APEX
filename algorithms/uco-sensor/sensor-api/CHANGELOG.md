@@ -5,6 +5,165 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.10] — 2026-06-18 — Sprint G: Signal Correctness (8 fixes cirúrgicos)
+
+### Corrigido
+
+Auditoria externa (Codex, 2026-06-18) encontrou bugs de **corretude do
+sinal** que invalidavam o downstream: o produto inteiro depende de o
+APS / Compound Alert / Meta-Score estarem certos. Esta release atende
+**os 8 achados acionáveis** sem refatoração estrutural — o refactor de
+arquitetura (des-globalizar `_store`, extrair `governance/signals.py`)
+fica para **Sprint H**.
+
+#### G.1 — Ausência ≠ perfeição  (CRITICAL — C-1)
+
+Antes: `aps_from_metric_vector(<obj sem extended vectors>)` retornava
+`aps=100.0 / rating="A"`. Repo vazio: meta-score=100/A. Um quality gate
+**aprovava ausência de evidência** como prova de qualidade — exatamente
+o failure mode que invalida o gate.
+
+Depois:
+- `aps_from_metric_vector` retorna `aps=None / rating="UNKNOWN"` quando
+  nenhum dos 6 vetores estendidos relevantes está anexado
+  (`_has_any_extended_vector`).
+- `rate_aps(None) == "UNKNOWN"`.
+- `RepoMetaScore` agora carrega `Optional[float]` em `score`, `raw_score`,
+  `weighted_aps`, `mean_aps`, `median_aps`. Repo vazio → todos `None`,
+  `rating="UNKNOWN"`.
+- `to_dict()` serializa `null` em vez de `0.0` para esses campos.
+
+CI quality gates **devem** tratar `UNKNOWN` como hard fail.
+
+#### G.2 — Inversão de sinal no tier RED  (HIGH — C-2)
+
+Antes: `compound_alert.py:77` disparava RED em `BIASED_DOWN`. Mas
+`api/server.py:2952` define a convenção canônica:
+- `bias = actual − forecast`
+- `BIASED_UP   = bias > 0 = actual MAIOR que forecast = predictor undershot` (perigoso)
+- `BIASED_DOWN = bias < 0 = actual MENOR que forecast = predictor overshot` (pessimista, seguro)
+
+Resultado: RED disparava no caso seguro (predictor pessimista demais),
+nunca no caso genuinamente perigoso (degradação real mais íngreme que
+o forecast).
+
+Depois: condição RED usa `BIASED_UP`. Docstring, razões textuais e
+três testes Sprint A (TC01, TC06, TC25) que "pinavam" o bug foram
+corrigidos para validar a semântica correta.
+
+#### G.3 — Hurst R/S em amostras insuficientes  (HIGH — C-3)
+
+Antes: `_aps_trend_from_store` declarava `DEGRADING_PERSISTENT` com
+`len >= 4 e hurst > 0.55`. Mas o próprio predictor declara
+`_MIN_SAMPLES_RELIABLE = 8`. Para n=4-7 o R/S degenera (sub-séries de
+tamanho ~n com `n_subs=1`) — a estimativa é matematicamente sem
+sentido mas governava um veredito de produção que alimenta RED.
+
+Depois: Hurst só é calculado quando `n >= _MIN_SAMPLES_RELIABLE`. Abaixo
+disso, `hurst=0.5` (neutro) e o veredito é rebaixado para `DEGRADING`
+(sem `_PERSISTENT`). RED só atinge quando há base estatística.
+
+#### G.4 — Re-insert preserva colunas late-bound  (MEDIUM — C-4)
+
+Antes: `INSERT OR REPLACE INTO snapshots` deletava+reinseria a linha,
+apagando `diagnostic_vector_json` que foi populada DEPOIS do insert
+(via `update_diagnostic`, que requer ≥5 snapshots). Um re-scan do
+mesmo `(module_id, commit_hash)` perdia o diagnóstico já calculado.
+
+Depois: `INSERT ... ON CONFLICT(module_id, commit_hash) DO UPDATE SET`
+com `COALESCE(excluded.<col>, <col>)` em 9 colunas late-bound:
+`extended_vectors_json`, `advanced_vector_json`, `diagnostic_vector_json`,
+`extended_vectors_v2_json`, `aps_score`, `predictor_*` (4). Requer
+SQLite ≥ 3.24 (2018-06).
+
+#### G.5 — Tiebreak determinístico em get_history  (MEDIUM — C-5)
+
+Antes: `ORDER BY timestamp DESC` sem tiebreak. Dois snapshots com mesmo
+`mv.timestamp` (timestamps gerados pelo cliente, inserções rápidas)
+tinham ordem **indefinida** — e Predictor/Baseline dependem dela.
+
+Depois: `ORDER BY timestamp DESC, id DESC` em `get_history`,
+`get_aps_history` e `get_predictor_history`. Saída determinística por
+ordem de inserção quando timestamps colidem.
+
+#### G.6 — fixed_rules causalmente restrito  (MEDIUM — C-7)
+
+Antes: `fixed_rules = before_set − after_set`. Qualquer regra que sumiu
+entre os dois scans era creditada como "corrigida", mesmo que o
+transform aplicado não a tivesse causado (efeito colateral, line-shift).
+Inflava `success_rate` / `top_fixed_rules` na telemetria Sprint C.
+
+Depois:
+```python
+causally_eligible = {rule for rule, tcls in SAST_TO_TRANSFORM.items()
+                     if tcls.__name__ in transforms_applied}
+fixed_rules = sorted((before_set - after_set) & causally_eligible)
+```
+Apenas regras cuja transform classe efetivamente rodou aparecem em
+`fixed_rules`. Telemetria volta a ser auditável.
+
+#### G.7 — persist_error distinto de opt-out  (MEDIUM — C-8)
+
+Antes: `except Exception: persisted_id = None`. Falha sistêmica
+(disco cheio, DB locked) produzia exatamente a mesma resposta que
+`persist=false`: `HTTP 200, persisted_id=null`, sem log. Telemetria de
+auto-fix poderia estar 100% perdida e nenhum sinal disso vazaria.
+
+Depois: em falha, resposta inclui `persist_error: "<TypeError>: <msg>"`.
+Opt-out (`persist=false`) **não** inclui esse campo — distinção clara.
+Falha também é logada via `logging.getLogger("uco-sensor").warning(...)`.
+
+#### G.8 — Constant-time admin compare  (LOW — segurança lateral)
+
+Antes: `if admin_k and plain_key == admin_k:` — comparação caracter-a-
+caracter que retorna após o primeiro byte divergente, vazando comprimento
+e similaridade da chave via timing.
+
+Depois: `hmac.compare_digest(plain_key.encode(), admin_k.encode())`.
+Primitiva canônica Python para comparação de credenciais.
+
+### Testes — 30 novos (TG01–TG30) que **pinam o comportamento correto**
+
+- TG01–TG05 (G.1): bare MV → UNKNOWN; `rate_aps(None)` = UNKNOWN; repo
+  vazio = UNKNOWN; um vetor é suficiente; serialização carrega null
+- TG06–TG09 (G.2): BIASED_UP + DEGRADING_PERSISTENT = RED;
+  BIASED_DOWN + DEGRADING_PERSISTENT = AMBER (não RED); só BIASED_UP =
+  AMBER; GREEN preservado
+- TG10–TG12 (G.3): 7 amostras nunca PERSISTENT; 10 amostras elegíveis;
+  `_MIN_SAMPLES_RELIABLE == 8` pinned
+- TG13–TG15 (G.4): re-insert preserva diagnostic; sobrescreve canais
+  primários; COALESCE preserva APS quando novo é NULL
+- TG16–TG18 (G.5): get_history, get_aps_history, get_predictor_history
+  ordem ASC-by-id em colisão de timestamp
+- TG19–TG22 (G.6): unmapped rule não creditada; transforms_applied=[]
+  ⇒ fixed_rules=[]; combined fix credita só mapeados; fixed_count == len(fixed_rules)
+- TG23–TG25 (G.7): falha persistência → persist_error campo;
+  opt-out → sem persist_error; sucesso → sem persist_error
+- TG26–TG27 (G.8): inspeção de source pin `compare_digest`; comparação
+  correta aceita/rejeita
+- TG28–TG30 (integração): UNKNOWN propaga via `handle_repo_health_score`;
+  série < 8 nunca atinge RED end-to-end; APS+diagnostic+re-insert co-survivem
+
+Regressão completa: **1453 passed, 3 skipped, 0 falhas** em 11.7s
+(+30 vs Sprint E). Seis testes preexistentes (TZ04, TC01, TC06, TC25,
+TS03, TV17) "pinavam" o comportamento errado pré-Sprint-G — foram
+atualizados para validar a semântica correta, cada um com um comentário
+explicando o fix.
+
+### Não-objetivos desta release (próximas sprints)
+
+- **D-1 / D-2 (Sprint H)**: des-globalizar `_store`, injetar como
+  parâmetro nos handlers; extrair `governance/signals.py` com
+  `aps_trend(store, ...)` e `predictor_accuracy(store, ...)` puros que
+  os handlers e o Compound Alert chamam — eliminando a duplicação que
+  pariu C-2.
+- **D-4 (Sprint I)**: tirar Predictor/APS do caminho de escrita —
+  lazy on read ou worker assíncrono pós-insert.
+- **Mercado (Sprint J)**: feed dinâmico de CVE + atualização de regras
+  sem release.
+
+---
+
 ## [3.2.9] — 2026-06-18 — Sprint E: Snapshot-Diff Vector + Volatility Ranking
 
 ### Adicionado

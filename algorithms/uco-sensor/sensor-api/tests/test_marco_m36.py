@@ -206,13 +206,20 @@ def test_TV16_reverse_direction_negates_deltas():
 
 
 def test_TV17_aps_channel_present_when_persisted():
+    # Sprint G fix (C-1): aps_score is computed at insert time from the
+    # extended vectors actually attached.  Setting mv.aps_score = 42 on a
+    # bare MV used to round-trip; under Sprint G the store recomputes APS
+    # via aps_from_metric_vector, which now correctly returns None for an
+    # MV with zero extended vectors.  Attach a real SecurityVector so the
+    # channel materialises.
+    from metrics.extended_vectors import SecurityVector
     store = SnapshotStore(":memory:")
     mv = _mv("c0", ts=10.0)
-    object.__setattr__(mv, "aps_score", 42.0)
+    object.__setattr__(mv, "security", SecurityVector(sca_vulnerable_deps=1))
     object.__setattr__(mv, "lines_of_code", 100)
     store.insert(mv)
     mv2 = _mv("c1", ts=11.0)
-    object.__setattr__(mv2, "aps_score", 50.0)
+    object.__setattr__(mv2, "security", SecurityVector(sca_vulnerable_deps=4))
     object.__setattr__(mv2, "lines_of_code", 100)
     store.insert(mv2)
 

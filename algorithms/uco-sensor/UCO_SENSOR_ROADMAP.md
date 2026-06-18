@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-18  
-> **Versão atual:** v3.2.9 (Sprint E — Snapshot-diff vector: `ChannelDelta` + `top_volatile_channels` + `/diff/{channels,volatile}`) · Próximo: Sprint F — Spectral analysis full sobre APS → v3.2.10  
+> **Versão atual:** v3.2.10 (Sprint G — Signal Correctness: 8 fixes cirúrgicos pós-auditoria Codex, corretude do sinal restaurada) · Próximo: Sprint H — Des-globalização do `_store` + `governance/signals.py` puro → v3.3.0  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -35,6 +35,7 @@
 | **Sprint C** | **Auto-fix Telemetry — `remediations` table + `store_remediation`/`get_remediation_*` + `/apex/remediation/{history,stats}`** | **v3.2.7** | **✅** |
 | **Sprint D** | **AutoFix↔SAST Mapping Expansion — +3 transforms (SAST022 IV, SAST024 JWT, SAST027 SSL) + tela inicial HTML em `GET /`** | **v3.2.8** | **✅** |
 | **Sprint E** | **Snapshot-Diff Vector — `ChannelDelta` + `compute_diff*` + `top_volatile_channels` (CV ranking) + `/diff/{channels,volatile}`** | **v3.2.9** | **✅** |
+| **Sprint G** | **Signal Correctness — 8 fixes cirúrgicos pós-Codex (C-1 ausência≠100, C-2 inversão BIASED_UP, C-3 Hurst gate n≥8, C-4 ON CONFLICT preserva diagnostic, C-5 tiebreak id DESC, C-7 fixed_rules causal, C-8 persist_error distinto, lateral hmac.compare_digest)** | **v3.2.10** | **✅** |
 
 **Métricas atuais (v3.2.1):**
 
@@ -59,6 +60,10 @@
 | ~~Sprint C~~ | ~~Auto-fix telemetry (`remediations` table)~~ | ~~1d~~ | **v3.2.7** ✅ | **Entregue 2026-06-18 — tabela remediations + persistência best-effort + /apex/remediation/{history,stats} + 1363 testes verdes** |
 | ~~Sprint D~~ | ~~AutoFix↔SAST mapeamento expandido~~ | ~~0.5d~~ | **v3.2.8** ✅ | **Entregue 2026-06-18 — +3 transforms (SAST022/024/027) + tela inicial HTML / + 1393 testes verdes — SAST014/037 ficam p/ sprint estrutural** |
 | ~~Sprint E~~ | ~~Snapshot-diff vector~~ | ~~1d~~ | **v3.2.9** ✅ | **Entregue 2026-06-18 — `metrics/snapshot_diff.py` + ChannelDelta + CV ranking + /diff/{channels,volatile} + 1423 testes verdes** |
+| ~~Sprint G~~ | ~~Signal Correctness (pós-auditoria Codex)~~ | ~~1d~~ | **v3.2.10** ✅ | **Entregue 2026-06-18 — 8 fixes cirúrgicos + 30 TG-tests + 1453 testes verdes — corretude do sinal restaurada** |
+| Sprint H | Des-globalizar `_store` + extrair `governance/signals.py` puro (DRY) + observabilidade (logging JSON + métricas em /health) | 2d | v3.3.0 | Endereça D-1/D-2 (acoplamento global + duplicação) e parte do movimento Codex #3 |
+| Sprint I | Tirar Predictor/APS do caminho de escrita (lazy on-read ou worker assíncrono) + N+1 SQL nativo em `_latest_aps_per_module`/`get_remediation_stats` | 2d | v3.3.1 | Endereça D-4 + movimento Codex #2 |
+| Sprint J | Feed dinâmico de CVE + atualização incremental de regras SAST/IaC sem release | 2d | v3.3.2 | Cobre o gap estratégico de "cve_database hardcoded vira dívida em 6 meses" |
 | Sprint F | Spectral analysis full de APS | 1d | v3.2.10 | PSD bandada + wavelet sobre APS |
 | LEAP 4 | Predictor/Trend persistidos | 1d | v3.2.4 | Meta-análise de confidence histórico — sinal exclusivo no mercado |
 | M9.1 | Research Signals (Shannon + TCI + CC Churn + Invariant Density) | 5d | v3.3.0 | Release final — score competitivo ≥89/100 vs SonarQube |

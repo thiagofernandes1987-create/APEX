@@ -84,8 +84,14 @@ class TestSchemaAndInsert(unittest.TestCase):
         finally:
             os.unlink(dbf)
 
-    def test_TZ04_legacy_mv_no_extended_vectors_writes_neutral_aps(self):
-        """An mv with NO extended vectors → APS=100 (no anti-patterns detected)."""
+    def test_TZ04_legacy_mv_no_extended_vectors_writes_null_aps(self):
+        """An mv with NO extended vectors → APS = None (UNKNOWN, NOT 100/A).
+
+        Sprint G fix (C-1): absence of evidence must NOT score as 'no
+        anti-patterns detected'.  The persisted aps_score column for a
+        legacy/unscanned snapshot is NULL — quality gates downstream see
+        UNKNOWN and treat it as a hard fail, not as 'A'.
+        """
         store, dbf = _fresh_store()
         try:
             plain = MetricVector("legacy", "old", 50.0,
@@ -93,7 +99,7 @@ class TestSchemaAndInsert(unittest.TestCase):
             store.insert(plain)
             hist = store.get_aps_history("legacy")
             self.assertEqual(len(hist), 1)
-            self.assertAlmostEqual(hist[0][2], 100.0)
+            self.assertIsNone(hist[0][2])
         finally:
             os.unlink(dbf)
 

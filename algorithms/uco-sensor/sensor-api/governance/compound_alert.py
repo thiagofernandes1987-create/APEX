@@ -14,11 +14,21 @@ persist both streams.
 
 Tier ladder
 -----------
-    RED      APS verdict = DEGRADING_PERSISTENT  AND  predictor BIASED_DOWN
-             (quality falling faster than the model is willing to admit)
+    RED      APS verdict = DEGRADING_PERSISTENT  AND  predictor BIASED_UP
+             (quality falling AND the predictor is systematically OPTIMISTIC —
+             actual H is *higher* / worse than forecast.  Sprint G fix: prior
+             versions wired this to BIASED_DOWN, the opposite sign — pessimistic
+             predictor — which is the safe direction, not the dangerous one.)
     AMBER    APS DEGRADING / DEGRADING_PERSISTENT  XOR  predictor BIASED_*
     YELLOW   any degrading APS slope AND predictor MAE high relative to H
     GREEN    nothing else
+
+Sign convention (canonical, see api/server.py:2952):
+    bias = actual − forecast
+    BIASED_UP    → bias > 0  → actual > forecast → predictor UNDERSHOT
+                                                    (genuinely dangerous)
+    BIASED_DOWN  → bias < 0  → actual < forecast → predictor OVERSHOT
+                                                    (pessimistic / safe)
 
 priority_score ∈ [0, 100] sorts the repo-wide ranking deterministically.
 """
@@ -69,14 +79,23 @@ _TIER_BASE = {"RED": 90.0, "AMBER": 60.0, "YELLOW": 30.0, "GREEN": 5.0}
 def _classify(aps_verdict: str, predictor_verdict: str,
               aps_slope: float, predictor_mae_rel: float
               ) -> Tuple[str, List[str]]:
-    """Return (tier, reasons[])."""
+    """Return (tier, reasons[]).
+
+    Sprint G fix (C-2): the RED condition uses BIASED_UP (predictor
+    consistently undershoots the actual H = systematically optimistic
+    about degradation).  Prior versions used BIASED_DOWN, which is the
+    OPPOSITE — a pessimistic predictor whose forecast is *above* what
+    actually happens.  That meant the genuinely dangerous regime never
+    reached RED and the safe regime falsely did.
+    """
     reasons: List[str] = []
 
-    # RED — both signals scream
+    # RED — both signals scream: quality degrading persistently AND
+    # the predictor is systematically optimistic about how fast.
     if (aps_verdict == "DEGRADING_PERSISTENT"
-            and predictor_verdict == "BIASED_DOWN"):
+            and predictor_verdict == "BIASED_UP"):
         reasons.append("APS degrading persistently (Hurst > 0.55, slope < 0)")
-        reasons.append("Predictor consistently undershoots — actual fall steeper than forecast")
+        reasons.append("Predictor consistently undershoots — actual H steeper than forecast (bias > 0)")
         return "RED", reasons
 
     # AMBER — one of the two strong indicators fires
@@ -133,13 +152,26 @@ def _aps_trend_from_store(store: Any, module_id: str, window: int) -> Dict[str, 
     den = sum((xs[i] - x_mean) ** 2 for i in range(n)) or 1.0
     slope = num / den
 
+    # Sprint G fix (C-3): Hurst R/S degenerates on short series — the predictor
+    # itself declares _MIN_SAMPLES_RELIABLE = 8 as the cutoff for a reliable
+    # estimate.  We compute Hurst here only when we have ≥ 8 samples; otherwise
+    # the persistence verdict downgrades to plain DEGRADING (no "_PERSISTENT").
     try:
-        from sensor_core.predictor import hurst_rs
-        hurst = hurst_rs(series)
+        from sensor_core.predictor import hurst_rs, _MIN_SAMPLES_RELIABLE
     except Exception:
+        hurst_rs, _MIN_SAMPLES_RELIABLE = None, 8
+
+    hurst_reliable = n >= _MIN_SAMPLES_RELIABLE
+    if hurst_reliable and hurst_rs is not None:
+        try:
+            hurst = hurst_rs(series)
+        except Exception:
+            hurst = 0.5
+            hurst_reliable = False
+    else:
         hurst = 0.5
 
-    if slope < -0.5 and hurst > 0.55:
+    if slope < -0.5 and hurst > 0.55 and hurst_reliable:
         verdict = "DEGRADING_PERSISTENT"
     elif slope < -0.5:
         verdict = "DEGRADING"

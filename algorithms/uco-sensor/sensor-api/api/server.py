@@ -35,6 +35,8 @@ import os
 import sys
 import json
 import time
+import hmac
+import logging
 import threading
 import traceback
 # M8.0 FMEA: ThreadingHTTPServer — long-lived SSE connections must not
@@ -197,7 +199,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.2.9"
+    version:      str   = "3.2.10"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -246,9 +248,15 @@ def _authenticate(plain_key: str, require_admin: bool = False) -> Tuple[bool, Op
         return True, {"key_prefix": "dev", "name": "dev_mode", "calls_total": 0}
 
     if require_admin:
-        # Admin endpoint: usa variável de ambiente UCO_ADMIN_KEY
+        # Admin endpoint: usa variável de ambiente UCO_ADMIN_KEY.
+        # Sprint G fix (lateral): constant-time comparison.  ``==`` returns
+        # after the first mismatching byte, leaking secret length and
+        # similarity to a network attacker via timing.  ``hmac.compare_digest``
+        # is the canonical Python primitive for credential equality.
         admin_k = _config.admin_key or os.environ.get("UCO_ADMIN_KEY", "")
-        if admin_k and plain_key == admin_k:
+        if admin_k and hmac.compare_digest(
+            (plain_key or "").encode("utf-8"), admin_k.encode("utf-8")
+        ):
             return True, {"key_prefix": "admin", "name": "admin"}
         return False, None
 
@@ -1024,6 +1032,7 @@ def handle_apex_auto_remediate(data: Dict) -> Tuple[int, Dict]:
         return 500, {"error": f"auto-remediate failed: {exc}"}
 
     persisted_id: Optional[int] = None
+    persist_error: Optional[str] = None
     if persist:
         try:
             persisted_id = _store.store_remediation(
@@ -1031,14 +1040,27 @@ def handle_apex_auto_remediate(data: Dict) -> Tuple[int, Dict]:
                 result=result,
                 commit_hash=commit_hash,
             )
-        except Exception:
+        except Exception as exc:
+            # Sprint G fix (C-8): keep the actual response intact but make
+            # the failure observable.  Distinguish "user opted out" from
+            # "telemetry crashed" — previously both produced persisted_id=null
+            # with no other signal, silently losing telemetry on disk-full /
+            # DB-locked conditions.
+            persist_error = f"{type(exc).__name__}: {exc}"
+            logging.getLogger("uco-sensor").warning(
+                "store_remediation failed for module=%s: %s",
+                module_id, persist_error,
+            )
             persisted_id = None
 
-    return 200, {
+    payload: Dict[str, Any] = {
         "module_id":     module_id,
         "persisted_id":  persisted_id,
         **result.to_dict(),
     }
+    if persist_error is not None:
+        payload["persist_error"] = persist_error
+    return 200, payload
 
 
 def handle_remediation_history(module_id: str, limit: int = 100) -> Tuple[int, Dict]:

@@ -70,9 +70,11 @@ def _clean(store, module="c.mod", n=8):
 class TestClassifier(unittest.TestCase):
 
     def test_TC01_RED_when_both_signals_critical(self):
+        # Sprint G fix (C-2): RED fires on BIASED_UP (predictor undershoots),
+        # not BIASED_DOWN.  The previous test pinned the inverted-sign bug.
         tier, reasons = _classify(
             aps_verdict="DEGRADING_PERSISTENT",
-            predictor_verdict="BIASED_DOWN",
+            predictor_verdict="BIASED_UP",
             aps_slope=-2.0, predictor_mae_rel=0.18,
         )
         self.assertEqual(tier, "RED")
@@ -98,8 +100,9 @@ class TestClassifier(unittest.TestCase):
         self.assertEqual(reasons, [])
 
     def test_TC06_RED_takes_priority_over_AMBER(self):
-        # Both signals firing → RED, not AMBER
-        tier, _ = _classify("DEGRADING_PERSISTENT", "BIASED_DOWN", -5.0, 0.5)
+        # Both signals firing → RED, not AMBER.
+        # Sprint G fix (C-2): RED uses BIASED_UP (undershoot), not BIASED_DOWN.
+        tier, _ = _classify("DEGRADING_PERSISTENT", "BIASED_UP", -5.0, 0.5)
         self.assertEqual(tier, "RED")
 
 
@@ -285,7 +288,8 @@ class TestPriorityAndStructure(unittest.TestCase):
         )
 
     def test_TC25_RED_reasons_describe_both_signals(self):
-        _, reasons = _classify("DEGRADING_PERSISTENT", "BIASED_DOWN",
+        # Sprint G fix (C-2): RED fires on BIASED_UP, not BIASED_DOWN.
+        _, reasons = _classify("DEGRADING_PERSISTENT", "BIASED_UP",
                                 -1.0, 0.12)
         self.assertTrue(any("APS" in r for r in reasons))
         self.assertTrue(any("Predictor" in r for r in reasons))

@@ -131,7 +131,10 @@ def rate_aps(score: float) -> str:
     C  60–79
     D  40–59
     E  <  40
+    UNKNOWN — when score is None (insufficient data; see aps_from_metric_vector)
     """
+    if score is None:
+        return "UNKNOWN"
     if score >= 90.0: return "A"
     if score >= 80.0: return "B"
     if score >= 60.0: return "C"
@@ -151,20 +154,43 @@ def _read(obj: Any, *path: str) -> Any:
     return cur
 
 
+def _has_any_extended_vector(mv: Any) -> bool:
+    """
+    True when the MetricVector carries at least one of the nine extended
+    vectors the APS needs (any vector having SOME data is enough to score).
+
+    Sprint G fix (C-1): without this guard, a bare MetricVector — or any
+    object missing every extended vector entirely — used to yield
+    aps=100.0 / rating='A'.  That makes "absence of evidence" equivalent
+    to "evidence of quality", silently passing modules whose scanners
+    failed or whose language is unsupported.  We now return UNKNOWN.
+    """
+    for attr in ("flow", "security", "reliability", "performance",
+                 "maintainability", "thread_safety"):
+        if getattr(mv, attr, None) is not None:
+            return True
+    return False
+
+
 def aps_from_metric_vector(mv: Any) -> Dict[str, Any]:
     """
     Extract the 17 signals required by ``compute_aps`` from a MetricVector-like
     object, then compute and grade the score.
 
-    The function is tolerant: any missing attribute is treated as a 0 raw
-    value, which is also the best-case contribution to the score.
+    Sprint G — absence handling
+    ---------------------------
+    When the MetricVector carries **no** extended vectors at all, we
+    return ``aps=None`` / ``rating="UNKNOWN"`` instead of the previous
+    misleading ``aps=100.0`` / ``rating="A"``.  Quality gates MUST treat
+    UNKNOWN as a hard fail (not as "best case").  ``components`` and
+    ``signals`` are still populated (all zeros) so dashboards do not
+    break.
 
     Returns
     -------
     dict
-        ``{"aps": float, "rating": str, "components": dict[str, float]}``
-        where ``components[name] = min(1.0, raw / threshold)`` — useful for
-        radar charts and per-dimension dashboards.
+        ``{"aps": float|None, "rating": str, "components": dict[str, float],
+        "signals": dict[str, Any]}``.
     """
     signals: Dict[str, Any] = {
         # Security
@@ -191,7 +217,6 @@ def aps_from_metric_vector(mv: Any) -> Dict[str, Any]:
         "global_shared_state_count":   _read(mv, "thread_safety",  "global_shared_state_count")  or 0,
     }
 
-    score = compute_aps(signals)
     components: Dict[str, float] = {}
     for name, (_, threshold) in APS_COMPONENTS.items():
         raw = signals.get(name, 0)
@@ -201,6 +226,15 @@ def aps_from_metric_vector(mv: Any) -> Dict[str, Any]:
             raw_f = 0.0
         components[name] = round(min(1.0, raw_f / max(threshold, 1e-9)), 4)
 
+    if not _has_any_extended_vector(mv):
+        return {
+            "aps":        None,
+            "rating":     "UNKNOWN",
+            "components": components,
+            "signals":    signals,
+        }
+
+    score = compute_aps(signals)
     return {
         "aps":        score,
         "rating":     rate_aps(score),

@@ -375,8 +375,14 @@ class SnapshotStore:
         forecast          = self._compute_forecast(mv)        # LEAP 4
         (p_hurst, p_slope_pct, p_forecast_next, p_confidence) = forecast
 
+        # Sprint G fix (C-4): INSERT OR REPLACE used to delete+reinsert the row,
+        # silently wiping any value populated AFTER the original insert (notably
+        # diagnostic_vector_json set by update_diagnostic).  We now do an upsert
+        # via ON CONFLICT DO UPDATE and COALESCE the late-populated columns —
+        # if the new payload is NULL, keep what we already had.  Requires
+        # SQLite ≥ 3.24 (2018-06).
         sql = """
-        INSERT OR REPLACE INTO snapshots (
+        INSERT INTO snapshots (
             module_id, commit_hash, timestamp,
             hamiltonian, cyclomatic_complexity, infinite_loop_risk,
             dsm_density, dsm_cyclic_ratio, dependency_instability,
@@ -393,6 +399,34 @@ class SnapshotStore:
             ?, ?, ?, ?, ?,
             ?, ?, ?, ?
         )
+        ON CONFLICT(module_id, commit_hash) DO UPDATE SET
+            timestamp              = excluded.timestamp,
+            hamiltonian            = excluded.hamiltonian,
+            cyclomatic_complexity  = excluded.cyclomatic_complexity,
+            infinite_loop_risk     = excluded.infinite_loop_risk,
+            dsm_density            = excluded.dsm_density,
+            dsm_cyclic_ratio       = excluded.dsm_cyclic_ratio,
+            dependency_instability = excluded.dependency_instability,
+            syntactic_dead_code    = excluded.syntactic_dead_code,
+            duplicate_block_count  = excluded.duplicate_block_count,
+            halstead_bugs          = excluded.halstead_bugs,
+            language               = excluded.language,
+            lines_of_code          = excluded.lines_of_code,
+            status                 = excluded.status,
+            n_functions            = excluded.n_functions,
+            n_classes              = excluded.n_classes,
+            max_methods_per_class  = excluded.max_methods_per_class,
+            cc_hotspot_ratio       = excluded.cc_hotspot_ratio,
+            max_function_cc        = excluded.max_function_cc,
+            extended_vectors_json    = COALESCE(excluded.extended_vectors_json,    extended_vectors_json),
+            advanced_vector_json     = COALESCE(excluded.advanced_vector_json,     advanced_vector_json),
+            diagnostic_vector_json   = COALESCE(excluded.diagnostic_vector_json,   diagnostic_vector_json),
+            extended_vectors_v2_json = COALESCE(excluded.extended_vectors_v2_json, extended_vectors_v2_json),
+            aps_score                = COALESCE(excluded.aps_score,                aps_score),
+            predictor_hurst          = COALESCE(excluded.predictor_hurst,          predictor_hurst),
+            predictor_slope_pct      = COALESCE(excluded.predictor_slope_pct,      predictor_slope_pct),
+            predictor_forecast_next  = COALESCE(excluded.predictor_forecast_next,  predictor_forecast_next),
+            predictor_confidence     = COALESCE(excluded.predictor_confidence,     predictor_confidence)
         """
         values = (
             mv.module_id,
@@ -636,7 +670,7 @@ class SnapshotStore:
             predictor_forecast_next, predictor_confidence
         FROM snapshots
         WHERE module_id = ?
-        ORDER BY timestamp DESC
+        ORDER BY timestamp DESC, id DESC
         LIMIT ?
         """
         with self._lock:
@@ -667,7 +701,7 @@ class SnapshotStore:
         SELECT commit_hash, timestamp, aps_score
         FROM snapshots
         WHERE module_id = ?
-        ORDER BY timestamp DESC
+        ORDER BY timestamp DESC, id DESC
         LIMIT ?
         """
         with self._lock:
@@ -704,7 +738,7 @@ class SnapshotStore:
                predictor_forecast_next, predictor_confidence
         FROM snapshots
         WHERE module_id = ?
-        ORDER BY timestamp DESC
+        ORDER BY timestamp DESC, id DESC
         LIMIT ?
         """
         with self._lock:

@@ -75,11 +75,15 @@ class TestBasics(unittest.TestCase):
                   "penalty_red", "n_red", "n_amber"):
             self.assertIn(k, d)
 
-    def test_TS03_empty_repo_yields_a_grade(self):
+    def test_TS03_empty_repo_yields_unknown_grade(self):
+        # Sprint G fix (C-1): empty repo / no APS samples ⇒ UNKNOWN, not A.
+        # Quality gates must reject UNKNOWN as a hard fail — passing it as
+        # 'A' approved everything downstream on absence of evidence.
         store, dbf = _fresh_store()
         try:
             meta = compute_repo_meta_score(store)
-            self.assertEqual(meta.rating, "A")
+            self.assertEqual(meta.rating, "UNKNOWN")
+            self.assertIsNone(meta.score)
             self.assertEqual(meta.n_modules_valid, 0)
         finally:
             os.unlink(dbf)

@@ -172,10 +172,22 @@ def auto_remediate(source: str, module_id: str = "") -> RemediationResult:
         {r.transform for r in result.transforms_applied}
     )
 
-    # Set difference: rules that disappeared.
+    # Sprint G fix (C-7): credit a rule as "fixed" ONLY when the transform
+    # mapped to it actually ran.  The prior set-difference (before − after)
+    # counted incidental disappearances — a rule that stopped matching due to
+    # a line shift, or a side-effect of an unrelated rewrite, used to inflate
+    # the success_rate / top_fixed_rules telemetry.  Now we require:
+    #   (a) the rule was present before
+    #   (b) the rule is absent after
+    #   (c) its mapped transform class actually appears in transforms_applied
+    applied_transform_names = set(transforms_applied)
+    causally_eligible: Set[str] = {
+        rule for rule, t_cls in SAST_TO_TRANSFORM.items()
+        if t_cls.__name__ in applied_transform_names
+    }
     before_set = set(findings_before)
     after_set  = set(findings_after)
-    fixed_rules = sorted(before_set - after_set)
+    fixed_rules = sorted((before_set - after_set) & causally_eligible)
 
     return RemediationResult(
         patched_source=patched_source,

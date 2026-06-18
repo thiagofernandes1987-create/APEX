@@ -41,28 +41,30 @@ from typing import Any, Dict, List, Optional
 
 @dataclass
 class RepoMetaScore:
-    score:           float                # final number ∈ [0, 100]
-    rating:          str                  # A-E
+    score:           Optional[float]      # final number ∈ [0, 100] or None when UNKNOWN
+    rating:          str                  # A-E or "UNKNOWN" (insufficient data)
     n_modules:       int                  # total in store
     n_modules_valid: int                  # with non-null APS
-    raw_score:       float                # weighted mean before RED penalty
-    weighted_aps:    float                # same as raw_score (LOC-weighted)
-    mean_aps:        float                # unweighted arithmetic mean
-    median_aps:      float
+    raw_score:       Optional[float]      # weighted mean before RED penalty
+    weighted_aps:    Optional[float]      # same as raw_score (LOC-weighted)
+    mean_aps:        Optional[float]      # unweighted arithmetic mean
+    median_aps:      Optional[float]
     penalty_red:     int                  # weighted RED count subtracted
     n_red:           int                  # count of RED modules (Sprint A)
     n_amber:         int
 
     def to_dict(self) -> Dict[str, Any]:
+        def _r(v: Optional[float]) -> Optional[float]:
+            return None if v is None else round(v, 2)
         return {
-            "score":           round(self.score, 2),
+            "score":           _r(self.score),
             "rating":          self.rating,
             "n_modules":       self.n_modules,
             "n_modules_valid": self.n_modules_valid,
-            "raw_score":       round(self.raw_score, 2),
-            "weighted_aps":    round(self.weighted_aps, 2),
-            "mean_aps":        round(self.mean_aps, 2),
-            "median_aps":      round(self.median_aps, 2),
+            "raw_score":       _r(self.raw_score),
+            "weighted_aps":    _r(self.weighted_aps),
+            "mean_aps":        _r(self.mean_aps),
+            "median_aps":      _r(self.median_aps),
             "penalty_red":     self.penalty_red,
             "n_red":           self.n_red,
             "n_amber":         self.n_amber,
@@ -89,7 +91,14 @@ class APSOutlier:
 
 # ─── Rating helper ────────────────────────────────────────────────────────────
 
-def _rate(score: float) -> str:
+def _rate(score: Optional[float]) -> str:
+    """A-E ladder; UNKNOWN when score is None (insufficient data).
+
+    Sprint G fix (C-1): UNKNOWN is a hard fail for downstream quality
+    gates — it must NOT be treated as 'A' or as 'pass'.
+    """
+    if score is None:
+        return "UNKNOWN"
     if score >= 90.0: return "A"
     if score >= 80.0: return "B"
     if score >= 60.0: return "C"
@@ -159,12 +168,16 @@ def compute_repo_meta_score(store: Any, window: int = 100) -> RepoMetaScore:
     n_modules = len(list(store.list_modules()))
 
     if not snapshots:
-        # Empty repo OR no APS samples yet anywhere
+        # Empty repo OR no APS samples yet anywhere.
+        # Sprint G fix (C-1): UNKNOWN, NOT 'A'. Quality gates must NOT pass on
+        # absence of evidence — a freshly cloned repo or one whose scanner
+        # crashed used to score 100/A under the old code, silently approving
+        # everything downstream.
         return RepoMetaScore(
-            score=100.0, rating="A",
+            score=None, rating="UNKNOWN",
             n_modules=n_modules, n_modules_valid=0,
-            raw_score=100.0, weighted_aps=100.0,
-            mean_aps=100.0, median_aps=100.0,
+            raw_score=None, weighted_aps=None,
+            mean_aps=None, median_aps=None,
             penalty_red=0, n_red=0, n_amber=0,
         )
 
