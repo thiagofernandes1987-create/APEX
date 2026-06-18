@@ -197,7 +197,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.2.5"
+    version:      str   = "3.2.6"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -324,6 +324,9 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/predictor/accuracy",          "auth": True,   "desc": "Forecast-accuracy summary: MAE, RMSE, bias, n_evaluated (?module=&window=) [LEAP 4]"},
             {"method": "GET",    "path": "/alerts/compound",             "auth": True,   "desc": "Per-module compound risk (APS×Predictor cross-correlation) — RED/AMBER/YELLOW/GREEN (?module=&window=) [Sprint A]"},
             {"method": "GET",    "path": "/alerts/repo",                 "auth": True,   "desc": "Repo-wide compound-alert ranking + tier histogram (?window=&top_k=&include_green=) [Sprint A]"},
+            {"method": "GET",    "path": "/repo/health-score",           "auth": True,   "desc": "Single repo health number (LOC-weighted APS − RED penalty) + breakdown (?window=) [Sprint B]"},
+            {"method": "GET",    "path": "/repo/aps-outliers",           "auth": True,   "desc": "Modules whose APS is k σ below the repo mean (?k=2.0&window=) [Sprint B]"},
+            {"method": "GET",    "path": "/repo/health-history",         "auth": True,   "desc": "Time-series of the weighted-APS repo score across all commits (?window=&step=) [Sprint B]"},
             {"method": "POST",   "path": "/monitor/start",           "auth": True,   "desc": "Start real-time FileWatcher on a directory tree (M8.0)"},
             {"method": "POST",   "path": "/monitor/stop",            "auth": True,   "desc": "Stop the running FileWatcher (M8.0)"},
             {"method": "GET",    "path": "/monitor/status",          "auth": True,   "desc": "Watcher status: files watched, polls, alerts (M8.0)"},
@@ -2832,6 +2835,69 @@ def handle_repo_alerts(
     }
 
 
+# ── Sprint B — Repo-level meta-score + APS outliers ──────────────────────────
+
+def handle_repo_health_score(window: int = 100) -> Tuple[int, Dict]:
+    """
+    GET /repo/health-score?[window=]  (Sprint B)
+
+    Single number ∈ [0, 100] capturing the repo's current health:
+    LOC-weighted mean of the latest persisted APS per module, minus
+    5 points per RED compound-alert module (Sprint A integration).
+    """
+    try:
+        from governance.repo_meta_score import compute_repo_meta_score
+    except ImportError as exc:
+        return 503, {"error": f"repo meta-score not available: {exc}"}
+    meta = compute_repo_meta_score(_store, window=window)
+    return 200, meta.to_dict()
+
+
+def handle_repo_aps_outliers(
+    window: int = 100, k: float = 2.0,
+) -> Tuple[int, Dict]:
+    """
+    GET /repo/aps-outliers?[k=2.0&window=]  (Sprint B)
+
+    Modules whose latest APS is ≥ k σ BELOW the repo mean.  Only the
+    bad-news direction is flagged (low APS = many anti-patterns).
+    """
+    try:
+        from governance.repo_meta_score import compute_aps_outliers
+    except ImportError as exc:
+        return 503, {"error": f"repo meta-score not available: {exc}"}
+    outliers = compute_aps_outliers(_store, window=window, k=k)
+    return 200, {
+        "k":          k,
+        "window":     window,
+        "n_modules":  len(list(_store.list_modules())),
+        "n_outliers": len(outliers),
+        "outliers":   [o.to_dict() for o in outliers],
+    }
+
+
+def handle_repo_health_history(
+    window: int = 50, step: int = 1,
+) -> Tuple[int, Dict]:
+    """
+    GET /repo/health-history?[window=&step=]  (Sprint B)
+
+    Time-series of the LOC-weighted APS view of the repo across all unique
+    commit timestamps in the store, ascending.  Downsample with ``step``.
+    """
+    try:
+        from governance.repo_meta_score import repo_meta_score_history
+    except ImportError as exc:
+        return 503, {"error": f"repo meta-score not available: {exc}"}
+    series = repo_meta_score_history(_store, window=window, step=step)
+    return 200, {
+        "n_points": len(series),
+        "window":   window,
+        "step":     step,
+        "samples":  series,
+    }
+
+
 # ─── M8.0 Real-Time Monitoring endpoints ─────────────────────────────────────
 
 def handle_monitor_start(data: Dict) -> Tuple[int, Dict]:
@@ -3346,6 +3412,17 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 top_k         = int(top_k_raw) if top_k_raw else None
                 include_green = params.get("include_green", ["0"])[0].lower() in ("1", "true", "yes")
                 code, data    = handle_repo_alerts(window=window_n, top_k=top_k, include_green=include_green)
+            elif path == "/repo/health-score":
+                window_n   = int(params.get("window", ["100"])[0])
+                code, data = handle_repo_health_score(window=window_n)
+            elif path == "/repo/aps-outliers":
+                window_n   = int(params.get("window", ["100"])[0])
+                k_val      = float(params.get("k", ["2.0"])[0])
+                code, data = handle_repo_aps_outliers(window=window_n, k=k_val)
+            elif path == "/repo/health-history":
+                window_n   = int(params.get("window", ["50"])[0])
+                step_val   = max(1, int(params.get("step", ["1"])[0]))
+                code, data = handle_repo_health_history(window=window_n, step=step_val)
             elif path == "/monitor/status":
                 code, data = handle_monitor_status()
             elif path == "/lsp/diagnostics":

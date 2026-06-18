@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-16  
-> **Versão atual:** v3.2.5 (Sprint A — Compound Alert: APS×Predictor cross-correlation com tiers RED/AMBER/YELLOW/GREEN + ranking repo-wide) · Próximo: Sprint B — Repo meta-score + APS Z-score → v3.2.6  
+> **Versão atual:** v3.2.6 (Sprint B — Repo Meta-Score: 1 número único por commit + outliers Z-score + history time-series) · Próximo: Sprint C — Auto-fix telemetry → v3.2.7  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -31,6 +31,7 @@
 | **LEAP 3** | **AutoFix↔SAST closed loop — `auto_remediate(source)` + `POST /apex/auto-remediate`** | **v3.2.3** | **✅** |
 | **LEAP 4** | **Predictor/Trend persistidos — `predictor_*` columns + `/predictor/{history,accuracy}` with `forecast_error` backfill** | **v3.2.4** | **✅** |
 | **Sprint A** | **Compound Alert (APS × Predictor) — `compound_alert.py` + tiers RED/AMBER/YELLOW/GREEN + `/alerts/{compound,repo}` + ranking** | **v3.2.5** | **✅** |
+| **Sprint B** | **Repo Meta-Score — LOC-weighted APS + RED penalty + Z-score outliers + history time-series** | **v3.2.6** | **✅** |
 
 **Métricas atuais (v3.2.1):**
 
@@ -51,7 +52,7 @@
 | ~~LEAP 3~~ | ~~AutoFix↔SAST closed loop (M8.2)~~ | ~~2d~~ | **v3.2.3** ✅ | **Entregue 2026-06-17 — SAST_TO_TRANSFORM + auto_remediate + POST /apex/auto-remediate** |
 | ~~LEAP 4~~ | ~~Predictor/Trend persistidos + forecast accuracy~~ | ~~1d~~ | **v3.2.4** ✅ | **Entregue 2026-06-17 — 4 colunas predictor_* + forecast_error backfill + /predictor/accuracy** |
 | ~~Sprint A~~ | ~~Compound Alert (APS × Predictor cross-correlation)~~ | ~~1d~~ | **v3.2.5** ✅ | **Entregue 2026-06-17 — RED/AMBER/YELLOW/GREEN tiers + priority_score + /alerts/{compound,repo}** |
-| Sprint B | Repo-level meta-score + outliers (APS Z-score) | 1d | v3.2.6 | Sinal único repo-wide para gate de PR |
+| ~~Sprint B~~ | ~~Repo-level meta-score + outliers (APS Z-score)~~ | ~~1d~~ | **v3.2.6** ✅ | **Entregue 2026-06-17 — `RepoMetaScore` + outliers + history + /repo/{health-score,aps-outliers,health-history}** |
 | Sprint C | Auto-fix telemetry (`remediations` table) | 1d | v3.2.7 | Fecha loop LEAP 3 — efetividade ao longo do tempo |
 | Sprint D | AutoFix↔SAST mapeamento expandido | 0.5d | v3.2.8 | +5 regras mapeadas (SAST014, 022, 024, 027, 037) |
 | Sprint E | Snapshot-diff vector | 1d | v3.2.9 | "Qual canal mudou em cada commit" |

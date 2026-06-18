@@ -5,6 +5,106 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.6] — 2026-06-17 — Sprint B: Repo Meta-Score + APS outliers
+
+### Adicionado
+
+Agrega todos os módulos em **um único número de saúde do repositório por commit**,
+com detecção de outliers via Z-score sobre a distribuição de APS. Habilita um
+**Quality Gate de PR operável** (delta do meta-score) e dashboards de repo.
+
+#### Novo módulo — `governance/repo_meta_score.py`
+
+`RepoMetaScore` dataclass com 11 campos:
+`score, rating, n_modules, n_modules_valid, raw_score, weighted_aps,
+mean_aps, median_aps, penalty_red, n_red, n_amber`
+
+`APSOutlier` dataclass: `module_id, aps, z_score, threshold, deviation`
+
+**Fórmula do meta-score:**
+```
+raw_score   = LOC-weighted mean of latest APS per module
+penalty_red = 5 × count(Sprint-A RED modules)
+score       = max(0, min(100, raw_score − penalty_red))
+rating      = A ≥ 90, B 80-89, C 60-79, D 40-59, E < 40
+```
+
+**Decisões arquiteturais:**
+- LOC weighting: módulos grandes têm peso proporcional ao tamanho (módulos
+  com LOC=0 caem em weight=1 para não sumirem). Reflete a realidade: um
+  bug crítico em código de 10K linhas pesa mais que em utilitário de 50.
+- RED penalty: integra Sprint A diretamente no número. Qualquer módulo RED
+  derruba o repo em 5 pontos, mesmo que sua APS isolada não mexa a média.
+  AMBER não pune (é monitorado, não bloqueado) — política conservadora.
+- Outliers: SÓ direção bad-news (z ≤ −k). Módulos acima da média não são
+  flagged. Z-score requer ≥3 módulos e σ > 0.
+- History: replay LOC-weighted APS sobre união dos timestamps; downsample
+  com `step`. RED penalty **não** aplicado historicamente (replay de
+  Sprint-A tiers seria O(N² × W) — custo desproporcional).
+
+**API pública:**
+- `compute_repo_meta_score(store, window=100) -> RepoMetaScore`
+- `compute_aps_outliers(store, window=100, k=2.0) -> List[APSOutlier]`
+  (sorted worst-first by z_score; empty on k ≤ 0, < 3 modules, ou σ = 0)
+- `repo_meta_score_history(store, window=50, step=1) -> List[Dict]`
+
+#### Endpoints REST — `api/server.py`
+
+| Endpoint | Descrição |
+|---|---|
+| `GET /repo/health-score?window=` | Número único + breakdown completo |
+| `GET /repo/aps-outliers?k=2.0&window=` | Módulos ≥ k σ abaixo da média APS do repo |
+| `GET /repo/health-history?window=&step=` | Time-series do meta-score (LOC-weighted) |
+
+`SensorConfig.version` → `"3.2.6"`.
+
+#### Smoke test ao vivo (6 módulos, repo realista)
+
+```
+/repo/health-score:
+  score             : 65.92      ← LOC-weighted mean − 0 penalty
+  rating            : C
+  weighted_aps      : 65.92      ← billing.api (2500 LOC) puxa down
+  mean_aps          : 72.18      ← unweighted
+  median_aps        : 58.84      ← reveals skewed distribution
+  n_red             : 0
+  n_amber           : 6          ← todos os 6 são candidatos a atenção
+```
+
+Diagnóstico que se revelou imediatamente: `mean > weighted > median`
+significa que **módulos GRANDES pioram o repo mais que os pequenos** — uma
+inferência só possível pelo Sprint B.
+
+#### Testes — `tests/test_marco_m33.py` (30 testes TS01-TS30)
+
+- TS01-TS06: rating ladder + dataclass invariantes + empty repo
+- TS07-TS14: meta-score logic (queda com taint, LOC pulling, latest APS,
+  n_modules, bounds [0,100], RED penalty math, NULL skip, median LOC-agnóstico)
+- TS15-TS20: outliers (< 3 → [], σ = 0 → [], módulo ruim flagged,
+  k ≤ 0 → [], sorted worst-first, only below-mean)
+- TS21-TS25: history (empty → [], ASC order, shape, step downsample,
+  multi-module aggregation)
+- TS26-TS30: REST endpoints (shape de todos os 3, k customizado, step)
+
+**Resultado: 1130/1130 marco-tests PASS — suíte 100% verde.**
+
+#### O que Sprint B destrava
+
+| Uso | Como |
+|---|---|
+| **Quality Gate de PR** | `repo/health-score` antes/depois do PR; reject se delta < −2 |
+| **Dashboard executivo** | Score 0-100 ÚNICO, rating A-E, atualizado por commit |
+| **Outlier triage** | `/repo/aps-outliers?k=2.0` → módulos a focar primeiro |
+| **Trend visualisation** | `/repo/health-history` plotável diretamente |
+| **Detection de "bloated weak module"** | mean > weighted > median triplet revela skew |
+
+#### Próximo marco
+
+Sprint C — Auto-fix telemetry (`remediations` table) → v3.2.7
+(fecha o loop LEAP 3: efetividade do auto-remediate ao longo do tempo)
+
+---
+
 ## [3.2.5] — 2026-06-17 — Sprint A: Compound Alert (APS × Predictor)
 
 ### Adicionado
