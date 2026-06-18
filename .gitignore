@@ -3,3 +3,6 @@ algorithms/uco/__pycache__/
 
 # Bundles de transferência (não versionar)
 *.bundle
+
+# Bundles de transferência (não versionar)
+*.bundle
