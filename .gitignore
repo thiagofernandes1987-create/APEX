@@ -1,2 +1,5 @@
 algorithms/uco/__pycache__/
 **/__pycache__/
+
+# Bundles de transferência (não versionar)
+*.bundle
