@@ -5,6 +5,97 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.9] — 2026-06-18 — Sprint E: Snapshot-Diff Vector + Volatility Ranking
+
+### Adicionado
+
+Responde a pergunta que toda ferramenta de code-review quietamente
+quer responder: **"o que de fato mudou entre o commit A e o commit B
+para este módulo?"** — sem precisar abrir os dois snapshots
+manualmente, sem heurística, com cobertura de todos os canais
+persistidos (9 primários + APS + LOC).
+
+#### Novo módulo — `metrics/snapshot_diff.py`
+
+**Dataclasses:**
+
+- `ChannelDelta` — `name, short, value_from, value_to, delta_abs,
+  delta_pct, direction` (`"UP"`/`"DOWN"`/`"FLAT"`)
+- `SnapshotDiff` — `module_id, commit_from, commit_to, ts_from, ts_to,
+  channels (List[ChannelDelta])` + `n_changed`, `n_total`, `to_dict()`
+
+**API pública:**
+
+- `compute_diff(mv_from, mv_to)` — função pura sobre dois MetricVectors
+- `compute_diff_by_commits(store, module, commit_from, commit_to,
+  history_window=1000)` — resolve os dois commits e diff
+- `top_volatile_channels(store, module, window=50, top_k=5)` — ranking
+  de canais por **coeficiente de variação** (σ / |μ|)
+
+#### Decisões técnicas
+
+- **delta_pct = NaN quando ambos valores são 0** (canal "FLAT"
+  legítimo, sem dividir por zero); `+inf` quando `from=0` e `to>0`
+  (aparecimento genuíno do sinal).
+- **Coeficiente de variação** como métrica de volatilidade: unit-free,
+  comparável entre canais com escalas radicalmente diferentes
+  (`hamiltonian` 0-100 vs `duplicate_block_count` 0-10). Fallback para
+  σ puro quando `|μ| < 1e-9` para não perder canais sub-unitários.
+- **Canais com σ ≈ 0** (constantes na janela) **excluídos** do ranking
+  — não interessa "qual canal nunca mexe".
+- **Tiebreak alfabético** garante saída determinística em testes
+  (TV29).
+- **Predictor channels excluídos** da diff — eles descrevem o
+  predictor, não o código.
+- **Missing channels skipados em silêncio** em `compute_diff()` — não
+  reportados como FLAT (seria mentira sobre cobertura).
+- **JSON-safe serialization** — `to_dict()` substitui NaN por `null`
+  e ±inf por `"inf"`/`"-inf"`. Cliente HTTP nunca recebe payload
+  inválido.
+
+#### Novos endpoints REST
+
+| Método | Rota | Descrição |
+|---|---|---|
+| **GET** | `/diff/channels` | Per-channel delta entre 2 snapshots (`?module=&from=&to=`) |
+| **GET** | `/diff/volatile`  | Top canais por CV (`?module=&window=&top_k=`) |
+
+Ambos retornam `400` quando faltam parâmetros obrigatórios e `404`
+quando um dos commits não existe na história.
+
+#### Landing page atualizada
+
+`GET /` agora destaca v3.2.9 (Sprint E) na lista de recent capabilities,
+no topo. Visual e UX inalterados.
+
+### Testes — 30 novos (TV01–TV30)
+
+- TV01–TV10 — `compute_diff` puro: estrutura, 9 canais primários
+  presentes, direction UP/DOWN/FLAT, delta_pct = inf/NaN nos
+  edge-cases, n_changed, missing-channels skipados, serialização
+- TV11–TV20 — `compute_diff_by_commits`: hit, miss (from/to/módulo),
+  commits idênticos = todos FLAT, inversão nega deltas, APS+LOC
+  presentes quando persistidos, window limita visibilidade
+- TV21–TV30 — `top_volatile_channels`: histórico vazio, < 3 amostras,
+  CV descendente, top_k bound, canal constante excluído, n_samples
+  carrega, tiebreak alfabético, integração via `handle_diff_volatile`
+
+Regressão completa: **1423 passed, 3 skipped, 0 falhas** em 11.9s.
+
+### O que isso destrava
+
+- **PR delta view**: gere o diff de canais entre o último commit e o
+  baseline (a mãe do merge) — sinal compacto e auditável para
+  comentários automáticos de PR.
+- **Stability fingerprint**: o ranking de volatilidade por módulo é
+  uma assinatura — módulos com mesma assinatura tendem a ter os
+  mesmos modos de falha.
+- **Quality-gate seletivo**: bloqueie merges quando o módulo subir
+  > N% em CC OU em ILR num único PR, sem precisar enumerar todos os
+  canais.
+
+---
+
 ## [3.2.8] — 2026-06-18 — Sprint D: AutoFix↔SAST Mapping Expansion + Landing Page
 
 ### Adicionado
