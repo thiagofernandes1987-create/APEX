@@ -112,7 +112,27 @@ def _latest_aps_per_module(store: Any, window: int) -> List[Dict[str, Any]]:
     """
     Return ``[{module_id, aps, loc}]`` taking the most-recent persisted
     APS per module.  Modules with no APS samples are omitted.
+
+    Sprint I — fast path: when the store exposes ``latest_aps_per_module``
+    (single SQL query with MAX(timestamp) self-join, no N+1) we use it
+    directly.  Falls back to the Python loop for store stubs in unit
+    tests that don't implement the optimised method.  The ``window``
+    parameter is **ignored** in the fast path — the SQL pulls THE
+    latest snapshot, which by definition is more recent than anything
+    within any window.
     """
+    fast = getattr(store, "latest_aps_per_module", None)
+    if callable(fast):
+        try:
+            return [
+                {"module_id": row["module_id"],
+                 "aps":       float(row["aps"]),
+                 "loc":       int(row.get("loc", 0))}
+                for row in fast()
+            ]
+        except Exception:
+            pass   # fall through to the legacy Python loop
+
     out: List[Dict[str, Any]] = []
     for module_id in store.list_modules():
         hist = store.get_aps_history(module_id, window=window)

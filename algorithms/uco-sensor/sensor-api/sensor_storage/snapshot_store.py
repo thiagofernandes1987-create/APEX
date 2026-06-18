@@ -356,7 +356,7 @@ class SnapshotStore:
 
     # ─── Insert ──────────────────────────────────────────────────────────────
 
-    def insert(self, mv: MetricVector) -> None:
+    def insert(self, mv: MetricVector, *, defer_derived: bool = False) -> None:
         """
         Upsert MetricVector.
 
@@ -365,15 +365,31 @@ class SnapshotStore:
 
         M7.0: serializes AdvancedVector + Halstead/StructuralVector JSON blobs
         into the three new extended-vector columns when present on the mv.
+
+        Sprint I — ``defer_derived`` (default False) controls whether the
+        cost of computing APS + Predictor forecast happens inline (the
+        previous behavior, "compute on write") or is **skipped** so that
+        the hot insert path stays cheap.  When deferred, the derived
+        columns are written as NULL and ``recompute_derived(module_id,
+        commit_hash)`` (or batch helper ``recompute_derived_pending()``)
+        must be called later to populate them.  Designed for batch-scan
+        use cases (ingesting a full repo) where ``compute APS + forecast
+        on every row`` adds ~O(window)·log(window) per insert.
         """
         # ── M7.0 + LEAP 1 + LEAP 2 + LEAP 4: serialize extras + APS + forecast
         extended_json     = self._serialize_extended(mv)
         advanced_json     = self._serialize_advanced(mv)
         diagnostic_json   = self._serialize_diagnostic(mv)
         extended_v2_json  = self._serialize_extended_v2(mv)   # LEAP 1
-        aps_score         = self._compute_aps_score(mv)       # LEAP 2
-        forecast          = self._compute_forecast(mv)        # LEAP 4
-        (p_hurst, p_slope_pct, p_forecast_next, p_confidence) = forecast
+
+        if defer_derived:
+            # Sprint I — hot path: skip the heavy work.
+            aps_score = None
+            p_hurst = p_slope_pct = p_forecast_next = p_confidence = None
+        else:
+            aps_score = self._compute_aps_score(mv)           # LEAP 2
+            forecast  = self._compute_forecast(mv)            # LEAP 4
+            (p_hurst, p_slope_pct, p_forecast_next, p_confidence) = forecast
 
         # Sprint G fix (C-4): INSERT OR REPLACE used to delete+reinsert the row,
         # silently wiping any value populated AFTER the original insert (notably
@@ -479,6 +495,120 @@ class SnapshotStore:
         """
         with self._lock:
             self._get_conn().execute(sql, (diagnostic_json, module_id, commit_hash))
+
+    # ── Sprint I — deferred APS/forecast computation ─────────────────────────
+
+    def recompute_derived(self, module_id: str, commit_hash: str) -> bool:
+        """
+        Recompute APS + Predictor forecast for a single (module, commit) row
+        and persist them.  Returns True when the row exists and was updated;
+        False when it doesn't.
+
+        Used after a bulk ingest with ``insert(mv, defer_derived=True)`` to
+        backfill the derived columns at a quieter moment.
+        """
+        with self._lock:
+            row = self._get_conn().execute(
+                "SELECT 1 FROM snapshots WHERE module_id=? AND commit_hash=?",
+                (module_id, commit_hash),
+            ).fetchone()
+        if not row:
+            return False
+
+        history = self.get_history(module_id, window=100)
+        target = next((mv for mv in history if mv.commit_hash == commit_hash), None)
+        if target is None:
+            return False
+
+        aps_score = self._compute_aps_score(target)
+        forecast  = self._compute_forecast(target)
+        (p_hurst, p_slope_pct, p_forecast_next, p_confidence) = forecast
+
+        sql = """
+        UPDATE snapshots
+        SET aps_score                = ?,
+            predictor_hurst          = ?,
+            predictor_slope_pct      = ?,
+            predictor_forecast_next  = ?,
+            predictor_confidence     = ?
+        WHERE module_id = ? AND commit_hash = ?
+        """
+        with self._lock:
+            self._get_conn().execute(sql, (
+                aps_score, p_hurst, p_slope_pct,
+                p_forecast_next, p_confidence,
+                module_id, commit_hash,
+            ))
+        return True
+
+    def recompute_derived_pending(self, module_id: Optional[str] = None,
+                                  batch_limit: int = 1000) -> int:
+        """
+        Bulk-backfill APS + forecast for rows where ``aps_score IS NULL``.
+        Scope optionally narrowed to a single module.  Returns the number
+        of rows actually updated.
+
+        Safe to interrupt: each row is its own transaction.  Idempotent:
+        rows already populated are skipped by the WHERE clause.
+        """
+        params: tuple = ()
+        where = " WHERE aps_score IS NULL"
+        if module_id is not None:
+            where += " AND module_id = ?"
+            params = (module_id,)
+        sql = (
+            f"SELECT module_id, commit_hash FROM snapshots{where} "
+            f"ORDER BY timestamp ASC, id ASC LIMIT {int(batch_limit)}"
+        )
+        with self._lock:
+            pending = self._get_conn().execute(sql, params).fetchall()
+
+        n_updated = 0
+        for mid, sha in pending:
+            if self.recompute_derived(mid, sha):
+                n_updated += 1
+        return n_updated
+
+    # ── Sprint I — single-query "latest APS per module" ──────────────────────
+
+    def latest_aps_per_module(self) -> List[Dict[str, Any]]:
+        """
+        Return ``[{module_id, aps, loc, timestamp}, ...]`` for every module
+        whose latest snapshot has a non-NULL APS — computed in a SINGLE SQL
+        query with a self-join on (module_id, MAX(timestamp)).
+
+        Replaces the N+1 Python loop in ``governance/repo_meta_score.py``:
+        previously one ``list_modules()`` plus one ``get_aps_history(...)``
+        plus one ``get_history(..., window=1)`` per module.  On a repo with
+        500 modules and 100 snapshots each that was 1000+ queries.
+        Now it's 1.
+        """
+        sql = """
+        SELECT s.module_id,
+               s.aps_score,
+               s.lines_of_code,
+               s.timestamp
+        FROM snapshots s
+        INNER JOIN (
+            SELECT module_id, MAX(timestamp) AS max_ts
+            FROM snapshots
+            WHERE aps_score IS NOT NULL
+            GROUP BY module_id
+        ) latest
+          ON s.module_id = latest.module_id
+         AND s.timestamp = latest.max_ts
+        WHERE s.aps_score IS NOT NULL
+        ORDER BY s.module_id ASC
+        """
+        with self._lock:
+            rows = self._get_conn().execute(sql).fetchall()
+        return [
+            {"module_id": r[0],
+             "aps":       float(r[1]),
+             "loc":       int(r[2] or 0),
+             "timestamp": float(r[3])}
+            for r in rows
+        ]
 
     # ── M7.0: serialization helpers ──────────────────────────────────────────
 
@@ -1256,9 +1386,37 @@ class SnapshotStore:
             top_fixed_rules    — [(rule_id, count), ...] top-K by frequency
             top_transforms     — [(transform_name, count), ...] top-K
             first_ts / last_ts — bookends
+
+        Sprint I — fast path: the scalar aggregates (n_total, n_valid,
+        n_with_fixes, total_fixed, total_residual, first_ts, last_ts) are
+        computed in ONE native SQL query using SUM/COUNT/MIN/MAX.  Only
+        the top_k frequency tables still need to read JSON blobs (Python),
+        and that pass is limited to the ``fixed_rules_json`` /
+        ``transforms_json`` columns — not the full rows.
         """
-        history = self.get_remediation_history(module_id=module_id, limit=10**9)
-        n_total = len(history)
+        # ── Scalar aggregates via single SQL query ───────────────────────────
+        params: tuple = ()
+        where = ""
+        if module_id is not None:
+            where = " WHERE module_id = ?"
+            params = (module_id,)
+
+        scalar_sql = f"""
+        SELECT
+            COUNT(*)                                        AS n_total,
+            COALESCE(SUM(CASE WHEN is_valid=1 THEN 1 ELSE 0 END), 0) AS n_valid,
+            COALESCE(SUM(CASE WHEN fixed_count > 0 THEN 1 ELSE 0 END), 0) AS n_with_fixes,
+            COALESCE(SUM(fixed_count),    0)                AS total_fixed,
+            COALESCE(SUM(residual_count), 0)                AS total_residual,
+            MIN(timestamp)                                  AS first_ts,
+            MAX(timestamp)                                  AS last_ts
+        FROM remediations{where}
+        """
+        with self._lock:
+            (n_total, n_valid, n_with_fixes, total_fixed, total_resid,
+             first_ts, last_ts) = self._get_conn().execute(
+                scalar_sql, params,
+            ).fetchone()
 
         if n_total == 0:
             return {
@@ -1276,20 +1434,28 @@ class SnapshotStore:
                 "last_ts":         None,
             }
 
-        n_valid       = sum(1 for r in history if r["is_valid"])
-        n_with_fixes  = sum(1 for r in history if r["fixed_count"] > 0)
-        total_fixed   = sum(r["fixed_count"]    for r in history)
-        total_resid   = sum(r["residual_count"] for r in history)
+        # ── Frequency tables — only read the 2 JSON columns we need ──────────
+        freq_sql = f"""
+        SELECT fixed_rules_json, transforms_json
+        FROM remediations{where}
+        """
+        with self._lock:
+            freq_rows = self._get_conn().execute(freq_sql, params).fetchall()
 
-        # Frequency tables — keep insertion order on ties for stable output.
         rule_counts: Dict[str, int] = {}
-        for r in history:
-            for rule in r["fixed_rules"]:
-                rule_counts[rule] = rule_counts.get(rule, 0) + 1
-
         transform_counts: Dict[str, int] = {}
-        for r in history:
-            for t in r["transforms_applied"]:
+        for fr_json, tr_json in freq_rows:
+            try:
+                rules = json.loads(fr_json) if fr_json else []
+            except Exception:
+                rules = []
+            try:
+                trans = json.loads(tr_json) if tr_json else []
+            except Exception:
+                trans = []
+            for r in rules:
+                rule_counts[r] = rule_counts.get(r, 0) + 1
+            for t in trans:
                 transform_counts[t] = transform_counts.get(t, 0) + 1
 
         top_fixed = sorted(
@@ -1300,18 +1466,18 @@ class SnapshotStore:
         )[:max(0, int(top_k))]
 
         return {
-            "n_total":         n_total,
-            "n_valid":         n_valid,
-            "n_with_fixes":    n_with_fixes,
+            "n_total":         int(n_total),
+            "n_valid":         int(n_valid),
+            "n_with_fixes":    int(n_with_fixes),
             "success_rate":    n_with_fixes / n_total,
-            "total_fixed":     total_fixed,
-            "total_residual":  total_resid,
+            "total_fixed":     int(total_fixed),
+            "total_residual":  int(total_resid),
             "mean_fixed":      total_fixed  / n_total,
             "mean_residual":   total_resid  / n_total,
-            "top_fixed_rules": [{"rule_id": k,        "count": v} for k, v in top_fixed],
-            "top_transforms":  [{"transform": k,      "count": v} for k, v in top_trans],
-            "first_ts":        history[0]["timestamp"],
-            "last_ts":         history[-1]["timestamp"],
+            "top_fixed_rules": [{"rule_id": k,   "count": v} for k, v in top_fixed],
+            "top_transforms":  [{"transform": k, "count": v} for k, v in top_trans],
+            "first_ts":        float(first_ts) if first_ts is not None else None,
+            "last_ts":         float(last_ts)  if last_ts  is not None else None,
         }
 
     # ─── Close ───────────────────────────────────────────────────────────────

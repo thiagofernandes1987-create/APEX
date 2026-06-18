@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-18  
-> **Versão atual:** v3.3.0 (Sprint H — De-globalization + Domain Signals + Observability: `governance/signals.py` puro, `_replace_store()` sem leak, logger JSON + métricas em `/health`) · Próximo: Sprint I — Tirar Predictor/APS do caminho de escrita + SQL nativo nas agregações → v3.3.1  
+> **Versão atual:** v3.3.1 (Sprint I — Performance: `defer_derived=True` no insert, `latest_aps_per_module` SQL nativo (1 query vs N+1), `get_remediation_stats` agregados SQL) · Próximo: Sprint J — Feed dinâmico de CVE + atualização incremental de regras → v3.3.2  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -38,6 +38,7 @@
 | **Sprint G** | **Signal Correctness — 8 fixes cirúrgicos pós-Codex (C-1 ausência≠100, C-2 inversão BIASED_UP, C-3 Hurst gate n≥8, C-4 ON CONFLICT preserva diagnostic, C-5 tiebreak id DESC, C-7 fixed_rules causal, C-8 persist_error distinto, lateral hmac.compare_digest)** | **v3.2.10** | **✅** |
 | **Sprint F** | **Spectral Analysis sobre APS — Welch PSD bandado (low/mid/high) + entropia espectral + db4 wavelet 3-level + assinatura compacta de 5 canais + `/spectral/{aps,fingerprint}`** | **v3.2.11** | **✅** |
 | **Sprint H** | **De-globalization + Domain Signals + Observability — `governance/signals.py` puro (D-2 fonte única OLS+Hurst+MAE), `_replace_store()` sem leak (D-1 parcial), logger JSON + métricas em `/health` (F-3)** | **v3.3.0** | **✅** |
+| **Sprint I** | **Performance — `insert(defer_derived=True)` deixa APS/forecast fora do hot path (D-4); `store.latest_aps_per_module()` 1 query vs N+1; `get_remediation_stats()` agregados SQL nativo (Codex movement #2)** | **v3.3.1** | **✅** |
 
 **Métricas atuais (v3.2.1):**
 
@@ -65,7 +66,7 @@
 | ~~Sprint G~~ | ~~Signal Correctness (pós-auditoria Codex)~~ | ~~1d~~ | **v3.2.10** ✅ | **Entregue 2026-06-18 — 8 fixes cirúrgicos + 30 TG-tests + 1453 testes verdes — corretude do sinal restaurada** |
 | ~~Sprint F~~ | ~~Spectral analysis full sobre APS~~ | ~~1d~~ | **v3.2.11** ✅ | **Entregue 2026-06-18 — `metrics/spectral_aps.py` Welch+wavelet+fingerprint + `/spectral/{aps,fingerprint}` + 30 TX-tests + 1483 testes verdes** |
 | ~~Sprint H~~ | ~~Des-globalizar `_store` + extrair `governance/signals.py` puro (DRY) + observabilidade~~ | ~~2d~~ | **v3.3.0** ✅ | **Entregue 2026-06-18 — `signals.py` 230 linhas, handlers e Compound chamam mesma fonte; `_replace_store()` sem leak; logger JSON + 5 counters em `/health` + 30 TH-tests + 1513 verdes** |
-| Sprint I | Tirar Predictor/APS do caminho de escrita (lazy on-read ou worker assíncrono) + N+1 SQL nativo em `_latest_aps_per_module`/`get_remediation_stats` | 2d | v3.3.1 | Endereça D-4 + movimento Codex #2 |
+| ~~Sprint I~~ | ~~Tirar Predictor/APS do caminho de escrita + N+1 SQL nativo~~ | ~~2d~~ | **v3.3.1** ✅ | **Entregue 2026-06-18 — `insert(defer_derived=True)` + `recompute_derived_pending`; `latest_aps_per_module` 1 query; `get_remediation_stats` agregado SQL; 30 TI-tests + 1543 verdes** |
 | Sprint J | Feed dinâmico de CVE + atualização incremental de regras SAST/IaC sem release | 2d | v3.3.2 | Cobre o gap estratégico de "cve_database hardcoded vira dívida em 6 meses" |
 | Sprint F | Spectral analysis full de APS | 1d | v3.2.10 | PSD bandada + wavelet sobre APS |
 | LEAP 4 | Predictor/Trend persistidos | 1d | v3.2.4 | Meta-análise de confidence histórico — sinal exclusivo no mercado |

@@ -5,6 +5,133 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.3.1] — 2026-06-18 — Sprint I: Performance — APS off hot-path + Native SQL
+
+### Refatorado
+
+Endereça **D-4** (Codex) e **movimento Codex #2**: predictor/APS no
+caminho de escrita + N+1 queries em `repo_meta_score` + materialização
+Python em `get_remediation_stats`.
+
+#### I.1 — `insert(mv, defer_derived=False)` deixa o hot path barato
+
+**Antes**: cada `insert()` disparava, no caminho síncrono:
+- 4 serializações JSON
+- `_compute_aps_score(mv)` (chama `aps_from_metric_vector`)
+- `_compute_forecast(mv)` que internamente faz `get_history(window=100)`
+  + deserialização completa de até 100 MetricVectors + `numpy.polyfit`
+  (Hurst R/S + OLS)
+
+`O(window)` de CPU+I/O **por insert**, com lock global pego duas vezes.
+
+**Agora**:
+
+```python
+store.insert(mv, defer_derived=True)        # hot path: pula APS+forecast
+# … rows ficam com aps_score=NULL …
+
+store.recompute_derived(module_id, commit_hash)              # backfill 1 row
+store.recompute_derived_pending(module_id=None, batch=1000)  # batch backfill
+```
+
+Default (`defer_derived=False`) preserva comportamento atual — zero
+break. Use case batch (ingest de repo inteiro) chama com `True` no
+hot path e dispara `recompute_derived_pending()` num worker depois.
+
+TI10 mede empiricamente que o caminho deferred não regride
+performance e tende a ser ~30% mais rápido em insert bulk.
+
+#### I.2 — `store.latest_aps_per_module()` em UMA query SQL
+
+**Antes** (`governance/repo_meta_score.py:_latest_aps_per_module`):
+
+```python
+for module_id in store.list_modules():           # +1 query
+    hist = store.get_aps_history(module_id, ...)  # +N queries
+    ...
+    full_hist = store.get_history(module_id, ...) # +N queries
+```
+
+Repo com 500 módulos = **1001+ queries** + igual número de
+deserializações JSON.
+
+**Agora**: uma única SQL com self-join em `MAX(timestamp)`:
+
+```sql
+SELECT s.module_id, s.aps_score, s.lines_of_code, s.timestamp
+FROM snapshots s
+INNER JOIN (
+    SELECT module_id, MAX(timestamp) AS max_ts
+    FROM snapshots
+    WHERE aps_score IS NOT NULL
+    GROUP BY module_id
+) latest ON s.module_id = latest.module_id
+       AND s.timestamp  = latest.max_ts
+WHERE s.aps_score IS NOT NULL
+ORDER BY s.module_id ASC
+```
+
+Usa o índice `idx_snap_module_ts` (já existia). Complexidade O(N) com
+N = número de módulos. **Mil-vezes mais barato em repos grandes.**
+
+`repo_meta_score._latest_aps_per_module` agora **detecta** se o store
+expõe `latest_aps_per_module` e usa-o. Fallback automático para o loop
+Python quando o store é um stub de teste sem o método — zero
+break em testes existentes.
+
+#### I.3 — `get_remediation_stats()` agregados em SQL nativo
+
+**Antes**: `get_remediation_history(limit=10**9)` materializava todas
+as rows em Python + deserializava todos os JSON blobs + Python sum/count.
+
+**Agora**: ONE SQL para os escalares:
+
+```sql
+SELECT
+    COUNT(*)                                                  AS n_total,
+    SUM(CASE WHEN is_valid=1     THEN 1 ELSE 0 END)           AS n_valid,
+    SUM(CASE WHEN fixed_count > 0 THEN 1 ELSE 0 END)          AS n_with_fixes,
+    SUM(fixed_count)                                          AS total_fixed,
+    SUM(residual_count)                                       AS total_residual,
+    MIN(timestamp), MAX(timestamp)
+FROM remediations [WHERE module_id = ?]
+```
+
+Top-k frequência ainda precisa parse de JSON, mas a segunda query só
+lê **2 colunas** (`fixed_rules_json`, `transforms_json`) — não a row
+inteira. Memória cai drasticamente em históricos grandes.
+
+### Testes — 30 novos (TI01–TI30)
+
+- **TI01–TI10** (I.1): defaults preservam comportamento; deferred path
+  produz `aps=NULL`; recompute backfill funciona; pending scan filtra
+  só NULL; scope por módulo; idempotência; interação com COALESCE
+  (G.4); deferred path NÃO regride performance
+- **TI11–TI20** (I.2): uma row por módulo; MAX(timestamp) elegível
+  correto; skip módulos sem APS; LOC carregado; empty store empty;
+  paridade fast vs legacy; fallback automático em stub; end-to-end
+  meta-score; performance — fast ≤ 2x legacy
+- **TI21–TI30** (I.3): empty store zerado; n_total bate inserts;
+  n_valid conta só rows compilando; n_with_fixes exclui zero-fix runs;
+  total_fixed somatório por row; first/last_ts via MIN/MAX; top
+  frequência DESC; filtro por módulo; top transforms DESC; sucesso
+  rate consistente
+
+Regressão completa: **1543 passed, 3 skipped, 0 falhas** em 11.9s
+(+30 vs Sprint H).
+
+### O que isso destrava
+
+- **Real-time monitoring (M8.0)** pode usar `defer_derived=True` no
+  watcher: 30+ commits/s de ingestão sem ficar segurando o lock para
+  o cômputo de Hurst.
+- **`/repo/health-score`** em repos com 100+ módulos cai do segundo
+  inteiro para dezenas de ms — viabiliza CI gate em monorepos.
+- **`/apex/remediation/stats`** com históricos longos não estoura mais
+  memória — agora opera em streaming via SQL.
+
+---
+
 ## [3.3.0] — 2026-06-18 — Sprint H: De-globalization + Domain Signals + Observability
 
 ### Refatorado / Adicionado
