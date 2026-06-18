@@ -43,6 +43,10 @@ from sensor_core.autofix.transforms.replace_insecure_random import InsecureRando
 from sensor_core.autofix.transforms.replace_bare_except     import BareExceptReplacer
 from sensor_core.autofix.transforms.remove_mutable_default  import MutableDefaultRemover
 from sensor_core.autofix.transforms.simplify_comparison     import NoneComparisonSimplifier
+# Sprint D — additional high-confidence mappings.
+from sensor_core.autofix.transforms.enable_ssl_verify       import SSLVerifyEnabler
+from sensor_core.autofix.transforms.enable_jwt_verify       import JWTVerifyEnabler
+from sensor_core.autofix.transforms.replace_zero_nonce      import ZeroNonceReplacer
 
 
 # ─── Mapping table — single source of truth ──────────────────────────────────
@@ -50,6 +54,9 @@ from sensor_core.autofix.transforms.simplify_comparison     import NoneCompariso
 SAST_TO_TRANSFORM: Dict[str, Type[BaseTransform]] = {
     "SAST006": WeakHashReplacer,         # Weak Crypto (md5/sha1) → sha256
     "SAST007": InsecureRandomReplacer,   # Insecure random — choice → secrets.choice
+    "SAST022": ZeroNonceReplacer,        # Weak IV / All-Zero Nonce → os.urandom(N)
+    "SAST024": JWTVerifyEnabler,         # JWT none algo / signature bypass → enforce verify
+    "SAST027": SSLVerifyEnabler,         # SSL verify=False → verify=True
     "SAST038": BareExceptReplacer,       # Bare except → except Exception as e
     "SAST039": MutableDefaultRemover,    # Mutable default arg → None + guard
 }

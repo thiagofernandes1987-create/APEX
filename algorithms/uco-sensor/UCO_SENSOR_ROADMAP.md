@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-18  
-> **Versão atual:** v3.2.7 (Sprint C — Auto-fix telemetry: tabela `remediations` + endpoints history/stats fechando o loop LEAP 3) · Próximo: Sprint D — AutoFix↔SAST mapping expandido → v3.2.8  
+> **Versão atual:** v3.2.8 (Sprint D — AutoFix↔SAST mapping expandido: +3 transforms SAST022/024/027 + tela inicial HTML em `GET /`) · Próximo: Sprint E — Snapshot-diff vector → v3.2.9  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -33,6 +33,7 @@
 | **Sprint A** | **Compound Alert (APS × Predictor) — `compound_alert.py` + tiers RED/AMBER/YELLOW/GREEN + `/alerts/{compound,repo}` + ranking** | **v3.2.5** | **✅** |
 | **Sprint B** | **Repo Meta-Score — LOC-weighted APS + RED penalty + Z-score outliers + history time-series** | **v3.2.6** | **✅** |
 | **Sprint C** | **Auto-fix Telemetry — `remediations` table + `store_remediation`/`get_remediation_*` + `/apex/remediation/{history,stats}`** | **v3.2.7** | **✅** |
+| **Sprint D** | **AutoFix↔SAST Mapping Expansion — +3 transforms (SAST022 IV, SAST024 JWT, SAST027 SSL) + tela inicial HTML em `GET /`** | **v3.2.8** | **✅** |
 
 **Métricas atuais (v3.2.1):**
 
@@ -55,7 +56,7 @@
 | ~~Sprint A~~ | ~~Compound Alert (APS × Predictor cross-correlation)~~ | ~~1d~~ | **v3.2.5** ✅ | **Entregue 2026-06-17 — RED/AMBER/YELLOW/GREEN tiers + priority_score + /alerts/{compound,repo}** |
 | ~~Sprint B~~ | ~~Repo-level meta-score + outliers (APS Z-score)~~ | ~~1d~~ | **v3.2.6** ✅ | **Entregue 2026-06-17 — `RepoMetaScore` + outliers + history + /repo/{health-score,aps-outliers,health-history}** |
 | ~~Sprint C~~ | ~~Auto-fix telemetry (`remediations` table)~~ | ~~1d~~ | **v3.2.7** ✅ | **Entregue 2026-06-18 — tabela remediations + persistência best-effort + /apex/remediation/{history,stats} + 1363 testes verdes** |
-| Sprint D | AutoFix↔SAST mapeamento expandido | 0.5d | v3.2.8 | +5 regras mapeadas (SAST014, 022, 024, 027, 037) |
+| ~~Sprint D~~ | ~~AutoFix↔SAST mapeamento expandido~~ | ~~0.5d~~ | **v3.2.8** ✅ | **Entregue 2026-06-18 — +3 transforms (SAST022/024/027) + tela inicial HTML / + 1393 testes verdes — SAST014/037 ficam p/ Sprint E (rewrite estrutural)** |
 | Sprint E | Snapshot-diff vector | 1d | v3.2.9 | "Qual canal mudou em cada commit" |
 | Sprint F | Spectral analysis full de APS | 1d | v3.2.10 | PSD bandada + wavelet sobre APS |
 | LEAP 4 | Predictor/Trend persistidos | 1d | v3.2.4 | Meta-análise de confidence histórico — sinal exclusivo no mercado |

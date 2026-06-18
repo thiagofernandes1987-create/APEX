@@ -197,7 +197,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.2.7"
+    version:      str   = "3.2.8"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -259,6 +259,147 @@ def _authenticate(plain_key: str, require_admin: bool = False) -> Tuple[bool, Op
 
 
 # ─── Handlers de endpoint ────────────────────────────────────────────────────
+
+def handle_root() -> Tuple[int, str]:
+    """GET / — HTML landing page.  Self-contained, no external assets."""
+    version    = _config.version
+    n_modules  = len(_store.list_modules())
+    languages  = ", ".join(get_registry().supported_languages())
+
+    html = f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>UCO-Sensor v{version}</title>
+  <style>
+    :root {{
+      --bg:#0d1117; --fg:#e6edf3; --mut:#7d8590;
+      --acc:#58a6ff; --ok:#3fb950; --warn:#d29922;
+      --card:#161b22; --border:#30363d;
+    }}
+    * {{ box-sizing:border-box; }}
+    body {{ margin:0; font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+            background:var(--bg); color:var(--fg); line-height:1.5; }}
+    .wrap {{ max-width: 1040px; margin:0 auto; padding:36px 24px 64px; }}
+    header {{ display:flex; align-items:baseline; gap:18px; flex-wrap:wrap; }}
+    h1 {{ margin:0; font-size:36px; letter-spacing:-0.02em; }}
+    .badge {{ background:var(--card); border:1px solid var(--border);
+              padding:4px 12px; border-radius:999px; font-size:13px;
+              color:var(--mut); }}
+    .badge.ok {{ color:var(--ok); border-color:#1c5235; background:#0f2417; }}
+    .tag {{ background:var(--acc); color:#fff; padding:2px 8px;
+            border-radius:6px; font-size:12px; font-weight:600; }}
+    p.sub {{ color:var(--mut); font-size:16px; margin:8px 0 28px; }}
+    .grid {{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+             gap:14px; margin:24px 0 32px; }}
+    .card {{ background:var(--card); border:1px solid var(--border);
+             border-radius:10px; padding:18px 18px 14px; }}
+    .card h3 {{ margin:0 0 4px; font-size:15px; }}
+    .card p {{ margin:0; color:var(--mut); font-size:13px; }}
+    section {{ margin: 32px 0; }}
+    h2 {{ font-size:20px; border-bottom:1px solid var(--border);
+          padding-bottom:8px; margin-top:32px; }}
+    a {{ color:var(--acc); text-decoration:none; }}
+    a:hover {{ text-decoration:underline; }}
+    .links {{ display:flex; flex-wrap:wrap; gap:10px; margin:14px 0; }}
+    .links a {{ background:var(--card); border:1px solid var(--border);
+                padding:8px 14px; border-radius:8px; font-size:14px; }}
+    .endpoints {{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+                  font-size:13px; }}
+    .endpoints div {{ padding:6px 0; border-bottom:1px solid #20262d; }}
+    .method {{ display:inline-block; min-width:50px; color:var(--ok); }}
+    .method.post {{ color:var(--warn); }}
+    footer {{ color:var(--mut); font-size:12px; margin-top:48px;
+              border-top:1px solid var(--border); padding-top:16px; }}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>UCO-Sensor</h1>
+      <span class="badge ok">v{version}</span>
+      <span class="badge">running</span>
+    </header>
+    <p class="sub">
+      Spectral code-quality analyzer powered by UCO v4 + FrequencyEngine.
+      Persistent telemetry, predictive degradation, and AutoFix ↔ SAST
+      closed loop.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <h3>{n_modules} modules tracked</h3>
+        <p>Snapshot history persisted with full extended-vector channels.</p>
+      </div>
+      <div class="card">
+        <h3>Languages: {languages}</h3>
+        <p>Python (AST) + Tree-Sitter for JS / TS / Java / Go.</p>
+      </div>
+      <div class="card">
+        <h3>96 / 96 channels</h3>
+        <p>Persisted MetricVectors across all extended vectors (LEAP 1).</p>
+      </div>
+      <div class="card">
+        <h3>7 mapped SAST → AutoFix</h3>
+        <p>High-confidence rewrites: hash, random, IV, JWT, SSL, except, mutable defaults.</p>
+      </div>
+    </div>
+
+    <section>
+      <h2>Quick links</h2>
+      <div class="links">
+        <a href="/docs">/docs — full endpoint catalogue</a>
+        <a href="/health">/health — liveness probe</a>
+        <a href="/badge?score=87&status=STABLE">/badge — SVG badge</a>
+        <a href="https://github.com/thiagofernandes1987-create/APEX/tree/main/algorithms/uco-sensor">GitHub</a>
+        <a href="https://github.com/thiagofernandes1987-create/APEX/blob/main/algorithms/uco-sensor/sensor-api/CHANGELOG.md">Changelog</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>Recent capabilities</h2>
+      <div class="endpoints">
+        <div><span class="tag">v3.2.8</span> <strong>Sprint D — AutoFix↔SAST expansion</strong>:
+             +3 transforms (SAST022 weak IV, SAST024 JWT, SAST027 SSL verify).</div>
+        <div><span class="tag">v3.2.7</span> <strong>Sprint C — Auto-fix telemetry</strong>:
+             <code>remediations</code> table + <code>/apex/remediation/{{history,stats}}</code>.</div>
+        <div><span class="tag">v3.2.6</span> <strong>Sprint B — Repo Meta-Score</strong>:
+             LOC-weighted APS + Z-score outliers + <code>/repo/health-*</code>.</div>
+        <div><span class="tag">v3.2.5</span> <strong>Sprint A — Compound Alert</strong>:
+             RED/AMBER/YELLOW/GREEN tiers on APS × Predictor cross-correlation.</div>
+        <div><span class="tag">v3.2.4</span> <strong>LEAP 4 — Predictor persisted</strong>:
+             forecast accuracy as a meta-signal (MAE / RMSE / bias).</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Try it</h2>
+      <div class="endpoints">
+        <div><span class="method post">POST</span> <code>/analyze</code> — analyze code,
+             returns 9-channel MetricVector + status</div>
+        <div><span class="method post">POST</span> <code>/apex/auto-remediate</code> —
+             SAST scan → fix → re-scan, returns patched source</div>
+        <div><span class="method">GET</span>  <code>/anti-pattern-score?module=X</code> —
+             composite 0-100 quality score</div>
+        <div><span class="method">GET</span>  <code>/alerts/repo</code> —
+             repo-wide compound alerts (RED/AMBER/YELLOW/GREEN)</div>
+        <div><span class="method">GET</span>  <code>/repo/health-score</code> —
+             single repo health number with breakdown</div>
+        <div><span class="method">GET</span>  <code>/apex/remediation/stats</code> —
+             auto-fix effectiveness aggregated over time</div>
+      </div>
+    </section>
+
+    <footer>
+      Anonymous landing — POST endpoints and metrics require an API key. ·
+      Stdlib-only HTTP server (no FastAPI / Flask). · MIT licensed.
+    </footer>
+  </div>
+</body>
+</html>
+"""
+    return 200, html
+
 
 def handle_health() -> Tuple[int, Dict]:
     return 200, {
@@ -3315,6 +3456,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
         params = parse_qs(parsed.query)
 
         # Endpoints sem auth
+        if path == "/" or path == "/index.html":
+            return self._send_html(*handle_root())
         if path == "/health":
             return self._send_json(*handle_health())
         if path == "/docs":

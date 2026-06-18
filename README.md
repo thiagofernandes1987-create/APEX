@@ -1,6 +1,6 @@
 # APEX — Autonomous Polymorphic Engineering eXpert
 
-**Version**: v00.37.0 | **Skills**: 3,784 | **Domínios**: 52 | **DIFFs**: 132 | **Agentes**: 219 | [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+**APEX framework**: v00.39.1 (paged microkernel) | **uco-sensor**: v3.2.8 (Sprint D — AutoFix↔SAST expansion + landing) | **Skills**: 3,784 | **Domínios**: 52 | **Agentes**: 219 | [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 > Framework DSL que transforma qualquer LLM em um sistema multi-agente de engenharia cognitiva com governança, execução híbrida e trilha de auditoria.
 
@@ -100,21 +100,29 @@ APEX/
 │   ├── uco/
 │   │   ├── universal_code_optimizer_v4.py  ← UCO v4: 4,152 linhas
 │   │   └── UCO_API_SURFACE.yaml            ← API canônica (4 métodos públicos)
-│   ├── uco-sensor/                         ← UCO-Sensor v0.5.0
-│   │   ├── sensor-api/                     ← REST API: 19 endpoints, 156 testes, M1–M8
-│   │   │   ├── api/server.py               ← HTTP server (stdlib-only, zero deps extra)
+│   ├── uco-sensor/                         ← UCO-Sensor v3.2.8 (Sprint D)
+│   │   ├── sensor-api/                     ← REST API: 57 endpoints, 1393 testes, M1–M35 + LEAP 1-4 + Sprint A-D
+│   │   │   ├── api/server.py               ← HTTP server (stdlib-only) + landing HTML em GET /
 │   │   │   ├── apex_integration/           ← EventBus + Connector + 8 templates APEX
-│   │   │   ├── sensor_core/uco_bridge.py   ← Extrai 9 canais UCO v4
-│   │   │   ├── sensor_storage/             ← SnapshotStore SQLite + baseline + z-score
+│   │   │   ├── sensor_core/                ← UCO bridge + AutoFix engine (16 transforms + SAST↔AutoFix loop)
+│   │   │   │   └── autofix/                ← 7 transforms mapeados em SAST_TO_TRANSFORM (Sprint D)
+│   │   │   ├── sensor_storage/             ← SnapshotStore SQLite: snapshots + remediations + APS + predictor
+│   │   │   ├── governance/                 ← Compound alerts (Sprint A) + Repo meta-score (Sprint B)
+│   │   │   ├── metrics/                    ← Extended vectors v2 (9 dims) + Anti-Pattern Score (17 sinais)
+│   │   │   ├── monitor/                    ← Real-time FileWatcher + SSE stream (M8.0)
 │   │   │   ├── scan/                       ← RepoScanner + GitHistoryScanner
 │   │   │   ├── report/                     ← Relatório HTML standalone + badges SVG
-│   │   │   ├── lang_adapters/              ← Python, JS/TS, Java, Go
-│   │   │   ├── demo/demo_full.py           ← Demo E2E 8 steps (< 2s)
-│   │   │   ├── tests/test_marco1..8.py     ← 156 testes (M1 ANALISAR → M8 ENTREGAR)
+│   │   │   ├── lang_adapters/              ← Python (AST) + Tree-Sitter JS/TS/Java/Go (M9.0)
+│   │   │   ├── sast/                       ← 58 regras SAST, 5 linguagens
+│   │   │   ├── sca/                        ← 205 CVEs, 12 ecossistemas
+│   │   │   ├── iac/                        ← 102 regras IaC (Dockerfile/Compose/k8s/Terraform/Helm/Ansible/Pulumi/CDK)
+│   │   │   ├── tests/test_marco_m1..m35.py ← 1393 testes (M1 → Sprint D), 0 falhas
+│   │   │   ├── CHANGELOG.md                ← Histórico v0.6.0 → v3.2.8
 │   │   │   ├── Dockerfile                  ← Multi-stage Python 3.11-slim
 │   │   │   ├── docker-compose.yml          ← Stack dev/prod + perfil cron
 │   │   │   └── pyproject.toml              ← PEP 517/518, entry point: uco-sensor
-│   │   └── frequency-engine/               ← FrequencyEngine: FFT + Hurst + PCI
+│   │   ├── UCO_SENSOR_ROADMAP.md           ← WBS + estado consolidado (atualizado por marco)
+│   │   └── frequency-engine/               ← FrequencyEngine: FFT + Hurst R/S + DBSCAN + DegradationPredictor
 │   ├── optimization/
 │   ├── anthropic-cli/
 │   ├── anthropic-sdk-ruby/

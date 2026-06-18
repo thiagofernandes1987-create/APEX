@@ -5,6 +5,84 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.8] — 2026-06-18 — Sprint D: AutoFix↔SAST Mapping Expansion + Landing Page
+
+### Adicionado
+
+Três novos **transforms de alta confiança** entram no
+`SAST_TO_TRANSFORM`, elevando a cobertura do loop fechado AutoFix↔SAST
+de **4 → 7 regras automaticamente corrigíveis**, e uma **tela inicial
+HTML** servida em `GET /` para visualização rápida do estado da API.
+
+#### Novos transforms (3)
+
+| SAST | Transform | Antes | Depois |
+|---|---|---|---|
+| **SAST022** Weak IV / All-Zero Nonce | `ZeroNonceReplacer` | `AES.new(k, mode, nonce=b"\\x00"*12)` | `import os; AES.new(k, mode, nonce=os.urandom(12))` |
+| **SAST024** JWT signature bypass | `JWTVerifyEnabler` | `jwt.decode(t, k, verify=False)`<br>`jwt.decode(t, k, algorithms=["none","HS256"])` | `jwt.decode(t, k, verify=True)`<br>`jwt.decode(t, k, algorithms=["HS256"])` |
+| **SAST027** SSL verification disabled | `SSLVerifyEnabler` | `requests.get(url, verify=False)` | `requests.get(url, verify=True)` |
+
+**Mapeamento final** (`SAST_TO_TRANSFORM`):
+`SAST006 SAST007 SAST022 SAST024 SAST027 SAST038 SAST039` — 7 regras
+agora cobertas pelo loop `auto_remediate()`.
+
+#### Decisões arquiteturais
+
+- **Apenas rewrites de alta confiança** — `SAST014 SSRF` exige validação
+  semântica de origem da URL (não há reescrita segura sem conhecer o
+  contexto da chamada) e `SAST037 Resource Leak` exige rewrite estrutural
+  (mover statement para dentro de `with`). Ambos ficam para sprints
+  futuros com a categoria correta de transform.
+- **`os.urandom` é inserido com `import os` no topo do módulo** somente
+  quando (a) há pelo menos um rewrite e (b) `os` ainda não foi importado.
+  Idempotente em segundas passadas.
+- **JWT `algorithms=["none"]` puro** cai em `["HS256"]` (default
+  conservador que ainda exige uma chave de assinatura) — não fica vazio.
+- **Filtros estritos**: SSL transform só atua em `requests`/`httpx`,
+  JWT só em `jwt`/`PyJWT`, Nonce só em `.new()` de famílias de cifra
+  reconhecidas (`AES`, `ChaCha20`, `Salsa20`, `Blowfish`,
+  `ChaCha20_Poly1305`). Calls com cara similar mas módulo desconhecido
+  passam intocados.
+
+#### Nova landing page — `GET /`
+
+`handle_root()` retorna HTML standalone (sem dependências externas,
+zero JS) com:
+
+- Versão e n.º de módulos rastreados ao vivo
+- 4 cards de status (channels persistidos, mapeamento AutoFix, etc.)
+- Atalhos para `/docs`, `/health`, `/badge`, GitHub e CHANGELOG
+- Lista de capacidades recentes (Sprint D / C / B / A / LEAP 4)
+- Lista de endpoints "try it" mais usados
+
+Servido sem autenticação. Visual GitHub-dark, responsivo.
+`/index.html` é alias para `/`.
+
+### Testes — 30 novos (TU01–TU30)
+
+- TU01–TU10 — SSL transform: positional/keyword, requests vs httpx vs
+  módulo desconhecido, valor não-constante, idempotência, end-to-end
+- TU11–TU20 — JWT transform: legacy `verify=False`, options dict,
+  remoção de "none", fallback HS256, case-insensitive, `PyJWT` alias,
+  encode não toca, end-to-end
+- TU21–TU30 — Nonce transform: keyword/positional, `b"\\x00"*N` vs
+  literal zero, length preservation, auto-`import os`, não-duplicação,
+  rejeita não-zero, rejeita não-cipher, end-to-end + caso combinado
+  fixando 3 regras numa pass
+
+Regressão completa: **1393 passed, 3 skipped, 0 falhas** em 11.9s.
+
+### O que isso destrava
+
+- Cobertura **+75%** no loop AutoFix↔SAST (4 → 7 regras mapeadas)
+- **Onboarding visual** — abrir a URL da API no navegador agora mostra
+  estado, versão e capacidades em vez de 404
+- Base para o Sprint E: usando a telemetria do Sprint C, identificar
+  **automaticamente** quais regras SAST sobram com maior frequência
+  como candidatas a novos transforms
+
+---
+
 ## [3.2.7] — 2026-06-18 — Sprint C: Auto-Fix Telemetry
 
 ### Adicionado
