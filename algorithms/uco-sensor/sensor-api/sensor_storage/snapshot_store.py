@@ -168,6 +168,34 @@ CREATE INDEX IF NOT EXISTS idx_api_key_hash
 ON api_keys(key_hash);
 """
 
+# Sprint C — Auto-fix telemetry.  Each row is one auto_remediate() call:
+# the outcome of attempting to fix SAST findings via mapped transforms.
+# Closes the LEAP 3 loop by letting callers ask "is auto-remediation
+# actually working over time? which rules get fixed most? which leave
+# residuals?" — without recomputing anything.
+_DDL_REMEDIATIONS = """
+CREATE TABLE IF NOT EXISTS remediations (
+    id                   INTEGER PRIMARY KEY AUTOINCREMENT,
+    module_id            TEXT    NOT NULL,
+    commit_hash          TEXT    NOT NULL DEFAULT '',
+    timestamp            REAL    NOT NULL,
+    is_valid             INTEGER NOT NULL DEFAULT 1,
+    findings_before      INTEGER NOT NULL DEFAULT 0,
+    findings_after       INTEGER NOT NULL DEFAULT 0,
+    fixed_count          INTEGER NOT NULL DEFAULT 0,
+    residual_count       INTEGER NOT NULL DEFAULT 0,
+    transforms_json      TEXT    NOT NULL DEFAULT '[]',
+    fixed_rules_json     TEXT    NOT NULL DEFAULT '[]',
+    findings_before_json TEXT    NOT NULL DEFAULT '[]',
+    findings_after_json  TEXT    NOT NULL DEFAULT '[]'
+);
+"""
+
+_IDX_REMEDIATIONS = """
+CREATE INDEX IF NOT EXISTS idx_remed_module_ts
+ON remediations(module_id, timestamp);
+"""
+
 
 # ─── BaselineStats ───────────────────────────────────────────────────────────
 
@@ -302,9 +330,11 @@ class SnapshotStore:
             cur.execute(_DDL_SNAPSHOTS)
             cur.execute(_DDL_ANOMALIES)
             cur.execute(_DDL_API_KEYS)
+            cur.execute(_DDL_REMEDIATIONS)        # Sprint C
             cur.execute(_IDX_SNAPSHOTS)
             cur.execute(_IDX_ANOMALIES)
             cur.execute(_IDX_API_KEYS)
+            cur.execute(_IDX_REMEDIATIONS)        # Sprint C
             # M7.0: add extended-vector columns to pre-existing databases
             self._migrate_m70(cur)
 
@@ -1042,6 +1072,213 @@ class SnapshotStore:
                 (key_prefix,)
             )
         return cur.rowcount > 0
+
+    # ─── Sprint C — Auto-fix telemetry ───────────────────────────────────────
+
+    def store_remediation(
+        self,
+        module_id: str,
+        result: Any,
+        *,
+        commit_hash: str = "",
+        timestamp: Optional[float] = None,
+    ) -> int:
+        """
+        Persist one RemediationResult row.
+
+        ``result`` is duck-typed: it can be a sensor_core.autofix.sast_remediation
+        .RemediationResult, or any object with the same field surface, or even a
+        plain dict produced by ``RemediationResult.to_dict()``.  Defensive: any
+        missing field defaults to a neutral value (empty list / 0 / True).
+
+        Returns the inserted row id.
+        """
+        ts = float(timestamp) if timestamp is not None else time.time()
+
+        # Accept dict OR object form interchangeably.
+        if isinstance(result, dict):
+            getter = result.get
+        else:
+            getter = lambda key, default=None: getattr(result, key, default)
+
+        is_valid             = 1 if bool(getter("is_valid", True)) else 0
+        findings_before_list = list(getter("findings_before", []) or [])
+        findings_after_list  = list(getter("findings_after",  []) or [])
+        transforms_list      = list(getter("transforms_applied", []) or [])
+        fixed_rules_list     = list(getter("fixed_rules", []) or [])
+
+        fixed_count = getter("fixed_count", None)
+        if fixed_count is None:
+            fixed_count = len(fixed_rules_list)
+
+        residual_count = getter("residual_count", None)
+        if residual_count is None:
+            residual_count = len(findings_after_list)
+
+        sql = """
+        INSERT INTO remediations (
+            module_id, commit_hash, timestamp,
+            is_valid, findings_before, findings_after,
+            fixed_count, residual_count,
+            transforms_json, fixed_rules_json,
+            findings_before_json, findings_after_json
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """
+        values = (
+            module_id,
+            commit_hash or "",
+            ts,
+            is_valid,
+            len(findings_before_list),
+            len(findings_after_list),
+            int(fixed_count),
+            int(residual_count),
+            json.dumps(transforms_list),
+            json.dumps(fixed_rules_list),
+            json.dumps(findings_before_list),
+            json.dumps(findings_after_list),
+        )
+        with self._lock:
+            cur = self._get_conn().execute(sql, values)
+            return int(cur.lastrowid or 0)
+
+    def get_remediation_history(
+        self,
+        module_id: Optional[str] = None,
+        limit: int = 100,
+    ) -> List[Dict[str, Any]]:
+        """
+        Return remediation rows ASC by timestamp (oldest first).
+
+        ``module_id=None`` returns rows for **all** modules — useful for the
+        repo-level stats endpoint.  ``limit`` is applied AFTER the ASC sort,
+        so passing limit=100 yields the 100 oldest rows; reverse client-side
+        if you need newest-first.
+        """
+        sql = """
+        SELECT id, module_id, commit_hash, timestamp,
+               is_valid, findings_before, findings_after,
+               fixed_count, residual_count,
+               transforms_json, fixed_rules_json,
+               findings_before_json, findings_after_json
+        FROM remediations
+        """
+        params: tuple = ()
+        if module_id is not None:
+            sql += " WHERE module_id = ?"
+            params = (module_id,)
+        sql += " ORDER BY timestamp ASC, id ASC"
+        if limit and limit > 0:
+            sql += f" LIMIT {int(limit)}"
+
+        with self._lock:
+            rows = self._get_conn().execute(sql, params).fetchall()
+
+        out: List[Dict[str, Any]] = []
+        for r in rows:
+            try:
+                transforms = json.loads(r[9])  if r[9]  else []
+                fixed      = json.loads(r[10]) if r[10] else []
+                before     = json.loads(r[11]) if r[11] else []
+                after      = json.loads(r[12]) if r[12] else []
+            except Exception:
+                transforms, fixed, before, after = [], [], [], []
+            out.append({
+                "id":                 int(r[0]),
+                "module_id":          r[1],
+                "commit_hash":        r[2] or "",
+                "timestamp":          float(r[3]),
+                "is_valid":           bool(r[4]),
+                "findings_before":    int(r[5]),
+                "findings_after":     int(r[6]),
+                "fixed_count":        int(r[7]),
+                "residual_count":     int(r[8]),
+                "transforms_applied": transforms,
+                "fixed_rules":        fixed,
+                "findings_before_rules": before,
+                "findings_after_rules":  after,
+            })
+        return out
+
+    def get_remediation_stats(
+        self,
+        module_id: Optional[str] = None,
+        top_k: int = 5,
+    ) -> Dict[str, Any]:
+        """
+        Aggregate metrics across the remediation history.
+
+        Repo-wide when ``module_id`` is None; per-module otherwise.
+
+        Returns a dict with:
+            n_total            — total runs
+            n_valid            — runs whose patched source compiled
+            n_with_fixes       — runs that fixed ≥ 1 rule
+            success_rate       — n_with_fixes / n_total (0.0 when n_total=0)
+            total_fixed        — sum of fixed_count
+            total_residual     — sum of residual_count
+            mean_fixed         — total_fixed / n_total
+            mean_residual      — total_residual / n_total
+            top_fixed_rules    — [(rule_id, count), ...] top-K by frequency
+            top_transforms     — [(transform_name, count), ...] top-K
+            first_ts / last_ts — bookends
+        """
+        history = self.get_remediation_history(module_id=module_id, limit=10**9)
+        n_total = len(history)
+
+        if n_total == 0:
+            return {
+                "n_total":         0,
+                "n_valid":         0,
+                "n_with_fixes":    0,
+                "success_rate":    0.0,
+                "total_fixed":     0,
+                "total_residual":  0,
+                "mean_fixed":      0.0,
+                "mean_residual":   0.0,
+                "top_fixed_rules": [],
+                "top_transforms":  [],
+                "first_ts":        None,
+                "last_ts":         None,
+            }
+
+        n_valid       = sum(1 for r in history if r["is_valid"])
+        n_with_fixes  = sum(1 for r in history if r["fixed_count"] > 0)
+        total_fixed   = sum(r["fixed_count"]    for r in history)
+        total_resid   = sum(r["residual_count"] for r in history)
+
+        # Frequency tables — keep insertion order on ties for stable output.
+        rule_counts: Dict[str, int] = {}
+        for r in history:
+            for rule in r["fixed_rules"]:
+                rule_counts[rule] = rule_counts.get(rule, 0) + 1
+
+        transform_counts: Dict[str, int] = {}
+        for r in history:
+            for t in r["transforms_applied"]:
+                transform_counts[t] = transform_counts.get(t, 0) + 1
+
+        top_fixed = sorted(
+            rule_counts.items(), key=lambda kv: (-kv[1], kv[0])
+        )[:max(0, int(top_k))]
+        top_trans = sorted(
+            transform_counts.items(), key=lambda kv: (-kv[1], kv[0])
+        )[:max(0, int(top_k))]
+
+        return {
+            "n_total":         n_total,
+            "n_valid":         n_valid,
+            "n_with_fixes":    n_with_fixes,
+            "success_rate":    n_with_fixes / n_total,
+            "total_fixed":     total_fixed,
+            "total_residual":  total_resid,
+            "mean_fixed":      total_fixed  / n_total,
+            "mean_residual":   total_resid  / n_total,
+            "top_fixed_rules": [{"rule_id": k,        "count": v} for k, v in top_fixed],
+            "top_transforms":  [{"transform": k,      "count": v} for k, v in top_trans],
+            "first_ts":        history[0]["timestamp"],
+            "last_ts":         history[-1]["timestamp"],
+        }
 
     # ─── Close ───────────────────────────────────────────────────────────────
 

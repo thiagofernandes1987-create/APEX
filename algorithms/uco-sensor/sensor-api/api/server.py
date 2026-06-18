@@ -197,7 +197,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.2.6"
+    version:      str   = "3.2.7"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -299,6 +299,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "POST",   "path": "/diff",          "auth": True,   "desc": "Diff UCO entre 2 commits (before/after)"},
             {"method": "POST",   "path": "/apex/fix",            "auth": True,   "desc": "Fix bidirecional: APEX envia comando corretivo"},
             {"method": "POST",   "path": "/apex/auto-remediate", "auth": True,   "desc": "AutoFix↔SAST closed loop — scan, fix mapped rules, re-scan, return patched source [LEAP 3]"},
+            {"method": "GET",    "path": "/apex/remediation/history", "auth": True,   "desc": "Persisted RemediationResult history per module — oldest first (?module=&limit=) [Sprint C]"},
+            {"method": "GET",    "path": "/apex/remediation/stats",   "auth": True,   "desc": "Aggregate auto-fix telemetry — success rate, top fixed rules, top transforms (?module=&top_k=) [Sprint C]"},
             {"method": "GET",    "path": "/predict",          "auth": True,   "desc": "Degradation forecast para um módulo (?module=&horizon=)"},
             {"method": "GET",    "path": "/predict/all",      "auth": True,   "desc": "Fleet forecast — todos os módulos, ordenado por risco"},
             {"method": "POST",   "path": "/scan-incremental", "auth": True,   "desc": "Incremental scan — apenas arquivos alterados (M6.1)"},
@@ -846,41 +848,27 @@ def handle_apex_fix(data: Dict) -> Tuple[int, Dict]:
 
 def handle_apex_auto_remediate(data: Dict) -> Tuple[int, Dict]:
     """
-    POST /apex/auto-remediate  (LEAP 3 / M8.2)
+    POST /apex/auto-remediate  (LEAP 3 / M8.2 + Sprint C)
 
     Closes the AutoFix ↔ SAST loop: scans the source for SAST findings, runs
     only the AutoFix transforms whose mapping table targets a rule that fired,
     then re-scans the patched source to report which findings were actually
     fixed and which remain residual.
 
-    Request body
-    ------------
-    {
-      "code":      str  — Python source code (required)
-      "module_id": str  — identifier for debug (optional)
-    }
-
-    Response schema
-    ---------------
-    {
-      "module_id":          str,
-      "patched_source":     str,           — the rewritten code
-      "is_valid":           bool,          — patched_source compiles
-      "transforms_applied": [str],         — transform names that changed code
-      "findings_before":    [rule_id],     — SAST rules present originally
-      "findings_after":     [rule_id],     — SAST rules still present after fix
-      "fixed_rules":        [rule_id],     — rules eliminated by the loop
-      "fixed_count":        int,
-      "residual_count":     int
-    }
+    Sprint C: persists every successful call into the ``remediations`` table
+    (telemetry).  Persistence is best-effort — a write failure does NOT mask
+    the actual remediation result.  Set ``"persist": false`` in the request to
+    opt out (e.g. when sending throwaway test code).
     """
     try:
         from sensor_core.autofix.sast_remediation import auto_remediate
     except ImportError as exc:
         return 503, {"error": f"AutoFix↔SAST loop not available: {exc}"}
 
-    source    = data.get("code", "")
-    module_id = data.get("module_id", "<anonymous>")
+    source      = data.get("code", "")
+    module_id   = data.get("module_id", "<anonymous>")
+    commit_hash = data.get("commit_hash", "") or ""
+    persist     = data.get("persist", True)
 
     if not source or not source.strip():
         return 400, {"error": "Field 'code' is required and must be non-empty"}
@@ -890,7 +878,64 @@ def handle_apex_auto_remediate(data: Dict) -> Tuple[int, Dict]:
     except Exception as exc:
         return 500, {"error": f"auto-remediate failed: {exc}"}
 
-    return 200, {"module_id": module_id, **result.to_dict()}
+    persisted_id: Optional[int] = None
+    if persist:
+        try:
+            persisted_id = _store.store_remediation(
+                module_id=module_id,
+                result=result,
+                commit_hash=commit_hash,
+            )
+        except Exception:
+            persisted_id = None
+
+    return 200, {
+        "module_id":     module_id,
+        "persisted_id":  persisted_id,
+        **result.to_dict(),
+    }
+
+
+def handle_remediation_history(module_id: str, limit: int = 100) -> Tuple[int, Dict]:
+    """
+    GET /apex/remediation/history?module=<id>&limit=<n>  (Sprint C)
+
+    Returns persisted RemediationResult rows for one module (or all modules
+    when ``module_id`` is empty), oldest first.
+    """
+    try:
+        rows = _store.get_remediation_history(
+            module_id=(module_id or None),
+            limit=max(1, int(limit)),
+        )
+    except Exception as exc:
+        return 500, {"error": f"remediation-history failed: {exc}"}
+
+    return 200, {
+        "module_id": module_id or "*",
+        "limit":     int(limit),
+        "n_rows":    len(rows),
+        "history":   rows,
+    }
+
+
+def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, Dict]:
+    """
+    GET /apex/remediation/stats?module=<id>&top_k=<k>  (Sprint C)
+
+    Aggregate remediation telemetry: total runs, success rate, top fixed rules,
+    top transforms, mean fixed/residual per run.
+    """
+    try:
+        stats = _store.get_remediation_stats(
+            module_id=(module_id or None),
+            top_k=max(0, int(top_k)),
+        )
+    except Exception as exc:
+        return 500, {"error": f"remediation-stats failed: {exc}"}
+
+    stats["module_id"] = module_id or "*"
+    return 200, stats
 
 
 def handle_apex_status() -> Tuple[int, Dict]:
@@ -3402,6 +3447,14 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["100"])[0])
                 code, data = handle_predictor_accuracy(module_id, window=window_n)
+            elif path == "/apex/remediation/history":
+                module_id = params.get("module", [""])[0] or ""
+                limit_n   = int(params.get("limit", ["100"])[0])
+                code, data = handle_remediation_history(module_id, limit=limit_n)
+            elif path == "/apex/remediation/stats":
+                module_id = params.get("module", [""])[0] or ""
+                top_k_n   = int(params.get("top_k", ["5"])[0])
+                code, data = handle_remediation_stats(module_id, top_k=top_k_n)
             elif path == "/alerts/compound":
                 module_id = params.get("module", [None])[0]
                 window_n  = int(params.get("window", ["100"])[0])

@@ -803,6 +803,7 @@ R.run("T29  — /health responde em < 200ms", test_T29_health_latency)
 
 
 # ─── Sumário ──────────────────────────────────────────────────────────────────
-print()
-ok = R.summary()
-sys.exit(0 if ok else 1)
+if __name__ == "__main__":
+    print()
+    ok = R.summary()
+    sys.exit(0 if ok else 1)

@@ -599,8 +599,9 @@ R.run("T08c — POST /repair com código vazio retorna 400", test_repair_empty_c
 
 # ─── Summary ─────────────────────────────────────────────────────────────────
 
-print(f"\n{'═'*65}")
-print("  Marco 1 — Test Suite")
-print(f"{'═'*65}")
-ok = R.summary()
-sys.exit(0 if ok else 1)
+if __name__ == "__main__":
+    print(f"\n{'═'*65}")
+    print("  Marco 1 — Test Suite")
+    print(f"{'═'*65}")
+    ok = R.summary()
+    sys.exit(0 if ok else 1)

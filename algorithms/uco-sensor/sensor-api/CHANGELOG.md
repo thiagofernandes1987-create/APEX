@@ -5,6 +5,113 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.2.7] — 2026-06-18 — Sprint C: Auto-Fix Telemetry
+
+### Adicionado
+
+Fecha o loop do **LEAP 3 / M8.2** persistindo cada chamada
+`auto_remediate()` como uma linha de telemetria. A partir desta versão é
+possível responder, sem recomputar nada, perguntas como _"a auto-correção
+está realmente funcionando ao longo do tempo neste módulo?"_, _"quais
+regras SAST são as mais corrigidas (e quais sobram como resíduo)?"_, e
+_"quais transformações puxam o peso?"_.
+
+#### Nova tabela — `remediations` (SnapshotStore)
+
+```sql
+CREATE TABLE remediations (
+    id, module_id, commit_hash, timestamp,
+    is_valid, findings_before, findings_after,
+    fixed_count, residual_count,
+    transforms_json, fixed_rules_json,
+    findings_before_json, findings_after_json
+);
+CREATE INDEX idx_remed_module_ts ON remediations(module_id, timestamp);
+```
+
+Schema independente do `snapshots` — auto-fix pode rodar fora de uma
+janela de scan sem precisar de `(module_id, commit_hash)` válidos. Cada
+chamada `auto_remediate()` vira **uma** linha (não há UNIQUE), permitindo
+analisar fluxo no tempo mesmo dentro do mesmo commit.
+
+#### Novos métodos no `SnapshotStore`
+
+- **`store_remediation(module_id, result, *, commit_hash="", timestamp=None) -> int`**
+  - duck-typed: aceita `RemediationResult`, qualquer objeto com a mesma
+    superfície de atributos, ou um `dict` de `to_dict()` — escolha pelo
+    chamador
+  - timestamp default = `time.time()` no momento da escrita
+  - retorna o `id` da linha (≥ 1)
+- **`get_remediation_history(module_id=None, limit=100) -> List[Dict]`**
+  - ASC por timestamp (oldest first), filtragem opcional por módulo
+  - `module_id=None` → varre o repositório inteiro
+  - deserialização defensiva: JSON corrompido vira lista vazia, nunca raise
+- **`get_remediation_stats(module_id=None, top_k=5) -> Dict`**
+  - agrega `n_total`, `n_valid`, `n_with_fixes`, `success_rate`,
+    `total_fixed`, `total_residual`, `mean_fixed`, `mean_residual`
+  - `top_fixed_rules` / `top_transforms` ordenados por frequência desc,
+    desempate alfabético (output determinístico)
+  - empty store → tudo zerado, sem exceção
+
+#### Novos endpoints REST
+
+| Método | Rota | Descrição |
+|---|---|---|
+| **GET** | `/apex/remediation/history` | Histórico persistido (`?module=&limit=`) |
+| **GET** | `/apex/remediation/stats` | Agregado (`?module=&top_k=`) |
+
+**`/apex/auto-remediate` agora persiste por padrão.** A resposta inclui
+um novo campo `persisted_id` (`int` ou `null` se a escrita falhou). Para
+calls efêmeras (teste, sandbox) basta enviar `"persist": false` no body.
+
+#### Decisões arquiteturais
+
+- **Best-effort write:** falha de persistência **não** mascara o resultado
+  da remediação — o cliente sempre recebe o `RemediationResult`. O custo
+  de perder uma linha de telemetria é zero; mascarar uma correção real
+  seria caro.
+- **Duck typing aceitando dict:** já existem callers que persistem
+  remotamente via JSON (webhook APEX). Aceitar `dict` evita conversões
+  redundantes na fronteira.
+- **Empty list defaults:** `findings_after_rules` etc. retornam `[]` em vez
+  de `None` quando o JSON do banco está corrompido — assim consumidores
+  podem fazer `len(x)` e `for x in y` sem null-checks.
+
+### Testes — 30 novos (TR01–TR30)
+
+- TR01–TR10 — persistência: row id, idempotência multi-insert, round-trip
+  completo de campos, aceitação de dict, timestamp custom vs default,
+  findings vazios, `is_valid=False`, dict parcial, isolamento por módulo
+- TR11–TR20 — histórico: módulo desconhecido, ordem ASC, limite, repo-wide,
+  round-trip de `findings_after_rules` / transforms / commit_hash, filtro
+  por módulo, `findings_before_rules`, IDs duplicados
+- TR21–TR30 — stats: store vazio, n_total, success rate, agregação de
+  total_fixed, top fixed rules em ordem desc, top transforms desc, limite
+  top_k, mean_fixed por run, módulo vs repo-wide, bookends de timestamps
+
+Regressão completa: **1363 passed, 3 skipped, 0 falhas** em 10.6s.
+
+### Conserto colateral
+
+Os scripts legados `tests/test_marco1.py` e `tests/test_marco2.py` tinham
+`sys.exit()` no top-level (eram scripts standalone antes da era pytest).
+A coleta do pytest disparava `SystemExit` e abortava toda a suíte.
+Cirurgia mínima: o bloco final dos dois passou a ficar dentro de
+`if __name__ == "__main__":`. Comportamento como script preservado;
+pytest agora coleta sem erro.
+
+### O que isso destrava
+
+- **Dashboard de "auto-fix efficacy"** — gráficos de série temporal sobre
+  `fixed_count` e `residual_count` por módulo (Sprint D)
+- **Auto-tuning do mapping `SAST_TO_TRANSFORM`** — regras com taxa de
+  resíduo > 50% são candidatas a refinamento de transform (próxima fase)
+- **Sinal cruzado APS × auto-fix** — módulos com APS caindo + auto-fix
+  com sucesso = melhora real; APS caindo + auto-fix sem sucesso =
+  problema estrutural que transforms não resolvem (Sprint E)
+
+---
+
 ## [3.2.6] — 2026-06-17 — Sprint B: Repo Meta-Score + APS outliers
 
 ### Adicionado
