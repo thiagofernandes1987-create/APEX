@@ -5,6 +5,132 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.3.0] — 2026-06-18 — Sprint H: De-globalization + Domain Signals + Observability
+
+### Refatorado / Adicionado
+
+Endereça os achados estruturais da auditoria Codex (**D-1**, **D-2** e
+parte de **F-3**) — duplicação de matemática que pariu o C-2 de
+Sprint G, leak da conexão `:memory:` no bootstrap, e ausência de
+observabilidade operacional.
+
+#### H.1 — `governance/signals.py` como fonte única (D-2)
+
+**Antes**: a matemática de OLS+Hurst sobre APS e MAE/RMSE/bias sobre
+forecast_error vivia em **2 cópias** cada (handlers em `api/server.py`
+e `_aps_trend_from_store`/`_predictor_accuracy_from_store` em
+`compound_alert.py`). Drift estava começando — o handler tinha
+`slope_pct` e `forecast_next` que o Compound não tinha, e foi nessa
+fenda que C-2 (inversão BIASED_DOWN ↔ BIASED_UP) nasceu sem ser
+pego pelos testes do outro lado.
+
+**Agora**:
+
+```python
+from governance.signals import aps_trend, predictor_accuracy
+
+aps_trend(store, module_id, window=100) -> dict
+predictor_accuracy(store, module_id, window=100) -> dict
+```
+
+São funções puras: recebem `store` como parâmetro (qualquer duck-typed
+com `get_aps_history` / `get_predictor_history`), nunca raise, sempre
+retornam dict estruturado com `verdict`.
+
+`handle_anti_pattern_score_trend` e `handle_predictor_accuracy` em
+`server.py` agora chamam estas funções. `compound_alert.py` chama as
+mesmas. **Drift é estruturalmente impossível** — a inversão de sinal
+C-2 não poderia mais nascer.
+
+Os dois wrappers legados (`_aps_trend_from_store`,
+`_predictor_accuracy_from_store`) viram **passes thin** para
+`governance.signals.*` — testes que importam diretamente do
+`compound_alert` continuam funcionando.
+
+A correção do gate de Hurst em `n >= _MIN_SAMPLES_RELIABLE` (Sprint G
+G.3) ficou parcial — afetava só uma das cópias. Agora vale para o
+handler `/anti-pattern-score/trend` também.
+
+#### H.2 — `_replace_store()` substitui `_store.__init__()` (D-1)
+
+**Antes**: `server.py:3925` fazia `_store.__init__(args.db)` no
+bootstrap para repointar o DB no objeto vivo. Isso é code smell forte:
+a conexão `:memory:` aberta no `__init__` original **nunca era
+fechada** antes de `self._shared_conn` ser sobrescrito.
+
+**Agora**:
+
+```python
+def _replace_store(db_path: str) -> None:
+    global _store
+    try:
+        _store.close()        # close OLD connection cleanly
+    except Exception:
+        pass
+    _store = SnapshotStore(db_path)   # rebind GLOBAL
+    _bump_metric("store_replacements")
+    _log.info("store replaced: db_path=%s", db_path)
+```
+
+Idempotente, swallow safe em falha de close, conta a operação na
+métrica `store_replacements`.
+
+> **Nota**: a des-globalização **completa** (injetar `store` nos 57
+> handlers em vez do `_store` módulo-level) é refactor de blast radius
+> grande e fica para sprint dedicado. H.2 endereça o leak e o
+> `__init__` re-call sem mudar a superfície dos handlers.
+
+#### H.3 — Logger estruturado JSON + métricas em `/health`
+
+Novo módulo de observabilidade — **stdlib-only**:
+
+- `_JsonLogFormatter` — formatter JSON-line compatível com APMs
+  (Datadog, ELK, Loki). Cada log: `{ts, level, name, msg, exc?}`.
+- `_setup_json_logger("uco-sensor")` — idempotente; segunda chamada
+  não duplica handler.
+- 5 contadores monotônicos protegidos por `_metrics_lock`:
+  - `inserts_total`
+  - `remediation_writes_ok`
+  - `remediation_writes_failed`
+  - `auto_remediate_requests`
+  - `store_replacements`
+- `GET /health` agora inclui o bloco `metrics` com snapshot atômico.
+- `handle_apex_auto_remediate` incrementa os 3 contadores adequados
+  e loga falha de persistência via `_log.warning`.
+
+### Testes — 30 novos (TH01–TH30)
+
+- TH01–TH10 (H.1): `aps_trend` shape, INSUFFICIENT, gate Hurst,
+  `predictor_accuracy` shape, ERROR path em store quebrado, **paridade
+  byte-a-byte** entre wrapper legado e `signals.*` (TH09), sign
+  convention BIASED_UP (TH10)
+- TH11–TH20 (handlers): payload do handler == payload do `signals.*`
+  exceto internal fields strip; 400/404; Compound usa signals;
+  forecast = slope*n + intercept; sem internal keys vazando; tier RED
+  bloqueado em n < 8
+- TH21–TH30 (H.2 + H.3): `_replace_store` rebind, conta replacement,
+  fecha conexão antiga, swallow safe; `/health` carrega `metrics`;
+  todos os 5 contadores presentes; incrementos corretos em
+  auto-remediate (sucesso e falha); JSON formatter produz JSON
+  parseável com chaves canônicas
+
+Regressão completa: **1513 passed, 3 skipped, 0 falhas** em 12.5s
+(+30 vs Sprint F).
+
+### O que isso destrava
+
+- **Sprint I** pode atacar D-4 (custo de leitura no caminho de
+  escrita) sem medo de quebrar a matemática duplicada — agora há um
+  lugar só para mexer.
+- **APMs/dashboards** ganham um pulse confiável de saúde operacional:
+  contadores de telemetria perdida vs persistida tornam visível em
+  tempo real qualquer falha sistêmica da Sprint C.
+- **Tempo de PR-review de mudanças de matemática** cai pela metade —
+  uma alteração de sinal/threshold vive em um arquivo só, com testes
+  de paridade que falham antes que o drift volte.
+
+---
+
 ## [3.2.11] — 2026-06-18 — Sprint F: Spectral Analysis of APS
 
 ### Adicionado

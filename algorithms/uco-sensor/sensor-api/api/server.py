@@ -36,6 +36,7 @@ import sys
 import json
 import time
 import hmac
+import json as _json_mod
 import logging
 import threading
 import traceback
@@ -199,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.2.11"
+    version:      str   = "3.3.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -217,6 +218,74 @@ _config = SensorConfig(
     apex_enabled=os.environ.get("UCO_APEX_ENABLED", "0").lower() in ("1", "true", "yes"),
 )
 _store     = SnapshotStore(_config.db_path)
+
+
+# ─── Sprint H: structured logger + operational counters ─────────────────────
+
+class _JsonLogFormatter(logging.Formatter):
+    """Minimal JSON line formatter — APM-friendly, stdlib only."""
+    def format(self, record: logging.LogRecord) -> str:
+        payload = {
+            "ts":      self.formatTime(record, "%Y-%m-%dT%H:%M:%S"),
+            "level":   record.levelname,
+            "name":    record.name,
+            "msg":     record.getMessage(),
+        }
+        if record.exc_info:
+            payload["exc"] = self.formatException(record.exc_info)
+        return _json_mod.dumps(payload, ensure_ascii=False)
+
+
+def _setup_json_logger(name: str = "uco-sensor") -> logging.Logger:
+    """Configure a single stdout JSON handler — idempotent on second call."""
+    logger = logging.getLogger(name)
+    if not any(getattr(h, "_uco_json", False) for h in logger.handlers):
+        h = logging.StreamHandler()
+        h.setFormatter(_JsonLogFormatter())
+        h._uco_json = True   # type: ignore[attr-defined]
+        logger.addHandler(h)
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    return logger
+
+
+_log = _setup_json_logger()
+
+
+# Operational metrics surfaced in /health.  All ints, all monotonic.
+_metrics_lock = threading.Lock()
+_metrics: Dict[str, int] = {
+    "inserts_total":              0,
+    "remediation_writes_ok":      0,
+    "remediation_writes_failed":  0,
+    "auto_remediate_requests":    0,
+    "store_replacements":         0,
+}
+
+
+def _bump_metric(name: str, delta: int = 1) -> None:
+    with _metrics_lock:
+        _metrics[name] = _metrics.get(name, 0) + int(delta)
+
+
+def _replace_store(db_path: str) -> None:
+    """Sprint H: replace the module-level _store cleanly.
+
+    Pre-Sprint-H bootstrap called ``_store.__init__(args.db)`` to repoint the
+    DB without rebinding the global — that leaked the original ``:memory:``
+    connection (never closed) and never re-ran proper init invariants.  We
+    now ``close()`` the old store and rebind the global to a fresh one.
+    Idempotent: a second call with the same path closes+rebinds again, which
+    is the safe behavior.
+    """
+    global _store
+    try:
+        _store.close()
+    except Exception:
+        pass
+    _store = SnapshotStore(db_path)
+    _bump_metric("store_replacements")
+    _log.info("store replaced: db_path=%s", db_path)
 _bridge    = UCOBridge(mode=_config.engine_mode)
 _engine    = FrequencyEngine(verbose=_config.verbose)
 _router    = SignalOutputRouter()
@@ -416,6 +485,9 @@ def handle_root() -> Tuple[int, str]:
 
 
 def handle_health() -> Tuple[int, Dict]:
+    # Sprint H: snapshot of operational metrics for APMs.
+    with _metrics_lock:
+        metrics_copy = dict(_metrics)
     return 200, {
         "status":          "healthy",
         "version":         _config.version,
@@ -423,6 +495,7 @@ def handle_health() -> Tuple[int, Dict]:
         "modules_tracked": len(_store.list_modules()),
         "auth_enabled":    _config.auth_enabled,
         "languages":       get_registry().supported_languages(),
+        "metrics":         metrics_copy,
     }
 
 
@@ -1037,6 +1110,8 @@ def handle_apex_auto_remediate(data: Dict) -> Tuple[int, Dict]:
     except Exception as exc:
         return 500, {"error": f"auto-remediate failed: {exc}"}
 
+    _bump_metric("auto_remediate_requests")
+
     persisted_id: Optional[int] = None
     persist_error: Optional[str] = None
     if persist:
@@ -1046,6 +1121,7 @@ def handle_apex_auto_remediate(data: Dict) -> Tuple[int, Dict]:
                 result=result,
                 commit_hash=commit_hash,
             )
+            _bump_metric("remediation_writes_ok")
         except Exception as exc:
             # Sprint G fix (C-8): keep the actual response intact but make
             # the failure observable.  Distinguish "user opted out" from
@@ -1053,10 +1129,11 @@ def handle_apex_auto_remediate(data: Dict) -> Tuple[int, Dict]:
             # with no other signal, silently losing telemetry on disk-full /
             # DB-locked conditions.
             persist_error = f"{type(exc).__name__}: {exc}"
-            logging.getLogger("uco-sensor").warning(
+            _log.warning(
                 "store_remediation failed for module=%s: %s",
                 module_id, persist_error,
             )
+            _bump_metric("remediation_writes_failed")
             persisted_id = None
 
     payload: Dict[str, Any] = {
@@ -2881,6 +2958,7 @@ def handle_anti_pattern_score_trend(
           "verdict":       "DEGRADING_PERSISTENT" | "STABLE" | "IMPROVING" | "INSUFFICIENT"
         }
     """
+    # Sprint H: delegates to governance.signals.aps_trend (single source of truth).
     if not module_id:
         return 400, {"error": "module parameter is required"}
 
@@ -2888,62 +2966,12 @@ def handle_anti_pattern_score_trend(
     if not raw:
         return 404, {"error": f"No history found for module '{module_id}'"}
 
-    series = [aps for _, _, aps in raw if aps is not None]
-    if len(series) < 4:
-        return 200, {
-            "module_id":  module_id,
-            "n_samples":  len(series),
-            "verdict":    "INSUFFICIENT",
-            "min_required": 4,
-        }
-
-    n      = len(series)
-    mean   = sum(series) / n
-    xs     = list(range(n))
-    # OLS slope on the APS series (units per snapshot)
-    x_mean = (n - 1) / 2.0
-    num = sum((xs[i] - x_mean) * (series[i] - mean) for i in range(n))
-    den = sum((xs[i] - x_mean) ** 2 for i in range(n)) or 1.0
-    slope = num / den
-    intercept = mean - slope * x_mean
-    forecast_next = slope * n + intercept
-    slope_pct = (slope / mean) if mean else 0.0
-
-    # Hurst R/S (reuse the predictor's implementation; falls back to 0.5)
-    try:
-        from sensor_core.predictor import hurst_rs
-        hurst = hurst_rs(series)
-    except Exception:
-        hurst = 0.5
-
-    # Verdict: APS DECREASE is bad (lower score = more anti-patterns)
-    if slope < -0.5 and hurst > 0.55:
-        verdict = "DEGRADING_PERSISTENT"
-    elif slope < -0.5:
-        verdict = "DEGRADING"
-    elif slope > 0.5:
-        verdict = "IMPROVING"
-    else:
-        verdict = "STABLE"
-
-    latest_aps = series[-1]
-    try:
-        from metrics.anti_pattern_score import rate_aps
-        latest_rating = rate_aps(latest_aps)
-    except Exception:
-        latest_rating = "?"
-
-    return 200, {
-        "module_id":     module_id,
-        "n_samples":     n,
-        "latest_aps":    round(latest_aps, 2),
-        "latest_rating": latest_rating,
-        "slope":         round(slope, 4),
-        "slope_pct":     round(slope_pct, 4),
-        "forecast_next": round(forecast_next, 2),
-        "hurst":         round(hurst, 4),
-        "verdict":       verdict,
-    }
+    from governance.signals import aps_trend
+    result = aps_trend(_store, module_id, window=window)
+    # Strip internal fields the public endpoint doesn't advertise.
+    result.pop("intercept", None)
+    result.pop("hurst_reliable", None)
+    return 200, result
 
 
 # ── LEAP 4 — Predictor persistence endpoints ─────────────────────────────────
@@ -3014,6 +3042,7 @@ def handle_predictor_accuracy(
         "BIASED_DOWN"    |bias| > MAE/2 and bias < 0 (consistent overshoot)
         "NOISY"          MAE >= 10% of mean H but bias near zero
     """
+    # Sprint H: delegates to governance.signals.predictor_accuracy
     if not module_id:
         return 400, {"error": "module parameter is required"}
 
@@ -3021,41 +3050,8 @@ def handle_predictor_accuracy(
     if not samples:
         return 404, {"error": f"No history found for module '{module_id}'"}
 
-    pairs = [s["forecast_error"] for s in samples
-             if s["forecast_error"] is not None]
-    if len(pairs) < 3:
-        return 200, {
-            "module_id":   module_id,
-            "n_evaluated": len(pairs),
-            "verdict":     "INSUFFICIENT",
-            "min_required": 3,
-        }
-
-    # MAE / RMSE / bias on the forecast_error series (actual - forecast)
-    n      = len(pairs)
-    mae    = sum(abs(e) for e in pairs) / n
-    rmse   = (sum(e * e for e in pairs) / n) ** 0.5
-    bias   = sum(pairs) / n
-    mean_h = sum(s["hamiltonian"] for s in samples) / len(samples)
-    mae_rel = mae / mean_h if mean_h else mae
-
-    if mae_rel < 0.10:
-        verdict = "ACCURATE"
-    elif abs(bias) > mae / 2:
-        verdict = "BIASED_UP" if bias > 0 else "BIASED_DOWN"
-    else:
-        verdict = "NOISY"
-
-    return 200, {
-        "module_id":   module_id,
-        "n_evaluated": n,
-        "mae":         round(mae,    4),
-        "rmse":        round(rmse,   4),
-        "bias":        round(bias,   4),
-        "mae_relative": round(mae_rel, 4),
-        "mean_hamiltonian": round(mean_h, 4),
-        "verdict":     verdict,
-    }
+    from governance.signals import predictor_accuracy
+    return 200, predictor_accuracy(_store, module_id, window=window)
 
 
 # ── Sprint A — Compound Alert endpoints ──────────────────────────────────────
@@ -4003,7 +3999,7 @@ if __name__ == "__main__":
     _config.verbose      = args.verbose
     _config.auth_enabled = args.auth and not args.no_auth
     _config.admin_key    = os.environ.get("UCO_ADMIN_KEY", "")
-    _store.__init__(args.db)
+    _replace_store(args.db)
 
     # Configurar APEX connector se URL fornecida
     if args.apex_url or os.environ.get("APEX_WEBHOOK_URL"):

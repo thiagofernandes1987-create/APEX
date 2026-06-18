@@ -130,109 +130,23 @@ def _priority(tier: str, aps_slope: float, predictor_mae_rel: float) -> float:
 
 # ─── Public API ───────────────────────────────────────────────────────────────
 
+# Sprint H: aps_trend / predictor_accuracy were duplicated here before —
+# they now live in governance.signals as the single source of truth.
+# The thin wrappers below preserve the legacy private names so external
+# tests that import them (test_marco_m32) keep working.
+from governance.signals import aps_trend as _signals_aps_trend
+from governance.signals import predictor_accuracy as _signals_pred_accuracy
+
+
 def _aps_trend_from_store(store: Any, module_id: str, window: int) -> Dict[str, Any]:
-    """
-    Compute the APS trend (verdict + slope + Hurst) directly from *store*,
-    reusing the exact same logic the /anti-pattern-score/trend endpoint
-    runs — but on the store object we were given, not the module-level
-    api.server._store.  Returns a dict shaped like the endpoint response.
-    """
-    raw = store.get_aps_history(module_id, window=window)
-    series = [aps for _, _, aps in raw if aps is not None]
-    if len(series) < 4:
-        return {"verdict": "INSUFFICIENT", "n_samples": len(series),
-                "slope": 0.0, "latest_aps": series[-1] if series else None,
-                "latest_rating": None, "hurst": 0.5}
-
-    n      = len(series)
-    mean   = sum(series) / n
-    xs     = list(range(n))
-    x_mean = (n - 1) / 2.0
-    num = sum((xs[i] - x_mean) * (series[i] - mean) for i in range(n))
-    den = sum((xs[i] - x_mean) ** 2 for i in range(n)) or 1.0
-    slope = num / den
-
-    # Sprint G fix (C-3): Hurst R/S degenerates on short series — the predictor
-    # itself declares _MIN_SAMPLES_RELIABLE = 8 as the cutoff for a reliable
-    # estimate.  We compute Hurst here only when we have ≥ 8 samples; otherwise
-    # the persistence verdict downgrades to plain DEGRADING (no "_PERSISTENT").
-    try:
-        from sensor_core.predictor import hurst_rs, _MIN_SAMPLES_RELIABLE
-    except Exception:
-        hurst_rs, _MIN_SAMPLES_RELIABLE = None, 8
-
-    hurst_reliable = n >= _MIN_SAMPLES_RELIABLE
-    if hurst_reliable and hurst_rs is not None:
-        try:
-            hurst = hurst_rs(series)
-        except Exception:
-            hurst = 0.5
-            hurst_reliable = False
-    else:
-        hurst = 0.5
-
-    if slope < -0.5 and hurst > 0.55 and hurst_reliable:
-        verdict = "DEGRADING_PERSISTENT"
-    elif slope < -0.5:
-        verdict = "DEGRADING"
-    elif slope > 0.5:
-        verdict = "IMPROVING"
-    else:
-        verdict = "STABLE"
-
-    try:
-        from metrics.anti_pattern_score import rate_aps
-        latest_rating = rate_aps(series[-1])
-    except Exception:
-        latest_rating = None
-
-    return {
-        "verdict":       verdict,
-        "n_samples":     n,
-        "slope":         round(slope, 4),
-        "latest_aps":    round(series[-1], 2),
-        "latest_rating": latest_rating,
-        "hurst":         round(hurst, 4),
-    }
+    """Deprecated thin wrapper — use governance.signals.aps_trend directly."""
+    return _signals_aps_trend(store, module_id, window=window)
 
 
 def _predictor_accuracy_from_store(store: Any, module_id: str, window: int
                                     ) -> Dict[str, Any]:
-    """
-    Same as _aps_trend_from_store but for the predictor accuracy summary
-    (mirror of /predictor/accuracy logic, operating on the given store).
-    """
-    samples = store.get_predictor_history(module_id, window=window)
-    pairs = [s["forecast_error"] for s in samples
-             if s.get("forecast_error") is not None]
-    if len(pairs) < 3:
-        return {"verdict": "INSUFFICIENT", "n_evaluated": len(pairs),
-                "mae": None, "rmse": None, "bias": None,
-                "mae_relative": 0.0}
-
-    n   = len(pairs)
-    mae = sum(abs(e) for e in pairs) / n
-    rmse = (sum(e * e for e in pairs) / n) ** 0.5
-    bias = sum(pairs) / n
-    mean_h = sum(s["hamiltonian"] for s in samples) / max(len(samples), 1)
-    mae_rel = (mae / mean_h) if mean_h else mae
-
-    if mae_rel < 0.10:
-        verdict = "ACCURATE"
-    elif abs(bias) > mae / 2:
-        verdict = "BIASED_UP" if bias > 0 else "BIASED_DOWN"
-    else:
-        verdict = "NOISY"
-
-    return {
-        "verdict":      verdict,
-        "n_evaluated":  n,
-        "mae":          round(mae, 4),
-        "rmse":         round(rmse, 4),
-        "bias":         round(bias, 4),
-        "mae_relative": round(mae_rel, 4),
-        "mean_hamiltonian": round(mean_h, 4),
-    }
+    """Deprecated thin wrapper — use governance.signals.predictor_accuracy directly."""
+    return _signals_pred_accuracy(store, module_id, window=window)
 
 
 def compute_compound_alert(
