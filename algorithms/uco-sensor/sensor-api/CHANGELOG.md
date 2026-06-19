@@ -5,6 +5,136 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.3.2] — 2026-06-18 — Sprint J: Dynamic CVE Knowledge Feed
+
+### Adicionado
+
+Endereça o gap estratégico apontado pelo Codex — **"`cve_database`
+hardcoded vira dívida em 6 meses, sem feed de atualização = obsolescência
+garantida"**. Agora ops podem atualizar o corpus de CVEs em produção
+**sem release**, com rollback transacional por feed-id.
+
+#### Novo módulo — `sca/cve_feed.py`
+
+API pública:
+
+- `load_from_file(path, feed_id=None) -> FeedLoadResult`
+- `load_from_url(url, *, timeout=10.0, feed_id=None) -> FeedLoadResult`
+- `unload(feed_id) -> int` (n. de rows revertidas)
+- `reset_overrides() -> int`
+- `feed_status() -> dict` (total CVEs, ecossistemas, feeds ativos)
+
+**Dataclass `FeedLoadResult`**: `feed_id, source, ts_loaded, added_new,
+added_override, skipped_bad, errors[]`. Sempre retornada — nunca raise
+em input ruim. Cada linha malformada vira uma entrada em `errors`
+sem poisonar o batch.
+
+**Schema do feed** (JSON ou YAML — auto-detect):
+
+```json
+{
+  "version": "1.0",
+  "generated_at": "2026-06-18T00:00:00Z",
+  "cves": [
+    {
+      "ecosystem":      "npm",
+      "package":        "minimist",
+      "cve_id":         "CVE-2024-99999",
+      "severity":       "HIGH",
+      "cvss_score":     7.5,
+      "description":    "…",
+      "affected_range": ">=1.0.0,<1.2.6",
+      "fixed_version":  "1.2.6",
+      "cwe":            "CWE-1321"
+    }
+  ]
+}
+```
+
+#### Decisões de design
+
+- **Built-in DB nunca é mutado destrutivamente** — cada `load_*` registra
+  os deltas em `_LOADED_FEEDS[feed_id]` e `unload()` reverte
+  precisamente, restaurando entries override-adas.
+- **Dedup-por-CVE-id**: re-disclosure de severidade/range refinada
+  substitui a entrada anterior (não duplica). Acidentalmente cobre
+  o caso de "mesmo CVE aparecer 2× no mesmo feed".
+- **Network closed by default** — `load_from_url` exige `host` em
+  `UCO_CVE_FEED_ALLOWLIST` (CSV de hostnames). Sem env var = nenhum
+  fetch externo permitido. Mesmo com allowlist, ainda usa só
+  `urllib.request` (stdlib, sem requests).
+- **JSON + YAML opcional** — `json.loads` primeiro; fallback a `yaml`
+  se importável. Nenhuma dependência nova obrigatória.
+- **Parsing defensivo**: campos obrigatórios `{ecosystem, package,
+  cve_id, affected_range}`, severidade restrita a
+  `{CRITICAL, HIGH, MEDIUM, LOW, INFO}`, cvss_score deve ser numérico.
+  Linha inválida → conta em `skipped_bad` + mensagem em `errors`.
+
+#### Novos endpoints REST
+
+| Método | Rota | Auth | Descrição |
+|---|---|---|---|
+| **GET** | `/feeds/status` | user | total CVEs, ecossistemas, feeds ativos |
+| **POST** | `/feeds/cve/load` | **admin** | aceita `{path}`, `{url}` OU `{inline}` |
+| **POST** | `/feeds/cve/unload` | **admin** | reverte por `{feed_id}` |
+
+`POST /feeds/cve/load` aceita **três fontes mutuamente exclusivas**:
+
+```jsonc
+// 1. Arquivo local (path absoluto)
+{"path": "/srv/uco/feeds/cves-2026-Q2.json", "feed_id": "Q2-2026"}
+
+// 2. URL HTTP (host na allowlist)
+{"url": "https://internal.example.com/cves.json", "timeout": 10.0}
+
+// 3. Payload inline (já fetchado pelo orquestrador)
+{"inline": {"version": "1.0", "cves": [...]}, "feed_id": "ad-hoc"}
+```
+
+Os 2 writes (load/unload) exigem `hmac.compare_digest` na admin key
+(Sprint G G.8); o GET de status só requer chave de usuário regular.
+
+### Testes — 30 novos (TK01–TK30)
+
+- TK01–TK10 (módulo): load adiciona; lookup pega; unload reverte;
+  override substitui severity; reset limpa tudo; bad rows skipados sem
+  raise; arquivo inexistente vira erro estruturado; payload sem `cves`
+  rejeitado; `cves` deve ser list
+- TK11–TK20 (REST): status retorna shape correto; conta feeds ativos;
+  inline / path / url branches; allowlist vazio bloqueia URL;
+  400 quando faltar fonte; unload de feed desconhecido = 0; load+status
+  roundtrip mostra delta
+- TK21–TK30 (segurança & edge): allowlist host-matching positivo e
+  negativo; allowlist vazio bloqueia todos; ecosystem vazio skipado;
+  severity desconhecida rejeitada; CVE duplicado no mesmo feed usa
+  override path; reset cumulativo; `to_dict()` JSON-serializable;
+  default severity MEDIUM quando ausente; built-in CVE preservado
+  após roundtrip (lodash 4.17.11)
+
+Regressão completa: **1573 passed, 3 skipped, 0 falhas** em 11.9s
+(+30 vs Sprint I).
+
+### O que isso destrava
+
+- **Refresh diário de CVE corpus** sem nova release — cron job que
+  fetche o NVD/GitHub Advisory feed e `POST /feeds/cve/load` com a
+  payload normalizada
+- **Hot-patch durante incidente** — quando um CVE crítico vaza, drop
+  do JSON local + `/feeds/cve/load` põe a regra em produção em
+  segundos
+- **Diff por ambiente** — staging/prod podem carregar `feed_id`
+  diferentes para A/B test de impacto
+
+### Não-objetivos (Sprint K em diante)
+
+- **SAST rules feed dinâmico** — schema diferente (precisa de
+  validação AST/regex), pesado pra colocar no mesmo sprint
+- **NVD-direct integration** — assume um feed pre-normalizado;
+  o conversor NVD→schema fica fora de escopo
+- **Versionamento semântico do schema do feed** — hoje é v1.0 estática
+
+---
+
 ## [3.3.1] — 2026-06-18 — Sprint I: Performance — APS off hot-path + Native SQL
 
 ### Refatorado

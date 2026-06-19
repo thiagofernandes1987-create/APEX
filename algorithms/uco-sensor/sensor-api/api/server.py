@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.3.1"
+    version:      str   = "3.3.2"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -531,6 +531,9 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/apex/remediation/stats",   "auth": True,   "desc": "Aggregate auto-fix telemetry — success rate, top fixed rules, top transforms (?module=&top_k=) [Sprint C]"},
             {"method": "GET",    "path": "/diff/channels",            "auth": True,   "desc": "Per-channel delta between 2 snapshots (?module=&from=&to=) [Sprint E]"},
             {"method": "GET",    "path": "/diff/volatile",            "auth": True,   "desc": "Top channels by coefficient of variation over history (?module=&window=&top_k=) [Sprint E]"},
+            {"method": "GET",    "path": "/feeds/status",             "auth": True,   "desc": "CVE corpus state + active dynamic feeds [Sprint J]"},
+            {"method": "POST",   "path": "/feeds/cve/load",           "auth": "admin", "desc": "Load dynamic CVE feed from path/url/inline JSON [Sprint J]"},
+            {"method": "POST",   "path": "/feeds/cve/unload",         "auth": "admin", "desc": "Roll back a previously-loaded feed by feed_id [Sprint J]"},
             {"method": "GET",    "path": "/spectral/aps",             "auth": True,   "desc": "Welch PSD + entropy + db4 wavelet decomposition of APS series (?module=&window=) [Sprint F]"},
             {"method": "GET",    "path": "/spectral/fingerprint",     "auth": True,   "desc": "Compact 5-channel spectral fingerprint for module-to-module comparison (?module=&window=) [Sprint F]"},
             {"method": "GET",    "path": "/predict",          "auth": True,   "desc": "Degradation forecast para um módulo (?module=&horizon=)"},
@@ -1281,6 +1284,79 @@ def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, 
 
     stats["module_id"] = module_id or "*"
     return 200, stats
+
+
+def handle_feeds_status() -> Tuple[int, Dict]:
+    """GET /feeds/status — current CVE corpus state + active dynamic feeds (Sprint J)."""
+    try:
+        from sca.cve_feed import feed_status
+        return 200, feed_status()
+    except Exception as exc:
+        return 500, {"error": f"feeds/status failed: {exc}"}
+
+
+def handle_feeds_cve_load(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /feeds/cve/load — load a dynamic CVE feed (Sprint J).
+
+    Body schemas (mutually exclusive)
+    --------------------------------
+    {"path": "/abs/path/to/feed.json", "feed_id": "optional"}
+        Local-file load.
+
+    {"url":  "https://internal.example.com/cves.json",
+     "timeout": 10.0, "feed_id": "optional"}
+        HTTP load.  Host must appear in env ``UCO_CVE_FEED_ALLOWLIST``.
+
+    {"inline": {"version": "1.0", "cves": [...]}, "feed_id": "optional"}
+        Inline payload — no disk/network.  Useful for orchestrators that
+        already fetched the feed and want to push it.
+
+    Always returns a structured FeedLoadResult — never 500 on bad input;
+    parse errors and skipped rows live inside the payload.
+    """
+    try:
+        from sca.cve_feed import (
+            load_from_file, load_from_url, _ingest_text,
+        )
+    except Exception as exc:
+        return 503, {"error": f"cve_feed module unavailable: {exc}"}
+
+    feed_id = data.get("feed_id")
+
+    if "inline" in data:
+        import json as _json
+        import time as _time
+        try:
+            text = _json.dumps(data["inline"])
+        except Exception as exc:
+            return 400, {"error": f"inline payload not JSON-serializable: {exc}"}
+        fid = feed_id or f"inline:{int(_time.time())}"
+        result = _ingest_text(text, source="inline", feed_id=fid)
+    elif "path" in data:
+        path = str(data["path"])
+        result = load_from_file(path, feed_id=feed_id)
+    elif "url" in data:
+        url = str(data["url"])
+        timeout = float(data.get("timeout", 10.0))
+        result = load_from_url(url, timeout=timeout, feed_id=feed_id)
+    else:
+        return 400, {"error": "exactly one of 'path', 'url' or 'inline' is required"}
+
+    return 200, result.to_dict()
+
+
+def handle_feeds_cve_unload(data: Dict) -> Tuple[int, Dict]:
+    """POST /feeds/cve/unload — roll back a previously-loaded feed by id."""
+    try:
+        from sca.cve_feed import unload as _unload
+    except Exception as exc:
+        return 503, {"error": f"cve_feed module unavailable: {exc}"}
+    feed_id = data.get("feed_id", "")
+    if not feed_id:
+        return 400, {"error": "feed_id is required"}
+    n = _unload(feed_id)
+    return 200, {"feed_id": feed_id, "n_reverted": n}
 
 
 def handle_apex_status() -> Tuple[int, Dict]:
@@ -3731,6 +3807,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 window_n  = int(params.get("window", ["50"])[0])
                 top_k_n   = int(params.get("top_k",  ["5"])[0])
                 code, data = handle_diff_volatile(module_id, window=window_n, top_k=top_k_n)
+            elif path == "/feeds/status":
+                code, data = handle_feeds_status()
             elif path == "/spectral/aps":
                 module_id = params.get("module", [""])[0] or ""
                 window_n  = int(params.get("window", ["100"])[0])
@@ -3821,6 +3899,17 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_apex_fix(body)
             elif path == "/apex/auto-remediate":
                 code, data = handle_apex_auto_remediate(body)
+            elif path == "/feeds/cve/load":
+                # Sprint J: admin-only.
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                code, data = handle_feeds_cve_load(body)
+            elif path == "/feeds/cve/unload":
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                code, data = handle_feeds_cve_unload(body)
             elif path == "/scan-incremental":
                 code, data = handle_scan_incremental(body)
             elif path == "/scan-sca":
