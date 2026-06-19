@@ -515,6 +515,63 @@ RULES: List[SASTRuleInfo] = [
             "the function body: def f(arg=None): arg = [] if arg is None else arg"
         ),
     ),
+    # ── Sprint K — UCO transform bridge: 4 new detectors with closed-loop fix ─
+    SASTRuleInfo(
+        rule_id="SAST040", title="Unreachable Code After Terminal",
+        cwe_id="CWE-561", owasp="A04:2021",
+        severity="LOW",
+        description=(
+            "Statements appear after a return / raise / break / continue at the "
+            "same indentation level. The statements can never execute (dead code) "
+            "and signal either a refactoring mistake or hidden control-flow bug."
+        ),
+        remediation=(
+            "Remove the unreachable statements, or move them above the terminal "
+            "statement if their execution was intended."
+        ),
+    ),
+    SASTRuleInfo(
+        rule_id="SAST041", title="Redundant Constant Condition",
+        cwe_id="CWE-570", owasp="A04:2021",
+        severity="LOW",
+        description=(
+            "Conditional with a literal True/False guard ('if True:', 'if False:', "
+            "'while False:'). The branch is either always taken (noise in the AST) "
+            "or never executes (dead code). Both forms are anti-patterns."
+        ),
+        remediation=(
+            "Remove the literal conditional and keep / drop the body accordingly. "
+            "If the constant was a debug placeholder, restore the original guard."
+        ),
+    ),
+    SASTRuleInfo(
+        rule_id="SAST042", title="No-Op Self-Assignment",
+        cwe_id="CWE-563", owasp="A04:2021",
+        severity="LOW",
+        description=(
+            "Assignment that does not change state: 'x = x', 'x += 0', 'x *= 1', "
+            "'x = x + 0'. Probably a refactor remnant or a typo where the right-hand "
+            "side was meant to be a different expression."
+        ),
+        remediation=(
+            "Remove the no-op assignment, or correct the right-hand side to reflect "
+            "the intended computation."
+        ),
+    ),
+    SASTRuleInfo(
+        rule_id="SAST043", title="Unused Local Variable",
+        cwe_id="CWE-563", owasp="A04:2021",
+        severity="LOW",
+        description=(
+            "Local variable assigned but never read after the assignment. Either "
+            "dead code or a typo where a different name was meant to be used. "
+            "Detected by Python AST visitor over function bodies."
+        ),
+        remediation=(
+            "Remove the assignment, or fix the typo in the consuming code that "
+            "should reference the variable."
+        ),
+    ),
 ]
 
 _RULE_MAP: Dict[str, SASTRuleInfo] = {r.rule_id: r for r in RULES}
@@ -1057,11 +1114,42 @@ class _ASTScanner(ast.NodeVisitor):
 
     # ── SAST008 + SAST037: assignments ───────────────────────────────────────
 
+    # ── Sprint K — SAST041: redundant constant condition (if True/False, while False) ─
+
+    def visit_If(self, node: ast.If) -> None:
+        if (isinstance(node.test, ast.Constant)
+                and isinstance(node.test.value, bool)):
+            self._add("SAST041", node)
+        self.generic_visit(node)
+
+    def visit_While(self, node: ast.While) -> None:
+        if (isinstance(node.test, ast.Constant)
+                and node.test.value is False):
+            self._add("SAST041", node)
+        self.generic_visit(node)
+
+    def visit_AugAssign(self, node: ast.AugAssign) -> None:
+        # SAST042: x += 0  /  x -= 0  /  x *= 1  /  x /= 1
+        if isinstance(node.value, ast.Constant):
+            v = node.value.value
+            if (isinstance(node.op, (ast.Add, ast.Sub)) and v == 0) or \
+               (isinstance(node.op, (ast.Mult, ast.Div, ast.FloorDiv)) and v == 1):
+                self._add("SAST042", node)
+        self.generic_visit(node)
+
     def visit_Assign(self, node: ast.Assign) -> None:
         """
         SAST008: secret_name = "hardcoded_value"
         SAST037: var = open(...)  — file handle opened outside 'with'
+        SAST042: no-op self-assignment (x = x).
         """
+        # ── Sprint K — SAST042: no-op self assignment ──
+        if (len(node.targets) == 1
+                and isinstance(node.targets[0], ast.Name)
+                and isinstance(node.value, ast.Name)
+                and node.targets[0].id == node.value.id):
+            self._add("SAST042", node)
+
         # SAST008: hardcoded secret
         if isinstance(node.value, ast.Constant) and isinstance(node.value.value, str):
             val = node.value.value
@@ -1154,6 +1242,48 @@ class _ASTScanner(ast.NodeVisitor):
                     and not default.keywords):
                 self._add("SAST039", node)
                 break
+
+        # ── Sprint K — SAST040: unreachable code after terminal statement ──
+        terminal_classes = (ast.Return, ast.Raise, ast.Break, ast.Continue)
+        # Walk body and any nested block bodies looking for a terminal followed
+        # by another statement at the same level.
+        for parent in ast.walk(node):
+            block = getattr(parent, "body", None)
+            if isinstance(block, list):
+                for i, stmt in enumerate(block[:-1]):
+                    if isinstance(stmt, terminal_classes):
+                        self._add("SAST040", block[i + 1])
+                        break   # one finding per block is enough
+
+        # ── Sprint K — SAST043: unused local variable ──
+        # Collect all Name(ctx=Store) names in the function body; subtract every
+        # Name(ctx=Load) reference; remainder = unused.  Defensive: function
+        # parameters are EXCLUDED (those are caller-driven, not local dead state).
+        assigned: set = set()
+        loaded:   set = set()
+        param_names = {a.arg for a in node.args.args + node.args.kwonlyargs}
+        if node.args.vararg:
+            param_names.add(node.args.vararg.arg)
+        if node.args.kwarg:
+            param_names.add(node.args.kwarg.arg)
+
+        for child in ast.walk(node):
+            if isinstance(child, ast.Name):
+                if isinstance(child.ctx, ast.Store):
+                    if child.id not in param_names and not child.id.startswith("_"):
+                        assigned.add(child.id)
+                elif isinstance(child.ctx, ast.Load):
+                    loaded.add(child.id)
+
+        unused = assigned - loaded
+        for child in ast.walk(node):
+            if (isinstance(child, ast.Name)
+                    and isinstance(child.ctx, ast.Store)
+                    and child.id in unused):
+                self._add("SAST043", child)
+                unused.discard(child.id)   # one finding per variable
+                if not unused:
+                    break
 
     # ── SAST038: exception swallowing ────────────────────────────────────────
 

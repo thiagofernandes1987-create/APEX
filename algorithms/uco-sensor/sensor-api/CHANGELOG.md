@@ -5,6 +5,100 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.3.3] — 2026-06-19 — Sprint K: UCO Transform Bridge + Closed-Loop Coverage 7 → 11
+
+### Adicionado
+
+Endereça **Movimento #1 do relatório APEX Scientific** — "9 UCO transforms
+implementados que ninguém está usando". Sprint K **dobra a base de regras
+auto-corrigidas** (de 7 para 11) ao expor o arsenal silencioso do UCO
+core + criar implementações AST-nativas onde o UCO só tinha advisors.
+
+#### Novos detectores SAST (sast/scanner.py)
+
+| Rule | Título | CWE | Severity |
+|---|---|---|---|
+| **SAST040** | Unreachable Code After Terminal | CWE-561 | LOW |
+| **SAST041** | Redundant Constant Condition (`if True/False`, `while False`) | CWE-570 | LOW |
+| **SAST042** | No-Op Self-Assignment (`x = x`, `x += 0`, `x *= 1`) | CWE-563 | LOW |
+| **SAST043** | Unused Local Variable | CWE-563 | LOW |
+
+Catálogo total: 28 → **32 regras SAST** em Python AST scanner.
+
+#### Novos transforms
+
+- **`sensor_core/autofix/transforms/uco_transform_bridge.py`** —
+  adapter genérico para chamar transforms do UCO core (`algorithms/uco/`)
+  como `BaseTransform`. Round-trip via `ast.unparse` → UCO `.apply()` →
+  `ast.parse`. Defensivo: parse-error reverte para tree original.
+
+  Wrappers concretos:
+  - `UCOUnreachableRemover` → UCO `UnreachableAfterTerminalRemoval`
+  - `UCORedundantConditionRemover` → UCO `RedundantConditionEliminator`
+
+- **`sensor_core/autofix/transforms/remove_noop_assign.py`** —
+  `NoOpAssignRemover` AST-nativo (UCO `NoOpAssignmentSimplifier` só
+  cobre algumas formas aritméticas; este cobre `x = x`, `x += 0`,
+  `x *= 1`, `x = x + 0`, `x = x * 1`).
+
+- **`sensor_core/autofix/transforms/remove_unused_var.py`** —
+  `UnusedVarRemover` AST-nativo (UCO `PythonUnusedVarDetector` era
+  advisor, não rewriter). Escopo: variáveis locais de função; respeita
+  underscore-prefixed (`_intentional`); preserva RHS com Call
+  (side-effect).
+
+#### Mapeamento expandido
+
+```python
+SAST_TO_TRANSFORM = {
+    # ... 7 existentes (SAST006/007/022/024/027/038/039)
+    "SAST040": UCOUnreachableRemover,
+    "SAST041": UCORedundantConditionRemover,
+    "SAST042": NoOpAssignRemover,
+    "SAST043": UnusedVarRemover,
+}  # 11 entradas — cobertura SAST↔Fix cresceu 57%
+```
+
+### Decisões técnicas
+
+- **`while True` NÃO é flagged como redundante** (TN15) — é o padrão
+  canônico de loop infinito (servidor, daemon). Apenas `while False:`
+  é flagged.
+- **Variáveis com prefixo `_`** são "intencionalmente não usadas" por
+  convenção Python (pytest fixtures, unused tuple destructuring) e
+  ficam fora do SAST043 (TN25).
+- **Parâmetros de função** não viram SAST043 mesmo se "unused" no
+  corpo — o caller depende deles (TN26).
+- **RHS com Call** não é removido pelo SAST043 — pode ter side-effect
+  observável (`log = print(...)`). Conservador (TN28).
+- **`x = x + 1`** (genuíno) **não** é SAST042 (TN19) — apenas as
+  formas no-op (`x = x`, `x += 0`, etc).
+
+### Testes — 30 novos (TN01–TN30)
+
+- TN01–TN08 SAST040 detector + remover end-to-end
+- TN09–TN15 SAST041 detector + remover end-to-end (incluindo `while True` whitelist)
+- TN16–TN22 SAST042 detector + AST-native remover (Assign + AugAssign)
+- TN23–TN28 SAST043 detector + AST-native remover (com guards de side-effect)
+- TN29 caso combinado: 4 regras fechadas numa única `auto_remediate` pass
+- TN30 pin do tamanho do mapping (regressão futura detectada)
+
+Regressão completa: **1603 passed, 3 skipped, 0 falhas** em 19.1s
+(+30 vs Sprint J).
+
+### O que isso destrava
+
+- **Cobertura de auto-fix cresce 57%** (7→11 regras) sem custo de pesquisa
+  nova — apenas exposição de ativos já presentes.
+- **Telemetria de remediação (Sprint C/G) agora cobre dead-code** —
+  módulos com SAST040-043 começam a aparecer em `top_fixed_rules`,
+  validando o RPN do anti-pattern score na dimensão Maintainability.
+- **Base para Sprint L** — `propagation_analyzer` poderá medir
+  correlação entre canais `dead`/`bugs` agora que dead-code é fixado
+  no caminho de remediação.
+
+---
+
 ## [3.3.2] — 2026-06-18 — Sprint J: Dynamic CVE Knowledge Feed
 
 ### Adicionado

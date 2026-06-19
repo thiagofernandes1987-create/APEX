@@ -1,6 +1,7 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-18  
-> **Versão atual:** v3.3.2 (Sprint J — Dynamic CVE Feed: `sca/cve_feed.py` + `/feeds/{status,cve/load,cve/unload}` + rollback transacional + allowlist URL fechado por default) · Próximo: Sprint K — SAST/IaC rules dinâmicas → v3.3.3  
+> **Versão atual:** v3.3.3 (Sprint K — UCO Transform Bridge: cobertura SAST↔Fix 7 → 11 regras + 4 novos detectores SAST040-043) · Próximo: Sprint L — PELT change-point endpoint + git blame RCA → v3.3.4
+> **Plano vivo aprovado**: Sprints K → L → M → N → O → P (horizonte 30 dias APEX SCIENTIFIC redefinido)  
 > Documento vivo — atualizar após cada marco concluído
 
 ---
@@ -40,6 +41,7 @@
 | **Sprint H** | **De-globalization + Domain Signals + Observability — `governance/signals.py` puro (D-2 fonte única OLS+Hurst+MAE), `_replace_store()` sem leak (D-1 parcial), logger JSON + métricas em `/health` (F-3)** | **v3.3.0** | **✅** |
 | **Sprint I** | **Performance — `insert(defer_derived=True)` deixa APS/forecast fora do hot path (D-4); `store.latest_aps_per_module()` 1 query vs N+1; `get_remediation_stats()` agregados SQL nativo (Codex movement #2)** | **v3.3.1** | **✅** |
 | **Sprint J** | **Dynamic CVE Feed — `sca/cve_feed.py` (load/unload/reset + override transacional) + `/feeds/{status,cve/load,cve/unload}` + URL allowlist fechado por default + 30 TK-tests** | **v3.3.2** | **✅** |
+| **Sprint K** | **UCO Transform Bridge — SAST↔Fix loop 7 → 11 regras (SAST040 unreachable, SAST041 redundant cond, SAST042 noop, SAST043 unused var) + 30 TN-tests** | **v3.3.3** | **✅** |
 
 **Métricas atuais (v3.2.1):**
 
@@ -69,7 +71,12 @@
 | ~~Sprint H~~ | ~~Des-globalizar `_store` + extrair `governance/signals.py` puro (DRY) + observabilidade~~ | ~~2d~~ | **v3.3.0** ✅ | **Entregue 2026-06-18 — `signals.py` 230 linhas, handlers e Compound chamam mesma fonte; `_replace_store()` sem leak; logger JSON + 5 counters em `/health` + 30 TH-tests + 1513 verdes** |
 | ~~Sprint I~~ | ~~Tirar Predictor/APS do caminho de escrita + N+1 SQL nativo~~ | ~~2d~~ | **v3.3.1** ✅ | **Entregue 2026-06-18 — `insert(defer_derived=True)` + `recompute_derived_pending`; `latest_aps_per_module` 1 query; `get_remediation_stats` agregado SQL; 30 TI-tests + 1543 verdes** |
 | ~~Sprint J~~ | ~~Feed dinâmico de CVE~~ | ~~2d~~ | **v3.3.2** ✅ | **Entregue 2026-06-18 — `sca/cve_feed.py` + 3 endpoints + URL allowlist fechado por default + 30 TK-tests + 1573 verdes** |
-| Sprint K | SAST + IaC rules dinâmicas (regex/pattern-based + admin auth) | 1.5d | v3.3.3 | Estende o Sprint J ao corpus de regras estáticas |
+| ~~Sprint K~~ | ~~UCO Transform Bridge — 4 novos closed-loop rules~~ | ~~1d~~ | **v3.3.3** ✅ | **Entregue 2026-06-19 — bridge + 4 detectores + 2 transforms AST-nativos + cobertura 7→11 + 30 TN-tests + 1603 verdes** |
+| Sprint L | PELT change-point endpoint + git blame RCA | 1.5d | v3.3.4 | Movimento #2 do APEX Scientific — root cause automático por commit |
+| Sprint M | Propagação cross-canal + matriz de causalidade | 1.5d | v3.3.5 | Movimento #3 — base para Granger causality |
+| Sprint N | SAST + IaC rules feed dinâmico (extensão do Sprint J) | 1.5d | v3.3.6 | Knowledge feed completo |
+| Sprint O | Spectral fingerprint indexável (KD-tree) + endpoint /similar | 2.5d | v3.4.0 (MINOR) | Movimento #5 — similaridade comportamental |
+| Sprint P | DBSCAN signatures persistidas + biblioteca evolutiva | 2d | v3.4.1 | Movimento #4 — sensor aprende com cada repo |
 | Sprint F | Spectral analysis full de APS | 1d | v3.2.10 | PSD bandada + wavelet sobre APS |
 | LEAP 4 | Predictor/Trend persistidos | 1d | v3.2.4 | Meta-análise de confidence histórico — sinal exclusivo no mercado |
 | M9.1 | Research Signals (Shannon + TCI + CC Churn + Invariant Density) | 5d | v3.3.0 | Release final — score competitivo ≥89/100 vs SonarQube |

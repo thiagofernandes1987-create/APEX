@@ -51,6 +51,14 @@ from sensor_core.autofix.transforms.replace_zero_nonce      import ZeroNonceRepl
 
 # ─── Mapping table — single source of truth ──────────────────────────────────
 
+from sensor_core.autofix.transforms.uco_transform_bridge import (
+    UCOUnreachableRemover,        # Sprint K — SAST040 (UCO core wraps fine)
+    UCORedundantConditionRemover, # Sprint K — SAST041 (UCO core wraps fine)
+)
+from sensor_core.autofix.transforms.remove_noop_assign import NoOpAssignRemover
+from sensor_core.autofix.transforms.remove_unused_var  import UnusedVarRemover
+
+
 SAST_TO_TRANSFORM: Dict[str, Type[BaseTransform]] = {
     "SAST006": WeakHashReplacer,         # Weak Crypto (md5/sha1) → sha256
     "SAST007": InsecureRandomReplacer,   # Insecure random — choice → secrets.choice
@@ -59,6 +67,11 @@ SAST_TO_TRANSFORM: Dict[str, Type[BaseTransform]] = {
     "SAST027": SSLVerifyEnabler,         # SSL verify=False → verify=True
     "SAST038": BareExceptReplacer,       # Bare except → except Exception as e
     "SAST039": MutableDefaultRemover,    # Mutable default arg → None + guard
+    # ── Sprint K — new closed-loop rules (cobertura 7 → 11) ─────────────────
+    "SAST040": UCOUnreachableRemover,    # Unreachable after terminal → drop
+    "SAST041": UCORedundantConditionRemover,  # if True/False, while False → flatten
+    "SAST042": NoOpAssignRemover,        # x = x / x += 0 / x *= 1 → drop (AST native)
+    "SAST043": UnusedVarRemover,         # unused local var → drop  (AST native)
 }
 
 

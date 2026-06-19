@@ -4,7 +4,7 @@ build-backend = "setuptools.backends.legacy:build"
 
 [project]
 name        = "uco-sensor"
-version     = "3.3.2"
+version     = "3.3.3"
 description = "Spectral code-quality API powered by UCO v4 + FrequencyEngine"
 readme      = "README.md"
 license     = { text = "MIT" }
@@ -78,7 +78,7 @@ exclude = ["tests*", "validation*"]
 # ── Pytest ────────────────────────────────────────────────────────────────────
 [tool.pytest.ini_options]
 testpaths    = ["tests"]
-python_files = ["test_marco*.py", "test_marco_m1.py", "test_marco_m4.py", "test_marco_m5.py", "test_calibration.py", "test_marco_m12.py", "test_marco_m13.py", "test_marco_m14.py", "test_marco_m15.py", "test_marco_m16.py", "test_marco_m17.py", "test_marco_m18.py", "test_marco_m19.py", "test_marco_m20.py", "test_marco_m21.py", "test_marco_m22.py", "test_marco_m23.py", "test_marco_m24.py", "test_marco_m25.py", "test_marco_m26.py", "test_marco_m27.py", "test_marco_m28.py", "test_marco_m29.py", "test_marco_m30.py", "test_marco_m31.py", "test_marco_m32.py", "test_marco_m33.py", "test_marco_m34.py", "test_marco_m35.py", "test_marco_m36.py", "test_marco_m37.py", "test_marco_m38.py", "test_marco_m39.py", "test_marco_m40.py", "test_marco_m41.py"]
+python_files = ["test_marco*.py", "test_marco_m1.py", "test_marco_m4.py", "test_marco_m5.py", "test_calibration.py", "test_marco_m12.py", "test_marco_m13.py", "test_marco_m14.py", "test_marco_m15.py", "test_marco_m16.py", "test_marco_m17.py", "test_marco_m18.py", "test_marco_m19.py", "test_marco_m20.py", "test_marco_m21.py", "test_marco_m22.py", "test_marco_m23.py", "test_marco_m24.py", "test_marco_m25.py", "test_marco_m26.py", "test_marco_m27.py", "test_marco_m28.py", "test_marco_m29.py", "test_marco_m30.py", "test_marco_m31.py", "test_marco_m32.py", "test_marco_m33.py", "test_marco_m34.py", "test_marco_m35.py", "test_marco_m36.py", "test_marco_m37.py", "test_marco_m38.py", "test_marco_m39.py", "test_marco_m40.py", "test_marco_m41.py", "test_marco_m42.py"]
 python_functions = ["test_*"]
 addopts      = "-v --tb=short"
 
