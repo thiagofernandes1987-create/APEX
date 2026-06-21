@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.3.4"
+    version:      str   = "3.3.5"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -531,6 +531,10 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/apex/remediation/stats",   "auth": True,   "desc": "Aggregate auto-fix telemetry — success rate, top fixed rules, top transforms (?module=&top_k=) [Sprint C]"},
             {"method": "GET",    "path": "/diff/channels",            "auth": True,   "desc": "Per-channel delta between 2 snapshots (?module=&from=&to=) [Sprint E]"},
             {"method": "GET",    "path": "/diff/volatile",            "auth": True,   "desc": "Top channels by coefficient of variation over history (?module=&window=&top_k=) [Sprint E]"},
+            {"method": "GET",    "path": "/propagation",              "auth": True,   "desc": "Cross-channel propagation fingerprint for a module (?module=&penalty=&window=) [Sprint M]"},
+            {"method": "GET",    "path": "/propagation/groups",       "auth": True,   "desc": "Propagation fingerprint for 7 diagnostic groups (?module=&penalty=&window=) [Sprint M]"},
+            {"method": "GET",    "path": "/causality/matrix",         "auth": True,   "desc": "9×9 lag-correlation matrix per module (?module=&max_lag=&window=) [Sprint M]"},
+            {"method": "GET",    "path": "/causality/top",            "auth": True,   "desc": "Top-K causal pairs by |corr| (?module=&max_lag=&window=&top_k=) [Sprint M]"},
             {"method": "GET",    "path": "/changepoints",             "auth": True,   "desc": "PELT change-point + git blame on module history (?module=X&penalty=&model=&window=&repo_dir=) [Sprint L]"},
             {"method": "GET",    "path": "/changepoints/repo",        "auth": True,   "desc": "Repo-wide change-point ranking by confidence (?penalty=&model=&window=&repo_dir=) [Sprint L]"},
             {"method": "GET",    "path": "/feeds/status",             "auth": True,   "desc": "CVE corpus state + active dynamic feeds [Sprint J]"},
@@ -1286,6 +1290,81 @@ def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, 
 
     stats["module_id"] = module_id or "*"
     return 200, stats
+
+
+def handle_propagation(module_id: str, penalty: float = 2.5,
+                       window: int = 200) -> Tuple[int, Dict]:
+    """
+    GET /propagation?module=X[&penalty=&window=]  (Sprint M)
+
+    Propagation fingerprint (which channels moved together and in what order).
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+    try:
+        from governance.propagation import compute_propagation
+        payload = compute_propagation(
+            _store, module_id,
+            penalty=float(penalty), window=max(5, int(window)),
+        )
+    except Exception as exc:
+        return 500, {"error": f"propagation failed: {exc}"}
+    return 200, payload
+
+
+def handle_propagation_groups(module_id: str, penalty: float = 2.5,
+                              window: int = 200) -> Tuple[int, Dict]:
+    """GET /propagation/groups?module=X — fingerprint for 7 diagnostic groups."""
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+    try:
+        from governance.propagation import compute_propagation_groups
+        payload = compute_propagation_groups(
+            _store, module_id,
+            penalty=float(penalty), window=max(5, int(window)),
+        )
+    except Exception as exc:
+        return 500, {"error": f"propagation/groups failed: {exc}"}
+    return 200, payload
+
+
+def handle_causality_matrix(module_id: str, max_lag: int = 5,
+                            window: int = 200) -> Tuple[int, Dict]:
+    """
+    GET /causality/matrix?module=X[&max_lag=&window=]  (Sprint M)
+
+    9×9 cross-channel lag-correlation matrix (81 entries, including
+    diagonal).  Sign of best_lag tells direction (LEADS / LAGS / SYNC).
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+    try:
+        from governance.propagation import compute_causality_matrix
+        payload = compute_causality_matrix(
+            _store, module_id,
+            max_lag=max(0, int(max_lag)), window=max(5, int(window)),
+        )
+    except Exception as exc:
+        return 500, {"error": f"causality matrix failed: {exc}"}
+    return 200, payload
+
+
+def handle_causality_top(module_id: str, max_lag: int = 5,
+                         window: int = 200, top_k: int = 10) -> Tuple[int, Dict]:
+    """GET /causality/top — top-K off-diagonal coupling pairs by |corr|."""
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+    try:
+        from governance.propagation import top_causal_pairs
+        payload = top_causal_pairs(
+            _store, module_id,
+            max_lag=max(0, int(max_lag)),
+            window=max(5, int(window)),
+            top_k=max(0, int(top_k)),
+        )
+    except Exception as exc:
+        return 500, {"error": f"causality top failed: {exc}"}
+    return 200, payload
 
 
 def handle_changepoints(module_id: str, penalty: float = 1.0,
@@ -3873,6 +3952,29 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 window_n  = int(params.get("window", ["50"])[0])
                 top_k_n   = int(params.get("top_k",  ["5"])[0])
                 code, data = handle_diff_volatile(module_id, window=window_n, top_k=top_k_n)
+            elif path == "/propagation":
+                module_id = params.get("module", [""])[0] or ""
+                penalty_v = float(params.get("penalty", ["2.5"])[0])
+                window_n  = int(params.get("window", ["200"])[0])
+                code, data = handle_propagation(module_id, penalty=penalty_v, window=window_n)
+            elif path == "/propagation/groups":
+                module_id = params.get("module", [""])[0] or ""
+                penalty_v = float(params.get("penalty", ["2.5"])[0])
+                window_n  = int(params.get("window", ["200"])[0])
+                code, data = handle_propagation_groups(module_id, penalty=penalty_v, window=window_n)
+            elif path == "/causality/matrix":
+                module_id = params.get("module", [""])[0] or ""
+                max_lag_v = int(params.get("max_lag", ["5"])[0])
+                window_n  = int(params.get("window", ["200"])[0])
+                code, data = handle_causality_matrix(module_id, max_lag=max_lag_v, window=window_n)
+            elif path == "/causality/top":
+                module_id = params.get("module", [""])[0] or ""
+                max_lag_v = int(params.get("max_lag", ["5"])[0])
+                window_n  = int(params.get("window", ["200"])[0])
+                top_k_v   = int(params.get("top_k", ["10"])[0])
+                code, data = handle_causality_top(
+                    module_id, max_lag=max_lag_v, window=window_n, top_k=top_k_v
+                )
             elif path == "/changepoints":
                 module_id = params.get("module", [""])[0] or ""
                 penalty_v = float(params.get("penalty", ["1.0"])[0])

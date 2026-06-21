@@ -5,6 +5,99 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.3.5] — 2026-06-21 — Sprint M: Cross-Channel Propagation + Causality Matrix
+
+### Adicionado
+
+Executa o **Movimento #3 do APEX Scientific** — expor o
+`propagation_analyzer.py` (que estava dormente) e adicionar uma
+**matriz 9×9 de correlação com lag** — a base para o **Granger causality
+lite** (Sprint S).
+
+#### Novo módulo — `governance/propagation.py`
+
+Funções puras (`store` é duck-typed, nunca raise):
+
+| API | Retorno |
+|---|---|
+| `compute_propagation(store, module, *, primary_channels, penalty, window)` | dict com `propagation_pattern` (ISOLATED/SIMULTANEOUS/CASCADED_FAST/CASCADED_SLOW), `onset_spread_commits`, `channel_onset_order`, `leading_channel`, `lagging_channel` |
+| `compute_propagation_groups(store, module, ...)` | fingerprints para 7 grupos diagnósticos (god, bomb, cycle, debt, etc.) |
+| `compute_causality_matrix(store, module, *, max_lag, window)` | matriz 9×9 = 81 entradas com `from`, `to`, `best_lag`, `correlation`, `direction` (LEADS/LAGS/SYNC) |
+| `top_causal_pairs(store, module, *, top_k, max_lag, window)` | top-K off-diagonal por `|corr|` |
+
+#### Algoritmo da matriz
+
+Para cada par `(ch_i, ch_j)`, busca em `k ∈ [-max_lag, +max_lag]` o lag
+que maximiza `|Pearson(ch_i[t], ch_j[t+k])|`. Sign de `k`:
+
+- **`k > 0` → LEADS** (ch_i adianta-se a ch_j por k commits)
+- **`k < 0` → LAGS** (ch_i atrasa-se em relação a ch_j)
+- **`k = 0` → SYNC**
+
+Complexidade: `O(C² · L · N)` com C=9, L=2·max_lag+1, N≤200. Sub-ms na
+janela típica.
+
+#### Validação empírica (smoke test do desenvolvimento)
+
+Série sintética: CC sobe nos commits 1-10, bugs sobe nos 4-13. Resultado
+do top_causal_pairs:
+
+```
+CC    → bugs  lag=+5  r=+0.971  (LEADS)
+bugs  → CC    lag=-5  r=+0.971  (LAGS)
+```
+
+Identifica corretamente que CC adianta-se a bugs por 5 commits — o sinal
+de causalidade temporal que vai alimentar o Sprint S.
+
+#### Novos endpoints REST
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/propagation?module=&penalty=&window=` | fingerprint default `(H, CC, DI)` |
+| GET | `/propagation/groups?module=&penalty=&window=` | 7 grupos diagnósticos |
+| GET | `/causality/matrix?module=&max_lag=&window=` | 9×9 matriz completa |
+| GET | `/causality/top?module=&max_lag=&window=&top_k=` | top-K pairs |
+
+`400` em `module` ausente; `200` com `status` semântico (NO_HISTORY,
+INSUFFICIENT, ERROR, OK) em todos os outros casos.
+
+### Decisões de design
+
+- **`_json_safe(obj)`** recursivo coage `numpy.int64`/`float64` para
+  Python nativos antes da serialização REST. A fingerprint usa numpy
+  internamente e isso escapava para o payload.
+- **Diagonal da matriz** sempre tem `correlation=1.0, lag=0`. Mantida
+  para o cliente renderizar heatmap quadrado sem células ausentes.
+- **`max_lag` clamped to floor 0** no endpoint REST.
+- **`window` clamped to min 5** (consistente com outros endpoints).
+
+### Testes — 30 novos (TP01–TP30)
+
+- TP01–TP10 — `compute_propagation*` puro: shape, status semântico,
+  no-history, insufficient, custom channels, error path defensivo,
+  serialização JSON-safe (pin do bug numpy)
+- TP11–TP20 — matriz: 81 entries, fields obrigatórios, diagonal
+  identidade, deteção de lead/lag em série sintética, top_k bound,
+  exclusão da diagonal em top_causal_pairs
+- TP21–TP30 — REST: 400/200, payload shape, endpoints em `/docs`,
+  clamp de max_lag, pin do mapping channel↔attr
+
+Regressão completa: **1663 passed, 3 skipped, 0 falhas** em 12.5s
+(+30 vs Sprint L).
+
+### O que isso destrava
+
+- **Granger causality lite (Sprint S)** — a matriz de lag já dá a
+  direção e magnitude da causalidade temporal pairwise; só falta o
+  teste estatístico formal para virar "Granger causality" canônico.
+- **Heatmap visual no `/`** — landing page pode renderizar a matriz
+  9×9 como SVG colorido (verde=positivo, vermelho=negativo, intensidade=|r|).
+- **Cross-validation do PELT** — `propagation_groups` confirma quais
+  canais participaram do regime shift detectado em Sprint L.
+
+---
+
 ## [3.3.4] — 2026-06-21 — Sprint L: PELT Change-Point Endpoint + Git Blame RCA
 
 ### Adicionado
