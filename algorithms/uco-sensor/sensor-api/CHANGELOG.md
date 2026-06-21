@@ -5,6 +5,86 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.3.4] — 2026-06-21 — Sprint L: PELT Change-Point Endpoint + Git Blame RCA
+
+### Adicionado
+
+Executa o **Movimento #2 do APEX Scientific** — exposição do
+`change_point_detector.py` (PELT) como sinal de governança visível ao
+usuário, com **root-cause attribution** via git blame.
+
+Antes deste sprint o PELT rodava dentro do classificador da
+FrequencyEngine mas seu output nunca chegava à API. Era impossível
+responder a "em qual commit a regressão começou?" sem ler o histórico
+manualmente. Agora há um endpoint dedicado que devolve commit, autor,
+subject, data, confiança e canais afetados.
+
+#### Novo módulo — `governance/changepoints.py`
+
+**Dataclass** `ChangePointRecord` — `module_id, commit_idx, commit_hash,
+timestamp, confidence, magnitude, affected_channels` + 4 campos
+opcionais (`author`, `author_email`, `commit_subject`, `commit_date`)
+preenchidos sob demanda via git.
+
+**API pública:**
+- `detect_changepoints(store, module_id, *, primary_channels=None,
+  penalty=1.0, model="rbf", window=200) -> List[ChangePointRecord]`
+- `annotate_with_git(records, repo_dir=None, timeout=5.0) -> List[...]`
+  (enrichment best-effort; falha de git deixa fields `None`, nunca raise)
+- `repo_changepoints(store, *, …, repo_dir=None) -> List[...]`
+  (varre todos os módulos, ranking por confiança desc)
+
+#### Decisões técnicas
+
+- **`primary_channels` default** = `("H", "CC", "DI")` — os 3 canais
+  com maior pre-correlação a regime shifts reais, conforme o
+  FrequencyClassifier interno.
+- **PELT model `"rbf"` default** (detecta mudança de média **E**
+  variância). `"l2"` para mudança de média apenas — mais rápido.
+- **`window` mínimo clampado a 5** no endpoint REST.
+- **git enrichment é best-effort**: se `git show` falha (no-git,
+  no-repo, unknown SHA, timeout), os fields ficam `None`. Endpoint
+  **nunca** retorna 500 por causa de git.
+- **Ranking por confiança desc** no repo-wide; tiebreak por module_id
+  asc (determinístico para CI).
+
+#### Novos endpoints REST
+
+| Método | Rota | Descrição |
+|---|---|---|
+| **GET** | `/changepoints?module=X&penalty=&model=&window=&repo_dir=` | PELT change-points + git blame opcional por módulo |
+| **GET** | `/changepoints/repo?penalty=&model=&window=&repo_dir=` | Repo-wide ranking |
+
+`400` em `module` ausente, `200` em store vazio (n_records=0).
+
+### Testes — 30 novos (TO01–TO30)
+
+- TO01–TO10 — `detect_changepoints` puro: regime shift, série flat,
+  história vazia / < min_samples, shape do record, canais default
+  pinados, custom channels, penalty/model propagação, JSON serializável
+- TO11–TO20 — agregação repo-wide: ranking, multi-módulo, isolamento,
+  `annotate_with_git` no-git / unknown-SHA / missing-hash safe
+- TO21–TO30 — REST: 400 missing module, 200 com payload, shape do JSON,
+  empty store, model/penalty no payload, módulo desconhecido = 0,
+  repo_dir sem git ok, endpoints registrados em `/docs`, window clamp
+
+Regressão completa: **1633 passed, 3 skipped, 0 falhas** em 13.5s
+(+30 vs Sprint K).
+
+### O que isso destrava
+
+- **Root-cause automático em PR review**: hook de CI roda
+  `/changepoints?module=X` no diff e devolve "esse PR mudou o regime
+  de qualidade — confiança 0.96, canais afetados: H, CC, DI". Caminho
+  direto para "automated PR comment" diferencial vs SonarQube/Snyk.
+- **Foundation para Sprint M** — `propagation_analyzer` agora pode
+  identificar cadeia causal cross-canal a partir do commit pivô.
+- **Validação científica** do `_DEFAULT_PRIMARY=("H","CC","DI")`
+  como signature pre-shift — base para paper "Hamiltonian regime
+  shifts in software quality time series" (Sprint Z).
+
+---
+
 ## [3.3.3] — 2026-06-19 — Sprint K: UCO Transform Bridge + Closed-Loop Coverage 7 → 11
 
 ### Adicionado

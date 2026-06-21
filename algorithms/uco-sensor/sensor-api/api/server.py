@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.3.3"
+    version:      str   = "3.3.4"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -531,6 +531,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/apex/remediation/stats",   "auth": True,   "desc": "Aggregate auto-fix telemetry — success rate, top fixed rules, top transforms (?module=&top_k=) [Sprint C]"},
             {"method": "GET",    "path": "/diff/channels",            "auth": True,   "desc": "Per-channel delta between 2 snapshots (?module=&from=&to=) [Sprint E]"},
             {"method": "GET",    "path": "/diff/volatile",            "auth": True,   "desc": "Top channels by coefficient of variation over history (?module=&window=&top_k=) [Sprint E]"},
+            {"method": "GET",    "path": "/changepoints",             "auth": True,   "desc": "PELT change-point + git blame on module history (?module=X&penalty=&model=&window=&repo_dir=) [Sprint L]"},
+            {"method": "GET",    "path": "/changepoints/repo",        "auth": True,   "desc": "Repo-wide change-point ranking by confidence (?penalty=&model=&window=&repo_dir=) [Sprint L]"},
             {"method": "GET",    "path": "/feeds/status",             "auth": True,   "desc": "CVE corpus state + active dynamic feeds [Sprint J]"},
             {"method": "POST",   "path": "/feeds/cve/load",           "auth": "admin", "desc": "Load dynamic CVE feed from path/url/inline JSON [Sprint J]"},
             {"method": "POST",   "path": "/feeds/cve/unload",         "auth": "admin", "desc": "Roll back a previously-loaded feed by feed_id [Sprint J]"},
@@ -1284,6 +1286,70 @@ def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, 
 
     stats["module_id"] = module_id or "*"
     return 200, stats
+
+
+def handle_changepoints(module_id: str, penalty: float = 1.0,
+                        model: str = "rbf", window: int = 200,
+                        repo_dir: str = "") -> Tuple[int, Dict]:
+    """
+    GET /changepoints?module=X[&penalty=&model=&window=&repo_dir=]  (Sprint L)
+
+    Returns change-point records detected by PELT on the persisted history of
+    a module.  When ``repo_dir`` is provided, each record is enriched with
+    git author/subject/date via ``git show`` on the commit_hash.
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+    try:
+        from governance.changepoints import (
+            detect_changepoints, annotate_with_git,
+        )
+        records = detect_changepoints(
+            _store, module_id,
+            penalty=float(penalty), model=str(model),
+            window=max(5, int(window)),
+        )
+        if repo_dir and records:
+            annotate_with_git(records, repo_dir=repo_dir)
+    except Exception as exc:
+        return 500, {"error": f"changepoints failed: {exc}"}
+
+    return 200, {
+        "module_id":     module_id,
+        "n_records":     len(records),
+        "model":         model,
+        "penalty":       penalty,
+        "changepoints":  [r.to_dict() for r in records],
+    }
+
+
+def handle_repo_changepoints(penalty: float = 1.0, model: str = "rbf",
+                              window: int = 200,
+                              repo_dir: str = "") -> Tuple[int, Dict]:
+    """
+    GET /changepoints/repo[?penalty=&model=&window=&repo_dir=]  (Sprint L)
+
+    Repo-wide change-point ranking — every module scanned, results sorted
+    by confidence descending.  Heavy: O(n_modules · PELT_cost) — paginate
+    via ``top_k`` from the client side.
+    """
+    try:
+        from governance.changepoints import repo_changepoints
+        records = repo_changepoints(
+            _store,
+            penalty=float(penalty), model=str(model),
+            window=max(5, int(window)),
+            repo_dir=(repo_dir or None),
+        )
+    except Exception as exc:
+        return 500, {"error": f"repo changepoints failed: {exc}"}
+
+    return 200, {
+        "n_records":     len(records),
+        "model":         model,
+        "penalty":       penalty,
+        "changepoints":  [r.to_dict() for r in records],
+    }
 
 
 def handle_feeds_status() -> Tuple[int, Dict]:
@@ -3807,6 +3873,25 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 window_n  = int(params.get("window", ["50"])[0])
                 top_k_n   = int(params.get("top_k",  ["5"])[0])
                 code, data = handle_diff_volatile(module_id, window=window_n, top_k=top_k_n)
+            elif path == "/changepoints":
+                module_id = params.get("module", [""])[0] or ""
+                penalty_v = float(params.get("penalty", ["1.0"])[0])
+                model_v   = params.get("model", ["rbf"])[0]
+                window_n  = int(params.get("window", ["200"])[0])
+                repo_dir  = params.get("repo_dir", [""])[0] or ""
+                code, data = handle_changepoints(
+                    module_id, penalty=penalty_v, model=model_v,
+                    window=window_n, repo_dir=repo_dir,
+                )
+            elif path == "/changepoints/repo":
+                penalty_v = float(params.get("penalty", ["1.0"])[0])
+                model_v   = params.get("model", ["rbf"])[0]
+                window_n  = int(params.get("window", ["200"])[0])
+                repo_dir  = params.get("repo_dir", [""])[0] or ""
+                code, data = handle_repo_changepoints(
+                    penalty=penalty_v, model=model_v,
+                    window=window_n, repo_dir=repo_dir,
+                )
             elif path == "/feeds/status":
                 code, data = handle_feeds_status()
             elif path == "/spectral/aps":

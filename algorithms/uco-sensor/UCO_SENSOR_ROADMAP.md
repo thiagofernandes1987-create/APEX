@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-18  
-> **Versão atual:** v3.3.3 (Sprint K — UCO Transform Bridge: cobertura SAST↔Fix 7 → 11 regras + 4 novos detectores SAST040-043) · Próximo: Sprint L — PELT change-point endpoint + git blame RCA → v3.3.4
+> **Versão atual:** v3.3.4 (Sprint L — PELT Change-Point + RCA: PELT visível via `/changepoints` com git blame + ranking repo-wide) · Próximo: Sprint M — Propagação cross-canal + matriz de causalidade → v3.3.5
 > **Plano vivo aprovado**: Sprints K → L → M → N → O → P (horizonte 30 dias APEX SCIENTIFIC redefinido)  
 > Documento vivo — atualizar após cada marco concluído
 
@@ -42,6 +42,7 @@
 | **Sprint I** | **Performance — `insert(defer_derived=True)` deixa APS/forecast fora do hot path (D-4); `store.latest_aps_per_module()` 1 query vs N+1; `get_remediation_stats()` agregados SQL nativo (Codex movement #2)** | **v3.3.1** | **✅** |
 | **Sprint J** | **Dynamic CVE Feed — `sca/cve_feed.py` (load/unload/reset + override transacional) + `/feeds/{status,cve/load,cve/unload}` + URL allowlist fechado por default + 30 TK-tests** | **v3.3.2** | **✅** |
 | **Sprint K** | **UCO Transform Bridge — SAST↔Fix loop 7 → 11 regras (SAST040 unreachable, SAST041 redundant cond, SAST042 noop, SAST043 unused var) + 30 TN-tests** | **v3.3.3** | **✅** |
+| **Sprint L** | **PELT Change-Point + RCA — `governance/changepoints.py` (detect + repo-wide + git blame enrichment) + `/changepoints` + `/changepoints/repo` + 30 TO-tests** | **v3.3.4** | **✅** |
 
 **Métricas atuais (v3.2.1):**
 
@@ -72,7 +73,7 @@
 | ~~Sprint I~~ | ~~Tirar Predictor/APS do caminho de escrita + N+1 SQL nativo~~ | ~~2d~~ | **v3.3.1** ✅ | **Entregue 2026-06-18 — `insert(defer_derived=True)` + `recompute_derived_pending`; `latest_aps_per_module` 1 query; `get_remediation_stats` agregado SQL; 30 TI-tests + 1543 verdes** |
 | ~~Sprint J~~ | ~~Feed dinâmico de CVE~~ | ~~2d~~ | **v3.3.2** ✅ | **Entregue 2026-06-18 — `sca/cve_feed.py` + 3 endpoints + URL allowlist fechado por default + 30 TK-tests + 1573 verdes** |
 | ~~Sprint K~~ | ~~UCO Transform Bridge — 4 novos closed-loop rules~~ | ~~1d~~ | **v3.3.3** ✅ | **Entregue 2026-06-19 — bridge + 4 detectores + 2 transforms AST-nativos + cobertura 7→11 + 30 TN-tests + 1603 verdes** |
-| Sprint L | PELT change-point endpoint + git blame RCA | 1.5d | v3.3.4 | Movimento #2 do APEX Scientific — root cause automático por commit |
+| ~~Sprint L~~ | ~~PELT change-point endpoint + git blame RCA~~ | ~~1.5d~~ | **v3.3.4** ✅ | **Entregue 2026-06-21 — `changepoints.py` + 2 endpoints + RCA opcional + 30 TO-tests + 1633 verdes** |
 | Sprint M | Propagação cross-canal + matriz de causalidade | 1.5d | v3.3.5 | Movimento #3 — base para Granger causality |
 | Sprint N | SAST + IaC rules feed dinâmico (extensão do Sprint J) | 1.5d | v3.3.6 | Knowledge feed completo |
 | Sprint O | Spectral fingerprint indexável (KD-tree) + endpoint /similar | 2.5d | v3.4.0 (MINOR) | Movimento #5 — similaridade comportamental |
