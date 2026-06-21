@@ -5,6 +5,114 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.4.0] — 2026-06-21 — Sprint O: Spectral Fingerprint Index + Similarity Search (MINOR)
+
+### Adicionado
+
+Executa o **Movimento #5 do APEX Scientific** — território virgem no
+mercado: similaridade comportamental entre módulos via assinatura
+espectral. Dois módulos com fingerprints próximas têm **regimes de
+qualidade similares ao longo do tempo**, mesmo que seu APS instantâneo
+seja muito diferente. Nenhum SAST/quality-gate clássico opera neste eixo.
+
+#### Novo módulo — `governance/fingerprint_index.py`
+
+**Dataclasses:**
+- `Fingerprint(module_id, band_low_fraction, band_mid_fraction,
+  band_high_fraction, spectral_entropy, cycle_length, n_samples)`
+- `SimilarityHit(module_id, distance, fingerprint)`
+- `FingerprintIndex(fingerprints: Dict[str, Fingerprint])`
+
+**API pública:**
+- `build_index(store, *, window=100) -> FingerprintIndex`
+- `FingerprintIndex.find_similar(module, k=10, *, metric="euclidean")
+  -> List[SimilarityHit]`
+- `FingerprintIndex.cluster_distances(*, metric="euclidean") ->
+  List[Dict]` (lower-triangular, sem diagonal)
+
+#### Métricas de distância
+
+- **euclidean** (default) — L2 puro
+- **cosine** — angular, scale-invariant
+- **manhattan** — L1, robusto a outliers dimensionais
+
+Métrica desconhecida → fallback silencioso para euclidean.
+
+#### Decisões de design
+
+- **Index é stateless** — computado on-demand a cada request a partir
+  do store. Mais simples (sem persistência separada); Sprint U pode
+  adicionar cache.
+- **Módulos sem fingerprint computável** (n_samples < 8, scipy
+  falhou) são **omitidos** do índice — nunca representados como
+  zero-vector (que mentiria sobre cobertura).
+- **`cycle_length` normalizada** via `log1p / 10` no `to_vector()` —
+  dampens range desproporcional (período pode ser 2 ou 200).
+- **Pure numpy + math no hot path** — scipy só nas fingerprints
+  upstream (Sprint F).
+
+#### Validação empírica (smoke do desenvolvimento)
+
+4 módulos com assinaturas espectrais distintas:
+- `sin6` — senoidal período 6
+- `sin6b` — senoidal período 6 com phase 0.5
+- `noise` — alta entropia
+- `drift` — monotônico
+
+Resultado de `find_similar('sin6', k=3)`:
+```
+sin6b    d=0.1527    ← match correto (mesma frequência, fase diferente)
+drift    d=0.7457
+noise    d=0.7457
+```
+
+#### Novos endpoints REST
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/similar?module=&k=&metric=&window=` | top-K vizinhos |
+| GET | `/fingerprint/index?window=` | todas fingerprints |
+| GET | `/fingerprint/clusters?metric=&window=` | matriz pairwise lower-triangular |
+
+`400` em `module` ausente; `404` quando módulo não tem fingerprint
+computável; `200` com `index_size=0` quando store vazio.
+
+### Versão MINOR
+
+Salto v3.3.x → v3.4.0 marca o início do **horizonte 90 dias** do plano
+APEX SCIENTIFIC: deixamos "from signal to action" (HMC repair, RCA
+automático, IDE plugin) entram a partir daqui.
+
+### Testes — 30 novos (TR01–TR30)
+
+- TR01–TR10 — Fingerprint dataclass, vector shape, build_index
+  empty/short/well-sampled, defensive em store quebrado, cycle_length=0
+- TR11–TR20 — find_similar k-bound, exclui anchor, ordem asc, módulo
+  desconhecido vazio, sin6→sin6b pinned, 3 métricas funcionam,
+  fallback metric desconhecida, cluster_distances triangular,
+  sanity dos helpers de distância
+- TR21–TR30 — REST: 400/404/200 paths, payload shape, métrica
+  propagada, endpoints em `/docs`, window clamp ≥ 8
+
+Regressão completa: **1723 passed, 3 skipped, 0 falhas** em 14.4s
+(+30 vs Sprint N).
+
+### O que isso destrava
+
+- **"Modules behaviorally similar to your hotspot"** — busca semântica
+  por padrão de degradação. Quality-gate ganha capacidade de
+  generalização: "esse novo módulo se parece com os 3 que tiveram
+  bug crítico na semana passada".
+- **Detecção de código gerado por IA / refatorações copy-paste** —
+  assinaturas espectrais peculiares (alta entropia, low cycle) são
+  marcadores estatísticos. Território virgem.
+- **Provenance**: prova quantitativa de que 2 módulos compartilham
+  origem comportamental.
+- **Base para Sprint P** — DBSCAN evolutivo pode clusterizar os
+  fingerprints persistidos.
+
+---
+
 ## [3.3.6] — 2026-06-21 — Sprint N: Dynamic SAST Rules Feed
 
 ### Adicionado

@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.3.6"
+    version:      str   = "3.4.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -531,6 +531,9 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/apex/remediation/stats",   "auth": True,   "desc": "Aggregate auto-fix telemetry — success rate, top fixed rules, top transforms (?module=&top_k=) [Sprint C]"},
             {"method": "GET",    "path": "/diff/channels",            "auth": True,   "desc": "Per-channel delta between 2 snapshots (?module=&from=&to=) [Sprint E]"},
             {"method": "GET",    "path": "/diff/volatile",            "auth": True,   "desc": "Top channels by coefficient of variation over history (?module=&window=&top_k=) [Sprint E]"},
+            {"method": "GET",    "path": "/similar",                  "auth": True,   "desc": "Top-K spectrally similar modules (?module=&k=&metric=&window=) [Sprint O]"},
+            {"method": "GET",    "path": "/fingerprint/index",        "auth": True,   "desc": "All computable spectral fingerprints (?window=) [Sprint O]"},
+            {"method": "GET",    "path": "/fingerprint/clusters",     "auth": True,   "desc": "Pairwise distance matrix between fingerprints (?metric=&window=) [Sprint O]"},
             {"method": "GET",    "path": "/propagation",              "auth": True,   "desc": "Cross-channel propagation fingerprint for a module (?module=&penalty=&window=) [Sprint M]"},
             {"method": "GET",    "path": "/propagation/groups",       "auth": True,   "desc": "Propagation fingerprint for 7 diagnostic groups (?module=&penalty=&window=) [Sprint M]"},
             {"method": "GET",    "path": "/causality/matrix",         "auth": True,   "desc": "9×9 lag-correlation matrix per module (?module=&max_lag=&window=) [Sprint M]"},
@@ -1293,6 +1296,71 @@ def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, 
 
     stats["module_id"] = module_id or "*"
     return 200, stats
+
+
+def handle_similar(module_id: str, k: int = 10, metric: str = "euclidean",
+                   window: int = 100) -> Tuple[int, Dict]:
+    """
+    GET /similar?module=X[&k=&metric=&window=]  (Sprint O)
+
+    Returns the K most spectrally-similar modules to the anchor.
+    Distance metrics: euclidean (default) | cosine | manhattan.
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+    try:
+        from governance.fingerprint_index import build_index
+        idx = build_index(_store, window=max(8, int(window)))
+        if module_id not in idx.fingerprints:
+            return 404, {
+                "error": f"module '{module_id}' has no computable fingerprint "
+                         "(insufficient samples or scipy error)",
+                "index_size": idx.size,
+            }
+        hits = idx.find_similar(
+            module_id, k=max(0, int(k)), metric=str(metric),
+        )
+    except Exception as exc:
+        return 500, {"error": f"similar failed: {exc}"}
+
+    return 200, {
+        "module_id":  module_id,
+        "k":          int(k),
+        "metric":     metric,
+        "index_size": idx.size,
+        "anchor":     idx.fingerprints[module_id].to_dict(),
+        "hits":       [h.to_dict() for h in hits],
+    }
+
+
+def handle_fingerprint_index(window: int = 100) -> Tuple[int, Dict]:
+    """GET /fingerprint/index — list all modules with computable fingerprints."""
+    try:
+        from governance.fingerprint_index import build_index
+        idx = build_index(_store, window=max(8, int(window)))
+    except Exception as exc:
+        return 500, {"error": f"fingerprint index failed: {exc}"}
+    return 200, {
+        "index_size":   idx.size,
+        "fingerprints": [fp.to_dict() for fp in idx.fingerprints.values()],
+    }
+
+
+def handle_fingerprint_clusters(metric: str = "euclidean",
+                                window: int = 100) -> Tuple[int, Dict]:
+    """GET /fingerprint/clusters — pairwise distance matrix (lower-triangular)."""
+    try:
+        from governance.fingerprint_index import build_index
+        idx = build_index(_store, window=max(8, int(window)))
+        pairs = idx.cluster_distances(metric=str(metric))
+    except Exception as exc:
+        return 500, {"error": f"fingerprint clusters failed: {exc}"}
+    return 200, {
+        "index_size": idx.size,
+        "metric":     metric,
+        "n_pairs":    len(pairs),
+        "pairs":      pairs,
+    }
 
 
 def handle_propagation(module_id: str, penalty: float = 2.5,
@@ -4006,6 +4074,19 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 window_n  = int(params.get("window", ["50"])[0])
                 top_k_n   = int(params.get("top_k",  ["5"])[0])
                 code, data = handle_diff_volatile(module_id, window=window_n, top_k=top_k_n)
+            elif path == "/similar":
+                module_id = params.get("module", [""])[0] or ""
+                k_v       = int(params.get("k", ["10"])[0])
+                metric_v  = params.get("metric", ["euclidean"])[0]
+                window_n  = int(params.get("window", ["100"])[0])
+                code, data = handle_similar(module_id, k=k_v, metric=metric_v, window=window_n)
+            elif path == "/fingerprint/index":
+                window_n = int(params.get("window", ["100"])[0])
+                code, data = handle_fingerprint_index(window=window_n)
+            elif path == "/fingerprint/clusters":
+                metric_v = params.get("metric", ["euclidean"])[0]
+                window_n = int(params.get("window", ["100"])[0])
+                code, data = handle_fingerprint_clusters(metric=metric_v, window=window_n)
             elif path == "/propagation":
                 module_id = params.get("module", [""])[0] or ""
                 penalty_v = float(params.get("penalty", ["2.5"])[0])
