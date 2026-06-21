@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-18  
-> **Versão atual:** v3.4.0 (Sprint O — Spectral Fingerprint Index: assinatura 5-canal + `/similar` + 3 métricas + cluster_distances) · Próximo: Sprint P — DBSCAN signatures persistidas + biblioteca evolutiva → v3.4.1
+> **Versão atual:** v3.4.1 (Sprint P — DBSCAN Signatures Persisted: nova tabela `discovered_signatures` + library evolutiva + 5 endpoints) · **HORIZONTE 30 DIAS COMPLETO ✅** · Próximo: horizonte 90 dias (Sprint Q — HMC closed-loop repair) → v3.4.2
 > **Plano vivo aprovado**: Sprints K → L → M → N → O → P (horizonte 30 dias APEX SCIENTIFIC redefinido)  
 > Documento vivo — atualizar após cada marco concluído
 
@@ -46,6 +46,7 @@
 | **Sprint M** | **Cross-Channel Propagation + Causality Matrix — `governance/propagation.py` + 4 endpoints (`/propagation`, `/propagation/groups`, `/causality/matrix`, `/causality/top`) + 9×9 lag-correlation matrix + 30 TP-tests** | **v3.3.5** | **✅** |
 | **Sprint N** | **Dynamic SAST Rules Feed — `sast/rules_feed.py` (regex-only, rollback by feed_id, built-in collision rejected) + 3 admin endpoints + 30 TQ-tests** | **v3.3.6** | **✅** |
 | **Sprint O** | **Spectral Fingerprint Index + Similarity — `governance/fingerprint_index.py` + `/similar` + `/fingerprint/{index,clusters}` + 3 distance metrics + 30 TR-tests (MINOR release)** | **v3.4.0** | **✅** |
+| **Sprint P** | **DBSCAN Signatures Persistidas + Library Evolutiva — tabela `discovered_signatures` + `governance/signature_library.py` + DBSCAN puro + 5 endpoints + signature_id estável + 30 TS-tests** | **v3.4.1** | **✅** ⭐ HORIZONTE 30D COMPLETO |
 
 **Métricas atuais (v3.2.1):**
 
@@ -80,6 +81,7 @@
 | ~~Sprint M~~ | ~~Propagação cross-canal + matriz de causalidade~~ | ~~1.5d~~ | **v3.3.5** ✅ | **Entregue 2026-06-21 — `propagation.py` + 4 endpoints + matriz 9×9 + top causal pairs + 30 TP-tests + 1663 verdes** |
 | ~~Sprint N~~ | ~~SAST rules feed dinâmico (extensão do Sprint J)~~ | ~~1.5d~~ | **v3.3.6** ✅ | **Entregue 2026-06-21 — `sast/rules_feed.py` regex-only + 3 admin endpoints + built-in collision rejected + 30 TQ-tests + 1693 verdes** |
 | ~~Sprint O~~ | ~~Spectral fingerprint indexável (KD-tree) + endpoint /similar~~ | ~~2.5d~~ | **v3.4.0** ✅ (MINOR) | **Entregue 2026-06-21 — `fingerprint_index.py` + 3 endpoints + 3 métricas distância + cluster_distances + 30 TR-tests + 1723 verdes** |
+| ~~Sprint P~~ | ~~DBSCAN signatures persistidas + biblioteca evolutiva~~ | ~~2d~~ | **v3.4.1** ✅ ⭐ | **Entregue 2026-06-21 — tabela + library + DBSCAN puro + 5 endpoints + signature_id estável + 30 TS-tests + 1753 verdes — HORIZONTE 30D COMPLETO** |
 | Sprint P | DBSCAN signatures persistidas + biblioteca evolutiva | 2d | v3.4.1 | Movimento #4 — sensor aprende com cada repo |
 | Sprint F | Spectral analysis full de APS | 1d | v3.2.10 | PSD bandada + wavelet sobre APS |
 | LEAP 4 | Predictor/Trend persistidos | 1d | v3.2.4 | Meta-análise de confidence histórico — sinal exclusivo no mercado |

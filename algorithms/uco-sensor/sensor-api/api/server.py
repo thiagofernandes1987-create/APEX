@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.4.0"
+    version:      str   = "3.4.1"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -531,6 +531,9 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/apex/remediation/stats",   "auth": True,   "desc": "Aggregate auto-fix telemetry — success rate, top fixed rules, top transforms (?module=&top_k=) [Sprint C]"},
             {"method": "GET",    "path": "/diff/channels",            "auth": True,   "desc": "Per-channel delta between 2 snapshots (?module=&from=&to=) [Sprint E]"},
             {"method": "GET",    "path": "/diff/volatile",            "auth": True,   "desc": "Top channels by coefficient of variation over history (?module=&window=&top_k=) [Sprint E]"},
+            {"method": "POST",   "path": "/signatures/discover",      "auth": "admin", "desc": "DBSCAN over fingerprints, persist new + bump existing (body: {window?,eps?,min_samples?}) [Sprint P]"},
+            {"method": "GET",    "path": "/signatures",               "auth": True,   "desc": "List persisted signatures (?limit=) [Sprint P]"},
+            {"method": "GET",    "path": "/signatures/status",        "auth": True,   "desc": "Signature library summary [Sprint P]"},
             {"method": "GET",    "path": "/similar",                  "auth": True,   "desc": "Top-K spectrally similar modules (?module=&k=&metric=&window=) [Sprint O]"},
             {"method": "GET",    "path": "/fingerprint/index",        "auth": True,   "desc": "All computable spectral fingerprints (?window=) [Sprint O]"},
             {"method": "GET",    "path": "/fingerprint/clusters",     "auth": True,   "desc": "Pairwise distance matrix between fingerprints (?metric=&window=) [Sprint O]"},
@@ -1296,6 +1299,71 @@ def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, 
 
     stats["module_id"] = module_id or "*"
     return 200, stats
+
+
+def handle_signatures_discover(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /signatures/discover  (Sprint P, admin)
+
+    Body (optional): {window, eps, min_samples}
+    Runs DBSCAN over the spectral fingerprints; persists new clusters,
+    bumps existing ones by signature_id (hash of centroid).
+    """
+    try:
+        from governance.signature_library import discover_signatures
+        window      = max(8, int(data.get("window", 100)))
+        eps         = float(data.get("eps", 0.25))
+        min_samples = max(2, int(data.get("min_samples", 2)))
+        result = discover_signatures(
+            _store, window=window, eps=eps, min_samples=min_samples,
+        )
+    except Exception as exc:
+        return 500, {"error": f"discover failed: {exc}"}
+    return 200, result
+
+
+def handle_signatures_list(limit: int = 100) -> Tuple[int, Dict]:
+    """GET /signatures — list persisted signatures, by occurrence desc."""
+    try:
+        sigs = _store.list_signatures(limit=max(1, int(limit)))
+    except Exception as exc:
+        return 500, {"error": f"list signatures failed: {exc}"}
+    return 200, {"n_signatures": len(sigs), "signatures": sigs}
+
+
+def handle_signatures_get(signature_id: str) -> Tuple[int, Dict]:
+    """GET /signatures/{id} — single signature detail."""
+    if not signature_id:
+        return 400, {"error": "signature_id is required"}
+    try:
+        sig = _store.get_signature(signature_id)
+    except Exception as exc:
+        return 500, {"error": f"get signature failed: {exc}"}
+    if sig is None:
+        return 404, {"error": f"signature {signature_id!r} not found"}
+    return 200, sig
+
+
+def handle_signatures_delete(signature_id: str) -> Tuple[int, Dict]:
+    """DELETE /signatures/{id} — remove from library (admin)."""
+    if not signature_id:
+        return 400, {"error": "signature_id is required"}
+    try:
+        deleted = _store.delete_signature(signature_id)
+    except Exception as exc:
+        return 500, {"error": f"delete signature failed: {exc}"}
+    if not deleted:
+        return 404, {"error": f"signature {signature_id!r} not found"}
+    return 200, {"signature_id": signature_id, "deleted": True}
+
+
+def handle_signatures_status() -> Tuple[int, Dict]:
+    """GET /signatures/status — library summary."""
+    try:
+        from governance.signature_library import library_status
+        return 200, library_status(_store)
+    except Exception as exc:
+        return 500, {"error": f"status failed: {exc}"}
 
 
 def handle_similar(module_id: str, k: int = 10, metric: str = "euclidean",
@@ -4080,6 +4148,14 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 metric_v  = params.get("metric", ["euclidean"])[0]
                 window_n  = int(params.get("window", ["100"])[0])
                 code, data = handle_similar(module_id, k=k_v, metric=metric_v, window=window_n)
+            elif path == "/signatures":
+                limit_n = int(params.get("limit", ["100"])[0])
+                code, data = handle_signatures_list(limit=limit_n)
+            elif path == "/signatures/status":
+                code, data = handle_signatures_status()
+            elif path.startswith("/signatures/") and path != "/signatures/status":
+                sig_id = path[len("/signatures/"):]
+                code, data = handle_signatures_get(sig_id)
             elif path == "/fingerprint/index":
                 window_n = int(params.get("window", ["100"])[0])
                 code, data = handle_fingerprint_index(window=window_n)
@@ -4239,6 +4315,11 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 if not ok_admin:
                     return self._send_json(403, {"error": "admin authentication required"})
                 code, data = handle_feeds_sast_load(body)
+            elif path == "/signatures/discover":
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                code, data = handle_signatures_discover(body)
             elif path == "/feeds/sast/unload":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
@@ -4294,6 +4375,9 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
             if path == "/auth/keys":
                 prefix = params.get("prefix", [None])[0]
                 code, data = handle_revoke_key(prefix)
+            elif path.startswith("/signatures/"):
+                sig_id = path[len("/signatures/"):]
+                code, data = handle_signatures_delete(sig_id)
             else:
                 code, data = 404, {"error": f"Unknown endpoint: {path}"}
         except Exception as e:

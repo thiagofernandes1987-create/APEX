@@ -5,6 +5,124 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.4.1] — 2026-06-21 — Sprint P: DBSCAN Signatures Persisted + Evolutive Library
+
+### Adicionado
+
+Executa o **Movimento #4 do APEX Scientific** — fecha o horizonte
+30 dias do plano. Pela primeira vez o sensor **aprende** com cada
+repo escaneado: clusters DBSCAN sobre as fingerprints espectrais são
+**persistidos** como signatures; re-runs em repos evoluídos bumpam
+o `occurrence_count` em vez de duplicar.
+
+#### Nova tabela — `discovered_signatures`
+
+```sql
+CREATE TABLE discovered_signatures (
+    id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+    signature_id       TEXT    NOT NULL UNIQUE,
+    created_at         REAL    NOT NULL,
+    last_seen_at       REAL    NOT NULL,
+    occurrence_count   INTEGER NOT NULL DEFAULT 1,
+    n_members          INTEGER NOT NULL DEFAULT 0,
+    diameter           REAL    NOT NULL DEFAULT 0.0,
+    centroid_json      TEXT    NOT NULL DEFAULT '[]',
+    members_json       TEXT    NOT NULL DEFAULT '[]',
+    label              TEXT    NOT NULL DEFAULT '',
+    notes              TEXT    NOT NULL DEFAULT ''
+);
+CREATE INDEX idx_sig_signature_id ON discovered_signatures(signature_id);
+```
+
+#### Novos métodos no `SnapshotStore`
+
+- `store_signature(signature_id, centroid, members, diameter, label, notes)`
+  → inserir ou bumpar (UPDATE `occurrence_count + 1`, manter centroide
+  original como identidade)
+- `get_signature(signature_id) -> Optional[dict]`
+- `list_signatures(limit=100)` — ordem por `occurrence_count DESC`
+- `delete_signature(signature_id) -> bool`
+- `signature_count() -> int`
+
+#### Novo módulo — `governance/signature_library.py`
+
+- `discover_signatures(store, *, window=100, eps=0.25, min_samples=2) -> dict`
+- `library_status(store) -> dict`
+- `signature_id_from_centroid(centroid, decimals=3) -> str` (MD5 sobre
+  centroide arredondado — estável entre runs)
+- DBSCAN próprio em **Python puro / numpy** (sem scipy) — O(n²) na
+  vizinhança, adequado para n ≤ 10³ módulos (sensor scale típico)
+
+#### Decisões de design
+
+- **Centroide define identidade da signature**, não a lista de membros
+  — bump preserva centroide, atualiza só membros/diâmetro/occurrence.
+- **signature_id = MD5(round(centroide, 3))** — 2 runs com centroides
+  equivalentes (até 3 casas) geram mesmo ID → bump.
+- **eps=0.25 default** calibrado para escala [0..1] da fingerprint
+  (Sprint O); **min_samples=2** adequado para datasets pequenos.
+- **DBSCAN em Python puro** evita dependência scipy no hot path.
+  Region query O(n) cada — sub-segundo até ~500 módulos.
+- **POST /signatures/discover é admin** — write op, mesma proteção
+  hmac.compare_digest do Sprint G.8.
+
+#### Validação empírica
+
+5 módulos com 2 clusters distintos (3 senoidais + 2 drift):
+
+```
+1ª run: clusters=2 new=2 bumped=0 noise=0
+  sig_bf02850cdc00bd40  members=[drift, drift2]   diam=0.0000
+  sig_144c1ff3f443dc0f  members=[sin6, sin6b, sin6c]  diam=0.1681
+
+2ª run: clusters=2 new=0 bumped=2   ← evolução detectada
+```
+
+#### Novos endpoints REST
+
+| Método | Rota | Auth | Descrição |
+|---|---|---|---|
+| POST | `/signatures/discover` | **admin** | roda DBSCAN + persiste |
+| GET | `/signatures?limit=` | user | lista por occurrence desc |
+| GET | `/signatures/status` | user | summary (size, top-5) |
+| GET | `/signatures/{id}` | user | detalhe de uma signature |
+| DELETE | `/signatures/{id}` | **admin** | remove da biblioteca |
+
+### Testes — 30 novos (TS01–TS30)
+
+- TS01–TS10 — storage: CRUD completo, idempotent re-store bumpa,
+  signature_id estável, payload round-trip
+- TS11–TS20 — discovery: OK/EMPTY status, persistência, re-run bumpa,
+  payload contém members + centroid, library_status, helpers
+  (centroid, diameter, DBSCAN noise label)
+- TS21–TS30 — REST: 5 handlers, 400/404/200, params eps/min_samples,
+  /docs registration
+
+Regressão completa: **1753 passed, 3 skipped, 0 falhas** em 15.0s
+(+30 vs Sprint O).
+
+### Horizonte 30 dias COMPLETO ✅
+
+Sprint P fecha o primeiro horizonte do APEX SCIENTIFIC ("Expose the
+silent assets"). Os 6 sprints (K-P) entregaram **+180 testes**, **+22
+endpoints REST** e **+5 movimentos** sobre os ativos científicos que
+estavam dormentes:
+
+| Sprint | Movimento APEX | Status |
+|---|---|---|
+| K | #1 UCO transforms bridge | ✅ v3.3.3 |
+| L | #2 PELT + git blame RCA | ✅ v3.3.4 |
+| M | #3 Propagação + causality matrix | ✅ v3.3.5 |
+| N | SAST rules feed | ✅ v3.3.6 |
+| O | #5 Spectral fingerprint similarity | ✅ v3.4.0 |
+| **P** | **#4 DBSCAN signatures persistidas** | **✅ v3.4.1** |
+
+**Próximo horizonte (90 dias)** — "From signal to action":
+HMC closed-loop repair, RCA automático, Granger causality, VS Code
+extension, performance overhaul (ASGI + Postgres + Redis).
+
+---
+
 ## [3.4.0] — 2026-06-21 — Sprint O: Spectral Fingerprint Index + Similarity Search (MINOR)
 
 ### Adicionado

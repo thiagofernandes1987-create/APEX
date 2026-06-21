@@ -196,6 +196,31 @@ CREATE INDEX IF NOT EXISTS idx_remed_module_ts
 ON remediations(module_id, timestamp);
 """
 
+# Sprint P — discovered signatures persistence.  Each row is one
+# DBSCAN cluster found over the spectral fingerprints (Sprint O).
+# signature_id is a stable hash of the centroid → re-running discover()
+# on a re-evolved repo bumps occurrence_count instead of duplicating.
+_DDL_SIGNATURES = """
+CREATE TABLE IF NOT EXISTS discovered_signatures (
+    id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+    signature_id       TEXT    NOT NULL UNIQUE,
+    created_at         REAL    NOT NULL,
+    last_seen_at       REAL    NOT NULL,
+    occurrence_count   INTEGER NOT NULL DEFAULT 1,
+    n_members          INTEGER NOT NULL DEFAULT 0,
+    diameter           REAL    NOT NULL DEFAULT 0.0,
+    centroid_json      TEXT    NOT NULL DEFAULT '[]',
+    members_json       TEXT    NOT NULL DEFAULT '[]',
+    label              TEXT    NOT NULL DEFAULT '',
+    notes              TEXT    NOT NULL DEFAULT ''
+);
+"""
+
+_IDX_SIGNATURES = """
+CREATE INDEX IF NOT EXISTS idx_sig_signature_id
+ON discovered_signatures(signature_id);
+"""
+
 
 # ─── BaselineStats ───────────────────────────────────────────────────────────
 
@@ -331,10 +356,12 @@ class SnapshotStore:
             cur.execute(_DDL_ANOMALIES)
             cur.execute(_DDL_API_KEYS)
             cur.execute(_DDL_REMEDIATIONS)        # Sprint C
+            cur.execute(_DDL_SIGNATURES)          # Sprint P
             cur.execute(_IDX_SNAPSHOTS)
             cur.execute(_IDX_ANOMALIES)
             cur.execute(_IDX_API_KEYS)
             cur.execute(_IDX_REMEDIATIONS)        # Sprint C
+            cur.execute(_IDX_SIGNATURES)          # Sprint P
             # M7.0: add extended-vector columns to pre-existing databases
             self._migrate_m70(cur)
 
@@ -1482,6 +1509,100 @@ class SnapshotStore:
 
     # ─── Close ───────────────────────────────────────────────────────────────
 
+    # ── Sprint P — Discovered signatures persistence ────────────────────────
+
+    def store_signature(
+        self,
+        signature_id: str,
+        centroid: List[float],
+        members: List[str],
+        diameter: float,
+        *,
+        label: str = "",
+        notes: str = "",
+    ) -> Dict[str, Any]:
+        """
+        Persist a discovered signature.  If ``signature_id`` already exists:
+        bump ``occurrence_count``, update ``last_seen_at`` + ``n_members`` +
+        ``members_json``; do NOT overwrite the original centroid (it defines
+        the cluster identity).
+        """
+        now = time.time()
+        members_text  = json.dumps(list(members))
+        centroid_text = json.dumps(list(centroid))
+
+        with self._lock:
+            conn = self._get_conn()
+            row = conn.execute(
+                "SELECT id FROM discovered_signatures WHERE signature_id = ?",
+                (signature_id,),
+            ).fetchone()
+
+            if row is None:
+                conn.execute(
+                    "INSERT INTO discovered_signatures ("
+                    "signature_id, created_at, last_seen_at, occurrence_count, "
+                    "n_members, diameter, centroid_json, members_json, label, notes"
+                    ") VALUES (?, ?, ?, 1, ?, ?, ?, ?, ?, ?)",
+                    (signature_id, now, now,
+                     len(members), float(diameter),
+                     centroid_text, members_text, label, notes),
+                )
+            else:
+                conn.execute(
+                    "UPDATE discovered_signatures SET "
+                    "last_seen_at = ?, occurrence_count = occurrence_count + 1, "
+                    "n_members = ?, diameter = ?, members_json = ?, "
+                    "label = CASE WHEN ? != '' THEN ? ELSE label END, "
+                    "notes = CASE WHEN ? != '' THEN ? ELSE notes END "
+                    "WHERE signature_id = ?",
+                    (now, len(members), float(diameter), members_text,
+                     label, label, notes, notes, signature_id),
+                )
+
+        return self.get_signature(signature_id) or {}
+
+    def get_signature(self, signature_id: str) -> Optional[Dict[str, Any]]:
+        with self._lock:
+            row = self._get_conn().execute(
+                "SELECT id, signature_id, created_at, last_seen_at, "
+                "occurrence_count, n_members, diameter, centroid_json, "
+                "members_json, label, notes "
+                "FROM discovered_signatures WHERE signature_id = ?",
+                (signature_id,),
+            ).fetchone()
+        if row is None:
+            return None
+        return _signature_row_to_dict(row)
+
+    def list_signatures(self, *, limit: int = 100) -> List[Dict[str, Any]]:
+        sql = (
+            "SELECT id, signature_id, created_at, last_seen_at, "
+            "occurrence_count, n_members, diameter, centroid_json, "
+            "members_json, label, notes "
+            "FROM discovered_signatures "
+            "ORDER BY occurrence_count DESC, last_seen_at DESC "
+            f"LIMIT {int(max(1, limit))}"
+        )
+        with self._lock:
+            rows = self._get_conn().execute(sql).fetchall()
+        return [_signature_row_to_dict(r) for r in rows]
+
+    def delete_signature(self, signature_id: str) -> bool:
+        with self._lock:
+            cur = self._get_conn().execute(
+                "DELETE FROM discovered_signatures WHERE signature_id = ?",
+                (signature_id,),
+            )
+        return cur.rowcount > 0
+
+    def signature_count(self) -> int:
+        with self._lock:
+            row = self._get_conn().execute(
+                "SELECT COUNT(*) FROM discovered_signatures"
+            ).fetchone()
+        return int(row[0] or 0)
+
     def close(self) -> None:
         """Fecha conexão(ões) SQLite explicitamente."""
         with self._lock:
@@ -1651,3 +1772,32 @@ class SnapshotStore:
                 pass
 
         return mv
+
+
+# ─── Sprint P — signature row helper (module-level) ───────────────────────────
+
+def _signature_row_to_dict(row: tuple) -> Dict[str, Any]:
+    (id_, signature_id, created_at, last_seen_at,
+     occurrence_count, n_members, diameter,
+     centroid_json, members_json, label, notes) = row
+    try:
+        centroid = json.loads(centroid_json) if centroid_json else []
+    except Exception:
+        centroid = []
+    try:
+        members = json.loads(members_json) if members_json else []
+    except Exception:
+        members = []
+    return {
+        "id":               int(id_),
+        "signature_id":     str(signature_id),
+        "created_at":       float(created_at),
+        "last_seen_at":     float(last_seen_at),
+        "occurrence_count": int(occurrence_count),
+        "n_members":        int(n_members),
+        "diameter":         float(diameter),
+        "centroid":         centroid,
+        "members":          members,
+        "label":            str(label or ""),
+        "notes":            str(notes or ""),
+    }
