@@ -674,6 +674,22 @@ def scan(source: str, file_extension: str = ".py") -> SASTResult:
     findings.extend(_check_hardcoded_secrets_regex(source))
     findings.extend(_check_weak_tls_regex(source))
 
+    # Sprint N — dynamic regex rules injected via /feeds/sast/load
+    try:
+        from sast.rules_feed import scan_dynamic
+        for d in scan_dynamic(source):
+            findings.append(SASTFinding(
+                rule_id=d["rule_id"], severity=d["severity"],
+                cwe_id=d.get("cwe_id", "CWE-0"), owasp="",
+                title=d["rule_id"], description=d.get("description", ""),
+                line=int(d["line"]), col=0,
+                code_snippet=d.get("evidence", ""),
+                remediation=d.get("remediation", ""),
+                debt_minutes=10, confidence=0.8,
+            ))
+    except Exception:
+        pass   # dynamic rules must never break the static scan
+
     # 2. AST-based rules
     try:
         tree = ast.parse(source)

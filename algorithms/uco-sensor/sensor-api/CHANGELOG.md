@@ -5,6 +5,98 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.3.6] — 2026-06-21 — Sprint N: Dynamic SAST Rules Feed
+
+### Adicionado
+
+Estende o padrão do Sprint J (CVE feed dinâmico) ao corpus de **regras
+SAST**: ops podem injetar novos detectores em runtime sem release, com
+rollback transacional por `feed_id`.
+
+#### Restrição de segurança
+
+Regras **executam** contra código-fonte. Para manter a superfície
+segura, aceitamos apenas **predicados regex** — sem Python eval, sem
+AST predicate arbitrário, sem I/O. Mesma restrição que Semgrep,
+Bandit e Snyk aplicam a regras de comunidade.
+
+#### Novo módulo — `sast/rules_feed.py`
+
+API pública:
+- `load_from_file(path, feed_id=None) -> RuleFeedLoadResult`
+- `load_from_url(url, *, timeout=10.0, feed_id=None) -> RuleFeedLoadResult`
+- `unload(feed_id) -> int`
+- `reset() -> int`
+- `feed_status() -> dict`
+- `scan_dynamic(source) -> List[Dict]` (chamado por `sast.scanner.scan`)
+
+Schema do feed (JSON/YAML auto-detect):
+```json
+{
+  "version": "1.0",
+  "rules": [
+    {
+      "rule_id":  "SAST900",
+      "title":    "Use of eval()",
+      "severity": "HIGH",
+      "cwe_id":   "CWE-95",
+      "pattern":  "\\beval\\s*\\("
+    }
+  ]
+}
+```
+
+#### Decisões de design
+
+- **Built-in collision rejeitada**: tentativa de carregar `SAST001`
+  (e qualquer outro do catálogo built-in) é skipada com erro
+  estruturado. Não há override de regras built-in.
+- **Duplicate rule_id no mesmo feed**: skip silencioso na 2ª ocorrência
+  (não overrides dentro do mesmo load).
+- **Regex inválido** → skip + erro estruturado, não raise.
+- **Network closed by default** — `load_from_url` exige host em
+  `UCO_SAST_FEED_ALLOWLIST` (CSV). Diferente do CVE feed (Sprint J)
+  para permitir granularidade por tipo de feed.
+- **Compilação do regex feita no load**, cacheada em
+  `DynamicRule._compiled`. Scan é hot-path — não recompila.
+- **`scan_dynamic` defensivo**: nunca quebra o `scan()` static; failure
+  na regra dinâmica é silently swallowed.
+
+#### Novos endpoints REST
+
+| Método | Rota | Auth | Descrição |
+|---|---|---|---|
+| GET | `/feeds/sast/status` | user | rules + feeds ativos |
+| POST | `/feeds/sast/load` | **admin** | `{path|url|inline}` + `feed_id` opcional |
+| POST | `/feeds/sast/unload` | **admin** | rollback por `feed_id` |
+
+### Testes — 30 novos (TQ01–TQ30)
+
+- TQ01–TQ10 — módulo: load/unload/reset, built-in collision, dup
+  rule_id, regex inválido, severity inválido, missing fields,
+  arquivo inexistente, payload sem `rules`
+- TQ11–TQ20 — integração com `scan()`: rule trigger, severity, CWE,
+  line number, unload remove findings, multiple rules per feed,
+  multi-feed isolation, built-in findings preserved, JSON-serializable
+- TQ21–TQ30 — REST: status, load inline/path, 400 sem source,
+  unload reverte, URL allowlist closed-by-default, endpoints em
+  `/docs`, status conta feeds, roundtrip load→scan→unload
+
+Regressão completa: **1693 passed, 3 skipped, 0 falhas** em 12.9s
+(+30 vs Sprint M).
+
+### O que isso destrava
+
+- **Hot-patch de regra durante incidente**: novo padrão de exploit
+  descoberto → drop do JSON local + `POST /feeds/sast/load` → regra em
+  produção em segundos.
+- **A/B per environment**: staging e prod podem rodar `feed_id`
+  diferentes para impacto controlado.
+- **Marketplace de regras community**: schema é simples o bastante
+  para third-parties contribuírem (próximo passo).
+
+---
+
 ## [3.3.5] — 2026-06-21 — Sprint M: Cross-Channel Propagation + Causality Matrix
 
 ### Adicionado
