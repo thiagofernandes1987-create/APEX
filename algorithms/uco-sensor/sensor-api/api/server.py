@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.4.2"
+    version:      str   = "3.4.3"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -531,6 +531,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/apex/remediation/stats",   "auth": True,   "desc": "Aggregate auto-fix telemetry — success rate, top fixed rules, top transforms (?module=&top_k=) [Sprint C]"},
             {"method": "GET",    "path": "/diff/channels",            "auth": True,   "desc": "Per-channel delta between 2 snapshots (?module=&from=&to=) [Sprint E]"},
             {"method": "GET",    "path": "/diff/volatile",            "auth": True,   "desc": "Top channels by coefficient of variation over history (?module=&window=&top_k=) [Sprint E]"},
+            {"method": "GET",    "path": "/granger/matrix",           "auth": True,   "desc": "Formal Granger F-test 9×9 matrix (?module=&max_lag=&window=&alpha=) [Sprint S]"},
+            {"method": "GET",    "path": "/granger/significant",      "auth": True,   "desc": "Pairs that pass F-test sorted by p asc (?module=&max_lag=&window=&alpha=) [Sprint S]"},
             {"method": "GET",    "path": "/rca",                      "auth": True,   "desc": "Root-Cause Analysis: PELT + git blame + causality (?module=&repo_dir=&window=) [Sprint R]"},
             {"method": "GET",    "path": "/rca/repo",                 "auth": True,   "desc": "Repo-wide RCA, modules with change-points (?repo_dir=&window=&top_k=) [Sprint R]"},
             {"method": "POST",   "path": "/signatures/discover",      "auth": "admin", "desc": "DBSCAN over fingerprints, persist new + bump existing (body: {window?,eps?,min_samples?}) [Sprint P]"},
@@ -1301,6 +1303,47 @@ def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, 
 
     stats["module_id"] = module_id or "*"
     return 200, stats
+
+
+def handle_granger_matrix(module_id: str, max_lag: int = 3,
+                          window: int = 200, alpha: float = 0.05) -> Tuple[int, Dict]:
+    """
+    GET /granger/matrix?module=X[&max_lag=&window=&alpha=]  (Sprint S)
+
+    9×9 Granger-causality matrix using formal F-test. Replaces the
+    Pearson-lag heuristic of /causality/matrix with statistical rigor.
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+    try:
+        from governance.granger_causality import granger_matrix
+        payload = granger_matrix(
+            _store, module_id,
+            max_lag=max(1, int(max_lag)),
+            window=max(8, int(window)),
+            alpha=float(alpha),
+        )
+    except Exception as exc:
+        return 500, {"error": f"granger matrix failed: {exc}"}
+    return 200, payload
+
+
+def handle_granger_significant(module_id: str, max_lag: int = 3,
+                               window: int = 200, alpha: float = 0.05) -> Tuple[int, Dict]:
+    """GET /granger/significant — pairs with p_value < alpha, sorted by p asc."""
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+    try:
+        from governance.granger_causality import significant_pairs
+        payload = significant_pairs(
+            _store, module_id,
+            max_lag=max(1, int(max_lag)),
+            window=max(8, int(window)),
+            alpha=float(alpha),
+        )
+    except Exception as exc:
+        return 500, {"error": f"granger significant failed: {exc}"}
+    return 200, payload
 
 
 def handle_rca(module_id: str, repo_dir: str = "",
@@ -4194,6 +4237,18 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 metric_v  = params.get("metric", ["euclidean"])[0]
                 window_n  = int(params.get("window", ["100"])[0])
                 code, data = handle_similar(module_id, k=k_v, metric=metric_v, window=window_n)
+            elif path == "/granger/matrix":
+                module_id = params.get("module", [""])[0] or ""
+                max_lag_v = int(params.get("max_lag", ["3"])[0])
+                window_n  = int(params.get("window", ["200"])[0])
+                alpha_v   = float(params.get("alpha", ["0.05"])[0])
+                code, data = handle_granger_matrix(module_id, max_lag=max_lag_v, window=window_n, alpha=alpha_v)
+            elif path == "/granger/significant":
+                module_id = params.get("module", [""])[0] or ""
+                max_lag_v = int(params.get("max_lag", ["3"])[0])
+                window_n  = int(params.get("window", ["200"])[0])
+                alpha_v   = float(params.get("alpha", ["0.05"])[0])
+                code, data = handle_granger_significant(module_id, max_lag=max_lag_v, window=window_n, alpha=alpha_v)
             elif path == "/rca":
                 module_id = params.get("module", [""])[0] or ""
                 repo_dir  = params.get("repo_dir", [""])[0] or ""

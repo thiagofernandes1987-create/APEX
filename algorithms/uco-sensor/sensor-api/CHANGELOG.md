@@ -5,6 +5,105 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.4.3] — 2026-06-22 — Sprint S: Granger Causality (formal F-test)
+
+### Adicionado
+
+Substitui o heurístico de correlação Pearson com lag (Sprint M) pelo
+**teste F de Granger canônico**. Granger pergunta:
+
+> "O passado de `X` ajuda a prever `Y` ALÉM do passado de `Y`?"
+
+Essa restrição extra — melhoria sobre baseline autorregressivo —
+torna Granger o **formalismo canônico para causalidade temporal**
+em séries de tempo. Dois random walks podem ser muito correlacionados;
+Granger corretamente descarta coincidência.
+
+#### Novo módulo — `governance/granger_causality.py`
+
+**Dataclass:**
+- `GrangerResult` — `from_channel, to_channel, best_lag, f_statistic,
+  p_value, granger_causes, n_samples, alpha`
+
+**API pública:**
+- `granger_pair(x, y, *, max_lag=5, alpha=0.05) -> GrangerResult`
+- `granger_matrix(store, module_id, *, max_lag=3, window=200,
+  alpha=0.05) -> Dict` (9×9 = 81 entries)
+- `significant_pairs(store, module_id, ...) -> Dict` (filtrado por
+  p < α, ordenado por p ascendente)
+
+#### Modelo matemático
+
+Para cada lag k ∈ 1..max_lag e cada par ordenado (X → Y):
+
+```
+Restricted:   y_t = a₀ + Σ aⱼ·y_{t-j}                 + ε_R
+Unrestricted: y_t = a₀ + Σ aⱼ·y_{t-j} + Σ bⱼ·x_{t-j} + ε_U
+
+F = ((RSS_R - RSS_U) / k) / (RSS_U / (n - 2k - 1))
+
+p_value = scipy.stats.f.sf(F, k, n - 2k - 1)
+```
+
+`best_lag` = aquele que minimiza p_value entre 1..max_lag.
+`granger_causes` = (p_value < alpha).
+
+#### Decisões de design
+
+- **OLS via numpy.linalg.lstsq** se disponível; fallback puro Python
+  (Gauss-elimination) — sem dependência hard de numpy no caminho.
+- **F-survival via scipy.stats.f.sf**; fallback retorna 1.0 quando
+  scipy ausente — caller trata como "sem significância" (conservador).
+- **Diagonal sempre p_value=1.0** — canal não causa a si mesmo.
+- **statsmodels NÃO usado** — implementação própria mais leve,
+  determinística, sem dependência opcional adicional.
+
+#### Validação empírica
+
+Série sintética: `y[t] = 0.7·x[t-2] + 0.1·N(0,1)`:
+
+```
+x → y:  best_lag=2  F=886.0  p=0.0000  causes=True   ← detectado
+y → x:  best_lag=2  F=1.5    p=0.2253  causes=False  ← corretamente rejeitado
+```
+
+Em série CC→bugs construída no store: `CC → bugs` com p≈0.00004,
+`bugs → CC` com p≈0.00071 (mais alto — direção certa identificada).
+
+#### Novos endpoints REST
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/granger/matrix?module=&max_lag=&window=&alpha=` | 9×9 matriz F-test |
+| GET | `/granger/significant?module=&...` | pairs significativos sorted by p asc |
+
+### Testes — 30 novos (TX01–TX30)
+
+- TX01–TX10 — `granger_pair`: detecção de causalidade sintética,
+  rejeição reversa, best_lag matches design, sample insuficiente,
+  alpha threshold, série constante, serialização
+- TX11–TX20 — matriz + significant_pairs: 81 entries, diagonal
+  neutra, fields obrigatórios, no_history/insufficient, filtro alpha,
+  exclusão diagonal, ordenação por p asc
+- TX21–TX30 — REST: 400/200, payload shape, alpha propaga, alpha
+  afeta count, empty store, max_lag clamp, /docs registration,
+  causalidade sintética visível via API
+
+Regressão completa: **1813 passed, 3 skipped, 0 falhas** em 13.8s
+(+30 vs Sprint R).
+
+### O que isso destrava
+
+- **Substituição cirúrgica do Pearson-lag heurístico** por sinal
+  estatisticamente rigoroso — RCA (Sprint R) pode evoluir para usar
+  Granger ao invés de correlação no candidato filter.
+- **Paper-ready** — F-test canônico é a forma esperada em literatura
+  de inferência causal em séries temporais.
+- **Foundation para Sprint T** — VS Code extension pode renderizar a
+  matriz Granger com cor por p-value.
+
+---
+
 ## [3.4.2] — 2026-06-22 — Sprint R: Automated Root-Cause Analysis
 
 ### Adicionado
