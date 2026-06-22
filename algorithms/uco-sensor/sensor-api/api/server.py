@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.4.1"
+    version:      str   = "3.4.2"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -531,6 +531,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/apex/remediation/stats",   "auth": True,   "desc": "Aggregate auto-fix telemetry — success rate, top fixed rules, top transforms (?module=&top_k=) [Sprint C]"},
             {"method": "GET",    "path": "/diff/channels",            "auth": True,   "desc": "Per-channel delta between 2 snapshots (?module=&from=&to=) [Sprint E]"},
             {"method": "GET",    "path": "/diff/volatile",            "auth": True,   "desc": "Top channels by coefficient of variation over history (?module=&window=&top_k=) [Sprint E]"},
+            {"method": "GET",    "path": "/rca",                      "auth": True,   "desc": "Root-Cause Analysis: PELT + git blame + causality (?module=&repo_dir=&window=) [Sprint R]"},
+            {"method": "GET",    "path": "/rca/repo",                 "auth": True,   "desc": "Repo-wide RCA, modules with change-points (?repo_dir=&window=&top_k=) [Sprint R]"},
             {"method": "POST",   "path": "/signatures/discover",      "auth": "admin", "desc": "DBSCAN over fingerprints, persist new + bump existing (body: {window?,eps?,min_samples?}) [Sprint P]"},
             {"method": "GET",    "path": "/signatures",               "auth": True,   "desc": "List persisted signatures (?limit=) [Sprint P]"},
             {"method": "GET",    "path": "/signatures/status",        "auth": True,   "desc": "Signature library summary [Sprint P]"},
@@ -1299,6 +1301,50 @@ def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, 
 
     stats["module_id"] = module_id or "*"
     return 200, stats
+
+
+def handle_rca(module_id: str, repo_dir: str = "",
+               window: int = 200) -> Tuple[int, Dict]:
+    """
+    GET /rca?module=X[&repo_dir=&window=]  (Sprint R)
+
+    End-to-end Root-Cause Analysis: PELT change-point + git blame
+    + cross-channel causality → identifies the commit, author, and
+    root channel responsible for the regime shift.
+    """
+    if not module_id:
+        return 400, {"error": "module parameter is required"}
+    try:
+        from governance.rca import analyze
+        report = analyze(_store, module_id,
+                          repo_dir=(repo_dir or None),
+                          window=max(8, int(window)))
+    except Exception as exc:
+        return 500, {"error": f"rca failed: {exc}"}
+    return 200, report.to_dict()
+
+
+def handle_rca_repo(repo_dir: str = "", window: int = 200,
+                    top_k: int = 10) -> Tuple[int, Dict]:
+    """
+    GET /rca/repo[?repo_dir=&window=&top_k=]  (Sprint R)
+
+    Repo-wide RCA — only modules with detected change-points, sorted
+    by changepoint_confidence desc.
+    """
+    try:
+        from governance.rca import analyze_repo
+        reports = analyze_repo(
+            _store, repo_dir=(repo_dir or None),
+            window=max(8, int(window)),
+            top_k=max(0, int(top_k)),
+        )
+    except Exception as exc:
+        return 500, {"error": f"rca/repo failed: {exc}"}
+    return 200, {
+        "n_reports": len(reports),
+        "reports":   [r.to_dict() for r in reports],
+    }
 
 
 def handle_signatures_discover(data: Dict) -> Tuple[int, Dict]:
@@ -4148,6 +4194,16 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 metric_v  = params.get("metric", ["euclidean"])[0]
                 window_n  = int(params.get("window", ["100"])[0])
                 code, data = handle_similar(module_id, k=k_v, metric=metric_v, window=window_n)
+            elif path == "/rca":
+                module_id = params.get("module", [""])[0] or ""
+                repo_dir  = params.get("repo_dir", [""])[0] or ""
+                window_n  = int(params.get("window", ["200"])[0])
+                code, data = handle_rca(module_id, repo_dir=repo_dir, window=window_n)
+            elif path == "/rca/repo":
+                repo_dir = params.get("repo_dir", [""])[0] or ""
+                window_n = int(params.get("window", ["200"])[0])
+                top_k_n  = int(params.get("top_k", ["10"])[0])
+                code, data = handle_rca_repo(repo_dir=repo_dir, window=window_n, top_k=top_k_n)
             elif path == "/signatures":
                 limit_n = int(params.get("limit", ["100"])[0])
                 code, data = handle_signatures_list(limit=limit_n)

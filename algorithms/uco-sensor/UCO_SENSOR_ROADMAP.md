@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-18  
-> **Versão atual:** v3.4.1 (Sprint P — DBSCAN Signatures Persisted: nova tabela `discovered_signatures` + library evolutiva + 5 endpoints) · **HORIZONTE 30 DIAS COMPLETO ✅** · Próximo: horizonte 90 dias (Sprint Q — HMC closed-loop repair) → v3.4.2
+> **Versão atual:** v3.4.2 (Sprint R — RCA Automático: PELT + git blame + causality pipeline + `/rca` + `/rca/repo`) · **Horizonte 90 dias em curso** (1/5 sprints — R) · Próximo: Sprint S — Granger causality formal → v3.4.3
 > **Plano vivo aprovado**: Sprints K → L → M → N → O → P (horizonte 30 dias APEX SCIENTIFIC redefinido)  
 > Documento vivo — atualizar após cada marco concluído
 
@@ -47,6 +47,7 @@
 | **Sprint N** | **Dynamic SAST Rules Feed — `sast/rules_feed.py` (regex-only, rollback by feed_id, built-in collision rejected) + 3 admin endpoints + 30 TQ-tests** | **v3.3.6** | **✅** |
 | **Sprint O** | **Spectral Fingerprint Index + Similarity — `governance/fingerprint_index.py` + `/similar` + `/fingerprint/{index,clusters}` + 3 distance metrics + 30 TR-tests (MINOR release)** | **v3.4.0** | **✅** |
 | **Sprint P** | **DBSCAN Signatures Persistidas + Library Evolutiva — tabela `discovered_signatures` + `governance/signature_library.py` + DBSCAN puro + 5 endpoints + signature_id estável + 30 TS-tests** | **v3.4.1** | **✅** ⭐ HORIZONTE 30D COMPLETO |
+| **Sprint R** | **RCA Automático — `governance/rca.py` orquestra PELT + git blame + causality em pipeline único + `/rca` + `/rca/repo` + summary_text humano + 30 TJ-tests** | **v3.4.2** | **✅** |
 
 **Métricas atuais (v3.2.1):**
 

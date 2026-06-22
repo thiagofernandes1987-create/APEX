@@ -5,6 +5,111 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.4.2] — 2026-06-22 — Sprint R: Automated Root-Cause Analysis
+
+### Adicionado
+
+**Primeiro sprint do horizonte 90 dias** ("From signal to action").
+Orquestra PELT (Sprint L) + git blame (Sprint L) + cross-channel
+causality (Sprint M) em **um único pipeline** que responde a:
+
+> *"Em qual commit o regime de qualidade mudou, quem foi o autor,
+>  qual canal foi a causa-raiz, e qual o lag até o efeito visível?"*
+
+Esse sinal end-to-end **nenhum SAST/quality-gate existente produz**.
+É o caminho direto para "automated PR review comment" diferencial.
+
+#### Novo módulo — `governance/rca.py`
+
+**Dataclasses:**
+- `RCARootCause` — `root_channel, target_channel, correlation,
+  lag_to_visible_effect, confidence`
+- `RCAReport` — payload completo: módulo, status, commit info, git
+  enrichment, candidatos de root-cause, primary_root, summary_text
+
+**API pública:**
+- `analyze(store, module_id, *, repo_dir=None, window=200,
+  top_k_pairs=3) -> RCAReport`
+- `analyze_repo(store, *, repo_dir=None, window=200, top_k=10)
+  -> List[RCAReport]` (ordenado por confiança desc)
+
+#### Pipeline (4 etapas)
+
+1. **PELT detect** (Sprint L) → change-point commit + affected_channels
+2. **Git blame enrichment** (Sprint L) → author, subject, date
+3. **Causality top pairs** (Sprint M) → ranking de leads por |corr|
+4. **Filtragem:** mantém só `LEADS` cuja `from` ∈ `affected_channels`
+   do change-point → root-cause candidates
+
+`primary_root` = candidato com maior |corr| (sempre o 1º da lista
+ordenada).
+
+#### Decisões de design
+
+- **Defensive imports**: módulo nunca raise se downstream falhar
+  (devolve `RCAReport(status="ERROR")`).
+- **Git enrichment best-effort**: `repo_dir` inexistente, sem git,
+  unknown SHA → fields ficam `None`, nunca crash.
+- **Apenas direction=LEADS** entra como candidato — `LAGS` e `SYNC`
+  não fazem sentido como root-cause.
+- **`confidence` do candidato** = `cp_confidence × |correlation|` —
+  combina força do change-point com força do acoplamento.
+- **Summary text humano** ao final do payload — formato fixo,
+  parseable, ready-to-post como PR comment.
+
+#### Validação empírica (smoke do desenvolvimento)
+
+Série sintética com regime shift em c12 + CC liderando bugs:
+
+```
+status: OK
+commit:  c12  conf=0.975
+channels affected: ['H', 'CC', 'DI']
+candidates: 2
+  H → DI  lag=+2  r=+1.000
+  CC → H  lag=+3  r=+0.916
+
+SUMMARY: Quality regime shifted at commit c12 — author unknown,
+channels affected: H, CC, DI (PELT confidence 0.97).
+Root cause: H → DI with lag +2 (corr +1.00).
+```
+
+#### Novos endpoints REST
+
+| Método | Rota | Descrição |
+|---|---|---|
+| GET | `/rca?module=&repo_dir=&window=` | RCA por módulo |
+| GET | `/rca/repo?repo_dir=&window=&top_k=` | repo-wide ranking |
+
+`400` em `module` ausente; `200` com `status="NO_CHANGEPOINT"` quando
+não há regime shift.
+
+### Testes — 30 novos (TJ01–TJ30)
+
+- TJ01–TJ10 — `analyze()` puro: shape, status semântico, no-changepoint,
+  unknown module, commit hash, confidence + channels, summary text,
+  defensive em broken store, serialização JSON-safe
+- TJ11–TJ20 — root-cause filter: leading channels em affected_channels,
+  primary é 1º candidato, lag é int, correlation signed [-1,1],
+  no-root quando flat, summary inclui root, top_k_pairs parameter
+- TJ21–TJ30 — REST: 400/200 paths, payload com summary, repo-wide
+  retorna list, empty store, top_k bound, sort by confidence desc,
+  repo_dir sem git ok, endpoints em `/docs`
+
+Regressão completa: **1783 passed, 3 skipped, 0 falhas** em 14.2s
+(+30 vs Sprint P).
+
+### O que isso destrava
+
+- **Automated PR comment** com root-cause attribution — formato
+  pronto: "Author X em commit Y mudou o regime em canal Z com lag W".
+- **Foundation para Sprint S (Granger causality)** — substitui a
+  correlação Pearson por F-test formal.
+- **Validação científica do modelo causal** — propagation_analyzer
+  agora alimenta produto end-to-end.
+
+---
+
 ## [3.4.1] — 2026-06-21 — Sprint P: DBSCAN Signatures Persisted + Evolutive Library
 
 ### Adicionado
