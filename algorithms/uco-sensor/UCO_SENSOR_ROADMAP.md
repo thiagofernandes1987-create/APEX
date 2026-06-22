@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-18  
-> **Versão atual:** v3.4.3 (Sprint S — Granger Causality formal: teste F canônico, OLS puro + scipy.f.sf, 9×9 matriz, `/granger/{matrix,significant}`) · **Horizonte 90 dias em curso** (2/5 sprints — R+S) · Próximo: Sprint Q — HMC closed-loop repair → v3.4.4
+> **Versão atual:** v3.4.4 (Sprint Q — HMC Closed-Loop Repair ⭐ MOVIMENTO #1 APEX SCIENTIFIC: Bayesian sampling de transforms, APS preservation, prova de minimalidade ΔH) · **Horizonte 90 dias em curso** (3/5 sprints — R+S+Q) · Próximo: Sprint T — VS Code extension → v3.4.5
 > **Plano vivo aprovado**: Sprints K → L → M → N → O → P (horizonte 30 dias APEX SCIENTIFIC redefinido)  
 > Documento vivo — atualizar após cada marco concluído
 
@@ -49,6 +49,7 @@
 | **Sprint P** | **DBSCAN Signatures Persistidas + Library Evolutiva — tabela `discovered_signatures` + `governance/signature_library.py` + DBSCAN puro + 5 endpoints + signature_id estável + 30 TS-tests** | **v3.4.1** | **✅** ⭐ HORIZONTE 30D COMPLETO |
 | **Sprint R** | **RCA Automático — `governance/rca.py` orquestra PELT + git blame + causality em pipeline único + `/rca` + `/rca/repo` + summary_text humano + 30 TJ-tests** | **v3.4.2** | **✅** |
 | **Sprint S** | **Granger Causality formal — `governance/granger_causality.py` com F-test canônico, OLS puro + scipy.f.sf fallback, 9×9 matriz + significant_pairs + `/granger/{matrix,significant}` + 30 TX-tests** | **v3.4.3** | **✅** |
+| **Sprint Q** ⭐ | **HMC Closed-Loop Repair (MOVIMENTO #1 APEX SCIENTIFIC) — `sensor_core/autofix/hmc_repair.py` + Bayesian sampling via UCO `optimize(method='hmc')` + APS preservation + determinismo (seed=42) + 7 status semânticos + fallback Greedy + `POST /repair/hmc` + 30 TW-tests** | **v3.4.4** | **✅** |
 
 **Métricas atuais (v3.2.1):**
 

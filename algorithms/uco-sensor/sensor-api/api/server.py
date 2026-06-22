@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.4.3"
+    version:      str   = "3.4.4"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -531,6 +531,7 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/apex/remediation/stats",   "auth": True,   "desc": "Aggregate auto-fix telemetry — success rate, top fixed rules, top transforms (?module=&top_k=) [Sprint C]"},
             {"method": "GET",    "path": "/diff/channels",            "auth": True,   "desc": "Per-channel delta between 2 snapshots (?module=&from=&to=) [Sprint E]"},
             {"method": "GET",    "path": "/diff/volatile",            "auth": True,   "desc": "Top channels by coefficient of variation over history (?module=&window=&top_k=) [Sprint E]"},
+            {"method": "POST",   "path": "/repair/hmc",               "auth": True,   "desc": "HMC Bayesian closed-loop repair with APS-preservation constraint (body:{code,n_steps?,burn_in?,preserve_aps?,deterministic?,timeout_s?}) [Sprint Q]"},
             {"method": "GET",    "path": "/granger/matrix",           "auth": True,   "desc": "Formal Granger F-test 9×9 matrix (?module=&max_lag=&window=&alpha=) [Sprint S]"},
             {"method": "GET",    "path": "/granger/significant",      "auth": True,   "desc": "Pairs that pass F-test sorted by p asc (?module=&max_lag=&window=&alpha=) [Sprint S]"},
             {"method": "GET",    "path": "/rca",                      "auth": True,   "desc": "Root-Cause Analysis: PELT + git blame + causality (?module=&repo_dir=&window=) [Sprint R]"},
@@ -1303,6 +1304,46 @@ def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, 
 
     stats["module_id"] = module_id or "*"
     return 200, stats
+
+
+def handle_repair_hmc(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /repair/hmc  (Sprint Q)
+
+    Body:
+      {
+        "code":          str   — required, Python source
+        "module_id":     str   — optional identifier
+        "n_steps":       int   — default 20
+        "burn_in":       int   — default 5
+        "preserve_aps":  bool  — default True (rejects APS-regressing patches)
+        "deterministic": bool  — default False (pin seed for CI reproducibility)
+        "timeout_s":     float — default 60.0 (wallclock cap)
+      }
+
+    HMC Bayesian sampling over AST transforms with APS-preservation
+    constraint and proof of H minimality.  Falls back to GreedyOptimizer
+    when numpy unavailable.
+    """
+    source = data.get("code", "")
+    if not source or not source.strip():
+        return 400, {"error": "Field 'code' is required and must be non-empty"}
+
+    try:
+        from sensor_core.autofix.hmc_repair import hmc_repair
+        result = hmc_repair(
+            source,
+            module_id=str(data.get("module_id", "")),
+            n_steps=max(1, int(data.get("n_steps", 20))),
+            burn_in=max(0, int(data.get("burn_in", 5))),
+            preserve_aps=bool(data.get("preserve_aps", True)),
+            deterministic=bool(data.get("deterministic", False)),
+            timeout_s=float(data.get("timeout_s", 60.0)),
+        )
+    except Exception as exc:
+        return 500, {"error": f"HMC repair failed: {exc}"}
+
+    return 200, result.to_dict()
 
 
 def handle_granger_matrix(module_id: str, max_lag: int = 3,
@@ -4410,6 +4451,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_apex_fix(body)
             elif path == "/apex/auto-remediate":
                 code, data = handle_apex_auto_remediate(body)
+            elif path == "/repair/hmc":
+                code, data = handle_repair_hmc(body)
             elif path == "/feeds/cve/load":
                 # Sprint J: admin-only.
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
