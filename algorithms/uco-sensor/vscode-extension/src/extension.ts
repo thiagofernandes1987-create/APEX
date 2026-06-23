@@ -88,6 +88,11 @@ export function activate(context: vscode.ExtensionContext): void {
         vscode.commands.registerCommand("uco-sensor.showDashboard",    showDashboard),
         vscode.commands.registerCommand("uco-sensor.analyzeWorkspace", analyzeWorkspace),
         vscode.commands.registerCommand("uco-sensor.configureServer",  configureServer),
+        // Sprint T (v3.4.5) — new horizon-90d commands
+        vscode.commands.registerCommand("uco-sensor.showRCA",          showRCA),
+        vscode.commands.registerCommand("uco-sensor.showChangepoints", showChangepoints),
+        vscode.commands.registerCommand("uco-sensor.showSimilar",      showSimilar),
+        vscode.commands.registerCommand("uco-sensor.repairHMC",        repairHMC),
     );
 
     // ── Auto-analyze on save ──────────────────────────────────────────────────
@@ -542,5 +547,167 @@ async function configureServer(): Promise<void> {
                 `UCO-Sensor: Server configured (${url}) but not reachable — check it is running.`,
             );
         }
+    }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Sprint T (v3.4.5) — horizon-90d commands
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function currentModuleId(): string | undefined {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        vscode.window.showWarningMessage("UCO-Sensor: Open a file first.");
+        return undefined;
+    }
+    const ws = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+    if (ws) {
+        return vscode.workspace.asRelativePath(editor.document.uri, false);
+    }
+    return editor.document.fileName;
+}
+
+/** UCO-Sensor: Show Root-Cause Analysis */
+async function showRCA(): Promise<void> {
+    const moduleId = currentModuleId();
+    if (!moduleId) { return; }
+    const ws = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || "";
+    try {
+        const resp = await client.getRCA(moduleId, ws);
+        const data = (resp as any)?.data ?? resp;
+        if (data?.status === "NO_CHANGEPOINT") {
+            vscode.window.showInformationMessage(
+                `UCO RCA — ${moduleId}: no regime shift detected.`,
+            );
+            return;
+        }
+        const summary = data?.summary_text || JSON.stringify(data, null, 2);
+        const panel = vscode.window.createOutputChannel("UCO RCA");
+        panel.clear();
+        panel.appendLine(`Module: ${moduleId}`);
+        panel.appendLine(`Status: ${data?.status}`);
+        panel.appendLine(`Commit: ${data?.commit_hash ?? "?"}`);
+        panel.appendLine(`Author: ${data?.author ?? "?"}`);
+        panel.appendLine(`Confidence: ${data?.changepoint_confidence?.toFixed?.(3) ?? "?"}`);
+        panel.appendLine(`Channels: ${(data?.affected_channels ?? []).join(", ")}`);
+        if (data?.primary_root) {
+            const r = data.primary_root;
+            const lag = r.lag_to_visible_effect;
+            const lagStr = lag > 0 ? `+${lag}` : String(lag);
+            panel.appendLine(`Root: ${r.root_channel} → ${r.target_channel} (lag ${lagStr}, corr ${r.correlation?.toFixed?.(3)})`);
+        }
+        panel.appendLine("");
+        panel.appendLine(summary);
+        panel.show();
+    } catch (e: any) {
+        vscode.window.showErrorMessage(`UCO RCA failed: ${e?.message ?? e}`);
+    }
+}
+
+/** UCO-Sensor: Show Change-Points */
+async function showChangepoints(): Promise<void> {
+    const moduleId = currentModuleId();
+    if (!moduleId) { return; }
+    const ws = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath || "";
+    try {
+        const resp = await client.getChangepoints(moduleId, ws);
+        const data = (resp as any)?.data ?? resp;
+        const cps = data?.changepoints ?? [];
+        if (cps.length === 0) {
+            vscode.window.showInformationMessage(`UCO: no change-points for ${moduleId}.`);
+            return;
+        }
+        const items = cps.map((cp: any) => ({
+            label: `${cp.commit_hash?.slice(0, 8) ?? "?"}  conf=${cp.confidence?.toFixed?.(2)}`,
+            description: cp.author ? `${cp.author} — ${cp.commit_subject ?? ""}` : "",
+            detail: `channels: ${(cp.affected_channels ?? []).join(", ")}`,
+        }));
+        await vscode.window.showQuickPick(items, {
+            placeHolder: `Change-points for ${moduleId}`,
+        });
+    } catch (e: any) {
+        vscode.window.showErrorMessage(`UCO change-points failed: ${e?.message ?? e}`);
+    }
+}
+
+/** UCO-Sensor: Show Similar Modules */
+async function showSimilar(): Promise<void> {
+    const moduleId = currentModuleId();
+    if (!moduleId) { return; }
+    try {
+        const resp = await client.getSimilar(moduleId, 10);
+        const data = (resp as any)?.data ?? resp;
+        const hits = data?.hits ?? [];
+        if (hits.length === 0) {
+            vscode.window.showInformationMessage(`UCO: no similar modules for ${moduleId}.`);
+            return;
+        }
+        const items = hits.map((h: any) => ({
+            label: h.module_id,
+            description: `distance ${h.distance?.toFixed?.(4)}`,
+        }));
+        await vscode.window.showQuickPick(items, {
+            placeHolder: `Modules spectrally similar to ${moduleId}`,
+        });
+    } catch (e: any) {
+        vscode.window.showErrorMessage(`UCO similar failed: ${e?.message ?? e}`);
+    }
+}
+
+/** UCO-Sensor: Repair Current File via HMC */
+async function repairHMC(): Promise<void> {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        vscode.window.showWarningMessage("UCO-Sensor: Open a file first.");
+        return;
+    }
+    if (editor.document.languageId !== "python") {
+        vscode.window.showWarningMessage("UCO HMC repair: Python only in v3.4.5.");
+        return;
+    }
+    const moduleId = currentModuleId() ?? "";
+    const code = editor.document.getText();
+    try {
+        const resp = await client.repairHMC({
+            code,
+            module_id: moduleId,
+            n_steps: 20,
+            deterministic: true,
+            preserve_aps: true,
+            timeout_s: 30,
+        });
+        const data = (resp as any)?.data ?? resp;
+        if (!data?.patched_source || data.patched_source === code) {
+            vscode.window.showInformationMessage(
+                `UCO HMC: no improvement found (${data?.status ?? "unknown"}).`,
+            );
+            return;
+        }
+        if (data?.status === "REJECTED_APS_REGRESSION") {
+            vscode.window.showWarningMessage(
+                `UCO HMC: patch rejected (APS would drop ${data.aps_before} → ${data.aps_after}).`,
+            );
+            return;
+        }
+        const choice = await vscode.window.showInformationMessage(
+            `UCO HMC: ${data.summary_text ?? "patch ready"}. Apply?`,
+            "Apply", "Show diff", "Cancel",
+        );
+        if (choice === "Apply") {
+            const fullRange = new vscode.Range(
+                editor.document.positionAt(0),
+                editor.document.positionAt(code.length),
+            );
+            await editor.edit((eb) => eb.replace(fullRange, data.patched_source));
+        } else if (choice === "Show diff") {
+            const left = vscode.Uri.parse(`untitled:original-${Date.now()}.py`);
+            const right = vscode.Uri.parse(`untitled:hmc-patched-${Date.now()}.py`);
+            const leftDoc  = await vscode.workspace.openTextDocument({ language: "python", content: code });
+            const rightDoc = await vscode.workspace.openTextDocument({ language: "python", content: data.patched_source });
+            await vscode.commands.executeCommand("vscode.diff", leftDoc.uri, rightDoc.uri, "UCO HMC: original ↔ patched");
+        }
+    } catch (e: any) {
+        vscode.window.showErrorMessage(`UCO HMC failed: ${e?.message ?? e}`);
     }
 }

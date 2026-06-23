@@ -5,6 +5,75 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.4.5] — 2026-06-22 — Sprint T: VS Code Extension v1.1.0 (horizon-90d wiring)
+
+### Adicionado
+
+Estende a extensão VS Code pré-existente (`vscode-extension/`, v1.0.0 →
+**v1.1.0**) para consumir os 5 endpoints do horizonte 90 dias.
+
+#### 5 novos métodos em `UCOClient` (`src/api.ts`)
+
+- `getRCA(moduleId, repoDir?, window?)` → Sprint R
+- `getChangepoints(moduleId, repoDir?, window?)` → Sprint L
+- `getSimilar(moduleId, k?, metric?)` → Sprint O
+- `getGrangerSignificant(moduleId, maxLag?, alpha?)` → Sprint S
+- `repairHMC({code, module_id?, n_steps?, burn_in?, preserve_aps?,
+  deterministic?, timeout_s?})` → Sprint Q (timeout 90s para HMC)
+- (`getLSPDiagnostics` já existia; mantido na auditoria)
+
+#### 4 novos comandos VS Code (`src/extension.ts`)
+
+| Comando | Quando | Ação |
+|---|---|---|
+| `UCO-Sensor: Show Root-Cause Analysis (RCA)` | Python/JS/TS/Java/Go | OutputChannel com commit, autor, canais, primary_root, summary |
+| `UCO-Sensor: Show Change-Points (PELT)` | idem | QuickPick com lista de change-points |
+| `UCO-Sensor: Show Spectrally-Similar Modules` | idem | QuickPick com top-10 vizinhos por distância |
+| `UCO-Sensor: Repair Current File (HMC Bayesian)` | **Python only** | Diff preview + Apply / Cancel; default `deterministic=true` + `preserve_aps=true` |
+
+`currentModuleId()` helper escolhe entre workspace-relative path e
+fileName, consistente com a configuração `ucoSensor.moduleIdStrategy`.
+
+#### Decisões de design
+
+- **HMC repair com `deterministic: true`** por default — CI gating
+  precisa reproducibilidade.
+- **HMC repair com `preserve_aps: true`** por default — alinhado com
+  Sprint G correctness (rejeita patches que pioram APS).
+- **Diff preview** antes de aplicar — usuário decide via 3 opções
+  (Apply / Show diff / Cancel).
+- **HMC Python-only em v1.1.0** — UCO core suporta multi-linguagem
+  via Pygments mas HMC otimal ainda só foi validado em Python.
+
+### Testes — 30 novos (TY01–TY30)
+
+Como não há `tsc` no sandbox, a validação combina:
+- **TY01–TY10** — file-content asserts: 5 métodos novos + `POST /repair/hmc`
+  + `getLSPDiagnostics` no `api.ts`
+- **TY11–TY20** — `extension.ts`: 4 comandos registrados + `currentModuleId()`
+  helper + defaults `deterministic:true` / `preserve_aps:true` no
+  HMC handler + `package.json` lista comandos + HMC Python-only +
+  version bumped to 1.1.0
+- **TY21–TY30** — server-side contract: payloads de `/rca`, `/changepoints`,
+  `/similar`, `/granger/significant`, `/repair/hmc` contêm as chaves
+  que a extensão consome (summary_text, primary_root, hits, distance,
+  pairs, patched_source, etc.)
+
+Regressão completa: **1873 passed, 3 skipped, 0 falhas** em 21.3s
+(+30 vs Sprint Q).
+
+### O que isso destrava
+
+- **Adoção via developer experience** — Sprint Q (HMC repair) deixa de
+  ser endpoint REST e vira **comando do menu** no editor que o
+  desenvolvedor já usa.
+- **RCA inline** sem trocar de contexto: dev faz commit, vê "regime
+  shifted, root cause: CC → bugs lag +3" no próprio VS Code.
+- **Bridge para mercado** — extension marketplace é canal de adoção
+  viral sem precisar de SaaS-side ou GitHub App.
+
+---
+
 ## [3.4.4] — 2026-06-22 — Sprint Q: HMC Closed-Loop Repair ⭐
 
 ### Adicionado

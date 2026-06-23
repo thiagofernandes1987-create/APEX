@@ -2,7 +2,7 @@
   "name": "uco-sensor",
   "displayName": "UCO-Sensor",
   "description": "Real-time UCO code quality + SAST security analysis in VS Code. Cyclomatic/Cognitive complexity, SQALE debt, 13 security rules, inline decorations.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "apex-uco",
   "license": "MIT",
   "repository": {
@@ -66,6 +66,26 @@
         "command": "uco-sensor.configureServer",
         "title": "UCO-Sensor: Configure Server URL",
         "icon": "$(settings-gear)"
+      },
+      {
+        "command": "uco-sensor.showRCA",
+        "title": "UCO-Sensor: Show Root-Cause Analysis (RCA)",
+        "icon": "$(search-fuzzy)"
+      },
+      {
+        "command": "uco-sensor.showChangepoints",
+        "title": "UCO-Sensor: Show Change-Points (PELT)",
+        "icon": "$(git-commit)"
+      },
+      {
+        "command": "uco-sensor.showSimilar",
+        "title": "UCO-Sensor: Show Spectrally-Similar Modules",
+        "icon": "$(symbol-namespace)"
+      },
+      {
+        "command": "uco-sensor.repairHMC",
+        "title": "UCO-Sensor: Repair Current File (HMC Bayesian)",
+        "icon": "$(wrench)"
       }
     ],
     "configuration": {
@@ -126,7 +146,23 @@
         },
         { "command": "uco-sensor.showDashboard" },
         { "command": "uco-sensor.analyzeWorkspace" },
-        { "command": "uco-sensor.configureServer" }
+        { "command": "uco-sensor.configureServer" },
+        {
+          "command": "uco-sensor.showRCA",
+          "when": "editorLangId =~ /^(python|javascript|typescript|java|go)$/"
+        },
+        {
+          "command": "uco-sensor.showChangepoints",
+          "when": "editorLangId =~ /^(python|javascript|typescript|java|go)$/"
+        },
+        {
+          "command": "uco-sensor.showSimilar",
+          "when": "editorLangId =~ /^(python|javascript|typescript|java|go)$/"
+        },
+        {
+          "command": "uco-sensor.repairHMC",
+          "when": "editorLangId == python"
+        }
       ]
     },
     "views": {
