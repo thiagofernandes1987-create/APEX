@@ -5,6 +5,58 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.7.0] — 2026-06-24 — Sprint X: CFG visualizável + hotspot overlay + port-allocator
+
+### Adicionado — Movimento APEX SCIENTIFIC "explicabilidade"
+
+CFG (control-flow graph) por função extraído via `ast` puro, retornado
+como JSON / DOT, com overlay de severidade SAST + APS contribution por
+node. Permite visualizações no painel HTML da extensão VS Code (Sprint
+T) ou em ferramentas externas (Graphviz, mermaid).
+
+#### Novos módulos
+
+* `governance/cfg.py` (~280 LOC) — `build_cfg(source, max_nodes=200)`,
+  `overlay_hotspots(cfg, store, module_id, findings=None)`,
+  `cfg_as_dot(cfg)`. Pure-Python AST (sem dependência de tree-sitter),
+  bounded a 200 nodes default (TRUNCATED status), defensivo contra
+  SyntaxError e source vazio.
+* `tests/_port_allocator.py` — quick-win do gate-2b LOW finding
+  "hardcoded_port". Pede ao kernel uma porta livre via `socket.bind(0)`.
+
+#### Novos endpoints REST
+
+| Método | Path | Auth | Descrição |
+|---|---|---|---|
+| GET | `/cfg/{module_id}` | true | CFG por função em JSON (`?source=…&max_nodes=200`). |
+| GET | `/cfg/hotspots/{module_id}` | true | CFG anotado com `severity` (max SAST) + `aps_contribution` por node. |
+
+#### Decisões de design (APEX SCIENTIFIC)
+
+* **Function-level granularity** — um CFG por `FunctionDef`/`AsyncFunctionDef`; código de módulo vira pseudo-CFG `<module>`.
+* **Bounded** — `max_nodes` default 200; quando excedido, `status="TRUNCATED"` e `truncated=true` no função.
+* **Pure-Python AST** — sem tree-sitter (funciona em qualquer sandbox).
+* **Read-only** — não muta `SnapshotStore`.
+* **JSON-first** — DOT é opcional (`cfg_as_dot`), JSON é o contrato.
+
+### Testes
+
+* `tests/test_marco_m57.py` — TY01-TY30 cobrindo: AST shapes
+  (if/loop/try/return/async/multi-func), truncation, ERROR paths,
+  overlay severity + APS contribution, DOT rendering, REST handlers,
+  port allocator (3 testes).
+
+### Métricas
+
+| Métrica | v3.6.0 | v3.7.0 |
+|---|---|---|
+| Testes passando | 2022 | **2052** (+30) |
+| Falhas          | 0    | **0** |
+| Endpoints REST  | 64+  | **66+** (+2 CFG) |
+| LOW findings backlog | 59 | 58 (-1 hardcoded_port) |
+
+---
+
 ## [3.6.0] — 2026-06-24 — Sprint V: Marketplace de spectral signatures (horizonte 180d ⭐)
 
 ### Adicionado — Movimento APEX SCIENTIFIC #5 expandido

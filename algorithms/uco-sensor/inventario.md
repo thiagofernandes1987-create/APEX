@@ -7,7 +7,7 @@
 
 ## Versão atual
 
-**v3.6.0** (Sprint V — Marketplace de spectral signatures, horizonte 180d INICIADO ⭐) ✅
+**v3.7.0** (Sprint X — CFG visualizável + hotspot overlay + port-allocator) ✅
 
 ## Equipe APEX (modo SCIENTIFIC)
 
@@ -131,7 +131,7 @@
 | Sprint | Foco | Status |
 |---|---|---|
 | **V** | Marketplace de spectral signatures (Movimento #5 expandido) | **✅ v3.6.0** |
-| **X** | CFG visualizável + hotspot overlay + port-allocator nos testes | pending |
+| **X** | CFG visualizável + hotspot overlay + port-allocator nos testes | **✅ v3.7.0** |
 | **Y** | SaaS multi-tenant + billing | pending |
 | **Z** | Paper POPL/PLDI submission | pending |
 

@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.6.0"
+    version:      str   = "3.7.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -553,6 +553,8 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "GET",    "path": "/marketplace/list",         "auth": True,   "desc": "List marketplace signatures, latest version each (?limit=&offset=&publisher_id=) [Sprint V]"},
             {"method": "GET",    "path": "/marketplace/pull/{id}",    "auth": True,   "desc": "Pull a marketplace signature by id (?version=N optional) [Sprint V]"},
             {"method": "POST",   "path": "/marketplace/import",       "auth": "admin", "desc": "Verify hash + persist a foreign signature (body: {signature_id, payload, expected_hash, publisher_id?, notes?}) [Sprint V]"},
+            {"method": "GET",    "path": "/cfg/{module_id}",           "auth": True,   "desc": "Per-function CFG as JSON (?source=…&max_nodes=200) [Sprint X]"},
+            {"method": "GET",    "path": "/cfg/hotspots/{module_id}",  "auth": True,   "desc": "CFG annotated with SAST severity + APS contribution per node [Sprint X]"},
             {"method": "GET",    "path": "/similar",                  "auth": True,   "desc": "Top-K spectrally similar modules (?module=&k=&metric=&window=) [Sprint O]"},
             {"method": "GET",    "path": "/fingerprint/index",        "auth": True,   "desc": "All computable spectral fingerprints (?window=) [Sprint O]"},
             {"method": "GET",    "path": "/fingerprint/clusters",     "auth": True,   "desc": "Pairwise distance matrix between fingerprints (?metric=&window=) [Sprint O]"},
@@ -1612,6 +1614,58 @@ def handle_marketplace_pull(signature_id: str,
     if out is None:
         return 404, {"error": f"signature {signature_id!r} not found"}
     return 200, out
+
+
+# ─── Sprint X — CFG visualizável + hotspot overlay ──────────────────────────
+
+def handle_cfg(module_id: str, source: str = "",
+               max_nodes: int = 200) -> Tuple[int, Dict]:
+    """GET /cfg/{module_id}?max_nodes=… — return per-function CFGs as JSON.
+
+    If *source* is not provided in query, the handler attempts to read
+    the latest snapshot's source from the store (best-effort).  Empty
+    source returns ``status=ERROR`` per cfg.build_cfg contract.
+    """
+    from governance.cfg import build_cfg
+    if not module_id:
+        return 400, {"error": "module_id is required"}
+    src = source or _best_effort_module_source(module_id)
+    try:
+        cfg = build_cfg(src or "", max_nodes=max(8, int(max_nodes)))
+    except Exception as exc:
+        return 500, {"error": f"cfg build failed: {exc}"}
+    cfg["module_id"] = module_id
+    return 200, cfg
+
+
+def handle_cfg_hotspots(module_id: str, source: str = "",
+                        max_nodes: int = 200) -> Tuple[int, Dict]:
+    """GET /cfg/hotspots/{module_id} — CFG annotated with SAST severity per node."""
+    from governance.cfg import build_cfg, overlay_hotspots
+    if not module_id:
+        return 400, {"error": "module_id is required"}
+    src = source or _best_effort_module_source(module_id)
+    try:
+        cfg = build_cfg(src or "", max_nodes=max(8, int(max_nodes)))
+        overlay = overlay_hotspots(cfg, _store, module_id)
+    except Exception as exc:
+        return 500, {"error": f"cfg hotspots failed: {exc}"}
+    overlay["module_id"] = module_id
+    return 200, overlay
+
+
+def _best_effort_module_source(module_id: str) -> str:
+    """Attempt to read the source the store has cached for *module_id*."""
+    for method in ("get_module_source", "get_latest_source"):
+        fn = getattr(_store, method, None)
+        if callable(fn):
+            try:
+                src = fn(module_id)
+            except Exception:
+                src = None
+            if isinstance(src, str):
+                return src
+    return ""
 
 
 def handle_marketplace_import(data: Dict) -> Tuple[int, Dict]:
@@ -4483,6 +4537,17 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 ver_raw = params.get("version", [None])[0]
                 ver_n = int(ver_raw) if ver_raw not in (None, "") else None
                 code, data = handle_marketplace_pull(sig_id, version=ver_n)
+            # ─── Sprint X — CFG (GET) ────────────────────────────────────────
+            elif path.startswith("/cfg/hotspots/"):
+                module_id = path[len("/cfg/hotspots/"):]
+                src       = params.get("source", [""])[0]
+                max_n     = int(params.get("max_nodes", ["200"])[0])
+                code, data = handle_cfg_hotspots(module_id, source=src, max_nodes=max_n)
+            elif path.startswith("/cfg/"):
+                module_id = path[len("/cfg/"):]
+                src       = params.get("source", [""])[0]
+                max_n     = int(params.get("max_nodes", ["200"])[0])
+                code, data = handle_cfg(module_id, source=src, max_nodes=max_n)
             elif path == "/fingerprint/index":
                 window_n = int(params.get("window", ["100"])[0])
                 code, data = handle_fingerprint_index(window=window_n)
