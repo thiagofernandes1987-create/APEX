@@ -5,6 +5,60 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.6.0] — 2026-06-24 — Sprint V: Marketplace de spectral signatures (horizonte 180d ⭐)
+
+### Adicionado — Movimento APEX SCIENTIFIC #5 expandido
+
+Primeira sprint do horizonte 180 dias. Local UCO Sensor instances podem
+**publicar** signatures discovered via DBSCAN, **listar** signatures
+publicadas, **pull** por id (com version pinning), e **importar**
+signatures externas com verificação de hash canônico SHA-256.
+
+#### Novos módulos
+
+* `governance/marketplace.py` — publish/pull/list/import + canonical
+  payload hash + ReDoS guard + payload allowlist.
+* `sensor_storage/snapshot_store.py` — `marketplace_signatures` table
+  (separada de `discovered_signatures`) + CRUD (`marketplace_publish`,
+  `marketplace_get`, `marketplace_list`, `marketplace_count`,
+  `marketplace_delete`).
+
+#### Novos endpoints REST
+
+| Método | Path | Auth | Descrição |
+|---|---|---|---|
+| POST | `/marketplace/publish` | admin | Publica signature local (body: `{signature_id, payload, publisher_id?, notes?}`). Version auto-incrementada. |
+| GET  | `/marketplace/list`    | true  | Latest version por signature_id (paginado: `?limit=&offset=&publisher_id=`). |
+| GET  | `/marketplace/pull/{id}` | true | Fetch signature; `?version=N` opcional. |
+| POST | `/marketplace/import`  | admin | Importa signature externa após verificar hash (body: `{signature_id, payload, expected_hash, publisher_id?, notes?}`). |
+
+#### Defesas integradas (re-usa endurecimento gate-1 + gate-2)
+
+* `UCO_ADMIN_KEY` exigido em todas as escritas (Sprint W audit-1).
+* Hash SHA-256 canônico (sort_keys + separators) detecta tampering em trânsito.
+* Payload `_ALLOWED_PAYLOAD_KEYS` allowlist rejeita campos surpresa.
+* Guard ReDoS reusado do Sprint W audit-6 rejeita patterns em `label`/`notes`/`category`.
+* Tabela separada — DBSCAN local não pode sobrescrever entry curado.
+
+### Testes
+
+* `tests/test_marco_m56.py` — TV01-TV30 cobrindo: pure-Python core
+  (hash/publish/pull/list/import/guards), storage layer (version
+  auto-increment, pagination, latest-per-id, count, delete, isolation),
+  REST (publish/list/pull/import handlers, 400/404/200 paths, /docs
+  registration, budget < 2s para 20 publishes).
+
+### Métricas
+
+| Métrica | v3.5.2 | v3.6.0 |
+|---|---|---|
+| Testes passando | 1992 | **2022** (+30) |
+| Falhas          | 0    | **0** |
+| Endpoints       | 60+  | **64+** (+4 marketplace) |
+| Tables SQLite   | 5    | **6** (+marketplace_signatures) |
+
+---
+
 ## [3.5.2] — 2026-06-24 — Sprint W2: APEX gate-2 deep audit + stress + parameter sweep
 
 ### Resumo executivo

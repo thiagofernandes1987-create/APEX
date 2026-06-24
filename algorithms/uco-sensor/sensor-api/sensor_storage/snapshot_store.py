@@ -221,6 +221,31 @@ CREATE INDEX IF NOT EXISTS idx_sig_signature_id
 ON discovered_signatures(signature_id);
 """
 
+# Sprint V — Marketplace de spectral signatures.  Each row is a signature
+# published to (or pulled from) the marketplace; separate table from
+# discovered_signatures so a local DBSCAN sweep doesn't accidentally
+# overwrite a curated marketplace entry, and so publish/pull events have
+# their own audit trail (publisher_id, version, payload_hash, source).
+_DDL_MARKETPLACE = """
+CREATE TABLE IF NOT EXISTS marketplace_signatures (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    signature_id    TEXT    NOT NULL,
+    version         INTEGER NOT NULL DEFAULT 1,
+    publisher_id    TEXT    NOT NULL DEFAULT 'anonymous',
+    created_at      REAL    NOT NULL,
+    payload_hash    TEXT    NOT NULL,
+    payload_json    TEXT    NOT NULL,
+    source          TEXT    NOT NULL DEFAULT 'local',
+    notes           TEXT    NOT NULL DEFAULT '',
+    UNIQUE(signature_id, version)
+);
+"""
+
+_IDX_MARKETPLACE = """
+CREATE INDEX IF NOT EXISTS idx_mkt_signature_id
+ON marketplace_signatures(signature_id);
+"""
+
 
 # ─── BaselineStats ───────────────────────────────────────────────────────────
 
@@ -357,11 +382,13 @@ class SnapshotStore:
             cur.execute(_DDL_API_KEYS)
             cur.execute(_DDL_REMEDIATIONS)        # Sprint C
             cur.execute(_DDL_SIGNATURES)          # Sprint P
+            cur.execute(_DDL_MARKETPLACE)         # Sprint V
             cur.execute(_IDX_SNAPSHOTS)
             cur.execute(_IDX_ANOMALIES)
             cur.execute(_IDX_API_KEYS)
             cur.execute(_IDX_REMEDIATIONS)        # Sprint C
             cur.execute(_IDX_SIGNATURES)          # Sprint P
+            cur.execute(_IDX_MARKETPLACE)         # Sprint V
             # M7.0: add extended-vector columns to pre-existing databases
             self._migrate_m70(cur)
 
@@ -1615,6 +1642,101 @@ class SnapshotStore:
             ).fetchone()
         return int(row[0] or 0)
 
+    # ─── Sprint V — Marketplace CRUD ────────────────────────────────────────
+
+    def marketplace_publish(
+        self,
+        signature_id: str,
+        payload_json: str,
+        payload_hash: str,
+        *,
+        publisher_id: str = "anonymous",
+        source: str = "local",
+        notes: str = "",
+    ) -> Dict[str, Any]:
+        """Insert a new marketplace entry — version auto-increments per signature_id."""
+        now = time.time()
+        with self._lock:
+            cur = self._get_conn().cursor()
+            row = cur.execute(
+                "SELECT COALESCE(MAX(version), 0) FROM marketplace_signatures "
+                "WHERE signature_id = ?",
+                (signature_id,),
+            ).fetchone()
+            next_version = int(row[0] or 0) + 1
+            cur.execute(
+                "INSERT INTO marketplace_signatures (signature_id, version, "
+                "publisher_id, created_at, payload_hash, payload_json, source, notes) "
+                "VALUES (?,?,?,?,?,?,?,?)",
+                (signature_id, next_version, publisher_id, now,
+                 payload_hash, payload_json, source, notes),
+            )
+        entry = self.marketplace_get(signature_id, version=next_version)
+        return entry or {}
+
+    def marketplace_get(
+        self, signature_id: str, *, version: Optional[int] = None,
+    ) -> Optional[Dict[str, Any]]:
+        if version is None:
+            sql = (
+                "SELECT id, signature_id, version, publisher_id, created_at, "
+                "payload_hash, payload_json, source, notes "
+                "FROM marketplace_signatures WHERE signature_id = ? "
+                "ORDER BY version DESC LIMIT 1"
+            )
+            args: Tuple[Any, ...] = (signature_id,)
+        else:
+            sql = (
+                "SELECT id, signature_id, version, publisher_id, created_at, "
+                "payload_hash, payload_json, source, notes "
+                "FROM marketplace_signatures "
+                "WHERE signature_id = ? AND version = ?"
+            )
+            args = (signature_id, int(version))
+        with self._lock:
+            row = self._get_conn().execute(sql, args).fetchone()
+        if row is None:
+            return None
+        return _marketplace_row_to_dict(row)
+
+    def marketplace_list(
+        self, *, limit: int = 100, offset: int = 0,
+        publisher_id: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        # latest version per signature_id
+        sql = (
+            "SELECT m.id, m.signature_id, m.version, m.publisher_id, "
+            "m.created_at, m.payload_hash, m.payload_json, m.source, m.notes "
+            "FROM marketplace_signatures m "
+            "JOIN (SELECT signature_id, MAX(version) AS v "
+            "      FROM marketplace_signatures GROUP BY signature_id) latest "
+            "ON m.signature_id = latest.signature_id AND m.version = latest.v "
+        )
+        params: List[Any] = []
+        if publisher_id is not None:
+            sql += "WHERE m.publisher_id = ? "
+            params.append(publisher_id)
+        sql += "ORDER BY m.created_at DESC LIMIT ? OFFSET ?"
+        params.extend([int(limit), int(offset)])
+        with self._lock:
+            rows = self._get_conn().execute(sql, tuple(params)).fetchall()
+        return [_marketplace_row_to_dict(r) for r in rows]
+
+    def marketplace_count(self) -> int:
+        with self._lock:
+            row = self._get_conn().execute(
+                "SELECT COUNT(DISTINCT signature_id) FROM marketplace_signatures"
+            ).fetchone()
+        return int(row[0] or 0)
+
+    def marketplace_delete(self, signature_id: str) -> int:
+        with self._lock:
+            cur = self._get_conn().execute(
+                "DELETE FROM marketplace_signatures WHERE signature_id = ?",
+                (signature_id,),
+            )
+        return int(cur.rowcount or 0)
+
     def close(self) -> None:
         """Fecha conexão(ões) SQLite explicitamente."""
         with self._lock:
@@ -1787,6 +1909,26 @@ class SnapshotStore:
 
 
 # ─── Sprint P — signature row helper (module-level) ───────────────────────────
+
+def _marketplace_row_to_dict(row: tuple) -> Dict[str, Any]:
+    (id_, signature_id, version, publisher_id, created_at,
+     payload_hash, payload_json, source, notes) = row
+    try:
+        payload = json.loads(payload_json) if payload_json else {}
+    except Exception:
+        payload = {}
+    return {
+        "id":            int(id_),
+        "signature_id":  str(signature_id),
+        "version":       int(version),
+        "publisher_id":  str(publisher_id),
+        "created_at":    float(created_at),
+        "payload_hash":  str(payload_hash),
+        "payload":       payload,
+        "source":        str(source or "local"),
+        "notes":         str(notes or ""),
+    }
+
 
 def _signature_row_to_dict(row: tuple) -> Dict[str, Any]:
     (id_, signature_id, created_at, last_seen_at,

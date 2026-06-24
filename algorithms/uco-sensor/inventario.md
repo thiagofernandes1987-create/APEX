@@ -7,7 +7,7 @@
 
 ## Versão atual
 
-**v3.5.2** (Sprint W2 — gate-2 + stress + parameter sweep completos) ✅
+**v3.6.0** (Sprint V — Marketplace de spectral signatures, horizonte 180d INICIADO ⭐) ✅
 
 ## Equipe APEX (modo SCIENTIFIC)
 
@@ -126,11 +126,41 @@
 
 ---
 
-## Próximos sprints após gate-2 (horizonte 180 dias)
+## Próximos sprints (horizonte 180 dias)
 
-| Sprint | Foco | Pré-requisito |
+| Sprint | Foco | Status |
 |---|---|---|
-| **V** | Marketplace de spectral signatures (Movimento #5 expandido) + sweep `ruff` LOW findings | gate-2 ✅ |
-| **X** | CFG visualizável + hotspot overlay + port-allocator nos testes | Sprint V |
-| **Y** | SaaS multi-tenant + billing | Sprint X |
-| **Z** | Paper POPL/PLDI submission | Sprint Y |
+| **V** | Marketplace de spectral signatures (Movimento #5 expandido) | **✅ v3.6.0** |
+| **X** | CFG visualizável + hotspot overlay + port-allocator nos testes | pending |
+| **Y** | SaaS multi-tenant + billing | pending |
+| **Z** | Paper POPL/PLDI submission | pending |
+
+---
+
+## Sprint V (v3.6.0) — execução
+
+### APEX SCIENTIFIC scoping registrado
+
+| Etapa | Saída |
+|---|---|
+| DSM (Design Structure Matrix) | marketplace toca: signature_library, api/server, store (tabela nova), auth |
+| Ishikawa | causa-raiz: signatures locais não fan-out → impossível compartilhar entre orgs |
+| Pareto 80/20 | publish + list + pull + import (PKI signing / multi-tenant / billing → Y/Z) |
+| FMEA | 4 failure modes mitigados: ReDoS payload, duplicate id, no-auth, store flood |
+
+### Implementação
+
+* `governance/marketplace.py` — 150 LOC novos (publish_signature, pull_signature, list_marketplace, import_signature, canonical_payload_hash, _has_redos_shape, _payload_passes_guards).
+* `sensor_storage/snapshot_store.py` — tabela `marketplace_signatures` + 5 CRUD methods + `_marketplace_row_to_dict`.
+* `api/server.py` — 4 handlers REST + 4 entradas em `/docs` + roteamento POST (admin) + GET.
+* `tests/test_marco_m56.py` — 30 testes TV01-TV30.
+* `pyproject.toml` + `api/server.py` SensorConfig.version + `CHANGELOG.md` + roadmap atualizados.
+
+### Métricas pós-Sprint V
+
+| Métrica | v3.5.2 | **v3.6.0** |
+|---|---|---|
+| Tests passing | 1992 | **2022** (+30) |
+| Falhas        | 0    | **0** |
+| Endpoints     | 60+  | **64+** (+4 marketplace) |
+| Tables SQLite | 5    | **6** |

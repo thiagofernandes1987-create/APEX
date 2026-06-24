@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
-> **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-18  
-> **Versão atual:** v3.5.1 (Sprint W — APEX audit fixes: 6 CRITICAL/HIGH endurecidos pré-horizonte 180 dias) · **GATE DE QUALIDADE APEX SCIENTIFIC PASSOU ✅** · Próximo: horizonte 180 dias (Sprint V — Marketplace de signatures) → v3.6.0
+> **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-24  
+> **Versão atual:** v3.6.0 (Sprint V — Marketplace de spectral signatures, horizonte 180d INICIADO ⭐) · **GATE-2 PASSOU ✅** · Próximo: Sprint X — CFG visualizável + hotspot overlay → v3.7.0
 > **Plano vivo aprovado**: Sprints K → L → M → N → O → P (horizonte 30 dias APEX SCIENTIFIC redefinido)  
 > Documento vivo — atualizar após cada marco concluído
 
@@ -53,6 +53,8 @@
 | **Sprint T** | **VS Code Extension v1.1.0 — UCOClient ganha 5 métodos (getRCA, getChangepoints, getSimilar, getGrangerSignificant, repairHMC) + 4 novos comandos do editor (RCA panel, Changepoints quickPick, Similar quickPick, HMC repair com diff preview) + 30 TY-tests** | **v3.4.5** | **✅** |
 | **Sprint U** ⭐ | **Performance overhaul — Cache layer (`sensor_storage/cache.py`) LRU/Redis + cache em 3 handlers heavy + ASGI wrapper opt-in (`asgi/app.py`) + Bench harness (`bench/benchmark.py`) + endpoints `/cache/{status,invalidate}` + 30 TE-tests** | **v3.5.0** | **✅** ⭐ HORIZONTE 90D COMPLETO |
 | **Sprint W** 🔒 | **APEX Audit Hardening — 6 fixes CRITICAL/HIGH (auth bypass / SSOT hmc / channels SSOT / predictor leak / path-jail / ReDoS) + `governance/channels.py` + `sensor_storage/path_jail.py` + `tests/conftest.py` + 30 TF-tests** | **v3.5.1** | **✅** 🔒 GATE DE QUALIDADE |
+| **Sprint W2** 🔒 | **APEX Gate-2 deep audit — 8 fixes HIGH/MEDIUM (numpy RNG leak / hmc summary access / severity-regression gate / predictor denominator / granger noiseless / isolated_store / vacuous asserts / hardcoded /home/claude path) + README env-var docs + 21 TG-tests + 30 TS-stress tests** | **v3.5.2** | **✅** 🔒 GATE-2 PASSOU |
+| **Sprint V** ⭐ | **Marketplace de spectral signatures (MOVIMENTO #5 expandido) — `governance/marketplace.py` publish/pull/list/import + `marketplace_signatures` table + canonical SHA-256 payload hash + payload allowlist + ReDoS guard reused (audit-6) + admin auth (audit-1) + 4 endpoints REST (`/marketplace/{publish,list,pull/{id},import}`) + version auto-increment + 30 TV-tests** | **v3.6.0** | **✅** ⭐ HORIZONTE 180D INICIADO |
 
 **Métricas atuais (v3.2.1):**
 

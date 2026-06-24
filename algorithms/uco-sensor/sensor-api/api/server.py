@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.5.2"
+    version:      str   = "3.6.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -549,6 +549,10 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "POST",   "path": "/signatures/discover",      "auth": "admin", "desc": "DBSCAN over fingerprints, persist new + bump existing (body: {window?,eps?,min_samples?}) [Sprint P]"},
             {"method": "GET",    "path": "/signatures",               "auth": True,   "desc": "List persisted signatures (?limit=) [Sprint P]"},
             {"method": "GET",    "path": "/signatures/status",        "auth": True,   "desc": "Signature library summary [Sprint P]"},
+            {"method": "POST",   "path": "/marketplace/publish",      "auth": "admin", "desc": "Publish a local signature to marketplace (body: {signature_id, payload, publisher_id?, notes?}) [Sprint V]"},
+            {"method": "GET",    "path": "/marketplace/list",         "auth": True,   "desc": "List marketplace signatures, latest version each (?limit=&offset=&publisher_id=) [Sprint V]"},
+            {"method": "GET",    "path": "/marketplace/pull/{id}",    "auth": True,   "desc": "Pull a marketplace signature by id (?version=N optional) [Sprint V]"},
+            {"method": "POST",   "path": "/marketplace/import",       "auth": "admin", "desc": "Verify hash + persist a foreign signature (body: {signature_id, payload, expected_hash, publisher_id?, notes?}) [Sprint V]"},
             {"method": "GET",    "path": "/similar",                  "auth": True,   "desc": "Top-K spectrally similar modules (?module=&k=&metric=&window=) [Sprint O]"},
             {"method": "GET",    "path": "/fingerprint/index",        "auth": True,   "desc": "All computable spectral fingerprints (?window=) [Sprint O]"},
             {"method": "GET",    "path": "/fingerprint/clusters",     "auth": True,   "desc": "Pairwise distance matrix between fingerprints (?metric=&window=) [Sprint O]"},
@@ -1555,6 +1559,86 @@ def handle_signatures_status() -> Tuple[int, Dict]:
         return 200, library_status(_store)
     except Exception as exc:
         return 500, {"error": f"status failed: {exc}"}
+
+
+# ─── Sprint V — Marketplace de spectral signatures ───────────────────────────
+
+def handle_marketplace_publish(data: Dict) -> Tuple[int, Dict]:
+    """POST /marketplace/publish (admin) — publish a signature locally."""
+    from governance.marketplace import publish_signature
+    sig_id   = (data.get("signature_id") or "").strip()
+    payload  = data.get("payload") or {}
+    publisher = (data.get("publisher_id") or "anonymous").strip() or "anonymous"
+    notes    = (data.get("notes") or "").strip()
+    if not sig_id:
+        return 400, {"error": "signature_id is required"}
+    if not isinstance(payload, dict):
+        return 400, {"error": "payload must be an object"}
+    try:
+        out = publish_signature(
+            _store, sig_id, payload,
+            publisher_id=publisher, notes=notes,
+        )
+    except Exception as exc:
+        return 500, {"error": f"publish failed: {exc}"}
+    if out.get("status") != "OK":
+        return 400, out
+    return 200, out
+
+
+def handle_marketplace_list(limit: int = 100, offset: int = 0,
+                            publisher_id: str = "") -> Tuple[int, Dict]:
+    """GET /marketplace/list — paginated, latest version per signature_id."""
+    from governance.marketplace import list_marketplace
+    try:
+        return 200, list_marketplace(
+            _store, limit=max(1, int(limit)), offset=max(0, int(offset)),
+            publisher_id=(publisher_id or None),
+        )
+    except Exception as exc:
+        return 500, {"error": f"list failed: {exc}"}
+
+
+def handle_marketplace_pull(signature_id: str,
+                            version: Optional[int] = None) -> Tuple[int, Dict]:
+    """GET /marketplace/pull/{id}[?version=N] — fetch by id (latest or pinned)."""
+    from governance.marketplace import pull_signature
+    if not signature_id:
+        return 400, {"error": "signature_id is required"}
+    try:
+        out = pull_signature(_store, signature_id, version=version)
+    except Exception as exc:
+        return 500, {"error": f"pull failed: {exc}"}
+    if out is None:
+        return 404, {"error": f"signature {signature_id!r} not found"}
+    return 200, out
+
+
+def handle_marketplace_import(data: Dict) -> Tuple[int, Dict]:
+    """POST /marketplace/import (admin) — verify hash + persist a foreign signature."""
+    from governance.marketplace import import_signature
+    sig_id   = (data.get("signature_id") or "").strip()
+    payload  = data.get("payload") or {}
+    expected = (data.get("expected_hash") or "").strip()
+    publisher = (data.get("publisher_id") or "imported").strip() or "imported"
+    notes    = (data.get("notes") or "").strip()
+    if not sig_id:
+        return 400, {"error": "signature_id is required"}
+    if not isinstance(payload, dict):
+        return 400, {"error": "payload must be an object"}
+    if not expected:
+        return 400, {"error": "expected_hash is required"}
+    try:
+        out = import_signature(
+            _store, sig_id, payload,
+            expected_hash=expected,
+            publisher_id=publisher, notes=notes,
+        )
+    except Exception as exc:
+        return 500, {"error": f"import failed: {exc}"}
+    if out.get("status") != "OK":
+        return 400, out
+    return 200, out
 
 
 def handle_similar(module_id: str, k: int = 10, metric: str = "euclidean",
@@ -4386,6 +4470,19 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
             elif path.startswith("/signatures/") and path != "/signatures/status":
                 sig_id = path[len("/signatures/"):]
                 code, data = handle_signatures_get(sig_id)
+            # ─── Sprint V — Marketplace (GET) ───────────────────────────────
+            elif path == "/marketplace/list":
+                limit_n  = int(params.get("limit",  ["100"])[0])
+                offset_n = int(params.get("offset", ["0"])[0])
+                pub_v    = params.get("publisher_id", [""])[0]
+                code, data = handle_marketplace_list(
+                    limit=limit_n, offset=offset_n, publisher_id=pub_v,
+                )
+            elif path.startswith("/marketplace/pull/"):
+                sig_id = path[len("/marketplace/pull/"):]
+                ver_raw = params.get("version", [None])[0]
+                ver_n = int(ver_raw) if ver_raw not in (None, "") else None
+                code, data = handle_marketplace_pull(sig_id, version=ver_n)
             elif path == "/fingerprint/index":
                 window_n = int(params.get("window", ["100"])[0])
                 code, data = handle_fingerprint_index(window=window_n)
@@ -4559,6 +4656,17 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 if not ok_admin:
                     return self._send_json(403, {"error": "admin authentication required"})
                 code, data = handle_signatures_discover(body)
+            # ─── Sprint V — Marketplace (POST, admin-gated) ─────────────────
+            elif path == "/marketplace/publish":
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                code, data = handle_marketplace_publish(body)
+            elif path == "/marketplace/import":
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                code, data = handle_marketplace_import(body)
             elif path == "/feeds/sast/unload":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
