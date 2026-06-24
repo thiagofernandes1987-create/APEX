@@ -5,6 +5,61 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.5.2] — 2026-06-24 — Sprint W2: APEX gate-2 deep audit + stress + parameter sweep
+
+### Resumo executivo
+
+Segunda auditoria APEX SCIENTIFIC — agora cobrindo cinco dimensões
+**adicionais** (`correctness`, `tests`, `dead-code`, `control-flow`,
+`wiring`) — encontrou **8 fixes HIGH/MEDIUM**, **0 CRITICAL**, e produziu
+**61 testes regressivos novos** (`TG01-TG21` + `TS01-TS30` paramétricos).
+Suíte expandida de **1931 → 1992 passing**, zero falhas, zero novos
+findings significativos remanescentes.
+
+### Corrigido — Gate-2 fixes
+
+| Fix | Severidade | Arquivo | Categoria |
+|---|---|---|---|
+| G2-1 | **HIGH** | `sensor_core/autofix/hmc_repair.py` | global RNG state leak |
+| G2-2 | HIGH | `sensor_core/autofix/hmc_repair.py` | broken summary access (dataclass path) |
+| G2-3 | HIGH | `sensor_core/autofix/hmc_repair.py` | severity-regression gate (defence-in-depth APS clip) |
+| G2-4 | HIGH | `governance/signals.py:218` | denominator mismatch in `predictor_accuracy` |
+| G2-5 | HIGH | `governance/granger_causality.py:192` | noiseless causation silently skipped |
+| G2-6 | MEDIUM | `tests/conftest.py` | opt-in `isolated_store` fixture |
+| G2-7 | MEDIUM | `tests/test_marco_m48.py` | vacuous-conditional assertions promoted to invariants |
+| G2-8 | **HIGH** | `validation/analyze_real_history.py` | hardcoded `/home/claude` `sys.path.insert` → portable `__file__`-relative |
+
+### Documentado — Variáveis de ambiente
+
+`README.md` ganhou uma seção "Variáveis de ambiente (referência
+completa)" cobrindo `UCO_AUTH_ENABLED`, `UCO_ADMIN_KEY`,
+`UCO_APEX_ENABLED`, `APEX_WEBHOOK_URL`, `APEX_API_KEY`, `UCO_FEEDS_DIR`,
+`UCO_REDIS_URL`, `UCO_CACHE_MAX_SIZE` — todas previamente apenas no
+CHANGELOG.
+
+### Testes adicionados — TG (gate-2 pin) + TS (stress / parameter sweep)
+
+* `tests/test_marco_m54.py` — TG01-TG21: pins cada fix gate-2 com guards
+  source-level + invariantes funcionais.
+* `tests/test_marco_m55.py` — TS01-TS30: parameter sweep e stress
+  (predictor_accuracy × 5 windows, granger × 4 lags × 4 alphas, SAST
+  scanner em 500 LOC sob 1s, IaC scanner em 50 ficheiros sob 5s,
+  SnapshotStore 1000 inserts sob 3s, RCA + propagation + granger_matrix
+  9×9 sob 2s, changepoints PELT).
+
+### Métricas de qualidade após gate-2
+
+| Métrica | v3.5.1 | v3.5.2 |
+|---|---|---|
+| Testes passando        | 1931 | **1992** (+61) |
+| Falhas                 | 0    | **0** |
+| CRITICAL findings ativos | 0  | **0** |
+| HIGH findings ativos     | 0  | **0** |
+| MEDIUM findings backlog  | 26 | 23 (3 fechados via README) |
+| LOW findings backlog     | _n/a_ | 59 (deferred Sprint V) |
+
+---
+
 ## [3.5.1] — 2026-06-25 — Sprint W: APEX SCIENTIFIC Audit Fixes (6 CRITICAL/HIGH)
 
 ### Corrigido — Auditoria APEX (5 auditores paralelos + 3 verificadores adversariais)

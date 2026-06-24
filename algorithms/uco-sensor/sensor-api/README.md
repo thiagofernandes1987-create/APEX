@@ -194,6 +194,20 @@ APEX_API_KEY:     <apex_key>
 UCO_APEX_ENABLED: "1"
 ```
 
+### Variáveis de ambiente (referência completa — Sprint W2)
+
+| Variável | Onde | Default | Descrição |
+|---|---|---|---|
+| `UCO_AUTH_ENABLED` | `api/server.py` | `0` | `"1"` exige API key em endpoints sensíveis (ingest, admin). |
+| `UCO_ADMIN_KEY` | `api/server.py` | _none_ | Chave **sempre** exigida em endpoints `admin/*` (independente de `UCO_AUTH_ENABLED`). Sprint W audit-1. |
+| `UCO_APEX_ENABLED` | `api/server.py` | `0` | Liga o conector APEX (envio de `UCO_ANOMALY_DETECTED`). |
+| `APEX_WEBHOOK_URL` | conector APEX | _none_ | URL do Event Bus APEX. |
+| `APEX_API_KEY` | conector APEX | _none_ | Token de autenticação no Event Bus APEX. |
+| `UCO_FEEDS_DIR` | `sensor_storage/path_jail.py` | _none_ | **Raíz do path-jail** para `/feeds/*/load`. Sem essa variável, todo file-load é rejeitado (Sprint W audit-5). |
+| `UCO_REDIS_URL` | `sensor_storage/cache.py` | _none_ | Quando setada, cache compartilhado via Redis; caso contrário usa LRU local. |
+| `UCO_CACHE_MAX_SIZE` | `sensor_storage/cache.py` | `1024` | Capacidade do LRU local (entradas). |
+
+
 ### Templates de Ação por Tipo de Anomalia
 
 | Tipo | Mode APEX | Intervenção Imediata |

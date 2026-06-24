@@ -189,24 +189,34 @@ def granger_pair(
         _, rss_r = _ols_solve(X_R, Y)
         _, rss_u = _ols_solve(X_U, Y)
 
-        if rss_u < 1e-12 or rss_r <= rss_u:
+        if rss_r <= rss_u:
             continue
 
         df1 = k
         df2 = n_eff - 2 * k - 1
         if df2 <= 0:
             continue
-        F = ((rss_r - rss_u) / df1) / (rss_u / df2)
-        p = _f_survival(F, df1, df2)
+
+        if rss_u < 1e-12:
+            # Noiseless causation: unrestricted model fits perfectly while
+            # restricted model has residual error → perfect lag-k dependence.
+            F = float("inf")
+            p = 0.0
+        else:
+            F = ((rss_r - rss_u) / df1) / (rss_u / df2)
+            p = _f_survival(F, df1, df2)
 
         if p < best_p:
             best_p   = p
             best_f   = F
             best_lag = k
 
+    # Clamp F-stat to a JSON-safe value when noiseless causation occurred.
+    _F_SAT = 1.0e12
+    safe_f = best_f if best_f != float("inf") else _F_SAT
     return GrangerResult(
         from_channel="", to_channel="",
-        best_lag=best_lag, f_statistic=round(best_f, 4),
+        best_lag=best_lag, f_statistic=round(safe_f, 4),
         p_value=round(best_p, 6),
         granger_causes=(best_p < alpha),
         n_samples=len(y), alpha=alpha,

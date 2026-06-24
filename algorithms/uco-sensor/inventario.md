@@ -7,22 +7,22 @@
 
 ## Versão atual
 
-**v3.5.1** (Sprint W — gate-1 fixes aplicados) → **alvo: v3.5.2** ao final.
+**v3.5.2** (Sprint W2 — gate-2 + stress + parameter sweep completos) ✅
 
 ## Equipe APEX (modo SCIENTIFIC)
 
 | Papel | Função | Status |
 |---|---|---|
-| Tech Lead         | Orquestração + priorização (esta sessão Claude) | ✅ |
-| Architect         | Acoplamento, blast radius | ✅ gate-1 |
-| Security Engineer | Auth, secrets, race conditions, ReDoS, path-traversal | ✅ gate-1 |
-| Performance Eng.  | Hot paths, locks, N+1, cache invalidation | ✅ gate-1 |
-| Correctness Theor.| Bugs lógicos, sign conventions, off-by-one | ⏳ gate-2 (caiu em gate-1) |
-| Test Strategist   | Tautologias, mocks que escondem bugs, gaps | ⏳ gate-2 (caiu em gate-1) |
-| Dead Code Hunter  | Funções/imports nunca usados, branches mortos | 🆕 gate-2 |
-| Control Flow Anal.| Loops sem condição de saída, recursão sem base case | 🆕 gate-2 |
-| Wiring Auditor    | Paths hardcoded, env vars, sys.path manipulation | 🆕 gate-2 |
-| Debugger          | Reproduce + corrigir cada finding | conforme demanda |
+| Tech Lead         | Orquestração + priorização                            | ✅ gate-1 + gate-2 |
+| Architect         | Acoplamento, blast radius                              | ✅ gate-1 |
+| Security Engineer | Auth, secrets, race conditions, ReDoS, path-traversal | ✅ gate-1 + gate-2 |
+| Performance Eng.  | Hot paths, locks, N+1, cache invalidation              | ✅ gate-1 |
+| Correctness Theor.| Bugs lógicos, sign conventions, off-by-one             | ✅ gate-2 (G2-1..G2-5) |
+| Test Strategist   | Tautologias, mocks que escondem bugs, gaps            | ✅ gate-2 (G2-6/G2-7) |
+| Dead Code Hunter  | Funções/imports nunca usados, branches mortos          | ✅ gate-2 (50 findings LOW, deferred) |
+| Control Flow Anal.| Loops sem condição de saída, recursão sem base case   | ✅ gate-2 (2 findings LOW, deferred) |
+| Wiring Auditor    | Paths hardcoded, env vars, sys.path manipulation       | ✅ gate-2 (G2-8 HIGH + 3 MED corrigidos) |
+| Debugger          | Reproduce + corrigir cada finding                      | ✅ on demand |
 
 ---
 
@@ -43,38 +43,73 @@
 - [x] Regressão: 1931 tests passing, 0 falhas
 - [x] Commit `cf8d7386` (v3.5.1)
 
-### Gate-2 (APEX Workflow #2 — Sprint W2, alvo v3.5.2) 🚧
+### Gate-2 (APEX Workflow #2 — Sprint W2, v3.5.2) ✅
 
-- [ ] Workflow lançado (5 dimensões: correctness + tests + dead-code + control-flow + wiring)
-- [ ] Findings coletados + dedupe + adversarial verify
-- [ ] Inventário atualizado com findings + plano de fix
-- [ ] Fixes implementados
-- [ ] Testes TG01-TGNN pinam cada fix
-- [ ] Regressão re-rodada — alvo: zero falhas + zero novos findings significant
-- [ ] Commit final + bump v3.5.2
+- [x] Workflow 5-dim paralelo lançado (correctness + tests + dead-code + control-flow + wiring)
+- [x] Gate-2a (correctness/tests): 7 findings dedupe → 5 HIGH/MED corrigidos
+- [x] Gate-2b (dead-code/control-flow/wiring relançado): 63 findings → 1 HIGH + 3 MED corrigidos
+- [x] **8 HIGH/MEDIUM** confirmados e corrigidos:
+  - [x] **G2-1** HIGH — `hmc_repair` numpy RNG state leak → save/restore via `get_state()`/`set_state()` em try/finally
+  - [x] **G2-2** HIGH — `hmc_repair` broken summary access (dataclass) → helper `_summary_get()`
+  - [x] **G2-3** HIGH — `hmc_repair` APS clip saturation → guard `_no_severity_regression()` defence-in-depth
+  - [x] **G2-4** HIGH — `signals.predictor_accuracy` mean_h denominator mismatch → filtra subset
+  - [x] **G2-5** HIGH — `granger_causality` rss_u≈0 silently skipped → handle noiseless causation
+  - [x] **G2-6** MED — `tests/conftest.py` `isolated_store` opt-in fixture
+  - [x] **G2-7** MED — `test_marco_m48.py` TJ11/TJ12/TJ16 vacuous-cond → unconditional asserts
+  - [x] **G2-8** HIGH — `validation/analyze_real_history.py` hardcoded `/home/claude` → `__file__`-relative
+- [x] 3 MEDIUM (env-var docs) corrigidos via README.md
+- [x] 21 testes TG01-TG21 pinam cada fix gate-2
+- [x] 30 testes TS01-TS30 stress + parameter sweep (signals/scanners/store/RCA)
+- [x] Regressão: 1992 tests passing (+61), 0 falhas
+- [x] CHANGELOG.md atualizado com seção [3.5.2]
+- [x] Bump pyproject.toml + api/server.py para 3.5.2
 
 ---
 
-## Findings sob investigação (gate-2)
+## Findings deferred (LOW — Sprint V/X)
 
-_Atualizado pelo Workflow assim que retornar._
+| Categoria | Count | Disposição |
+|---|---|---|
+| unused-import                | 42 | Sweep automatizado em Sprint V (ruff `F401`) |
+| orphan-method (constructors) | 7  | Documentar como public-API ou remover em Sprint V |
+| undocumented_env_var (LOW)   | 2  | Já cobertos pela seção README de v3.5.2 |
+| syspath_mutation (defensive) | 2  | Refator para `importlib` em Sprint X |
+| orphan-class                 | 1  | `UCOUnusedVarTransformer` removal em Sprint V |
+| silent thread death loop     | 1  | `cache.py` background thread → adicionar restart-on-die |
+| sleep-based polling          | 1  | Substituir por `Event.wait()` em Sprint V |
+| hardcoded_host (test only)   | 1  | OK em testes (`127.0.0.1`), deferred |
+| hardcoded_port               | 1  | Substituir por port-allocator em Sprint X |
+| hardcoded_path_docs          | 1  | Docs apenas; deferred |
 
-| ID | Severidade | Arquivo:Linha | Categoria | Status fix | Teste regressão |
-|---|---|---|---|---|---|
-| (pending workflow) |  |  |  |  |  |
+**Total LOW deferred:** 59 — todos triados, nenhum bloqueia o horizonte 180d.
 
 ---
 
-## Métricas finais de qualidade (a atualizar)
+## Quick-wins de alto ROI identificados (próximo sprint)
 
-| Métrica | Antes gate-1 | Após gate-1 | Após gate-2 (alvo) |
+| Item | Estimativa | ROI | Notas |
 |---|---|---|---|
-| Tests passing            | 1901 | 1931 | ≥1961 |
-| LOC produção             | 39.781 | 40.592 | TBD |
-| CRITICAL findings        | 1 confirmado | 0 | 0 |
-| HIGH findings            | 5 confirmados | 0 | 0 |
-| MEDIUM findings backlog  | 26 | 26 | TBD |
-| Cobertura módulos audit  | 7 | 7 | TBD |
+| Cache `predictor_accuracy` outputs (cache TTL ~5s) | 1h | Alto | endpoint hot path em dashboards |
+| Background-thread restart wrapper em `cache.py`     | 2h | Alto | finding gate-2b; resiliência operacional |
+| `Event.wait()` no consumer loop em vez de `sleep`   | 1h | Médio | redução de latência ~50ms p99 |
+| Sweep `ruff F401` para 42 unused-imports            | 30min | Médio | -200 LOC, melhora coverage signal |
+| Remover 7 orphan classmethod constructors           | 1h | Médio | dead code drift fechado |
+| Port-allocator nos testes (em vez de 19084 hard)   | 1h | Médio | habilita testes paralelos via xdist |
+
+---
+
+## Métricas finais de qualidade
+
+| Métrica | Antes gate-1 | Após gate-1 | **Após gate-2 (v3.5.2)** |
+|---|---|---|---|
+| Tests passing            | 1901  | 1931 | **1992** (+91 total) |
+| Falhas                   | 0     | 0    | **0** |
+| LOC produção             | 39.781| 40.592 | ~40.900 |
+| CRITICAL findings        | 1 conf| 0    | **0** |
+| HIGH findings            | 5 conf| 0    | **0** |
+| MEDIUM findings backlog  | 26    | 26   | 23 (-3 fechados via README) |
+| LOW findings backlog     | n/a   | n/a  | 59 (triados, deferred) |
+| Cobertura módulos audit  | 7     | 7    | 14 (signals + granger + hmc + iac + sast + store + RCA + propagation + changepoints + conftest + validation + …) |
 
 ---
 
@@ -84,15 +119,18 @@ _Atualizado pelo Workflow assim que retornar._
 2. **Path-jail closed-by-default** — sem `UCO_FEEDS_DIR`, todo file-load rejeitado.
 3. **Admin endpoints SEMPRE exigem `UCO_ADMIN_KEY`** independente de `auth_enabled`.
 4. **HMC `preserve_aps=True` por default** + APS canônico via SSOT.
-5. **MEDIUM/LOW deferred para Sprint V** — não bloqueiam horizonte 180 dias.
+5. **G2-1 save/restore numpy RNG** > thread-local RNG (minimally-invasive; preserva API do UCO core).
+6. **G2-6 isolated_store é opt-in** — autouse fixture quebrava 3 legacy tests que `import _store` direto; opt-in via marker é minimamente invasivo.
+7. **LOW findings (59) deferred para Sprint V** — não bloqueiam horizonte 180 dias; sweep automatizável.
+8. **MEDIUM/LOW deferred para Sprint V** — não bloqueiam horizonte 180 dias.
 
 ---
 
 ## Próximos sprints após gate-2 (horizonte 180 dias)
 
-| Sprint | Foco |
-|---|---|
-| V | Marketplace de spectral signatures (Movimento #5 expandido) |
-| X | CFG visualizável + hotspot overlay |
-| Y | SaaS multi-tenant + billing |
-| Z | Paper POPL/PLDI submission |
+| Sprint | Foco | Pré-requisito |
+|---|---|---|
+| **V** | Marketplace de spectral signatures (Movimento #5 expandido) + sweep `ruff` LOW findings | gate-2 ✅ |
+| **X** | CFG visualizável + hotspot overlay + port-allocator nos testes | Sprint V |
+| **Y** | SaaS multi-tenant + billing | Sprint X |
+| **Z** | Paper POPL/PLDI submission | Sprint Y |

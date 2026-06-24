@@ -144,16 +144,19 @@ def test_TJ10_analyze_module_id_carried_through():
 def test_TJ11_root_causes_only_leading_channels_in_affected():
     """Each candidate's root_channel must appear in affected_channels."""
     r = analyze(_shifted_store(), "demo")
-    if r.root_causes:
-        affected = set(r.affected_channels)
-        for rc in r.root_causes:
-            assert rc.root_channel in affected
+    assert r.root_causes, (
+        "shifted-store fixture must produce at least one root cause "
+        "— if this fails, the assertion below was previously vacuous"
+    )
+    affected = set(r.affected_channels)
+    for rc in r.root_causes:
+        assert rc.root_channel in affected
 
 
 def test_TJ12_primary_root_is_first_candidate():
     r = analyze(_shifted_store(), "demo")
-    if r.root_causes:
-        assert r.primary_root is r.root_causes[0]
+    assert r.root_causes, "shifted-store fixture must produce ≥1 root cause"
+    assert r.primary_root is r.root_causes[0]
 
 
 def test_TJ13_root_cause_lag_is_int():
@@ -176,8 +179,10 @@ def test_TJ15_no_root_cause_when_flat():
 
 def test_TJ16_summary_includes_root_cause_when_present():
     r = analyze(_shifted_store(), "demo")
-    if r.primary_root:
-        assert "Root cause" in r.summary_text
+    assert r.primary_root is not None, (
+        "shifted-store must produce primary_root for this gate to be valid"
+    )
+    assert "Root cause" in r.summary_text
 
 
 def test_TJ17_summary_omits_root_cause_on_no_changepoint():
