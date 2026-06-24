@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.4.5"
+    version:      str   = "3.5.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -1276,14 +1276,30 @@ def handle_spectral_fingerprint(module_id: str, window: int = 100) -> Tuple[int,
 
     Compact 5-channel spectral fingerprint (band fractions + entropy +
     cycle length) for module-to-module comparison and clustering.
+
+    Sprint U: result cached with TTL 60s per module.
     """
     if not module_id:
         return 400, {"error": "module is required"}
+    # ── Sprint U cache ──────────────────────────────────────────────
+    try:
+        from sensor_storage.cache import cache_get, cache_set
+        cache_key = f"spectral_fp:{module_id}:w={int(window)}"
+        cached = cache_get(cache_key)
+        if cached is not None:
+            return 200, cached
+    except Exception:
+        cache_key = None
     try:
         from metrics.spectral_aps import aps_fingerprint
         result = aps_fingerprint(_store, module_id, window=max(3, int(window)))
     except Exception as exc:
         return 500, {"error": f"spectral/fingerprint failed: {exc}"}
+    if cache_key:
+        try:
+            cache_set(cache_key, result, ttl=60)
+        except Exception:
+            pass
     return 200, result
 
 
@@ -1304,6 +1320,26 @@ def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, 
 
     stats["module_id"] = module_id or "*"
     return 200, stats
+
+
+def handle_cache_status() -> Tuple[int, Dict]:
+    """GET /cache/status — Sprint U: backend + hits/misses/size."""
+    try:
+        from sensor_storage.cache import cache_status
+        return 200, cache_status()
+    except Exception as exc:
+        return 500, {"error": f"cache/status failed: {exc}"}
+
+
+def handle_cache_invalidate(data: Dict) -> Tuple[int, Dict]:
+    """POST /cache/invalidate — Sprint U (admin); body: {prefix}."""
+    try:
+        from sensor_storage.cache import cache_invalidate
+        prefix = str(data.get("prefix", ""))
+        n = cache_invalidate(prefix)
+        return 200, {"invalidated": n, "prefix": prefix}
+    except Exception as exc:
+        return 500, {"error": f"cache/invalidate failed: {exc}"}
 
 
 def handle_repair_hmc(data: Dict) -> Tuple[int, Dict]:
@@ -1356,6 +1392,16 @@ def handle_granger_matrix(module_id: str, max_lag: int = 3,
     """
     if not module_id:
         return 400, {"error": "module parameter is required"}
+    # ── Sprint U cache (Granger 9×9 = 81 F-tests, costly) ───────────
+    try:
+        from sensor_storage.cache import cache_get, cache_set
+        cache_key = (f"granger_matrix:{module_id}:lag={int(max_lag)}:"
+                     f"w={int(window)}:a={float(alpha)}")
+        cached = cache_get(cache_key)
+        if cached is not None:
+            return 200, cached
+    except Exception:
+        cache_key = None
     try:
         from governance.granger_causality import granger_matrix
         payload = granger_matrix(
@@ -1366,6 +1412,11 @@ def handle_granger_matrix(module_id: str, max_lag: int = 3,
         )
     except Exception as exc:
         return 500, {"error": f"granger matrix failed: {exc}"}
+    if cache_key:
+        try:
+            cache_set(cache_key, payload, ttl=120)
+        except Exception:
+            pass
     return 200, payload
 
 
@@ -3694,13 +3745,30 @@ def handle_repo_health_score(window: int = 100) -> Tuple[int, Dict]:
     Single number ∈ [0, 100] capturing the repo's current health:
     LOC-weighted mean of the latest persisted APS per module, minus
     5 points per RED compound-alert module (Sprint A integration).
+
+    Sprint U: result cached with TTL 30s (n_modules-dependent).
     """
+    # ── Sprint U cache ──────────────────────────────────────────────
+    try:
+        from sensor_storage.cache import cache_get, cache_set
+        cache_key = f"repo_health_score:n={len(_store.list_modules())}:w={int(window)}"
+        cached = cache_get(cache_key)
+        if cached is not None:
+            return 200, cached
+    except Exception:
+        cache_key = None
     try:
         from governance.repo_meta_score import compute_repo_meta_score
     except ImportError as exc:
         return 503, {"error": f"repo meta-score not available: {exc}"}
     meta = compute_repo_meta_score(_store, window=window)
-    return 200, meta.to_dict()
+    payload = meta.to_dict()
+    if cache_key:
+        try:
+            cache_set(cache_key, payload, ttl=30)
+        except Exception:
+            pass
+    return 200, payload
 
 
 def handle_repo_aps_outliers(
@@ -4359,6 +4427,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 )
             elif path == "/feeds/status":
                 code, data = handle_feeds_status()
+            elif path == "/cache/status":
+                code, data = handle_cache_status()
             elif path == "/feeds/sast/status":
                 code, data = handle_feeds_sast_status()
             elif path == "/spectral/aps":
@@ -4453,6 +4523,11 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_apex_auto_remediate(body)
             elif path == "/repair/hmc":
                 code, data = handle_repair_hmc(body)
+            elif path == "/cache/invalidate":
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                code, data = handle_cache_invalidate(body)
             elif path == "/feeds/cve/load":
                 # Sprint J: admin-only.
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)

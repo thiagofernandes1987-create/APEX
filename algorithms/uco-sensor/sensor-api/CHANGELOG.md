@@ -5,6 +5,130 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.5.0] — 2026-06-23 — Sprint U: Cache Layer + ASGI Wrapper + Bench (MINOR) ⭐ HORIZONTE 90 DIAS COMPLETO
+
+### Adicionado
+
+**Fecha o horizonte 90 dias do APEX Scientific.** Performance overhaul
+cirúrgico: todo deliverable é opt-in, fallback no comportamento atual,
+zero quebra dos 1873 testes anteriores.
+
+**Decisão APEX SCIENTIFIC (FMEA):** Postgres adapter foi tirado deste
+sprint e remetido para Sprint W (separação de blast radius). Pareto:
+80% do ganho de performance em workloads de leitura vem do cache, não
+do backend de storage.
+
+#### 1. Cache layer — `sensor_storage/cache.py`
+
+**Dois backends, escolha automática:**
+- **LRU in-memory** (default) — pure stdlib, zero dependências.
+- **Redis** (opt-in via `UCO_REDIS_URL=redis://host:port/db`) — para
+  deploys multi-worker. Falha de conexão → fallback transparente
+  para LRU.
+
+**API pública:**
+- `cache_get(key) -> Optional[Any]`
+- `cache_set(key, value, *, ttl=60) -> None`
+- `cache_invalidate(prefix="") -> int`
+- `cache_status() -> Dict` (backend, hits, misses, sets, evictions, hit_rate)
+- `@cached(ttl=N, key_fn=...)` decorator
+
+**Contratos defensivos:**
+- Cache **NUNCA quebra request** — backend errors swallowed silently.
+- `cache_get` → `None` em falha; `cache_set` → no-op em falha.
+- Counters thread-safe expostos em `cache_status()`.
+
+#### 2. Cache aplicado a 3 handlers heavy
+
+| Endpoint | TTL | Cache key |
+|---|---|---|
+| `/repo/health-score` | 30s | `repo_health_score:n={N}:w={W}` |
+| `/spectral/fingerprint` | 60s | `spectral_fp:{module}:w={W}` |
+| `/granger/matrix` | 120s | `granger_matrix:{mod}:lag={L}:w={W}:a={A}` |
+
+TTLs calibrados pelo custo de recomputação: Granger 9×9 (81 F-tests)
+ganha TTL maior. **Cache key inclui params** — mudança de `window` ou
+`alpha` gera nova entrada (não corrompe).
+
+#### 3. ASGI wrapper — `asgi/app.py`
+
+Starlette **opt-in** que delega cada rota para o handler Python existente.
+Zero duplicação de handler. Comportamento idêntico ao `http.server`
+síncrono — único ganho do ASGI é o modelo de I/O e multi-worker via
+`uvicorn`.
+
+**Curadoria:** apenas os 7 endpoints mais críticos (heavy GETs + key
+POSTs) na route table. Long tail continua via `http.server`.
+
+```bash
+pip install starlette uvicorn
+uvicorn asgi.app:app --host 0.0.0.0 --port 8765 --workers 4
+```
+
+**Trade-off documentado:** handlers ainda síncronos — bloqueiam worker
+em chamadas longas (HMC, /repo/health-history). Worker pool fica
+para Sprint W.
+
+#### 4. Benchmark harness — `bench/benchmark.py`
+
+Pure-stdlib (urllib). Dois modos:
+- `--mode serial` — baseline de latência single-connection
+- `--mode parallel --workers N` — throughput aproximado (limitado por
+  GIL no `http.server`; ASGI/uvicorn aparece aqui)
+
+Métricas: throughput (req/s), p50/p95/p99 (ms), mean, error count.
+
+```bash
+python -m bench.benchmark --url http://localhost:8765/health \
+                          --n 100 --mode parallel --workers 16
+```
+
+#### 5. Novos endpoints de observabilidade
+
+| Método | Rota | Auth |
+|---|---|---|
+| GET | `/cache/status` | user — backend + counters |
+| POST | `/cache/invalidate` | **admin** — body `{prefix}` |
+
+### Testes — 30 novos (TE01–TE30)
+
+- TE01–TE10 — cache primitives: get/set, TTL expiry, invalidate por
+  prefix, status, decorator (hit/miss correto), LRU eviction,
+  unserializable safe-swallow
+- TE11–TE20 — integração com 3 handlers heavy: hit no 2º call, key
+  inclui params, payload idêntico cached vs fresh, backend quebrado
+  não trava handler, /cache/invalidate e /cache/status funcionam
+- TE21–TE30 — benchmark: _percentile (incl. P99 com nearest-rank),
+  summarise shape + empty, _one_request gracefully handles invalid
+  URL, main() retorna nonzero em all-errors, ASGI app importável
+  (skipado se Starlette ausente), route table sane
+
+Regressão completa: **1901 passed, 5 skipped, 0 falhas** em 21.9s.
+
+### Versão MINOR (v3.4.x → v3.5.0)
+
+Marca **fechamento do horizonte 90 dias** APEX Scientific:
+
+| Sprint | Versão | Movimento |
+|---|---|---|
+| R | v3.4.2 | RCA Automático |
+| S | v3.4.3 | Granger F-test |
+| Q ⭐ | v3.4.4 | **HMC Closed-Loop Repair (#1)** |
+| T | v3.4.5 | VS Code Extension v1.1.0 |
+| **U** | **v3.5.0** | **Cache + ASGI + Bench** |
+
+### Não-objetivos (Sprint W)
+
+- **Postgres adapter** — FMEA tirou deste sprint; 80% do ganho de leitura
+  vem do cache, não do storage backend. Postgres fica para Sprint W.
+- **Async handlers** — refactor de 60+ funções `def` para `async def`
+  exige reescrita maior, fica para sprint dedicado.
+- **Cache invalidation via store hook** — TTL curto resolve no curto
+  prazo; hook automático em `_store.insert()` requer refactor do
+  decorator pattern, fica para Sprint W também.
+
+---
+
 ## [3.4.5] — 2026-06-22 — Sprint T: VS Code Extension v1.1.0 (horizon-90d wiring)
 
 ### Adicionado
