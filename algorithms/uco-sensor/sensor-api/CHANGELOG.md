@@ -5,6 +5,137 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.5.1] — 2026-06-25 — Sprint W: APEX SCIENTIFIC Audit Fixes (6 CRITICAL/HIGH)
+
+### Corrigido — Auditoria APEX (5 auditores paralelos + 3 verificadores adversariais)
+
+Antes de avançar para o horizonte 180 dias, executamos a auditoria
+profunda pedida pelo APEX SCIENTIFIC: 5 auditores especializados rodando
+em paralelo (architect, security, performance, correctness, tests) +
+3-vote adversarial verify por finding HIGH/CRITICAL. Resultado: **39
+findings brutos** → **13 HIGH/CRITICAL deduplicados** → **6 críticos
+confirmados e corrigidos** nesta release.
+
+| Fix | Severidade | Arquivo | Categoria |
+|---|---|---|---|
+| audit-1 | **CRITICAL** | `api/server.py:316` | auth-bypass / default-insecure |
+| audit-2 | HIGH | `sensor_core/autofix/hmc_repair.py:91` | SSOT violation |
+| audit-3 | HIGH | `governance/granger_causality.py:59` + `propagation.py:148` | code duplication |
+| audit-4 | HIGH | `sensor_storage/snapshot_store.py:545` | spec drift (predictor leak) |
+| audit-5 | HIGH | `api/server.py:1854` (+ feeds) | path-traversal |
+| audit-6 | HIGH | `sast/rules_feed.py:137` | ReDoS injection |
+
+#### audit-1 CRITICAL — Auth bypass por default
+
+**Antes**: `_authenticate()` short-circuitava em `auth_enabled=False`
+(default), retornando `(True, dev_info)` mesmo para `require_admin=True`.
+Qualquer chamador anônimo executava `POST /feeds/cve/load`,
+`/signatures/discover`, `/cache/invalidate`, `DELETE /auth/keys` etc.
+Fix Sprint G G.8 (hmac.compare_digest) era inalcançável.
+
+**Agora**: `require_admin=True` SEMPRE exige `UCO_ADMIN_KEY` via
+constant-time compare, independente de `auth_enabled`. Sem chave
+admin configurada → 403 garantido. Modo dev preservado apenas para
+endpoints **não-admin**.
+
+#### audit-2 HIGH — `hmc_repair._compute_aps` shadow formula
+
+**Antes**: importava `aps_from_metric_vector` mas NUNCA chamava;
+sintetizava `100 - 10 * n_crit_high` (só conta SAST CRITICAL/HIGH,
+ignora os 17 componentes ponderados do APS canônico). Patch HMC podia
+degradar reliability/performance/maintainability arbitrariamente sem
+o `preserve_aps` guard detectar.
+
+**Agora**: constrói MetricVector mínimo com `SecurityVector` +
+`FlowVector` derivados das findings SAST, chama
+`aps_from_metric_vector` canônico. SSOT do Sprint H restaurada.
+
+#### audit-3 HIGH — Channel SSOT violation
+
+**Antes**: `_CHANNELS`, `_ATTR_BY_SHORT` e `_series()` duplicados
+verbatim em `granger_causality.py` e `propagation.py`. Mesma falha de
+drift que `signals.py` (Sprint H) tentou eliminar.
+
+**Agora**: novo módulo `governance/channels.py` com `CHANNELS`,
+`ATTR_BY_SHORT` e `series()` canônicos. Ambos consumidores re-exportam.
+
+#### audit-4 HIGH — Predictor leak no recompute_derived
+
+**Antes**: `_compute_forecast(mv)` chamava `get_history(window=100)`
+que retornava o histórico **incluindo** a target row (já persistida
+pelo `defer_derived=True` + `recompute_derived` do Sprint I). O
+predictor "previa" um valor que já estava no input — `MAE≈0`,
+verdict `ACCURATE` fantasma para batch ingests.
+
+**Agora**: filtragem dupla (`commit_hash != target_commit AND
+timestamp < target_ts`) garante history estritamente PRIOR.
+
+#### audit-5 HIGH — Path-traversal em /feeds/{cve,sast}/load
+
+**Antes**: `POST /feeds/cve/load {"path": "/etc/passwd"}` abria
+arquivo arbitrário; combinado com audit-1 leak de arquivos para
+chamador anônimo.
+
+**Agora**: novo módulo `sensor_storage/path_jail.py` exige
+`UCO_FEEDS_DIR` env var, canonicaliza com `Path.resolve()`,
+rejeita escape via `..`. Closed-by-default: sem env var → todo
+file-load rejeitado (use `inline:` ou `url:` na payload).
+
+#### audit-6 HIGH — ReDoS no `sast/rules_feed`
+
+**Antes**: `_parse_rule()` chamava `re.compile(pattern_src)` sem
+validação. Admin malicioso/descuidado carrega `(a+)+` → `/analyze`
+e `/sast` travam para sempre.
+
+**Agora**: validação estática de padrões com quantificadores
+aninhados (`+)+`, `+)*`, `*)+`, `*)*`, `+}+`, `*}*`) e limite de
+comprimento (1024 chars). Padrões seguros (incluindo built-ins)
+passam.
+
+### Colateral — conftest.py de teste
+
+Path-jail quebraria 33 testes que usam `tempfile.NamedTemporaryFile`
+em `/tmp`. Adicionado `tests/conftest.py` que setta
+`UCO_FEEDS_DIR=/tmp` e `UCO_ADMIN_KEY=test-key` na sessão pytest —
+zero modificação nos 33 testes existentes.
+
+### Testes — 30 novos (TF01–TF30) pinando cada fix
+
+- TF01–TF05 (audit-1): admin requer key mesmo com auth_enabled=False,
+  aceita key correta, 403 quando sem admin_k, non-admin dev mode
+  preservado, hmac.compare_digest ainda em uso
+- TF06–TF10 (audit-2): `_compute_aps` delega ao canonical (inspeção
+  de source), retorna float válido para code limpo, cai para código
+  dirty, shadow formula removida, failure path = None
+- TF11–TF15 (audit-3): `governance.channels.CHANNELS` exposto, attr
+  map completo, granger + propagation re-exportam (assert `is`
+  canonical), inline tuple removido
+- TF16–TF20 (audit-4): `recompute_derived` não vaza target.hamiltonian,
+  source contém filtro por commit_hash + timestamp, < 4 rows = None,
+  insert path normal preservado, predictor_accuracy real (não fantasma)
+- TF21–TF25 (audit-5): path-jail rejeita fora root, aceita dentro,
+  closed-by-default sem env var, cve_feed + rules_feed honram jail
+- TF26–TF30 (audit-6): nested quantifiers `(a+)+`, `(a*)+`, `(.*)*`
+  rejeitados; padrão >1024 chars rejeitado; padrão seguro aceito
+
+Regressão completa: **1931 passed, 5 skipped, 0 falhas** em 15.1s
+(+30 vs Sprint U).
+
+### Findings MEDIUM/LOW não corrigidos nesta release
+
+A auditoria também sinalizou 26 findings MEDIUM/LOW que não bloqueiam
+adoção. Ficam para o backlog do horizonte 180 dias — serão tratados
+em Sprint V (V de "validation hardening") ou conforme priorização.
+
+### Pronto para horizonte 180 dias
+
+Esta release **fecha o gate de qualidade** pedido pelo APEX SCIENTIFIC
+antes do horizonte 180 dias. Sprint V (Marketplace), W (Postgres),
+X (CFG visual), Y (SaaS), Z (Paper) podem prosseguir com a base
+endurecida.
+
+---
+
 ## [3.5.0] — 2026-06-23 — Sprint U: Cache Layer + ASGI Wrapper + Bench (MINOR) ⭐ HORIZONTE 90 DIAS COMPLETO
 
 ### Adicionado

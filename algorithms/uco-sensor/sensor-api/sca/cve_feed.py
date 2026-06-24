@@ -141,21 +141,40 @@ def _parse_entry(raw: Dict[str, Any]) -> Tuple[Optional[Tuple[str, str]], Option
 # ─── Public API: load ─────────────────────────────────────────────────────────
 
 def load_from_file(path: str, feed_id: Optional[str] = None) -> FeedLoadResult:
-    """Load CVE entries from a local JSON or YAML file."""
+    """Load CVE entries from a local JSON or YAML file.
+
+    Sprint W fix (audit-5, HIGH): path is validated through
+    ``sensor_storage.path_jail.check_feed_path`` which requires
+    ``UCO_FEEDS_DIR`` env var to be set and the resolved path to live
+    inside it.  Closed-by-default: without ``UCO_FEEDS_DIR``, every
+    file-based load is rejected.  Use inline/url payloads instead.
+    """
     if feed_id is None:
         feed_id = f"file:{os.path.basename(path)}:{int(time.time())}"
 
+    from sensor_storage.path_jail import check_feed_path
+    safe_path = check_feed_path(path)
+    if safe_path is None:
+        return FeedLoadResult(
+            feed_id=feed_id, source=path, ts_loaded=time.time(),
+            added_new=0, added_override=0, skipped_bad=0,
+            errors=[
+                "path rejected by path-jail: set UCO_FEEDS_DIR and ensure "
+                "the path resolves inside it (or use inline/url)"
+            ],
+        )
+
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(safe_path, "r", encoding="utf-8") as f:
             text = f.read()
     except Exception as exc:
         return FeedLoadResult(
-            feed_id=feed_id, source=path, ts_loaded=time.time(),
+            feed_id=feed_id, source=safe_path, ts_loaded=time.time(),
             added_new=0, added_override=0, skipped_bad=0,
             errors=[f"{type(exc).__name__}: {exc}"],
         )
 
-    return _ingest_text(text, source=path, feed_id=feed_id)
+    return _ingest_text(text, source=safe_path, feed_id=feed_id)
 
 
 def load_from_url(url: str, *, timeout: float = 10.0,

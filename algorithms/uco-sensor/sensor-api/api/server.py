@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.5.0"
+    version:      str   = "3.5.1"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -311,23 +311,33 @@ def _authenticate(plain_key: str, require_admin: bool = False) -> Tuple[bool, Op
     Valida a API key.
 
     Retorna (True, info_dict) se válido, (False, None) caso contrário.
-    Se auth_enabled=False, sempre aceita (modo dev).
-    """
-    if not _config.auth_enabled:
-        return True, {"key_prefix": "dev", "name": "dev_mode", "calls_total": 0}
 
+    Sprint W fix (audit-1, CRITICAL — APEX auditor "security"):
+    ``require_admin=True`` SEMPRE exige ``UCO_ADMIN_KEY`` via constant-time
+    comparison, independente de ``auth_enabled``.  Antes deste fix,
+    ``auth_enabled=False`` (default) short-circuitava o cheque de admin,
+    permitindo que qualquer chamador anônimo executasse
+    ``POST /feeds/cve/load``, ``POST /signatures/discover``,
+    ``POST /cache/invalidate`` etc.  Modo dev continua liberado para
+    endpoints **não-admin** apenas.
+    """
+    # ── Admin endpoints SEMPRE protegidos quando UCO_ADMIN_KEY definida ───
+    # (mesmo em auth_enabled=False — modo dev NÃO deve abrir admin path).
     if require_admin:
-        # Admin endpoint: usa variável de ambiente UCO_ADMIN_KEY.
-        # Sprint G fix (lateral): constant-time comparison.  ``==`` returns
-        # after the first mismatching byte, leaking secret length and
-        # similarity to a network attacker via timing.  ``hmac.compare_digest``
-        # is the canonical Python primitive for credential equality.
         admin_k = _config.admin_key or os.environ.get("UCO_ADMIN_KEY", "")
-        if admin_k and hmac.compare_digest(
+        if not admin_k:
+            # Sem chave admin configurada → admin endpoint sempre 403
+            # (impossível autenticar mesmo enviando uma chave).
+            return False, None
+        if hmac.compare_digest(
             (plain_key or "").encode("utf-8"), admin_k.encode("utf-8")
         ):
             return True, {"key_prefix": "admin", "name": "admin"}
         return False, None
+
+    # ── Endpoints não-admin ────────────────────────────────────────────────
+    if not _config.auth_enabled:
+        return True, {"key_prefix": "dev", "name": "dev_mode", "calls_total": 0}
 
     info = _store.validate_key(plain_key)
     if info is None:

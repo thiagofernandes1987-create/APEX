@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-18  
-> **Versão atual:** v3.5.0 (Sprint U — Cache layer + ASGI wrapper + Bench harness) · **HORIZONTE 90 DIAS COMPLETO ✅** (R+S+Q+T+U) · Próximo: Sprint W — Postgres adapter + async handlers + cache invalidation hooks → v3.5.1
+> **Versão atual:** v3.5.1 (Sprint W — APEX audit fixes: 6 CRITICAL/HIGH endurecidos pré-horizonte 180 dias) · **GATE DE QUALIDADE APEX SCIENTIFIC PASSOU ✅** · Próximo: horizonte 180 dias (Sprint V — Marketplace de signatures) → v3.6.0
 > **Plano vivo aprovado**: Sprints K → L → M → N → O → P (horizonte 30 dias APEX SCIENTIFIC redefinido)  
 > Documento vivo — atualizar após cada marco concluído
 
@@ -52,6 +52,7 @@
 | **Sprint Q** ⭐ | **HMC Closed-Loop Repair (MOVIMENTO #1 APEX SCIENTIFIC) — `sensor_core/autofix/hmc_repair.py` + Bayesian sampling via UCO `optimize(method='hmc')` + APS preservation + determinismo (seed=42) + 7 status semânticos + fallback Greedy + `POST /repair/hmc` + 30 TW-tests** | **v3.4.4** | **✅** |
 | **Sprint T** | **VS Code Extension v1.1.0 — UCOClient ganha 5 métodos (getRCA, getChangepoints, getSimilar, getGrangerSignificant, repairHMC) + 4 novos comandos do editor (RCA panel, Changepoints quickPick, Similar quickPick, HMC repair com diff preview) + 30 TY-tests** | **v3.4.5** | **✅** |
 | **Sprint U** ⭐ | **Performance overhaul — Cache layer (`sensor_storage/cache.py`) LRU/Redis + cache em 3 handlers heavy + ASGI wrapper opt-in (`asgi/app.py`) + Bench harness (`bench/benchmark.py`) + endpoints `/cache/{status,invalidate}` + 30 TE-tests** | **v3.5.0** | **✅** ⭐ HORIZONTE 90D COMPLETO |
+| **Sprint W** 🔒 | **APEX Audit Hardening — 6 fixes CRITICAL/HIGH (auth bypass / SSOT hmc / channels SSOT / predictor leak / path-jail / ReDoS) + `governance/channels.py` + `sensor_storage/path_jail.py` + `tests/conftest.py` + 30 TF-tests** | **v3.5.1** | **✅** 🔒 GATE DE QUALIDADE |
 
 **Métricas atuais (v3.2.1):**
 

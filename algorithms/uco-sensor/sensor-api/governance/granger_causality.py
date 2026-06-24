@@ -56,18 +56,10 @@ from typing import Any, Dict, List, Optional, Tuple
 _log = logging.getLogger("uco-sensor.granger")
 
 
-_CHANNELS = ("H", "CC", "ILR", "DSM_d", "DSM_c", "DI", "dead", "dups", "bugs")
-_ATTR_BY_SHORT = {
-    "H":     "hamiltonian",
-    "CC":    "cyclomatic_complexity",
-    "ILR":   "infinite_loop_risk",
-    "DSM_d": "dsm_density",
-    "DSM_c": "dsm_cyclic_ratio",
-    "DI":    "dependency_instability",
-    "dead":  "syntactic_dead_code",
-    "dups":  "duplicate_block_count",
-    "bugs":  "halstead_bugs",
-}
+# Sprint W fix (audit-3, HIGH): channel maps moved to governance.channels SSOT.
+# Local aliases preserved so existing imports (`from .granger_causality import _CHANNELS`)
+# in tests keep working.
+from governance.channels import CHANNELS as _CHANNELS, ATTR_BY_SHORT as _ATTR_BY_SHORT
 
 
 # ─── Result dataclass ────────────────────────────────────────────────────────
@@ -223,9 +215,8 @@ def granger_pair(
 
 # ─── Store integration ───────────────────────────────────────────────────────
 
-def _series(history: List[Any], short: str) -> List[float]:
-    attr = _ATTR_BY_SHORT[short]
-    return [float(getattr(mv, attr, 0.0) or 0.0) for mv in history]
+# Sprint W fix (audit-3): delegate to SSOT
+from governance.channels import series as _series
 
 
 def granger_matrix(

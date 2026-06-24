@@ -89,26 +89,61 @@ class HMCRepairResult:
 
 
 def _compute_aps(source: str) -> Optional[float]:
-    """Run the SAST scanner + APS formula on a snippet.  Returns None on failure."""
+    """
+    Compute the canonical APS for a snippet by delegating to the SSOT
+    ``metrics.anti_pattern_score.aps_from_metric_vector``.
+
+    Sprint W fix (audit-2, HIGH): prior to this fix the function imported
+    ``aps_from_metric_vector`` but never called it — instead returning
+    a shadow ``100 - 10*n_crit_high`` heuristic that ignored the 17
+    weighted components of the canonical APS.  The Sprint H SSOT for
+    governance signals was bypassed and the ``preserve_aps`` guard in
+    ``hmc_repair`` only checked CRITICAL/HIGH SAST count.
+
+    We now build a minimal MetricVector-shaped object from the SAST
+    findings, attach a synthetic ``SecurityVector`` + ``FlowVector``
+    derived from those findings, and call the canonical APS function.
+    Other extended vectors stay ``None`` — ``aps_from_metric_vector``
+    handles missing vectors deterministically (zero contribution for
+    each absent signal).
+    """
     try:
         from sast.scanner import scan
         from metrics.anti_pattern_score import aps_from_metric_vector
+        from metrics.extended_vectors import SecurityVector, FlowVector
     except Exception:
         return None
 
-    # We do NOT have a MetricVector for a snippet — synthesise a minimal
-    # SecurityVector from SAST findings count + severity ratio.
     try:
         result = scan(source, file_extension=".py")
-        # Crude estimate: APS counts SAST findings by severity.  When
-        # available we use the full anti_pattern_score; otherwise we just
-        # count critical+high as a proxy.
-        n_crit_high = sum(
-            1 for f in getattr(result, "findings", [])
-            if f.severity in ("CRITICAL", "HIGH")
+        findings = list(getattr(result, "findings", []))
+
+        n_crit = sum(1 for f in findings if f.severity == "CRITICAL")
+        n_high = sum(1 for f in findings if f.severity == "HIGH")
+        n_med  = sum(1 for f in findings if f.severity == "MEDIUM")
+
+        # Map SAST findings into the SecurityVector / FlowVector channels
+        # that aps_from_metric_vector reads (anti_pattern_score.py:170-191).
+        # This keeps the canonical formula in play; we DO NOT re-implement it.
+        sec_vector  = SecurityVector(
+            sca_vulnerable_deps=0,        # SAST is code-level, not SCA
+            iac_misconfig_count=0,        # ditto, not IaC
         )
-        # Lower findings → higher APS (100 = clean).  Scale 5 findings ≈ 50 pts.
-        return max(0.0, 100.0 - 10.0 * n_crit_high)
+        # taint_path_count / injection_surface approximated from SAST severity.
+        flow_vector = FlowVector(
+            taint_path_count=n_crit + n_high,
+            injection_surface=float(n_crit) * 0.5 + float(n_high) * 0.3 + float(n_med) * 0.1,
+        )
+
+        class _MinimalMV:
+            pass
+        mv = _MinimalMV()
+        mv.security = sec_vector
+        mv.flow     = flow_vector
+
+        payload = aps_from_metric_vector(mv)
+        aps = payload.get("aps") if isinstance(payload, dict) else None
+        return float(aps) if aps is not None else None
     except Exception:
         return None
 

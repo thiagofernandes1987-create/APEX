@@ -737,6 +737,13 @@ class SnapshotStore:
         """
         Run the DegradationPredictor on the history strictly PRIOR to ``mv``.
 
+        Sprint W fix (audit-4, HIGH): when called from ``recompute_derived``
+        the target row already exists in SQLite, so ``get_history`` returned
+        the target itself in the list and the predictor "forecasted" its own
+        actual value (MAE≈0, phantom ACCURATE verdict).  We now filter the
+        target by both ``commit_hash`` and ``timestamp`` to guarantee the
+        history is strictly prior, regardless of caller.
+
         Returns
         -------
         (hurst, slope_pct, forecast_next, confidence) — all Optional[float].
@@ -751,8 +758,13 @@ class SnapshotStore:
             module_id = getattr(mv, "module_id", None)
             if not module_id:
                 return (None, None, None, None)
-            # Look at the history WITHOUT the row we're about to write.
-            history = self.get_history(module_id, window=100)
+            target_commit = getattr(mv, "commit_hash", None)
+            target_ts     = float(getattr(mv, "timestamp", 0.0) or 0.0)
+            # History EXCLUDING the target row (audit-4 fix).
+            history = [
+                h for h in self.get_history(module_id, window=100)
+                if h.commit_hash != target_commit and float(h.timestamp) < target_ts
+            ]
             if len(history) < 4:
                 return (None, None, None, None)
             forecast = DegradationPredictor().predict(history, module_id=module_id)
