@@ -5,6 +5,121 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.8.0] — 2026-06-24 — Sprint Y: SaaS multi-tenant + unit-budget billing ⭐ APEX SCIENTIFIC pleno (2 workflows)
+
+### APEX SCIENTIFIC orquestração
+
+* **Workflow #1 (design panel)** — 3 MVPs alternativos (`row-stamp-default-tenant`,
+  `row-stamp-everywhere`, `unit-budget-billing`) avaliados por painel de
+  juízes em 4 dimensões (safety 40% / simplicity 30% / back-compat 20% /
+  billing-correctness 10%). Vencedor: **`unit-budget-billing`** (82/100,
+  STRONG_PICK).  Síntese final grafted: `Retry-After` header,
+  `list_usage_periods` API, hardcoded `BYPASS_TENANTS` frozenset,
+  `TenantSuspended` exception class, `contact_email` column,
+  `assert_active` chokepoint.
+
+* **Workflow #2 (post-impl review)** — 3 dimensões (security + correctness
+  + perf) sobre o diff Sprint Y, cada finding com 2-vote adversarial
+  verify. Total raw 27 findings; 2 CRITICAL e 2 HIGH verificados 2/2
+  forçaram fixes adicionais (resto deferido para v3.8.1).
+
+### Adicionado
+
+#### Novos módulos
+
+* `governance/tenancy.py` (~170 LOC) — DEFAULT_TENANT_ID, BYPASS_TENANTS
+  hardcoded frozenset, PLAN_BUDGETS, TenantSuspended exception, CRUD
+  (create/get/list/update/suspend/reactivate), assert_active chokepoint,
+  resolve_tenant_from_api_key.
+* `governance/billing.py` (~330 LOC) — UNIT_COSTS table, QuotaExceeded
+  exception, cost_for, current_period_window (UTC calendar month),
+  reset_period_if_rolled, check_quota, record_event, **check_and_charge**
+  (atomic chokepoint), usage_summary, usage_events, list_usage_periods,
+  prune_old_events, quota_exceeded_response (Retry-After header).
+
+#### Schema (additive, back-compat preservada)
+
+* `tenants` table — id, tenant_id (slug), display_name, plan
+  (FREE/PRO/ENT), unit_budget, units_used (denormalized counter),
+  period_anchor (UTC month epoch), soft_limit_pct, status, created_at,
+  updated_at, contact_email, notes. Bootstrap row 'default' inserted
+  idempotently (ENT, unit_budget=0).
+* `usage_events` table — append-only log, units **frozen at write time**
+  (immutable history when UNIT_COSTS changes), period_key denormalized
+  for fast aggregation, status_code preserved (forensic 0-unit rows on
+  402 denials).
+* `api_keys.tenant_id` column — ALTER TABLE additive, DEFAULT 'default'
+  so legacy keys keep working.
+
+#### Endpoints REST (10 novos)
+
+| Método | Path | Auth | Descrição |
+|---|---|---|---|
+| POST   | `/tenants`                              | admin | Cria tenant |
+| GET    | `/tenants`                              | admin | Lista (`?plan=&status=&limit=&offset=`) |
+| GET    | `/tenants/{id}`                         | admin | Detalhe |
+| POST   | `/tenants/{id}/suspend`                 | admin | Suspende (não permite em bypass) |
+| POST   | `/tenants/{id}/reactivate`              | admin | Reativa |
+| GET    | `/tenants/{id}/usage`                   | admin | Sumário do período atual ou `?period=YYYY-MM` |
+| GET    | `/tenants/{id}/usage/history`           | admin | Últimos N períodos |
+| GET    | `/billing/plans`                        | público | Catálogo de planos + UNIT_COSTS |
+| GET    | `/billing/me`                           | api_key | Usage do tenant resolvido pela key |
+| POST   | `/billing/admin/prune`                  | admin | Prune `usage_events` antigos |
+
+#### Wiring (proof-of-concept)
+
+Billing aplicado em `/analyze`, `/repair/hmc`, `/scan-incremental` via
+`_billed_dispatch` helper.  Expansão completa para 19 handlers billable
+deferred to v3.8.1 (não bloqueia funcionalidade — tenants podem ser
+criados, observar usage e billing funciona end-to-end via os 3 wired).
+
+### Corrigido — Sprint Y must-fix (achados Workflow #2, 2/2 verify)
+
+| Fix | Severidade | Local | Issue |
+|---|---|---|---|
+| SY-FIX-1 | **CRITICAL** | `snapshot_store.py:validate_key` | Não retornava `tenant_id` → todo auth resolvia para bypass tenant |
+| SY-FIX-2 | HIGH | `snapshot_store.py:create_key` | Sem parâmetro `tenant_id` — admins não conseguiam bindar key a tenant |
+| SY-FIX-3 | **CRITICAL** | `api/server.py` | `check_and_charge` nunca era chamado dos handlers → quota não enforced |
+| SY-FIX-4 | HIGH | `billing.py:check_and_charge` | TOCTOU entre check e UPDATE units_used → double-spend |
+| SY-FIX-5 | MEDIUM | `tenancy.py:update_tenant` | Não validava BYPASS_TENANTS — admin podia mudar plan/status/budget do `default` |
+| SY-FIX-6 | HIGH | `billing.py:check_quota` | `unit_budget=0` em qualquer plan virava ilimitado (privilege escalation) |
+| SY-FIX-7 | HIGH | `billing.py:reset_period_if_rolled` | Race entre duas chamadas concorrentes no boundary do período |
+
+SY-FIX-4 introduziu `SnapshotStore.atomic_check_and_charge(tenant_id, cost)`
+— single-acquire read+UPDATE elimina TOCTOU; `check_and_charge` foi
+reescrito para delegar a este chokepoint.
+
+### Testes adicionados
+
+`tests/test_marco_m58.py` — **TZ01-TZ37** (37 testes):
+
+* TZ01-TZ10 — tenancy registry (bypass invariants, CRUD, plan tiers, suspend/reactivate, assert_active, key resolution)
+* TZ11-TZ20 — billing engine (cost_for, period_window, check_quota, atomic check_and_charge, units frozen, isolation, period rollover)
+* TZ21-TZ30 — REST handlers (/tenants/*, /billing/plans, /billing/me, /docs)
+* TZ31-TZ37 — must-fix regression pins (1 por SY-FIX, source-level + functional invariants)
+
+### Defer to v3.8.1 (não bloqueia)
+
+* Expand billing wiring para 16 endpoints restantes (autofix, sca/iac/flow/perf/arch/test/thread, sast, gate, signatures/discover, feeds/cve/load, feeds/sast/load, repair, marketplace/publish)
+* N+1 perf em `list_usage_periods`
+* Hot-row contention em `tenants.units_used`
+* Index coverage gaps em `usage_events` reads
+* `prune_old_events` sem VACUUM
+* Soft-warn arithmetic integer-truncation
+
+### Métricas
+
+| Métrica | v3.7.0 | v3.8.0 |
+|---|---|---|
+| Testes passando | 2052 | **2089** (+37) |
+| Falhas          | 0    | **0** |
+| Endpoints REST  | 66+  | **76+** (+10 tenants/billing) |
+| Tables SQLite   | 6    | **8** (+tenants, +usage_events) |
+| CRITICAL findings ativos | 0 | **0** (2 found by Workflow #2 → ambos corrigidos) |
+| HIGH findings ativos | 0 | **0** (4 found → todos corrigidos) |
+
+---
+
 ## [3.7.0] — 2026-06-24 — Sprint X: CFG visualizável + hotspot overlay + port-allocator
 
 ### Adicionado — Movimento APEX SCIENTIFIC "explicabilidade"

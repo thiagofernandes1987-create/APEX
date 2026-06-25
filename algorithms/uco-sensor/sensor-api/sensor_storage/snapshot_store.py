@@ -652,6 +652,65 @@ class SnapshotStore:
             ).fetchall()
         return [str(r[0]) for r in rows]
 
+    def atomic_check_and_charge(
+        self, tenant_id: str, cost: int,
+    ) -> Tuple[bool, Dict[str, Any]]:
+        """Sprint Y SY-FIX-4: read tenant + bump units_used in ONE lock acquire.
+
+        Returns ``(ok, info)`` where:
+        * ``ok=True`` iff the charge fits within ``unit_budget`` (or budget==0 +
+          plan='ENT'); ``units_used`` is incremented by ``cost`` in the same
+          critical section so two concurrent callers cannot both observe the
+          pre-charge value and both succeed.
+        * ``info`` carries the updated ``units_used`` / ``units_remaining`` /
+          ``unit_budget`` / ``plan`` / ``status`` for the caller's response.
+        """
+        with self._lock:
+            row = self._get_conn().execute(
+                "SELECT plan, unit_budget, units_used, status FROM tenants "
+                "WHERE tenant_id = ?",
+                (tenant_id,),
+            ).fetchone()
+            if row is None:
+                return False, {"error": "tenant_not_found", "tenant_id": tenant_id}
+            plan, unit_budget, units_used, status = row
+            unit_budget = int(unit_budget)
+            units_used  = int(units_used)
+            if status != "active":
+                return False, {
+                    "error":     "tenant_suspended",
+                    "tenant_id": tenant_id, "status": status, "plan": plan,
+                }
+            # ENT plan with budget=0 = unlimited
+            if unit_budget == 0 and plan == "ENT":
+                return True, {
+                    "tenant_id": tenant_id, "plan": plan,
+                    "unit_budget": 0, "units_used": units_used,
+                    "units_remaining": None, "cost": int(cost),
+                }
+            # non-ENT with budget=0 OR over-budget → reject
+            if unit_budget == 0 or units_used + cost > unit_budget:
+                return False, {
+                    "error":            "quota_exceeded",
+                    "tenant_id":        tenant_id, "plan": plan,
+                    "unit_budget":      unit_budget,
+                    "units_used":       units_used,
+                    "cost":             int(cost),
+                }
+            new_used = units_used + int(cost)
+            self._get_conn().execute(
+                "UPDATE tenants SET units_used = ?, updated_at = ? "
+                "WHERE tenant_id = ?",
+                (new_used, time.time(), tenant_id),
+            )
+            return True, {
+                "tenant_id":       tenant_id, "plan": plan,
+                "unit_budget":     unit_budget,
+                "units_used":      new_used,
+                "units_remaining": unit_budget - new_used,
+                "cost":            int(cost),
+            }
+
     def prune_usage_events_older_than(self, cutoff_period_key: str) -> int:
         """Delete usage_events with period_key < cutoff. Returns rows deleted."""
         with self._lock:
@@ -1433,7 +1492,8 @@ class SnapshotStore:
     def _hash_key(plain_key: str) -> str:
         return hashlib.sha256(plain_key.encode("utf-8")).hexdigest()
 
-    def create_key(self, name: str = "", quota_day: int = 0) -> str:
+    def create_key(self, name: str = "", quota_day: int = 0,
+                   *, tenant_id: str = "default") -> str:
         """
         Cria uma nova API key.
 
@@ -1442,8 +1502,11 @@ class SnapshotStore:
 
         Parâmetros
         ----------
-        name      : descrição humana (ex: "github_ci_prod")
-        quota_day : máximo de chamadas por dia, 0 = ilimitado
+        name       : descrição humana (ex: "github_ci_prod")
+        quota_day  : máximo de chamadas por dia, 0 = ilimitado
+        tenant_id  : Sprint Y SY-FIX-2 — binds the key to a tenant for
+                     per-tenant billing/quota.  Defaults to "default" for
+                     back-compat (legacy single-tenant deployments).
 
         Retorna
         -------
@@ -1454,12 +1517,13 @@ class SnapshotStore:
         key_hash = self._hash_key(plain)
         sql = """
         INSERT INTO api_keys (key_prefix, key_hash, name, quota_day, calls_today,
-                              calls_total, last_reset, active, created_at)
-        VALUES (?, ?, ?, ?, 0, 0, ?, 1, ?)
+                              calls_total, last_reset, active, created_at, tenant_id)
+        VALUES (?, ?, ?, ?, 0, 0, ?, 1, ?, ?)
         """
         now = time.time()
         with self._lock:
-            self._get_conn().execute(sql, (prefix, key_hash, name, quota_day, now, now))
+            self._get_conn().execute(sql, (prefix, key_hash, name, quota_day,
+                                            now, now, tenant_id or "default"))
         return plain
 
     def validate_key(self, plain_key: str) -> Optional[Dict[str, Any]]:
@@ -1474,9 +1538,13 @@ class SnapshotStore:
             return None
 
         key_hash = self._hash_key(plain_key)
+        # Sprint Y SY-FIX-1: include tenant_id so resolve_tenant_from_api_key
+        # can route the request to the correct tenant. Pre-fix, every
+        # authenticated request silently resolved to DEFAULT_TENANT_ID and
+        # bypassed the entire billing/quota model.
         sql = """
         SELECT id, key_prefix, name, quota_day, calls_today, calls_total,
-               last_reset, active
+               last_reset, active, tenant_id
         FROM api_keys
         WHERE key_hash = ?
         """
@@ -1485,7 +1553,8 @@ class SnapshotStore:
             if not row:
                 return None
 
-            key_id, prefix, name, quota_day, calls_today, calls_total, last_reset, active = row
+            (key_id, prefix, name, quota_day, calls_today, calls_total,
+             last_reset, active, tenant_id) = row
 
             if not active:
                 return None
@@ -1516,6 +1585,7 @@ class SnapshotStore:
             "quota_day":    quota_day,
             "calls_today":  calls_today + 1,
             "calls_total":  calls_total + 1,
+            "tenant_id":    tenant_id or "default",
         }
 
     def get_usage(self, key_prefix: str) -> Optional[Dict[str, Any]]:

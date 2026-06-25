@@ -115,6 +115,23 @@ def update_tenant(
         raise ValueError(f"plan must be one of {VALID_PLANS}")
     if status is not None and status not in VALID_STATUSES:
         raise ValueError(f"status must be one of {VALID_STATUSES}")
+    # Sprint Y SY-FIX-5: BYPASS_TENANTS invariant cannot be broken via PATCH.
+    # Refuse to change plan/status/unit_budget on the bypass tenants so an
+    # admin cannot accidentally (or maliciously) flip 'default' to a FREE-100
+    # quota and brick the 2052 legacy tests + every single-tenant deployment.
+    if tenant_id in BYPASS_TENANTS:
+        if plan is not None and plan != "ENT":
+            raise ValueError(
+                f"cannot change plan on bypass tenant {tenant_id!r}"
+            )
+        if status is not None and status != "active":
+            raise ValueError(
+                f"cannot change status on bypass tenant {tenant_id!r}"
+            )
+        if unit_budget is not None and unit_budget != 0:
+            raise ValueError(
+                f"cannot change unit_budget on bypass tenant {tenant_id!r}"
+            )
     return store.update_tenant_fields(
         tenant_id,
         display_name=display_name,

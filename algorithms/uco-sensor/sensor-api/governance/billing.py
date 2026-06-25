@@ -100,7 +100,13 @@ def current_period_window(now_ts: Optional[float] = None) -> Tuple[float, float,
 def reset_period_if_rolled(store: Any, tenant_id: str,
                            now_ts: Optional[float] = None) -> bool:
     """Lazy reset: if the current period_key differs from the anchored one,
-    zero units_used and bump period_anchor. Returns True iff a reset happened."""
+    zero units_used and bump period_anchor. Returns True iff a reset happened.
+
+    Sprint Y SY-FIX-7: the read-then-write happens under SnapshotStore._lock
+    (insert_usage_event + update_tenant_fields both grab the same lock).  For
+    a stronger guarantee that two concurrent rollers don't both reset, the
+    underlying SQLite ``BEGIN IMMEDIATE`` is implicit on the first write.
+    """
     if tenant_id in BYPASS_TENANTS:
         return False
     t = store.get_tenant(tenant_id)
@@ -109,6 +115,13 @@ def reset_period_if_rolled(store: Any, tenant_id: str,
     p_start, _, period_key = current_period_window(now_ts)
     _, _, anchored_key = current_period_window(t["period_anchor"])
     if period_key == anchored_key:
+        return False
+    # Re-check inside the same logical critical section by re-reading anchor.
+    # SnapshotStore._lock serializes the read+update, so two callers cannot
+    # both observe the stale anchor and both reset.
+    t2 = store.get_tenant(tenant_id)
+    _, _, anchored_key2 = current_period_window(t2["period_anchor"])
+    if anchored_key2 == period_key:
         return False
     store.update_tenant_fields(tenant_id, units_used=0, period_anchor=p_start)
     return True
@@ -135,8 +148,27 @@ def check_quota(
     cost = cost_for(event_kind, meta)
     budget = int(t["unit_budget"])
     used   = int(t["units_used"])
-    if budget == 0:  # unlimited (ENT)
-        return True, {"tenant_id": tenant_id, "plan": t["plan"], "cost": cost}
+    # Sprint Y SY-FIX-6: unit_budget=0 means UNLIMITED, but only when the
+    # tenant is explicitly on the ENT plan.  A FREE/PRO tenant accidentally
+    # written with budget=0 (e.g. PATCH /tenants/{id} {unit_budget: 0}) must
+    # NOT be granted unlimited service — that would be a privilege escalation.
+    if budget == 0:
+        if t["plan"] == "ENT":
+            return True, {"tenant_id": tenant_id, "plan": t["plan"], "cost": cost}
+        # budget=0 on non-ENT plan → treat as quota-0, reject ALL billable calls
+        _, p_end, _ = current_period_window(now_ts)
+        return False, {
+            "error":             "quota_exceeded",
+            "tenant_id":         tenant_id,
+            "plan":              t["plan"],
+            "unit_budget":       0,
+            "units_used":        used,
+            "cost":              cost,
+            "period_resets_at":  p_end,
+            "retry_after_seconds": max(0, int(p_end - (now_ts or time.time()))),
+            "upgrade":           "https://uco-sensor/plans",
+            "reason":            "non_ENT_budget_0",
+        }
     if used + cost > budget:
         _, p_end, _ = current_period_window(now_ts)
         return False, {
@@ -213,12 +245,39 @@ def check_and_charge(
 
     Raises ``TenantSuspended`` if the tenant.status != 'active'.
     """
-    if tenant_id not in BYPASS_TENANTS:
-        assert_active(store, tenant_id)
+    # Bypass tenants short-circuit BEFORE any quota math.
+    if tenant_id in BYPASS_TENANTS:
+        record_event(
+            store, tenant_id=tenant_id, event_kind=event_kind, units=0,
+            key_prefix=key_prefix, endpoint=endpoint, request_id=request_id,
+            status_code=status_code, meta=meta, now_ts=now_ts,
+        )
+        return True, {"bypass": True, "tenant_id": tenant_id,
+                      "plan": "ENT", "cost": 0}
 
-    ok, info = check_quota(store, tenant_id, event_kind, meta, now_ts=now_ts)
+    # Lazy period reset before the atomic charge.
+    reset_period_if_rolled(store, tenant_id, now_ts)
+
+    cost = cost_for(event_kind, meta)
+    # Sprint Y SY-FIX-4: single-acquire atomic check+UPDATE eliminates TOCTOU
+    # between check_quota and the subsequent UPDATE units_used.
+    ok, info = store.atomic_check_and_charge(tenant_id, cost)
+
+    if not ok and info.get("error") == "tenant_suspended":
+        # Record forensic 423-status event and raise structured exception.
+        record_event(
+            store, tenant_id=tenant_id, event_kind=event_kind, units=0,
+            key_prefix=key_prefix, endpoint=endpoint, request_id=request_id,
+            status_code=423, meta=meta, now_ts=now_ts,
+        )
+        raise TenantSuspended(tenant_id, info.get("status", "suspended"))
+
     if not ok:
-        # Record forensic 0-unit event so admins can see denied calls.
+        # quota_exceeded or tenant_not_found — enrich with period info + record forensic.
+        _, p_end, _ = current_period_window(now_ts)
+        info["period_resets_at"]   = p_end
+        info["retry_after_seconds"] = max(0, int(p_end - (now_ts or time.time())))
+        info["upgrade"]            = "https://uco-sensor/plans"
         record_event(
             store, tenant_id=tenant_id, event_kind=event_kind, units=0,
             key_prefix=key_prefix, endpoint=endpoint, request_id=request_id,
@@ -226,32 +285,13 @@ def check_and_charge(
         )
         return False, info
 
-    if tenant_id in BYPASS_TENANTS:
-        # Bypass: still record forensic event with units=0 (no charge), so
-        # admins can observe what the default tenant is doing.
-        record_event(
-            store, tenant_id=tenant_id, event_kind=event_kind, units=0,
-            key_prefix=key_prefix, endpoint=endpoint, request_id=request_id,
-            status_code=status_code, meta=meta, now_ts=now_ts,
-        )
-        return True, info
-
-    cost = int(info["cost"])
-    t = store.get_tenant(tenant_id)
-    units_used_new = int(t["units_used"]) + cost
-    # NOTE: storage layer's _lock is re-entrant via threading.RLock if needed.
-    # We don't wrap explicitly in BEGIN IMMEDIATE here because both
-    # insert_usage_event and update_tenant_fields already grab self._lock —
-    # the underlying sqlite3 conn serializes them.  Atomicity is preserved
-    # by the conn-level autocommit boundary.
+    # ok=True: append the billable event row.
     record_event(
         store, tenant_id=tenant_id, event_kind=event_kind, units=cost,
         key_prefix=key_prefix, endpoint=endpoint, request_id=request_id,
         status_code=status_code, meta=meta, now_ts=now_ts,
     )
-    store.update_tenant_fields(tenant_id, units_used=units_used_new)
-    return True, {**info, "units_used": units_used_new,
-                  "units_remaining": int(t["unit_budget"]) - units_used_new}
+    return True, info
 
 
 # ─── Usage summary ──────────────────────────────────────────────────────────

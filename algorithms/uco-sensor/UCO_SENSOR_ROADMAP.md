@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
 > **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-24  
-> **Versão atual:** v3.7.0 (Sprint X — CFG visualizável + hotspot overlay + port-allocator) · **GATE-2 PASSOU ✅** · Próximo: Sprint Y — SaaS multi-tenant + billing → v3.8.0
+> **Versão atual:** v3.8.0 (Sprint Y — SaaS multi-tenant + billing, **APEX SCIENTIFIC pleno: 2 workflows multi-agente**) · **GATE-2 PASSOU ✅** · Próximo: Sprint Z — Paper POPL/PLDI submission → v3.9.0
 > **Plano vivo aprovado**: Sprints K → L → M → N → O → P (horizonte 30 dias APEX SCIENTIFIC redefinido)  
 > Documento vivo — atualizar após cada marco concluído
 
@@ -56,6 +56,7 @@
 | **Sprint W2** 🔒 | **APEX Gate-2 deep audit — 8 fixes HIGH/MEDIUM (numpy RNG leak / hmc summary access / severity-regression gate / predictor denominator / granger noiseless / isolated_store / vacuous asserts / hardcoded /home/claude path) + README env-var docs + 21 TG-tests + 30 TS-stress tests** | **v3.5.2** | **✅** 🔒 GATE-2 PASSOU |
 | **Sprint V** ⭐ | **Marketplace de spectral signatures (MOVIMENTO #5 expandido) — `governance/marketplace.py` publish/pull/list/import + `marketplace_signatures` table + canonical SHA-256 payload hash + payload allowlist + ReDoS guard reused (audit-6) + admin auth (audit-1) + 4 endpoints REST (`/marketplace/{publish,list,pull/{id},import}`) + version auto-increment + 30 TV-tests** | **v3.6.0** | **✅** ⭐ HORIZONTE 180D INICIADO |
 | **Sprint X** | **CFG visualizável + hotspot overlay — `governance/cfg.py` pure-Python AST → JSON CFG bounded a 200 nodes + `overlay_hotspots` (severity max + APS contribution per node) + `cfg_as_dot` Graphviz output + 2 endpoints REST (`/cfg/{module_id}` + `/cfg/hotspots/{module_id}`) + `tests/_port_allocator.py` (gate-2b LOW#hardcoded_port quick-win) + 30 TY-tests** | **v3.7.0** | **✅** |
+| **Sprint Y** ⭐ | **SaaS multi-tenant + unit-budget billing — APEX SCIENTIFIC pleno: Workflow #1 (3 designs alternativos avaliados por painel, vencedor `unit-budget-billing` 82/100 STRONG_PICK) + Workflow #2 (security/correctness/perf review com 2-vote adversarial verify, 27 findings → 7 must-fix aplicados SY-FIX-1..7) + `governance/tenancy.py` + `governance/billing.py` + tabelas `tenants` + `usage_events` + `api_keys.tenant_id` ALTER + 10 endpoints REST (`/tenants/*` + `/billing/*`) + `_billed_dispatch` chokepoint (3 handlers wired: /analyze, /repair/hmc, /scan-incremental — expand v3.8.1) + 37 TZ-tests** | **v3.8.0** | **✅** ⭐ HORIZONTE 180D 3/4 |
 
 **Métricas atuais (v3.2.1):**
 

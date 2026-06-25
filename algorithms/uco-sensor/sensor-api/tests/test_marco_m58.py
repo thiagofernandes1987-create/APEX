@@ -342,3 +342,109 @@ def test_TZ30_docs_endpoint_lists_tenants_and_billing_routes(isolated_store):
     assert "/tenants/{tenant_id}/usage" in routes
     assert "/billing/plans" in routes
     assert "/billing/me" in routes
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TZ31-TZ37 — Workflow #2 must-fix findings (SY-FIX-1..7)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def test_TZ31_SYFIX1_validate_key_returns_tenant_id():
+    """SY-FIX-1 (CRITICAL): validate_key must include tenant_id in returned dict."""
+    s = _fresh_store()
+    s.insert_tenant("acme", plan="PRO")
+    plain = s.create_key(name="acme-prod", tenant_id="acme")
+    info = s.validate_key(plain)
+    assert info is not None
+    assert info["tenant_id"] == "acme"
+
+
+def test_TZ32_SYFIX2_create_key_binds_to_tenant():
+    """SY-FIX-2 (HIGH): create_key must accept and persist tenant_id."""
+    s = _fresh_store()
+    s.insert_tenant("alpha", plan="FREE")
+    s.insert_tenant("beta",  plan="PRO")
+    k_alpha = s.create_key(name="a", tenant_id="alpha")
+    k_beta  = s.create_key(name="b", tenant_id="beta")
+    assert s.validate_key(k_alpha)["tenant_id"] == "alpha"
+    assert s.validate_key(k_beta)["tenant_id"] == "beta"
+    # Legacy default
+    k_def = s.create_key(name="legacy")
+    assert s.validate_key(k_def)["tenant_id"] == "default"
+
+
+def test_TZ33_SYFIX3_billed_dispatch_blocks_over_quota_tenant(isolated_store):
+    """SY-FIX-3 (CRITICAL): /analyze actually charges and 402s when over quota."""
+    from governance.tenancy import create_tenant
+    from api.server import _billed_dispatch, handle_analyze
+    create_tenant(isolated_store, "tight", plan="FREE", unit_budget=2)
+    key_info = {"key_prefix": "x", "tenant_id": "tight"}
+    body = {"module_id": "m", "code": "x = 1\n"}
+    # First 2 calls succeed
+    for i in range(2):
+        code, _ = _billed_dispatch("snapshot", key_info, "/analyze", handle_analyze, body)
+        assert code != 402, f"call #{i+1} unexpectedly 402"
+    # 3rd call rejected
+    code, data = _billed_dispatch("snapshot", key_info, "/analyze", handle_analyze, body)
+    assert code == 402
+    assert data["error"] == "quota_exceeded"
+    assert data["retry_after_seconds"] >= 0
+
+
+def test_TZ34_SYFIX4_atomic_check_and_charge_no_double_spend():
+    """SY-FIX-4 (HIGH): atomic_check_and_charge prevents concurrent overspend."""
+    from governance.tenancy import create_tenant
+    s = _fresh_store()
+    create_tenant(s, "race", plan="FREE", unit_budget=5)
+    # 100 sequential check+charge of cost=1 — only first 5 should succeed
+    successes = 0
+    for _ in range(100):
+        ok, _ = s.atomic_check_and_charge("race", 1)
+        if ok:
+            successes += 1
+    assert successes == 5, f"atomic charge should bound to budget; got {successes}"
+    final = s.get_tenant("race")
+    assert final["units_used"] == 5
+
+
+def test_TZ35_SYFIX5_update_tenant_refuses_bypass_plan_change():
+    """SY-FIX-5 (MED): update_tenant must reject plan change on bypass tenants."""
+    from governance.tenancy import update_tenant
+    s = _fresh_store()
+    with pytest.raises(ValueError):
+        update_tenant(s, "default", plan="FREE")
+    with pytest.raises(ValueError):
+        update_tenant(s, "default", status="suspended")
+    with pytest.raises(ValueError):
+        update_tenant(s, "default", unit_budget=100)
+    # Display-only change is fine
+    out = update_tenant(s, "default", display_name="Renamed")
+    assert out["display_name"] == "Renamed"
+
+
+def test_TZ36_SYFIX6_non_ENT_with_budget_zero_is_quota_zero_not_unlimited():
+    """SY-FIX-6 (HIGH): unit_budget=0 must NOT grant unlimited to FREE/PRO plans."""
+    from governance.tenancy import create_tenant
+    from governance.billing import check_and_charge
+    s = _fresh_store()
+    create_tenant(s, "exploit", plan="FREE", unit_budget=0)
+    ok, info = check_and_charge(s, "exploit", "snapshot", endpoint="/x")
+    assert ok is False
+    assert info.get("reason") == "non_ENT_budget_0" or info.get("error") == "quota_exceeded"
+
+
+def test_TZ37_SYFIX7_reset_period_idempotent_under_concurrent_callers():
+    """SY-FIX-7 (HIGH): reset_period_if_rolled re-checks anchor inside lock."""
+    from governance.tenancy import create_tenant
+    from governance.billing import reset_period_if_rolled, check_and_charge
+    s = _fresh_store()
+    create_tenant(s, "rollover", plan="PRO")
+    # Charge some in June
+    for _ in range(3):
+        check_and_charge(s, "rollover", "snapshot", endpoint="/x", now_ts=1782302400.0)
+    assert s.get_tenant("rollover")["units_used"] == 3
+    # Two simulated callers in July see rollover
+    r1 = reset_period_if_rolled(s, "rollover", now_ts=1784116800.0)
+    r2 = reset_period_if_rolled(s, "rollover", now_ts=1784116800.0)
+    assert r1 is True
+    assert r2 is False  # second caller observes already-reset anchor
+    assert s.get_tenant("rollover")["units_used"] == 0

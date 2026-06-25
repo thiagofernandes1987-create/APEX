@@ -7,7 +7,7 @@
 
 ## Versão atual
 
-**v3.7.0** (Sprint X — CFG visualizável + hotspot overlay + port-allocator) ✅
+**v3.8.0** (Sprint Y — SaaS multi-tenant + billing, APEX SCIENTIFIC pleno via 2 workflows) ✅
 
 ## Equipe APEX (modo SCIENTIFIC)
 
@@ -132,8 +132,51 @@
 |---|---|---|
 | **V** | Marketplace de spectral signatures (Movimento #5 expandido) | **✅ v3.6.0** |
 | **X** | CFG visualizável + hotspot overlay + port-allocator nos testes | **✅ v3.7.0** |
-| **Y** | SaaS multi-tenant + billing | pending |
-| **Z** | Paper POPL/PLDI submission | pending |
+| **Y** ⭐ | SaaS multi-tenant + billing (APEX SCIENTIFIC pleno) | **✅ v3.8.0** |
+| **Z** | Paper POPL/PLDI submission | pending → v3.9.0 |
+
+---
+
+## Sprint Y (v3.8.0) — APEX SCIENTIFIC pleno
+
+### Workflows multi-agente executados
+
+| # | Tipo | Saída |
+|---|---|---|
+| #1 | Design panel | 3 MVPs avaliados; vencedor `unit-budget-billing` 82/100 STRONG_PICK; síntese final grafted ideas de runners-up (`BYPASS_TENANTS` hardcoded, `TenantSuspended` exception, `Retry-After` header) |
+| #2 | Multi-dim review (security/correctness/perf) com 2-vote adversarial verify | 27 raw findings; 2 CRITICAL + 2 HIGH 2/2-verificados → SY-FIX-1..7 aplicados em mesma release |
+
+### Fixes aplicados nesta release
+
+| ID | Severidade | Onde | Issue |
+|---|---|---|---|
+| SY-FIX-1 | CRIT | snapshot_store.validate_key | Não retornava tenant_id → todo auth virava bypass |
+| SY-FIX-2 | HIGH | snapshot_store.create_key | Sem parâmetro tenant_id |
+| SY-FIX-3 | CRIT | api/server.py | check_and_charge nunca chamado dos handlers |
+| SY-FIX-4 | HIGH | billing.check_and_charge | TOCTOU race → atomic_check_and_charge novo |
+| SY-FIX-5 | MED | tenancy.update_tenant | BYPASS_TENANTS invariant quebrável via PATCH |
+| SY-FIX-6 | HIGH | billing.check_quota | unit_budget=0 em non-ENT virava ilimitado |
+| SY-FIX-7 | HIGH | billing.reset_period_if_rolled | Race entre concurrent rollers |
+
+### Deferred para v3.8.1 (achados Workflow #2 não-bloqueantes)
+
+* Expand billing wiring para 16 handlers billable restantes
+* N+1 em list_usage_periods (12 round-trips por chamada)
+* Hot-row contention em tenants.units_used
+* Index coverage gaps em usage_events reads
+* prune_old_events sem VACUUM
+* Soft-warn integer truncation
+
+### Métricas pós-Sprint Y
+
+| Métrica | v3.7.0 | **v3.8.0** |
+|---|---|---|
+| Tests passing | 2052 | **2089** (+37) |
+| Falhas | 0 | **0** |
+| Endpoints REST | 66+ | **76+** (+10) |
+| Tables SQLite | 6 | **8** (+tenants, +usage_events) |
+| CRITICAL findings ativos | 0 | **0** (2 found + 2 fixed na mesma release) |
+| HIGH findings ativos | 0 | **0** (4 found + 4 fixed) |
 
 ---
 

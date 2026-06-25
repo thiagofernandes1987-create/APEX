@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.7.0"
+    version:      str   = "3.8.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -1787,6 +1787,30 @@ def handle_billing_admin_prune(data: Dict) -> Tuple[int, Dict]:
         return 400, {"error": "retention_months must be >= 1"}
     pruned = prune_old_events(_store, retention_months=months)
     return 200, {"pruned_rows": pruned, "retention_months": months}
+
+
+def _billed_dispatch(
+    event_kind: str, key_info: Optional[Dict], endpoint: str,
+    handler_fn, *args, **kwargs,
+) -> Tuple[int, Dict]:
+    """Sprint Y SY-FIX-3 — chokepoint: resolve tenant, check_and_charge,
+    invoke handler iff allowed; emit 402 + Retry-After when over-quota
+    or 423 when suspended. Bypass tenants pass through untouched."""
+    from governance.tenancy import resolve_tenant_from_api_key, TenantSuspended
+    from governance.billing import check_and_charge
+    tid, _ = resolve_tenant_from_api_key(_store, key_info)
+    key_prefix = (key_info or {}).get("key_prefix", "")
+    try:
+        ok, info = check_and_charge(
+            _store, tid, event_kind,
+            key_prefix=key_prefix, endpoint=endpoint,
+        )
+    except TenantSuspended as exc:
+        return 423, {"error": "tenant_suspended",
+                     "tenant_id": exc.tenant_id, "status": exc.status}
+    if not ok:
+        return 402, info
+    return handler_fn(*args, **kwargs)
 
 
 def _best_effort_module_source(module_id: str) -> str:
@@ -4845,7 +4869,9 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
 
         try:
             if path == "/analyze":
-                code, data = handle_analyze(body)
+                code, data = _billed_dispatch(
+                    "snapshot", key_info, "/analyze", handle_analyze, body,
+                )
             elif path == "/repair":
                 code, data = handle_repair(body)
             elif path == "/analyze-pr":
@@ -4865,7 +4891,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
             elif path == "/apex/auto-remediate":
                 code, data = handle_apex_auto_remediate(body)
             elif path == "/repair/hmc":
-                code, data = handle_repair_hmc(body)
+                code, data = _billed_dispatch(
+                    "hmc_repair", key_info, "/repair/hmc",
+                    handle_repair_hmc, body,
+                )
             elif path == "/cache/invalidate":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
@@ -4932,7 +4961,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                     return self._send_json(403, {"error": "admin authentication required"})
                 code, data = handle_feeds_sast_unload(body)
             elif path == "/scan-incremental":
-                code, data = handle_scan_incremental(body)
+                code, data = _billed_dispatch(
+                    "scan", key_info, "/scan-incremental",
+                    handle_scan_incremental, body,
+                )
             elif path == "/scan-sca":
                 code, data = handle_scan_sca(body)
             elif path == "/scan-iac":
