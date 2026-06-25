@@ -285,3 +285,80 @@ def test_TW30_paper_tex_skeleton_has_all_five_invariants():
     src = paper_tex.read_text(encoding="utf-8")
     for lbl in ("inv:i1", "inv:i2", "inv:i3", "inv:i4", "inv:i5"):
         assert f"\\label{{{lbl}}}" in src, f"missing {lbl}"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TW31-TW36 — Sprint Z Workflow #2 must-fix
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def test_TW31_SZFIX1_strict_I1_rejects_unmeasured_aps():
+    """SZ-FIX-1: strict I1 returns False when EITHER side is None.
+
+    Pre-fix the checker silently returned True, contradicting the paper's
+    Theorem 1 unconditional preservation claim.  A crashed `_compute_aps`
+    no longer hides an APS regression at the formal-invariant gate.
+    """
+    from governance.invariants import invariant_i1_aps_preserved
+    assert invariant_i1_aps_preserved(0.5, None) is False
+    assert invariant_i1_aps_preserved(None, 0.5) is False
+    assert invariant_i1_aps_preserved(None, None) is False
+    # Normal measurable cases still pass.
+    assert invariant_i1_aps_preserved(0.5, 0.5) is True
+    assert invariant_i1_aps_preserved(0.3, 0.7) is True
+
+
+def test_TW32_SZFIX1_lenient_variant_preserves_production_gate_semantics():
+    """The lenient variant keeps the prior 'None = vacuous' semantics,
+    so hmc_repair's production gate (which can legitimately encounter a
+    crashed scorer) is not broken by the strict-mode upgrade."""
+    from governance.invariants import invariant_i1_aps_preserved_or_unmeasured
+    assert invariant_i1_aps_preserved_or_unmeasured(0.5, None) is True
+    assert invariant_i1_aps_preserved_or_unmeasured(None, 0.5) is True
+    assert invariant_i1_aps_preserved_or_unmeasured(0.5, 0.3) is False
+
+
+def test_TW33_SZFIX2_I2_counts_dict_findings_with_severity_key():
+    """SZ-FIX-2: dict-shaped findings (no .severity attribute) are now counted."""
+    from governance.invariants import invariant_i2_no_severity_regression
+    before = {"findings": [{"severity": "LOW"}]}
+    after  = {"findings": [{"severity": "LOW"}, {"severity": "CRITICAL"}]}
+    assert invariant_i2_no_severity_regression(before, after) is False
+
+
+def test_TW34_SZFIX2_I2_counts_findings_with_level_alias():
+    """SZ-FIX-2: findings using 'level' field name are now counted."""
+    from governance.invariants import _count_findings
+    from types import SimpleNamespace
+    obj = SimpleNamespace(findings=[
+        SimpleNamespace(level="CRITICAL"),
+        SimpleNamespace(level="critical"),  # case-folded
+        SimpleNamespace(level="HIGH"),
+    ])
+    assert _count_findings(obj, "CRITICAL") == 2
+    assert _count_findings(obj, "HIGH") == 1
+
+
+def test_TW35_SZFIX2_I2_counts_are_case_insensitive():
+    """SZ-FIX-2: lowercase severity 'critical' counted same as 'CRITICAL'."""
+    from governance.invariants import _count_findings
+    from types import SimpleNamespace
+    obj = SimpleNamespace(findings=[
+        SimpleNamespace(severity="critical"),
+        SimpleNamespace(severity="Critical"),
+        SimpleNamespace(severity="CRITICAL"),
+    ])
+    assert _count_findings(obj, "critical") == 3
+    assert _count_findings(obj, "CRITICAL") == 3
+
+
+def test_TW36_SZFIX2_I2_findings_without_severity_dont_inflate():
+    """Defensive: a finding missing both 'severity' and 'level' fields
+    contributes 0 — does NOT crash, does NOT match any target severity."""
+    from governance.invariants import _count_findings
+    from types import SimpleNamespace
+    obj = SimpleNamespace(findings=[
+        SimpleNamespace(message="orphan finding with no severity"),
+        SimpleNamespace(severity="HIGH"),
+    ])
+    assert _count_findings(obj, "HIGH") == 1
+    assert _count_findings(obj, "") == 0  # never matches the empty default

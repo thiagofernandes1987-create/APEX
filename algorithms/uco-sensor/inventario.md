@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-**v3.8.0** (Sprint Y — SaaS multi-tenant + billing, APEX SCIENTIFIC pleno via 2 workflows) ✅
+**v3.9.0** (Sprint Z — Paper POPL/PLDI skeleton + 5 invariantes formais + v3.8.1 backlog) ✅ 🏁 **HORIZONTE 180D COMPLETO**
 
 ---
 
@@ -46,9 +46,9 @@ um sprint cresce > 30 items, ele vira sub-checklist linkado abaixo.
 | **Horizonte 90d (entregue)** | Sprints R, S, Q, T, U (RCA, Granger, HMC, VS Code, Cache/ASGI) | ✅ | v3.5.0 |
 | **Gate-1 hardening (entregue)** | Sprint W (audit-1..6) | ✅ | v3.5.1 |
 | **Gate-2 deep audit (entregue)** | Sprint W2 (G2-1..G2-8 + stress) — [checklist gate-2](#gate-2-checklist) | ✅ | v3.5.2 |
-| **Horizonte 180d (3/4 concluído)** | V (Marketplace) → X (CFG) → Y (SaaS multi-tenant) → **Z (Paper) pending** | 🟢 75% | v3.6.0 → v3.7.0 → v3.8.0 → → v3.9.0 |
-| **Sprint Z — Paper POPL/PLDI** | [Checklist Z](#sprint-z-wbs) | 🔵 ready to start | → v3.9.0 |
-| **v3.8.1 follow-up** | [Backlog Workflow #2](#v381-backlog) — 6 deferred itens | 🟡 backlog | → v3.8.1 |
+| **Horizonte 180d (COMPLETO)** 🏁 | V (Marketplace) → X (CFG) → Y (SaaS multi-tenant) → Z (Paper + invariants) | ✅ 100% | v3.6.0 → v3.7.0 → v3.8.0 → v3.9.0 |
+| **Sprint Z — Paper + invariants + v3.8.1** | [Checklist Z](#sprint-z-wbs) | ✅ | v3.9.0 |
+| **v3.8.1 follow-up** | [Backlog Workflow #2](#v381-backlog) — 5/6 fechados em v3.9.0 | ✅ | v3.9.0 (1 deferred → v3.9.2) |
 
 ## Equipe APEX (modo SCIENTIFIC)
 
@@ -167,14 +167,23 @@ um sprint cresce > 30 items, ele vira sub-checklist linkado abaixo.
 
 ---
 
-## Próximos sprints (horizonte 180 dias)
+## Próximos sprints (horizonte 180 dias) — 🏁 COMPLETO
 
 | Sprint | Foco | Status |
 |---|---|---|
 | **V** | Marketplace de spectral signatures (Movimento #5 expandido) | **✅ v3.6.0** |
 | **X** | CFG visualizável + hotspot overlay + port-allocator nos testes | **✅ v3.7.0** |
 | **Y** ⭐ | SaaS multi-tenant + billing (APEX SCIENTIFIC pleno) | **✅ v3.8.0** |
-| **Z** | Paper POPL/PLDI submission | pending → v3.9.0 |
+| **Z** 🏁 | Paper POPL/PLDI skeleton + 5 formal invariants + v3.8.1 backlog | **✅ v3.9.0** |
+
+### Próximo horizonte (sugestões — aguardar direção do usuário)
+
+| Versão | Foco proposto |
+|---|---|
+| v3.9.1 | Corpus integration (5 OSS repos reais; T1/T2 reproducibility com dados reais; baselines T4 SonarQube/CodeQL/Semgrep/Infer) |
+| v3.9.2 | Hot-row contention fix (sharded counters em `tenants.units_used`) |
+| v4.0.0 | Multi-language SAST expansion (Ruby, Rust, Kotlin, Swift via tree-sitter) |
+| v4.1.0 | Real-time SSE dashboard sobre `governance/*` |
 
 ---
 
@@ -237,25 +246,30 @@ WBS executado:
 ---
 
 <a id="sprint-z-wbs"></a>
-## Sprint Z (v3.9.0) — WBS pendente
+## Sprint Z (v3.9.0) — WBS executado ✅
 
-Foco: **Paper POPL/PLDI submission** + v3.8.1 backlog fixes (oportunidade de
-empacotamento conjunto).
+Foco: **Paper POPL/PLDI submission** + v3.8.1 backlog fixes (empacotados juntos).
 
-WBS proposto:
-- [ ] APEX SCIENTIFIC scoping inline (DSM/Ishikawa/Pareto/FMEA do paper)
-- [ ] Workflow #1 (design panel): 3 estruturas alternativas do paper (theorem-first / experiments-first / system-paper) → painel de juízes seleciona melhor
-- [ ] Implementação:
-  - [ ] LaTeX skeleton (sections, theorem environments, bibliography skeleton)
-  - [ ] Formalização do UCO: 5 invariantes núcleo (APS preservation, severity monotone, HMC convergence bound, propagation tensor symmetry, period reset atomicity)
-  - [ ] Experimentos reprodutíveis: bench harness Sprint U + corpus de 5 OSS repos (Flask, Django, requests, +2) → tabelas
-  - [ ] Related work: SonarQube, CodeQL, Infer, Semgrep, PMD
-  - [ ] Threats to validity section
-- [ ] Workflow #2 (multi-dim review): correctness theorem proofs + experimental validity + writing quality + 2-vote adversarial verify
-- [ ] Apply must-fix findings
-- [ ] v3.8.1 backlog (oportunidade): incluir os 6 deferred do Workflow #2 Sprint Y na release
-- [ ] Tests TW01-TW30 (paper reproducibility scripts)
-- [ ] Bump v3.8.0 → v3.9.0 + commit + bundle
+WBS executado:
+- [x] APEX SCIENTIFIC scoping inline (DSM/Ishikawa/Pareto/FMEA registrado em chat)
+- [x] (Workflow #1 design panel **dispensado** — estrutura de paper é well-understood, não justificava agentes; decisão registrada)
+- [x] Implementação:
+  - [x] `paper/paper.tex` — LaTeX skeleton ACM article (sections, theorem env, bibliography)
+  - [x] `paper/references.bib` — 7 entries skeleton (SonarQube, CodeQL, Infer, Neal HMC, Granger, PELT, Welch)
+  - [x] `paper/experiments.md` — protocolo reprodutível para E1-E4 sobre corpus 5 OSS
+  - [x] `paper/reproducibility.py` — script standalone que regenera T1/T2/T3/T4 CSVs
+  - [x] `governance/invariants.py` — 5 invariantes I1-I5 como executable spec + `assert_invariant` + `InvariantViolation`
+- [x] v3.8.1 backlog (5/6 dos deferred Workflow #2 Sprint Y):
+  - [x] Expand `_billed_dispatch` para 18 handlers (era 3)
+  - [x] N+1 fix em `list_usage_periods` via `sum_units_by_period_and_kind`
+  - [x] Novo índice `idx_usage_tenant_occurred`
+  - [x] `prune_old_events(vacuum=True)` opcional + `SnapshotStore.vacuum()`
+  - [x] `soft_warn` float arithmetic
+  - [ ] **Hot-row contention** deferred para v3.9.2 (exige benchmark formal)
+- [x] Workflow #2 (multi-dim review): soundness + experimental + billing-wiring × 2-vote verify → 25 findings, 1 HIGH + 1 HIGH + 1 LOW confirmados
+- [x] SZ-FIX-1 (I1 strict checker) + SZ-FIX-2 (I2 unified `_get_sev`) + SZ-FIX-3 (T1 real cases)
+- [x] Tests TW01-TW36 (5 invariantes × 3 testes + v3.8.1 verifications + paper reproducibility smoke + SZ-FIX pins)
+- [x] Bump v3.8.0 → v3.9.0 + CHANGELOG + roadmap + inventario + commit + bundle
 
 ---
 

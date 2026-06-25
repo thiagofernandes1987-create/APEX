@@ -56,8 +56,30 @@ def invariant_i1_aps_preserved(
 ) -> bool:
     """APS-after >= APS-before (within numerical tolerance).
 
-    None values are treated as "unmeasured" → invariant trivially holds
-    (refuse to claim a violation we cannot observe).
+    Sprint Z SZ-FIX-1 (Workflow #2 finding, CRITICAL→HIGH): the checker
+    is now **strict** — None on either side fails the invariant.  The paper
+    (Theorem 1) claims unconditional preservation; the prior lenient
+    behaviour ("None = trivially holds") opened a silent-pass path when
+    ``_compute_aps`` crashed and returned None.  Callers that genuinely
+    cannot measure APS should use
+    ``invariant_i1_aps_preserved_or_unmeasured`` (lenient, vacuous-on-None),
+    which is wired to the runtime gate in ``hmc_repair.py`` for back-compat.
+    """
+    if aps_before is None or aps_after is None:
+        return False
+    return float(aps_after) >= float(aps_before) - tolerance
+
+
+def invariant_i1_aps_preserved_or_unmeasured(
+    aps_before: Optional[float],
+    aps_after: Optional[float],
+    *,
+    tolerance: float = 1e-9,
+) -> bool:
+    """Lenient variant — None on either side returns True (vacuous).
+
+    Used by the production HMC repair gate which legitimately tolerates
+    APS-scorer crashes; the paper's Theorem 1 references the strict form.
     """
     if aps_before is None or aps_after is None:
         return True
@@ -66,9 +88,39 @@ def invariant_i1_aps_preserved(
 
 # ─── I2: Severity monotone ───────────────────────────────────────────────────
 
+def _get_sev(finding: Any) -> str:
+    """Sprint Z SZ-FIX-2 (Workflow #2 finding, HIGH): unified severity
+    extractor that handles attribute-form, dict-form, and case-folding.
+
+    Returns the canonical UPPER-CASE severity, or empty string if none
+    is discoverable.  A future scanner that names the field 'level' or
+    emits lowercase 'critical' is now scored correctly.
+    """
+    val: Any = None
+    # Attribute form (dataclass / SimpleNamespace / pydantic)
+    if hasattr(finding, "severity"):
+        val = getattr(finding, "severity", None)
+    elif hasattr(finding, "level"):
+        val = getattr(finding, "level", None)
+    # Dict form
+    elif isinstance(finding, dict):
+        val = finding.get("severity") or finding.get("level")
+    if val is None:
+        return ""
+    return str(val).strip().upper()
+
+
 def _count_findings(scan_result: Any, severity: str) -> int:
-    findings = getattr(scan_result, "findings", []) or []
-    return sum(1 for f in findings if getattr(f, "severity", "") == severity)
+    findings = getattr(scan_result, "findings", None)
+    if findings is None and isinstance(scan_result, dict):
+        findings = scan_result.get("findings", [])
+    findings = findings or []
+    target = severity.strip().upper()
+    if not target:
+        # Defensive: empty target string matches NOTHING (else any orphan
+        # finding without severity field would inflate the count).
+        return 0
+    return sum(1 for f in findings if _get_sev(f) == target)
 
 
 def invariant_i2_no_severity_regression(
@@ -96,7 +148,13 @@ def invariant_i3_hmc_convergence(
     tolerance: float = 1e-6,
 ) -> bool:
     """For status == OK: ``h_final <= h_initial`` (sampling converges
-    to a no-worse energy).  Any other status: invariant vacuously true."""
+    to a no-worse energy).  Any other status: invariant vacuously true.
+
+    Vacuous statuses (intentional — the system gave up on the run): "ERROR",
+    "TIMEOUT", "REJECTED_APS_REGRESSION", "REJECTED_SEVERITY_REGRESSION",
+    "NO_TRANSFORM_APPLIED".  None-valued h_initial/h_final also vacuous —
+    we refuse to claim a violation we cannot observe.
+    """
     if status != "OK":
         return True
     if h_initial is None or h_final is None:

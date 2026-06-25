@@ -72,8 +72,18 @@ regression tests in \texttt{tests/test\_marco\_m59.py} (TW01-TW15).
 
 \begin{invariant}[APS preservation under repair]
 \label{inv:i1}
-Let $p$ be a patch accepted by HMC with \texttt{preserve\_aps=True}.
-Then $\mathrm{APS}(p) \geq \mathrm{APS}(\mathrm{source})$.
+Let $p$ be a patch accepted by HMC with \texttt{preserve\_aps=True},
+and assume the APS score is measurable on both
+$\mathrm{source}$ and $p$ (i.e.\ \texttt{\_compute\_aps} does not
+raise).  Then $\mathrm{APS}(p) \geq \mathrm{APS}(\mathrm{source})$
+within numerical tolerance $10^{-9}$.
+The unmeasurable case --- where the APS scorer raises and returns
+\texttt{None} --- is detected by the strict checker
+\texttt{invariant\_i1\_aps\_preserved} (returns \texttt{False}) and is
+distinct from the lenient variant
+\texttt{invariant\_i1\_aps\_preserved\_or\_unmeasured} used by the
+production gate (Sprint Z SZ-FIX-1, derived from the Workflow~\#2
+soundness audit).
 \end{invariant}
 
 \begin{invariant}[Severity monotone under repair]

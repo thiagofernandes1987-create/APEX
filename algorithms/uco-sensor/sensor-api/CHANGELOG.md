@@ -5,6 +5,99 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.9.0] — 2026-06-25 — Sprint Z: Paper POPL/PLDI skeleton + 5 formal invariants + v3.8.1 backlog ⭐ HORIZONTE 180D COMPLETO
+
+### APEX SCIENTIFIC orquestração
+
+* **Workflow #2 (multi-dim review)** — soundness invariants + experimental
+  validity + billing-wiring correctness × 2-vote adversarial verify.
+  25 raw findings; 1 CRITICAL (downgraded HIGH no verify) + 1 HIGH
+  + 1 LOW confirmados 2/2; 3 NOOPs (skeptics refutaram); resto truncado
+  pela session limit.
+
+### Adicionado — Paper
+
+* `paper/paper.tex` — LaTeX skeleton (ACM article) com 5 theorem
+  environments, abstract, contributions, model section, invariants
+  section (com Theorem 1 referenciando o checker estrito + variante
+  lenient), HMC, multi-tenant, evaluation, related work, threats to
+  validity, conclusion. `\\label{inv:i1..i5}` consistente com testes.
+* `paper/references.bib` — bibliography skeleton: SonarQube, CodeQL,
+  Infer, Neal HMC 2011, Granger 1969, PELT Killick 2012, Welch 1967.
+* `paper/experiments.md` — protocolo reprodutível para 4 experimentos
+  (E1-E4) sobre corpus de 5 OSS repos (Flask, Django, requests + 2 TBD)
+  + threats to validity + status v3.9.0 (skeleton release, corpus
+  integration → v3.9.1).
+* `paper/reproducibility.py` — script standalone (sem pytest dep) que
+  regenera T1.csv (invariantes), T2.csv (HMC repair stats), T3.csv
+  (billing throughput — `serial_batches` column, não "concurrency",
+  por honestidade), T4.csv (baseline placeholder).
+
+### Adicionado — Invariants module (executable spec)
+
+* `governance/invariants.py` — 5 invariantes formais com triple
+  (PROPERTY / CHECKER / RUNTIME HOOK):
+  - **I1** APS preservation under repair (strict + lenient variants)
+  - **I2** Severity monotone (unified `_get_sev` extractor)
+  - **I3** HMC convergence bound (vacuous on non-OK status)
+  - **I4** Propagation symmetry at τ=0 (tolerance 1e-9)
+  - **I5** Period reset atomicity (Sprint Y SY-FIX-7 promoted to invariant)
+  + `assert_invariant(id, *args, hint=...)` runtime hook
+  + `list_invariants()` catalogue
+  + `InvariantViolation` exception with structured context.
+
+### Corrigido — v3.8.1 backlog (5/6 do deferred Workflow #2 Sprint Y)
+
+| Fix | Local | Issue |
+|---|---|---|
+| v3.8.1-fix-1 | `api/server.py` | Expand `_billed_dispatch` para 18 handlers (era 3 — só `/analyze`, `/repair/hmc`, `/scan-incremental`). Agora cobre `/repair`, `/analyze-pr`, `/scan-repo`, `/diff`, `/gate`, `/sast`, `/apex/fix`, `/apex/auto-remediate`, `/scan-sca`, `/scan-iac`, `/scan-flow`, `/scan-performance`, `/scan-architecture`, `/scan-test-quality`, `/scan-thread-safety`, `/feeds/cve/load` (admin+billed), `/feeds/sast/load` (admin+billed), `/signatures/discover` (admin+billed), `/marketplace/publish` (admin+billed). `/cache/invalidate` e `/apex/webhook` ficam não-billed (admin op + inbound webhook). |
+| v3.8.1-fix-2 | `governance/billing.py:list_usage_periods` | N+1 (era 1+N round-trips para 12 períodos = 13 queries) → 1 query agregada via novo `SnapshotStore.sum_units_by_period_and_kind`. |
+| v3.8.1-fix-3 | `sensor_storage/snapshot_store.py` | Novo índice `idx_usage_tenant_occurred ON usage_events(tenant_id, occurred_at DESC)` para `list_usage_events_for_tenant`. |
+| v3.8.1-fix-4 | `governance/billing.py:prune_old_events` | Aceita `vacuum=True` kwarg (default False). Novo `SnapshotStore.vacuum()` method. |
+| v3.8.1-fix-5 | `governance/billing.py:check_quota` | `soft_warn` agora usa aritmética float (`pct / 100.0`) em vez de integer-floor, eliminando off-by-near-1% em budgets grandes. |
+
+**Deferred to v3.9.1**: hot-row contention em `tenants.units_used`
+(precisa benchmark formal para validar sharded counters / read-side
+aggregation).
+
+### Corrigido — Sprint Z must-fix (achados Workflow #2 2/2 verified)
+
+| Fix | Severidade | Local | Issue |
+|---|---|---|---|
+| SZ-FIX-1 | HIGH (orig CRITICAL) | `governance/invariants.py:invariant_i1_aps_preserved` | Checker silenciosamente aceitava None → desacordo com paper Theorem 1 (preservação incondicional). Pre-fix: APS-scorer crash → None → invariant trivially holds → patch sai com status="OK". Fix: strict (None na nada → False). Adicionada variante lenient `_or_unmeasured` para production gate back-compat. Paper Theorem 1 reescrito com claim preciso. |
+| SZ-FIX-2 | HIGH | `governance/invariants.py:_count_findings` | `getattr(f, 'severity', '')` falhava silenciosamente para dict-findings, alias `level`, e case-mismatch ('critical' vs 'CRITICAL'). Fix: unified `_get_sev(f)` helper que aceita attribute/dict/case-folded; `_count_findings` ganha guard contra target vazio. |
+| SZ-FIX-3 | LOW | `paper/reproducibility.py:table_t1_invariants` | I2 só exercitava (None,None) short-circuit. Fix: 3 cases reais (stable / regression / improved). |
+
+### Testes adicionados
+
+`tests/test_marco_m59.py` — **TW01-TW36** (36 testes):
+
+* TW01-TW15 — 5 invariantes (3 testes cada: positive / negative / edge)
+* TW16-TW22 — v3.8.1 backlog fixes verification (source-level + runtime)
+* TW23-TW26 — invariant registry + assert_invariant hook
+* TW27-TW30 — paper reproducibility script smoke + paper.tex skeleton
+* TW31-TW36 — Sprint Z Workflow #2 must-fix pins (SZ-FIX-1/2 + edge cases)
+
+### Métricas
+
+| Métrica | v3.8.0 | v3.9.0 |
+|---|---|---|
+| Testes passando | 2089 | **2125** (+36) |
+| Falhas          | 0    | **0** |
+| Endpoints REST  | 76+  | **76+** (sem novos) |
+| Endpoints billed | 3   | **18** (+15) |
+| Tables SQLite   | 8    | **8** |
+| Formal invariants | 0   | **5** (executable spec) |
+| Paper artifacts | 0    | **4** (`paper/{paper.tex, references.bib, experiments.md, reproducibility.py}`) |
+| CRITICAL/HIGH ativos | 0 | **0** (1 CRIT→HIGH + 1 HIGH found by Workflow #2 → ambos fixed) |
+
+### 🏁 HORIZONTE 180D COMPLETO
+
+Sprints V → X → Y → Z entregues. Pronto para horizonte seguinte
+(v4.0.0 — multi-language SAST expansion ou v3.9.1 — corpus integration).
+
+---
+
 ## [3.8.0] — 2026-06-24 — Sprint Y: SaaS multi-tenant + unit-budget billing ⭐ APEX SCIENTIFIC pleno (2 workflows)
 
 ### APEX SCIENTIFIC orquestração

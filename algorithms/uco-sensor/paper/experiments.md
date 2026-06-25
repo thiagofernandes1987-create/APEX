@@ -75,6 +75,16 @@ python paper/reproducibility.py --output paper/tables/
 
 Output: CSV per table, suitable for LaTeX inclusion via `\input{...}`.
 
+### v3.9.0 status (skeleton release)
+
+The current `reproducibility.py` produces **synthetic** rows for T1
+(11 hand-crafted invariant cases) and **toy** rows for T2
+(`def f(x): return x+1` × 10). T3 is real (in-process benchmark of the
+`check_and_charge` chokepoint). T4 is a placeholder until corpus runs
+land. Wiring the 5-repo corpus + replacing T1/T2 with corpus-derived
+data is the v3.9.1 milestone (`paper/CORPUS_INTEGRATION.md` will
+document the contract).
+
 ## Threats to validity
 
 * **Corpus skew** — Python-only, 5 repos, mid-size; results may not

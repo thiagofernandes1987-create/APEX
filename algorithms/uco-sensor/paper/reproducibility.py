@@ -51,18 +51,27 @@ def table_t1_invariants(output_dir: Path, *, quick: bool) -> None:
     )
 
     # Synthetic cases: stand-ins for repo-derived data when corpus is absent.
+    # Sprint Z (LOW from Workflow #2): I2 now exercises real-data cases,
+    # not just the (None,None) short-circuit.
+    from types import SimpleNamespace
+    def _scan(*sevs):
+        return SimpleNamespace(findings=[SimpleNamespace(severity=s) for s in sevs])
     cases = [
-        ("synthetic-aps-equal",   "I1", invariant_i1_aps_preserved(0.5, 0.5), True),
-        ("synthetic-aps-up",      "I1", invariant_i1_aps_preserved(0.3, 0.7), True),
-        ("synthetic-aps-down",    "I1", invariant_i1_aps_preserved(0.7, 0.3), False),
-        ("synthetic-sev-equal",   "I2", invariant_i2_no_severity_regression(None, None), True),
-        ("synthetic-hmc-ok",      "I3", invariant_i3_hmc_convergence(10.0, 5.0, "OK"), True),
-        ("synthetic-hmc-fail",    "I3", invariant_i3_hmc_convergence(5.0, 10.0, "OK"), False),
-        ("synthetic-hmc-error",   "I3", invariant_i3_hmc_convergence(5.0, 10.0, "ERROR"), True),
-        ("synthetic-prop-sym",    "I4", invariant_i4_propagation_symmetry(0.123, 0.123), True),
-        ("synthetic-prop-asym",   "I4", invariant_i4_propagation_symmetry(0.123, 0.124), False),
-        ("synthetic-reset-ok",    "I5", invariant_i5_period_reset_idempotent(True, False), True),
-        ("synthetic-reset-bad",   "I5", invariant_i5_period_reset_idempotent(True, True), False),
+        ("synthetic-aps-equal",      "I1", invariant_i1_aps_preserved(0.5, 0.5), True),
+        ("synthetic-aps-up",         "I1", invariant_i1_aps_preserved(0.3, 0.7), True),
+        ("synthetic-aps-down",       "I1", invariant_i1_aps_preserved(0.7, 0.3), False),
+        ("synthetic-aps-unmeasured", "I1", invariant_i1_aps_preserved(0.5, None), False),  # SZ-FIX-1
+        ("synthetic-sev-vacuous",    "I2", invariant_i2_no_severity_regression(None, None), True),
+        ("synthetic-sev-stable",     "I2", invariant_i2_no_severity_regression(_scan("HIGH","LOW"), _scan("HIGH","LOW")), True),
+        ("synthetic-sev-regression", "I2", invariant_i2_no_severity_regression(_scan("LOW"), _scan("LOW","CRITICAL")), False),
+        ("synthetic-sev-improved",   "I2", invariant_i2_no_severity_regression(_scan("HIGH","HIGH"), _scan("LOW")), True),
+        ("synthetic-hmc-ok",         "I3", invariant_i3_hmc_convergence(10.0, 5.0, "OK"), True),
+        ("synthetic-hmc-fail",       "I3", invariant_i3_hmc_convergence(5.0, 10.0, "OK"), False),
+        ("synthetic-hmc-error",      "I3", invariant_i3_hmc_convergence(5.0, 10.0, "ERROR"), True),
+        ("synthetic-prop-sym",       "I4", invariant_i4_propagation_symmetry(0.123, 0.123), True),
+        ("synthetic-prop-asym",      "I4", invariant_i4_propagation_symmetry(0.123, 0.124), False),
+        ("synthetic-reset-ok",       "I5", invariant_i5_period_reset_idempotent(True, False), True),
+        ("synthetic-reset-bad",      "I5", invariant_i5_period_reset_idempotent(True, True), False),
     ]
     out = output_dir / "T1.csv"
     with out.open("w", newline="") as fh:
@@ -108,29 +117,32 @@ def table_t3_billing_throughput(output_dir: Path, *, quick: bool) -> None:
     from governance.billing import check_and_charge
 
     rows: List[Dict[str, Any]] = []
-    concurrencies = [1] if quick else [1, 10, 50]
+    # NOTE — measured SERIALLY (single-thread loop) under the SnapshotStore
+    # GIL/lock combination.  True concurrent scaling needs threaded callers;
+    # this baseline establishes the per-call ceiling.  Column named
+    # `serial_batches` to avoid misleading a paper reviewer.
+    serial_batches = [1] if quick else [1, 10, 50]
     n_per = 200 if quick else 1000
-    for concurrency in concurrencies:
+    for sb in serial_batches:
         s = SnapshotStore(":memory:")
-        create_tenant(s, "bench", plan="ENT")  # unlimited so we measure pure throughput
+        create_tenant(s, "bench", plan="ENT")
         t0 = time.perf_counter()
-        # serial proxy (true concurrency would need threads + GIL handoff)
-        for i in range(n_per * concurrency):
+        for i in range(n_per * sb):
             check_and_charge(s, "bench", "snapshot", endpoint="/x")
         dt = time.perf_counter() - t0
         rows.append({
-            "concurrency": concurrency,
-            "total_events": n_per * concurrency,
-            "wall_seconds": round(dt, 4),
-            "events_per_sec": round((n_per * concurrency) / dt, 1),
+            "serial_batches": sb,
+            "total_events":   n_per * sb,
+            "wall_seconds":   round(dt, 4),
+            "events_per_sec": round((n_per * sb) / dt, 1),
         })
     out = output_dir / "T3.csv"
     with out.open("w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=["concurrency", "total_events",
+        w = csv.DictWriter(fh, fieldnames=["serial_batches", "total_events",
                                             "wall_seconds", "events_per_sec"])
         w.writeheader()
         w.writerows(rows)
-    print(f"  T3.csv  ({len(rows)} concurrency levels)")
+    print(f"  T3.csv  ({len(rows)} serial-batch sizes)")
 
 
 # ─── T4: Baseline comparison (placeholder — full corpus deferred) ───────────

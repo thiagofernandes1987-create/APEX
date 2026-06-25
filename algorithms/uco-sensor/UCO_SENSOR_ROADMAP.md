@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
-> **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-24  
-> **Versão atual:** v3.8.0 (Sprint Y — SaaS multi-tenant + billing, **APEX SCIENTIFIC pleno: 2 workflows multi-agente**) · **GATE-2 PASSOU ✅** · Próximo: Sprint Z — Paper POPL/PLDI submission → v3.9.0
+> **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-25  
+> **Versão atual:** v3.9.0 (Sprint Z — Paper POPL/PLDI skeleton + 5 formal invariants + v3.8.1 backlog) · **🏁 HORIZONTE 180D COMPLETO ✅** · Próximo: v3.9.1 (corpus integration) ou v4.0.0 (multi-lang expansion)
 > **Plano vivo aprovado**: Sprints K → L → M → N → O → P (horizonte 30 dias APEX SCIENTIFIC redefinido)  
 > Documento vivo — atualizar após cada marco concluído
 
@@ -57,6 +57,7 @@
 | **Sprint V** ⭐ | **Marketplace de spectral signatures (MOVIMENTO #5 expandido) — `governance/marketplace.py` publish/pull/list/import + `marketplace_signatures` table + canonical SHA-256 payload hash + payload allowlist + ReDoS guard reused (audit-6) + admin auth (audit-1) + 4 endpoints REST (`/marketplace/{publish,list,pull/{id},import}`) + version auto-increment + 30 TV-tests** | **v3.6.0** | **✅** ⭐ HORIZONTE 180D INICIADO |
 | **Sprint X** | **CFG visualizável + hotspot overlay — `governance/cfg.py` pure-Python AST → JSON CFG bounded a 200 nodes + `overlay_hotspots` (severity max + APS contribution per node) + `cfg_as_dot` Graphviz output + 2 endpoints REST (`/cfg/{module_id}` + `/cfg/hotspots/{module_id}`) + `tests/_port_allocator.py` (gate-2b LOW#hardcoded_port quick-win) + 30 TY-tests** | **v3.7.0** | **✅** |
 | **Sprint Y** ⭐ | **SaaS multi-tenant + unit-budget billing — APEX SCIENTIFIC pleno: Workflow #1 (3 designs alternativos avaliados por painel, vencedor `unit-budget-billing` 82/100 STRONG_PICK) + Workflow #2 (security/correctness/perf review com 2-vote adversarial verify, 27 findings → 7 must-fix aplicados SY-FIX-1..7) + `governance/tenancy.py` + `governance/billing.py` + tabelas `tenants` + `usage_events` + `api_keys.tenant_id` ALTER + 10 endpoints REST (`/tenants/*` + `/billing/*`) + `_billed_dispatch` chokepoint (3 handlers wired: /analyze, /repair/hmc, /scan-incremental — expand v3.8.1) + 37 TZ-tests** | **v3.8.0** | **✅** ⭐ HORIZONTE 180D 3/4 |
+| **Sprint Z** 🏁 | **Paper POPL/PLDI skeleton + 5 formal invariants + v3.8.1 backlog — `paper/{paper.tex, references.bib, experiments.md, reproducibility.py}` + `governance/invariants.py` (I1..I5 executable spec + `assert_invariant` runtime hook + `InvariantViolation` exception) + v3.8.1 wired billing em +15 handlers (3 → 18) + N+1 fix em `list_usage_periods` + `idx_usage_tenant_occurred` + `prune_old_events(vacuum=True)` + `soft_warn` float arithmetic + Workflow #2 review (25 findings, 1 HIGH+1 HIGH+1 LOW confirmados) → SZ-FIX-1/2/3 aplicados (I1 strict, I2 unified `_get_sev`, T1 real cases) + 36 TW-tests** | **v3.9.0** | **✅** 🏁 HORIZONTE 180D COMPLETO |
 
 **Métricas atuais (v3.2.1):**
 
