@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
-> **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-18  
-> **Versão atual:** v3.4.4 (Sprint Q — HMC Closed-Loop Repair ⭐ MOVIMENTO #1 APEX SCIENTIFIC: Bayesian sampling de transforms, APS preservation, prova de minimalidade ΔH) · **Horizonte 90 dias em curso** (3/5 sprints — R+S+Q) · Próximo: Sprint T — VS Code extension → v3.4.5
+> **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-24  
+> **Versão atual:** v3.7.0 (Sprint X — CFG visualizável + hotspot overlay + port-allocator) · **GATE-2 PASSOU ✅** · Próximo: Sprint Y — SaaS multi-tenant + billing → v3.8.0
 > **Plano vivo aprovado**: Sprints K → L → M → N → O → P (horizonte 30 dias APEX SCIENTIFIC redefinido)  
 > Documento vivo — atualizar após cada marco concluído
 
@@ -50,6 +50,12 @@
 | **Sprint R** | **RCA Automático — `governance/rca.py` orquestra PELT + git blame + causality em pipeline único + `/rca` + `/rca/repo` + summary_text humano + 30 TJ-tests** | **v3.4.2** | **✅** |
 | **Sprint S** | **Granger Causality formal — `governance/granger_causality.py` com F-test canônico, OLS puro + scipy.f.sf fallback, 9×9 matriz + significant_pairs + `/granger/{matrix,significant}` + 30 TX-tests** | **v3.4.3** | **✅** |
 | **Sprint Q** ⭐ | **HMC Closed-Loop Repair (MOVIMENTO #1 APEX SCIENTIFIC) — `sensor_core/autofix/hmc_repair.py` + Bayesian sampling via UCO `optimize(method='hmc')` + APS preservation + determinismo (seed=42) + 7 status semânticos + fallback Greedy + `POST /repair/hmc` + 30 TW-tests** | **v3.4.4** | **✅** |
+| **Sprint T** | **VS Code Extension v1.1.0 — UCOClient ganha 5 métodos (getRCA, getChangepoints, getSimilar, getGrangerSignificant, repairHMC) + 4 novos comandos do editor (RCA panel, Changepoints quickPick, Similar quickPick, HMC repair com diff preview) + 30 TY-tests** | **v3.4.5** | **✅** |
+| **Sprint U** ⭐ | **Performance overhaul — Cache layer (`sensor_storage/cache.py`) LRU/Redis + cache em 3 handlers heavy + ASGI wrapper opt-in (`asgi/app.py`) + Bench harness (`bench/benchmark.py`) + endpoints `/cache/{status,invalidate}` + 30 TE-tests** | **v3.5.0** | **✅** ⭐ HORIZONTE 90D COMPLETO |
+| **Sprint W** 🔒 | **APEX Audit Hardening — 6 fixes CRITICAL/HIGH (auth bypass / SSOT hmc / channels SSOT / predictor leak / path-jail / ReDoS) + `governance/channels.py` + `sensor_storage/path_jail.py` + `tests/conftest.py` + 30 TF-tests** | **v3.5.1** | **✅** 🔒 GATE DE QUALIDADE |
+| **Sprint W2** 🔒 | **APEX Gate-2 deep audit — 8 fixes HIGH/MEDIUM (numpy RNG leak / hmc summary access / severity-regression gate / predictor denominator / granger noiseless / isolated_store / vacuous asserts / hardcoded /home/claude path) + README env-var docs + 21 TG-tests + 30 TS-stress tests** | **v3.5.2** | **✅** 🔒 GATE-2 PASSOU |
+| **Sprint V** ⭐ | **Marketplace de spectral signatures (MOVIMENTO #5 expandido) — `governance/marketplace.py` publish/pull/list/import + `marketplace_signatures` table + canonical SHA-256 payload hash + payload allowlist + ReDoS guard reused (audit-6) + admin auth (audit-1) + 4 endpoints REST (`/marketplace/{publish,list,pull/{id},import}`) + version auto-increment + 30 TV-tests** | **v3.6.0** | **✅** ⭐ HORIZONTE 180D INICIADO |
+| **Sprint X** | **CFG visualizável + hotspot overlay — `governance/cfg.py` pure-Python AST → JSON CFG bounded a 200 nodes + `overlay_hotspots` (severity max + APS contribution per node) + `cfg_as_dot` Graphviz output + 2 endpoints REST (`/cfg/{module_id}` + `/cfg/hotspots/{module_id}`) + `tests/_port_allocator.py` (gate-2b LOW#hardcoded_port quick-win) + 30 TY-tests** | **v3.7.0** | **✅** |
 
 **Métricas atuais (v3.2.1):**
 

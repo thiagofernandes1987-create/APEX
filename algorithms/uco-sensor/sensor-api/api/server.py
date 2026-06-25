@@ -200,7 +200,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.4.4"
+    version:      str   = "3.7.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -311,23 +311,33 @@ def _authenticate(plain_key: str, require_admin: bool = False) -> Tuple[bool, Op
     Valida a API key.
 
     Retorna (True, info_dict) se válido, (False, None) caso contrário.
-    Se auth_enabled=False, sempre aceita (modo dev).
-    """
-    if not _config.auth_enabled:
-        return True, {"key_prefix": "dev", "name": "dev_mode", "calls_total": 0}
 
+    Sprint W fix (audit-1, CRITICAL — APEX auditor "security"):
+    ``require_admin=True`` SEMPRE exige ``UCO_ADMIN_KEY`` via constant-time
+    comparison, independente de ``auth_enabled``.  Antes deste fix,
+    ``auth_enabled=False`` (default) short-circuitava o cheque de admin,
+    permitindo que qualquer chamador anônimo executasse
+    ``POST /feeds/cve/load``, ``POST /signatures/discover``,
+    ``POST /cache/invalidate`` etc.  Modo dev continua liberado para
+    endpoints **não-admin** apenas.
+    """
+    # ── Admin endpoints SEMPRE protegidos quando UCO_ADMIN_KEY definida ───
+    # (mesmo em auth_enabled=False — modo dev NÃO deve abrir admin path).
     if require_admin:
-        # Admin endpoint: usa variável de ambiente UCO_ADMIN_KEY.
-        # Sprint G fix (lateral): constant-time comparison.  ``==`` returns
-        # after the first mismatching byte, leaking secret length and
-        # similarity to a network attacker via timing.  ``hmac.compare_digest``
-        # is the canonical Python primitive for credential equality.
         admin_k = _config.admin_key or os.environ.get("UCO_ADMIN_KEY", "")
-        if admin_k and hmac.compare_digest(
+        if not admin_k:
+            # Sem chave admin configurada → admin endpoint sempre 403
+            # (impossível autenticar mesmo enviando uma chave).
+            return False, None
+        if hmac.compare_digest(
             (plain_key or "").encode("utf-8"), admin_k.encode("utf-8")
         ):
             return True, {"key_prefix": "admin", "name": "admin"}
         return False, None
+
+    # ── Endpoints não-admin ────────────────────────────────────────────────
+    if not _config.auth_enabled:
+        return True, {"key_prefix": "dev", "name": "dev_mode", "calls_total": 0}
 
     info = _store.validate_key(plain_key)
     if info is None:
@@ -539,6 +549,12 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "POST",   "path": "/signatures/discover",      "auth": "admin", "desc": "DBSCAN over fingerprints, persist new + bump existing (body: {window?,eps?,min_samples?}) [Sprint P]"},
             {"method": "GET",    "path": "/signatures",               "auth": True,   "desc": "List persisted signatures (?limit=) [Sprint P]"},
             {"method": "GET",    "path": "/signatures/status",        "auth": True,   "desc": "Signature library summary [Sprint P]"},
+            {"method": "POST",   "path": "/marketplace/publish",      "auth": "admin", "desc": "Publish a local signature to marketplace (body: {signature_id, payload, publisher_id?, notes?}) [Sprint V]"},
+            {"method": "GET",    "path": "/marketplace/list",         "auth": True,   "desc": "List marketplace signatures, latest version each (?limit=&offset=&publisher_id=) [Sprint V]"},
+            {"method": "GET",    "path": "/marketplace/pull/{id}",    "auth": True,   "desc": "Pull a marketplace signature by id (?version=N optional) [Sprint V]"},
+            {"method": "POST",   "path": "/marketplace/import",       "auth": "admin", "desc": "Verify hash + persist a foreign signature (body: {signature_id, payload, expected_hash, publisher_id?, notes?}) [Sprint V]"},
+            {"method": "GET",    "path": "/cfg/{module_id}",           "auth": True,   "desc": "Per-function CFG as JSON (?source=…&max_nodes=200) [Sprint X]"},
+            {"method": "GET",    "path": "/cfg/hotspots/{module_id}",  "auth": True,   "desc": "CFG annotated with SAST severity + APS contribution per node [Sprint X]"},
             {"method": "GET",    "path": "/similar",                  "auth": True,   "desc": "Top-K spectrally similar modules (?module=&k=&metric=&window=) [Sprint O]"},
             {"method": "GET",    "path": "/fingerprint/index",        "auth": True,   "desc": "All computable spectral fingerprints (?window=) [Sprint O]"},
             {"method": "GET",    "path": "/fingerprint/clusters",     "auth": True,   "desc": "Pairwise distance matrix between fingerprints (?metric=&window=) [Sprint O]"},
@@ -1276,14 +1292,30 @@ def handle_spectral_fingerprint(module_id: str, window: int = 100) -> Tuple[int,
 
     Compact 5-channel spectral fingerprint (band fractions + entropy +
     cycle length) for module-to-module comparison and clustering.
+
+    Sprint U: result cached with TTL 60s per module.
     """
     if not module_id:
         return 400, {"error": "module is required"}
+    # ── Sprint U cache ──────────────────────────────────────────────
+    try:
+        from sensor_storage.cache import cache_get, cache_set
+        cache_key = f"spectral_fp:{module_id}:w={int(window)}"
+        cached = cache_get(cache_key)
+        if cached is not None:
+            return 200, cached
+    except Exception:
+        cache_key = None
     try:
         from metrics.spectral_aps import aps_fingerprint
         result = aps_fingerprint(_store, module_id, window=max(3, int(window)))
     except Exception as exc:
         return 500, {"error": f"spectral/fingerprint failed: {exc}"}
+    if cache_key:
+        try:
+            cache_set(cache_key, result, ttl=60)
+        except Exception:
+            pass
     return 200, result
 
 
@@ -1304,6 +1336,26 @@ def handle_remediation_stats(module_id: str = "", top_k: int = 5) -> Tuple[int, 
 
     stats["module_id"] = module_id or "*"
     return 200, stats
+
+
+def handle_cache_status() -> Tuple[int, Dict]:
+    """GET /cache/status — Sprint U: backend + hits/misses/size."""
+    try:
+        from sensor_storage.cache import cache_status
+        return 200, cache_status()
+    except Exception as exc:
+        return 500, {"error": f"cache/status failed: {exc}"}
+
+
+def handle_cache_invalidate(data: Dict) -> Tuple[int, Dict]:
+    """POST /cache/invalidate — Sprint U (admin); body: {prefix}."""
+    try:
+        from sensor_storage.cache import cache_invalidate
+        prefix = str(data.get("prefix", ""))
+        n = cache_invalidate(prefix)
+        return 200, {"invalidated": n, "prefix": prefix}
+    except Exception as exc:
+        return 500, {"error": f"cache/invalidate failed: {exc}"}
 
 
 def handle_repair_hmc(data: Dict) -> Tuple[int, Dict]:
@@ -1356,6 +1408,16 @@ def handle_granger_matrix(module_id: str, max_lag: int = 3,
     """
     if not module_id:
         return 400, {"error": "module parameter is required"}
+    # ── Sprint U cache (Granger 9×9 = 81 F-tests, costly) ───────────
+    try:
+        from sensor_storage.cache import cache_get, cache_set
+        cache_key = (f"granger_matrix:{module_id}:lag={int(max_lag)}:"
+                     f"w={int(window)}:a={float(alpha)}")
+        cached = cache_get(cache_key)
+        if cached is not None:
+            return 200, cached
+    except Exception:
+        cache_key = None
     try:
         from governance.granger_causality import granger_matrix
         payload = granger_matrix(
@@ -1366,6 +1428,11 @@ def handle_granger_matrix(module_id: str, max_lag: int = 3,
         )
     except Exception as exc:
         return 500, {"error": f"granger matrix failed: {exc}"}
+    if cache_key:
+        try:
+            cache_set(cache_key, payload, ttl=120)
+        except Exception:
+            pass
     return 200, payload
 
 
@@ -1494,6 +1561,138 @@ def handle_signatures_status() -> Tuple[int, Dict]:
         return 200, library_status(_store)
     except Exception as exc:
         return 500, {"error": f"status failed: {exc}"}
+
+
+# ─── Sprint V — Marketplace de spectral signatures ───────────────────────────
+
+def handle_marketplace_publish(data: Dict) -> Tuple[int, Dict]:
+    """POST /marketplace/publish (admin) — publish a signature locally."""
+    from governance.marketplace import publish_signature
+    sig_id   = (data.get("signature_id") or "").strip()
+    payload  = data.get("payload") or {}
+    publisher = (data.get("publisher_id") or "anonymous").strip() or "anonymous"
+    notes    = (data.get("notes") or "").strip()
+    if not sig_id:
+        return 400, {"error": "signature_id is required"}
+    if not isinstance(payload, dict):
+        return 400, {"error": "payload must be an object"}
+    try:
+        out = publish_signature(
+            _store, sig_id, payload,
+            publisher_id=publisher, notes=notes,
+        )
+    except Exception as exc:
+        return 500, {"error": f"publish failed: {exc}"}
+    if out.get("status") != "OK":
+        return 400, out
+    return 200, out
+
+
+def handle_marketplace_list(limit: int = 100, offset: int = 0,
+                            publisher_id: str = "") -> Tuple[int, Dict]:
+    """GET /marketplace/list — paginated, latest version per signature_id."""
+    from governance.marketplace import list_marketplace
+    try:
+        return 200, list_marketplace(
+            _store, limit=max(1, int(limit)), offset=max(0, int(offset)),
+            publisher_id=(publisher_id or None),
+        )
+    except Exception as exc:
+        return 500, {"error": f"list failed: {exc}"}
+
+
+def handle_marketplace_pull(signature_id: str,
+                            version: Optional[int] = None) -> Tuple[int, Dict]:
+    """GET /marketplace/pull/{id}[?version=N] — fetch by id (latest or pinned)."""
+    from governance.marketplace import pull_signature
+    if not signature_id:
+        return 400, {"error": "signature_id is required"}
+    try:
+        out = pull_signature(_store, signature_id, version=version)
+    except Exception as exc:
+        return 500, {"error": f"pull failed: {exc}"}
+    if out is None:
+        return 404, {"error": f"signature {signature_id!r} not found"}
+    return 200, out
+
+
+# ─── Sprint X — CFG visualizável + hotspot overlay ──────────────────────────
+
+def handle_cfg(module_id: str, source: str = "",
+               max_nodes: int = 200) -> Tuple[int, Dict]:
+    """GET /cfg/{module_id}?max_nodes=… — return per-function CFGs as JSON.
+
+    If *source* is not provided in query, the handler attempts to read
+    the latest snapshot's source from the store (best-effort).  Empty
+    source returns ``status=ERROR`` per cfg.build_cfg contract.
+    """
+    from governance.cfg import build_cfg
+    if not module_id:
+        return 400, {"error": "module_id is required"}
+    src = source or _best_effort_module_source(module_id)
+    try:
+        cfg = build_cfg(src or "", max_nodes=max(8, int(max_nodes)))
+    except Exception as exc:
+        return 500, {"error": f"cfg build failed: {exc}"}
+    cfg["module_id"] = module_id
+    return 200, cfg
+
+
+def handle_cfg_hotspots(module_id: str, source: str = "",
+                        max_nodes: int = 200) -> Tuple[int, Dict]:
+    """GET /cfg/hotspots/{module_id} — CFG annotated with SAST severity per node."""
+    from governance.cfg import build_cfg, overlay_hotspots
+    if not module_id:
+        return 400, {"error": "module_id is required"}
+    src = source or _best_effort_module_source(module_id)
+    try:
+        cfg = build_cfg(src or "", max_nodes=max(8, int(max_nodes)))
+        overlay = overlay_hotspots(cfg, _store, module_id)
+    except Exception as exc:
+        return 500, {"error": f"cfg hotspots failed: {exc}"}
+    overlay["module_id"] = module_id
+    return 200, overlay
+
+
+def _best_effort_module_source(module_id: str) -> str:
+    """Attempt to read the source the store has cached for *module_id*."""
+    for method in ("get_module_source", "get_latest_source"):
+        fn = getattr(_store, method, None)
+        if callable(fn):
+            try:
+                src = fn(module_id)
+            except Exception:
+                src = None
+            if isinstance(src, str):
+                return src
+    return ""
+
+
+def handle_marketplace_import(data: Dict) -> Tuple[int, Dict]:
+    """POST /marketplace/import (admin) — verify hash + persist a foreign signature."""
+    from governance.marketplace import import_signature
+    sig_id   = (data.get("signature_id") or "").strip()
+    payload  = data.get("payload") or {}
+    expected = (data.get("expected_hash") or "").strip()
+    publisher = (data.get("publisher_id") or "imported").strip() or "imported"
+    notes    = (data.get("notes") or "").strip()
+    if not sig_id:
+        return 400, {"error": "signature_id is required"}
+    if not isinstance(payload, dict):
+        return 400, {"error": "payload must be an object"}
+    if not expected:
+        return 400, {"error": "expected_hash is required"}
+    try:
+        out = import_signature(
+            _store, sig_id, payload,
+            expected_hash=expected,
+            publisher_id=publisher, notes=notes,
+        )
+    except Exception as exc:
+        return 500, {"error": f"import failed: {exc}"}
+    if out.get("status") != "OK":
+        return 400, out
+    return 200, out
 
 
 def handle_similar(module_id: str, k: int = 10, metric: str = "euclidean",
@@ -3694,13 +3893,30 @@ def handle_repo_health_score(window: int = 100) -> Tuple[int, Dict]:
     Single number ∈ [0, 100] capturing the repo's current health:
     LOC-weighted mean of the latest persisted APS per module, minus
     5 points per RED compound-alert module (Sprint A integration).
+
+    Sprint U: result cached with TTL 30s (n_modules-dependent).
     """
+    # ── Sprint U cache ──────────────────────────────────────────────
+    try:
+        from sensor_storage.cache import cache_get, cache_set
+        cache_key = f"repo_health_score:n={len(_store.list_modules())}:w={int(window)}"
+        cached = cache_get(cache_key)
+        if cached is not None:
+            return 200, cached
+    except Exception:
+        cache_key = None
     try:
         from governance.repo_meta_score import compute_repo_meta_score
     except ImportError as exc:
         return 503, {"error": f"repo meta-score not available: {exc}"}
     meta = compute_repo_meta_score(_store, window=window)
-    return 200, meta.to_dict()
+    payload = meta.to_dict()
+    if cache_key:
+        try:
+            cache_set(cache_key, payload, ttl=30)
+        except Exception:
+            pass
+    return 200, payload
 
 
 def handle_repo_aps_outliers(
@@ -4308,6 +4524,30 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
             elif path.startswith("/signatures/") and path != "/signatures/status":
                 sig_id = path[len("/signatures/"):]
                 code, data = handle_signatures_get(sig_id)
+            # ─── Sprint V — Marketplace (GET) ───────────────────────────────
+            elif path == "/marketplace/list":
+                limit_n  = int(params.get("limit",  ["100"])[0])
+                offset_n = int(params.get("offset", ["0"])[0])
+                pub_v    = params.get("publisher_id", [""])[0]
+                code, data = handle_marketplace_list(
+                    limit=limit_n, offset=offset_n, publisher_id=pub_v,
+                )
+            elif path.startswith("/marketplace/pull/"):
+                sig_id = path[len("/marketplace/pull/"):]
+                ver_raw = params.get("version", [None])[0]
+                ver_n = int(ver_raw) if ver_raw not in (None, "") else None
+                code, data = handle_marketplace_pull(sig_id, version=ver_n)
+            # ─── Sprint X — CFG (GET) ────────────────────────────────────────
+            elif path.startswith("/cfg/hotspots/"):
+                module_id = path[len("/cfg/hotspots/"):]
+                src       = params.get("source", [""])[0]
+                max_n     = int(params.get("max_nodes", ["200"])[0])
+                code, data = handle_cfg_hotspots(module_id, source=src, max_nodes=max_n)
+            elif path.startswith("/cfg/"):
+                module_id = path[len("/cfg/"):]
+                src       = params.get("source", [""])[0]
+                max_n     = int(params.get("max_nodes", ["200"])[0])
+                code, data = handle_cfg(module_id, source=src, max_nodes=max_n)
             elif path == "/fingerprint/index":
                 window_n = int(params.get("window", ["100"])[0])
                 code, data = handle_fingerprint_index(window=window_n)
@@ -4359,6 +4599,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 )
             elif path == "/feeds/status":
                 code, data = handle_feeds_status()
+            elif path == "/cache/status":
+                code, data = handle_cache_status()
             elif path == "/feeds/sast/status":
                 code, data = handle_feeds_sast_status()
             elif path == "/spectral/aps":
@@ -4453,6 +4695,11 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_apex_auto_remediate(body)
             elif path == "/repair/hmc":
                 code, data = handle_repair_hmc(body)
+            elif path == "/cache/invalidate":
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                code, data = handle_cache_invalidate(body)
             elif path == "/feeds/cve/load":
                 # Sprint J: admin-only.
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
@@ -4474,6 +4721,17 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 if not ok_admin:
                     return self._send_json(403, {"error": "admin authentication required"})
                 code, data = handle_signatures_discover(body)
+            # ─── Sprint V — Marketplace (POST, admin-gated) ─────────────────
+            elif path == "/marketplace/publish":
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                code, data = handle_marketplace_publish(body)
+            elif path == "/marketplace/import":
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                code, data = handle_marketplace_import(body)
             elif path == "/feeds/sast/unload":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:

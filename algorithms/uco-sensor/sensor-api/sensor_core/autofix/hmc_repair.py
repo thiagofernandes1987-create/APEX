@@ -88,27 +88,83 @@ class HMCRepairResult:
         return asdict(self)
 
 
+def _summary_get(summary: Any, key: str, default: float = 0.0) -> float:
+    """
+    Sprint W gate-2 fix (G2-2): unified accessor that works whether
+    ``summary`` is a dict (legacy) or a dataclass / SimpleNamespace
+    (UCO core's actual return shape).  The previous ternary
+    `getattr(...) if isinstance(summary, dict) else 0.0` silently
+    zeroed every diagnostic in the production path.
+    """
+    if summary is None:
+        return float(default)
+    if isinstance(summary, dict):
+        return float(summary.get(key, default) or default)
+    val = getattr(summary, key, None)
+    if val is None:
+        return float(default)
+    try:
+        return float(val)
+    except (TypeError, ValueError):
+        return float(default)
+
+
 def _compute_aps(source: str) -> Optional[float]:
-    """Run the SAST scanner + APS formula on a snippet.  Returns None on failure."""
+    """
+    Compute the canonical APS for a snippet by delegating to the SSOT
+    ``metrics.anti_pattern_score.aps_from_metric_vector``.
+
+    Sprint W fix (audit-2, HIGH): prior to this fix the function imported
+    ``aps_from_metric_vector`` but never called it — instead returning
+    a shadow ``100 - 10*n_crit_high`` heuristic that ignored the 17
+    weighted components of the canonical APS.  The Sprint H SSOT for
+    governance signals was bypassed and the ``preserve_aps`` guard in
+    ``hmc_repair`` only checked CRITICAL/HIGH SAST count.
+
+    We now build a minimal MetricVector-shaped object from the SAST
+    findings, attach a synthetic ``SecurityVector`` + ``FlowVector``
+    derived from those findings, and call the canonical APS function.
+    Other extended vectors stay ``None`` — ``aps_from_metric_vector``
+    handles missing vectors deterministically (zero contribution for
+    each absent signal).
+    """
     try:
         from sast.scanner import scan
         from metrics.anti_pattern_score import aps_from_metric_vector
+        from metrics.extended_vectors import SecurityVector, FlowVector
     except Exception:
         return None
 
-    # We do NOT have a MetricVector for a snippet — synthesise a minimal
-    # SecurityVector from SAST findings count + severity ratio.
     try:
         result = scan(source, file_extension=".py")
-        # Crude estimate: APS counts SAST findings by severity.  When
-        # available we use the full anti_pattern_score; otherwise we just
-        # count critical+high as a proxy.
-        n_crit_high = sum(
-            1 for f in getattr(result, "findings", [])
-            if f.severity in ("CRITICAL", "HIGH")
+        findings = list(getattr(result, "findings", []))
+
+        n_crit = sum(1 for f in findings if f.severity == "CRITICAL")
+        n_high = sum(1 for f in findings if f.severity == "HIGH")
+        n_med  = sum(1 for f in findings if f.severity == "MEDIUM")
+
+        # Map SAST findings into the SecurityVector / FlowVector channels
+        # that aps_from_metric_vector reads (anti_pattern_score.py:170-191).
+        # This keeps the canonical formula in play; we DO NOT re-implement it.
+        sec_vector  = SecurityVector(
+            sca_vulnerable_deps=0,        # SAST is code-level, not SCA
+            iac_misconfig_count=0,        # ditto, not IaC
         )
-        # Lower findings → higher APS (100 = clean).  Scale 5 findings ≈ 50 pts.
-        return max(0.0, 100.0 - 10.0 * n_crit_high)
+        # taint_path_count / injection_surface approximated from SAST severity.
+        flow_vector = FlowVector(
+            taint_path_count=n_crit + n_high,
+            injection_surface=float(n_crit) * 0.5 + float(n_high) * 0.3 + float(n_med) * 0.1,
+        )
+
+        class _MinimalMV:
+            pass
+        mv = _MinimalMV()
+        mv.security = sec_vector
+        mv.flow     = flow_vector
+
+        payload = aps_from_metric_vector(mv)
+        aps = payload.get("aps") if isinstance(payload, dict) else None
+        return float(aps) if aps is not None else None
     except Exception:
         return None
 
@@ -190,15 +246,25 @@ def hmc_repair(
         return r
 
     # Determinism: pin numpy seed when requested.
+    # Sprint W gate-2 fix (G2-1, HIGH): np.random.seed(42) mutates the GLOBAL
+    # numpy RNG and poisons every other consumer in the process (concurrent
+    # request handlers, predictor, spectral_aps, etc.).  We save the prior
+    # global state, install our seed, run HMC, and restore the prior state
+    # in a finally block.  This is the minimally invasive fix that keeps the
+    # UCO core's signature (which uses np.random directly) deterministic
+    # without leaking state.  A cleaner long-term fix is to pass np.random.default_rng(42)
+    # down through optimizer.optimize() but that requires UCO core API change.
     seed = None
+    _np_state_before = None
     if deterministic:
         try:
             import numpy as np
             seed = 42
+            _np_state_before = np.random.get_state()
             np.random.seed(seed)
             r.deterministic_seed = seed
         except Exception:
-            pass
+            _np_state_before = None
 
     optimizer = ucm.UniversalCodeOptimizer()
 
@@ -212,18 +278,30 @@ def hmc_repair(
     # ─── HMC main path ───────────────────────────────────────────────────────
     if has_numpy:
         try:
-            output = optimizer.optimize(
-                code=source, n_steps=n_steps, burn_in=burn_in,
-            )
+            try:
+                output = optimizer.optimize(
+                    code=source, n_steps=n_steps, burn_in=burn_in,
+                )
+            finally:
+                # Sprint W gate-2 fix (G2-1, HIGH): restore the global numpy
+                # RNG state IMMEDIATELY after optimize() consumes the seed.
+                # Without this, concurrent handlers would inherit the seeded
+                # state and produce unintentionally-reproducible-but-coupled
+                # results.
+                if _np_state_before is not None:
+                    try:
+                        import numpy as _np
+                        _np.random.set_state(_np_state_before)
+                    except Exception:
+                        pass
             r.patched_source    = output.optimized_code
-            r.h_before          = float(getattr(output.summary, "h_initial",
-                                                 output.summary.get("h_initial", 0.0))
-                                         if isinstance(output.summary, dict)
-                                         else 0.0)
-            r.h_after           = float(getattr(output.summary, "h_final",
-                                                 output.summary.get("h_final", 0.0))
-                                         if isinstance(output.summary, dict)
-                                         else 0.0)
+            # Sprint W gate-2 fix (G2-2, HIGH): the previous ternary
+            #   `getattr(...) if isinstance(summary, dict) else 0.0`
+            # silently zeroed h_before/h_after when summary is a dataclass
+            # (the production case in UCO core's OptimizationOutput).
+            # Use a unified helper that handles both shapes.
+            r.h_before          = _summary_get(output.summary, "h_initial", 0.0)
+            r.h_after           = _summary_get(output.summary, "h_final",   0.0)
             r.h_drop_abs        = r.h_before - r.h_after
             r.h_drop_pct        = (r.h_drop_abs / r.h_before) if r.h_before > 1e-9 else 0.0
             r.n_samples         = n_steps
@@ -293,10 +371,50 @@ def hmc_repair(
         aps_after  = _compute_aps(r.patched_source)
         r.aps_before = aps_before
         r.aps_after  = aps_after
-        if (aps_before is not None and aps_after is not None
+        # Sprint W gate-2 fix (G2-3, HIGH): APS via aps_from_metric_vector
+        # saturates on canonical thresholds (taint_path_count=1.0 →
+        # 1 finding already maxes the component).  Two patches with 1
+        # vs 5 CRITICAL findings produce the SAME APS, and the guard
+        # `aps_after < aps_before - eps` returns False.  We therefore
+        # add a defence-in-depth raw-finding-count check: reject the
+        # patch when n_critical+n_high RISES, even if APS appears
+        # unchanged.
+        if not _no_severity_regression(source, r.patched_source):
+            r.patched_source = source
+            r.status = "REJECTED_APS_REGRESSION"
+        elif (aps_before is not None and aps_after is not None
                 and aps_after < aps_before - 1e-9):
             r.patched_source = source
             r.status = "REJECTED_APS_REGRESSION"
 
     r.summary_text = _make_summary(r)
     return r
+
+
+def _no_severity_regression(source_before: str, source_after: str) -> bool:
+    """
+    Sprint W gate-2 (G2-3): return False (= reject) when the patched
+    source has STRICTLY MORE CRITICAL or STRICTLY MORE HIGH findings
+    than the original.  This catches the APS-clipping blind spot:
+    aps_from_metric_vector saturates at 1 finding and cannot
+    distinguish 1 vs 5 CRITICAL.
+    """
+    try:
+        from sast.scanner import scan
+    except Exception:
+        return True   # cannot evaluate → don't reject (preserve old behaviour)
+    try:
+        before = scan(source_before, file_extension=".py")
+        after  = scan(source_after,  file_extension=".py")
+        def _count(result, sev):
+            return sum(1 for f in getattr(result, "findings", [])
+                        if f.severity == sev)
+        crit_b, crit_a = _count(before, "CRITICAL"), _count(after, "CRITICAL")
+        high_b, high_a = _count(before, "HIGH"),     _count(after, "HIGH")
+        if crit_a > crit_b:
+            return False
+        if high_a > high_b:
+            return False
+        return True
+    except Exception:
+        return True

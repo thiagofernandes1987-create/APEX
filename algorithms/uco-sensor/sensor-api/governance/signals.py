@@ -197,8 +197,8 @@ def predictor_accuracy(store: Any, module_id: str, window: int = 100) -> Dict[st
             "error":       f"{type(exc).__name__}: {exc}",
         }
 
-    pairs = [s["forecast_error"] for s in samples
-             if s.get("forecast_error") is not None]
+    evaluated = [s for s in samples if s.get("forecast_error") is not None]
+    pairs = [s["forecast_error"] for s in evaluated]
     if len(pairs) < _PREDICTOR_MIN_PAIRS:
         return {
             "module_id":    module_id,
@@ -215,8 +215,7 @@ def predictor_accuracy(store: Any, module_id: str, window: int = 100) -> Dict[st
     mae = sum(abs(e) for e in pairs) / n
     rmse = (sum(e * e for e in pairs) / n) ** 0.5
     bias = sum(pairs) / n
-    mean_h = (sum(s["hamiltonian"] for s in samples) / len(samples)
-              if samples else 0.0)
+    mean_h = (sum(s["hamiltonian"] for s in evaluated) / n) if n else 0.0
     mae_rel = (mae / mean_h) if mean_h else mae
 
     if mae_rel < _PREDICTOR_MAE_REL_ACCURATE:

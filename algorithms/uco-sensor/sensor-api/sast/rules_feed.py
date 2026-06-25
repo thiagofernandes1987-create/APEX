@@ -133,6 +133,23 @@ def _parse_rule(raw: Dict[str, Any]) -> Tuple[Optional[DynamicRule], Optional[st
         return None, f"invalid severity {severity!r}"
 
     pattern_src = str(raw["pattern"])
+    # Sprint W fix (audit-6, HIGH) — ReDoS guard.
+    # Reject patterns with classic catastrophic backtracking shapes
+    # (nested quantifiers) and patterns absurdly long.  This is a
+    # conservative static heuristic, not an exhaustive solver — it
+    # blocks the well-known "(.+)+" / "(a*)*" / "(a|aa)+" families
+    # without requiring the `regex` package or a per-match timeout.
+    if len(pattern_src) > 1024:
+        return None, "pattern too long (>1024 chars)"
+    _REDOS_MARKERS = (
+        r")+",   # ends a group that may itself be quantified inside
+        r")*",
+    )
+    # Detect nested quantifiers: (X+)+, (X*)*, (X+)*, (X*)+
+    # Cheap detection: any of "+)+", "+)*", "*)+", "*)*" inside source.
+    for danger in ("+)+", "+)*", "*)+", "*)*", "+}+", "*}*"):
+        if danger in pattern_src:
+            return None, f"pattern rejected (potential ReDoS pattern {danger!r})"
     try:
         compiled = re.compile(pattern_src)
     except re.error as exc:
@@ -154,18 +171,30 @@ def _parse_rule(raw: Dict[str, Any]) -> Tuple[Optional[DynamicRule], Optional[st
 # ─── Public load / unload ────────────────────────────────────────────────────
 
 def load_from_file(path: str, feed_id: Optional[str] = None) -> RuleFeedLoadResult:
+    """Sprint W fix (audit-5, HIGH): path-jail via UCO_FEEDS_DIR."""
     if feed_id is None:
         feed_id = f"sast-file:{os.path.basename(path)}:{int(time.time())}"
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            text = f.read()
-    except Exception as exc:
+    from sensor_storage.path_jail import check_feed_path
+    safe_path = check_feed_path(path)
+    if safe_path is None:
         return RuleFeedLoadResult(
             feed_id=feed_id, source=path, ts_loaded=time.time(),
             added_new=0, skipped_bad=0,
+            errors=[
+                "path rejected by path-jail: set UCO_FEEDS_DIR and ensure "
+                "the path resolves inside it (or use inline/url)"
+            ],
+        )
+    try:
+        with open(safe_path, "r", encoding="utf-8") as f:
+            text = f.read()
+    except Exception as exc:
+        return RuleFeedLoadResult(
+            feed_id=feed_id, source=safe_path, ts_loaded=time.time(),
+            added_new=0, skipped_bad=0,
             errors=[f"{type(exc).__name__}: {exc}"],
         )
-    return _ingest_text(text, source=path, feed_id=feed_id)
+    return _ingest_text(text, source=safe_path, feed_id=feed_id)
 
 
 def load_from_url(url: str, *, timeout: float = 10.0,

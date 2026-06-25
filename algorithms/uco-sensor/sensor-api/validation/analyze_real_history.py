@@ -23,8 +23,14 @@ from pathlib import Path
 from typing import List, Dict, Optional
 from dataclasses import dataclass
 
-sys.path.insert(0, "/home/claude/uco-sensor-api")
-sys.path.insert(0, "/home/claude/uco-frequency-engine")
+# Sprint W2 (gate-2 G2-8 HIGH): replace hardcoded /home/claude paths with
+# __file__-relative resolution so the script runs on any host (cf. demo/demo_full.py).
+_HERE = Path(__file__).resolve().parent
+_SENSOR_API = _HERE.parent  # algorithms/uco-sensor/sensor-api
+_FREQ_ENGINE = _SENSOR_API.parent / "frequency-engine"
+for _p in (str(_SENSOR_API), str(_FREQ_ENGINE)):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 from core.data_structures import MetricVector
 from pipeline.frequency_engine import FrequencyEngine

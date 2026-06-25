@@ -297,4 +297,68 @@ export class UCOClient {
         const params = new URLSearchParams({ module: moduleId });
         return this.request<any>("GET", `/baseline?${params}`);
     }
+
+    // ────────────────────────────────────────────────────────────────────────
+    //  Sprint T (v3.4.5) — Wire the new horizon-90d endpoints into the IDE.
+    //  All five return a structured payload with `status` semantics; the
+    //  extension handles them generically via the `data` envelope.
+    // ────────────────────────────────────────────────────────────────────────
+
+    /** GET /rca?module=&repo_dir=&window= — Sprint R: PELT + git blame + causality. */
+    async getRCA(moduleId: string, repoDir = "", window = 200): Promise<any> {
+        const params = new URLSearchParams({ module: moduleId });
+        if (repoDir) { params.set("repo_dir", repoDir); }
+        params.set("window", String(window));
+        return this.request<any>("GET", `/rca?${params}`);
+    }
+
+    /** GET /changepoints?module=&repo_dir=&window= — Sprint L: PELT change-points. */
+    async getChangepoints(moduleId: string, repoDir = "", window = 200): Promise<any> {
+        const params = new URLSearchParams({ module: moduleId });
+        if (repoDir) { params.set("repo_dir", repoDir); }
+        params.set("window", String(window));
+        return this.request<any>("GET", `/changepoints?${params}`);
+    }
+
+    /** POST /repair/hmc — Sprint Q: Bayesian closed-loop repair with APS preservation. */
+    async repairHMC(req: {
+        code: string;
+        module_id?: string;
+        n_steps?: number;
+        burn_in?: number;
+        preserve_aps?: boolean;
+        deterministic?: boolean;
+        timeout_s?: number;
+    }): Promise<any> {
+        return this.request<any>("POST", "/repair/hmc", req, 90_000);
+    }
+
+    /** GET /similar?module=&k=&metric= — Sprint O: spectral fingerprint similarity. */
+    async getSimilar(moduleId: string, k = 10, metric: "euclidean" | "cosine" | "manhattan" = "euclidean"): Promise<any> {
+        const params = new URLSearchParams({
+            module: moduleId,
+            k: String(k),
+            metric,
+        });
+        return this.request<any>("GET", `/similar?${params}`);
+    }
+
+    /** GET /granger/significant?module=&max_lag=&alpha= — Sprint S: F-test pairs. */
+    async getGrangerSignificant(moduleId: string, maxLag = 3, alpha = 0.05): Promise<any> {
+        const params = new URLSearchParams({
+            module: moduleId,
+            max_lag: String(maxLag),
+            alpha: String(alpha),
+        });
+        return this.request<any>("GET", `/granger/significant?${params}`);
+    }
+
+    /** GET /lsp/diagnostics?module=&window= — M8.1: LSP-format diagnostics. */
+    async getLSPDiagnostics(moduleId: string, window = 50): Promise<any> {
+        const params = new URLSearchParams({
+            module: moduleId,
+            window: String(window),
+        });
+        return this.request<any>("GET", `/lsp/diagnostics?${params}`);
+    }
 }

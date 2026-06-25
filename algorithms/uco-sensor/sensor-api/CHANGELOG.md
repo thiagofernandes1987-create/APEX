@@ -5,6 +5,491 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.7.0] — 2026-06-24 — Sprint X: CFG visualizável + hotspot overlay + port-allocator
+
+### Adicionado — Movimento APEX SCIENTIFIC "explicabilidade"
+
+CFG (control-flow graph) por função extraído via `ast` puro, retornado
+como JSON / DOT, com overlay de severidade SAST + APS contribution por
+node. Permite visualizações no painel HTML da extensão VS Code (Sprint
+T) ou em ferramentas externas (Graphviz, mermaid).
+
+#### Novos módulos
+
+* `governance/cfg.py` (~280 LOC) — `build_cfg(source, max_nodes=200)`,
+  `overlay_hotspots(cfg, store, module_id, findings=None)`,
+  `cfg_as_dot(cfg)`. Pure-Python AST (sem dependência de tree-sitter),
+  bounded a 200 nodes default (TRUNCATED status), defensivo contra
+  SyntaxError e source vazio.
+* `tests/_port_allocator.py` — quick-win do gate-2b LOW finding
+  "hardcoded_port". Pede ao kernel uma porta livre via `socket.bind(0)`.
+
+#### Novos endpoints REST
+
+| Método | Path | Auth | Descrição |
+|---|---|---|---|
+| GET | `/cfg/{module_id}` | true | CFG por função em JSON (`?source=…&max_nodes=200`). |
+| GET | `/cfg/hotspots/{module_id}` | true | CFG anotado com `severity` (max SAST) + `aps_contribution` por node. |
+
+#### Decisões de design (APEX SCIENTIFIC)
+
+* **Function-level granularity** — um CFG por `FunctionDef`/`AsyncFunctionDef`; código de módulo vira pseudo-CFG `<module>`.
+* **Bounded** — `max_nodes` default 200; quando excedido, `status="TRUNCATED"` e `truncated=true` no função.
+* **Pure-Python AST** — sem tree-sitter (funciona em qualquer sandbox).
+* **Read-only** — não muta `SnapshotStore`.
+* **JSON-first** — DOT é opcional (`cfg_as_dot`), JSON é o contrato.
+
+### Testes
+
+* `tests/test_marco_m57.py` — TY01-TY30 cobrindo: AST shapes
+  (if/loop/try/return/async/multi-func), truncation, ERROR paths,
+  overlay severity + APS contribution, DOT rendering, REST handlers,
+  port allocator (3 testes).
+
+### Métricas
+
+| Métrica | v3.6.0 | v3.7.0 |
+|---|---|---|
+| Testes passando | 2022 | **2052** (+30) |
+| Falhas          | 0    | **0** |
+| Endpoints REST  | 64+  | **66+** (+2 CFG) |
+| LOW findings backlog | 59 | 58 (-1 hardcoded_port) |
+
+---
+
+## [3.6.0] — 2026-06-24 — Sprint V: Marketplace de spectral signatures (horizonte 180d ⭐)
+
+### Adicionado — Movimento APEX SCIENTIFIC #5 expandido
+
+Primeira sprint do horizonte 180 dias. Local UCO Sensor instances podem
+**publicar** signatures discovered via DBSCAN, **listar** signatures
+publicadas, **pull** por id (com version pinning), e **importar**
+signatures externas com verificação de hash canônico SHA-256.
+
+#### Novos módulos
+
+* `governance/marketplace.py` — publish/pull/list/import + canonical
+  payload hash + ReDoS guard + payload allowlist.
+* `sensor_storage/snapshot_store.py` — `marketplace_signatures` table
+  (separada de `discovered_signatures`) + CRUD (`marketplace_publish`,
+  `marketplace_get`, `marketplace_list`, `marketplace_count`,
+  `marketplace_delete`).
+
+#### Novos endpoints REST
+
+| Método | Path | Auth | Descrição |
+|---|---|---|---|
+| POST | `/marketplace/publish` | admin | Publica signature local (body: `{signature_id, payload, publisher_id?, notes?}`). Version auto-incrementada. |
+| GET  | `/marketplace/list`    | true  | Latest version por signature_id (paginado: `?limit=&offset=&publisher_id=`). |
+| GET  | `/marketplace/pull/{id}` | true | Fetch signature; `?version=N` opcional. |
+| POST | `/marketplace/import`  | admin | Importa signature externa após verificar hash (body: `{signature_id, payload, expected_hash, publisher_id?, notes?}`). |
+
+#### Defesas integradas (re-usa endurecimento gate-1 + gate-2)
+
+* `UCO_ADMIN_KEY` exigido em todas as escritas (Sprint W audit-1).
+* Hash SHA-256 canônico (sort_keys + separators) detecta tampering em trânsito.
+* Payload `_ALLOWED_PAYLOAD_KEYS` allowlist rejeita campos surpresa.
+* Guard ReDoS reusado do Sprint W audit-6 rejeita patterns em `label`/`notes`/`category`.
+* Tabela separada — DBSCAN local não pode sobrescrever entry curado.
+
+### Testes
+
+* `tests/test_marco_m56.py` — TV01-TV30 cobrindo: pure-Python core
+  (hash/publish/pull/list/import/guards), storage layer (version
+  auto-increment, pagination, latest-per-id, count, delete, isolation),
+  REST (publish/list/pull/import handlers, 400/404/200 paths, /docs
+  registration, budget < 2s para 20 publishes).
+
+### Métricas
+
+| Métrica | v3.5.2 | v3.6.0 |
+|---|---|---|
+| Testes passando | 1992 | **2022** (+30) |
+| Falhas          | 0    | **0** |
+| Endpoints       | 60+  | **64+** (+4 marketplace) |
+| Tables SQLite   | 5    | **6** (+marketplace_signatures) |
+
+---
+
+## [3.5.2] — 2026-06-24 — Sprint W2: APEX gate-2 deep audit + stress + parameter sweep
+
+### Resumo executivo
+
+Segunda auditoria APEX SCIENTIFIC — agora cobrindo cinco dimensões
+**adicionais** (`correctness`, `tests`, `dead-code`, `control-flow`,
+`wiring`) — encontrou **8 fixes HIGH/MEDIUM**, **0 CRITICAL**, e produziu
+**61 testes regressivos novos** (`TG01-TG21` + `TS01-TS30` paramétricos).
+Suíte expandida de **1931 → 1992 passing**, zero falhas, zero novos
+findings significativos remanescentes.
+
+### Corrigido — Gate-2 fixes
+
+| Fix | Severidade | Arquivo | Categoria |
+|---|---|---|---|
+| G2-1 | **HIGH** | `sensor_core/autofix/hmc_repair.py` | global RNG state leak |
+| G2-2 | HIGH | `sensor_core/autofix/hmc_repair.py` | broken summary access (dataclass path) |
+| G2-3 | HIGH | `sensor_core/autofix/hmc_repair.py` | severity-regression gate (defence-in-depth APS clip) |
+| G2-4 | HIGH | `governance/signals.py:218` | denominator mismatch in `predictor_accuracy` |
+| G2-5 | HIGH | `governance/granger_causality.py:192` | noiseless causation silently skipped |
+| G2-6 | MEDIUM | `tests/conftest.py` | opt-in `isolated_store` fixture |
+| G2-7 | MEDIUM | `tests/test_marco_m48.py` | vacuous-conditional assertions promoted to invariants |
+| G2-8 | **HIGH** | `validation/analyze_real_history.py` | hardcoded `/home/claude` `sys.path.insert` → portable `__file__`-relative |
+
+### Documentado — Variáveis de ambiente
+
+`README.md` ganhou uma seção "Variáveis de ambiente (referência
+completa)" cobrindo `UCO_AUTH_ENABLED`, `UCO_ADMIN_KEY`,
+`UCO_APEX_ENABLED`, `APEX_WEBHOOK_URL`, `APEX_API_KEY`, `UCO_FEEDS_DIR`,
+`UCO_REDIS_URL`, `UCO_CACHE_MAX_SIZE` — todas previamente apenas no
+CHANGELOG.
+
+### Testes adicionados — TG (gate-2 pin) + TS (stress / parameter sweep)
+
+* `tests/test_marco_m54.py` — TG01-TG21: pins cada fix gate-2 com guards
+  source-level + invariantes funcionais.
+* `tests/test_marco_m55.py` — TS01-TS30: parameter sweep e stress
+  (predictor_accuracy × 5 windows, granger × 4 lags × 4 alphas, SAST
+  scanner em 500 LOC sob 1s, IaC scanner em 50 ficheiros sob 5s,
+  SnapshotStore 1000 inserts sob 3s, RCA + propagation + granger_matrix
+  9×9 sob 2s, changepoints PELT).
+
+### Métricas de qualidade após gate-2
+
+| Métrica | v3.5.1 | v3.5.2 |
+|---|---|---|
+| Testes passando        | 1931 | **1992** (+61) |
+| Falhas                 | 0    | **0** |
+| CRITICAL findings ativos | 0  | **0** |
+| HIGH findings ativos     | 0  | **0** |
+| MEDIUM findings backlog  | 26 | 23 (3 fechados via README) |
+| LOW findings backlog     | _n/a_ | 59 (deferred Sprint V) |
+
+---
+
+## [3.5.1] — 2026-06-25 — Sprint W: APEX SCIENTIFIC Audit Fixes (6 CRITICAL/HIGH)
+
+### Corrigido — Auditoria APEX (5 auditores paralelos + 3 verificadores adversariais)
+
+Antes de avançar para o horizonte 180 dias, executamos a auditoria
+profunda pedida pelo APEX SCIENTIFIC: 5 auditores especializados rodando
+em paralelo (architect, security, performance, correctness, tests) +
+3-vote adversarial verify por finding HIGH/CRITICAL. Resultado: **39
+findings brutos** → **13 HIGH/CRITICAL deduplicados** → **6 críticos
+confirmados e corrigidos** nesta release.
+
+| Fix | Severidade | Arquivo | Categoria |
+|---|---|---|---|
+| audit-1 | **CRITICAL** | `api/server.py:316` | auth-bypass / default-insecure |
+| audit-2 | HIGH | `sensor_core/autofix/hmc_repair.py:91` | SSOT violation |
+| audit-3 | HIGH | `governance/granger_causality.py:59` + `propagation.py:148` | code duplication |
+| audit-4 | HIGH | `sensor_storage/snapshot_store.py:545` | spec drift (predictor leak) |
+| audit-5 | HIGH | `api/server.py:1854` (+ feeds) | path-traversal |
+| audit-6 | HIGH | `sast/rules_feed.py:137` | ReDoS injection |
+
+#### audit-1 CRITICAL — Auth bypass por default
+
+**Antes**: `_authenticate()` short-circuitava em `auth_enabled=False`
+(default), retornando `(True, dev_info)` mesmo para `require_admin=True`.
+Qualquer chamador anônimo executava `POST /feeds/cve/load`,
+`/signatures/discover`, `/cache/invalidate`, `DELETE /auth/keys` etc.
+Fix Sprint G G.8 (hmac.compare_digest) era inalcançável.
+
+**Agora**: `require_admin=True` SEMPRE exige `UCO_ADMIN_KEY` via
+constant-time compare, independente de `auth_enabled`. Sem chave
+admin configurada → 403 garantido. Modo dev preservado apenas para
+endpoints **não-admin**.
+
+#### audit-2 HIGH — `hmc_repair._compute_aps` shadow formula
+
+**Antes**: importava `aps_from_metric_vector` mas NUNCA chamava;
+sintetizava `100 - 10 * n_crit_high` (só conta SAST CRITICAL/HIGH,
+ignora os 17 componentes ponderados do APS canônico). Patch HMC podia
+degradar reliability/performance/maintainability arbitrariamente sem
+o `preserve_aps` guard detectar.
+
+**Agora**: constrói MetricVector mínimo com `SecurityVector` +
+`FlowVector` derivados das findings SAST, chama
+`aps_from_metric_vector` canônico. SSOT do Sprint H restaurada.
+
+#### audit-3 HIGH — Channel SSOT violation
+
+**Antes**: `_CHANNELS`, `_ATTR_BY_SHORT` e `_series()` duplicados
+verbatim em `granger_causality.py` e `propagation.py`. Mesma falha de
+drift que `signals.py` (Sprint H) tentou eliminar.
+
+**Agora**: novo módulo `governance/channels.py` com `CHANNELS`,
+`ATTR_BY_SHORT` e `series()` canônicos. Ambos consumidores re-exportam.
+
+#### audit-4 HIGH — Predictor leak no recompute_derived
+
+**Antes**: `_compute_forecast(mv)` chamava `get_history(window=100)`
+que retornava o histórico **incluindo** a target row (já persistida
+pelo `defer_derived=True` + `recompute_derived` do Sprint I). O
+predictor "previa" um valor que já estava no input — `MAE≈0`,
+verdict `ACCURATE` fantasma para batch ingests.
+
+**Agora**: filtragem dupla (`commit_hash != target_commit AND
+timestamp < target_ts`) garante history estritamente PRIOR.
+
+#### audit-5 HIGH — Path-traversal em /feeds/{cve,sast}/load
+
+**Antes**: `POST /feeds/cve/load {"path": "/etc/passwd"}` abria
+arquivo arbitrário; combinado com audit-1 leak de arquivos para
+chamador anônimo.
+
+**Agora**: novo módulo `sensor_storage/path_jail.py` exige
+`UCO_FEEDS_DIR` env var, canonicaliza com `Path.resolve()`,
+rejeita escape via `..`. Closed-by-default: sem env var → todo
+file-load rejeitado (use `inline:` ou `url:` na payload).
+
+#### audit-6 HIGH — ReDoS no `sast/rules_feed`
+
+**Antes**: `_parse_rule()` chamava `re.compile(pattern_src)` sem
+validação. Admin malicioso/descuidado carrega `(a+)+` → `/analyze`
+e `/sast` travam para sempre.
+
+**Agora**: validação estática de padrões com quantificadores
+aninhados (`+)+`, `+)*`, `*)+`, `*)*`, `+}+`, `*}*`) e limite de
+comprimento (1024 chars). Padrões seguros (incluindo built-ins)
+passam.
+
+### Colateral — conftest.py de teste
+
+Path-jail quebraria 33 testes que usam `tempfile.NamedTemporaryFile`
+em `/tmp`. Adicionado `tests/conftest.py` que setta
+`UCO_FEEDS_DIR=/tmp` e `UCO_ADMIN_KEY=test-key` na sessão pytest —
+zero modificação nos 33 testes existentes.
+
+### Testes — 30 novos (TF01–TF30) pinando cada fix
+
+- TF01–TF05 (audit-1): admin requer key mesmo com auth_enabled=False,
+  aceita key correta, 403 quando sem admin_k, non-admin dev mode
+  preservado, hmac.compare_digest ainda em uso
+- TF06–TF10 (audit-2): `_compute_aps` delega ao canonical (inspeção
+  de source), retorna float válido para code limpo, cai para código
+  dirty, shadow formula removida, failure path = None
+- TF11–TF15 (audit-3): `governance.channels.CHANNELS` exposto, attr
+  map completo, granger + propagation re-exportam (assert `is`
+  canonical), inline tuple removido
+- TF16–TF20 (audit-4): `recompute_derived` não vaza target.hamiltonian,
+  source contém filtro por commit_hash + timestamp, < 4 rows = None,
+  insert path normal preservado, predictor_accuracy real (não fantasma)
+- TF21–TF25 (audit-5): path-jail rejeita fora root, aceita dentro,
+  closed-by-default sem env var, cve_feed + rules_feed honram jail
+- TF26–TF30 (audit-6): nested quantifiers `(a+)+`, `(a*)+`, `(.*)*`
+  rejeitados; padrão >1024 chars rejeitado; padrão seguro aceito
+
+Regressão completa: **1931 passed, 5 skipped, 0 falhas** em 15.1s
+(+30 vs Sprint U).
+
+### Findings MEDIUM/LOW não corrigidos nesta release
+
+A auditoria também sinalizou 26 findings MEDIUM/LOW que não bloqueiam
+adoção. Ficam para o backlog do horizonte 180 dias — serão tratados
+em Sprint V (V de "validation hardening") ou conforme priorização.
+
+### Pronto para horizonte 180 dias
+
+Esta release **fecha o gate de qualidade** pedido pelo APEX SCIENTIFIC
+antes do horizonte 180 dias. Sprint V (Marketplace), W (Postgres),
+X (CFG visual), Y (SaaS), Z (Paper) podem prosseguir com a base
+endurecida.
+
+---
+
+## [3.5.0] — 2026-06-23 — Sprint U: Cache Layer + ASGI Wrapper + Bench (MINOR) ⭐ HORIZONTE 90 DIAS COMPLETO
+
+### Adicionado
+
+**Fecha o horizonte 90 dias do APEX Scientific.** Performance overhaul
+cirúrgico: todo deliverable é opt-in, fallback no comportamento atual,
+zero quebra dos 1873 testes anteriores.
+
+**Decisão APEX SCIENTIFIC (FMEA):** Postgres adapter foi tirado deste
+sprint e remetido para Sprint W (separação de blast radius). Pareto:
+80% do ganho de performance em workloads de leitura vem do cache, não
+do backend de storage.
+
+#### 1. Cache layer — `sensor_storage/cache.py`
+
+**Dois backends, escolha automática:**
+- **LRU in-memory** (default) — pure stdlib, zero dependências.
+- **Redis** (opt-in via `UCO_REDIS_URL=redis://host:port/db`) — para
+  deploys multi-worker. Falha de conexão → fallback transparente
+  para LRU.
+
+**API pública:**
+- `cache_get(key) -> Optional[Any]`
+- `cache_set(key, value, *, ttl=60) -> None`
+- `cache_invalidate(prefix="") -> int`
+- `cache_status() -> Dict` (backend, hits, misses, sets, evictions, hit_rate)
+- `@cached(ttl=N, key_fn=...)` decorator
+
+**Contratos defensivos:**
+- Cache **NUNCA quebra request** — backend errors swallowed silently.
+- `cache_get` → `None` em falha; `cache_set` → no-op em falha.
+- Counters thread-safe expostos em `cache_status()`.
+
+#### 2. Cache aplicado a 3 handlers heavy
+
+| Endpoint | TTL | Cache key |
+|---|---|---|
+| `/repo/health-score` | 30s | `repo_health_score:n={N}:w={W}` |
+| `/spectral/fingerprint` | 60s | `spectral_fp:{module}:w={W}` |
+| `/granger/matrix` | 120s | `granger_matrix:{mod}:lag={L}:w={W}:a={A}` |
+
+TTLs calibrados pelo custo de recomputação: Granger 9×9 (81 F-tests)
+ganha TTL maior. **Cache key inclui params** — mudança de `window` ou
+`alpha` gera nova entrada (não corrompe).
+
+#### 3. ASGI wrapper — `asgi/app.py`
+
+Starlette **opt-in** que delega cada rota para o handler Python existente.
+Zero duplicação de handler. Comportamento idêntico ao `http.server`
+síncrono — único ganho do ASGI é o modelo de I/O e multi-worker via
+`uvicorn`.
+
+**Curadoria:** apenas os 7 endpoints mais críticos (heavy GETs + key
+POSTs) na route table. Long tail continua via `http.server`.
+
+```bash
+pip install starlette uvicorn
+uvicorn asgi.app:app --host 0.0.0.0 --port 8765 --workers 4
+```
+
+**Trade-off documentado:** handlers ainda síncronos — bloqueiam worker
+em chamadas longas (HMC, /repo/health-history). Worker pool fica
+para Sprint W.
+
+#### 4. Benchmark harness — `bench/benchmark.py`
+
+Pure-stdlib (urllib). Dois modos:
+- `--mode serial` — baseline de latência single-connection
+- `--mode parallel --workers N` — throughput aproximado (limitado por
+  GIL no `http.server`; ASGI/uvicorn aparece aqui)
+
+Métricas: throughput (req/s), p50/p95/p99 (ms), mean, error count.
+
+```bash
+python -m bench.benchmark --url http://localhost:8765/health \
+                          --n 100 --mode parallel --workers 16
+```
+
+#### 5. Novos endpoints de observabilidade
+
+| Método | Rota | Auth |
+|---|---|---|
+| GET | `/cache/status` | user — backend + counters |
+| POST | `/cache/invalidate` | **admin** — body `{prefix}` |
+
+### Testes — 30 novos (TE01–TE30)
+
+- TE01–TE10 — cache primitives: get/set, TTL expiry, invalidate por
+  prefix, status, decorator (hit/miss correto), LRU eviction,
+  unserializable safe-swallow
+- TE11–TE20 — integração com 3 handlers heavy: hit no 2º call, key
+  inclui params, payload idêntico cached vs fresh, backend quebrado
+  não trava handler, /cache/invalidate e /cache/status funcionam
+- TE21–TE30 — benchmark: _percentile (incl. P99 com nearest-rank),
+  summarise shape + empty, _one_request gracefully handles invalid
+  URL, main() retorna nonzero em all-errors, ASGI app importável
+  (skipado se Starlette ausente), route table sane
+
+Regressão completa: **1901 passed, 5 skipped, 0 falhas** em 21.9s.
+
+### Versão MINOR (v3.4.x → v3.5.0)
+
+Marca **fechamento do horizonte 90 dias** APEX Scientific:
+
+| Sprint | Versão | Movimento |
+|---|---|---|
+| R | v3.4.2 | RCA Automático |
+| S | v3.4.3 | Granger F-test |
+| Q ⭐ | v3.4.4 | **HMC Closed-Loop Repair (#1)** |
+| T | v3.4.5 | VS Code Extension v1.1.0 |
+| **U** | **v3.5.0** | **Cache + ASGI + Bench** |
+
+### Não-objetivos (Sprint W)
+
+- **Postgres adapter** — FMEA tirou deste sprint; 80% do ganho de leitura
+  vem do cache, não do storage backend. Postgres fica para Sprint W.
+- **Async handlers** — refactor de 60+ funções `def` para `async def`
+  exige reescrita maior, fica para sprint dedicado.
+- **Cache invalidation via store hook** — TTL curto resolve no curto
+  prazo; hook automático em `_store.insert()` requer refactor do
+  decorator pattern, fica para Sprint W também.
+
+---
+
+## [3.4.5] — 2026-06-22 — Sprint T: VS Code Extension v1.1.0 (horizon-90d wiring)
+
+### Adicionado
+
+Estende a extensão VS Code pré-existente (`vscode-extension/`, v1.0.0 →
+**v1.1.0**) para consumir os 5 endpoints do horizonte 90 dias.
+
+#### 5 novos métodos em `UCOClient` (`src/api.ts`)
+
+- `getRCA(moduleId, repoDir?, window?)` → Sprint R
+- `getChangepoints(moduleId, repoDir?, window?)` → Sprint L
+- `getSimilar(moduleId, k?, metric?)` → Sprint O
+- `getGrangerSignificant(moduleId, maxLag?, alpha?)` → Sprint S
+- `repairHMC({code, module_id?, n_steps?, burn_in?, preserve_aps?,
+  deterministic?, timeout_s?})` → Sprint Q (timeout 90s para HMC)
+- (`getLSPDiagnostics` já existia; mantido na auditoria)
+
+#### 4 novos comandos VS Code (`src/extension.ts`)
+
+| Comando | Quando | Ação |
+|---|---|---|
+| `UCO-Sensor: Show Root-Cause Analysis (RCA)` | Python/JS/TS/Java/Go | OutputChannel com commit, autor, canais, primary_root, summary |
+| `UCO-Sensor: Show Change-Points (PELT)` | idem | QuickPick com lista de change-points |
+| `UCO-Sensor: Show Spectrally-Similar Modules` | idem | QuickPick com top-10 vizinhos por distância |
+| `UCO-Sensor: Repair Current File (HMC Bayesian)` | **Python only** | Diff preview + Apply / Cancel; default `deterministic=true` + `preserve_aps=true` |
+
+`currentModuleId()` helper escolhe entre workspace-relative path e
+fileName, consistente com a configuração `ucoSensor.moduleIdStrategy`.
+
+#### Decisões de design
+
+- **HMC repair com `deterministic: true`** por default — CI gating
+  precisa reproducibilidade.
+- **HMC repair com `preserve_aps: true`** por default — alinhado com
+  Sprint G correctness (rejeita patches que pioram APS).
+- **Diff preview** antes de aplicar — usuário decide via 3 opções
+  (Apply / Show diff / Cancel).
+- **HMC Python-only em v1.1.0** — UCO core suporta multi-linguagem
+  via Pygments mas HMC otimal ainda só foi validado em Python.
+
+### Testes — 30 novos (TY01–TY30)
+
+Como não há `tsc` no sandbox, a validação combina:
+- **TY01–TY10** — file-content asserts: 5 métodos novos + `POST /repair/hmc`
+  + `getLSPDiagnostics` no `api.ts`
+- **TY11–TY20** — `extension.ts`: 4 comandos registrados + `currentModuleId()`
+  helper + defaults `deterministic:true` / `preserve_aps:true` no
+  HMC handler + `package.json` lista comandos + HMC Python-only +
+  version bumped to 1.1.0
+- **TY21–TY30** — server-side contract: payloads de `/rca`, `/changepoints`,
+  `/similar`, `/granger/significant`, `/repair/hmc` contêm as chaves
+  que a extensão consome (summary_text, primary_root, hits, distance,
+  pairs, patched_source, etc.)
+
+Regressão completa: **1873 passed, 3 skipped, 0 falhas** em 21.3s
+(+30 vs Sprint Q).
+
+### O que isso destrava
+
+- **Adoção via developer experience** — Sprint Q (HMC repair) deixa de
+  ser endpoint REST e vira **comando do menu** no editor que o
+  desenvolvedor já usa.
+- **RCA inline** sem trocar de contexto: dev faz commit, vê "regime
+  shifted, root cause: CC → bugs lag +3" no próprio VS Code.
+- **Bridge para mercado** — extension marketplace é canal de adoção
+  viral sem precisar de SaaS-side ou GitHub App.
+
+---
+
 ## [3.4.4] — 2026-06-22 — Sprint Q: HMC Closed-Loop Repair ⭐
 
 ### Adicionado

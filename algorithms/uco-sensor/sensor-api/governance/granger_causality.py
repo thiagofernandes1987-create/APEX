@@ -56,18 +56,10 @@ from typing import Any, Dict, List, Optional, Tuple
 _log = logging.getLogger("uco-sensor.granger")
 
 
-_CHANNELS = ("H", "CC", "ILR", "DSM_d", "DSM_c", "DI", "dead", "dups", "bugs")
-_ATTR_BY_SHORT = {
-    "H":     "hamiltonian",
-    "CC":    "cyclomatic_complexity",
-    "ILR":   "infinite_loop_risk",
-    "DSM_d": "dsm_density",
-    "DSM_c": "dsm_cyclic_ratio",
-    "DI":    "dependency_instability",
-    "dead":  "syntactic_dead_code",
-    "dups":  "duplicate_block_count",
-    "bugs":  "halstead_bugs",
-}
+# Sprint W fix (audit-3, HIGH): channel maps moved to governance.channels SSOT.
+# Local aliases preserved so existing imports (`from .granger_causality import _CHANNELS`)
+# in tests keep working.
+from governance.channels import CHANNELS as _CHANNELS, ATTR_BY_SHORT as _ATTR_BY_SHORT
 
 
 # ─── Result dataclass ────────────────────────────────────────────────────────
@@ -197,24 +189,34 @@ def granger_pair(
         _, rss_r = _ols_solve(X_R, Y)
         _, rss_u = _ols_solve(X_U, Y)
 
-        if rss_u < 1e-12 or rss_r <= rss_u:
+        if rss_r <= rss_u:
             continue
 
         df1 = k
         df2 = n_eff - 2 * k - 1
         if df2 <= 0:
             continue
-        F = ((rss_r - rss_u) / df1) / (rss_u / df2)
-        p = _f_survival(F, df1, df2)
+
+        if rss_u < 1e-12:
+            # Noiseless causation: unrestricted model fits perfectly while
+            # restricted model has residual error → perfect lag-k dependence.
+            F = float("inf")
+            p = 0.0
+        else:
+            F = ((rss_r - rss_u) / df1) / (rss_u / df2)
+            p = _f_survival(F, df1, df2)
 
         if p < best_p:
             best_p   = p
             best_f   = F
             best_lag = k
 
+    # Clamp F-stat to a JSON-safe value when noiseless causation occurred.
+    _F_SAT = 1.0e12
+    safe_f = best_f if best_f != float("inf") else _F_SAT
     return GrangerResult(
         from_channel="", to_channel="",
-        best_lag=best_lag, f_statistic=round(best_f, 4),
+        best_lag=best_lag, f_statistic=round(safe_f, 4),
         p_value=round(best_p, 6),
         granger_causes=(best_p < alpha),
         n_samples=len(y), alpha=alpha,
@@ -223,9 +225,8 @@ def granger_pair(
 
 # ─── Store integration ───────────────────────────────────────────────────────
 
-def _series(history: List[Any], short: str) -> List[float]:
-    attr = _ATTR_BY_SHORT[short]
-    return [float(getattr(mv, attr, 0.0) or 0.0) for mv in history]
+# Sprint W fix (audit-3): delegate to SSOT
+from governance.channels import series as _series
 
 
 def granger_matrix(
