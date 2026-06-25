@@ -5,9 +5,50 @@
 
 ---
 
+## ⚠️ Standing instructions (ler ANTES de qualquer trabalho)
+
+Instruções permanentes registradas pelo usuário — **sempre obedecer**, nesta
+ordem, em toda sessão futura:
+
+1. **APEX SCIENTIFIC pleno por default** (`/loop` de sessões anteriores) —
+   DSM + Ishikawa + Pareto 80/20 + FMEA antes de toda decisão não-trivial;
+   uso de **workflows multi-agente** (design panel + multi-dim review +
+   adversarial verify) onde a complexidade justifica.
+2. **Sempre re-ler este inventário ANTES de iniciar trabalho em nova sessão.**
+   Procurar última task in-progress + última versão entregue + checklists
+   abertos. Nunca pular fases.
+3. **Todo horizonte/sprint começa com WBS + checklist explícito** (seção
+   "Sprint NN — WBS" abaixo). Atualizar a cada step concluído.
+4. **Achados novos entram no checklist do sprint correspondente** (ou criam
+   sub-checklist) — nunca soltos. Se gerar > 30 items, criar checklist
+   macro com ponteiros para per-sprint.
+5. **Se teste falhar:** tentar continuar de onde parou. Se impossível,
+   reiniciar a suíte completa e atualizar o checklist com motivo + step.
+6. **Push direto para `main`** está bloqueado pela proxy policy 403 — sempre
+   gerar bundle incremental e entregar via SendUserFile.
+
+---
+
 ## Versão atual
 
 **v3.8.0** (Sprint Y — SaaS multi-tenant + billing, APEX SCIENTIFIC pleno via 2 workflows) ✅
+
+---
+
+## 📋 Macro checklist (horizonte 180d)
+
+Todo horizonte tem um checklist macro + per-sprint detalhado. Quando
+um sprint cresce > 30 items, ele vira sub-checklist linkado abaixo.
+
+| Horizonte / Sprint | WBS | Status | Versão |
+|---|---|---|---|
+| **Horizonte 30d (entregue)** | Sprints K-P (PELT, Propagation, SAST feed, DBSCAN signatures) | ✅ | v3.4.1 |
+| **Horizonte 90d (entregue)** | Sprints R, S, Q, T, U (RCA, Granger, HMC, VS Code, Cache/ASGI) | ✅ | v3.5.0 |
+| **Gate-1 hardening (entregue)** | Sprint W (audit-1..6) | ✅ | v3.5.1 |
+| **Gate-2 deep audit (entregue)** | Sprint W2 (G2-1..G2-8 + stress) — [checklist gate-2](#gate-2-checklist) | ✅ | v3.5.2 |
+| **Horizonte 180d (3/4 concluído)** | V (Marketplace) → X (CFG) → Y (SaaS multi-tenant) → **Z (Paper) pending** | 🟢 75% | v3.6.0 → v3.7.0 → v3.8.0 → → v3.9.0 |
+| **Sprint Z — Paper POPL/PLDI** | [Checklist Z](#sprint-z-wbs) | 🔵 ready to start | → v3.9.0 |
+| **v3.8.1 follow-up** | [Backlog Workflow #2](#v381-backlog) — 6 deferred itens | 🟡 backlog | → v3.8.1 |
 
 ## Equipe APEX (modo SCIENTIFIC)
 
@@ -177,6 +218,69 @@
 | Tables SQLite | 6 | **8** (+tenants, +usage_events) |
 | CRITICAL findings ativos | 0 | **0** (2 found + 2 fixed na mesma release) |
 | HIGH findings ativos | 0 | **0** (4 found + 4 fixed) |
+
+---
+
+<a id="gate-2-checklist"></a>
+## Gate-2 — checklist detalhado (v3.5.2, executado)
+
+WBS executado:
+- [x] Workflow APEX gate-2 (5 dimensões em paralelo)
+- [x] Coletar findings + dedupe + adversarial verify
+- [x] Atualizar inventário com findings
+- [x] Implementar fixes G2-1..G2-8 (3 HIGH `hmc_repair`, 2 HIGH `signals`/`granger`, 2 MED `conftest`/`test_marco_m48`, 1 HIGH `validation`)
+- [x] Testes TG01-TG21 (gate-2 pins)
+- [x] Testes TS01-TS30 (stress + parameter sweep)
+- [x] Regressão zero falhas
+- [x] CHANGELOG + commit `e3beab13`
+
+---
+
+<a id="sprint-z-wbs"></a>
+## Sprint Z (v3.9.0) — WBS pendente
+
+Foco: **Paper POPL/PLDI submission** + v3.8.1 backlog fixes (oportunidade de
+empacotamento conjunto).
+
+WBS proposto:
+- [ ] APEX SCIENTIFIC scoping inline (DSM/Ishikawa/Pareto/FMEA do paper)
+- [ ] Workflow #1 (design panel): 3 estruturas alternativas do paper (theorem-first / experiments-first / system-paper) → painel de juízes seleciona melhor
+- [ ] Implementação:
+  - [ ] LaTeX skeleton (sections, theorem environments, bibliography skeleton)
+  - [ ] Formalização do UCO: 5 invariantes núcleo (APS preservation, severity monotone, HMC convergence bound, propagation tensor symmetry, period reset atomicity)
+  - [ ] Experimentos reprodutíveis: bench harness Sprint U + corpus de 5 OSS repos (Flask, Django, requests, +2) → tabelas
+  - [ ] Related work: SonarQube, CodeQL, Infer, Semgrep, PMD
+  - [ ] Threats to validity section
+- [ ] Workflow #2 (multi-dim review): correctness theorem proofs + experimental validity + writing quality + 2-vote adversarial verify
+- [ ] Apply must-fix findings
+- [ ] v3.8.1 backlog (oportunidade): incluir os 6 deferred do Workflow #2 Sprint Y na release
+- [ ] Tests TW01-TW30 (paper reproducibility scripts)
+- [ ] Bump v3.8.0 → v3.9.0 + commit + bundle
+
+---
+
+<a id="v381-backlog"></a>
+## v3.8.1 backlog — achados Workflow #2 Sprint Y deferred
+
+Findings do Workflow #2 que não bloquearam release Sprint Y mas devem
+entrar em v3.8.1 (idealmente junto com Sprint Z):
+
+- [ ] **Expand billing wiring** para 16 handlers billable restantes (atualmente
+  só `/analyze`, `/repair/hmc`, `/scan-incremental` têm `_billed_dispatch`).
+  Faltam: `/repair`, `/apex/auto-remediate`, `/sast`, `/gate`, `/scan-sca`,
+  `/scan-iac`, `/scan-flow`, `/scan-performance`, `/scan-architecture`,
+  `/scan-test-quality`, `/scan-thread-safety`, `/signatures/discover`,
+  `/feeds/cve/load`, `/feeds/sast/load`, `/marketplace/publish`, `/scan-repo`.
+- [ ] **N+1 em `list_usage_periods`** — substituir loop por uma SQL
+  agregação única (`SELECT period_key, event_kind, SUM(units) ... GROUP BY`).
+- [ ] **Hot-row contention `tenants.units_used`** — avaliar sharded counters
+  ou ler-side aggregation; benchmark antes/depois.
+- [ ] **Index coverage gaps** em `usage_events`: `idx_usage_tenant_occurred`
+  para ORDER BY occurred_at + coverage para sum-by-kind.
+- [ ] **`prune_old_events` sem VACUUM** — adicionar VACUUM opcional via
+  parâmetro + agendar em manutenção noturna.
+- [ ] **Soft-warn integer truncation** — usar `unit_budget * soft_pct / 100.0`
+  com float para evitar off-by-near-1% em budgets grandes.
 
 ---
 
