@@ -555,6 +555,16 @@ def handle_docs() -> Tuple[int, Dict]:
             {"method": "POST",   "path": "/marketplace/import",       "auth": "admin", "desc": "Verify hash + persist a foreign signature (body: {signature_id, payload, expected_hash, publisher_id?, notes?}) [Sprint V]"},
             {"method": "GET",    "path": "/cfg/{module_id}",           "auth": True,   "desc": "Per-function CFG as JSON (?source=…&max_nodes=200) [Sprint X]"},
             {"method": "GET",    "path": "/cfg/hotspots/{module_id}",  "auth": True,   "desc": "CFG annotated with SAST severity + APS contribution per node [Sprint X]"},
+            {"method": "POST",   "path": "/tenants",                   "auth": "admin", "desc": "Create tenant (body: {tenant_id, display_name?, plan?, unit_budget?, contact_email?, status?}) [Sprint Y]"},
+            {"method": "GET",    "path": "/tenants",                   "auth": "admin", "desc": "List tenants (?plan=&status=&limit=&offset=) [Sprint Y]"},
+            {"method": "GET",    "path": "/tenants/{tenant_id}",       "auth": "admin", "desc": "Get tenant by id [Sprint Y]"},
+            {"method": "POST",   "path": "/tenants/{tenant_id}/suspend","auth":"admin", "desc": "Suspend tenant (body: {reason?}) [Sprint Y]"},
+            {"method": "POST",   "path": "/tenants/{tenant_id}/reactivate","auth":"admin","desc": "Reactivate suspended tenant [Sprint Y]"},
+            {"method": "GET",    "path": "/tenants/{tenant_id}/usage", "auth": "admin", "desc": "Usage summary for current or ?period=YYYY-MM [Sprint Y]"},
+            {"method": "GET",    "path": "/tenants/{tenant_id}/usage/history","auth":"admin","desc":"Trailing N period summaries (?limit=12) [Sprint Y]"},
+            {"method": "GET",    "path": "/billing/plans",             "auth": False,  "desc": "Public catalog of plans + unit_costs [Sprint Y]"},
+            {"method": "GET",    "path": "/billing/me",                "auth": True,   "desc": "Usage for tenant inferred from API key [Sprint Y]"},
+            {"method": "POST",   "path": "/billing/admin/prune",       "auth": "admin", "desc": "Prune usage_events older than retention_months [Sprint Y]"},
             {"method": "GET",    "path": "/similar",                  "auth": True,   "desc": "Top-K spectrally similar modules (?module=&k=&metric=&window=) [Sprint O]"},
             {"method": "GET",    "path": "/fingerprint/index",        "auth": True,   "desc": "All computable spectral fingerprints (?window=) [Sprint O]"},
             {"method": "GET",    "path": "/fingerprint/clusters",     "auth": True,   "desc": "Pairwise distance matrix between fingerprints (?metric=&window=) [Sprint O]"},
@@ -1652,6 +1662,131 @@ def handle_cfg_hotspots(module_id: str, source: str = "",
         return 500, {"error": f"cfg hotspots failed: {exc}"}
     overlay["module_id"] = module_id
     return 200, overlay
+
+
+# ─── Sprint Y — Multi-tenant + billing handlers ──────────────────────────────
+
+def handle_tenants_create(data: Dict) -> Tuple[int, Dict]:
+    """POST /tenants (admin) — create a new tenant."""
+    from governance.tenancy import create_tenant
+    tid = (data.get("tenant_id") or "").strip()
+    if not tid:
+        return 400, {"error": "tenant_id is required"}
+    try:
+        out = create_tenant(
+            _store, tid,
+            display_name=data.get("display_name", "") or "",
+            plan=data.get("plan", "FREE"),
+            unit_budget=data.get("unit_budget"),
+            contact_email=data.get("contact_email", "") or "",
+            status=data.get("status", "active"),
+            soft_limit_pct=int(data.get("soft_limit_pct", 80)),
+            notes=data.get("notes", "") or "",
+        )
+    except ValueError as exc:
+        return 400, {"error": str(exc)}
+    except Exception as exc:
+        return 500, {"error": f"create_tenant failed: {exc}"}
+    return 201, out
+
+
+def handle_tenants_list(plan: str = "", status: str = "",
+                        limit: int = 100, offset: int = 0) -> Tuple[int, Dict]:
+    """GET /tenants (admin)."""
+    from governance.tenancy import list_tenants
+    try:
+        items = list_tenants(
+            _store,
+            plan=(plan or None), status=(status or None),
+            limit=max(1, int(limit)), offset=max(0, int(offset)),
+        )
+    except Exception as exc:
+        return 500, {"error": f"list_tenants failed: {exc}"}
+    return 200, {"tenants": items, "total": len(items)}
+
+
+def handle_tenants_get(tenant_id: str) -> Tuple[int, Dict]:
+    """GET /tenants/{id} (admin)."""
+    from governance.tenancy import get_tenant
+    if not tenant_id:
+        return 400, {"error": "tenant_id is required"}
+    t = get_tenant(_store, tenant_id)
+    if t is None:
+        return 404, {"error": f"tenant {tenant_id!r} not found"}
+    return 200, t
+
+
+def handle_tenants_suspend(tenant_id: str, data: Dict) -> Tuple[int, Dict]:
+    """POST /tenants/{id}/suspend (admin)."""
+    from governance.tenancy import suspend_tenant
+    if not tenant_id:
+        return 400, {"error": "tenant_id is required"}
+    try:
+        out = suspend_tenant(_store, tenant_id, reason=(data.get("reason") or ""))
+    except ValueError as exc:
+        return 400, {"error": str(exc)}
+    if out is None:
+        return 404, {"error": f"tenant {tenant_id!r} not found"}
+    return 200, out
+
+
+def handle_tenants_reactivate(tenant_id: str) -> Tuple[int, Dict]:
+    """POST /tenants/{id}/reactivate (admin)."""
+    from governance.tenancy import reactivate_tenant
+    if not tenant_id:
+        return 400, {"error": "tenant_id is required"}
+    out = reactivate_tenant(_store, tenant_id)
+    if out is None:
+        return 404, {"error": f"tenant {tenant_id!r} not found"}
+    return 200, out
+
+
+def handle_tenants_usage(tenant_id: str, period: str = "") -> Tuple[int, Dict]:
+    """GET /tenants/{id}/usage (admin)."""
+    from governance.billing import usage_summary
+    if not tenant_id:
+        return 400, {"error": "tenant_id is required"}
+    out = usage_summary(_store, tenant_id, period_key=(period or None))
+    if "error" in out:
+        return 404, out
+    return 200, out
+
+
+def handle_tenants_usage_history(tenant_id: str, limit: int = 12) -> Tuple[int, Dict]:
+    """GET /tenants/{id}/usage/history (admin)."""
+    from governance.billing import list_usage_periods
+    if not tenant_id:
+        return 400, {"error": "tenant_id is required"}
+    items = list_usage_periods(_store, tenant_id, limit=max(1, int(limit)))
+    return 200, {"tenant_id": tenant_id, "periods": items}
+
+
+def handle_billing_plans() -> Tuple[int, Dict]:
+    """GET /billing/plans (public)."""
+    from governance.billing import UNIT_COSTS
+    from governance.tenancy import PLAN_BUDGETS
+    plans = [{"name": name, "unit_budget": budget,
+              "unlimited": budget == 0}
+             for name, budget in PLAN_BUDGETS.items()]
+    return 200, {"plans": plans, "unit_costs": dict(UNIT_COSTS)}
+
+
+def handle_billing_me(api_key_info: Optional[Dict]) -> Tuple[int, Dict]:
+    """GET /billing/me — usage for the tenant inferred from the API key."""
+    from governance.tenancy import resolve_tenant_from_api_key
+    from governance.billing import usage_summary
+    tid, _ = resolve_tenant_from_api_key(_store, api_key_info)
+    return 200, usage_summary(_store, tid)
+
+
+def handle_billing_admin_prune(data: Dict) -> Tuple[int, Dict]:
+    """POST /billing/admin/prune (admin)."""
+    from governance.billing import prune_old_events
+    months = int(data.get("retention_months", 13))
+    if months < 1:
+        return 400, {"error": "retention_months must be >= 1"}
+    pruned = prune_old_events(_store, retention_months=months)
+    return 200, {"pruned_rows": pruned, "retention_months": months}
 
 
 def _best_effort_module_source(module_id: str) -> str:
@@ -4548,6 +4683,42 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 src       = params.get("source", [""])[0]
                 max_n     = int(params.get("max_nodes", ["200"])[0])
                 code, data = handle_cfg(module_id, source=src, max_nodes=max_n)
+            # ─── Sprint Y — Tenants & billing (GET) ─────────────────────────
+            elif path == "/tenants":
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                plan_v   = params.get("plan", [""])[0]
+                status_v = params.get("status", [""])[0]
+                limit_n  = int(params.get("limit", ["100"])[0])
+                offset_n = int(params.get("offset", ["0"])[0])
+                code, data = handle_tenants_list(plan=plan_v, status=status_v,
+                                                  limit=limit_n, offset=offset_n)
+            elif path.startswith("/tenants/") and path.endswith("/usage/history"):
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                tid = path[len("/tenants/"):-len("/usage/history")]
+                limit_n = int(params.get("limit", ["12"])[0])
+                code, data = handle_tenants_usage_history(tid, limit=limit_n)
+            elif path.startswith("/tenants/") and path.endswith("/usage"):
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                tid = path[len("/tenants/"):-len("/usage")]
+                period_v = params.get("period", [""])[0]
+                code, data = handle_tenants_usage(tid, period=period_v)
+            elif path.startswith("/tenants/"):
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                tid = path[len("/tenants/"):]
+                code, data = handle_tenants_get(tid)
+            elif path == "/billing/plans":
+                code, data = handle_billing_plans()
+            elif path == "/billing/me":
+                _, key_info = _authenticate(raw_key, require_admin=False)
+                code, data = handle_billing_me(key_info)
             elif path == "/fingerprint/index":
                 window_n = int(params.get("window", ["100"])[0])
                 code, data = handle_fingerprint_index(window=window_n)
@@ -4732,6 +4903,29 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 if not ok_admin:
                     return self._send_json(403, {"error": "admin authentication required"})
                 code, data = handle_marketplace_import(body)
+            # ─── Sprint Y — Tenants & billing (POST, admin) ─────────────────
+            elif path == "/tenants":
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                code, data = handle_tenants_create(body)
+            elif path.startswith("/tenants/") and path.endswith("/suspend"):
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                tid = path[len("/tenants/"):-len("/suspend")]
+                code, data = handle_tenants_suspend(tid, body)
+            elif path.startswith("/tenants/") and path.endswith("/reactivate"):
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                tid = path[len("/tenants/"):-len("/reactivate")]
+                code, data = handle_tenants_reactivate(tid)
+            elif path == "/billing/admin/prune":
+                ok_admin, _ = _authenticate(raw_key, require_admin=True)
+                if not ok_admin:
+                    return self._send_json(403, {"error": "admin authentication required"})
+                code, data = handle_billing_admin_prune(body)
             elif path == "/feeds/sast/unload":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:

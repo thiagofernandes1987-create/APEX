@@ -246,6 +246,62 @@ CREATE INDEX IF NOT EXISTS idx_mkt_signature_id
 ON marketplace_signatures(signature_id);
 """
 
+# Sprint Y — SaaS multi-tenant + billing.  Two new tables:
+#   tenants       — per-customer plan + budget + denormalized counter
+#   usage_events  — append-only billable event log (units frozen at write)
+# Plus an ALTER on api_keys to stamp every key with a tenant (DEFAULT 'default'
+# so legacy single-tenant deployments and the existing 2052 tests keep passing).
+_DDL_TENANTS = """
+CREATE TABLE IF NOT EXISTS tenants (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    tenant_id       TEXT    NOT NULL UNIQUE,
+    display_name    TEXT    NOT NULL DEFAULT '',
+    plan            TEXT    NOT NULL DEFAULT 'FREE'
+                    CHECK (plan IN ('FREE','PRO','ENT')),
+    unit_budget     INTEGER NOT NULL DEFAULT 100,
+    units_used      INTEGER NOT NULL DEFAULT 0,
+    period_anchor   REAL    NOT NULL,
+    soft_limit_pct  INTEGER NOT NULL DEFAULT 80,
+    status          TEXT    NOT NULL DEFAULT 'active'
+                    CHECK (status IN ('active','suspended','trial','cancelled')),
+    created_at      REAL    NOT NULL,
+    updated_at      REAL    NOT NULL,
+    contact_email   TEXT    NOT NULL DEFAULT '',
+    notes           TEXT    NOT NULL DEFAULT ''
+);
+"""
+
+_IDX_TENANTS_PLAN_STATUS = """
+CREATE INDEX IF NOT EXISTS idx_tenants_plan_status
+ON tenants(plan, status);
+"""
+
+_DDL_USAGE_EVENTS = """
+CREATE TABLE IF NOT EXISTS usage_events (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    tenant_id       TEXT    NOT NULL DEFAULT 'default',
+    key_prefix      TEXT    NOT NULL DEFAULT '',
+    event_kind      TEXT    NOT NULL,
+    units           INTEGER NOT NULL,
+    occurred_at     REAL    NOT NULL,
+    period_key      TEXT    NOT NULL,
+    endpoint        TEXT    NOT NULL DEFAULT '',
+    request_id      TEXT    NOT NULL DEFAULT '',
+    status_code     INTEGER NOT NULL DEFAULT 200,
+    meta_json       TEXT    NOT NULL DEFAULT '{}'
+);
+"""
+
+_IDX_USAGE_TENANT_PERIOD = """
+CREATE INDEX IF NOT EXISTS idx_usage_tenant_period
+ON usage_events(tenant_id, period_key);
+"""
+
+_IDX_USAGE_KIND_PERIOD = """
+CREATE INDEX IF NOT EXISTS idx_usage_kind_period
+ON usage_events(event_kind, period_key);
+"""
+
 
 # ─── BaselineStats ───────────────────────────────────────────────────────────
 
@@ -383,14 +439,227 @@ class SnapshotStore:
             cur.execute(_DDL_REMEDIATIONS)        # Sprint C
             cur.execute(_DDL_SIGNATURES)          # Sprint P
             cur.execute(_DDL_MARKETPLACE)         # Sprint V
+            cur.execute(_DDL_TENANTS)             # Sprint Y
+            cur.execute(_DDL_USAGE_EVENTS)        # Sprint Y
             cur.execute(_IDX_SNAPSHOTS)
             cur.execute(_IDX_ANOMALIES)
             cur.execute(_IDX_API_KEYS)
             cur.execute(_IDX_REMEDIATIONS)        # Sprint C
             cur.execute(_IDX_SIGNATURES)          # Sprint P
             cur.execute(_IDX_MARKETPLACE)         # Sprint V
+            cur.execute(_IDX_TENANTS_PLAN_STATUS) # Sprint Y
+            cur.execute(_IDX_USAGE_TENANT_PERIOD) # Sprint Y
+            cur.execute(_IDX_USAGE_KIND_PERIOD)   # Sprint Y
+            self._migrate_api_keys_tenant_id(cur) # Sprint Y additive
+            self._bootstrap_default_tenant(cur)   # Sprint Y idempotent
             # M7.0: add extended-vector columns to pre-existing databases
             self._migrate_m70(cur)
+
+    def _migrate_api_keys_tenant_id(self, cur: sqlite3.Cursor) -> None:
+        """Sprint Y additive — stamp existing api_keys with default tenant."""
+        try:
+            cur.execute(
+                "ALTER TABLE api_keys ADD COLUMN tenant_id TEXT NOT NULL DEFAULT 'default'"
+            )
+        except sqlite3.OperationalError:
+            pass  # column already present
+        try:
+            cur.execute(
+                "CREATE INDEX IF NOT EXISTS idx_api_keys_tenant ON api_keys(tenant_id)"
+            )
+        except sqlite3.OperationalError:
+            pass
+
+    def _bootstrap_default_tenant(self, cur: sqlite3.Cursor) -> None:
+        """Sprint Y — idempotent INSERT of the bypass 'default' tenant."""
+        now = time.time()
+        cur.execute(
+            "INSERT OR IGNORE INTO tenants "
+            "(tenant_id, display_name, plan, unit_budget, units_used, "
+            " period_anchor, soft_limit_pct, status, created_at, updated_at, "
+            " contact_email, notes) "
+            "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            ("default", "Default Tenant (legacy)", "ENT", 0, 0,
+             now, 100, "active", now, now, "", "bootstrap"),
+        )
+
+    # ─── Sprint Y — tenants & usage_events thin CRUD ────────────────────────
+
+    def insert_tenant(
+        self,
+        tenant_id: str,
+        *,
+        display_name: str = "",
+        plan: str = "FREE",
+        unit_budget: int = 100,
+        soft_limit_pct: int = 80,
+        status: str = "active",
+        contact_email: str = "",
+        notes: str = "",
+    ) -> Dict[str, Any]:
+        now = time.time()
+        with self._lock:
+            self._get_conn().execute(
+                "INSERT INTO tenants "
+                "(tenant_id, display_name, plan, unit_budget, units_used, "
+                " period_anchor, soft_limit_pct, status, created_at, updated_at, "
+                " contact_email, notes) "
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+                (tenant_id, display_name, plan, int(unit_budget), 0,
+                 now, int(soft_limit_pct), status, now, now,
+                 contact_email, notes),
+            )
+        return self.get_tenant(tenant_id) or {}
+
+    def get_tenant(self, tenant_id: str) -> Optional[Dict[str, Any]]:
+        with self._lock:
+            row = self._get_conn().execute(
+                "SELECT id, tenant_id, display_name, plan, unit_budget, "
+                "units_used, period_anchor, soft_limit_pct, status, "
+                "created_at, updated_at, contact_email, notes "
+                "FROM tenants WHERE tenant_id = ?",
+                (tenant_id,),
+            ).fetchone()
+        return _tenant_row_to_dict(row) if row else None
+
+    def list_tenants(
+        self,
+        *,
+        plan: Optional[str] = None,
+        status: Optional[str] = None,
+        limit: int = 100,
+        offset: int = 0,
+    ) -> List[Dict[str, Any]]:
+        sql = (
+            "SELECT id, tenant_id, display_name, plan, unit_budget, "
+            "units_used, period_anchor, soft_limit_pct, status, "
+            "created_at, updated_at, contact_email, notes FROM tenants "
+        )
+        clauses: List[str] = []
+        params: List[Any] = []
+        if plan:
+            clauses.append("plan = ?")
+            params.append(plan)
+        if status:
+            clauses.append("status = ?")
+            params.append(status)
+        if clauses:
+            sql += "WHERE " + " AND ".join(clauses) + " "
+        sql += "ORDER BY created_at DESC LIMIT ? OFFSET ?"
+        params.extend([int(limit), int(offset)])
+        with self._lock:
+            rows = self._get_conn().execute(sql, tuple(params)).fetchall()
+        return [_tenant_row_to_dict(r) for r in rows]
+
+    def update_tenant_fields(self, tenant_id: str, **fields: Any) -> Optional[Dict[str, Any]]:
+        allowed = {"display_name", "plan", "unit_budget", "status",
+                   "soft_limit_pct", "contact_email", "notes",
+                   "units_used", "period_anchor"}
+        sets = []
+        params: List[Any] = []
+        for k, v in fields.items():
+            if k in allowed and v is not None:
+                sets.append(f"{k} = ?")
+                params.append(v)
+        if not sets:
+            return self.get_tenant(tenant_id)
+        sets.append("updated_at = ?")
+        params.append(time.time())
+        params.append(tenant_id)
+        with self._lock:
+            self._get_conn().execute(
+                f"UPDATE tenants SET {', '.join(sets)} WHERE tenant_id = ?",
+                tuple(params),
+            )
+        return self.get_tenant(tenant_id)
+
+    def insert_usage_event(
+        self,
+        *,
+        tenant_id: str,
+        event_kind: str,
+        units: int,
+        occurred_at: float,
+        period_key: str,
+        key_prefix: str = "",
+        endpoint: str = "",
+        request_id: str = "",
+        status_code: int = 200,
+        meta_json: str = "{}",
+    ) -> int:
+        with self._lock:
+            cur = self._get_conn().execute(
+                "INSERT INTO usage_events "
+                "(tenant_id, key_prefix, event_kind, units, occurred_at, "
+                " period_key, endpoint, request_id, status_code, meta_json) "
+                "VALUES (?,?,?,?,?,?,?,?,?,?)",
+                (tenant_id, key_prefix, event_kind, int(units),
+                 float(occurred_at), period_key, endpoint, request_id,
+                 int(status_code), meta_json),
+            )
+        return int(cur.lastrowid or 0)
+
+    def sum_units_for_period(
+        self, tenant_id: str, period_key: str,
+    ) -> Tuple[int, Dict[str, int]]:
+        """Return (total_units, by_kind_dict) for one tenant + period."""
+        with self._lock:
+            rows = self._get_conn().execute(
+                "SELECT event_kind, COALESCE(SUM(units), 0) "
+                "FROM usage_events "
+                "WHERE tenant_id = ? AND period_key = ? AND status_code < 300 "
+                "GROUP BY event_kind",
+                (tenant_id, period_key),
+            ).fetchall()
+        by_kind: Dict[str, int] = {str(k): int(v or 0) for (k, v) in rows}
+        return sum(by_kind.values()), by_kind
+
+    def list_usage_events_for_tenant(
+        self,
+        tenant_id: str,
+        *,
+        period_key: Optional[str] = None,
+        event_kind: Optional[str] = None,
+        limit: int = 500,
+        offset: int = 0,
+    ) -> List[Dict[str, Any]]:
+        sql = (
+            "SELECT id, tenant_id, key_prefix, event_kind, units, occurred_at, "
+            "period_key, endpoint, request_id, status_code, meta_json "
+            "FROM usage_events WHERE tenant_id = ? "
+        )
+        params: List[Any] = [tenant_id]
+        if period_key:
+            sql += "AND period_key = ? "
+            params.append(period_key)
+        if event_kind:
+            sql += "AND event_kind = ? "
+            params.append(event_kind)
+        sql += "ORDER BY occurred_at DESC LIMIT ? OFFSET ?"
+        params.extend([int(limit), int(offset)])
+        with self._lock:
+            rows = self._get_conn().execute(sql, tuple(params)).fetchall()
+        return [_usage_event_row_to_dict(r) for r in rows]
+
+    def list_distinct_periods_for_tenant(
+        self, tenant_id: str, *, limit: int = 12,
+    ) -> List[str]:
+        with self._lock:
+            rows = self._get_conn().execute(
+                "SELECT DISTINCT period_key FROM usage_events "
+                "WHERE tenant_id = ? ORDER BY period_key DESC LIMIT ?",
+                (tenant_id, int(limit)),
+            ).fetchall()
+        return [str(r[0]) for r in rows]
+
+    def prune_usage_events_older_than(self, cutoff_period_key: str) -> int:
+        """Delete usage_events with period_key < cutoff. Returns rows deleted."""
+        with self._lock:
+            cur = self._get_conn().execute(
+                "DELETE FROM usage_events WHERE period_key < ?",
+                (cutoff_period_key,),
+            )
+        return int(cur.rowcount or 0)
 
     def _migrate_m70(self, cur: sqlite3.Cursor) -> None:
         """
@@ -1909,6 +2178,49 @@ class SnapshotStore:
 
 
 # ─── Sprint P — signature row helper (module-level) ───────────────────────────
+
+def _tenant_row_to_dict(row: tuple) -> Dict[str, Any]:
+    (id_, tenant_id, display_name, plan, unit_budget, units_used,
+     period_anchor, soft_limit_pct, status, created_at, updated_at,
+     contact_email, notes) = row
+    return {
+        "id":              int(id_),
+        "tenant_id":       str(tenant_id),
+        "display_name":    str(display_name or ""),
+        "plan":            str(plan),
+        "unit_budget":     int(unit_budget),
+        "units_used":      int(units_used),
+        "period_anchor":   float(period_anchor),
+        "soft_limit_pct":  int(soft_limit_pct),
+        "status":          str(status),
+        "created_at":      float(created_at),
+        "updated_at":      float(updated_at),
+        "contact_email":   str(contact_email or ""),
+        "notes":           str(notes or ""),
+    }
+
+
+def _usage_event_row_to_dict(row: tuple) -> Dict[str, Any]:
+    (id_, tenant_id, key_prefix, event_kind, units, occurred_at,
+     period_key, endpoint, request_id, status_code, meta_json) = row
+    try:
+        meta = json.loads(meta_json) if meta_json else {}
+    except Exception:
+        meta = {}
+    return {
+        "id":          int(id_),
+        "tenant_id":   str(tenant_id),
+        "key_prefix":  str(key_prefix or ""),
+        "event_kind":  str(event_kind),
+        "units":       int(units),
+        "occurred_at": float(occurred_at),
+        "period_key":  str(period_key),
+        "endpoint":    str(endpoint or ""),
+        "request_id":  str(request_id or ""),
+        "status_code": int(status_code),
+        "meta":        meta,
+    }
+
 
 def _marketplace_row_to_dict(row: tuple) -> Dict[str, Any]:
     (id_, signature_id, version, publisher_id, created_at,
