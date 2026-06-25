@@ -1,0 +1,160 @@
+% UCO Sensor — Paper Skeleton (Sprint Z, v3.9.0)
+% Target venue: POPL or PLDI
+% Last updated: Sprint Z release
+
+\documentclass[acmsmall, screen]{acmart}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta}
+
+\newtheorem{invariant}{Invariant}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
+
+\title{UCO Sensor: A Spectral, Multi-Tenant Code-Quality Platform with Formal Invariants and Hamiltonian Repair}
+
+\author{Anonymous (under double-blind review)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present \emph{UCO Sensor}, a code-quality analysis platform that
+formalizes five core invariants over a spectral representation of
+program metric trajectories, with a Hamiltonian Monte Carlo (HMC) repair
+loop, formal Granger F-test causality matrices, and a unit-budget
+multi-tenant billing layer.  Our contribution is the \emph{executable
+specification} of these invariants: each is a Python predicate whose
+violations are detected at runtime and pinned by a regression suite.
+We evaluate on a corpus of five OSS repositories
+(Flask, Django, requests, +2 TBD) and show that the system identifies
+prediction bias, propagation pathways, and remediation opportunities
+that single-snapshot SAST tools (SonarQube, CodeQL, Infer) miss.
+\end{abstract}
+
+\section{Introduction}
+
+\textbf{TODO} — motivate spectral code-quality analysis.
+
+\paragraph{Contributions.}
+\begin{itemize}
+\item A formal model of code health as a time-series in nine canonical
+      metric channels (\S\ref{sec:model}).
+\item Five \emph{executable invariants} (\S\ref{sec:invariants}) over
+      this model, paired with a runtime assertion hook
+      (\texttt{governance.invariants.assert\_invariant}).
+\item An HMC repair loop (\S\ref{sec:hmc}) that provably preserves the
+      APS (Architectural Pressure Score) under Invariant~I1.
+\item A multi-tenant unit-budget billing layer
+      (\S\ref{sec:tenancy}) with atomic check-and-charge that
+      eliminates TOCTOU double-spend.
+\item Reproducible experiments (\S\ref{sec:eval}) on five OSS repos;
+      script \texttt{paper/reproducibility.py} regenerates every
+      table and figure.
+\end{itemize}
+
+\section{Model}
+\label{sec:model}
+
+\textbf{TODO} — formalize the 9-channel metric vector + spectral lift
+via DBSCAN signatures (Sprint P) and Welch PSD (Sprint F).
+
+\section{Five Core Invariants}
+\label{sec:invariants}
+
+We isolate five invariants of the UCO Sensor system.  Each is
+implemented as a Python predicate in
+\texttt{governance/invariants.py}, and each is pinned by at least three
+regression tests in \texttt{tests/test\_marco\_m59.py} (TW01-TW15).
+
+\begin{invariant}[APS preservation under repair]
+\label{inv:i1}
+Let $p$ be a patch accepted by HMC with \texttt{preserve\_aps=True}.
+Then $\mathrm{APS}(p) \geq \mathrm{APS}(\mathrm{source})$.
+\end{invariant}
+
+\begin{invariant}[Severity monotone under repair]
+\label{inv:i2}
+For any accepted patch $p$, $|\{f \in \mathrm{findings}(p) :
+\mathrm{sev}(f) \in \{\mathrm{CRIT, HIGH}\}\}|$ does not strictly
+exceed the same count for the original source.
+\end{invariant}
+
+\begin{invariant}[HMC convergence bound]
+\label{inv:i3}
+For any HMC run with \texttt{n\_steps} $\geq 1$ and finite source, if
+the run returns \texttt{status="OK"}, then the final Hamiltonian
+satisfies $H_{\mathrm{final}} \leq H_{\mathrm{initial}}$.
+\end{invariant}
+
+\begin{invariant}[Propagation symmetry at zero lag]
+\label{inv:i4}
+For any two channels $a, b$ in the propagation matrix at lag $\tau = 0$,
+$\mathrm{cov}(a, b) = \mathrm{cov}(b, a)$ within $\epsilon = 10^{-9}$.
+\end{invariant}
+
+\begin{invariant}[Period reset atomicity]
+\label{inv:i5}
+Let two concurrent invocations of \texttt{reset\_period\_if\_rolled}
+target the same tenant.  If the first call returns \texttt{True}
+(i.e.\ performed the reset), the second returns \texttt{False}.
+\end{invariant}
+
+\subsection{Soundness}
+
+\begin{theorem}
+\label{thm:i1-soundness}
+The implementation of Invariant~\ref{inv:i1} in
+\texttt{governance.billing} together with the HMC accept-reject step
+in \texttt{sensor\_core/autofix/hmc\_repair.py} (\texttt{Sprint W
+gate-1 audit-2 fix}) is sound: any patch returned with
+\texttt{status="OK"} satisfies the invariant or has
+\texttt{status="REJECTED\_APS\_REGRESSION"}.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+By case analysis on the \texttt{preserve\_aps} gate:
+\textbf{TODO} — write out the case split + reference to lines
+in \texttt{hmc\_repair.py}.
+\end{proof}
+
+\section{Hamiltonian Repair}
+\label{sec:hmc}
+
+\textbf{TODO} — formalize HMC over AST transform space; reference
+the UCO core (\texttt{universal\_code\_optimizer\_v4}); discuss
+seed-restore (Sprint W2 gate-2 G2-1) as ensuring caller-RNG
+independence.
+
+\section{Multi-Tenant Billing}
+\label{sec:tenancy}
+
+\textbf{TODO} — derive the unit-budget atomic check-and-charge from
+the linearizability spec; reference Sprint Y SY-FIX-4.
+
+\section{Evaluation}
+\label{sec:eval}
+
+\textbf{TODO} — describe corpus (5 OSS repos), metrics, baselines.
+See \texttt{paper/experiments.md} for the protocol and
+\texttt{paper/reproducibility.py} for the regeneration script.
+
+\section{Related Work}
+\textbf{TODO} — SonarQube, CodeQL, Infer, Semgrep, PMD.
+
+\section{Threats to Validity}
+\label{sec:tv}
+
+\textbf{TODO} — corpus size, single-language (Python), HMC seed bias
+(mitigated by Sprint W2 G2-1).
+
+\section{Conclusion}
+\textbf{TODO}.
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}

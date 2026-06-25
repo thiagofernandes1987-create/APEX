@@ -302,6 +302,14 @@ CREATE INDEX IF NOT EXISTS idx_usage_kind_period
 ON usage_events(event_kind, period_key);
 """
 
+# Sprint Z v3.8.1-fix-3 — index for list_usage_events_for_tenant which
+# does WHERE tenant_id=? ORDER BY occurred_at DESC.  Without this the
+# planner does a full table scan + sort; with it the read is index-only.
+_IDX_USAGE_TENANT_OCCURRED = """
+CREATE INDEX IF NOT EXISTS idx_usage_tenant_occurred
+ON usage_events(tenant_id, occurred_at DESC);
+"""
+
 
 # ─── BaselineStats ───────────────────────────────────────────────────────────
 
@@ -450,6 +458,7 @@ class SnapshotStore:
             cur.execute(_IDX_TENANTS_PLAN_STATUS) # Sprint Y
             cur.execute(_IDX_USAGE_TENANT_PERIOD) # Sprint Y
             cur.execute(_IDX_USAGE_KIND_PERIOD)   # Sprint Y
+            cur.execute(_IDX_USAGE_TENANT_OCCURRED) # Sprint Z v3.8.1-fix-3
             self._migrate_api_keys_tenant_id(cur) # Sprint Y additive
             self._bootstrap_default_tenant(cur)   # Sprint Y idempotent
             # M7.0: add extended-vector columns to pre-existing databases
@@ -652,6 +661,31 @@ class SnapshotStore:
             ).fetchall()
         return [str(r[0]) for r in rows]
 
+    def sum_units_by_period_and_kind(
+        self, tenant_id: str, *, limit_periods: int = 12,
+    ) -> List[Tuple[str, str, int]]:
+        """Sprint Z v3.8.1-fix-2: single-query replacement for N+1 in
+        ``list_usage_periods``.  Returns ``[(period_key, event_kind, units)]``
+        for the N most-recent periods of *tenant_id*, status<300 only.
+        """
+        sql = (
+            "SELECT period_key, event_kind, COALESCE(SUM(units), 0) "
+            "FROM usage_events "
+            "WHERE tenant_id = ? AND status_code < 300 "
+            "  AND period_key IN ("
+            "    SELECT DISTINCT period_key FROM usage_events "
+            "    WHERE tenant_id = ? "
+            "    ORDER BY period_key DESC LIMIT ?"
+            "  ) "
+            "GROUP BY period_key, event_kind "
+            "ORDER BY period_key DESC, event_kind ASC"
+        )
+        with self._lock:
+            rows = self._get_conn().execute(
+                sql, (tenant_id, tenant_id, int(limit_periods)),
+            ).fetchall()
+        return [(str(p), str(k), int(u or 0)) for (p, k, u) in rows]
+
     def atomic_check_and_charge(
         self, tenant_id: str, cost: int,
     ) -> Tuple[bool, Dict[str, Any]]:
@@ -719,6 +753,12 @@ class SnapshotStore:
                 (cutoff_period_key,),
             )
         return int(cur.rowcount or 0)
+
+    def vacuum(self) -> None:
+        """Sprint Z v3.8.1-fix-4 — reclaim file space after large deletes.
+        Cannot run inside a transaction; conn.commit() is implicit on connect."""
+        with self._lock:
+            self._get_conn().execute("VACUUM")
 
     def _migrate_m70(self, cur: sqlite3.Cursor) -> None:
         """

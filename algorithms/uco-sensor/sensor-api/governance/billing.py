@@ -182,13 +182,17 @@ def check_quota(
             "retry_after_seconds": max(0, int(p_end - (now_ts or time.time()))),
             "upgrade":            "https://uco-sensor/plans",
         }
+    # Sprint Z v3.8.1-fix-5 — float arithmetic; integer-floor previously
+    # delayed soft_warn firing by up to ~1 unit on large budgets.
+    soft_pct = float(t.get("soft_limit_pct", 80)) / 100.0
+    soft_threshold = soft_pct * budget  # float
     return True, {
         "tenant_id":     tenant_id,
         "plan":          t["plan"],
         "cost":          cost,
         "units_used":    used,
         "units_remaining": budget - used,
-        "soft_warn":     used + cost >= int(t.get("soft_limit_pct", 80)) * budget // 100,
+        "soft_warn":     (used + cost) >= soft_threshold,
     }
 
 
@@ -340,28 +344,45 @@ def usage_events(
 
 
 def list_usage_periods(store: Any, tenant_id: str, *, limit: int = 12) -> List[Dict[str, Any]]:
-    keys = store.list_distinct_periods_for_tenant(tenant_id, limit=limit)
-    out: List[Dict[str, Any]] = []
-    for k in keys:
-        total, by_kind = store.sum_units_for_period(tenant_id, k)
-        out.append({
-            "period_key": k,
-            "units_used": total,
-            "by_kind":    by_kind,
-        })
-    return out
+    """Sprint Z v3.8.1-fix-2: single SQL aggregation replaces the prior
+    1+N round-trips (one DISTINCT + one SUM per period).  For ``limit=12``
+    that was 13 queries; now it is 1.
+    """
+    rows = store.sum_units_by_period_and_kind(tenant_id, limit_periods=limit)
+    if not rows:
+        return []
+    grouped: Dict[str, Dict[str, Any]] = {}
+    for period_key, event_kind, units in rows:
+        bucket = grouped.setdefault(
+            period_key, {"period_key": period_key, "units_used": 0, "by_kind": {}}
+        )
+        bucket["by_kind"][event_kind] = units
+        bucket["units_used"] += units
+    # Preserve order (DESC by period_key) from the SQL.
+    return [grouped[p] for p in dict.fromkeys(r[0] for r in rows)]
 
 
-def prune_old_events(store: Any, retention_months: int = 13) -> int:
-    """Delete usage_events older than `retention_months` calendar months back."""
+def prune_old_events(store: Any, retention_months: int = 13,
+                     *, vacuum: bool = False) -> int:
+    """Delete usage_events older than `retention_months` calendar months back.
+
+    Sprint Z v3.8.1-fix-4 — pass ``vacuum=True`` to run SQLite ``VACUUM`` after
+    the delete so the underlying file shrinks.  Default False because VACUUM
+    rewrites the whole database file (expensive) — only do it in nightly cron.
+    """
     now = datetime.now(timezone.utc)
-    # cutoff is start of (current_month - retention_months)
     y, m = now.year, now.month - retention_months
     while m <= 0:
         m += 12
         y -= 1
     cutoff = f"{y:04d}-{m:02d}"
-    return store.prune_usage_events_older_than(cutoff)
+    deleted = store.prune_usage_events_older_than(cutoff)
+    if vacuum and deleted > 0:
+        try:
+            store.vacuum()
+        except Exception:
+            pass  # best-effort; never fail prune on vacuum error
+    return deleted
 
 
 def quota_exceeded_response(info: Dict[str, Any]) -> Tuple[int, Dict[str, Any], Dict[str, str]]:

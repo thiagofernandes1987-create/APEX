@@ -4873,23 +4873,40 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                     "snapshot", key_info, "/analyze", handle_analyze, body,
                 )
             elif path == "/repair":
-                code, data = handle_repair(body)
+                code, data = _billed_dispatch(
+                    "autofix", key_info, "/repair", handle_repair, body,
+                )
             elif path == "/analyze-pr":
-                code, data = handle_analyze_pr(body)
+                code, data = _billed_dispatch(
+                    "scan", key_info, "/analyze-pr", handle_analyze_pr, body,
+                )
             elif path == "/scan-repo":
-                code, data = handle_scan_repo(body)
+                code, data = _billed_dispatch(
+                    "scan", key_info, "/scan-repo", handle_scan_repo, body,
+                )
             elif path == "/apex/webhook":
                 code, data = handle_apex_webhook(body)
             elif path == "/diff":
-                code, data = handle_diff(body)
+                code, data = _billed_dispatch(
+                    "snapshot", key_info, "/diff", handle_diff, body,
+                )
             elif path == "/gate":
-                code, data = handle_gate(body)
+                code, data = _billed_dispatch(
+                    "gate", key_info, "/gate", handle_gate, body,
+                )
             elif path == "/sast":
-                code, data = handle_sast(body)
+                code, data = _billed_dispatch(
+                    "sast", key_info, "/sast", handle_sast, body,
+                )
             elif path == "/apex/fix":
-                code, data = handle_apex_fix(body)
+                code, data = _billed_dispatch(
+                    "autofix", key_info, "/apex/fix", handle_apex_fix, body,
+                )
             elif path == "/apex/auto-remediate":
-                code, data = handle_apex_auto_remediate(body)
+                code, data = _billed_dispatch(
+                    "autofix", key_info, "/apex/auto-remediate",
+                    handle_apex_auto_remediate, body,
+                )
             elif path == "/repair/hmc":
                 code, data = _billed_dispatch(
                     "hmc_repair", key_info, "/repair/hmc",
@@ -4901,11 +4918,14 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                     return self._send_json(403, {"error": "admin authentication required"})
                 code, data = handle_cache_invalidate(body)
             elif path == "/feeds/cve/load":
-                # Sprint J: admin-only.
+                # Sprint J: admin-only. Sprint Z: also billed (feed_load=10 units).
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
                     return self._send_json(403, {"error": "admin authentication required"})
-                code, data = handle_feeds_cve_load(body)
+                code, data = _billed_dispatch(
+                    "feed_load", key_info, "/feeds/cve/load",
+                    handle_feeds_cve_load, body,
+                )
             elif path == "/feeds/cve/unload":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
@@ -4915,18 +4935,27 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
                     return self._send_json(403, {"error": "admin authentication required"})
-                code, data = handle_feeds_sast_load(body)
+                code, data = _billed_dispatch(
+                    "feed_load", key_info, "/feeds/sast/load",
+                    handle_feeds_sast_load, body,
+                )
             elif path == "/signatures/discover":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
                     return self._send_json(403, {"error": "admin authentication required"})
-                code, data = handle_signatures_discover(body)
+                code, data = _billed_dispatch(
+                    "scan", key_info, "/signatures/discover",
+                    handle_signatures_discover, body,
+                )
             # ─── Sprint V — Marketplace (POST, admin-gated) ─────────────────
             elif path == "/marketplace/publish":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
                     return self._send_json(403, {"error": "admin authentication required"})
-                code, data = handle_marketplace_publish(body)
+                code, data = _billed_dispatch(
+                    "signature_pub", key_info, "/marketplace/publish",
+                    handle_marketplace_publish, body,
+                )
             elif path == "/marketplace/import":
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
                 if not ok_admin:
@@ -4966,19 +4995,33 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                     handle_scan_incremental, body,
                 )
             elif path == "/scan-sca":
-                code, data = handle_scan_sca(body)
+                code, data = _billed_dispatch(
+                    "scan", key_info, "/scan-sca", handle_scan_sca, body,
+                )
             elif path == "/scan-iac":
-                code, data = handle_scan_iac(body)
+                code, data = _billed_dispatch(
+                    "scan", key_info, "/scan-iac", handle_scan_iac, body,
+                )
             elif path == "/scan-flow":
-                code, data = handle_scan_flow(body)
+                code, data = _billed_dispatch(
+                    "scan", key_info, "/scan-flow", handle_scan_flow, body,
+                )
             elif path == "/scan-performance":
-                code, data = handle_scan_performance(body)
+                code, data = _billed_dispatch(
+                    "scan", key_info, "/scan-performance", handle_scan_performance, body,
+                )
             elif path == "/scan-architecture":
-                code, data = handle_scan_architecture(body)
+                code, data = _billed_dispatch(
+                    "scan", key_info, "/scan-architecture", handle_scan_architecture, body,
+                )
             elif path == "/scan-test-quality":
-                code, data = handle_scan_test_quality(body)
+                code, data = _billed_dispatch(
+                    "scan", key_info, "/scan-test-quality", handle_scan_test_quality, body,
+                )
             elif path == "/scan-thread-safety":
-                code, data = handle_scan_thread_safety(body)
+                code, data = _billed_dispatch(
+                    "scan", key_info, "/scan-thread-safety", handle_scan_thread_safety, body,
+                )
             elif path == "/monitor/start":
                 code, data = handle_monitor_start(body)
             elif path == "/monitor/stop":
