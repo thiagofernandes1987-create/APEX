@@ -1,0 +1,345 @@
+{
+  "repo": "psf/requests",
+  "subdir": "src/requests",
+  "upstream_commits_fetched": 80,
+  "local_commits_replayed": 80,
+  "files_analyzed": 11,
+  "temporal": {
+    "repo_path": "/tmp/corpus_requests",
+    "n_commits": 80,
+    "n_files": 11,
+    "project_status": "WARNING",
+    "elapsed_s": 17.02697228299985,
+    "critical": 0,
+    "warning": 8,
+    "stable": 3,
+    "file_results": [
+      {
+        "path": "exceptions.py",
+        "language": "python",
+        "n_commits": 5,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.9794,
+        "self_cure_pct": 117.0,
+        "onset_commit": null,
+        "confidence": 0.644
+      },
+      {
+        "path": "adapters.py",
+        "language": "python",
+        "n_commits": 17,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.9785,
+        "self_cure_pct": 109.0,
+        "onset_commit": "18ed4216e2625d88c5f3cedbace1769be08a962f",
+        "confidence": 0.742
+      },
+      {
+        "path": "compat.py",
+        "language": "python",
+        "n_commits": 6,
+        "severity": "WARNING",
+        "primary_error": "GOD_CLASS_FORMATION",
+        "hurst": 0.9763,
+        "self_cure_pct": 121.0,
+        "onset_commit": null,
+        "confidence": 0.74
+      },
+      {
+        "path": "utils.py",
+        "language": "python",
+        "n_commits": 20,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.9716,
+        "self_cure_pct": 143.0,
+        "onset_commit": null,
+        "confidence": 0.755
+      },
+      {
+        "path": "__init__.py",
+        "language": "python",
+        "n_commits": 8,
+        "severity": "WARNING",
+        "primary_error": "TECH_DEBT_ACCUMULATION",
+        "hurst": 0.9318,
+        "self_cure_pct": 341.0,
+        "onset_commit": "56cdaf72fd56246749837f3a6628c58d3b34ab31",
+        "confidence": 0.542
+      },
+      {
+        "path": "_types.py",
+        "language": "python",
+        "n_commits": 7,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.8838,
+        "self_cure_pct": 1162.0,
+        "onset_commit": null,
+        "confidence": 0.759
+      },
+      {
+        "path": "sessions.py",
+        "language": "python",
+        "n_commits": 10,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.8439,
+        "self_cure_pct": 819.0,
+        "onset_commit": null,
+        "confidence": 0.685
+      },
+      {
+        "path": "models.py",
+        "language": "python",
+        "n_commits": 19,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.7225,
+        "self_cure_pct": 1431.0,
+        "onset_commit": "cd987fcd9d423e8d9be402f70a5c9b929a134f68",
+        "confidence": 0.686
+      },
+      {
+        "path": "packages.py",
+        "language": "python",
+        "n_commits": 5,
+        "severity": "INFO",
+        "primary_error": "DEAD_CODE_DRIFT",
+        "hurst": 1.0,
+        "self_cure_pct": 0.0,
+        "onset_commit": null,
+        "confidence": 0.521
+      },
+      {
+        "path": "status_codes.py",
+        "language": "python",
+        "n_commits": 5,
+        "severity": "INFO",
+        "primary_error": "DEAD_CODE_DRIFT",
+        "hurst": 0.9794,
+        "self_cure_pct": 110.0,
+        "onset_commit": null,
+        "confidence": 0.576
+      },
+      {
+        "path": "__version__.py",
+        "language": "python",
+        "n_commits": 13,
+        "severity": "INFO",
+        "primary_error": "GOD_CLASS_FORMATION",
+        "hurst": 0.5,
+        "self_cure_pct": 2500.0,
+        "onset_commit": null,
+        "confidence": 0.392
+      }
+    ]
+  },
+  "sast_point_in_time": {
+    "total_findings": 17,
+    "by_file": {
+      "__init__.py": [
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 130,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 146,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "__version__.py": [],
+      "_internal_utils.py": [],
+      "_types.py": [],
+      "adapters.py": [],
+      "api.py": [],
+      "auth.py": [
+        {
+          "rule_id": "SAST025",
+          "severity": "MEDIUM",
+          "line": 104,
+          "title": "Timing Attack via String Comparison"
+        },
+        {
+          "rule_id": "SAST006",
+          "severity": "MEDIUM",
+          "line": 179,
+          "title": "Weak Cryptographic Algorithm"
+        },
+        {
+          "rule_id": "SAST006",
+          "severity": "MEDIUM",
+          "line": 187,
+          "title": "Weak Cryptographic Algorithm"
+        },
+        {
+          "rule_id": "SAST025",
+          "severity": "MEDIUM",
+          "line": 227,
+          "title": "Timing Attack via String Comparison"
+        },
+        {
+          "rule_id": "SAST006",
+          "severity": "MEDIUM",
+          "line": 237,
+          "title": "Weak Cryptographic Algorithm"
+        },
+        {
+          "rule_id": "SAST025",
+          "severity": "MEDIUM",
+          "line": 349,
+          "title": "Timing Attack via String Comparison"
+        }
+      ],
+      "certs.py": [],
+      "compat.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 43,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST042",
+          "severity": "LOW",
+          "line": 111,
+          "title": "No-Op Self-Assignment"
+        },
+        {
+          "rule_id": "SAST042",
+          "severity": "LOW",
+          "line": 112,
+          "title": "No-Op Self-Assignment"
+        }
+      ],
+      "cookies.py": [],
+      "exceptions.py": [],
+      "help.py": [],
+      "hooks.py": [],
+      "models.py": [
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 177,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 219,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 1110,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "packages.py": [],
+      "sessions.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 823,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "status_codes.py": [],
+      "structures.py": [],
+      "utils.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 178,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 279,
+          "title": "Exception Swallowing"
+        }
+      ]
+    }
+  },
+  "onset_fix_correlation": [
+    {
+      "file": "adapters.py",
+      "severity": "WARNING",
+      "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+      "hurst": 0.979,
+      "onset_upstream_sha": "e18879932287",
+      "onset_subject": "Don't create default SSLContext if ssl module isn't present (#6724)",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "06d2a384418e",
+          "subject": "Merge branch 'psf:main' into patch-1"
+        },
+        {
+          "sha": "b653d80ded36",
+          "subject": "Merge branch 'psf:main' into patch-1"
+        },
+        {
+          "sha": "5b4b64c3467f",
+          "subject": "Add more tests to prevent regression of CVE 2024 47081"
+        },
+        {
+          "sha": "3f07f990ac74",
+          "subject": "Fix typo in documentation for verify"
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "__init__.py",
+      "severity": "WARNING",
+      "primary_error": "TECH_DEBT_ACCUMULATION",
+      "hurst": 0.932,
+      "onset_upstream_sha": "561e4b6889f5",
+      "onset_subject": "Add inline types to Requests (#7272)",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "b684dcb9bbf3",
+          "subject": "sessions: fix hooks type (#7425)"
+        },
+        {
+          "sha": "6404f345e562",
+          "subject": "Fix `prepare_body` stream detection for `__getattr__`-based file wrappers (#7433)"
+        },
+        {
+          "sha": "e511bc72777a",
+          "subject": "Fix mutability issues with headers input types (#7431)"
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "models.py",
+      "severity": "WARNING",
+      "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+      "hurst": 0.723,
+      "onset_upstream_sha": "e50e5945294f",
+      "onset_subject": "Improve static typing of 3rd party imports  (#7496)",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "6f205ff422bc",
+          "subject": "Fix `_encode_files` detection for `__getattr__`-based file wrappers (#7502)"
+        }
+      ],
+      "has_corroborating_fix": true
+    }
+  ],
+  "summary": {
+    "critical_files": 0,
+    "warning_files": 8,
+    "files_with_corroborating_fix": 3,
+    "files_with_onset_but_no_corroborating_fix": 0
+  }
+}

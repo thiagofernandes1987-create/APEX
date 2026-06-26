@@ -1,0 +1,138 @@
+{
+  "repo": "scrapy/scrapy",
+  "subdir": "scrapy/core",
+  "upstream_commits_fetched": 60,
+  "local_commits_replayed": 24,
+  "files_analyzed": 4,
+  "temporal": {
+    "repo_path": "/tmp/corpus_scrapy",
+    "n_commits": 24,
+    "n_files": 4,
+    "project_status": "WARNING",
+    "elapsed_s": 4.102469912999993,
+    "critical": 0,
+    "warning": 3,
+    "stable": 1,
+    "file_results": [
+      {
+        "path": "engine.py",
+        "language": "python",
+        "n_commits": 8,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 1.0,
+        "self_cure_pct": 0.0,
+        "onset_commit": "28de3fe2ce1c24d8891d444b929dd5d68f409e00",
+        "confidence": 0.602
+      },
+      {
+        "path": "spidermw.py",
+        "language": "python",
+        "n_commits": 10,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 1.0,
+        "self_cure_pct": 0.0,
+        "onset_commit": null,
+        "confidence": 0.709
+      },
+      {
+        "path": "scheduler.py",
+        "language": "python",
+        "n_commits": 7,
+        "severity": "WARNING",
+        "primary_error": "GOD_CLASS_FORMATION",
+        "hurst": 0.9703,
+        "self_cure_pct": 149.0,
+        "onset_commit": null,
+        "confidence": 0.716
+      },
+      {
+        "path": "scraper.py",
+        "language": "python",
+        "n_commits": 8,
+        "severity": "INFO",
+        "primary_error": "DEAD_CODE_DRIFT",
+        "hurst": 1.0,
+        "self_cure_pct": 0.0,
+        "onset_commit": null,
+        "confidence": 0.635
+      }
+    ]
+  },
+  "sast_point_in_time": {
+    "total_findings": 6,
+    "by_file": {
+      "__init__.py": [],
+      "engine.py": [
+        {
+          "rule_id": "SAST011",
+          "severity": "HIGH",
+          "line": 542,
+          "title": "Path Traversal via open()"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 377,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 386,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 395,
+          "title": "Adjacent Duplicate Statement"
+        }
+      ],
+      "scheduler.py": [],
+      "scraper.py": [
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 428,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 438,
+          "title": "Adjacent Duplicate Statement"
+        }
+      ],
+      "spidermw.py": []
+    }
+  },
+  "onset_fix_correlation": [
+    {
+      "file": "engine.py",
+      "severity": "WARNING",
+      "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+      "hurst": 1.0,
+      "onset_upstream_sha": "e02ad08672a5",
+      "onset_subject": "Move to mypy --strict with exceptions. (#7300)",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "9f4651151d70",
+          "subject": "Deprecate ScrapyCommand.set_crawler(), remove/fix some dead code. (#7276)"
+        },
+        {
+          "sha": "72bcf8cb466f",
+          "subject": "adjust httpx error mapping (#7384)"
+        }
+      ],
+      "has_corroborating_fix": true
+    }
+  ],
+  "summary": {
+    "critical_files": 0,
+    "warning_files": 3,
+    "files_with_corroborating_fix": 1,
+    "files_with_onset_but_no_corroborating_fix": 0
+  }
+}

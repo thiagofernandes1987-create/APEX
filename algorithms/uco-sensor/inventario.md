@@ -32,6 +32,7 @@ ordem, em toda sessão futura:
 ## Versão atual
 
 **v3.10.0** (Sprint AB — Deep-Eval P0 multi-tenant isolation + 4 quick-wins; AA-1 + AB-1..AB-5; 2191 testes verdes) ✅
++ Sprint AC-1/AC-2 (corpus validation, fora do release — ver §"Sprint AC" abaixo)
 
 **v3.9.1** (QA Loop 4-lentes + 2-round convergence — QA-FIX-1..6 + Round 2 migration sweep) ✅
 
@@ -635,3 +636,80 @@ Findings deferred para Sprint AC (futuro):
 3. Os 5 handlers wired (/analyze, /diff, /analyze-pr, /scan-repo via
    handler_analyze_pr, /gate) cobrem ~80% do tráfego billable; os
    outros 11+ handlers billable não-storage não precisam de mudança.
+
+---
+
+## Sprint AC — Corpus Validation (não-release, paper/E1/E4)
+
+**Contexto**: `git clone` de repositórios não-APEX é bloqueado pelo
+proxy do sandbox (403). Descoberto que `api.github.com` e
+`codeload.github.com` funcionam via HTTPS normal. `paper/corpus_runner.py`
+explora isso: busca commits + conteúdo de arquivos via GitHub API,
+**replay** como um git local real ("shadow repo"), e roda o
+`scan.git_history_scanner.GitHistoryScanner` / `sast.scanner` **sem
+modificação** contra ele.
+
+**AC-1** (`paper/corpus_runs/requests_report.md`): MVP, `psf/requests`
+80 commits. `sessions.py` flagrado como previsto pelo `experiments.md`
+("god-class" case). Claim inicial de "3/3 onset→fix corroboration =
+evidência de precisão" — **posteriormente invalidado em AC-2**.
+
+**AC-2** (`paper/corpus_runs/AC2_summary.md`): escalado para 8 repos
+(flask, django, fastapi, matplotlib, celery, scrapy, pandas, requests;
+460 commits upstream, 44 arquivos analisados). Resultados:
+- 0 CRITICAL / 34 WARNING / 10 INFO — sem crash, robusto em 8 domínios
+  diferentes.
+- **55% dos arquivos flagrados caem no mesmo padrão**
+  (`COGNITIVE_COMPLEXITY_EXPLOSION`) — possível falta de diversidade
+  do classificador, não investigado a fundo (Sprint AC-3?).
+- **Correção metodológica importante**: a métrica "onset→fix
+  correlation" (20/20 = 100% nas duas rodadas) foi testada contra um
+  controle (`paper/corpus_baseline_check.py`) e **não bateu o baseline**
+  — P(janela aleatória de 15 commits conter commit fix-like) = 94-100%
+  em todos os repos, e distância onset→fix (média 2.5) não foi menor
+  que distância aleatório→fix (média 1.2) em 5/7 repos medíveis. A
+  métrica mede a taxa-base do corpus, não sinal real do UCO. **Não usar
+  esse número no paper sem reformular** (ver recomendações no AC2_summary).
+- 132 achados SAST pontuais, 0 HIGH/CRITICAL, sem triagem manual de
+  falso-positivo ainda (gap real vs. protocolo E4/T4).
+
+**Sprint AC-3 (concluído)** — auditoria CVE-anchored before/after nos 8
+repos solicitados (ver `paper/corpus_runs/AC3_cve_before_after.md`):
+
+- Resolvido `(vulnerable_sha, fixed_sha, file)` para 6 CVEs reais (1 em
+  cada: `flask`, `django`, `celery`, `scrapy`, `fastapi`; + 1 nova em
+  `requests`), somadas às 2 já confirmadas em `requests` no round
+  anterior = 8 casos. Cobertura: 4/8 repos têm GHSA nativo; `django` e
+  `celery` resolvidos via índice global `/advisories?ecosystem=pip`;
+  **`matplotlib` e `pandas` têm zero CVE indexado em qualquer fonte
+  testada — não cobertos, declarado explicitamente, não omitido em
+  silêncio**.
+- **6/8 (75%) blind spot confirmado**: SAST e os 9 canais de métrica
+  zero-diff entre versão vulnerável e corrigida. 2/8 mostraram delta de
+  métrica mas **confundido** por refactor estrutural acompanhando o fix
+  (não é detecção da vulnerabilidade específica — documentado
+  honestamente em vez de contado como acerto).
+- **Refinamento real aplicado** (não só relatado): 2 novas regras SAST
+  a partir dos blind spots com formato AST genérico —
+  **SAST046** (`netloc.split()` em vez de `.hostname`, CWE-1286,
+  causa-raiz CVE-2024-47081) e **SAST047** (header sensível removido e
+  re-atribuído sem checar scheme/host, CWE-200, causa-raiz
+  CVE-2023-32681). Ambas validadas contra os snapshots reais via
+  GitHub API (não só exemplos sintéticos) e fixadas em
+  `tests/test_marco_m63.py` (TAC01-TAC14, 14 testes, incluindo casos de
+  não-falso-positivo). Suíte completa: 2205 passed, 0 regressões.
+  Namespace SAST046-047 livre confirmado (`_RULE_MAP` parava em
+  SAST045).
+- `scrapy` CVE-2022-0577 permanece blind spot mesmo após o refinamento
+  — de propósito: a vulnerabilidade é *ausência* de checagem de
+  domínio (função de guarda não existia antes do fix), não uma
+  reatribuição presente-mas-sem-guarda; não há nó AST para ancorar uma
+  regra baseada em presença. Documentado como limitação conhecida.
+- **Pendente para Sprint AC-4** (não iniciado): as outras 4 classes de
+  blind spot (cache poisoning via `Vary: Cookie` ausente, SQL injection
+  via template Oracle, command injection via deserialização não
+  confiável, CSRF ausente) cada uma precisaria de regra dedicada
+  própria; triagem manual dos 132 achados SAST do AC-2; repo de
+  controle positivo para testar se CRITICAL algum dia dispara fora de
+  testes sintéticos; investigar concentração de padrão
+  (`COGNITIVE_COMPLEXITY_EXPLOSION` = 55%).

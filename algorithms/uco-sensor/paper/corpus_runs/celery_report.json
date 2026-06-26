@@ -1,0 +1,360 @@
+{
+  "repo": "celery/celery",
+  "subdir": "celery/app",
+  "upstream_commits_fetched": 60,
+  "local_commits_replayed": 60,
+  "files_analyzed": 4,
+  "temporal": {
+    "repo_path": "/tmp/corpus_celery",
+    "n_commits": 60,
+    "n_files": 4,
+    "project_status": "WARNING",
+    "elapsed_s": 8.924524434999967,
+    "critical": 0,
+    "warning": 4,
+    "stable": 0,
+    "file_results": [
+      {
+        "path": "base.py",
+        "language": "python",
+        "n_commits": 15,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.9563,
+        "self_cure_pct": 233.0,
+        "onset_commit": "75f38131573db1eee8d1967c158c2af382f2eb30",
+        "confidence": 0.77
+      },
+      {
+        "path": "amqp.py",
+        "language": "python",
+        "n_commits": 5,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.9148,
+        "self_cure_pct": 496.0,
+        "onset_commit": null,
+        "confidence": 0.741
+      },
+      {
+        "path": "defaults.py",
+        "language": "python",
+        "n_commits": 17,
+        "severity": "WARNING",
+        "primary_error": "AI_CODE_BOMB",
+        "hurst": 0.85,
+        "self_cure_pct": 750.0,
+        "onset_commit": "6c212275686b6dbd0684590ba197eb87a1c4d485",
+        "confidence": 0.604
+      },
+      {
+        "path": "task.py",
+        "language": "python",
+        "n_commits": 18,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.8322,
+        "self_cure_pct": 877.0,
+        "onset_commit": null,
+        "confidence": 0.667
+      }
+    ]
+  },
+  "sast_point_in_time": {
+    "total_findings": 29,
+    "by_file": {
+      "__init__.py": [],
+      "amqp.py": [
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 24,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST042",
+          "severity": "LOW",
+          "line": 227,
+          "title": "No-Op Self-Assignment"
+        },
+        {
+          "rule_id": "SAST042",
+          "severity": "LOW",
+          "line": 228,
+          "title": "No-Op Self-Assignment"
+        },
+        {
+          "rule_id": "SAST042",
+          "severity": "LOW",
+          "line": 229,
+          "title": "No-Op Self-Assignment"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 532,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "annotations.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 24,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 30,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "autoretry.py": [],
+      "backends.py": [],
+      "base.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 626,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 1286,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "builtins.py": [
+        {
+          "rule_id": "SAST043",
+          "severity": "LOW",
+          "line": 145,
+          "title": "Unused Local Variable"
+        }
+      ],
+      "control.py": [
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 60,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST042",
+          "severity": "LOW",
+          "line": 429,
+          "title": "No-Op Self-Assignment"
+        }
+      ],
+      "defaults.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 444,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "events.py": [],
+      "log.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 135,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "registry.py": [
+        {
+          "rule_id": "SAST042",
+          "severity": "LOW",
+          "line": 15,
+          "title": "No-Op Self-Assignment"
+        }
+      ],
+      "routes.py": [
+        {
+          "rule_id": "SAST001",
+          "severity": "CRITICAL",
+          "line": 102,
+          "title": "SQL Injection"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 44,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "task.py": [
+        {
+          "rule_id": "SAST042",
+          "severity": "LOW",
+          "line": 218,
+          "title": "No-Op Self-Assignment"
+        },
+        {
+          "rule_id": "SAST042",
+          "severity": "LOW",
+          "line": 219,
+          "title": "No-Op Self-Assignment"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 245,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 665,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 930,
+          "title": "Adjacent Duplicate Statement"
+        }
+      ],
+      "trace.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 338,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 491,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 517,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 826,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 830,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "utils.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 177,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 405,
+          "title": "Exception Swallowing"
+        }
+      ]
+    }
+  },
+  "onset_fix_correlation": [
+    {
+      "file": "base.py",
+      "severity": "WARNING",
+      "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+      "hurst": 0.956,
+      "onset_upstream_sha": "6c2a779fc091",
+      "onset_subject": "Pydantic typehints: Fix optional, allow generics (#9319)",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "6c2a779fc091",
+          "subject": "Pydantic typehints: Fix optional, allow generics (#9319)"
+        },
+        {
+          "sha": "dbf2de8d13d0",
+          "subject": "Fix send_task method when detect is native delayed delivery approach available (#9552)"
+        },
+        {
+          "sha": "35cca09a8bf7",
+          "subject": "Fixed bug when revoking by stamped headers a stamp that does not exist (#9575)"
+        },
+        {
+          "sha": "821e6557ae18",
+          "subject": "Canvas Stamping Doc Fixes (#9578)"
+        },
+        {
+          "sha": "0316198dc251",
+          "subject": "Improve docs about acks_on_failure_or_timeout (#9577)"
+        },
+        {
+          "sha": "78bd187e756a",
+          "subject": "Revert \"Improve docs about acks_on_failure_or_timeout (#9577)\" (#9606)"
+        },
+        {
+          "sha": "b6cab29e6932",
+          "subject": "fix: resolve issue #9569 by supporting distinct broker transport options for workers (#9695)"
+        },
+        {
+          "sha": "9cb389d31ad8",
+          "subject": "fix: (#8786) time out when chord header fails with group body (#9788)"
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "defaults.py",
+      "severity": "WARNING",
+      "primary_error": "AI_CODE_BOMB",
+      "hurst": 0.85,
+      "onset_upstream_sha": "a8ecf180e027",
+      "onset_subject": "Added worker_enable_soft_shutdown_on_idle (#9231)",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "21f73b8e8f09",
+          "subject": "Correct the error description in exception message when validate soft_time_limit (#9246)"
+        },
+        {
+          "sha": "6c2a779fc091",
+          "subject": "Pydantic typehints: Fix optional, allow generics (#9319)"
+        },
+        {
+          "sha": "dbf2de8d13d0",
+          "subject": "Fix send_task method when detect is native delayed delivery approach available (#9552)"
+        },
+        {
+          "sha": "35cca09a8bf7",
+          "subject": "Fixed bug when revoking by stamped headers a stamp that does not exist (#9575)"
+        },
+        {
+          "sha": "821e6557ae18",
+          "subject": "Canvas Stamping Doc Fixes (#9578)"
+        },
+        {
+          "sha": "0316198dc251",
+          "subject": "Improve docs about acks_on_failure_or_timeout (#9577)"
+        },
+        {
+          "sha": "78bd187e756a",
+          "subject": "Revert \"Improve docs about acks_on_failure_or_timeout (#9577)\" (#9606)"
+        }
+      ],
+      "has_corroborating_fix": true
+    }
+  ],
+  "summary": {
+    "critical_files": 0,
+    "warning_files": 4,
+    "files_with_corroborating_fix": 2,
+    "files_with_onset_but_no_corroborating_fix": 0
+  }
+}

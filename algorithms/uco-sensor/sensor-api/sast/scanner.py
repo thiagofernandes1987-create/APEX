@@ -601,6 +601,47 @@ RULES: List[SASTRuleInfo] = [
             "Replace the expression with its evaluated literal value."
         ),
     ),
+    # ── Sprint AC-3 — CVE-anchored before/after corpus audit found both of
+    # these patterns missed by every existing rule across real CVEs in
+    # psf/requests and scrapy/scrapy (see paper/corpus_runs/AC3_*.md):
+    SASTRuleInfo(
+        rule_id="SAST046", title="URL Host Extracted via netloc.split() Instead of .hostname",
+        cwe_id="CWE-1286", owasp="A05:2021",
+        severity="MEDIUM",
+        description=(
+            "Host is extracted from a parsed URL by splitting '.netloc' on "
+            "':' instead of using the '.hostname' property. '.netloc' also "
+            "contains userinfo ('user:pass@host') and IPv6 brackets, so a "
+            "naive split(':') can yield the wrong host string and bypass "
+            "host-based security checks (e.g. .netrc credential matching, "
+            "allow/deny-list comparisons). Real-world root cause of "
+            "CVE-2024-47081 (psf/requests .netrc leak)."
+        ),
+        remediation=(
+            "Use 'urlparse(url).hostname' (and '.port' if needed) instead "
+            "of manually splitting '.netloc' on ':'."
+        ),
+    ),
+    SASTRuleInfo(
+        rule_id="SAST047", title="Sensitive Header Re-sent on Redirect Without Origin Check",
+        cwe_id="CWE-200", owasp="A01:2021",
+        severity="MEDIUM",
+        description=(
+            "A function that handles HTTP redirects deletes/rebuilds a "
+            "sensitive header (Authorization, Proxy-Authorization, Cookie, "
+            "Cookie2) but the function body contains no comparison of "
+            "scheme/host/hostname/netloc/domain between the original and "
+            "redirect target. Without that guard the credential or cookie "
+            "can be replayed to a different origin. Real-world root cause "
+            "of CVE-2023-32681 (psf/requests Proxy-Authorization leak) and "
+            "CVE-2022-0577 (scrapy/scrapy cross-domain cookie leak)."
+        ),
+        remediation=(
+            "Before re-attaching the header, compare the original and "
+            "redirect target's scheme/hostname (and port, for proxy "
+            "credentials) and drop the header on mismatch."
+        ),
+    ),
 ]
 
 _RULE_MAP: Dict[str, SASTRuleInfo] = {r.rule_id: r for r in RULES}
@@ -905,6 +946,16 @@ _TIMING_SENSITIVE_NAMES = frozenset({
 # SAST027 SSL verify=False
 _REQUESTS_MODULES  = frozenset({"requests", "session", "Session"})
 
+# SAST047: sensitive headers that must not cross an origin change on redirect
+_SENSITIVE_REDIRECT_HEADERS = frozenset({
+    "authorization", "proxy-authorization", "cookie", "cookie2",
+})
+# Attribute names whose presence anywhere in a 'redirect' function body is
+# treated as evidence of an origin/scheme comparison guard.
+_ORIGIN_CHECK_ATTRS = frozenset({
+    "scheme", "host", "hostname", "netloc", "domain",
+})
+
 
 class _ASTScanner(ast.NodeVisitor):
     """Walk the AST and collect SAST findings."""
@@ -1006,6 +1057,43 @@ class _ASTScanner(ast.NodeVisitor):
         # b'\x00\x00...' literal
         if isinstance(node, ast.Constant) and isinstance(node.value, bytes):
             return len(node.value) > 0 and all(b == 0 for b in node.value)
+        return False
+
+    def _is_origin_expr(self, node: ast.expr, origin_vars: set) -> bool:
+        """True if node is a Name bound to an origin attribute, or that
+        attribute access directly (e.g. 'scheme' var or '<x>.scheme')."""
+        if isinstance(node, ast.Name):
+            return node.id in origin_vars
+        if isinstance(node, ast.Attribute):
+            return node.attr.lower() in _ORIGIN_CHECK_ATTRS
+        return False
+
+    def _has_origin_guard(self, node: Any) -> bool:
+        """True if the function conditions any branch/comparison on a
+        scheme/host/netloc/domain-derived value — i.e. it actually checks
+        the origin before acting, not just references it for an unrelated
+        lookup (the real CVE-2023-32681 bug: 'scheme' was read but only
+        used to index a proxy dict, never compared)."""
+        origin_vars: set = set()
+        for child in ast.walk(node):
+            if (isinstance(child, ast.Assign) and len(child.targets) == 1
+                    and isinstance(child.targets[0], ast.Name)
+                    and isinstance(child.value, ast.Attribute)
+                    and child.value.attr.lower() in _ORIGIN_CHECK_ATTRS):
+                origin_vars.add(child.targets[0].id)
+
+        for child in ast.walk(node):
+            if isinstance(child, ast.Compare):
+                if any(self._is_origin_expr(o, origin_vars)
+                       for o in [child.left, *child.comparators]):
+                    return True
+            if (isinstance(child, ast.Call) and isinstance(child.func, ast.Attribute)
+                    and child.func.attr in ("startswith", "endswith")
+                    and self._is_origin_expr(child.func.value, origin_vars)):
+                return True
+            if isinstance(child, ast.If):
+                if any(self._is_origin_expr(n, origin_vars) for n in ast.walk(child.test)):
+                    return True
         return False
 
     # ── SAST001-SAST013 + M7.1 call checks ───────────────────────────────────
@@ -1171,6 +1259,15 @@ class _ASTScanner(ast.NodeVisitor):
         if module in _REQUESTS_MODULES and name in _HTTP_REQUEST_METHODS:
             if self._kw_is_false(node, "verify"):
                 self._add("SAST027", node)
+
+        # ── Sprint AC-3 — SAST046: host extracted via '.netloc'.split(...)
+        # instead of '.hostname' — root cause of CVE-2024-47081. The real
+        # vulnerable code split on a *variable* holding ':', not always a
+        # literal, so any '.netloc.split(...)' call qualifies.
+        if (name == "split" and isinstance(node.func, ast.Attribute)
+                and isinstance(node.func.value, ast.Attribute)
+                and node.func.value.attr == "netloc"):
+            self._add("SAST046", node)
 
         self.generic_visit(node)
 
@@ -1380,6 +1477,43 @@ class _ASTScanner(ast.NodeVisitor):
                 unused.discard(child.id)   # one finding per variable
                 if not unused:
                     break
+
+        # ── Sprint AC-3 — SAST047: sensitive header removed then re-set
+        # (reattached) in the same function, without the origin
+        # (scheme/host) it was bound to ever being *checked* — see
+        # CVE-2023-32681 (psf/requests) case study in paper/corpus_runs/
+        # AC3_*.md. Requiring both a removal AND a re-assignment of the
+        # *same* header key (not just any touch) keeps this specific to
+        # the reattachment shape and avoids flagging ordinary one-shot
+        # header-setting code.
+        removed_keys: set = set()
+        assigned_keys: set = set()
+        sensitive_node = None
+        for child in ast.walk(node):
+            if isinstance(child, ast.Delete):
+                for target in child.targets:
+                    if (isinstance(target, ast.Subscript)
+                            and isinstance(target.slice, ast.Constant)
+                            and isinstance(target.slice.value, str)
+                            and target.slice.value.lower() in _SENSITIVE_REDIRECT_HEADERS):
+                        removed_keys.add(target.slice.value.lower())
+                        sensitive_node = sensitive_node or target
+            elif (isinstance(child, ast.Call) and self._call_name(child) == "pop"
+                  and child.args and isinstance(child.args[0], ast.Constant)
+                  and isinstance(child.args[0].value, str)
+                  and child.args[0].value.lower() in _SENSITIVE_REDIRECT_HEADERS):
+                removed_keys.add(child.args[0].value.lower())
+                sensitive_node = sensitive_node or child
+            elif isinstance(child, ast.Assign):
+                for target in child.targets:
+                    if (isinstance(target, ast.Subscript)
+                            and isinstance(target.slice, ast.Constant)
+                            and isinstance(target.slice.value, str)
+                            and target.slice.value.lower() in _SENSITIVE_REDIRECT_HEADERS):
+                        assigned_keys.add(target.slice.value.lower())
+                        sensitive_node = sensitive_node or target
+        if (removed_keys & assigned_keys) and not self._has_origin_guard(node):
+            self._add("SAST047", sensitive_node)
 
     # ── SAST038: exception swallowing ────────────────────────────────────────
 
