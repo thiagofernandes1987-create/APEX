@@ -26,11 +26,15 @@ class RustAdapter(GenericRegexAdapter):
     LINE_COMMENT_RE  = re.compile(r'//[^\n]*',   re.MULTILINE)
     BLOCK_COMMENT_RE = re.compile(r'/\*.*?\*/',  re.DOTALL)
 
-    # Rust raw strings r#"..."# need special handling
+    # Rust raw strings r#"..."# need special handling. Char literals are
+    # bounded to exactly one char/escape ('x', '\n', '\u{1F600}') — an
+    # unbounded quantifier here would also match bare lifetime/generic
+    # apostrophes ('a, 'static, <'a>), which have no closing quote and would
+    # otherwise swallow everything up to the next unrelated quote in the file.
     STRING_RE = re.compile(
-        r'r#+"[^"]*"+#+'           # raw strings r#"..."#, r##"..."##, ...
-        r'|b?"(?:[^"\\]|\\.)*"'   # byte and normal strings
-        r"|b?'(?:[^'\\]|\\.)*'",  # byte and char literals
+        r'r#+"[^"]*"+#+'                       # raw strings r#"..."#, r##"..."##, ...
+        r'|b?"(?:[^"\\]|\\.)*"'                # byte and normal strings
+        r"|b?'(?:\\u\{[0-9a-fA-F]+\}|\\.|[^'\\\n])'",  # byte and char literals
         re.DOTALL,
     )
 

@@ -31,6 +31,11 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.10.1** (Sprint AC-3 — CVE-anchored before/after nos 8 repos + SAST046/047; 2205 testes verdes) ✅
++ Sprint AD — auditoria CVE-anchored cross-ecossistema (C/Go/JS/Java/Rust) +
+  fix de instrumentação no `RustAdapter` (ver §"Sprint AD" abaixo);
+  **versão alvo desta entrega: v3.10.2** (bump pendente nesta sessão)
+
 **v3.10.0** (Sprint AB — Deep-Eval P0 multi-tenant isolation + 4 quick-wins; AA-1 + AB-1..AB-5; 2191 testes verdes) ✅
 + Sprint AC-1/AC-2 (corpus validation, fora do release — ver §"Sprint AC" abaixo)
 
@@ -713,3 +718,65 @@ repos solicitados (ver `paper/corpus_runs/AC3_cve_before_after.md`):
   controle positivo para testar se CRITICAL algum dia dispara fora de
   testes sintéticos; investigar concentração de padrão
   (`COGNITIVE_COMPLEXITY_EXPLOSION` = 55%).
+
+---
+
+## Sprint AD — Auditoria CVE-anchored fora do Python + fix RustAdapter (concluído)
+
+**Contexto**: pedido explícito do usuário (lista curada de ~100 repos
+cross-ecossistema: JS/TS, Python, Go, Rust, Java/Kotlin, C/C++,
+PHP/Ruby/C#/Mobile, infra de larga escala) para testar UCO Sensor fora
+do Python e refinar scanners/parâmetros com os achados. Escopo
+decidido via AskUserQuestion: **amostra representativa** (1 caso por
+ecossistema nesta rodada, não os ~100 repos de uma vez) — ver relatório
+completo em `paper/corpus_runs/AD_cross_ecosystem.md`.
+
+**Casos rodados (5, mesma metodologia da AC-3, `cve_diff_check.py`
+sem nenhuma modificação — já era agnóstico de linguagem)**:
+
+| Repo | Linguagem | CVE | Veredito |
+|---|---|---|---|
+| `curl/curl` | C | CVE-2023-38545 (SOCKS5 buffer overflow) | BLIND SPOT |
+| `golang/go` | Go | CVE-2023-29404 (cgo RCE via build flags) | BLIND SPOT (0% delta) |
+| `axios/axios` | JS | CVE-2023-45857 (CSRF token leak) | BLIND SPOT |
+| `spring-projects/spring-framework` | Java | CVE-2022-22965 (Spring4Shell) | BLIND SPOT (delta 12%, sob limiar 15%) |
+| `rust-lang/regex` | Rust | CVE-2022-24713 (ReDoS) | BLIND SPOT (após fix do adapter — ver abaixo) |
+
+**5/5 (100%) blind spot confirmado** — esperado: SAST046/047 (as 2
+regras novas da AC-3) são específicas de forma de AST Python por
+construção; nenhum dos 5 adapters destas linguagens tem regra SAST
+própria ainda. Nenhuma regra nova foi adicionada nesta rodada (causas
+raiz das 5 vulnerabilidades são heterogêneas demais para uma regra
+comum).
+
+**Achado principal — bug real de instrumentação no `RustAdapter`**
+(não um gap de detecção, um defeito de medição): investigando o caso
+`rust-lang/regex`, `cyclomatic_complexity` saltou de 45→102 (e
+`hamiltonian` 7.55→21.76, `halstead_bugs` 5.26→9.54) entre dois
+snapshots quase idênticos (diff real de 27 linhas) — implausível.
+Causa raiz: `lang_adapters/rust.py`'s `STRING_RE` usava quantificador
+`*` sem limite no ramo de literal de caractere; apóstrofos nus de
+*lifetime*/genérico do Rust (`'a`, `'static`, `<'a>`, `&'a T` — sem
+aspas de fechamento) eram confundidos com início de literal de
+caractere, e o regex (com `re.DOTALL`) "casava" tudo até a próxima
+aspa simples não relacionada em qualquer lugar do arquivo, fundindo
+strings e código inteiro em um match bogus.
+
+**Fix**: limitar o ramo de literal de caractere a exatamente um
+caractere/escape:
+`r"|b?'(?:\\u\{[0-9a-fA-F]+\}|\\.|[^'\\\n])'"`. Após o fix, o mesmo
+caso real estabiliza em `cyclomatic_complexity: 152 → 152` (idêntico,
+sem salto espúrio).
+
+**Validação**: 8 testes de pinagem novos (`tests/test_marco_m64.py`,
+TAD01-TAD08). Suíte completa: **2213 passed, 5 skipped, 0
+regressões**.
+
+- **Pendente para futuras rodadas**: completar "amostra
+  representativa" com um 2º caso por ecossistema se o usuário quiser
+  mais confiança estatística; regras SAST dedicadas para C/Go/JS/Java/
+  Rust (nenhuma existe ainda — todo o SAST atual é Python-AST); o teste
+  de throughput puro (CPU/memória em ASTs gigantes) e o teste de
+  falso-positivo (rodar contra `sqlite/sqlite`, `google/guava`) da lista
+  original do usuário não foram executados nesta rodada — ficam em
+  aberto para Sprint AE ou seguinte, se solicitado.

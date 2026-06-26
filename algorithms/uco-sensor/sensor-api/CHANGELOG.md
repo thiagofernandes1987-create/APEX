@@ -5,6 +5,50 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.10.2] — 2026-06-26 — Sprint AD: cross-ecosystem CVE audit + RustAdapter fix
+
+Estende a metodologia de diff antes/depois ancorada em CVE da AC-3 para
+fora do Python — 1 caso real por ecossistema em C (`curl/curl`,
+CVE-2023-38545), Go (`golang/go`, CVE-2023-29404), JavaScript
+(`axios/axios`, CVE-2023-45857), Java (`spring-framework`,
+CVE-2022-22965/Spring4Shell) e Rust (`rust-lang/regex`,
+CVE-2022-24713). `paper/cve_diff_check.py` não precisou de nenhuma
+modificação — já era agnóstico de linguagem. Ver
+`paper/corpus_runs/AD_cross_ecosystem.md` para a auditoria completa.
+
+### Corrigido — `lang_adapters/rust.py`: `STRING_RE` casava lifetimes/genéricos como literal de caractere
+
+Bug real de instrumentação (não um gap de detecção) encontrado ao
+investigar o caso `rust-lang/regex`: o ramo de literal de caractere de
+`STRING_RE` usava um quantificador `*` sem limite, então um apóstrofo
+nu de lifetime/genérico do Rust (`'a`, `'static`, `<'a>`, `&'a T` — sem
+aspas de fechamento) era tratado como início de literal de caractere e
+"casava" (com `re.DOTALL`) tudo até a próxima aspa simples não
+relacionada em qualquer lugar do arquivo, fundindo strings e código
+inteiro em um match bogus. Causou `cyclomatic_complexity` saltar de
+45→102 entre dois snapshots quase idênticos do `regex` crate (diff real
+de 27 linhas), um artefato puro de medição. Corrigido limitando o ramo
+de literal de caractere a exatamente um caractere/escape:
+`r"|b?'(?:\\u\{[0-9a-fA-F]+\}|\\.|[^'\\\n])'"`. Após o fix, o mesmo
+caso real estabiliza em `cyclomatic_complexity: 152 → 152`.
+
+Fixado em `tests/test_marco_m64.py` (TAD01-TAD08, 8 testes: lifetime
+isolado, lifetime+string+char combinados, literais de caractere reais
+ainda corretamente removidos, estabilidade de complexidade entre
+snapshots, ausência de match-runaway multi-linha). Suíte completa:
+2213 passed, 5 skipped, 0 regressões.
+
+### Resultado da auditoria
+
+5/5 (100%) blind spot confirmado nos 5 ecossistemas — esperado, pois
+SAST046/047 (da AC-3) são específicas de forma de AST Python; nenhum
+adapter destas 5 linguagens tem regra SAST própria ainda. Nenhuma regra
+nova adicionada nesta rodada (causas raiz das 5 vulnerabilidades são
+heterogêneas demais para uma regra comum). Gap documentado
+explicitamente, não escondido.
+
+---
+
 ## [3.10.1] — 2026-06-26 — Sprint AC-3: CVE-anchored corpus audit + SAST046/047
 
 Resposta direta a um gap de rigor identificado pelo usuário no protocolo
