@@ -5,6 +5,54 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.10.1] — 2026-06-26 — Sprint AC-3: CVE-anchored corpus audit + SAST046/047
+
+Resposta direta a um gap de rigor identificado pelo usuário no protocolo
+de validação de corpus (AC-1/AC-2 mediam apenas correlação genérica
+onset→fix-keyword, posteriormente invalidada por teste de controle — ver
+`paper/corpus_runs/AC2_summary.md` §4). Este sprint ancora em 8 CVEs
+reais e documentadas (6 repos: requests, scrapy, flask, django, celery,
+fastapi) com pares vulnerable-sha/fixed-sha resolvidos via GitHub
+Security Advisories API, diffando achados SAST e os 9 canais de métrica
+estrutural entre as duas versões de cada arquivo. Ver
+`paper/corpus_runs/AC3_cve_before_after.md` para a auditoria completa.
+
+### Adicionado — SAST046 / SAST047
+
+Duas novas regras SAST, derivadas diretamente dos blind spots
+confirmados (6/8 casos sem nenhum diff de SAST ou métrica entre versão
+vulnerável e corrigida):
+
+* **SAST046** (CWE-1286, MEDIUM) — host de URL extraído via
+  `<expr>.netloc.split(...)` em vez de `.hostname`; causa-raiz real de
+  CVE-2024-47081 (`.netrc` credential leak em `psf/requests`).
+* **SAST047** (CWE-200, MEDIUM) — header sensível
+  (`Authorization`/`Proxy-Authorization`/`Cookie`/`Cookie2`) removido e
+  re-atribuído na mesma função sem nunca condicionar em valor derivado
+  de scheme/host/netloc/domain; causa-raiz real de CVE-2023-32681
+  (`Proxy-Authorization` leak em `psf/requests`). Rastreia variáveis
+  locais atribuídas a partir do atributo de origem (não só presença
+  textual) para reconhecer guards como `scheme.startswith('https')`,
+  evitando falso-negativo no próprio bug que motivou a regra.
+
+Ambas validadas contra os snapshots reais (GitHub Contents API), não só
+exemplos sintéticos, e fixadas em `tests/test_marco_m63.py`
+(TAC01-TAC14, 14 testes incluindo casos de não-falso-positivo). Suíte
+completa: 2205 passed, 5 skipped, 0 regressões.
+
+### Limitações declaradas
+
+`matplotlib` e `pandas` não têm nenhum CVE indexado em GHSA nativo nem
+no índice global `/advisories` — não cobertos nesta rodada, declarado
+explicitamente. `scrapy` CVE-2022-0577 permanece blind spot mesmo após
+o refinamento (vulnerabilidade é ausência de checagem, não reatribuição
+sem guarda — fora do escopo de uma regra baseada em presença). 4 outras
+classes de blind spot confirmadas (cache poisoning, SQL injection
+Oracle, deserialização insegura, CSRF ausente) ficam para sprint
+seguinte — cada uma precisa de regra própria.
+
+---
+
 ## [3.10.0] — 2026-06-26 — Sprint AB: Multi-tenant isolation + Deep-Eval quick-wins
 
 Follow-up direto ao `UCO_SENSOR_DEEP_EVAL.md` (avaliação profunda
