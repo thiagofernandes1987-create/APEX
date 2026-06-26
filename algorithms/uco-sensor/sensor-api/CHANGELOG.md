@@ -5,6 +5,128 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.10.0] — 2026-06-26 — Sprint AB: Multi-tenant isolation + Deep-Eval quick-wins
+
+Follow-up direto ao `UCO_SENSOR_DEEP_EVAL.md` (avaliação profunda
+multi-agente de v3.9.1, composite score 69/100). Pivot de Sprint AA
+(deep UCO integration, AA-1 entregue; AA-2/3/4 pausados para v3.11.0+)
+para fechar o P0 single de GA + quatro quick-wins de alto ROI.
+
+### Adicionado — AB-1 (P0, gate-de-GA): tenant_id schema isolation
+
+Endereça **deep-eval §3 Finding #1** (multi-tenant é billing-only;
+snapshots/anomalies/discovered_signatures/remediations/marketplace
+todos sem `tenant_id` — CWE-639 IDOR de nível de banco).
+
+* Schema migration aditiva (`_migrate_ab_tenant_isolation`) adiciona
+  `tenant_id TEXT NOT NULL DEFAULT 'default'` às 5 tabelas de produto.
+* DDL de `snapshots` substitui o legacy `UNIQUE(module_id, commit_hash)`
+  por índice composto `ux_snapshots_tenant_module_commit(tenant_id,
+  module_id, commit_hash)`. Dois tenants podem agora publicar o mesmo
+  `(module_id, commit_hash)` sem colisão / sobrescrita cross-tenant.
+* `insert(mv, *, tenant_id='default')` aceita escopo opcional; legacy
+  callers sem `tenant_id` continuam escrevendo no partition `'default'`
+  (compat com 2161 testes pinados).
+* `get_history(module_id, window, *, tenant_id='default')` filtra por
+  partition; tenant A NÃO vê dados de B mesmo com mesmo `module_id`.
+* `list_modules(*, tenant_id='default')` scoped; admin pode passar
+  `tenant_id='*'` para listar entre tenants.
+* `_billed_dispatch` resolve o tenant via `resolve_tenant_from_api_key`
+  e propaga o `tid` resolvido como `data['_tenant_id']` para os
+  handlers `/analyze`, `/diff`, `/analyze-pr`, `/scan-repo` e `/gate`,
+  que passam o escopo para `_store.insert`.
+* **Legacy DBs em produção**: a coluna é adicionada via ALTER + novo
+  índice; o legacy `UNIQUE(module_id, commit_hash)` inline ainda
+  existe (SQLite não suporta DROP CONSTRAINT). Para destravar
+  multi-tenancy real em DBs pre-AB, operadores fazem rebuild manual
+  (gated em v3.10.1 follow-up; deploys fresh já isolam).
+
+### Adicionado — AB-2 (QW#1): marketplace ReDoS guard reusa regex_analyzer
+
+Endereça deep-eval §3 Finding #5. `governance/marketplace._has_redos_shape`
+substitui o blocklist de substring fraco (`("**", "++", "(.*)+", ...)`)
+por chamada a `sast.regex_analyzer.is_vulnerable` — o mesmo analisador
+estruturado de Classe A/B/C usado por SAST019. Família `(X+)+`,
+`([a-z]+)*`, `(\\d+)*` agora rejeitada (antes passava). Guards
+`None`/empty → False (QA-FIX-6) e `len > 2000` → True preservados.
+
+### Adicionado — AB-3 (QW#2): cache invalidation on writes
+
+Endereça deep-eval §3 Finding #4 (dashboards serviam dados 30-120s
+stale). Helper `_invalidate_module_caches(module_id)` em
+`api/server.py` invalida 3 famílias por write:
+
+* `spectral_fp:{module_id}:*`     (TTL 60s)
+* `granger_matrix:{module_id}:*`  (TTL 120s)
+* `repo_health_score:*`           (TTL 30s — global, depende de n_modules)
+
+Chamado após cada `_store.insert(mv)` em `/analyze`, `/diff`,
+`/analyze-pr` e `/gate`. Falhas são swallowed (cache NUNCA quebra a
+request).
+
+### Adicionado — AB-4 (QW#3): README sincronizado com v3.10.0
+
+Endereça deep-eval §3 Finding #7 (README 3 majors atrás —
+`version-0.4.0`, "20+ endpoints", sem multi-tenant/billing/invariants):
+
+* Badges atualizados para `version-3.10.0` + `tests-2185+`.
+* Tabela de endpoints reorganizada por categoria (~76+ endpoints
+  agrupados: Análise core, SAST/SCA/IaC, AutoFix, Histórico, Marketplace,
+  Signatures, CFG, Multi-tenant, Billing, Invariants, Feeds, APEX).
+* Multi-tenant SaaS quickstart `< 5 min` (criar tenant → key →
+  `/analyze` → verificar consumo).
+* Tabela de tabelas SQLite documenta as 5 com tenant_id pós-AB.
+* Histórico de versões `v3.10.0 ← v3.9.1 ← ... ← v0.1.0` adicionado.
+* Estrutura do projeto expandida (governance/, sast/, sca/, iac/,
+  metrics/, paper/ documentados).
+
+### Mudado — AB-5 (QW#4): charge-after-success em `_billed_dispatch`
+
+Endereça deep-eval §3 Finding #2 (denial-of-budget: 500/exceção
+debitava). Pipeline invertido para:
+
+1. `assert_active` → 423 se tenant suspenso (sem débito).
+2. `check_quota` (read-only) → 402 se quota insuficiente.
+3. `handler_fn(*args, **kwargs)`.
+4. Se `200 <= code < 300` → `check_and_charge` atômico debita.
+5. Se 4xx/5xx ou exceção → `record_event(units=0)` forense, **sem
+   débito**.
+
+SY-FIX-4 atomicidade preservada: o débito real continua sob lock do
+store. Janela TOCTOU entre pre-check e post-charge custa no máximo
+"uma chamada de graça" em corrida concorrente — preferível ao
+over-charge anterior em 100% das 500s.
+
+### Pinado — testes AB
+
+* `tests/test_marco_m62.py` (TAB01-TAB30, 30 novos pins):
+  TAB01-10 cross-tenant isolation, TAB11-14 ReDoS reuse,
+  TAB15-18 cache invalidate, TAB19-22 README sync,
+  TAB23-30 charge-after-success.
+* Regressão: **2191 passing, 0 falhas** (2161 → 2191, +30).
+
+### Bumped
+
+* `pyproject.toml` 3.9.1 → 3.10.0
+* `api/server.py` SensorConfig.version 3.9.1 → 3.10.0
+* pyproject `testpaths` agora inclui `test_marco_m61.py` e `_m62.py`.
+
+### Pausado (volta em v3.11.0+)
+
+* Sprint AA-2: `sensor_core/uco_deep_bridge.py` — canais deep (dsm_reciprocity, weighted_complexity, smoothing_factor, branching_factor, max_depth, node/edge/reachable counts).
+* Sprint AA-3: endpoint `mode=deep` + `DEEP_CHANNELS` SSOT + billing próprio.
+* Sprint AA-4: piloto multi-linguagem JS via pygments CFG/DSM.
+
+### Backlog deferido (Sprint AC futuro)
+
+Findings #3/#6/#8/#9 do deep-eval + quick-wins #5-#14 que não entraram
+em AB. Conflito de namespace SAST: o eval propunha
+SAST044=pickle/SAST045=yaml.load — AA-1 já consumiu SAST044/045
+(adjacent-dup/foldable-const), então SAST046+ ficam disponíveis para
+deserialization/SSRF/XXE quando vierem.
+
+---
+
 ## [3.9.1] — 2026-06-26 — QA Loop (4 lentes + 2-round convergence)
 
 ### APEX SCIENTIFIC QA Loop executado

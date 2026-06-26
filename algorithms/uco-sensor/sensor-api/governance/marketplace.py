@@ -48,19 +48,36 @@ def canonical_payload_hash(payload: Dict[str, Any]) -> str:
 
 
 def _has_redos_shape(text: str) -> bool:
-    """Sprint W audit-6 guard reused — reject nested quantifiers.
+    """ReDoS guard for marketplace payloads.
 
-    QA-FIX-6 (Round 1): an EMPTY string is NOT a regex shape at all —
-    treat as safe (return False) so a publisher can legitimately omit
-    optional string fields like ``label``/``notes``.  An over-long
-    string (> 2000 chars) is still rejected as a DoS surface.
+    Sprint AB (v3.10.0): replaces the prior substring blocklist
+    (``("**", "++", "(.*)+", ...)``) with a call to
+    ``sast.regex_analyzer.analyze_pattern`` — the same structured
+    ReDoS analyzer used by SAST019. The blocklist let through whole
+    families of catastrophic patterns (``(a+)+``, ``([a-z]+)*``,
+    ``(\\d+)*``) that the analyzer correctly flags. Reusing the SSOT
+    closes the DRY divergence identified in UCO_SENSOR_DEEP_EVAL §3
+    Finding #5.
+
+    Preserved guards (unchanged contract):
+      * ``None`` or empty → False (publishers may omit optional fields;
+        QA-FIX-6 v3.9.1).
+      * length > 2000 chars → True (DoS-by-input-size surface).
     """
     if text is None or text == "":
         return False
     if len(text) > 2000:
         return True
-    suspect = ("**", "++", "*?+", "+?*", "{0,}{", "(?:.*)+", "(.*)+", "(.+)+")
-    return any(s in text for s in suspect)
+    try:
+        from sast.regex_analyzer import is_vulnerable
+        return is_vulnerable(text)
+    except Exception:
+        # Defensive fallback: if the analyzer is missing or raises on a
+        # malformed pattern, retain the conservative blocklist so the
+        # guard never opens a hole due to import error.
+        suspect = ("**", "++", "*?+", "+?*", "{0,}{",
+                   "(?:.*)+", "(.*)+", "(.+)+")
+        return any(s in text for s in suspect)
 
 
 def _payload_passes_guards(payload: Dict[str, Any]) -> Optional[str]:

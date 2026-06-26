@@ -201,7 +201,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.9.1"
+    version:      str   = "3.10.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -378,6 +378,38 @@ def _sanitize_for_echo(value: str, *, max_len: int = 64) -> str:
     if len(value) > max_len:
         cleaned += "…"
     return cleaned
+
+
+# Sprint AB (v3.10.0) — cache invalidation on writes.  Closes the stale-data
+# window identified in UCO_SENSOR_DEEP_EVAL §3 Finding #4: dashboards served
+# 30-120s old data after a new snapshot because cache.cache_set() had no
+# corresponding invalidate-on-write.  Call this helper immediately after any
+# `_store.insert(mv)` so the next read recomputes from the persisted row.
+#
+# Module-scoped families invalidated (TTLs 30-120s in original cache_set):
+#   * spectral_fp:{module_id}:*      (TTL 60)  — server.py:1387
+#   * granger_matrix:{module_id}:*   (TTL 120) — server.py:1498
+# Global family invalidated (depends on n_modules / repo-wide state):
+#   * repo_health_score:*            (TTL 30)  — server.py:4158
+#
+# Failures are swallowed: cache MUST never break the request.
+def _invalidate_module_caches(module_id: str) -> None:
+    try:
+        from sensor_storage.cache import cache_invalidate
+    except Exception:
+        return
+    try:
+        cache_invalidate(f"spectral_fp:{module_id}")
+    except Exception:
+        pass
+    try:
+        cache_invalidate(f"granger_matrix:{module_id}")
+    except Exception:
+        pass
+    try:
+        cache_invalidate("repo_health_score:")
+    except Exception:
+        pass
 
 
 def _authenticate(plain_key: str, require_admin: bool = False) -> Tuple[bool, Optional[Dict]]:
@@ -714,6 +746,7 @@ def handle_analyze(data: Dict) -> Tuple[int, Dict]:
     commit_hash = data.get("commit_hash", f"auto_{int(time.time())}")
     timestamp   = float(data.get("timestamp", time.time()))
     file_ext    = data.get("file_extension", data.get("language", ".py"))
+    tenant_id   = data.get("_tenant_id", "default")   # Sprint AB AB-1
     # Normalizar extensão
     if not file_ext.startswith("."):
         file_ext = f".{file_ext}"
@@ -731,12 +764,14 @@ def handle_analyze(data: Dict) -> Tuple[int, Dict]:
         timestamp=timestamp,
     )
 
-    # Persistir no store
-    _store.insert(mv)
+    # Persistir no store (Sprint AB AB-1: scoped to caller's tenant)
+    _store.insert(mv, tenant_id=tenant_id)
+    _invalidate_module_caches(module_id)   # Sprint AB QW#2
 
-    # Classificação espectral (se houver histórico suficiente)
+    # Classificação espectral (se houver histórico suficiente, no escopo do tenant)
     classification = None
-    history = _store.get_history(module_id, window=_config.max_history)
+    history = _store.get_history(module_id, window=_config.max_history,
+                                  tenant_id=tenant_id)
     apex_event_sent = False
     if len(history) >= 5:
         result = _engine.analyze(history, module_id=module_id)
@@ -925,10 +960,11 @@ def handle_analyze_pr(data: Dict) -> Tuple[int, Dict]:
       "base_branch": "main"
     }
     """
-    files    = data.get("files", [])
-    pr_num   = data.get("pr_number", 0)
-    repo     = data.get("repo", "unknown/repo")
-    base_ref = data.get("base_branch", "main")
+    files     = data.get("files", [])
+    pr_num    = data.get("pr_number", 0)
+    repo      = data.get("repo", "unknown/repo")
+    base_ref  = data.get("base_branch", "main")
+    tenant_id = data.get("_tenant_id", "default")   # Sprint AB AB-1
 
     if not files:
         return 400, {"error": "files list is required and cannot be empty"}
@@ -957,7 +993,8 @@ def handle_analyze_pr(data: Dict) -> Tuple[int, Dict]:
             module_id=path,
             commit_hash=chash,
         )
-        _store.insert(mv)
+        _store.insert(mv, tenant_id=tenant_id)   # Sprint AB AB-1
+        _invalidate_module_caches(path)   # Sprint AB QW#2
 
         result = {
             "path":     path,
@@ -1890,24 +1927,115 @@ def _billed_dispatch(
     event_kind: str, key_info: Optional[Dict], endpoint: str,
     handler_fn, *args, **kwargs,
 ) -> Tuple[int, Dict]:
-    """Sprint Y SY-FIX-3 — chokepoint: resolve tenant, check_and_charge,
-    invoke handler iff allowed; emit 402 + Retry-After when over-quota
-    or 423 when suspended. Bypass tenants pass through untouched."""
-    from governance.tenancy import resolve_tenant_from_api_key, TenantSuspended
-    from governance.billing import check_and_charge
+    """Chokepoint that protects billable endpoints with quota + tenant gating.
+
+    Sprint Y (SY-FIX-3) introduced the dispatcher and used a *charge-before-
+    handler* flow: ``check_and_charge`` ran first, then ``handler_fn``. That
+    debited the tenant **before** the work happened, so a handler that crashed
+    (500) or returned a 4xx still consumed budget — denial-of-budget surface
+    (UCO_SENSOR_DEEP_EVAL §3 Finding #2). In ``hmc_repair`` (20 units/call) a
+    5-shot intermittent bug drained a FREE tenant's whole period in seconds.
+
+    Sprint AB (v3.10.0, AB-5) inverts to *charge-after-success*:
+
+      1. ``assert_active`` — 423 if tenant suspended (cheap, no debit).
+      2. ``check_quota`` — read-only pre-flight; 402 + Retry-After if the
+         call WOULD exceed quota. Handler not invoked.
+      3. ``handler_fn(*args, **kwargs)`` runs.
+      4. On 2xx response → atomic ``check_and_charge`` commits the debit.
+         (The atomic re-check under ``SnapshotStore._lock`` preserves
+         SY-FIX-4's TOCTOU guarantee for the actual debit step.) If a
+         concurrent caller exhausted the budget between pre-check and
+         post-success, the user still receives their response — the race
+         loss is one un-billed call, not a wrong-result.
+      5. On non-2xx response → ``record_event`` with units=0 for forensic
+         visibility; no debit.
+
+    Bypass tenants (``BYPASS_TENANTS``) pass through with units=0 events
+    (identical to pre-AB behavior — they were never charged).
+    """
+    from governance.tenancy import (
+        resolve_tenant_from_api_key, assert_active, TenantSuspended,
+    )
+    from governance.billing import check_quota, check_and_charge, record_event
+
     tid, _ = resolve_tenant_from_api_key(_store, key_info)
     key_prefix = (key_info or {}).get("key_prefix", "")
+
+    # Sprint AB (AB-1) — propagate tenant_id into the handler's data dict
+    # so handlers that persist (snapshots/anomalies/remediations) can scope
+    # writes to the caller's tenant. Handlers that don't read this key
+    # ignore it harmlessly.
+    if args and isinstance(args[0], dict):
+        # Only set if the caller didn't explicitly pass one (precedence:
+        # explicit user-supplied tenant override > resolved tid). This
+        # also avoids overwriting in the rare nested-dispatch case.
+        args[0].setdefault("_tenant_id", tid)
+
+    # ── 1. Suspended check (cheap, no debit) ──
     try:
-        ok, info = check_and_charge(
-            _store, tid, event_kind,
-            key_prefix=key_prefix, endpoint=endpoint,
-        )
+        assert_active(_store, tid)
     except TenantSuspended as exc:
+        # Forensic 423 record (units=0).
+        try:
+            record_event(
+                _store, tenant_id=tid, event_kind=event_kind, units=0,
+                key_prefix=key_prefix, endpoint=endpoint, status_code=423,
+            )
+        except Exception:
+            pass
         return 423, {"error": "tenant_suspended",
                      "tenant_id": exc.tenant_id, "status": exc.status}
+
+    # ── 2. Pre-flight quota check (no debit) ──
+    ok, info = check_quota(_store, tid, event_kind)
     if not ok:
+        # Same 402 payload shape as before (period_resets_at, retry_after,
+        # upgrade); record forensic 402 event for visibility.
+        try:
+            record_event(
+                _store, tenant_id=tid, event_kind=event_kind, units=0,
+                key_prefix=key_prefix, endpoint=endpoint, status_code=402,
+            )
+        except Exception:
+            pass
         return 402, info
-    return handler_fn(*args, **kwargs)
+
+    # ── 3. Invoke handler ──
+    try:
+        code, data = handler_fn(*args, **kwargs)
+    except Exception:
+        # Uncaught exception bubbles to the top-level _safe_500_envelope.
+        # No charge — that's the whole point of charge-after-success.
+        raise
+
+    # ── 4/5. Charge-after-success vs forensic-on-failure ──
+    try:
+        if isinstance(code, int) and 200 <= code < 300:
+            # Atomic re-check + debit. SY-FIX-4 atomicity preserved here:
+            # the actual UPDATE units_used happens under the store's lock.
+            check_and_charge(
+                _store, tid, event_kind,
+                key_prefix=key_prefix, endpoint=endpoint,
+                status_code=int(code),
+            )
+        else:
+            # Forensic-only record (units=0) so dashboards still show the
+            # attempt, but the tenant is not debited for the failure.
+            record_event(
+                _store, tenant_id=tid, event_kind=event_kind, units=0,
+                key_prefix=key_prefix, endpoint=endpoint,
+                status_code=int(code) if isinstance(code, int) else 0,
+            )
+    except TenantSuspended:
+        # Tenant got suspended between pre-check and post-success — we
+        # already produced the response; eat the loss for this request.
+        pass
+    except Exception:
+        # Billing path must never raise out of the dispatcher.
+        pass
+
+    return code, data
 
 
 def _best_effort_module_source(module_id: str) -> str:
@@ -2382,9 +2510,10 @@ def handle_diff(data: Dict) -> Tuple[int, Dict]:
     Retorna delta dos 9 canais UCO entre before e after, flag de regressão,
     e sugestões de transforms quando há piora.
     """
-    before = data.get("before", {})
-    after  = data.get("after",  {})
-    persist = bool(data.get("persist", False))
+    before    = data.get("before", {})
+    after     = data.get("after",  {})
+    persist   = bool(data.get("persist", False))
+    tenant_id = data.get("_tenant_id", "default")   # Sprint AB AB-1
 
     code_b = before.get("code", "")
     code_a = after.get("code",  "")
@@ -2413,8 +2542,11 @@ def handle_diff(data: Dict) -> Tuple[int, Dict]:
                              module_id=module_a, commit_hash=hash_a, timestamp=ts_a)
 
     if persist:
-        _store.insert(mv_b)
-        _store.insert(mv_a)
+        _store.insert(mv_b, tenant_id=tenant_id)   # Sprint AB AB-1
+        _store.insert(mv_a, tenant_id=tenant_id)
+        _invalidate_module_caches(module_b)   # Sprint AB QW#2
+        if module_a != module_b:
+            _invalidate_module_caches(module_a)
 
     # Deltas (after − before)
     def _mv_dict(mv) -> Dict:
@@ -2659,6 +2791,7 @@ def handle_gate(data: Dict) -> Tuple[int, Dict]:
     commit_hash = data.get("commit_hash", f"gate_{int(time.time())}")
     file_ext    = data.get("file_extension", data.get("language", ".py"))
     policy_dict = data.get("policy", None)
+    tenant_id   = data.get("_tenant_id", "default")   # Sprint AB AB-1
 
     if not code.strip():
         return 400, {"error": "code is required and cannot be empty"}
@@ -2674,7 +2807,8 @@ def handle_gate(data: Dict) -> Tuple[int, Dict]:
         commit_hash=commit_hash,
         timestamp=time.time(),
     )
-    _store.insert(mv)
+    _store.insert(mv, tenant_id=tenant_id)   # Sprint AB AB-1
+    _invalidate_module_caches(module_id)   # Sprint AB QW#2
 
     # Load policy
     policy = policy_from_dict(policy_dict) if policy_dict else load_default_policy()
