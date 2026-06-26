@@ -32,6 +32,7 @@ Uso:
 """
 from __future__ import annotations
 import os
+import re
 import sys
 import json
 import time
@@ -304,6 +305,79 @@ def _extract_api_key(headers: Any, params: Dict) -> str:
     if not key:
         key = params.get("api_key", [""])[0]
     return key.strip()
+
+
+# QA-FIX-1 (CRITICAL, Round 1) — production-safe 500 envelope.  By default,
+# only a stable error code + class name are returned; the full traceback is
+# only included when UCO_INCLUDE_TRACE=1 is set (dev / debug only).  Never
+# leaks file paths / line numbers / internal function names to API clients
+# in production.
+def _safe_500_envelope(exc: Exception) -> Tuple[int, Dict[str, Any]]:
+    include_trace = os.environ.get("UCO_INCLUDE_TRACE", "0") == "1"
+    body: Dict[str, Any] = {
+        "error":      "internal_error",
+        "error_class": type(exc).__name__,
+    }
+    if include_trace:
+        # Last 500 chars of trace, dev-only.
+        body["trace"] = traceback.format_exc()[-500:]
+    return 500, body
+
+
+# QA-FIX-2 (HIGH, Round 1) — typed parsers for query params.  Replace bare
+# `int(params.get(...)[0])` calls inside the try/except 500 handler with
+# these helpers so a malformed `?limit=abc` yields a 400 instead of a 500
+# with leaked stack trace.  Raise structured exceptions; caller maps them
+# to 400 responses.
+class _QueryParamError(Exception):
+    """Structured 400-mapped exception for malformed query parameters."""
+    def __init__(self, param: str, value: str, expected: str):
+        super().__init__(f"invalid query param {param!r}: {value!r} (expected {expected})")
+        self.param = param
+        self.value = value
+        self.expected = expected
+
+
+def _qp_int(params: Dict, name: str, default: int) -> int:
+    raw = params.get(name, [str(default)])[0]
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        raise _QueryParamError(name, str(raw), "integer")
+
+
+def _qp_float(params: Dict, name: str, default: float) -> float:
+    raw = params.get(name, [str(default)])[0]
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        raise _QueryParamError(name, str(raw), "float")
+
+
+# QA-FIX-3 (MED, Round 1) — period_key strict validation: format YYYY-MM,
+# month 1-12.  Used in /tenants/{id}/usage?period=…
+_PERIOD_KEY_RE = re.compile(r"^(\d{4})-(0[1-9]|1[0-2])$")
+
+
+def _validate_period_key(value: str) -> Optional[str]:
+    """Return value if valid `YYYY-MM` else None."""
+    if not value:
+        return None
+    m = _PERIOD_KEY_RE.match(value.strip())
+    return m.group(0) if m else None
+
+
+# QA-FIX-5 (MED, Round 1) — sanitize user-supplied values that get echoed
+# back in error messages so an attacker cannot inject newlines / control
+# chars / extremely long noise into operator logs or response bodies.
+def _sanitize_for_echo(value: str, *, max_len: int = 64) -> str:
+    if not isinstance(value, str):
+        value = str(value)
+    cleaned = "".join(c if c.isprintable() and c not in "\r\n\t" else "?"
+                       for c in value[:max_len])
+    if len(value) > max_len:
+        cleaned += "…"
+    return cleaned
 
 
 def _authenticate(plain_key: str, require_admin: bool = False) -> Tuple[bool, Optional[Dict]]:
@@ -1706,46 +1780,69 @@ def handle_tenants_list(plan: str = "", status: str = "",
 
 
 def handle_tenants_get(tenant_id: str) -> Tuple[int, Dict]:
-    """GET /tenants/{id} (admin)."""
+    """GET /tenants/{id} (admin). QA-FIX-4: strip + sanitize tenant_id."""
     from governance.tenancy import get_tenant
+    tenant_id = (tenant_id or "").strip()
     if not tenant_id:
         return 400, {"error": "tenant_id is required"}
     t = get_tenant(_store, tenant_id)
     if t is None:
-        return 404, {"error": f"tenant {tenant_id!r} not found"}
+        return 404, {"error": "tenant_not_found",
+                     "tenant_id": _sanitize_for_echo(tenant_id)}
     return 200, t
 
 
 def handle_tenants_suspend(tenant_id: str, data: Dict) -> Tuple[int, Dict]:
-    """POST /tenants/{id}/suspend (admin)."""
+    """POST /tenants/{id}/suspend (admin). QA-FIX-4/5."""
     from governance.tenancy import suspend_tenant
+    tenant_id = (tenant_id or "").strip()
     if not tenant_id:
         return 400, {"error": "tenant_id is required"}
     try:
         out = suspend_tenant(_store, tenant_id, reason=(data.get("reason") or ""))
     except ValueError as exc:
-        return 400, {"error": str(exc)}
+        return 400, {"error": _sanitize_for_echo(str(exc), max_len=200)}
     if out is None:
-        return 404, {"error": f"tenant {tenant_id!r} not found"}
+        return 404, {"error": "tenant_not_found",
+                     "tenant_id": _sanitize_for_echo(tenant_id)}
     return 200, out
 
 
 def handle_tenants_reactivate(tenant_id: str) -> Tuple[int, Dict]:
-    """POST /tenants/{id}/reactivate (admin)."""
+    """POST /tenants/{id}/reactivate (admin). QA-FIX-4/5."""
     from governance.tenancy import reactivate_tenant
+    tenant_id = (tenant_id or "").strip()
     if not tenant_id:
         return 400, {"error": "tenant_id is required"}
     out = reactivate_tenant(_store, tenant_id)
     if out is None:
-        return 404, {"error": f"tenant {tenant_id!r} not found"}
+        return 404, {"error": "tenant_not_found",
+                     "tenant_id": _sanitize_for_echo(tenant_id)}
     return 200, out
 
 
 def handle_tenants_usage(tenant_id: str, period: str = "") -> Tuple[int, Dict]:
-    """GET /tenants/{id}/usage (admin)."""
+    """GET /tenants/{id}/usage (admin).
+
+    QA-FIX-3 (Round 1) — `period` must match strict YYYY-MM format
+    (month 01-12).  Pre-fix, '2026-13' / 'foo' / SQL metachars were
+    silently echoed back with empty data; now → 400.
+    QA-FIX-4 (Round 1) — `tenant_id` is whitespace-stripped before
+    lookup; surrounding spaces / tabs / newlines no longer cause
+    phantom 404s for legitimate IDs.
+    """
     from governance.billing import usage_summary
+    tenant_id = (tenant_id or "").strip()
     if not tenant_id:
         return 400, {"error": "tenant_id is required"}
+    if period:
+        validated = _validate_period_key(period)
+        if validated is None:
+            return 400, {"error": "invalid_query_param",
+                          "param": "period",
+                          "value": _sanitize_for_echo(period),
+                          "expected": "YYYY-MM (month 01-12)"}
+        period = validated
     out = usage_summary(_store, tenant_id, period_key=(period or None))
     if "error" in out:
         return 404, out
@@ -4835,9 +4932,17 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_lsp_diagnostics(module_id, window=window_n)
             else:
                 code, data = 404, {"error": f"Unknown endpoint: {path}"}
+        except _QueryParamError as qpe:
+            # QA-FIX-2 — typed 400 envelope for malformed query params.
+            code = 400
+            data = {"error": "invalid_query_param",
+                    "param":    _sanitize_for_echo(qpe.param),
+                    "value":    _sanitize_for_echo(qpe.value),
+                    "expected": qpe.expected}
         except Exception as e:
-            code = 500
-            data = {"error": str(e), "trace": traceback.format_exc()[-500:]}
+            # QA-FIX-1 — production-safe 500 envelope; full trace only when
+            # UCO_INCLUDE_TRACE=1 (dev / debug).
+            code, data = _safe_500_envelope(e)
 
         self._send_json(code, data)
 
@@ -5034,9 +5139,17 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                     code, data = handle_create_key(body)
             else:
                 code, data = 404, {"error": f"Unknown endpoint: {path}"}
+        except _QueryParamError as qpe:
+            # QA-FIX-2 — typed 400 envelope for malformed query params.
+            code = 400
+            data = {"error": "invalid_query_param",
+                    "param":    _sanitize_for_echo(qpe.param),
+                    "value":    _sanitize_for_echo(qpe.value),
+                    "expected": qpe.expected}
         except Exception as e:
-            code = 500
-            data = {"error": str(e), "trace": traceback.format_exc()[-500:]}
+            # QA-FIX-1 — production-safe 500 envelope; full trace only when
+            # UCO_INCLUDE_TRACE=1 (dev / debug).
+            code, data = _safe_500_envelope(e)
 
         self._send_json(code, data)
 
@@ -5061,9 +5174,17 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_signatures_delete(sig_id)
             else:
                 code, data = 404, {"error": f"Unknown endpoint: {path}"}
+        except _QueryParamError as qpe:
+            # QA-FIX-2 — typed 400 envelope for malformed query params.
+            code = 400
+            data = {"error": "invalid_query_param",
+                    "param":    _sanitize_for_echo(qpe.param),
+                    "value":    _sanitize_for_echo(qpe.value),
+                    "expected": qpe.expected}
         except Exception as e:
-            code = 500
-            data = {"error": str(e), "trace": traceback.format_exc()[-500:]}
+            # QA-FIX-1 — production-safe 500 envelope; full trace only when
+            # UCO_INCLUDE_TRACE=1 (dev / debug).
+            code, data = _safe_500_envelope(e)
 
         self._send_json(code, data)
 

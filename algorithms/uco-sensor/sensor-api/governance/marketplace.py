@@ -48,8 +48,16 @@ def canonical_payload_hash(payload: Dict[str, Any]) -> str:
 
 
 def _has_redos_shape(text: str) -> bool:
-    """Sprint W audit-6 guard reused — reject nested quantifiers."""
-    if not text or len(text) > 2000:
+    """Sprint W audit-6 guard reused — reject nested quantifiers.
+
+    QA-FIX-6 (Round 1): an EMPTY string is NOT a regex shape at all —
+    treat as safe (return False) so a publisher can legitimately omit
+    optional string fields like ``label``/``notes``.  An over-long
+    string (> 2000 chars) is still rejected as a DoS surface.
+    """
+    if text is None or text == "":
+        return False
+    if len(text) > 2000:
         return True
     suspect = ("**", "++", "*?+", "+?*", "{0,}{", "(?:.*)+", "(.*)+", "(.+)+")
     return any(s in text for s in suspect)
