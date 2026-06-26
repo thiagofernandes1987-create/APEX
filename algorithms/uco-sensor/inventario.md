@@ -50,6 +50,7 @@ um sprint cresce > 30 items, ele vira sub-checklist linkado abaixo.
 | **Sprint Z — Paper + invariants + v3.8.1** | [Checklist Z](#sprint-z-wbs) | ✅ | v3.9.0 |
 | **v3.8.1 follow-up** | [Backlog Workflow #2](#v381-backlog) — 5/6 fechados em v3.9.0 | ✅ | v3.9.0 (1 deferred → v3.9.2) |
 | **v3.9.1 QA Loop** | 4-lentes (QA+Product+Eng+Security) × 2-round convergence — [Checklist QA Loop](#qa-loop-v391) | ✅ | v3.9.1 |
+| **Sprint AA — UCO Deep Integration** | Integração total `algorithms/uco/` → uco-sensor — [Checklist AA](#sprint-aa-wbs) | 🔄 em andamento | v3.10.0 (alvo) |
 
 ## Equipe APEX (modo SCIENTIFIC)
 
@@ -352,3 +353,115 @@ entrar em v3.8.1 (idealmente junto com Sprint Z):
 | Falhas        | 0    | **0** |
 | Endpoints     | 60+  | **64+** (+4 marketplace) |
 | Tables SQLite | 5    | **6** |
+
+---
+
+<a id="sprint-aa-wbs"></a>
+## Sprint AA — UCO Deep Integration (v3.10.0) — WBS
+
+### Auditoria do estado real (2026-06-26) — antes de planejar
+
+Lido `algorithms/uco/universal_code_optimizer_v4.py` (4152 LOC) linha a linha
+nas seções relevantes. Achado central: **o `UCOBridge` (sensor_core/uco_bridge.py)
+NÃO chama o motor `analyze()` do UCO core.** Ele reimplementa do zero, via AST
+visitor próprio (`_UCOVisitor`), os 9 canais (H, CC, ILR, DSM_d, DSM_c, DI, dead,
+dups, bugs) — com fórmulas calibradas e 2145 testes pinados. Apenas dois pontos
+hoje tocam o UCO core de fato:
+
+1. `sensor_core/autofix/transforms/uco_transform_bridge.py` (Sprint K) — 4 dos
+   9 `CodeTransform` do core bridged (SAST040-043).
+2. `sensor_core/autofix/hmc_repair.py` (Sprint Q) — já chama `optimize()` HMC
+   completo (numpy) com fallback gracioso para `optimize_fast()` (SA) quando
+   numpy indisponível. **AA-6 (optimize completo HMC+SA) já está pronto** —
+   removido do escopo deste sprint.
+
+### DSM (acoplamento)
+
+`uco_bridge.py` ↔ `algorithms/uco/` (path sys.path injection) ↔ `channels.py`
+(SSOT 9 canais) ↔ `policy_engine.py`/`trend_engine.py`/`signals.py` (consomem
+os 9 canais) ↔ `api/server.py` (`_billed_dispatch`, billing por endpoint) ↔
+`sensor_core/autofix/transforms/` (5 transforms órfãos do core).
+
+### Ishikawa (causa-raiz do gap)
+
+Os dois motores evoluíram em paralelo: o core (`universal_code_optimizer_v4.py`)
+ganhou CFG real (Tarjan SCC), DSM com reciprocidade/ciclos via grafo verdadeiro,
+`weighted_complexity`, `smoothing_factor` (momentum K), `branching_factor`,
+`max_depth` — nenhum desses chegou ao sensor porque o `UCOBridge` foi escrito
+antes (ou em paralelo) e nunca foi atualizado para consumir o motor mais novo.
+Substituir o `UCOBridge` inteiro pelo motor do core é **alto risco** (fórmulas
+diferentes, 2145 testes pinados na calibração atual). Decisão: **integração em
+camadas (tiered)**, não substituição.
+
+### Pareto 80/20 — o que entra neste sprint
+
+| Item | ROI | Risco | Decisão |
+|---|---|---|---|
+| AA-1: Bridge dos 5 transforms órfãos | Alto / mecânico | Baixo (aditivo) | ✅ entra |
+| AA-2: Novo módulo `uco_deep_bridge.py` (canais novos: dsm_reciprocity, weighted_complexity, smoothing_factor, branching_factor, max_depth, node/edge/reachable/unreachable counts) | Alto (canais "capturados mas não calculados" reais) | Médio | ✅ entra |
+| AA-3: Endpoint opt-in `mode=deep` (não substitui o fast path) | Médio-alto | Baixo (aditivo, billing próprio) | ✅ entra |
+| AA-4: Multi-linguagem via pygments (`GenericCFGBuilder`/`GenericDSMCollector`) para JS/Go/Java | Médio | Médio (motor genérico ainda não validado em produção) | ✅ entra (escopo: piloto JS) |
+| `detect_patterns()` do core (heurística regex crua) | Baixo | — | ❌ fora — sensor já tem detectores AST superiores |
+| Substituir `UCOBridge` pelo motor do core | — | Alto (quebra 2145 testes calibrados) | ❌ fora — rejeitado |
+
+### FMEA
+
+| Modo de falha | Mitigação |
+|---|---|
+| `mode=deep` muda canais default e quebra Granger/trend/policy que esperam 9 canais fixos | Canais novos são **aditivos** em `channels.py`; `series()` só lê os 9 originais por padrão — novos canais opt-in via novo `DEEP_CHANNELS` tuple separado |
+| numpy ausente quebra deep mode | `uco_deep_bridge` usa apenas `analyze()` (não requer numpy, confirmado em `UCO_API_SURFACE.yaml`) — só o autofix `optimize()` HMC requer numpy, e isso já tem fallback (Sprint Q) |
+| Custo de billing não gated → deep mode usado de graça | `_billed_dispatch` com unit cost próprio (mais caro que `/analyze` fast) |
+| pygments ausente no runtime → multi-lang CFG quebra import | Mesmo padrão do core: `_PygmentsMixin` já é defensivo; sensor side precisa de try/except no boundary do novo módulo |
+
+### Checklist AA (WBS)
+
+- [x] AA-1: Bridge dos 5 transforms órfãos do UCO core (concluído — ver nota
+      abaixo: apenas 2 mapeados a SAST novo, 3 são cosméticos)
+      (`AdjacentDuplicateBlockRemoval`, `DuplicateAdjacentControlBlockMerger`,
+      `BracketWhitespaceNormalizer`, `ConstantFoldingTransform`,
+      `EmptyBlockRemover`)
+- [ ] AA-2: `sensor_core/uco_deep_bridge.py` — wrapper de
+      `UniversalCodeOptimizer.analyze()` expondo canais novos
+      (`dsm_reciprocity`, `weighted_complexity`, `smoothing_factor`,
+      `branching_factor`, `max_depth`, `node_count`, `edge_count`,
+      `reachable_count`, `unreachable_count`) como atributos extras do
+      `MetricVector` (padrão `getattr` já usado, sem quebrar schema)
+- [ ] AA-3: `DEEP_CHANNELS` em `channels.py` (SSOT separado, aditivo) +
+      endpoint `mode=deep` em `/analyze` roteando para `uco_deep_bridge`,
+      billed via `_billed_dispatch` com novo `UNIT_COSTS["analyze_deep"]`
+- [ ] AA-4: Piloto multi-linguagem JS via `GenericCFGBuilder`/
+      `GenericDSMCollector` (pygments) integrado a `lang_adapters/javascript.py`
+- [ ] AA-5: `tests/test_marco_m61.py` — TUC01-TUC30 (transforms órfãos,
+      canais deep, endpoint deep, piloto JS)
+- [ ] AA-6: ~~Expor optimize() HMC completo~~ — **já implementado** (Sprint Q,
+      `hmc_repair.py`), confirmado nesta auditoria, removido do escopo
+- [ ] AA-7: Workflow multi-dim review (novo endpoint + billing surface =
+      gatilho do framework condicional para ceremônia pesada)
+- [ ] AA-8: CHANGELOG + version bump v3.10.0 + regressão completa + release
+
+### AA-1 — nota de execução (concluído)
+
+Das 5 classes órfãs, apenas 2 detectam um defeito real e ganharam SAST rule
+nova: **SAST044** (Adjacent Duplicate Statement, detector texto em
+`sast/scanner.py::_check_adjacent_duplicate_lines`) e **SAST045**
+(Unsimplified Constant Expression, detector AST em `visit_Assign`) — ambas
+wired em `SAST_TO_TRANSFORM` (11 → 13 entradas). As outras 3
+(`DuplicateAdjacentControlBlockMerger`, `BracketWhitespaceNormalizer`,
+`EmptyBlockRemover`) são puramente cosméticas — sem achado de qualidade
+associado — e foram bridged como transforms chamáveis diretamente, sem
+rule SAST (decisão documentada no docstring do módulo: não fabricar
+findings falsos para formatação). 16 novos testes (TUC01-TUC16,
+`tests/test_marco_m61.py`) + 1 teste legado atualizado
+(`test_TN30` → 13 entradas). Regressão completa: **2161 passing, 0
+falhas** (de 2145).
+
+### Recomendação arquitetural — "UCO como módulo de deep search"
+
+Sim — **manter o `UCOBridge` atual como tier rápido (default, zero-dep,
+calibrado, 2145 testes)** e tratar o motor completo do `algorithms/uco/`
+como um **tier opcional "deep"** (CFG real com Tarjan SCC, DSM com
+reciprocidade verdadeira, multi-linguagem via pygments), acionado por
+`mode=deep` e cobrado com unit cost mais alto. Isso evita: (a) reescrever
+2145 testes pinados na calibração atual, (b) duas fórmulas de Hamiltonian
+divergentes colidindo no mesmo canal, (c) dependência rígida em numpy/pygments
+no caminho rápido usado por CI/PR gates.
