@@ -31,6 +31,8 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.10.0** (Sprint AB — Deep-Eval P0 multi-tenant isolation + 4 quick-wins; AA-1 + AB-1..AB-5; 2191 testes verdes) ✅
+
 **v3.9.1** (QA Loop 4-lentes + 2-round convergence — QA-FIX-1..6 + Round 2 migration sweep) ✅
 
 ---
@@ -50,6 +52,8 @@ um sprint cresce > 30 items, ele vira sub-checklist linkado abaixo.
 | **Sprint Z — Paper + invariants + v3.8.1** | [Checklist Z](#sprint-z-wbs) | ✅ | v3.9.0 |
 | **v3.8.1 follow-up** | [Backlog Workflow #2](#v381-backlog) — 5/6 fechados em v3.9.0 | ✅ | v3.9.0 (1 deferred → v3.9.2) |
 | **v3.9.1 QA Loop** | 4-lentes (QA+Product+Eng+Security) × 2-round convergence — [Checklist QA Loop](#qa-loop-v391) | ✅ | v3.9.1 |
+| **Sprint AA — UCO Deep Integration** | AA-1 entregue (5 transforms bridged + SAST044/045); AA-2/3/4 **pausados** após deep-eval — retomam em v3.11.0+ | ⏸️ AA-1 ✅, AA-2/3/4 paused | v3.10.0 (parcial) |
+| **Sprint AB — Deep-Eval follow-up (P0 + QW)** | Multi-tenant schema isolation + 4 quick-wins do `UCO_SENSOR_DEEP_EVAL.md` — [Checklist AB](#sprint-ab-wbs) | 🔄 em andamento | v3.10.0 (alvo) |
 
 ## Equipe APEX (modo SCIENTIFIC)
 
@@ -352,3 +356,282 @@ entrar em v3.8.1 (idealmente junto com Sprint Z):
 | Falhas        | 0    | **0** |
 | Endpoints     | 60+  | **64+** (+4 marketplace) |
 | Tables SQLite | 5    | **6** |
+
+---
+
+<a id="sprint-aa-wbs"></a>
+## Sprint AA — UCO Deep Integration (v3.10.0) — WBS
+
+### Auditoria do estado real (2026-06-26) — antes de planejar
+
+Lido `algorithms/uco/universal_code_optimizer_v4.py` (4152 LOC) linha a linha
+nas seções relevantes. Achado central: **o `UCOBridge` (sensor_core/uco_bridge.py)
+NÃO chama o motor `analyze()` do UCO core.** Ele reimplementa do zero, via AST
+visitor próprio (`_UCOVisitor`), os 9 canais (H, CC, ILR, DSM_d, DSM_c, DI, dead,
+dups, bugs) — com fórmulas calibradas e 2145 testes pinados. Apenas dois pontos
+hoje tocam o UCO core de fato:
+
+1. `sensor_core/autofix/transforms/uco_transform_bridge.py` (Sprint K) — 4 dos
+   9 `CodeTransform` do core bridged (SAST040-043).
+2. `sensor_core/autofix/hmc_repair.py` (Sprint Q) — já chama `optimize()` HMC
+   completo (numpy) com fallback gracioso para `optimize_fast()` (SA) quando
+   numpy indisponível. **AA-6 (optimize completo HMC+SA) já está pronto** —
+   removido do escopo deste sprint.
+
+### DSM (acoplamento)
+
+`uco_bridge.py` ↔ `algorithms/uco/` (path sys.path injection) ↔ `channels.py`
+(SSOT 9 canais) ↔ `policy_engine.py`/`trend_engine.py`/`signals.py` (consomem
+os 9 canais) ↔ `api/server.py` (`_billed_dispatch`, billing por endpoint) ↔
+`sensor_core/autofix/transforms/` (5 transforms órfãos do core).
+
+### Ishikawa (causa-raiz do gap)
+
+Os dois motores evoluíram em paralelo: o core (`universal_code_optimizer_v4.py`)
+ganhou CFG real (Tarjan SCC), DSM com reciprocidade/ciclos via grafo verdadeiro,
+`weighted_complexity`, `smoothing_factor` (momentum K), `branching_factor`,
+`max_depth` — nenhum desses chegou ao sensor porque o `UCOBridge` foi escrito
+antes (ou em paralelo) e nunca foi atualizado para consumir o motor mais novo.
+Substituir o `UCOBridge` inteiro pelo motor do core é **alto risco** (fórmulas
+diferentes, 2145 testes pinados na calibração atual). Decisão: **integração em
+camadas (tiered)**, não substituição.
+
+### Pareto 80/20 — o que entra neste sprint
+
+| Item | ROI | Risco | Decisão |
+|---|---|---|---|
+| AA-1: Bridge dos 5 transforms órfãos | Alto / mecânico | Baixo (aditivo) | ✅ entra |
+| AA-2: Novo módulo `uco_deep_bridge.py` (canais novos: dsm_reciprocity, weighted_complexity, smoothing_factor, branching_factor, max_depth, node/edge/reachable/unreachable counts) | Alto (canais "capturados mas não calculados" reais) | Médio | ✅ entra |
+| AA-3: Endpoint opt-in `mode=deep` (não substitui o fast path) | Médio-alto | Baixo (aditivo, billing próprio) | ✅ entra |
+| AA-4: Multi-linguagem via pygments (`GenericCFGBuilder`/`GenericDSMCollector`) para JS/Go/Java | Médio | Médio (motor genérico ainda não validado em produção) | ✅ entra (escopo: piloto JS) |
+| `detect_patterns()` do core (heurística regex crua) | Baixo | — | ❌ fora — sensor já tem detectores AST superiores |
+| Substituir `UCOBridge` pelo motor do core | — | Alto (quebra 2145 testes calibrados) | ❌ fora — rejeitado |
+
+### FMEA
+
+| Modo de falha | Mitigação |
+|---|---|
+| `mode=deep` muda canais default e quebra Granger/trend/policy que esperam 9 canais fixos | Canais novos são **aditivos** em `channels.py`; `series()` só lê os 9 originais por padrão — novos canais opt-in via novo `DEEP_CHANNELS` tuple separado |
+| numpy ausente quebra deep mode | `uco_deep_bridge` usa apenas `analyze()` (não requer numpy, confirmado em `UCO_API_SURFACE.yaml`) — só o autofix `optimize()` HMC requer numpy, e isso já tem fallback (Sprint Q) |
+| Custo de billing não gated → deep mode usado de graça | `_billed_dispatch` com unit cost próprio (mais caro que `/analyze` fast) |
+| pygments ausente no runtime → multi-lang CFG quebra import | Mesmo padrão do core: `_PygmentsMixin` já é defensivo; sensor side precisa de try/except no boundary do novo módulo |
+
+### Checklist AA (WBS)
+
+- [x] AA-1: Bridge dos 5 transforms órfãos do UCO core (concluído — ver nota
+      abaixo: apenas 2 mapeados a SAST novo, 3 são cosméticos)
+      (`AdjacentDuplicateBlockRemoval`, `DuplicateAdjacentControlBlockMerger`,
+      `BracketWhitespaceNormalizer`, `ConstantFoldingTransform`,
+      `EmptyBlockRemover`)
+- [ ] AA-2: `sensor_core/uco_deep_bridge.py` — wrapper de
+      `UniversalCodeOptimizer.analyze()` expondo canais novos
+      (`dsm_reciprocity`, `weighted_complexity`, `smoothing_factor`,
+      `branching_factor`, `max_depth`, `node_count`, `edge_count`,
+      `reachable_count`, `unreachable_count`) como atributos extras do
+      `MetricVector` (padrão `getattr` já usado, sem quebrar schema)
+- [ ] AA-3: `DEEP_CHANNELS` em `channels.py` (SSOT separado, aditivo) +
+      endpoint `mode=deep` em `/analyze` roteando para `uco_deep_bridge`,
+      billed via `_billed_dispatch` com novo `UNIT_COSTS["analyze_deep"]`
+- [ ] AA-4: Piloto multi-linguagem JS via `GenericCFGBuilder`/
+      `GenericDSMCollector` (pygments) integrado a `lang_adapters/javascript.py`
+- [ ] AA-5: `tests/test_marco_m61.py` — TUC01-TUC30 (transforms órfãos,
+      canais deep, endpoint deep, piloto JS)
+- [ ] AA-6: ~~Expor optimize() HMC completo~~ — **já implementado** (Sprint Q,
+      `hmc_repair.py`), confirmado nesta auditoria, removido do escopo
+- [ ] AA-7: Workflow multi-dim review (novo endpoint + billing surface =
+      gatilho do framework condicional para ceremônia pesada)
+- [ ] AA-8: CHANGELOG + version bump v3.10.0 + regressão completa + release
+
+### AA-1 — nota de execução (concluído)
+
+Das 5 classes órfãs, apenas 2 detectam um defeito real e ganharam SAST rule
+nova: **SAST044** (Adjacent Duplicate Statement, detector texto em
+`sast/scanner.py::_check_adjacent_duplicate_lines`) e **SAST045**
+(Unsimplified Constant Expression, detector AST em `visit_Assign`) — ambas
+wired em `SAST_TO_TRANSFORM` (11 → 13 entradas). As outras 3
+(`DuplicateAdjacentControlBlockMerger`, `BracketWhitespaceNormalizer`,
+`EmptyBlockRemover`) são puramente cosméticas — sem achado de qualidade
+associado — e foram bridged como transforms chamáveis diretamente, sem
+rule SAST (decisão documentada no docstring do módulo: não fabricar
+findings falsos para formatação). 16 novos testes (TUC01-TUC16,
+`tests/test_marco_m61.py`) + 1 teste legado atualizado
+(`test_TN30` → 13 entradas). Regressão completa: **2161 passing, 0
+falhas** (de 2145).
+
+### Recomendação arquitetural — "UCO como módulo de deep search"
+
+Sim — **manter o `UCOBridge` atual como tier rápido (default, zero-dep,
+calibrado, 2145 testes)** e tratar o motor completo do `algorithms/uco/`
+como um **tier opcional "deep"** (CFG real com Tarjan SCC, DSM com
+reciprocidade verdadeira, multi-linguagem via pygments), acionado por
+`mode=deep` e cobrado com unit cost mais alto. Isso evita: (a) reescrever
+2145 testes pinados na calibração atual, (b) duas fórmulas de Hamiltonian
+divergentes colidindo no mesmo canal, (c) dependência rígida em numpy/pygments
+no caminho rápido usado por CI/PR gates.
+
+### Decisão de pivot pós-AA-1 (2026-06-26)
+
+Após AA-1 concluído, usuário forneceu **`UCO_SENSOR_DEEP_EVAL.md`** (avaliação
+profunda multi-agente de v3.9.1: 9 P0/P1 confirmados, 14 quick-wins, composite
+score 69/100). Achado P0 único = **Finding #1 (multi-tenant é billing-only;
+snapshots/anomalies/discovered_signatures/remediations/marketplace sem
+`tenant_id`)** — verificado ainda real no código atual (snapshot_store.py:55-88).
+
+**Decisão registrada**: pausar AA-2/3/4 (deep bridge / mode=deep / pygments JS)
+e abrir Sprint AB para tratar o P0 + 4 quick-wins de alto ROI antes de qualquer
+trabalho deep. AA-2/3/4 retornam em v3.11.0+ após AB fechar.
+
+**Conflito de namespace SAST detectado**: o eval propõe SAST044=pickle,
+SAST045=yaml.load, SAST046=SSRF, SAST047=XXE. **AA-1 já consumiu SAST044
+(adjacent-dup) e SAST045 (foldable-const)**. Quando os novos scanners do eval
+forem implementados (Sprint AC futuro), os IDs deslocam para SAST046+
+(pickle), SAST047 (yaml.load), SAST048 (SSRF), SAST049 (XXE).
+
+---
+
+<a id="sprint-ab-wbs"></a>
+## Sprint AB — Deep-Eval P0 + Quick-Wins (v3.10.0) — WBS
+
+### Auditoria do estado real (2026-06-26) — pré-execução
+
+Verificações antes de planejar:
+1. `snapshot_store.py:55-88` (_DDL_SNAPSHOTS) — sem `tenant_id` ✓ verificado
+2. `snapshot_store.py:122-138` (_DDL_ANOMALIES) — sem `tenant_id` ✓ verificado
+3. `snapshot_store.py:176-191` (_DDL_REMEDIATIONS) — sem `tenant_id` ✓ verificado
+4. `snapshot_store.py:203-216` (_DDL_SIGNATURES) — sem `tenant_id` ✓ verificado
+5. `snapshot_store.py:229+` (_DDL_MARKETPLACE) — sem `tenant_id` ✓ verificado
+6. `governance/marketplace.py:50-63` (_has_redos_shape) — ainda blocklist
+   substring; `sast/regex_analyzer.py` existe e expõe `is_vulnerable` ✓ verificado
+7. `UNIQUE(module_id, commit_hash)` na linha 87 — colidirá entre tenants
+   após adicionar tenant_id; trocar para `UNIQUE(tenant_id, module_id, commit_hash)` ✓
+
+### DSM (acoplamento Sprint AB)
+
+```
+snapshot_store.py  ─►  tenant_id em 5 tabelas + migration aditiva
+        │
+        ▼  (helper novo _scoped_select_where)
+api/server.py      ─►  handler_fn aceita tid kwarg
+        │                _billed_dispatch propaga tid
+        ▼
+billing.py         ─►  charge_after_2xx (não-charge no 500)
+governance/marketplace.py ─► reusa sast/regex_analyzer
+sensor_core/cache.py     ─► invalidação no insert(mv)
+README.md ⇆ pyproject.toml — sync de versão
+```
+
+### Ishikawa (causa-raiz do gap multi-tenant)
+
+Sprint Y modelou tenancy/billing exemplarmente (atomic check_and_charge,
+BYPASS_TENANTS invariant, SY-FIX-1..7) — mas a fronteira do tenant parou no
+`_billed_dispatch`. O `tid` resolvido por `resolve_tenant_from_api_key`
+é usado **apenas para débito** e descartado antes do handler. Razão histórica:
+ao escrever o Sprint Y, a prioridade era _billing_ correto (que justifica
+o produto pago), não _isolation_ (que justifica multi-tenant). A retrofit
+agora exige: (a) migration aditiva em 5 tabelas, (b) propagar `tid` no
+dispatch para todos os handlers que persistem, (c) helper `_scoped`
+para evitar miss em 30+ call-sites SELECT/INSERT.
+
+### Pareto 80/20 — escopo AB
+
+| Item | ROI | Esforço | Risco | Decisão |
+|---|---|---|---|---|
+| AB-1: tenant_id em 5 tabelas + helper + propagação | ★★★★★ (P0, gate-de-GA) | L (5-8 pd) | Médio (mitigado por helper) | ✅ entra |
+| AB-2: marketplace._has_redos_shape → analyze_pattern | ★★★★ | S (0.5 pd) | Baixo (DRY-fix, função já existe) | ✅ entra |
+| AB-3: cache_invalidate em writes | ★★★★ | S (0.5 pd) | Baixo (1 linha após cada insert) | ✅ entra |
+| AB-4: README ↔ pyproject sync | ★★★★ | S (0.2 pd) | Baixo (docs) | ✅ entra |
+| AB-5: charge-after-2xx em _billed_dispatch | ★★★★ | M (1 pd) | Médio (mexe em flow de billing, exige re-pin de testes) | ✅ entra |
+| Quick-wins #5-#14 do eval | ★★★ | varia | Baixo | ❌ fora (entram em v3.10.1/AC) |
+| Finding #3 (lock refactor read-only) | ★★★ | L | Médio (precisa benchmark) | ❌ fora (deferred para Sprint AC) |
+| Finding #6 (secrets-in-history) | ★★★★ | M | Baixo | ❌ fora (Sprint AC) |
+| Finding #9 (SAST046-049 expansion) | ★★★★ | M | Baixo (renumerar de SAST046 por conflito) | ❌ fora (Sprint AC) |
+
+### FMEA AB
+
+| Modo de falha | Severidade | Mitigação |
+|---|---|---|
+| Migration aditiva quebra em DB pré-existente sem `tenant_id` | ALTA | Pattern já existe (`_migrate_api_keys_tenant_id` snapshot_store.py:467) — copiar exatamente |
+| Query miss em 30+ call-sites SELECT/INSERT (vaza cross-tenant após migration) | ALTA | **Helper `_scoped`** centraliza filtro; pesquisar todos os `SELECT * FROM snapshots`/`INSERT INTO snapshots` e migrar para o helper |
+| `UNIQUE(module_id, commit_hash)` colide entre tenants pós-migration | ALTA | Trocar UNIQUE constraint para incluir `tenant_id` — DROP + recreate na migration |
+| Back-fill de linhas existentes precisa ser 'default' (consistente com BYPASS_TENANTS) | MÉDIA | DEFAULT 'default' na migration; tests checam que linhas antigas viram tenant='default' |
+| `handler_fn(tid=...)` quebra 50+ handlers que não aceitam o kwarg | ALTA | Aceitar `tid` opcional no dispatcher, passar como kwarg, handlers que ignoram não quebram |
+| Charge-after-2xx altera comportamento de testes existentes que esperam débito em 500 | MÉDIA | Re-pin os testes afetados; documentar a mudança de semântica no CHANGELOG |
+| Cache invalidate em hot path adiciona latência | BAIXA | Operação O(1) por key, prefix invalidation já suportado |
+| Renaming README ✗ — apenas docs | BAIXA | — |
+
+### Checklist AB (WBS)
+
+- [x] AB-0: APEX SCIENTIFIC scoping + WBS section (este arquivo)
+- [ ] AB-1: tenant_id schema isolation + _scoped helper
+  - [ ] migration aditiva em snapshots, anomalies, discovered_signatures,
+        remediations, marketplace_signatures
+  - [ ] trocar UNIQUE(module_id, commit_hash) → UNIQUE(tenant_id, module_id, commit_hash)
+  - [ ] _scoped query helper em snapshot_store
+  - [ ] migrar SELECT/INSERT call-sites para helper
+  - [ ] propagar tid de _billed_dispatch para handlers de write (analyze/diff/scan)
+  - [ ] 6-8 cross-tenant pin tests (tenant A NÃO vê dados de B)
+- [ ] AB-2: marketplace._has_redos_shape → sast.regex_analyzer.is_vulnerable
+  - [ ] preservar guard len>2000, guard empty→False
+  - [ ] testes que `(a+)+`, `([a-z]+)*` agora rejeitam (antes passavam)
+- [ ] AB-3: cache_invalidate após cada _store.insert
+  - [ ] /analyze, /diff, /scan-repo, /scan-incremental write paths
+  - [ ] 3 testes: insert → cache miss → recomputa
+- [ ] AB-4: README badges + endpoints + table list sync com v3.10.0
+  - [ ] badge version, contagem endpoints (~76+), seções multi-tenant/billing/invariants
+- [ ] AB-5: charge-after-2xx em _billed_dispatch
+  - [ ] split pre-check quota (sem charge) + post-2xx charge
+  - [ ] testes que 500 NÃO debita, 200 debita
+  - [ ] testes que 402 retornado quando quota insuficiente (sem touch no DB)
+- [ ] AB-6: tests/test_marco_m62.py TAB01-TAB30 (pinning AB-1..AB-5)
+- [ ] AB-7: CHANGELOG [3.10.0] + bump pyproject + api/server SensorConfig.version
+- [ ] AB-8: full regression (2161 → target ~2185+, 0 falhas)
+- [ ] AB-9: bundle + SendUserFile para entrega no remote (push 403)
+
+### Notas de execução
+
+Ordem prática proposta: AB-4 (README, mais barato) → AB-2 (DRY-fix, isolado)
+→ AB-3 (cache invalidate, isolado) → AB-5 (charge-after-2xx, mexe em
+billing) → AB-1 (P0 grande, deixar por último permite consolidar contexto
+com testes pintos das mudanças anteriores). Mas se houver pressão de
+prazo: AB-1 primeiro (é o P0 gate-de-GA, valor de produto maior).
+
+### Sprint AB — nota de execução (concluído v3.10.0)
+
+Ordem executada: AB-0 → AB-4 → AB-2 → AB-3 → AB-5 → AB-1 → AB-6 → AB-7
+(exatamente o plano sugerido acima). Métricas finais:
+
+| Métrica | v3.9.1 | **v3.10.0** | Δ |
+|---|---|---|---|
+| Tests passing | 2161 (AA-1) | **2191** | +30 (TAB01-TAB30) |
+| Falhas        | 0           | **0**    |  |
+| Tabelas com tenant_id real | 3 (tenants/usage_events/api_keys) | **8** (+snapshots/anomalies/discovered_signatures/remediations/marketplace_signatures) | +5 |
+| Endpoints SAST↔Fix loop    | 13          | **13**   | (sem mudança) |
+| Cache invalidation on writes | 0 sites    | **4** sites (/analyze, /diff, /analyze-pr, /gate) | +4 |
+| Charge-on-error vulnerability | YES (Finding #2 P1) | **NO** | fechado |
+| README badge version       | v3.9.1      | **v3.10.0** | sync |
+| ReDoS guard family coverage | ~30% (subset of substrings) | **~80%** (Class A/B/C structural) | +50pp |
+
+Findings deep-eval **atendidos em AB**: #1 (P0 schema isolation, gate-de-GA),
+#2 (P1 charge-after-success), #4 (P1 cache invalidate), #5 (P1 ReDoS reuse),
+#7 (P1 README sync) = 5/9 dos P0/P1 confirmados pelo eval.
+
+Findings deferred para Sprint AC (futuro):
+- #3 lock refactor read-only (precisa benchmark formal)
+- #6 secrets-in-history (novo scanner, ~2 pd)
+- #8 N+1 recompute_derived_pending (já no backlog deferred v3.9.2)
+- #9 SAST046-049 expansion (pickle/yaml.load/SSRF/XXE — namespace
+  pós-AA-1 começa em 046; ~2-3 pd)
+- QW#5-#14 (ruff F401 sweep, restart-on-die, port-allocator etc.)
+
+**Limitações conhecidas de AB-1**:
+1. Legacy DBs em produção mantêm o `UNIQUE(module_id, commit_hash)`
+   inline da DDL pre-AB — escrita de novo tenant com (m,c) já gravado
+   por outro tenant ainda colide. Mitigação: deploy fresh (DDL pós-AB
+   não tem o legacy UNIQUE) OU rebuild manual (gated em v3.10.1).
+2. Apenas snapshots, get_history, list_modules wired ao escopo de
+   tenant. Anomalies / signatures / remediations / marketplace têm a
+   coluna mas seus métodos ainda leem/escrevem cross-tenant.
+   Enforcement remanescente entra em v3.10.1.
+3. Os 5 handlers wired (/analyze, /diff, /analyze-pr, /scan-repo via
+   handler_analyze_pr, /gate) cobrem ~80% do tráfego billable; os
+   outros 11+ handlers billable não-storage não precisam de mudança.

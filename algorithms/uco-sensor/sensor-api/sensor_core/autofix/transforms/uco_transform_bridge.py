@@ -148,3 +148,43 @@ class UCOUnusedVarTransformer(_UCOWrapTransform):
     """Removes unused local variables in Python functions (SAST043, CWE-563)."""
     _uco_class_name = "PythonUnusedVarDetector"
     _description    = "Removed unused local variable (CWE-563)"
+
+
+# ─── Sprint AA — UCO Deep Integration: 5 previously-orphan transforms ─────────
+# Audited: 9 CodeTransform subclasses exist in the UCO core; only 4 were
+# bridged above (Sprint K). This sprint bridges the remaining 5. Two of them
+# (Adjacent duplicate removal, constant folding) map to new SAST rules
+# (SAST044, SAST045 — see sast/scanner.py) and are wired into
+# SAST_TO_TRANSFORM for the closed-loop. The other three (control-block
+# merge, bracket whitespace, empty C-like block removal) are pure cosmetic
+# cleanups with no associated defect to report — they are bridged as
+# directly-callable transforms but intentionally NOT wired to a SAST rule.
+
+class UCOAdjacentDuplicateRemover(_UCOWrapTransform):
+    """Removes consecutive duplicate lines (SAST044, CWE-1041)."""
+    _uco_class_name = "AdjacentDuplicateBlockRemoval"
+    _description    = "Removed adjacent duplicate statement (CWE-1041)"
+
+
+class UCOConstantFolder(_UCOWrapTransform):
+    """Folds constant expressions to their literal value (SAST045, CWE-1164)."""
+    _uco_class_name = "ConstantFoldingTransform"
+    _description    = "Folded constant expression to literal value (CWE-1164)"
+
+
+class UCODuplicateControlBlockMerger(_UCOWrapTransform):
+    """Merges adjacent identical control-block lines. Cosmetic — no SAST rule."""
+    _uco_class_name = "DuplicateAdjacentControlBlockMerger"
+    _description    = "Merged duplicate adjacent control-block line"
+
+
+class UCOBracketWhitespaceNormalizer(_UCOWrapTransform):
+    """Normalizes trailing whitespace and excess blank lines. Cosmetic — no SAST rule."""
+    _uco_class_name = "BracketWhitespaceNormalizer"
+    _description    = "Normalized bracket/whitespace formatting"
+
+
+class UCOEmptyBlockRemover(_UCOWrapTransform):
+    """Removes empty C-like {} blocks. Cosmetic — no SAST rule, safe_for c_like only."""
+    _uco_class_name = "EmptyBlockRemover"
+    _description    = "Removed empty C-like block"

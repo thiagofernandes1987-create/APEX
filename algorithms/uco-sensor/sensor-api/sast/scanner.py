@@ -572,6 +572,35 @@ RULES: List[SASTRuleInfo] = [
             "should reference the variable."
         ),
     ),
+    # ── Sprint AA — UCO Deep Integration: 2 more orphan-transform detectors ──
+    SASTRuleInfo(
+        rule_id="SAST044", title="Adjacent Duplicate Statement",
+        cwe_id="CWE-1041", owasp="A04:2021",
+        severity="LOW",
+        description=(
+            "Two consecutive lines (ignoring whitespace) are textually "
+            "identical. Usually a copy-paste remnant or a refactor that "
+            "forgot to delete the original line."
+        ),
+        remediation=(
+            "Remove the duplicate line, keeping a single occurrence of the "
+            "statement."
+        ),
+    ),
+    SASTRuleInfo(
+        rule_id="SAST045", title="Unsimplified Constant Expression",
+        cwe_id="CWE-1164", owasp="A04:2021",
+        severity="LOW",
+        description=(
+            "Right-hand side of an assignment is a constant expression "
+            "(e.g. '2 + 3 * 4') that could be folded to a single literal "
+            "at write time. Usually noise left over from a calculation "
+            "done inline instead of being precomputed."
+        ),
+        remediation=(
+            "Replace the expression with its evaluated literal value."
+        ),
+    ),
 ]
 
 _RULE_MAP: Dict[str, SASTRuleInfo] = {r.rule_id: r for r in RULES}
@@ -673,6 +702,7 @@ def scan(source: str, file_extension: str = ".py") -> SASTResult:
     findings.extend(_check_hardcoded_private_key(source))
     findings.extend(_check_hardcoded_secrets_regex(source))
     findings.extend(_check_weak_tls_regex(source))
+    findings.extend(_check_adjacent_duplicate_lines(source))
 
     # Sprint N — dynamic regex rules injected via /feeds/sast/load
     try:
@@ -783,6 +813,22 @@ def _check_hardcoded_secrets_regex(source: str) -> List[SASTFinding]:
         snippet = lines_src[lineno - 1].strip() if lineno <= len(lines_src) else ""
         rule = _RULE_MAP["SAST008"]
         findings.append(_make_finding(rule, lineno, m.start(), snippet))
+    return findings
+
+
+def _check_adjacent_duplicate_lines(source: str) -> List[SASTFinding]:
+    """SAST044: two consecutive non-blank lines that are identical (ignoring
+    leading/trailing whitespace). One finding per duplicate pair, reported
+    on the second (duplicate) line."""
+    findings: List[SASTFinding] = []
+    rule = _RULE_MAP["SAST044"]
+    lines = source.splitlines()
+    prev_stripped: Optional[str] = None
+    for i, line in enumerate(lines, start=1):
+        stripped = line.strip()
+        if stripped and prev_stripped is not None and stripped == prev_stripped:
+            findings.append(_make_finding(rule, i, 0, stripped))
+        prev_stripped = stripped if stripped else None
     return findings
 
 
@@ -1190,7 +1236,41 @@ class _ASTScanner(ast.NodeVisitor):
                 and self._call_name(node.value) == "open"):
             self._add("SAST037", node)
 
+        # ── Sprint AA — SAST045: unsimplified constant expression ──
+        if (len(node.targets) == 1
+                and self._is_foldable_constant_expr(node.value)):
+            self._add("SAST045", node)
+
         self.generic_visit(node)
+
+    @staticmethod
+    def _is_foldable_constant_expr(node: ast.expr) -> bool:
+        """True for a BinOp/UnaryOp/BoolOp whose every leaf is a Constant —
+        i.e. an expression that could be folded to a single literal
+        (mirrors UCO core's ConstantFoldingTransform._is_all_constants)."""
+        if isinstance(node, ast.Constant):
+            return False  # already a literal — nothing to fold
+        if isinstance(node, ast.BinOp):
+            return (_ASTScanner._is_all_constants(node.left)
+                    and _ASTScanner._is_all_constants(node.right))
+        if isinstance(node, ast.UnaryOp):
+            return _ASTScanner._is_all_constants(node.operand)
+        if isinstance(node, ast.BoolOp):
+            return all(_ASTScanner._is_all_constants(v) for v in node.values)
+        return False
+
+    @staticmethod
+    def _is_all_constants(node: ast.expr) -> bool:
+        if isinstance(node, ast.Constant):
+            return True
+        if isinstance(node, ast.BinOp):
+            return (_ASTScanner._is_all_constants(node.left)
+                    and _ASTScanner._is_all_constants(node.right))
+        if isinstance(node, ast.UnaryOp):
+            return _ASTScanner._is_all_constants(node.operand)
+        if isinstance(node, ast.BoolOp):
+            return all(_ASTScanner._is_all_constants(v) for v in node.values)
+        return False
 
     # ── SAST012: assert for security ──────────────────────────────────────────
 

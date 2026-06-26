@@ -54,6 +54,8 @@ from sensor_core.autofix.transforms.replace_zero_nonce      import ZeroNonceRepl
 from sensor_core.autofix.transforms.uco_transform_bridge import (
     UCOUnreachableRemover,        # Sprint K — SAST040 (UCO core wraps fine)
     UCORedundantConditionRemover, # Sprint K — SAST041 (UCO core wraps fine)
+    UCOAdjacentDuplicateRemover,  # Sprint AA — SAST044
+    UCOConstantFolder,            # Sprint AA — SAST045
 )
 from sensor_core.autofix.transforms.remove_noop_assign import NoOpAssignRemover
 from sensor_core.autofix.transforms.remove_unused_var  import UnusedVarRemover
@@ -72,6 +74,9 @@ SAST_TO_TRANSFORM: Dict[str, Type[BaseTransform]] = {
     "SAST041": UCORedundantConditionRemover,  # if True/False, while False → flatten
     "SAST042": NoOpAssignRemover,        # x = x / x += 0 / x *= 1 → drop (AST native)
     "SAST043": UnusedVarRemover,         # unused local var → drop  (AST native)
+    # ── Sprint AA — UCO Deep Integration (cobertura 11 → 13) ────────────────
+    "SAST044": UCOAdjacentDuplicateRemover,  # adjacent duplicate line → drop
+    "SAST045": UCOConstantFolder,            # foldable constant expr → literal
 }
 
 

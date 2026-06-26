@@ -226,7 +226,8 @@ def test_TN29_combined_fix_closes_all_four_rules_in_one_pass():
 
 
 def test_TN30_mapping_table_grew_to_eleven_entries():
-    # Pin: regressions that drop a Sprint-K rule must fail this assertion.
-    assert len(SAST_TO_TRANSFORM) == 11
-    for rule in ("SAST040", "SAST041", "SAST042", "SAST043"):
+    # Pin: regressions that drop a Sprint-K/AA rule must fail this assertion.
+    # Sprint AA added SAST044/SAST045 (11 → 13).
+    assert len(SAST_TO_TRANSFORM) == 13
+    for rule in ("SAST040", "SAST041", "SAST042", "SAST043", "SAST044", "SAST045"):
         assert rule in SAST_TO_TRANSFORM

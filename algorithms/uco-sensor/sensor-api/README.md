@@ -2,13 +2,15 @@
 
 ![UCO Score](https://img.shields.io/badge/UCO%20Score-87%2F100-4c1?style=flat-square)
 ![Status](https://img.shields.io/badge/status-STABLE-4c1?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.4.0-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-3.10.0-blue?style=flat-square)
+![Tests](https://img.shields.io/badge/tests-2185%2B%20passing-4c1?style=flat-square)
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
-![APEX](https://img.shields.io/badge/APEX-v00.36.0-7c3aed?style=flat-square)
 
-> **API de análise espectral de qualidade de código** — powered by **UCO v4** + **FrequencyEngine**.  
+> **Plataforma SaaS de análise espectral de qualidade de código** — powered by **UCO v4** + **FrequencyEngine**.  
 > Detecta degradação de código *antes* que vire dívida técnica irreversível, integrada nativamente ao **APEX Event Bus**.
+>
+> v3.10.0 entrega: **isolamento multi-tenant real**, billing atômico, 76+ endpoints REST, 13 transformações fechadas SAST↔Fix, 5 invariantes formais executáveis, paper POPL/PLDI skeleton.
 
 ---
 
@@ -150,30 +152,63 @@ print(f"{result.primary_error} | {result.severity} | conf={result.primary_confid
 
 ---
 
-## Endpoints
+## Endpoints (76+)
 
-| Método | Path | Auth | Descrição |
-|--------|------|------|-----------|
-| GET  | `/health` | — | Liveness probe |
-| GET  | `/docs` | — | Auto-documentação |
-| GET  | `/badge` | — | Badge SVG (`?score=87&status=STABLE` ou `?module=`) |
-| POST | `/analyze` | ✓ | Analisa código (multi-linguagem) |
-| POST | `/repair` | ✓ | Sugere e aplica transforms UCO |
-| POST | `/diff` | ✓ | Diff UCO entre 2 commits |
-| POST | `/analyze-pr` | ✓ | Análise de PR (SARIF 2.1.0) |
-| POST | `/scan-repo` | ✓ | Scan de repositório inteiro |
-| GET  | `/modules` | ✓ | Lista módulos rastreados |
-| GET  | `/history` | ✓ | Histórico de snapshots |
-| GET  | `/baseline` | ✓ | Baseline e z-scores |
-| GET  | `/report` | ✓ | Relatório HTML standalone |
-| GET  | `/anomalies` | ✓ | Anomalias detectadas |
-| GET  | `/apex/status` | ✓ | Status integração APEX |
-| GET  | `/apex/ping` | ✓ | Ping APEX |
-| POST | `/apex/webhook` | ✓ | Webhook bidirecional APEX |
-| POST | `/apex/fix` | ✓ | Fix guiado pelo APEX |
-| POST | `/auth/keys` | admin | Cria API key |
-| GET  | `/auth/keys` | admin | Lista API keys |
-| DELETE | `/auth/keys` | admin | Revoga API key |
+Categorias principais (lista completa via `GET /docs`):
+
+| Categoria | Endpoints | Notas |
+|---|---|---|
+| **Liveness/Discovery** | `/health`, `/docs`, `/badge` | sem auth |
+| **Análise core** | `/analyze`, `/diff`, `/repair`, `/repair/hmc`, `/scan-incremental`, `/scan-repo`, `/analyze-pr` (SARIF 2.1.0) | billable |
+| **SAST / SCA / IaC** | `/sast`, `/scan-sca`, `/scan-iac`, `/scan-flow`, `/scan-performance`, `/scan-architecture`, `/scan-test-quality`, `/scan-thread-safety` | billable |
+| **AutoFix loop** | `/apex/auto-remediate`, `/gate` | 13 regras SAST mapeadas (SAST006/7/22/24/27/38/39/40/41/42/43/44/45) |
+| **Histórico / Trend** | `/modules`, `/history`, `/baseline`, `/anti-pattern-score`, `/anti-pattern-score/history`, `/anti-pattern-score/trend`, `/predictor/accuracy` | leitura |
+| **Marketplace** | `/marketplace/publish`, `/marketplace/pull`, `/marketplace/list`, `/marketplace/import` | Sprint V |
+| **Signatures (DBSCAN)** | `/signatures/discover`, `/signatures/import`, `/similar` | Sprint P/U |
+| **CFG visualization** | `/cfg/graph`, `/cfg/hotspots` | Sprint X |
+| **Multi-tenant SaaS** | `/tenants` (CRUD), `/tenants/{id}/usage`, `/tenants/{id}/suspend`, `/tenants/{id}/reactivate`, `/auth/keys` (admin) | Sprint Y |
+| **Billing** | `/billing/usage`, `/billing/quota`, `/billing/events`, charged via `_billed_dispatch` (atomic check_and_charge) | Sprint Y |
+| **Invariants** | `/invariants/check`, `/invariants/violations` | Sprint Z (I1-I5 formal) |
+| **Feeds** | `/feeds/sast/load`, `/feeds/cve/load`, `/feeds/rules/list` | path-jail Sprint W |
+| **APEX integration** | `/apex/status`, `/apex/ping`, `/apex/webhook`, `/apex/fix` | Event Bus bidirecional |
+| **Cache admin** | `/cache/invalidate` | admin |
+
+> **Auth**: a maioria dos endpoints exige API key (`X-API-Key` header). Admin-only endpoints exigem `UCO_ADMIN_KEY` **independente** de `UCO_AUTH_ENABLED` (Sprint W audit-1). Billable endpoints rejeitam 402 quando a quota do tenant é insuficiente (Sprint Y SY-FIX-6).
+
+---
+
+## Multi-tenant SaaS quickstart (< 5 min)
+
+```bash
+# 1. Iniciar o servidor com auth e admin key
+export UCO_AUTH_ENABLED=1
+export UCO_ADMIN_KEY=$(openssl rand -hex 32)
+python cli.py serve --port 8080 &
+
+# 2. Criar um tenant (admin)
+curl -X POST http://localhost:8080/tenants \
+  -H "X-Admin-Key: $UCO_ADMIN_KEY" \
+  -d '{"tenant_id": "acme-corp", "plan": "PRO", "unit_budget": 100000}'
+
+# 3. Gerar API key para o tenant (admin)
+KEY=$(curl -X POST http://localhost:8080/auth/keys \
+  -H "X-Admin-Key: $UCO_ADMIN_KEY" \
+  -d '{"name": "acme-prod", "tenant_id": "acme-corp"}' | jq -r .key)
+
+# 4. Cliente faz análise (debita 1 unidade do budget de acme-corp)
+curl -X POST http://localhost:8080/analyze \
+  -H "X-API-Key: $KEY" \
+  -d '{"code": "def f(x): return x", "module_id": "utils.math", "commit_hash": "abc123"}'
+
+# 5. Verificar consumo
+curl -H "X-Admin-Key: $UCO_ADMIN_KEY" \
+  http://localhost:8080/tenants/acme-corp/usage?period=2026-06
+```
+
+A partir de v3.10.0 (Sprint AB), **dados de produto são isolados por tenant
+no schema**: snapshots, anomalies, discovered_signatures, remediations e
+marketplace_signatures todas têm coluna `tenant_id` + `UNIQUE(tenant_id,
+module_id, commit_hash)`. Tenant A não vê / sobrescreve dados do tenant B.
 
 ---
 
@@ -194,18 +229,21 @@ APEX_API_KEY:     <apex_key>
 UCO_APEX_ENABLED: "1"
 ```
 
-### Variáveis de ambiente (referência completa — Sprint W2)
+### Variáveis de ambiente (referência completa)
 
 | Variável | Onde | Default | Descrição |
 |---|---|---|---|
 | `UCO_AUTH_ENABLED` | `api/server.py` | `0` | `"1"` exige API key em endpoints sensíveis (ingest, admin). |
 | `UCO_ADMIN_KEY` | `api/server.py` | _none_ | Chave **sempre** exigida em endpoints `admin/*` (independente de `UCO_AUTH_ENABLED`). Sprint W audit-1. |
+| `UCO_INCLUDE_TRACE` | `api/server.py` | `0` | `"1"` inclui stack trace em respostas 500; default **strip** (QA-FIX-1, v3.9.1). |
 | `UCO_APEX_ENABLED` | `api/server.py` | `0` | Liga o conector APEX (envio de `UCO_ANOMALY_DETECTED`). |
 | `APEX_WEBHOOK_URL` | conector APEX | _none_ | URL do Event Bus APEX. |
 | `APEX_API_KEY` | conector APEX | _none_ | Token de autenticação no Event Bus APEX. |
 | `UCO_FEEDS_DIR` | `sensor_storage/path_jail.py` | _none_ | **Raíz do path-jail** para `/feeds/*/load`. Sem essa variável, todo file-load é rejeitado (Sprint W audit-5). |
 | `UCO_REDIS_URL` | `sensor_storage/cache.py` | _none_ | Quando setada, cache compartilhado via Redis; caso contrário usa LRU local. |
 | `UCO_CACHE_MAX_SIZE` | `sensor_storage/cache.py` | `1024` | Capacidade do LRU local (entradas). |
+| `UCO_DB_PATH` | `sensor_storage/snapshot_store.py` | `:memory:` | Caminho do SQLite. Usar arquivo (ex.: `/var/lib/uco/uco.db`) em produção para persistência + WAL. |
+| `BYPASS_TENANTS` | `governance/tenancy.py` | _hardcoded_ | Tenant IDs que bulam invariants de billing (ex.: `default` para legacy single-tenant). |
 
 
 ### Templates de Ação por Tipo de Anomalia
@@ -245,29 +283,50 @@ UCO_APEX_ENABLED: "1"
 ```
 sensor-api/
 ├── api/
-│   └── server.py           — HTTP server (stdlib only, zero deps extras)
+│   └── server.py           — HTTP server (stdlib only, _billed_dispatch, 76+ handlers)
 ├── sensor_core/
-│   └── uco_bridge.py       — UCOBridge: extrai 9 canais do UCO v4
+│   ├── uco_bridge.py       — UCOBridge fast tier (9 canais, calibrado, zero-dep)
+│   └── autofix/            — engine + 13 transforms + sast_remediation closed-loop
 ├── sensor_storage/
-│   └── snapshot_store.py   — SnapshotStore SQLite com baseline e z-score
-├── lang_adapters/          — Python, JS/TS, Java, Go
-├── apex_integration/
-│   ├── event_bus.py        — ApexEventBus (webhook/callback/file/null)
-│   ├── connector.py        — ApexConnector com severity gate
-│   └── templates.py        — 8 templates de ação corretiva
-├── scan/
-│   ├── repo_scanner.py     — Scan de repositório completo
-│   └── git_history_scanner.py — Análise temporal de commits
-├── report/
-│   ├── html_report.py      — Relatório HTML standalone
-│   └── badge.py            — Badges SVG estilo shields.io
+│   ├── snapshot_store.py   — SQLite + WAL, tabelas multi-tenant (Sprint AB)
+│   ├── cache.py            — LRU local / Redis opcional
+│   └── path_jail.py        — File-load guard (Sprint W audit-5)
+├── governance/             — channels (SSOT), invariants (I1-I5), policy_engine,
+│                              tenancy, billing, marketplace, trend_engine, signals
+├── sast/                   — scanner (33 regras: SAST001-SAST045), regex_analyzer,
+│                              rules_feed (dynamic), taint_engine
+├── sca/                    — vulnerability_scanner (205 CVEs / 12 ecosystems)
+├── iac/                    — scanner (102 regras / 8 formats: TF, K8s, Docker, etc.)
+├── metrics/                — extended_vectors (96 canais estendidos),
+│                              anti_pattern_score, hmc_repair
+├── lang_adapters/          — Python, JS/TS, Java, Go (tree-sitter / fallback)
+├── apex_integration/       — event_bus, connector, templates
+├── scan/                   — repo_scanner, git_history_scanner, incremental
+├── report/                 — html_report, badge SVG, SARIF 2.1.0
+├── ci/                     — action_entrypoint (GitHub Action), uco-pr-check.yml
+├── paper/                  — paper.tex (POPL/PLDI), experiments.md, reproducibility.py
+├── tests/                  — test_marco_m1..test_marco_m62 (2185+ tests)
 ├── cli.py                  — CLI completa
-├── pyproject.toml          — Packaging PEP 517/518
+├── pyproject.toml          — Packaging PEP 517/518 (v3.10.0)
 ├── Dockerfile              — Multi-stage (Python 3.11-slim)
 ├── docker-compose.yml      — Stack dev/prod
-├── CHANGELOG.md            — Histórico v0.1.0 → v0.4.0
-└── ROADMAP.md              — Marcos M1–M8 com critérios de aceitação
+├── CHANGELOG.md            — Histórico v0.1.0 → v3.10.0
+├── ROADMAP.md              — Marcos M1–M62 + roadmap Sprint AC+
+└── inventario.md (./..)    — Tracking persistente entre sessões (APEX SCIENTIFIC)
 ```
+
+### Tabelas SQLite (Sprint AB, v3.10.0)
+
+| Tabela | Owner | tenant_id? | Notas |
+|---|---|---|---|
+| `snapshots`            | Sprint A    | ✓ Sprint AB | UNIQUE(tenant_id, module_id, commit_hash) |
+| `anomalies`            | Sprint A    | ✓ Sprint AB | |
+| `discovered_signatures`| Sprint P    | ✓ Sprint AB | DBSCAN clusters por tenant |
+| `remediations`         | Sprint C    | ✓ Sprint AB | AutoFix telemetry |
+| `marketplace_signatures`| Sprint V   | ✓ Sprint AB | Compartilhado entre tenants vs. privado |
+| `api_keys`             | Sprint M    | ✓ Sprint Y  | |
+| `tenants`              | Sprint Y    | n/a (é a tabela) | |
+| `usage_events`         | Sprint Y    | ✓ Sprint Y  | Atomic check_and_charge |
 
 ---
 
@@ -307,21 +366,47 @@ python -m pytest tests/ -v
 python -m pytest tests/ --cov=. --cov-report=html
 ```
 
-| Marcos | Testes | Status |
-|--------|--------|--------|
-| M1 Core | 30 | ✅ |
-| M2 Lang+Auth | 20 | ✅ |
-| M3 APEX | 16 | ✅ |
-| M4 Reports | 35 | ✅ |
-| M5 Diff+Bench | 15 | ✅ |
-| M6 Docker | 14 | ✅ |
-| M7 Templates | 16 | ✅ |
-| M8 Demo | 10 | ✅ |
-| **Total** | **156** | **✅** |
+| Marcos / Sprints | Escopo | Testes | Status |
+|------------------|--------|--------|--------|
+| M1 Core              | Pipeline e MetricVector                  | 30   | ✅ |
+| M2 Lang+Auth         | Multi-linguagem + API keys               | 20   | ✅ |
+| M3 APEX              | Conector Event Bus                        | 16   | ✅ |
+| M4 Reports           | HTML + Badge SVG                         | 35   | ✅ |
+| M5 Diff+Bench        | /diff + benchmark suite                  | 15   | ✅ |
+| M6 Docker            | Multi-stage + docker-compose             | 14   | ✅ |
+| M7 Templates         | /apex/fix + templates de ação            | 16   | ✅ |
+| M8 Demo              | Pipeline end-to-end + README pin         | 10   | ✅ |
+| M9–M30 (LEAP 1–4)    | Persistence, AutoFix, APS               | ~450 | ✅ |
+| M31–M45 (Sprints C–N)| Telemetry, signatures, SAST feed         | ~600 | ✅ |
+| M46–M52 (Sprints O–T)| DBSCAN, HMC, RCA, Granger                | ~350 | ✅ |
+| M53–M55 (Sprints W/W2)| Gates 1+2 hardening                      | ~150 | ✅ |
+| M56–M60 (Sprints V–Z) | Marketplace, CFG, multi-tenant, paper+invariants | ~250 | ✅ |
+| M61 (Sprint AA)      | UCO Deep Integration — AA-1 parcial      | 16   | ✅ |
+| M62 (Sprint AB)      | Multi-tenant isolation + 4 quick-wins    | 30   | ✅ v3.10.0 |
+| **Total**            | **M1–M62**                                | **~2191** | **✅** |
+
+> Para rodar a suíte completa: `python -m pytest tests/ -q` (≈ 2-3min em CI moderna).
+
+---
+
+## Histórico de versões
+
+| Versão | Sprint | Highlights |
+|---|---|---|
+| **v3.10.0** | AB | Multi-tenant **schema isolation real** (tenant_id em 5 tabelas + _scoped helper), charge-after-2xx, cache invalidate on writes, ReDoS guard reuse |
+| v3.9.1 | QA Loop | 4-lente 2-round convergence, QA-FIX-1..6 |
+| v3.9.0 | Z | Paper POPL/PLDI skeleton, 5 invariantes formais executáveis |
+| v3.8.0 | Y | Multi-tenant **billing** + atomic check_and_charge (isolation entregue em AB) |
+| v3.7.0 | X | CFG visualizável + port-allocator |
+| v3.6.0 | V | Marketplace de spectral signatures |
+| v3.5.2 | W2 | Gate-2 deep audit (G2-1..G2-8) |
+| v3.5.1 | W  | Gate-1 hardening (audit-1..6) |
+| v3.5.0 | R/S/Q/T/U | RCA, Granger, HMC repair, VS Code, Cache/ASGI |
+| ... | ... | (`CHANGELOG.md` para histórico completo desde v0.1.0) |
 
 ---
 
 ## Licença
 
 MIT — © APEX Project 2026  
-Desenvolvido com **[APEX v00.36.0](https://github.com/thiagofernandes1987-create/APEX)** — agente `pmi_pm` + `engineer` + `architect`
+Plataforma desenvolvida iterativamente sob disciplina **APEX SCIENTIFIC** (DSM + Ishikawa + Pareto + FMEA + WBS), com workflows multi-agente para design panel e adversarial review onde a complexidade justifica.
