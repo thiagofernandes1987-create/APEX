@@ -1,0 +1,408 @@
+{
+  "repo": "pandas-dev/pandas",
+  "subdir": "pandas/core/indexes",
+  "upstream_commits_fetched": 60,
+  "local_commits_replayed": 60,
+  "files_analyzed": 5,
+  "temporal": {
+    "repo_path": "/tmp/corpus_pandas",
+    "n_commits": 60,
+    "n_files": 5,
+    "project_status": "WARNING",
+    "elapsed_s": 40.89410250100002,
+    "critical": 0,
+    "warning": 5,
+    "stable": 0,
+    "file_results": [
+      {
+        "path": "datetimes.py",
+        "language": "python",
+        "n_commits": 12,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 1.0,
+        "self_cure_pct": 0.0,
+        "onset_commit": "17b2af8373222827160b1bf9fd3792f2952d52dd",
+        "confidence": 0.691
+      },
+      {
+        "path": "timedeltas.py",
+        "language": "python",
+        "n_commits": 7,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.9607,
+        "self_cure_pct": 215.0,
+        "onset_commit": "78e2231c539ae8c1f787186e19bf4e4783a9bc6e",
+        "confidence": 0.727
+      },
+      {
+        "path": "datetimelike.py",
+        "language": "python",
+        "n_commits": 15,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.9572,
+        "self_cure_pct": 237.0,
+        "onset_commit": null,
+        "confidence": 0.77
+      },
+      {
+        "path": "multi.py",
+        "language": "python",
+        "n_commits": 11,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.9459,
+        "self_cure_pct": 272.0,
+        "onset_commit": "ac745130729816ca81ee1446e848364781b19128",
+        "confidence": 0.804
+      },
+      {
+        "path": "base.py",
+        "language": "python",
+        "n_commits": 24,
+        "severity": "WARNING",
+        "primary_error": "AI_CODE_BOMB",
+        "hurst": 0.8371,
+        "self_cure_pct": 815.0,
+        "onset_commit": "ac745130729816ca81ee1446e848364781b19128",
+        "confidence": 0.786
+      }
+    ]
+  },
+  "sast_point_in_time": {
+    "total_findings": 35,
+    "by_file": {
+      "__init__.py": [],
+      "accessors.py": [],
+      "api.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 170,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "base.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 875,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 1783,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST043",
+          "severity": "LOW",
+          "line": 3238,
+          "title": "Unused Local Variable"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 3466,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 3889,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 3967,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 4117,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 4242,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 4483,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 4489,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 4493,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 4633,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 4664,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 4672,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 4748,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 5155,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 6081,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST043",
+          "severity": "LOW",
+          "line": 6468,
+          "title": "Unused Local Variable"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 7311,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "category.py": [],
+      "datetimelike.py": [],
+      "datetimes.py": [
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 1043,
+          "title": "Unsimplified Constant Expression"
+        }
+      ],
+      "extension.py": [],
+      "frozen.py": [],
+      "interval.py": [],
+      "multi.py": [
+        {
+          "rule_id": "SAST025",
+          "severity": "MEDIUM",
+          "line": 3675,
+          "title": "Timing Attack via String Comparison"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 1287,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 2678,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 2856,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 2863,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 2865,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 2960,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 3006,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 3008,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 3873,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 4701,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 4919,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "period.py": [],
+      "range.py": [
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 564,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST043",
+          "severity": "LOW",
+          "line": 1031,
+          "title": "Unused Local Variable"
+        }
+      ],
+      "timedeltas.py": []
+    }
+  },
+  "onset_fix_correlation": [
+    {
+      "file": "datetimes.py",
+      "severity": "WARNING",
+      "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+      "hurst": 1.0,
+      "onset_upstream_sha": "093c0ad84a4c",
+      "onset_subject": "REF: remove DatetimeArray._with_freq, further freq management cleanup (GH#24566) (#65276)",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "42a8b615db62",
+          "subject": "BUG: DataFrame.loc preserves original index name when key is an Index (#65229)"
+        },
+        {
+          "sha": "af4c3f03f59d",
+          "subject": "BUG: fix .loc with tuple key on MultiIndex with IntervalIndex level (#65239)"
+        },
+        {
+          "sha": "d7645941071a",
+          "subject": "BUG: MultiIndex.get_loc returns scalar for unique key in non-unique index (#65234)"
+        },
+        {
+          "sha": "0fca9048632f",
+          "subject": "BUG: reject unhashable elements in Index constructor (#64798)"
+        },
+        {
+          "sha": "4c8c0fb45df1",
+          "subject": "BUG: Index.take respects fill_value and allows fills on integer dtypes (#65268)"
+        },
+        {
+          "sha": "16cdddea44f0",
+          "subject": "BUG: Preserve nullable index dtype in `_transform_index` (#65316)"
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "timedeltas.py",
+      "severity": "WARNING",
+      "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+      "hurst": 0.961,
+      "onset_upstream_sha": "d9998e52f241",
+      "onset_subject": "REF: drop freq attribute from DTA/TDA arrays (GH-24566) (#65429)",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "057cdb579eb1",
+          "subject": "BUG: fix is_monotonic_increasing/decreasing properties for ExtensionArrays (#65585)"
+        },
+        {
+          "sha": "68b9444c90a9",
+          "subject": "BUG: Preserve dtype in Index.where (#65653)"
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "multi.py",
+      "severity": "WARNING",
+      "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+      "hurst": 0.946,
+      "onset_upstream_sha": "ef6d0d37cc10",
+      "onset_subject": "PERF: speed up partial key indexing on MultiIndex Series (#65092)",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "c1c9e0729be7",
+          "subject": "BUG: Series.dt.isocalendar() not preserving index for pyarrow dtypes (#65902)"
+        },
+        {
+          "sha": "c23f6ca02dcd",
+          "subject": "BUG: RangeIndex.nbytes/memory_usage raised TypeError on PyPy (GH-46176) (#65601)"
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "base.py",
+      "severity": "WARNING",
+      "primary_error": "AI_CODE_BOMB",
+      "hurst": 0.837,
+      "onset_upstream_sha": "ef6d0d37cc10",
+      "onset_subject": "PERF: speed up partial key indexing on MultiIndex Series (#65092)",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "c1c9e0729be7",
+          "subject": "BUG: Series.dt.isocalendar() not preserving index for pyarrow dtypes (#65902)"
+        },
+        {
+          "sha": "c23f6ca02dcd",
+          "subject": "BUG: RangeIndex.nbytes/memory_usage raised TypeError on PyPy (GH-46176) (#65601)"
+        }
+      ],
+      "has_corroborating_fix": true
+    }
+  ],
+  "summary": {
+    "critical_files": 0,
+    "warning_files": 5,
+    "files_with_corroborating_fix": 4,
+    "files_with_onset_but_no_corroborating_fix": 0
+  }
+}

@@ -1,5 +1,15 @@
 # Sprint AC-1 — Corpus Validation MVP: `psf/requests`
 
+> **Correção (Sprint AC-2, ver `AC2_summary.md` §4):** a seção "Correlação
+> onset → fix real" abaixo, que reportou 3/3 (100%) como evidência de
+> precisão, foi invalidada por um teste de controle subsequente. A
+> probabilidade de uma janela aleatória de 15 commits conter um commit
+> "fix-like" é de 94-100% neste e em outros 7 repositórios testados — ou
+> seja, o "100%" mede a taxa-base do corpus, não uma propriedade real da
+> detecção de onset do UCO. Mantendo o texto original abaixo por
+> integridade do histórico, mas **não trate isso como evidência de
+> precisão** sem reler a correção.
+
 > Primeira execução **real** (não sintética) do protocolo E1/E4 de
 > `paper/experiments.md`, usando dados reais via GitHub API em vez de
 > `git clone` (bloqueado neste sandbox). Metodologia em

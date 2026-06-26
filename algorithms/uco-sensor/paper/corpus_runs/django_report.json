@@ -1,0 +1,205 @@
+{
+  "repo": "django/django",
+  "subdir": "django/core/handlers",
+  "upstream_commits_fetched": 60,
+  "local_commits_replayed": 60,
+  "files_analyzed": 4,
+  "temporal": {
+    "repo_path": "/tmp/corpus_django",
+    "n_commits": 60,
+    "n_files": 4,
+    "project_status": "WARNING",
+    "elapsed_s": 5.092643613000007,
+    "critical": 0,
+    "warning": 4,
+    "stable": 0,
+    "file_results": [
+      {
+        "path": "exception.py",
+        "language": "python",
+        "n_commits": 12,
+        "severity": "WARNING",
+        "primary_error": "GOD_CLASS_FORMATION",
+        "hurst": 1.0,
+        "self_cure_pct": 0.0,
+        "onset_commit": "c6aff2ef3e7a5351d21d6ffa0202ac270ab09395",
+        "confidence": 0.533
+      },
+      {
+        "path": "wsgi.py",
+        "language": "python",
+        "n_commits": 14,
+        "severity": "WARNING",
+        "primary_error": "GOD_CLASS_FORMATION",
+        "hurst": 1.0,
+        "self_cure_pct": 0.0,
+        "onset_commit": "0b515d3684ff2b0e03cc816ca9b3a93f99af11df",
+        "confidence": 0.702
+      },
+      {
+        "path": "base.py",
+        "language": "python",
+        "n_commits": 14,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 1.0,
+        "self_cure_pct": 0.0,
+        "onset_commit": null,
+        "confidence": 0.667
+      },
+      {
+        "path": "asgi.py",
+        "language": "python",
+        "n_commits": 32,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.8435,
+        "self_cure_pct": 1565.0,
+        "onset_commit": "3e7d1de08b1016e6ee317ec8c6ed5cdeebd97629",
+        "confidence": 0.725
+      }
+    ]
+  },
+  "sast_point_in_time": {
+    "total_findings": 3,
+    "by_file": {
+      "__init__.py": [],
+      "asgi.py": [
+        {
+          "rule_id": "SAST045",
+          "severity": "LOW",
+          "line": 155,
+          "title": "Unsimplified Constant Expression"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 202,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 208,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "base.py": [],
+      "exception.py": [],
+      "wsgi.py": []
+    }
+  },
+  "onset_fix_correlation": [
+    {
+      "file": "exception.py",
+      "severity": "WARNING",
+      "primary_error": "GOD_CLASS_FORMATION",
+      "hurst": 1.0,
+      "onset_upstream_sha": "8c7ff7b8cff4",
+      "onset_subject": "Removed unreachable SystemExit check.",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "36fa071d6ebd",
+          "subject": "Fixed #32889 -- Allowed per-request sync_to_async context in ASGIHandler ."
+        },
+        {
+          "sha": "1024b5e74a71",
+          "subject": "Fixed 32956 -- Lowercased spelling of \"web\" and \"web framework\" where appropriate."
+        },
+        {
+          "sha": "2d472ad05c7f",
+          "subject": "Fixed #33495 -- Improved debug logging message about adapting handlers for middlewares."
+        },
+        {
+          "sha": "441103a04d1d",
+          "subject": "Refs #33173, Refs #30451 -- Fixed ResourceWarning from unclosed body files in ASGI handler on Python 3.11+."
+        },
+        {
+          "sha": "f1e0fc645bb0",
+          "subject": "Fixed #33754 -- Fixed crash with prematurely closed ASGI request body."
+        },
+        {
+          "sha": "e96320c91724",
+          "subject": "Fixed #33755 -- Moved ASGI body-file cleanup into request class."
+        },
+        {
+          "sha": "6220c445c40a",
+          "subject": "Fixed #29186 -- Fixed pickling HttpRequest and subclasses."
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "wsgi.py",
+      "severity": "WARNING",
+      "primary_error": "GOD_CLASS_FORMATION",
+      "hurst": 1.0,
+      "onset_upstream_sha": "fac26684fd62",
+      "onset_subject": "Removed unused buf_size argument to LimitedStream().",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "2d472ad05c7f",
+          "subject": "Fixed #33495 -- Improved debug logging message about adapting handlers for middlewares."
+        },
+        {
+          "sha": "441103a04d1d",
+          "subject": "Refs #33173, Refs #30451 -- Fixed ResourceWarning from unclosed body files in ASGI handler on Python 3.11+."
+        },
+        {
+          "sha": "f1e0fc645bb0",
+          "subject": "Fixed #33754 -- Fixed crash with prematurely closed ASGI request body."
+        },
+        {
+          "sha": "e96320c91724",
+          "subject": "Fixed #33755 -- Moved ASGI body-file cleanup into request class."
+        },
+        {
+          "sha": "6220c445c40a",
+          "subject": "Fixed #29186 -- Fixed pickling HttpRequest and subclasses."
+        },
+        {
+          "sha": "0bd2c0c9015b",
+          "subject": "Fixed #33735 -- Added async support to StreamingHttpResponse."
+        },
+        {
+          "sha": "b47f2f5b9077",
+          "subject": "Fixed #33865 -- Optimized LimitedStream wrapper."
+        },
+        {
+          "sha": "3bbe22dafcc6",
+          "subject": "Fixed #34233 -- Dropped support for Python 3.8 and 3.9."
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "asgi.py",
+      "severity": "WARNING",
+      "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+      "hurst": 0.844,
+      "onset_upstream_sha": "2501958b5127",
+      "onset_subject": "Refs #36315 -- Replaced manual task and cancellation handling with TaskGroup in ASGIHandler.",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "eb22e1d6d643",
+          "subject": "Fixed CVE-2025-14550 -- Optimized repeated header parsing in ASGI requests."
+        },
+        {
+          "sha": "b33c31d99259",
+          "subject": "Fixed #36940 -- Fixed script name edge case in ASGIRequest.path_info."
+        },
+        {
+          "sha": "caf90a971f09",
+          "subject": "Fixed CVE-2026-3902 -- Ignored headers with underscores in ASGIRequest."
+        }
+      ],
+      "has_corroborating_fix": true
+    }
+  ],
+  "summary": {
+    "critical_files": 0,
+    "warning_files": 4,
+    "files_with_corroborating_fix": 3,
+    "files_with_onset_but_no_corroborating_fix": 0
+  }
+}

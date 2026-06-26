@@ -1,0 +1,446 @@
+{
+  "repo": "pallets/flask",
+  "subdir": "src/flask",
+  "upstream_commits_fetched": 60,
+  "local_commits_replayed": 57,
+  "files_analyzed": 11,
+  "temporal": {
+    "repo_path": "/tmp/corpus_flask",
+    "n_commits": 57,
+    "n_files": 11,
+    "project_status": "WARNING",
+    "elapsed_s": 13.15040805600006,
+    "critical": 0,
+    "warning": 6,
+    "stable": 5,
+    "file_results": [
+      {
+        "path": "templating.py",
+        "language": "python",
+        "n_commits": 13,
+        "severity": "WARNING",
+        "primary_error": "DEPENDENCY_CYCLE_INTRODUCTION",
+        "hurst": 1.0,
+        "self_cure_pct": 0.0,
+        "onset_commit": "f5889bc6bf2803736fa62cae33ba1b639aca9fec",
+        "confidence": 0.693
+      },
+      {
+        "path": "helpers.py",
+        "language": "python",
+        "n_commits": 24,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.998,
+        "self_cure_pct": 15.0,
+        "onset_commit": "0093d71d1264f672d32f906d9f65c273a7831086",
+        "confidence": 0.559
+      },
+      {
+        "path": "testing.py",
+        "language": "python",
+        "n_commits": 18,
+        "severity": "WARNING",
+        "primary_error": "TECH_DEBT_ACCUMULATION",
+        "hurst": 0.8933,
+        "self_cure_pct": 533.0,
+        "onset_commit": "4744be9202891e8e0d183fdbe32a7d288eea51db",
+        "confidence": 0.621
+      },
+      {
+        "path": "sessions.py",
+        "language": "python",
+        "n_commits": 10,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.8734,
+        "self_cure_pct": 1266.0,
+        "onset_commit": "68deadbf01fe5d5be908f43cdec95dcdcba7f12c",
+        "confidence": 0.741
+      },
+      {
+        "path": "app.py",
+        "language": "python",
+        "n_commits": 26,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.8179,
+        "self_cure_pct": 1312.0,
+        "onset_commit": "f5889bc6bf2803736fa62cae33ba1b639aca9fec",
+        "confidence": 0.797
+      },
+      {
+        "path": "ctx.py",
+        "language": "python",
+        "n_commits": 14,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.6486,
+        "self_cure_pct": 1958.0,
+        "onset_commit": null,
+        "confidence": 0.639
+      },
+      {
+        "path": "cli.py",
+        "language": "python",
+        "n_commits": 21,
+        "severity": "INFO",
+        "primary_error": "LOOP_RISK_INTRODUCTION",
+        "hurst": 0.7748,
+        "self_cure_pct": 2252.0,
+        "onset_commit": null,
+        "confidence": 0.703
+      },
+      {
+        "path": "__init__.py",
+        "language": "python",
+        "n_commits": 22,
+        "severity": "INFO",
+        "primary_error": "TECH_DEBT_ACCUMULATION",
+        "hurst": 0.6672,
+        "self_cure_pct": 3328.0,
+        "onset_commit": "d8ba4ac931cf600e9fe8fe884fa1282a2cf7d312",
+        "confidence": 0.7
+      },
+      {
+        "path": "debughelpers.py",
+        "language": "python",
+        "n_commits": 9,
+        "severity": "INFO",
+        "primary_error": "REFACTORING_IN_PROGRESS",
+        "hurst": 0.5274,
+        "self_cure_pct": 3665.0,
+        "onset_commit": null,
+        "confidence": 0.502
+      },
+      {
+        "path": "globals.py",
+        "language": "python",
+        "n_commits": 9,
+        "severity": "INFO",
+        "primary_error": "REFACTORING_IN_PROGRESS",
+        "hurst": 0.5274,
+        "self_cure_pct": 3665.0,
+        "onset_commit": null,
+        "confidence": 0.618
+      },
+      {
+        "path": "typing.py",
+        "language": "python",
+        "n_commits": 19,
+        "severity": "INFO",
+        "primary_error": "AI_CODE_BOMB",
+        "hurst": 0.4254,
+        "self_cure_pct": 5335.0,
+        "onset_commit": null,
+        "confidence": 0.29
+      }
+    ]
+  },
+  "sast_point_in_time": {
+    "total_findings": 19,
+    "by_file": {
+      "__init__.py": [],
+      "__main__.py": [],
+      "app.py": [
+        {
+          "rule_id": "SAST011",
+          "severity": "HIGH",
+          "line": 443,
+          "title": "Path Traversal via open()"
+        },
+        {
+          "rule_id": "SAST011",
+          "severity": "HIGH",
+          "line": 445,
+          "title": "Path Traversal via open()"
+        },
+        {
+          "rule_id": "SAST011",
+          "severity": "HIGH",
+          "line": 465,
+          "title": "Path Traversal via open()"
+        },
+        {
+          "rule_id": "SAST011",
+          "severity": "HIGH",
+          "line": 467,
+          "title": "Path Traversal via open()"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 1595,
+          "title": "Adjacent Duplicate Statement"
+        }
+      ],
+      "blueprints.py": [
+        {
+          "rule_id": "SAST011",
+          "severity": "HIGH",
+          "line": 126,
+          "title": "Path Traversal via open()"
+        },
+        {
+          "rule_id": "SAST011",
+          "severity": "HIGH",
+          "line": 128,
+          "title": "Path Traversal via open()"
+        }
+      ],
+      "cli.py": [
+        {
+          "rule_id": "SAST011",
+          "severity": "HIGH",
+          "line": 1022,
+          "title": "Path Traversal via open()"
+        },
+        {
+          "rule_id": "SAST003",
+          "severity": "HIGH",
+          "line": 1023,
+          "title": "Unsafe eval() / exec()"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 1036,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 1098,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "config.py": [
+        {
+          "rule_id": "SAST011",
+          "severity": "HIGH",
+          "line": 208,
+          "title": "Path Traversal via open()"
+        },
+        {
+          "rule_id": "SAST003",
+          "severity": "HIGH",
+          "line": 209,
+          "title": "Unsafe eval() / exec()"
+        },
+        {
+          "rule_id": "SAST011",
+          "severity": "HIGH",
+          "line": 293,
+          "title": "Path Traversal via open()"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 163,
+          "title": "Exception Swallowing"
+        }
+      ],
+      "ctx.py": [],
+      "debughelpers.py": [],
+      "globals.py": [],
+      "helpers.py": [
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 540,
+          "title": "Adjacent Duplicate Statement"
+        }
+      ],
+      "logging.py": [],
+      "sessions.py": [
+        {
+          "rule_id": "SAST006",
+          "severity": "MEDIUM",
+          "line": 281,
+          "title": "Weak Cryptographic Algorithm"
+        }
+      ],
+      "signals.py": [],
+      "templating.py": [],
+      "testing.py": [
+        {
+          "rule_id": "SAST011",
+          "severity": "HIGH",
+          "line": 235,
+          "title": "Path Traversal via open()"
+        },
+        {
+          "rule_id": "SAST037",
+          "severity": "MEDIUM",
+          "line": 235,
+          "title": "Resource Leak \u2014 Unclosed File Handle"
+        }
+      ],
+      "typing.py": [],
+      "views.py": [],
+      "wrappers.py": []
+    }
+  },
+  "onset_fix_correlation": [
+    {
+      "file": "templating.py",
+      "severity": "WARNING",
+      "primary_error": "DEPENDENCY_CYCLE_INTRODUCTION",
+      "hurst": 1.0,
+      "onset_upstream_sha": "96a01e420b74",
+      "onset_subject": "Merge branch 'stable'",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "25642fd1fd65",
+          "subject": "fix annotation for select_jinja_autoescape (#5808)"
+        },
+        {
+          "sha": "c77a5203438f",
+          "subject": "deprecate should_ignore_error"
+        },
+        {
+          "sha": "e82db2ca3a22",
+          "subject": "fix provide_automatic_options override"
+        },
+        {
+          "sha": "7b0088693ece",
+          "subject": "fix typing"
+        },
+        {
+          "sha": "fbb6f0bc4c60",
+          "subject": "all teardown callbacks are called despite errors"
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "helpers.py",
+      "severity": "WARNING",
+      "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+      "hurst": 0.998,
+      "onset_upstream_sha": "25642fd1fd65",
+      "onset_subject": "fix annotation for select_jinja_autoescape (#5808)",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "25642fd1fd65",
+          "subject": "fix annotation for select_jinja_autoescape (#5808)"
+        },
+        {
+          "sha": "c77a5203438f",
+          "subject": "deprecate should_ignore_error"
+        },
+        {
+          "sha": "e82db2ca3a22",
+          "subject": "fix provide_automatic_options override"
+        },
+        {
+          "sha": "7b0088693ece",
+          "subject": "fix typing"
+        },
+        {
+          "sha": "fbb6f0bc4c60",
+          "subject": "all teardown callbacks are called despite errors"
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "testing.py",
+      "severity": "WARNING",
+      "primary_error": "TECH_DEBT_ACCUMULATION",
+      "hurst": 0.893,
+      "onset_upstream_sha": "53b8f0821879",
+      "onset_subject": "push preserved contexts in correct order",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "6a64969009bf",
+          "subject": "pass context through dispatch methods"
+        },
+        {
+          "sha": "25642fd1fd65",
+          "subject": "fix annotation for select_jinja_autoescape (#5808)"
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "sessions.py",
+      "severity": "WARNING",
+      "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+      "hurst": 0.873,
+      "onset_upstream_sha": "3709c4a9a87e",
+      "onset_subject": "update ruff hook and noqa",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "c77a5203438f",
+          "subject": "deprecate should_ignore_error"
+        },
+        {
+          "sha": "e82db2ca3a22",
+          "subject": "fix provide_automatic_options override"
+        },
+        {
+          "sha": "7b0088693ece",
+          "subject": "fix typing"
+        },
+        {
+          "sha": "fbb6f0bc4c60",
+          "subject": "all teardown callbacks are called despite errors"
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "app.py",
+      "severity": "WARNING",
+      "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+      "hurst": 0.818,
+      "onset_upstream_sha": "96a01e420b74",
+      "onset_subject": "Merge branch 'stable'",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "25642fd1fd65",
+          "subject": "fix annotation for select_jinja_autoescape (#5808)"
+        },
+        {
+          "sha": "c77a5203438f",
+          "subject": "deprecate should_ignore_error"
+        },
+        {
+          "sha": "e82db2ca3a22",
+          "subject": "fix provide_automatic_options override"
+        },
+        {
+          "sha": "7b0088693ece",
+          "subject": "fix typing"
+        },
+        {
+          "sha": "fbb6f0bc4c60",
+          "subject": "all teardown callbacks are called despite errors"
+        }
+      ],
+      "has_corroborating_fix": true
+    },
+    {
+      "file": "__init__.py",
+      "severity": "INFO",
+      "primary_error": "TECH_DEBT_ACCUMULATION",
+      "hurst": 0.667,
+      "onset_upstream_sha": "7d5d18745812",
+      "onset_subject": "better type checking during deprecation",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "fb5415986170",
+          "subject": "secret key rotation: fix key list ordering"
+        }
+      ],
+      "has_corroborating_fix": true
+    }
+  ],
+  "summary": {
+    "critical_files": 0,
+    "warning_files": 6,
+    "files_with_corroborating_fix": 6,
+    "files_with_onset_but_no_corroborating_fix": 0
+  }
+}

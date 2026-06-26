@@ -1,0 +1,187 @@
+{
+  "repo": "matplotlib/matplotlib",
+  "subdir": "lib/matplotlib/axes",
+  "upstream_commits_fetched": 60,
+  "local_commits_replayed": 54,
+  "files_analyzed": 2,
+  "temporal": {
+    "repo_path": "/tmp/corpus_matplotlib",
+    "n_commits": 54,
+    "n_files": 2,
+    "project_status": "WARNING",
+    "elapsed_s": 65.701461817,
+    "critical": 0,
+    "warning": 2,
+    "stable": 0,
+    "file_results": [
+      {
+        "path": "_base.py",
+        "language": "python",
+        "n_commits": 40,
+        "severity": "WARNING",
+        "primary_error": "GOD_CLASS_FORMATION",
+        "hurst": 0.9575,
+        "self_cure_pct": 425.0,
+        "onset_commit": "0b57404ffc2cc985340c7345f11452be9c3da63a",
+        "confidence": 0.638
+      },
+      {
+        "path": "_axes.py",
+        "language": "python",
+        "n_commits": 19,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.6045,
+        "self_cure_pct": 1977.0,
+        "onset_commit": null,
+        "confidence": 0.697
+      }
+    ]
+  },
+  "sast_point_in_time": {
+    "total_findings": 14,
+    "by_file": {
+      "__init__.py": [],
+      "_axes.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 1465,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 2238,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST043",
+          "severity": "LOW",
+          "line": 3483,
+          "title": "Unused Local Variable"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 5192,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 5932,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 5934,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST043",
+          "severity": "LOW",
+          "line": 6748,
+          "title": "Unused Local Variable"
+        },
+        {
+          "rule_id": "SAST043",
+          "severity": "LOW",
+          "line": 6749,
+          "title": "Unused Local Variable"
+        }
+      ],
+      "_base.py": [
+        {
+          "rule_id": "SAST025",
+          "severity": "MEDIUM",
+          "line": 4550,
+          "title": "Timing Attack via String Comparison"
+        },
+        {
+          "rule_id": "SAST025",
+          "severity": "MEDIUM",
+          "line": 4555,
+          "title": "Timing Attack via String Comparison"
+        },
+        {
+          "rule_id": "SAST025",
+          "severity": "MEDIUM",
+          "line": 4557,
+          "title": "Timing Attack via String Comparison"
+        },
+        {
+          "rule_id": "SAST025",
+          "severity": "MEDIUM",
+          "line": 4559,
+          "title": "Timing Attack via String Comparison"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 156,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST043",
+          "severity": "LOW",
+          "line": 2577,
+          "title": "Unused Local Variable"
+        }
+      ],
+      "_secondary_axes.py": []
+    }
+  },
+  "onset_fix_correlation": [
+    {
+      "file": "_base.py",
+      "severity": "WARNING",
+      "primary_error": "GOD_CLASS_FORMATION",
+      "hurst": 0.958,
+      "onset_upstream_sha": "07127b686398",
+      "onset_subject": "BUG: Fix relim() to support Collection artists (scatter, etc.)  relim() previously skipped Collection instances entirely. Two issues:  1. add_collection() did not call collection._set_in_autoscale(True),    unlike add_line(), add_patch(), and add_image(). This caused relim()    to skip collections via the _get_in_autoscale() check.  2. relim() had no handling for Collection instances. Added an elif    branch that calls get_datalim() and update_datalim(), mirroring the    logic already used in add_collection().  Closes #30859",
+      "fixlike_commits_within_15_after_onset": [
+        {
+          "sha": "07127b686398",
+          "subject": "BUG: Fix relim() to support Collection artists (scatter, etc.)  relim() previously skipped Collection instances entirely. Two issues:  1. add_collection() did not call collection._set_in_autoscale(True),    unlike add_line(), add_patch(), and add_image(). This caused relim()    to skip collections via the _get_in_autoscale() check.  2. relim() had no handling for Collection instances. Added an elif    branch that calls get_datalim() and update_datalim(), mirroring the    logic already used in add_collection().  Closes #30859"
+        },
+        {
+          "sha": "1d8b2296cb68",
+          "subject": "BUG: Add explanatory comments to relim() Collection branch"
+        },
+        {
+          "sha": "3da28af5d6dc",
+          "subject": "BUG: Preserve autolim=False semantics for Collection relim support"
+        },
+        {
+          "sha": "68a6269b9730",
+          "subject": "BUG: Extract _update_collection_limits helper; call from add_collection and relim()"
+        },
+        {
+          "sha": "f90c147dd486",
+          "subject": "TST/BUG: Fix _datalim_only semantics and add user-facing relim test"
+        },
+        {
+          "sha": "016175145d19",
+          "subject": "DOC: Fix Sphinx warning and address reviewer comments"
+        },
+        {
+          "sha": "56d23737ce49",
+          "subject": "DOC: Document that bar() errorbars do not support individual coloring (#31579)"
+        },
+        {
+          "sha": "c6377d0f0009",
+          "subject": "plt.stairs: fix unit handling for orientation=\"horizontal\" (#31666)"
+        }
+      ],
+      "has_corroborating_fix": true
+    }
+  ],
+  "summary": {
+    "critical_files": 0,
+    "warning_files": 2,
+    "files_with_corroborating_fix": 1,
+    "files_with_onset_but_no_corroborating_fix": 0
+  }
+}

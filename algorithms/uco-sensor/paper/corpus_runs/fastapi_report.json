@@ -1,0 +1,146 @@
+{
+  "repo": "fastapi/fastapi",
+  "subdir": "fastapi",
+  "upstream_commits_fetched": 60,
+  "local_commits_replayed": 50,
+  "files_analyzed": 3,
+  "temporal": {
+    "repo_path": "/tmp/corpus_fastapi",
+    "n_commits": 50,
+    "n_files": 3,
+    "project_status": "WARNING",
+    "elapsed_s": 10.016928134000068,
+    "critical": 0,
+    "warning": 2,
+    "stable": 1,
+    "file_results": [
+      {
+        "path": "routing.py",
+        "language": "python",
+        "n_commits": 14,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 1.0,
+        "self_cure_pct": 0.0,
+        "onset_commit": null,
+        "confidence": 0.727
+      },
+      {
+        "path": "applications.py",
+        "language": "python",
+        "n_commits": 9,
+        "severity": "WARNING",
+        "primary_error": "COGNITIVE_COMPLEXITY_EXPLOSION",
+        "hurst": 0.7756,
+        "self_cure_pct": 1428.0,
+        "onset_commit": null,
+        "confidence": 0.727
+      },
+      {
+        "path": "__init__.py",
+        "language": "python",
+        "n_commits": 26,
+        "severity": "INFO",
+        "primary_error": "GOD_CLASS_FORMATION",
+        "hurst": 0.5,
+        "self_cure_pct": 2500.0,
+        "onset_commit": null,
+        "confidence": 0.342
+      }
+    ]
+  },
+  "sast_point_in_time": {
+    "total_findings": 9,
+    "by_file": {
+      "__init__.py": [],
+      "__main__.py": [],
+      "applications.py": [
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 274,
+          "title": "Adjacent Duplicate Statement"
+        }
+      ],
+      "background.py": [],
+      "cli.py": [],
+      "concurrency.py": [
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 35,
+          "title": "Adjacent Duplicate Statement"
+        }
+      ],
+      "datastructures.py": [],
+      "encoders.py": [
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 331,
+          "title": "Adjacent Duplicate Statement"
+        }
+      ],
+      "exception_handlers.py": [],
+      "exceptions.py": [],
+      "logger.py": [],
+      "param_functions.py": [],
+      "params.py": [],
+      "requests.py": [],
+      "responses.py": [],
+      "routing.py": [
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 593,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 818,
+          "title": "Adjacent Duplicate Statement"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 1735,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST038",
+          "severity": "LOW",
+          "line": 1913,
+          "title": "Exception Swallowing"
+        },
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 2013,
+          "title": "Adjacent Duplicate Statement"
+        }
+      ],
+      "sse.py": [
+        {
+          "rule_id": "SAST044",
+          "severity": "LOW",
+          "line": 226,
+          "title": "Adjacent Duplicate Statement"
+        }
+      ],
+      "staticfiles.py": [],
+      "templating.py": [],
+      "testclient.py": [],
+      "types.py": [],
+      "utils.py": [],
+      "websockets.py": []
+    }
+  },
+  "onset_fix_correlation": [],
+  "summary": {
+    "critical_files": 0,
+    "warning_files": 2,
+    "files_with_corroborating_fix": 0,
+    "files_with_onset_but_no_corroborating_fix": 0
+  }
+}
