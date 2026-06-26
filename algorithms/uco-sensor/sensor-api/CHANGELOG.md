@@ -5,6 +5,62 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.9.1] — 2026-06-26 — QA Loop (4 lentes + 2-round convergence)
+
+### APEX SCIENTIFIC QA Loop executado
+
+**Tech Leader nível mestre** rodou QA Loop padrão sobre superfície
+v3.9.0 (Sprint Y multi-tenant + Sprint Z invariants/paper):
+
+```
+EXPLORAR → REPORTAR → REVISAR → CORRIGIR → RE-EXPLORAR
+    ↑                                              │
+    └──────────────────────────────────────────────┘
+```
+
+* **Round 1 EXPLORE** — 4 lentes paralelas (🧪 QA + 🎯 Product +
+  ⚙️ Engineering + 🔒 Security) × 2-vote adversarial verify por
+  finding CRIT/HIGH. Surface: 7 arquivos da v3.9.0.
+* **Round 1 REPORT** — Tech Lead consolidou: 2 CONFIRMED P0/P1 + 1 MED 2/2-verified + 3 MED por triagem manual + backlog 25+ MED/LOW.
+* **Round 1 CORRIGIR** — 6 fixes QA-FIX-1..6 aplicados.
+* **Round 2 RE-EXPLORE** — 4 lentes sobre arquivos patched para convergência. 3/4 lentes verdict=DRY; **🔒 Security caught real gap**: `_qp_int`/`_qp_float` helpers existiam mas **nenhum call-site usava** (migração incompleta) → 64 sites de `int(params.get(...))` + 8 de `float(...)` ainda vazavam 500.
+* **Round 2 CORRIGIR** — sweep regex migrou 71 sites para os helpers tipados; loop convergido.
+
+### Corrigido — QA-FIX-1..6 (Round 1)
+
+| Fix | Sev | Onde | Issue |
+|---|---|---|---|
+| QA-FIX-1 | **CRIT** 2/2 | `api/server.py` do_GET/POST/DELETE catch-all | Bare 500 vazava `traceback.format_exc()[-500:]` com absolute paths / function names / line numbers a QUALQUER cliente. Fix: `_safe_500_envelope(exc)` retorna `{"error":"internal_error","error_class":"<Type>"}`; trace só com `UCO_INCLUDE_TRACE=1`. |
+| QA-FIX-2 | **HIGH** 2/2 | `api/server.py` | Query param `ValueError` virava 500 com trace leak. Fix: novos `_QueryParamError` + `_qp_int` + `_qp_float`; dispatcher captura ANTES do catch-all e retorna 400 `{"error":"invalid_query_param","param":"...","value":"...","expected":"integer"}`. **Round 2 completou a migração** de 71 call-sites. |
+| QA-FIX-3 | MED 2/2 | `handle_tenants_usage` | `?period=2026-13` aceito silenciosamente. Fix: `_PERIOD_KEY_RE` strict `^\d{4}-(0[1-9]\|1[0-2])$` + 400 envelope. |
+| QA-FIX-4 | MED | `handle_tenants_{get,suspend,reactivate}` | `tid` sem `.strip()` → phantom 404s. Fix: strip + sanitize em todos os 3. |
+| QA-FIX-5 | MED | helpers | Newline injection via `!r` echo. Fix: `_sanitize_for_echo()` remove `\r\n\t` + non-printable + cap 64 chars. |
+| QA-FIX-6 | MED | `marketplace._has_redos_shape` | Empty string rejeitada como ReDoS. Fix: empty/None → False; >2000 chars continua rejeitado. |
+
+### Testes adicionados
+
+`tests/test_marco_m60.py` — **TQA01-TQA20** (20 testes):
+
+* TQA01-TQA03 `_safe_500_envelope` (strip default / UCO_INCLUDE_TRACE=1 / custom exc class)
+* TQA04-TQA07 `_qp_int`/`_qp_float` (default / valid / garbage)
+* TQA08-TQA10 `_validate_period_key` + handle_tenants_usage 400 path
+* TQA11-TQA13 `_sanitize_for_echo` (whitespace strip / control chars / length cap)
+* TQA14-TQA15 `_has_redos_shape` (empty OK / dangerous patterns still rejected)
+* **TQA16-TQA20** (Round 2 finding) — verificam que migração `_qp_int`/`_qp_float` está completa via source-level grep + smoke integration
+
+### Métricas
+
+| Métrica | v3.9.0 | v3.9.1 |
+|---|---|---|
+| Tests passing | 2125 | **2145** (+20) |
+| Falhas | 0 | **0** |
+| Bare `int(params.get(...))` em server.py | 64 | **0** |
+| Bare `float(params.get(...))` em server.py | 8 | **0** |
+| 500-leak paths (CRITICAL info disclosure) | 3 | **0** |
+| QA loop rounds executados | 0 | **2** (convergiu) |
+
+---
+
 ## [3.9.0] — 2026-06-25 — Sprint Z: Paper POPL/PLDI skeleton + 5 formal invariants + v3.8.1 backlog ⭐ HORIZONTE 180D COMPLETO
 
 ### APEX SCIENTIFIC orquestração

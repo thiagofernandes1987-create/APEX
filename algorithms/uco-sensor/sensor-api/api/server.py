@@ -201,7 +201,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.9.0"
+    version:      str   = "3.9.1"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -4614,7 +4614,7 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_modules()
             elif path == "/history":
                 module_id = params.get("module", [None])[0]
-                window    = int(params.get("window", ["50"])[0])
+                window    = _qp_int(params, "window", 50)
                 code, data = handle_history(module_id, window)
             elif path == "/baseline":
                 module_id = params.get("module", [None])[0]
@@ -4633,12 +4633,12 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_apex_ping()
             elif path == "/anomalies":
                 module_id = params.get("module", [None])[0]
-                limit_n   = int(params.get("limit", ["50"])[0])
+                limit_n   = _qp_int(params, "limit", 50)
                 code, data = handle_anomalies(module_id, limit_n)
             elif path == "/trend":
                 module_id = params.get("module", [None])[0]
                 metric    = params.get("metric", ["hamiltonian"])[0]
-                window_n  = int(params.get("window", ["10"])[0])
+                window_n  = _qp_int(params, "window", 10)
                 code, data = handle_trend(module_id, metric, window_n)
             elif path == "/dashboard":
                 code, data = handle_dashboard()
@@ -4666,73 +4666,73 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 return self._send_svg(http_code, svg)
             elif path == "/predict":
                 module_id = params.get("module",  [None])[0]
-                window_n  = int(params.get("window",  ["20"])[0])
-                horizon_n = int(params.get("horizon", ["5"])[0])
+                window_n  = _qp_int(params, "window", 20)
+                horizon_n = _qp_int(params, "horizon", 5)
                 code, data = handle_predict(module_id, window=window_n, horizon=horizon_n)
             elif path == "/predict/all":
-                window_n  = int(params.get("window",  ["20"])[0])
-                horizon_n = int(params.get("horizon", ["5"])[0])
-                top_n_val = int(params.get("top_n",   ["10"])[0])
+                window_n  = _qp_int(params, "window", 20)
+                horizon_n = _qp_int(params, "horizon", 5)
+                top_n_val = _qp_int(params, "top_n", 10)
                 code, data = handle_predict_all(window=window_n, horizon=horizon_n, top_n=top_n_val)
             elif path == "/metrics/advanced":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["50"])[0])
+                window_n  = _qp_int(params, "window", 50)
                 code, data = handle_metrics_advanced(module_id, window=window_n)
             elif path == "/metrics/reliability":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["50"])[0])
+                window_n  = _qp_int(params, "window", 50)
                 code, data = handle_metrics_reliability(module_id, window=window_n)
             elif path == "/metrics/maintainability":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["50"])[0])
+                window_n  = _qp_int(params, "window", 50)
                 code, data = handle_metrics_maintainability(module_id, window=window_n)
             elif path == "/metrics/flow":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["50"])[0])
+                window_n  = _qp_int(params, "window", 50)
                 code, data = handle_metrics_flow(module_id, window=window_n)
             elif path == "/metrics/performance":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["50"])[0])
+                window_n  = _qp_int(params, "window", 50)
                 code, data = handle_metrics_performance(module_id, window=window_n)
             elif path == "/metrics/architecture":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["50"])[0])
+                window_n  = _qp_int(params, "window", 50)
                 code, data = handle_metrics_architecture(module_id, window=window_n)
             elif path == "/metrics/test-quality":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["50"])[0])
+                window_n  = _qp_int(params, "window", 50)
                 code, data = handle_metrics_test_quality(module_id, window=window_n)
             elif path == "/metrics/thread-safety":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["50"])[0])
+                window_n  = _qp_int(params, "window", 50)
                 code, data = handle_metrics_thread_safety(module_id, window=window_n)
             elif path == "/anti-pattern-score":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["50"])[0])
+                window_n  = _qp_int(params, "window", 50)
                 code, data = handle_anti_pattern_score(module_id, window=window_n)
             elif path == "/anti-pattern-score/history":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["100"])[0])
+                window_n  = _qp_int(params, "window", 100)
                 code, data = handle_anti_pattern_score_history(module_id, window=window_n)
             elif path == "/anti-pattern-score/trend":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["100"])[0])
+                window_n  = _qp_int(params, "window", 100)
                 code, data = handle_anti_pattern_score_trend(module_id, window=window_n)
             elif path == "/predictor/history":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["100"])[0])
+                window_n  = _qp_int(params, "window", 100)
                 code, data = handle_predictor_history(module_id, window=window_n)
             elif path == "/predictor/accuracy":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["100"])[0])
+                window_n  = _qp_int(params, "window", 100)
                 code, data = handle_predictor_accuracy(module_id, window=window_n)
             elif path == "/apex/remediation/history":
                 module_id = params.get("module", [""])[0] or ""
-                limit_n   = int(params.get("limit", ["100"])[0])
+                limit_n   = _qp_int(params, "limit", 100)
                 code, data = handle_remediation_history(module_id, limit=limit_n)
             elif path == "/apex/remediation/stats":
                 module_id = params.get("module", [""])[0] or ""
-                top_k_n   = int(params.get("top_k", ["5"])[0])
+                top_k_n   = _qp_int(params, "top_k", 5)
                 code, data = handle_remediation_stats(module_id, top_k=top_k_n)
             elif path == "/diff/channels":
                 module_id   = params.get("module", [""])[0] or ""
@@ -4741,39 +4741,39 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_diff_channels(module_id, commit_from, commit_to)
             elif path == "/diff/volatile":
                 module_id = params.get("module", [""])[0] or ""
-                window_n  = int(params.get("window", ["50"])[0])
-                top_k_n   = int(params.get("top_k",  ["5"])[0])
+                window_n  = _qp_int(params, "window", 50)
+                top_k_n   = _qp_int(params, "top_k", 5)
                 code, data = handle_diff_volatile(module_id, window=window_n, top_k=top_k_n)
             elif path == "/similar":
                 module_id = params.get("module", [""])[0] or ""
-                k_v       = int(params.get("k", ["10"])[0])
+                k_v       = _qp_int(params, "k", 10)
                 metric_v  = params.get("metric", ["euclidean"])[0]
-                window_n  = int(params.get("window", ["100"])[0])
+                window_n  = _qp_int(params, "window", 100)
                 code, data = handle_similar(module_id, k=k_v, metric=metric_v, window=window_n)
             elif path == "/granger/matrix":
                 module_id = params.get("module", [""])[0] or ""
-                max_lag_v = int(params.get("max_lag", ["3"])[0])
-                window_n  = int(params.get("window", ["200"])[0])
-                alpha_v   = float(params.get("alpha", ["0.05"])[0])
+                max_lag_v = _qp_int(params, "max_lag", 3)
+                window_n  = _qp_int(params, "window", 200)
+                alpha_v   = _qp_float(params, "alpha", 0.05)
                 code, data = handle_granger_matrix(module_id, max_lag=max_lag_v, window=window_n, alpha=alpha_v)
             elif path == "/granger/significant":
                 module_id = params.get("module", [""])[0] or ""
-                max_lag_v = int(params.get("max_lag", ["3"])[0])
-                window_n  = int(params.get("window", ["200"])[0])
-                alpha_v   = float(params.get("alpha", ["0.05"])[0])
+                max_lag_v = _qp_int(params, "max_lag", 3)
+                window_n  = _qp_int(params, "window", 200)
+                alpha_v   = _qp_float(params, "alpha", 0.05)
                 code, data = handle_granger_significant(module_id, max_lag=max_lag_v, window=window_n, alpha=alpha_v)
             elif path == "/rca":
                 module_id = params.get("module", [""])[0] or ""
                 repo_dir  = params.get("repo_dir", [""])[0] or ""
-                window_n  = int(params.get("window", ["200"])[0])
+                window_n  = _qp_int(params, "window", 200)
                 code, data = handle_rca(module_id, repo_dir=repo_dir, window=window_n)
             elif path == "/rca/repo":
                 repo_dir = params.get("repo_dir", [""])[0] or ""
-                window_n = int(params.get("window", ["200"])[0])
-                top_k_n  = int(params.get("top_k", ["10"])[0])
+                window_n = _qp_int(params, "window", 200)
+                top_k_n  = _qp_int(params, "top_k", 10)
                 code, data = handle_rca_repo(repo_dir=repo_dir, window=window_n, top_k=top_k_n)
             elif path == "/signatures":
-                limit_n = int(params.get("limit", ["100"])[0])
+                limit_n = _qp_int(params, "limit", 100)
                 code, data = handle_signatures_list(limit=limit_n)
             elif path == "/signatures/status":
                 code, data = handle_signatures_status()
@@ -4782,8 +4782,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_signatures_get(sig_id)
             # ─── Sprint V — Marketplace (GET) ───────────────────────────────
             elif path == "/marketplace/list":
-                limit_n  = int(params.get("limit",  ["100"])[0])
-                offset_n = int(params.get("offset", ["0"])[0])
+                limit_n  = _qp_int(params, "limit", 100)
+                offset_n = _qp_int(params, "offset", 0)
                 pub_v    = params.get("publisher_id", [""])[0]
                 code, data = handle_marketplace_list(
                     limit=limit_n, offset=offset_n, publisher_id=pub_v,
@@ -4797,12 +4797,12 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
             elif path.startswith("/cfg/hotspots/"):
                 module_id = path[len("/cfg/hotspots/"):]
                 src       = params.get("source", [""])[0]
-                max_n     = int(params.get("max_nodes", ["200"])[0])
+                max_n     = _qp_int(params, "max_nodes", 200)
                 code, data = handle_cfg_hotspots(module_id, source=src, max_nodes=max_n)
             elif path.startswith("/cfg/"):
                 module_id = path[len("/cfg/"):]
                 src       = params.get("source", [""])[0]
-                max_n     = int(params.get("max_nodes", ["200"])[0])
+                max_n     = _qp_int(params, "max_nodes", 200)
                 code, data = handle_cfg(module_id, source=src, max_nodes=max_n)
             # ─── Sprint Y — Tenants & billing (GET) ─────────────────────────
             elif path == "/tenants":
@@ -4811,8 +4811,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                     return self._send_json(403, {"error": "admin authentication required"})
                 plan_v   = params.get("plan", [""])[0]
                 status_v = params.get("status", [""])[0]
-                limit_n  = int(params.get("limit", ["100"])[0])
-                offset_n = int(params.get("offset", ["0"])[0])
+                limit_n  = _qp_int(params, "limit", 100)
+                offset_n = _qp_int(params, "offset", 0)
                 code, data = handle_tenants_list(plan=plan_v, status=status_v,
                                                   limit=limit_n, offset=offset_n)
             elif path.startswith("/tenants/") and path.endswith("/usage/history"):
@@ -4820,7 +4820,7 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 if not ok_admin:
                     return self._send_json(403, {"error": "admin authentication required"})
                 tid = path[len("/tenants/"):-len("/usage/history")]
-                limit_n = int(params.get("limit", ["12"])[0])
+                limit_n = _qp_int(params, "limit", 12)
                 code, data = handle_tenants_usage_history(tid, limit=limit_n)
             elif path.startswith("/tenants/") and path.endswith("/usage"):
                 ok_admin, _ = _authenticate(raw_key, require_admin=True)
@@ -4841,49 +4841,49 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 _, key_info = _authenticate(raw_key, require_admin=False)
                 code, data = handle_billing_me(key_info)
             elif path == "/fingerprint/index":
-                window_n = int(params.get("window", ["100"])[0])
+                window_n = _qp_int(params, "window", 100)
                 code, data = handle_fingerprint_index(window=window_n)
             elif path == "/fingerprint/clusters":
                 metric_v = params.get("metric", ["euclidean"])[0]
-                window_n = int(params.get("window", ["100"])[0])
+                window_n = _qp_int(params, "window", 100)
                 code, data = handle_fingerprint_clusters(metric=metric_v, window=window_n)
             elif path == "/propagation":
                 module_id = params.get("module", [""])[0] or ""
-                penalty_v = float(params.get("penalty", ["2.5"])[0])
-                window_n  = int(params.get("window", ["200"])[0])
+                penalty_v = _qp_float(params, "penalty", 2.5)
+                window_n  = _qp_int(params, "window", 200)
                 code, data = handle_propagation(module_id, penalty=penalty_v, window=window_n)
             elif path == "/propagation/groups":
                 module_id = params.get("module", [""])[0] or ""
-                penalty_v = float(params.get("penalty", ["2.5"])[0])
-                window_n  = int(params.get("window", ["200"])[0])
+                penalty_v = _qp_float(params, "penalty", 2.5)
+                window_n  = _qp_int(params, "window", 200)
                 code, data = handle_propagation_groups(module_id, penalty=penalty_v, window=window_n)
             elif path == "/causality/matrix":
                 module_id = params.get("module", [""])[0] or ""
-                max_lag_v = int(params.get("max_lag", ["5"])[0])
-                window_n  = int(params.get("window", ["200"])[0])
+                max_lag_v = _qp_int(params, "max_lag", 5)
+                window_n  = _qp_int(params, "window", 200)
                 code, data = handle_causality_matrix(module_id, max_lag=max_lag_v, window=window_n)
             elif path == "/causality/top":
                 module_id = params.get("module", [""])[0] or ""
-                max_lag_v = int(params.get("max_lag", ["5"])[0])
-                window_n  = int(params.get("window", ["200"])[0])
-                top_k_v   = int(params.get("top_k", ["10"])[0])
+                max_lag_v = _qp_int(params, "max_lag", 5)
+                window_n  = _qp_int(params, "window", 200)
+                top_k_v   = _qp_int(params, "top_k", 10)
                 code, data = handle_causality_top(
                     module_id, max_lag=max_lag_v, window=window_n, top_k=top_k_v
                 )
             elif path == "/changepoints":
                 module_id = params.get("module", [""])[0] or ""
-                penalty_v = float(params.get("penalty", ["1.0"])[0])
+                penalty_v = _qp_float(params, "penalty", 1.0)
                 model_v   = params.get("model", ["rbf"])[0]
-                window_n  = int(params.get("window", ["200"])[0])
+                window_n  = _qp_int(params, "window", 200)
                 repo_dir  = params.get("repo_dir", [""])[0] or ""
                 code, data = handle_changepoints(
                     module_id, penalty=penalty_v, model=model_v,
                     window=window_n, repo_dir=repo_dir,
                 )
             elif path == "/changepoints/repo":
-                penalty_v = float(params.get("penalty", ["1.0"])[0])
+                penalty_v = _qp_float(params, "penalty", 1.0)
                 model_v   = params.get("model", ["rbf"])[0]
-                window_n  = int(params.get("window", ["200"])[0])
+                window_n  = _qp_int(params, "window", 200)
                 repo_dir  = params.get("repo_dir", [""])[0] or ""
                 code, data = handle_repo_changepoints(
                     penalty=penalty_v, model=model_v,
@@ -4897,38 +4897,38 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 code, data = handle_feeds_sast_status()
             elif path == "/spectral/aps":
                 module_id = params.get("module", [""])[0] or ""
-                window_n  = int(params.get("window", ["100"])[0])
+                window_n  = _qp_int(params, "window", 100)
                 code, data = handle_spectral_aps(module_id, window=window_n)
             elif path == "/spectral/fingerprint":
                 module_id = params.get("module", [""])[0] or ""
-                window_n  = int(params.get("window", ["100"])[0])
+                window_n  = _qp_int(params, "window", 100)
                 code, data = handle_spectral_fingerprint(module_id, window=window_n)
             elif path == "/alerts/compound":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["100"])[0])
+                window_n  = _qp_int(params, "window", 100)
                 code, data = handle_compound_alert(module_id, window=window_n)
             elif path == "/alerts/repo":
-                window_n      = int(params.get("window", ["100"])[0])
+                window_n      = _qp_int(params, "window", 100)
                 top_k_raw     = params.get("top_k", [None])[0]
                 top_k         = int(top_k_raw) if top_k_raw else None
                 include_green = params.get("include_green", ["0"])[0].lower() in ("1", "true", "yes")
                 code, data    = handle_repo_alerts(window=window_n, top_k=top_k, include_green=include_green)
             elif path == "/repo/health-score":
-                window_n   = int(params.get("window", ["100"])[0])
+                window_n   = _qp_int(params, "window", 100)
                 code, data = handle_repo_health_score(window=window_n)
             elif path == "/repo/aps-outliers":
-                window_n   = int(params.get("window", ["100"])[0])
-                k_val      = float(params.get("k", ["2.0"])[0])
+                window_n   = _qp_int(params, "window", 100)
+                k_val      = _qp_float(params, "k", 2.0)
                 code, data = handle_repo_aps_outliers(window=window_n, k=k_val)
             elif path == "/repo/health-history":
-                window_n   = int(params.get("window", ["50"])[0])
-                step_val   = max(1, int(params.get("step", ["1"])[0]))
+                window_n   = _qp_int(params, "window", 50)
+                step_val   = max(1, _qp_int(params, "step", 1))
                 code, data = handle_repo_health_history(window=window_n, step=step_val)
             elif path == "/monitor/status":
                 code, data = handle_monitor_status()
             elif path == "/lsp/diagnostics":
                 module_id = params.get("module", [None])[0]
-                window_n  = int(params.get("window", ["50"])[0])
+                window_n  = _qp_int(params, "window", 50)
                 code, data = handle_lsp_diagnostics(module_id, window=window_n)
             else:
                 code, data = 404, {"error": f"Unknown endpoint: {path}"}
@@ -5241,8 +5241,8 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
         if svc is None or not svc.running:
             return self._send_json(409, {"error": "No monitor running — POST /monitor/start first"})
 
-        max_events = min(10_000, max(1, int(params.get("max_events", ["100"])[0])))
-        timeout_s  = min(300.0,  max(0.1, float(params.get("timeout_s", ["30"])[0])))
+        max_events = min(10_000, max(1, _qp_int(params, "max_events", 100)))
+        timeout_s  = min(300.0,  max(0.1, _qp_float(params, "timeout_s", 30)))
         heartbeat_every_s = 5.0
 
         self.send_response(200)

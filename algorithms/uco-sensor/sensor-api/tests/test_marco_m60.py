@@ -185,3 +185,54 @@ def test_TQA15_redos_guard_still_rejects_dangerous_patterns():
     assert _has_redos_shape("(.+)+") is True
     assert _has_redos_shape("X" * 2001) is True
     assert _has_redos_shape("normal label") is False
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TQA16-TQA20 — Round 2 RE-EXPLORE finding: QA-FIX-2 migration verification
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def test_TQA16_RT2_no_bare_int_params_get_remains_in_server():
+    """Round 2 lens (security): all `int(params.get(...))` were migrated to
+    `_qp_int(...)`. A bare cast left behind would still raise ValueError
+    inside the catch-all, leaking back as 500."""
+    import re
+    from pathlib import Path
+    src = Path(__file__).resolve().parent.parent.joinpath("api/server.py").read_text()
+    # Only matches the dispatcher-shape: int(params.get("…", ["…"])[0])
+    bare = re.findall(r'\bint\(params\.get\("[^"]+",\s*\["[^"]*"\]\)\[0\]\)', src)
+    assert len(bare) == 0, f"unmigrated int(params.get) sites: {bare[:3]}"
+
+
+def test_TQA17_RT2_no_bare_float_params_get_remains_in_server():
+    import re
+    from pathlib import Path
+    src = Path(__file__).resolve().parent.parent.joinpath("api/server.py").read_text()
+    bare = re.findall(r'\bfloat\(params\.get\("[^"]+",\s*\["[^"]*"\]\)\[0\]\)', src)
+    assert len(bare) == 0, f"unmigrated float(params.get) sites: {bare[:3]}"
+
+
+def test_TQA18_RT2_qp_int_callers_outnumber_helpers_def(isolated_store):
+    """Sanity: dispatcher actually USES the helpers (>10 callers)."""
+    from pathlib import Path
+    src = Path(__file__).resolve().parent.parent.joinpath("api/server.py").read_text()
+    assert src.count("_qp_int(params,") >= 30
+    assert src.count("_qp_float(params,") >= 5
+
+
+def test_TQA19_RT2_qp_int_path_integrated_in_real_get_dispatch():
+    """Smoke: a known GET handler that used `int(params.get(...))` no longer crashes
+    on garbage — the dispatcher path now produces a typed 400 envelope."""
+    from api.server import _qp_int, _QueryParamError
+    # Simulate the dispatcher line shape with malformed value
+    with pytest.raises(_QueryParamError) as ei:
+        _qp_int({"window": ["abc"]}, "window", 50)
+    assert ei.value.param == "window"
+
+
+def test_TQA20_RT2_qp_int_accepts_negative_and_zero_unchanged():
+    """Negative and zero are valid integers — _qp_int passes them through.
+    Range validation is each handler's responsibility (defensive defaults
+    in handler bodies, not in the parser)."""
+    from api.server import _qp_int
+    assert _qp_int({"limit": ["-1"]}, "limit", 50) == -1
+    assert _qp_int({"limit": ["0"]}, "limit", 50) == 0

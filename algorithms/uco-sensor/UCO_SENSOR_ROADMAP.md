@@ -1,6 +1,6 @@
 # UCO-Sensor — Inventário Técnico Completo & WBS v3.x
-> **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-25  
-> **Versão atual:** v3.9.0 (Sprint Z — Paper POPL/PLDI skeleton + 5 formal invariants + v3.8.1 backlog) · **🏁 HORIZONTE 180D COMPLETO ✅** · Próximo: v3.9.1 (corpus integration) ou v4.0.0 (multi-lang expansion)
+> **APEX v00.39.1 (paged microkernel) — SCIENTIFIC MODE** · Gerado em 2026-04-26 · Última atualização: 2026-06-26  
+> **Versão atual:** v3.9.1 (QA Loop 4-lentes + 2-round convergence: QA-FIX-1..6 + Round 2 migration sweep) · **🏁 HORIZONTE 180D COMPLETO ✅** · Próximo: v3.9.2 (corpus integration ou hot-row contention) ou v4.0.0 (multi-lang)
 > **Plano vivo aprovado**: Sprints K → L → M → N → O → P (horizonte 30 dias APEX SCIENTIFIC redefinido)  
 > Documento vivo — atualizar após cada marco concluído
 
@@ -58,6 +58,7 @@
 | **Sprint X** | **CFG visualizável + hotspot overlay — `governance/cfg.py` pure-Python AST → JSON CFG bounded a 200 nodes + `overlay_hotspots` (severity max + APS contribution per node) + `cfg_as_dot` Graphviz output + 2 endpoints REST (`/cfg/{module_id}` + `/cfg/hotspots/{module_id}`) + `tests/_port_allocator.py` (gate-2b LOW#hardcoded_port quick-win) + 30 TY-tests** | **v3.7.0** | **✅** |
 | **Sprint Y** ⭐ | **SaaS multi-tenant + unit-budget billing — APEX SCIENTIFIC pleno: Workflow #1 (3 designs alternativos avaliados por painel, vencedor `unit-budget-billing` 82/100 STRONG_PICK) + Workflow #2 (security/correctness/perf review com 2-vote adversarial verify, 27 findings → 7 must-fix aplicados SY-FIX-1..7) + `governance/tenancy.py` + `governance/billing.py` + tabelas `tenants` + `usage_events` + `api_keys.tenant_id` ALTER + 10 endpoints REST (`/tenants/*` + `/billing/*`) + `_billed_dispatch` chokepoint (3 handlers wired: /analyze, /repair/hmc, /scan-incremental — expand v3.8.1) + 37 TZ-tests** | **v3.8.0** | **✅** ⭐ HORIZONTE 180D 3/4 |
 | **Sprint Z** 🏁 | **Paper POPL/PLDI skeleton + 5 formal invariants + v3.8.1 backlog — `paper/{paper.tex, references.bib, experiments.md, reproducibility.py}` + `governance/invariants.py` (I1..I5 executable spec + `assert_invariant` runtime hook + `InvariantViolation` exception) + v3.8.1 wired billing em +15 handlers (3 → 18) + N+1 fix em `list_usage_periods` + `idx_usage_tenant_occurred` + `prune_old_events(vacuum=True)` + `soft_warn` float arithmetic + Workflow #2 review (25 findings, 1 HIGH+1 HIGH+1 LOW confirmados) → SZ-FIX-1/2/3 aplicados (I1 strict, I2 unified `_get_sev`, T1 real cases) + 36 TW-tests** | **v3.9.0** | **✅** 🏁 HORIZONTE 180D COMPLETO |
+| **QA Loop** ⭐ | **4-lentes (🧪 QA + 🎯 Product + ⚙️ Engineering + 🔒 Security) × 2-vote adversarial verify + 2-round convergence — Round 1: 6 fixes (CRIT `_safe_500_envelope` strip traceback; HIGH `_qp_int`/`_qp_float` 400 envelope; MED `_validate_period_key` strict regex; MED tenant_id `.strip()`; MED `_sanitize_for_echo`; MED `_has_redos_shape("")` accept) + 15 TQA-tests. Round 2 RE-EXPLORE catched incomplete QA-FIX-2 migration → sweep 71 call-sites + 5 mais TQA-tests. Loop convergiu.** | **v3.9.1** | **✅** |
 
 **Métricas atuais (v3.2.1):**
 

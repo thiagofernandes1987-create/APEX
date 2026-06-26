@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-**v3.9.0** (Sprint Z — Paper POPL/PLDI skeleton + 5 invariantes formais + v3.8.1 backlog) ✅ 🏁 **HORIZONTE 180D COMPLETO**
+**v3.9.1** (QA Loop 4-lentes + 2-round convergence — QA-FIX-1..6 + Round 2 migration sweep) ✅
 
 ---
 
@@ -49,6 +49,7 @@ um sprint cresce > 30 items, ele vira sub-checklist linkado abaixo.
 | **Horizonte 180d (COMPLETO)** 🏁 | V (Marketplace) → X (CFG) → Y (SaaS multi-tenant) → Z (Paper + invariants) | ✅ 100% | v3.6.0 → v3.7.0 → v3.8.0 → v3.9.0 |
 | **Sprint Z — Paper + invariants + v3.8.1** | [Checklist Z](#sprint-z-wbs) | ✅ | v3.9.0 |
 | **v3.8.1 follow-up** | [Backlog Workflow #2](#v381-backlog) — 5/6 fechados em v3.9.0 | ✅ | v3.9.0 (1 deferred → v3.9.2) |
+| **v3.9.1 QA Loop** | 4-lentes (QA+Product+Eng+Security) × 2-round convergence — [Checklist QA Loop](#qa-loop-v391) | ✅ | v3.9.1 |
 
 ## Equipe APEX (modo SCIENTIFIC)
 
@@ -270,6 +271,32 @@ WBS executado:
 - [x] SZ-FIX-1 (I1 strict checker) + SZ-FIX-2 (I2 unified `_get_sev`) + SZ-FIX-3 (T1 real cases)
 - [x] Tests TW01-TW36 (5 invariantes × 3 testes + v3.8.1 verifications + paper reproducibility smoke + SZ-FIX pins)
 - [x] Bump v3.8.0 → v3.9.0 + CHANGELOG + roadmap + inventario + commit + bundle
+
+---
+
+<a id="qa-loop-v391"></a>
+## QA Loop v3.9.1 — executado ✅
+
+Tech Leader nível mestre rodou padrão EXPLORAR→REPORTAR→REVISAR→CORRIGIR→RE-EXPLORAR
+com 4 lentes (🧪 QA + 🎯 Product + ⚙️ Engineering + 🔒 Security) sobre superfície v3.9.0.
+
+**Round 1**: 6 fixes confirmados aplicados:
+- [x] QA-FIX-1 **CRIT** — `_safe_500_envelope` (strip traceback default; `UCO_INCLUDE_TRACE=1` para dev)
+- [x] QA-FIX-2 **HIGH** — typed `_qp_int`/`_qp_float` + `_QueryParamError` → 400 envelope
+- [x] QA-FIX-3 MED — `_validate_period_key` strict YYYY-MM regex em `/tenants/{id}/usage`
+- [x] QA-FIX-4 MED — `.strip()` tenant_id em handlers `get`/`suspend`/`reactivate`
+- [x] QA-FIX-5 MED — `_sanitize_for_echo` (cap 64 + strip `\r\n\t` + non-printable)
+- [x] QA-FIX-6 MED — `_has_redos_shape("")` → False (empty não é regex shape)
+
+**Round 2 RE-EXPLORE** (4 lentes convergence check): 3/4 DRY; 🔒 Security catched **incomplete migration of QA-FIX-2** (helpers existiam mas nenhum call-site chamava). Fix Round 2:
+- [x] Sweep regex migrou **71 sites** (`63 int + 8 float`) para `_qp_int/_qp_float`
+
+**Loop convergiu em 2 rounds**. Métricas: 2125 → 2145 tests (+20 TQA01-TQA20), 0 falhas, 0 leak paths restantes.
+
+**Backlog deferido** (MED/LOW não-bloqueantes da Round 1 — entram em v3.9.2 ou v4.0.0):
+- N+1 em `recompute_derived_pending` (snapshot_store.py:989)
+- `threading.local` growth em `_webhook_depth` (server.py:2203)
+- 26+ MED/LOW de surface coherence, onboarding gaps, dead code
 
 ---
 
