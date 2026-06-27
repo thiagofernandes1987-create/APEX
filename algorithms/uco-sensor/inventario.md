@@ -31,6 +31,23 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**Protótipo (não versionado, exploratório)**: `frequency-engine/receptor/code_spectral_fingerprint.py`
++ `frequency-engine/tests/test_code_spectral_fingerprint.py` — MVP
+pedido pelo usuário ("versão mínima iniciar antes de aprimorar") em
+resposta à pergunta sobre adaptar `spectral_analyzer.py`/`wavelet_engine.py`
+para gerar espectros a partir de código com poder de análise semelhante
+a SCA. Sinal = comprimento de linha por linha não-vazia; fingerprint =
+[bandas PSD via Welch, bandas wavelet db4] normalizado, comparado por
+cosine similarity. Validado empiricamente (88/88 testes de
+`run_tests.py` continuam verdes + 4/4 testes novos) contra os pares
+reais já buscados nesta sessão: `sim(scrapy_vuln, scrapy_fixed)=0.958`
+vs `sim(scrapy_vuln, flask_vuln)=0.919`; `sim(flask_vuln, flask_fixed)=0.997`
+vs o mesmo cross-file control — same-file mais similar que cross-file
+em ambos, mas a margem é modesta (não é ainda discriminação forte tipo
+SCA por hash). Refinamento (features por linha mais ricas, calibração
+de limiar, corpus maior) fica para rodada futura, por pedido explícito
+do usuário de começar mínimo.
+
 **v3.11.8** (Sprint AJ — capstone re-scan literal: `paper/capstone_rescan.py`
 roda os 19 casos rastreáveis em uma única execução fresca contra o
 GitHub real, gera `AJ_capstone_rescan.md/.json`; 15/19 SIGNAL
