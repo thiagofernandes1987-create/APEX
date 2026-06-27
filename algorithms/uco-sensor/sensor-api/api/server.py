@@ -67,7 +67,7 @@ from scan.repo_scanner import RepoScanner
 from report.html_report import generate_html_report
 from report.badge import generate_badge_svg, generate_status_badge_svg
 from apex_integration.templates import get_template, render_prompt, fix_action_for, all_error_types
-from sast.scanner import scan as sast_scan, RULES as SAST_RULES
+from sast.scanner import scan as sast_scan, RULES as SAST_RULES, SASTResult
 
 # M9.0 — multi-language SAST (JS/TS, Java, Go)
 try:
@@ -84,6 +84,11 @@ except ImportError:
     _ml_rule_count = None               # type: ignore[assignment]
     _ML_RULES = []                      # type: ignore[assignment]
     _MULTILANG_SAST_AVAILABLE = False
+
+# M9.1 — SCA (dependência vulnerável) via OSV-Scanner, opcional/degradação graciosa
+from sast.sca_bridge import OSVScannerBridge
+
+_osv_bridge = OSVScannerBridge()
 from governance.policy_engine import (
     evaluate_policy, load_default_policy, policy_from_dict, mv_to_metrics_dict,
 )
@@ -3043,6 +3048,38 @@ def handle_sast_rules() -> Tuple[int, Dict]:
     }
 
 
+# ─── SCA endpoint (M9.1 — OSV-Scanner) ───────────────────────────────────────
+
+def handle_sca(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /sca — Software Composition Analysis: dependências vulneráveis.
+
+    Body: {"manifest": str, "filename": str}
+    ``filename`` deve ser um nome reconhecido pelo OSV-Scanner
+    (``requirements.txt``, ``package-lock.json``, ``go.sum``,
+    ``Cargo.lock`` etc.) — é ele quem determina o ecossistema.
+    Response: SASTResult dict (mesmo shape de /sast) + "available".
+    """
+    manifest = data.get("manifest", "")
+    filename = data.get("filename", "requirements.txt")
+    if not manifest.strip():
+        return 400, {"error": "manifest is required"}
+
+    if not _osv_bridge.available():
+        return 200, {
+            "available": False,
+            "engine": "osv-scanner",
+            "error": "osv-scanner binary not found in PATH (set OSV_SCANNER_BIN)",
+            **SASTResult().to_dict(),
+        }
+
+    result = _osv_bridge.scan_manifest(manifest, filename)
+    out = result.to_dict()
+    out["available"] = True
+    out["engine"] = "osv-scanner"
+    return 200, out
+
+
 # ─── Predictor endpoints (M6) ────────────────────────────────────────────────
 
 def handle_predict(
@@ -5136,6 +5173,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
             elif path == "/sast":
                 code, data = _billed_dispatch(
                     "sast", key_info, "/sast", handle_sast, body,
+                )
+            elif path == "/sca":
+                code, data = _billed_dispatch(
+                    "sast", key_info, "/sca", handle_sca, body,
                 )
             elif path == "/apex/fix":
                 code, data = _billed_dispatch(

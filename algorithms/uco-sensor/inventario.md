@@ -1161,3 +1161,40 @@ Oracle no django/QuerySet.extra, deserialização insegura, etc.) usando
 o mesmo processo que produziu SAST046/047/048: ler o diff real
 vulnerável→corrigido e isolar se há um nó AST ancorável antes de
 concluir que exige um motor de taint-tracking.
+
+## Sprint AK/AL — validação fingerprint espectral + SCA via OSV-Scanner (v3.12.0)
+
+Resposta a três pedidos explícitos do usuário na mesma mensagem.
+
+**AK — fingerprint espectral contra corpus maior**: rodado contra os 19
+pares de `capstone_rescan.py` (relatório completo em
+`paper/corpus_runs/AK_fingerprint_corpus_validation.md`). O confound
+"mesmo projeto, arquivo diferente" temido pelo usuário **se confirma**:
+similaridade `requests-1` vs. `requests-2` (média 0.9503) é
+indistinguível do baseline entre projetos não relacionados (0.9575,
+n=170); o caso `scrapy` (mesmo arquivo, vuln vs. corrigido, 0.9578)
+cai dentro desse mesmo intervalo de baseline aleatório. Diagnóstico:
+sinal "comprimento de linha" captura ritmo de formatação, não
+semântica. **Conclusão honesta**: MVP atual não serve como sinal
+autônomo em produção; aprofundar features (token histogram, AST-shape)
+fica justificado como próximo passo, não executado neste checkpoint.
+
+**AL — SCA: OSV-Scanner vs. Grype**: decisão tomada com evidência
+empírica real (binários baixados e testados neste sandbox), não só
+documentação. OSV-Scanner funciona ponta a ponta via modo offline
+(DB do Google Cloud Storage, host liberado); Grype falha por completo
+(DB em domínios Anchore, bloqueados pelo mesmo proxy). Ambos
+Apache-2.0/gratuitos — diferencial é alcançabilidade de rede, não
+licença. Implementado `sast/sca_bridge.py` (`OSVScannerBridge`,
+padrão de degradação graciosa de `TreeSitterBridge`) + endpoint
+`POST /sca` em `api/server.py`. Validado ponta a ponta com o binário
+real: detecta corretamente CVE-2023-32681/CVE-2024-47081 (`requests`)
+e CVE-2023-30861 (`flask`). `tests/test_marco_m74.py` (TAP01-TAP08).
+Regressão completa: 2321 passed, 5 skipped, 0 falhas.
+
+**Pendente, reafirmado pelo usuário como requisito obrigatório (não
+amostra)**: expandir cobertura real dos ~100 repositórios de
+`paper/corpus_runs/AE_repo_list_master.md` — atualmente apenas ~16-17
+têm caso CVE-anchorado real; os eixos de falso-positivo e throughput
+foram amostrados uma única vez (Sprint AE) e nunca estendidos. Tratado
+como task #68, ainda não iniciada.

@@ -5,6 +5,62 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.12.0] — 2026-06-27 — Sprint AK/AL: validação do fingerprint espectral + SCA via OSV-Scanner
+
+Resposta direta a três pedidos explícitos do usuário na mesma mensagem:
+(1) validar o fingerprint espectral contra um corpus maior testando o
+confound "mesmo projeto, arquivo diferente"; (2) decidir entre
+OSV-Scanner e Grype para SCA com base em ROI/custo real e integrar o
+escolhido; (3) tratar os ~100 repositórios da lista master como
+requisito obrigatório, não amostra.
+
+### Validação — fingerprint espectral (Sprint AK)
+
+`paper/corpus_runs/AK_fingerprint_corpus_validation.md`: rodado contra
+os 19 pares vulnerável/corrigido catalogados em `capstone_rescan.py`.
+Resultado: **o confound temido pelo usuário se confirma** — a
+similaridade "mesmo projeto, arquivo diferente" (`requests-1` vs.
+`requests-2`, média 0.9503) é estatisticamente indistinguível do
+baseline entre projetos completamente não relacionados (média 0.9575,
+n=170), e pelo menos 1 caso de "mesmo arquivo, vuln vs. corrigido"
+(`scrapy`, 0.9578) cai dentro do próprio intervalo desse baseline
+aleatório. Diagnóstico: o sinal "comprimento de linha" captura
+sobretudo ritmo de formatação (PEP8/gofmt/prettier), não semântica.
+Conclusão honesta: o MVP atual não deve ser usado como sinal autônomo
+de identidade de arquivo/versão em produção; aprofundar features
+(histograma de tokens, AST-shape) fica registrado como próximo passo
+justificado, mas fora do escopo deste checkpoint.
+
+### Adicionado — SCA via OSV-Scanner (Sprint AL)
+
+- `sast/sca_bridge.py`: `OSVScannerBridge` — bridge opcional/degradação
+  graciosa (mesmo padrão de `lang_adapters/tree_sitter_bridge.py`) para
+  o binário `osv-scanner`. `scan_manifest()` escreve o manifesto em
+  diretório temporário, roda `osv-scanner --offline
+  --download-offline-databases --format json --recursive`, e mapeia o
+  JSON para `SASTFinding`/`SASTResult` (rule_id `SCA-<id OSV/GHSA>`,
+  CWE-1395, severidade por bucket de CVSS `max_severity`).
+- Novo endpoint **`POST /sca`** em `api/server.py` (`handle_sca`):
+  body `{"manifest": str, "filename": str}`, resposta no mesmo shape
+  de `/sast` + `available`/`engine`.
+- **Decisão OSV-Scanner vs. Grype** (não apenas teórica — testada com
+  os binários reais neste sandbox): OSV-Scanner em modo
+  `--offline --download-offline-databases` baixa o DB do Google Cloud
+  Storage (host liberado) e escaneia 100% localmente — validado
+  detectando corretamente CVE-2023-32681/CVE-2024-47081 (`requests`) e
+  CVE-2023-30861 (`flask`) via o endpoint `/sca` real, ponta a ponta.
+  Grype depende de `grype.anchore.io`/`toolbox-data.anchore.io` —
+  ambos bloqueados pelo mesmo proxy — e falha por completo
+  (`failed to load vulnerability db`). Ambos são Apache-2.0/gratuitos;
+  o diferencial decisivo é alcançabilidade de rede em ambiente
+  restrito, não licenciamento.
+- `tests/test_marco_m74.py` (TAP01-TAP08): degradação graciosa sem
+  binário, mapeamento de payload OSV real capturado nesta sessão,
+  buckets de severidade por CVSS, rating de segurança, shape
+  `to_dict()` compatível com `/sast`.
+
+---
+
 ## [3.11.9] — 2026-06-27 — Sprint AH (fechamento): JS12 — command injection real do lodash, não ReDoS
 
 Continuação direta do `/goal`: o capstone re-scan (Sprint AJ, v3.11.8)
