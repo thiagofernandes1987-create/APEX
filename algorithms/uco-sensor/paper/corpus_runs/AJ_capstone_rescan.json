@@ -397,12 +397,15 @@
     "fixed_date": "2021-02-20",
     "engine": "multilang:javascript",
     "vuln_findings": [
-      "JS05"
+      "JS05",
+      "JS12"
     ],
     "fix_findings": [
       "JS05"
     ],
-    "rule_only_on_vuln": [],
-    "status": "BLIND_SPOT_OR_CONFOUNDED"
+    "rule_only_on_vuln": [
+      "JS12"
+    ],
+    "status": "SIGNAL"
   }
 ]

@@ -48,6 +48,18 @@ SCA por hash). Refinamento (features por linha mais ricas, calibração
 de limiar, corpus maior) fica para rodada futura, por pedido explícito
 do usuário de começar mínimo.
 
+**v3.11.9** (Sprint AH fechamento — JS12 corrige mischaracterization
+ReDoS→command-injection real do lodash CVE-2021-23337: opção externa
+`variable` de `_.template` spliçada sem validação em
+`'function(' + (variable||'obj') + ') {\n'`, compilada via `Function(...)`
+(CWE-94); nova regra whole-file [mesma técnica de CS06/C05] captura nome
+da variável e dispara se nenhum `.test(<mesmo nome>)` existe no arquivo;
+validada nos dois SHAs reais do lodash; `paper/capstone_rescan.py`
+re-executado: lodash BLIND_SPOT→SIGNAL (16/19 SIGNAL, restam só
+rust-regex e netty); `AF_consolidated_timeline.md` corrigido (linha #14,
+agregados 17/21 SIGNAL); PHP05/CS05 confirmados já fechados em rodada
+anterior, sem mudança necessária; rule_count 51→52; 2313 testes verdes,
+zero regressões) ✅
 **v3.11.8** (Sprint AJ — capstone re-scan literal: `paper/capstone_rescan.py`
 roda os 19 casos rastreáveis em uma única execução fresca contra o
 GitHub real, gera `AJ_capstone_rescan.md/.json`; 15/19 SIGNAL

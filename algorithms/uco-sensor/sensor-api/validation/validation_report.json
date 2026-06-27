@@ -1,5 +1,5 @@
 {
-  "timestamp": 1782594970.115569,
+  "timestamp": 1782597318.4828176,
   "passed": 48,
   "failed": 0,
   "total": 48,
@@ -202,17 +202,17 @@
     {
       "name": "Performance Python simples: < 2000ms",
       "passed": true,
-      "detail": "3.5ms"
+      "detail": "3.6ms"
     },
     {
       "name": "Performance Python complexo: < 2000ms",
       "passed": true,
-      "detail": "18.7ms"
+      "detail": "17.9ms"
     },
     {
       "name": "Performance JavaScript: < 2000ms",
       "passed": true,
-      "detail": "1.4ms"
+      "detail": "1.2ms"
     },
     {
       "name": "Performance Go: < 2000ms",

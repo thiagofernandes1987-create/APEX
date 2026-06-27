@@ -5,6 +5,72 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.11.9] — 2026-06-27 — Sprint AH (fechamento): JS12 — command injection real do lodash, não ReDoS
+
+Continuação direta do `/goal`: o capstone re-scan (Sprint AJ, v3.11.8)
+deixou `lodash/lodash` CVE-2021-23337 como o único `BLIND_SPOT` desta
+rodada que ainda tinha investigação concreta pendente (rust-regex e
+netty já tinham sido reconfirmados como genuinamente fora do alcance do
+motor atual). Ao investigar, descobriu-se que a própria documentação
+deste projeto (`AF_consolidated_timeline.md` linha 14, task de backlog
+"Sprint AH: JS12 ReDoS literal") tinha mischaracterizado o CVE como
+ReDoS. A leitura do diff real do fix
+(`3469357cff396a26c363f8c1b5a91dde28ba4b1c`, "Prevent command injection
+through `_.template`'s `variable` option") mostra que é, na verdade,
+**CWE-94 (command injection)**: a opção externa `variable` de
+`_.template` é concatenada sem validação em
+`'function(' + (variable || 'obj') + ') {\n' + ...`, string compilada
+via `Function(...)` — um atacante que controla `variable` escapa da
+lista de parâmetros e injeta código arbitrário no corpo gerado.
+
+### Adicionado
+
+- Nova regra **`JS12`** (CWE-94, A03:2021, CRITICAL) em
+  `sast/multilang_scanner.py`: detecção whole-file (mesma técnica de
+  `CS06`/`C05`) — captura o nome da variável atribuída a partir do
+  padrão `hasOwnProperty.call(options, 'variable') && options.variable`
+  e dispara se nenhum `.test(<mesmo nome>)` aparece em qualquer lugar
+  do arquivo antes do ponto onde essa variável é concatenada em
+  `'function(' + ...`.
+- `tests/test_marco_m73.py` (TAO01-TAO05): pins cobrindo o shape
+  vulnerável real, o shape corrigido real, ausência de assinatura sem
+  a opção `variable`, guard apontando para nome de variável diferente
+  (não deve suprimir o finding), e concatenação `'function(' + ...`
+  não relacionada ao padrão `_.template` (não deve disparar).
+
+### Validado empiricamente
+
+- `JS12` dispara 1x na versão vulnerável real de `lodash.js`
+  (sha `ded9bc66583ed0b4e3b7dc906206d40757b4a90a`) e silencia na versão
+  corrigida (sha `3469357cff396a26c363f8c1b5a91dde28ba4b1c`) — conteúdo
+  buscado via GitHub API/raw, não apenas fixtures pinadas.
+- `paper/capstone_rescan.py` re-executado: `lodash` reclassificado de
+  `BLIND_SPOT_OR_CONFOUNDED` para `SIGNAL` em
+  `paper/corpus_runs/AJ_capstone_rescan.md/.json` (16/19 SIGNAL nesta
+  rodada, restando apenas rust-regex e netty como BLIND_SPOT genuíno).
+- `AF_consolidated_timeline.md` corrigido: linha do caso #14 (lodash)
+  reclassificada de BLIND_SPOT para SIGNAL, com a mischaracterization
+  ReDoS explicitamente revertida e os agregados (17/21 SIGNAL, 2/21
+  confounded, 2/21 BLIND_SPOT) atualizados.
+- Regressão completa: 2313 passed / 5 skipped / 0 failed
+  (`rule_count()`/`len(_ALL_RULES)` atualizados de 51 → 52 nos 4 testes
+  que pinavam o inventário de regras).
+
+### Estado do loop
+
+- Confirmada a refinação de `PHP05`/`CS05` mencionada na task #63:
+  já estava completa em rodada anterior (Sprint AH original — `PHP05`
+  re-alvejada ao argumento `'path' => $var` sem `rawurlencode`; `CS05`
+  mantida intacta como triagem genérica, papel de detecção específica
+  do CVE #20 transferido para `CS06`). Nenhuma mudança adicional
+  necessária nesta rodada.
+- Dos 19 casos do capstone, restam apenas 2 BLIND_SPOT genuínos
+  (rust-regex CVE-2022-24713, netty CVE-2019-20444), ambos já
+  re-investigados com evidência detalhada do shape real e do motivo
+  arquitetural exato (parsing de `match`-arms em Rust e dataflow de
+  variáveis locais em Java, que o motor regex+cross-line atual não
+  oferece) — registrados como backlog explícito, não como recusa.
+
 ## [3.11.8] — 2026-06-27 — Sprint AJ: capstone re-scan + re-investigação rust-regex/netty
 
 Resposta direta à cláusula final do `/goal`: *"depois de fazer essas

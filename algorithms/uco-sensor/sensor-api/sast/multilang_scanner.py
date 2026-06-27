@@ -149,6 +149,25 @@ _JS_RULES: List[MLRule] = [
            "Require the same-origin check unconditionally (use && , not ||) before "
            "attaching a cookie-derived credential header to a request.",
            "const xsrfValue = isURLSameOrigin(fullPath) && config.xsrfCookieName && cookies.read(...);"),
+    MLRule("JS12", _JS, "CRITICAL", "CWE-94", "A03:2021",
+           "Command injection via unvalidated template `variable` option",
+           # CVE-2021-23337 (lodash, GHSA-35jh-r3h4-6jhm): `_.template`'s
+           # `variable` option is read from `options.variable` and spliced
+           # directly into the generated function's parameter list
+           # (`'function(' + (variable || 'obj') + ') {\n' + ...`) with no
+           # character-whitelist check. The fix (sha ded9bc66 -> 3469357c)
+           # adds `reForbiddenIdentifierChars.test(variable)` and throws
+           # before that splice ever runs. NOT a ReDoS bug (a prior pass on
+           # this corpus mischaracterized it as one) — this is the same
+           # "external option spliced into generated function source, no
+           # validation anywhere in the file" shape as CS06/C05, detected
+           # the same way: whole-file presence of the splice site without a
+           # matching `.test(<same var>)` guard anywhere else in the file.
+           _rx(r'(?!)'),  # never matches directly; detection is whole-file (see below)
+           "Validate the `variable` option against an identifier-safe character "
+           "whitelist (reject `()=,{}[]/\\s`) before splicing it into generated "
+           "function source.",
+           "if (reForbiddenIdentifierChars.test(variable)) { throw new Error(...); }"),
 ]
 
 
@@ -506,6 +525,43 @@ _CS_RULES: List[MLRule] = [
 
 CS06 = _CS_RULES[-1]
 
+JS12 = _JS_RULES[-1]
+
+_JS_TEMPLATE_VARIABLE_ASSIGN = re.compile(
+    r"\bvar\s+(\w+)\s*=\s*hasOwnProperty\.call\s*\(\s*options\s*,\s*['\"]variable['\"]\s*\)\s*&&\s*options\.variable"
+)
+_JS_TEMPLATE_VARIABLE_SPLICE = re.compile(
+    r"['\"]function\(['\"]\s*\+\s*\(?\s*(\w+)"
+)
+
+
+def _scan_js_template_variable_injection(source: str) -> List[Tuple[int, int]]:
+    """JS12: a file that reads an externally-supplied `variable` option
+    (the `_.template` pattern) and splices it into a `'function(' + ...`
+    generated-source string, with no `.test(<same var>)` validation call
+    anywhere else in the file guarding that splice."""
+    assign_name = None
+    splice_sites: List[Tuple[int, int, str]] = []
+
+    for lineno, raw in TreeSitterBridge.iter_lines(source):
+        line = _strip_line_comment(raw)
+        m = _JS_TEMPLATE_VARIABLE_ASSIGN.search(line)
+        if m and assign_name is None:
+            assign_name = m.group(1)
+        m2 = _JS_TEMPLATE_VARIABLE_SPLICE.search(line)
+        if m2:
+            splice_sites.append((lineno, m2.start(), m2.group(1)))
+
+    if assign_name is None:
+        return []
+
+    guard = re.compile(r"\.test\s*\(\s*" + re.escape(assign_name) + r"\s*\)")
+    if guard.search(source):
+        return []
+
+    return [(lineno, col) for lineno, col, name in splice_sites if name == assign_name]
+
+
 _CS_TAR_ESCAPE_GUARD_SITE = re.compile(
     r'\b(?:fileDestinationPath|linkDestination)\s*(?:==|is)\s*null\b'
 )
@@ -750,6 +806,33 @@ def scan_multilang(source: str, file_extension: str = "") -> SASTResult:
                 debt_minutes=_DEBT.get(RS01.severity, 20),
                 suggested_fix=RS01.suggested_fix,
                 confidence=0.65,   # cross-line heuristic — lower than single-line regex
+                explanation="",
+            ))
+
+    if language == "javascript":
+        lines = source.splitlines()
+        for lineno, col in _scan_js_template_variable_injection(source):
+            key = ("JS12", lineno)
+            if key in seen:
+                continue
+            seen.add(key)
+            snippet = lines[lineno - 1].strip()[:200] if 0 < lineno <= len(lines) else ""
+            findings.append(SASTFinding(
+                rule_id="JS12",
+                severity=JS12.severity,
+                cwe_id=JS12.cwe_id,
+                owasp=JS12.owasp,
+                title=JS12.title,
+                description="The `variable` option is spliced into generated function "
+                            "source here but no `.test()` validation guards it anywhere "
+                            "in this file",
+                line=lineno,
+                col=col,
+                code_snippet=snippet,
+                remediation=JS12.remediation,
+                debt_minutes=_DEBT.get(JS12.severity, 20),
+                suggested_fix=JS12.suggested_fix,
+                confidence=0.7,   # cross-line heuristic — lower than single-line regex
                 explanation="",
             ))
 

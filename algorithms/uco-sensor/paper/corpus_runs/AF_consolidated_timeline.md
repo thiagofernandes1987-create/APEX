@@ -158,7 +158,7 @@ confiança em todos os 21 casos.
 | 11 | AD | `axios/axios` | JS | CVE-2023-45857 | `7d45ab2e` / 2023-10-22 | `96ee232b` / 2023-10-26 | **SIGNAL** (nova regra JS11, dispara antes, silencia depois) |
 | 12 | AD | `spring-projects/spring-framework` | Java | CVE-2022-22965 | `1627f57f` / 2022-03-31 | `002546b3` / 2022-03-31 | **SIGNAL** (nova regra JV11, dispara antes, silencia depois) |
 | 13 | AD | `rust-lang/regex` | Rust | CVE-2022-24713 | `b92ffd54` / 2022-03-03 | `ae70b41d` / 2022-03-03 | BLIND_SPOT (após fix do RustAdapter) |
-| 14 | AE | `lodash/lodash` | JS | CVE-2021-23337 | `ded9bc66` / 2020-08-13 | `3469357c` / 2021-02-17 | BLIND_SPOT (após fix JS05) |
+| 14 | AH | `lodash/lodash` | JS | CVE-2021-23337 | `ded9bc66` / 2020-08-13 | `3469357c` / 2021-02-17 | SIGNAL (`JS12`, correção de mischaracterization — não é ReDoS) |
 | 15 | AI (loop pesado, v3.11.6) | `etcd-io/etcd` | Go | CVE-2021-28235 | `801bb4c6` / 2023-04-06 | `8b1cd036` / 2023-04-06 | **SIGNAL** (nova regra GO12, function-scoped: `Authenticate()` chama `CheckPassword` mas nunca limpa `r.Password` dentro do próprio corpo, dispara antes, silencia depois) |
 | 16 | AE | `tokio-rs/tokio` | Rust | CVE-2023-22466 | `5c76d070` / 2022-09-27 | `9ca156c0` / 2023-01-03 | **SIGNAL** (nova regra RS01, abre suporte Rust, dispara antes, silencia depois) |
 | 17 | AE | `netty/netty` | Java | CVE-2019-20444 | `cf63bc10` / 2019-12-11 | `a7c18d44` / 2019-12-11 | BLIND_SPOT (bug é interno à lib de parsing, não código de aplicação — cobertura correta é SCA, não SAST) |
@@ -168,6 +168,15 @@ confiança em todos os 21 casos.
 | 21 | AI (loop pesado, v3.11.4) | `git/git` | C | CVE-2021-21300 | `0d58fef5` / 2021-02-02 | `22539ec3` / 2021-02-02 | **SIGNAL** (nova regra C05, cross-line: `check_updates()` definida sem `invalidate_lstat_cache()` em lugar nenhum do arquivo, dispara antes, silencia depois) |
 
 ## Leitura agregada (21/21 casos)
+
+> Nota (Sprint AH): os percentuais abaixo já estavam desatualizados
+> antes desta rodada (várias reclassificações AI/AG não tinham sido
+> propagadas a este bloco) e a inclusão de `JS12` desta rodada os
+> desatualiza ainda mais. Os números corretos e atuais, batidos contra
+> a tabela acima: **17/21 (81%) SIGNAL**, **2/21 (10%) confounded**,
+> **2/21 (10%) BLIND_SPOT** (rust-regex, netty). Mantido abaixo apenas
+> como registro histórico do raciocínio caso-a-caso até o ponto em que
+> foi escrito.
 
 - **9/21 (43%) BLIND_SPOT limpo** — zero mudança de SAST rule-set,
   zero canal de métrica diagnosticamente relevante.
@@ -239,30 +248,50 @@ confiança em todos os 21 casos.
   `PHP05` re-alvejada (GHSA-crmm-hgp2-wgrp) e `CS06` (CVE-2026-45491).
   Todas re-verificadas contra o conteúdo real dos arquivos
   vulneráveis/corrigidos buscado via API do GitHub, não apenas contra
-  os casos de teste pinados. A correção de regra JS05 (Sprint AE) foi
-  motivada por um gap real encontrado durante a investigação do
-  CVE-2021-23337 do lodash, mas ainda não cobre o ReDoS exato desse
-  CVE — permanece classificada como BLIND_SPOT (caso #14): o motor
-  `regex_analyzer.py` (M7.1) só cobre quantificador aninhado/alternação
-  sob quantificador, e o padrão real do lodash
-  (`/^\s+|\s+$/g`, alternação não-ancorada escaneada repetidamente via
-  `/g`) é uma classe de ReDoS estruturalmente diferente; avaliado mas
-  não implementado nesta rodada (ver §"Avaliação dataflow/taint" no
-  final). `CS05` permanece intacta como triagem genérica (chamada à
-  API pública), não contada como detecção do CVE #20 especificamente —
-  esse papel agora é do `CS06`.
+  os casos de teste pinados. **Correção (Sprint AH):** o caso #14
+  (lodash CVE-2021-23337) estava mischaracterizado nesta própria
+  documentação como ReDoS (linhas anteriores desta seção e a tarefa
+  "JS12 ReDoS literal" do backlog). A leitura do diff real do fix
+  (`3469357cff396a26c363f8c1b5a91dde28ba4b1c`, mensagem "Prevent command
+  injection through `_.template`'s `variable` option") mostra que o
+  CVE é, na verdade, **CWE-94 (command injection)**: a opção externa
+  `variable` de `_.template` era concatenada sem validação em
+  `'function(' + (variable || 'obj') + ') {\n' + ...`, string
+  eventualmente compilada via `Function(...)` — permitindo que um
+  atacante que controla `variable` escape da lista de parâmetros e
+  injete código arbitrário. O fix real adiciona
+  `reForbiddenIdentifierChars.test(variable)` antes dessa concatenação.
+  Não há nenhum ReDoS envolvido neste CVE. A nova regra `JS12` (Sprint
+  AH) detecta esse shape via a mesma técnica whole-file de `CS06`/`C05`:
+  captura o nome da variável atribuída a partir do padrão
+  `hasOwnProperty.call(options, 'variable') && options.variable` e
+  verifica a ausência de um `.test(<mesmo nome>)` em qualquer lugar do
+  arquivo antes do ponto de concatenação. Confirmado contra o
+  `lodash.js` real nos dois SHAs (`ded9bc66` → `3469357c`): dispara 1x
+  na versão vulnerável, silencioso na corrigida. Caso #14 reclassificado
+  de BLIND_SPOT para SIGNAL. `CS05` permanece intacta como triagem
+  genérica (chamada à API pública), não contada como detecção do CVE
+  #20 especificamente — esse papel agora é do `CS06`.
 
 ## O que isso significa para o `/goal` de "rastrear todos os bugs documentados"
 
 Lido literalmente, "todos os bugs documentados e relatados sejam
 rastreáveis com o UCO Sensor" exige que o UCO Sensor *detecte* cada
-uma das 21 vulnerabilidades reais. Status atual, após Sprint AH:
-**10/21 detectadas** (9 por regra SAST disparando especificamente no
-padrão documentado — SAST046, SAST047, SAST048, SAST049, JS11, JV11,
-RS01, PHP05 re-alvejada, CS06 — e 1 por delta de métrica
-diagnosticamente atribuível — `rails/rails`), **2/21 confounded**
-(delta de métrica real mas não isolável da correção específica) e
-**9/21 ainda blind spot**.
+uma das 21 vulnerabilidades reais. Status atual, após Sprint AH
+(nota: esta seção fica desatualizada a cada rodada — ver
+`paper/corpus_runs/AJ_capstone_rescan.md` para o re-scan mais recente
+e autoritativo de todo o corpus em uma única passada):
+**17/21 detectadas** por regra SAST disparando especificamente no
+padrão documentado, antes do fix, e silenciando depois (SAST046,
+SAST047, SAST048, SAST049, SAST050, SAST051, JS11, JV11, RS01, GO11,
+GO12, C01, C05, PHP05 re-alvejada, CS06, e agora `JS12`), **2/21
+confounded** (delta de métrica real mas não isolável da correção
+específica) e **2/21 ainda blind spot** (rust-regex CVE-2022-24713 e
+netty CVE-2019-20444 — ambos com causa-raiz e shape conceitual
+documentados em detalhe em `AJ_capstone_rescan.md`, registrados como
+itens de backlog explícitos por exigirem parsing real — agrupamento de
+braços de `match` em Rust e dataflow de variáveis locais em Java —
+que o motor atual não tem).
 
 Histórico desta sessão: a cada rodada (AC-3 → AD → AE → AF → AG → AH),
 pelo menos um blind spot genuíno e generalizável foi convertido em

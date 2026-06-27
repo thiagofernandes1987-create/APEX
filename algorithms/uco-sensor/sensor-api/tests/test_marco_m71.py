@@ -263,4 +263,4 @@ def test_TAM18_unsupported_ext_still_empty():
 
 
 def test_TAM19_rule_count_reflects_c_rules():
-    assert rule_count() == 51
+    assert rule_count() == 52
