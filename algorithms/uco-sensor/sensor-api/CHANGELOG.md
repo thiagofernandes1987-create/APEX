@@ -5,6 +5,54 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.11.2] — 2026-06-27 — Sprint AI: extensão aditiva da CFG do UCO core + avaliação dataflow/taint-tracking real para netty
+
+Resposta de engenharia ao pedido do usuário: "crie o motor
+dataflow/taint-tracking real e verifique se UCO v4 (HMC/SA) ou um
+híbrido UCO v4 + UCO Sensor (propagação de ondas) conseguem cobrir
+netty, ou se existe alternativa open-source (SCA)".
+
+### Adicionado
+- `algorithms/uco/universal_code_optimizer_v4.py::PythonCFGBuilder` —
+  extensão **aditiva** (zero mudança de comportamento existente,
+  confirmada por regressão completa): `_handle_return` e o fallback
+  genérico de `_build_stmt` (que cobre `ast.Expr`, ex. chamadas soltas
+  como `os.system(cmd)`) agora também populam
+  `graph.metadata["python_defs_uses"]` com `uses` (sem `defs`), que
+  antes só existia para `ast.Assign`. Habilita motores de dataflow a
+  correlacionar variáveis tainted que alcançam sinks via a CFG real do
+  UCO sem reimplementar a coleta de uses.
+- `tests/test_marco_m70.py` (TAM01-TAM08) — fixa o comportamento da
+  extensão da CFG e confirma a presença do motor de taint-tracking real
+  pré-existente (`sast/taint_engine.py::TaintAnalyzer`, M7.2).
+
+### Investigado (sem mudança de código necessária)
+- **Motor dataflow/taint-tracking real**: já existe desde M7.2 —
+  `sast/taint_engine.py::TaintAnalyzer` é uma DFA intraprocedural real
+  em AST (merge de branches if/try/for/while, sources/sinks/sanitizers
+  tipados, SAST040-045), já integrado em `uco_bridge.py` e exposto via
+  API. Não foi necessário recriá-lo.
+- **HMC / SA (UCO v4)**: confirmados como otimizadores de busca de
+  autofix (Hamiltonian Monte Carlo / Simulated Annealing sobre o mesmo
+  "Hamiltoniano de qualidade de código" usado por
+  `sensor_core/autofix/hmc_repair.py`) — não são detectores de
+  vulnerabilidade. Não aplicável a netty.
+- **Propagation (`governance/propagation.py`)**: matriz 9×9 de
+  correlação cruzada com defasagem (Pearson lag) + PELT sobre séries
+  temporais de métricas — proxy de precedência causal entre commits,
+  não análise de um único diff de código. Não é SCA, não aplicável a
+  netty.
+- **netty CVE-2019-20444**: re-executado `paper/cve_diff_check.py`
+  contra os SHAs reais (vulnerável `cf63bc10`, corrigido `a7c18d44`,
+  `HttpObjectDecoder.java`). Nenhum dos 9 canais de métrica cruza o
+  threshold de 15%. Confirma numericamente o veredito já documentado:
+  BLIND_SPOT — bug interno de parsing (header HTTP sem dois-pontos),
+  sem shape de source→sink, sem assinatura estrutural. Cobertura
+  correta = **SCA** (Grype, Trivy, OSV-Scanner, OWASP Dependency-Check
+  — version-matching contra bases de CVE, não análise de código-fonte
+  da dependência). Grype destacado por escanear diretório/imagem sem
+  manifest/lockfile.
+
 ## [3.11.1] — 2026-06-27 — Sprint AH: refina PHP05 (discrimina o CVE real) + CS06 (TarEntry symlink-escape)
 
 Continuação direta da Sprint AG: dois agentes investigaram os fixes

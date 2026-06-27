@@ -31,6 +31,10 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.11.2** (Sprint AI — extensão aditiva da CFG do UCO core (defs/uses
+em Return/Expr) + confirmação de que o motor de taint-tracking real já
+existe (M7.2) + veredito final HMC/SA/Propagation/netty = não
+aplicável, cobertura correta é SCA; 2273 testes verdes) ✅
 **v3.11.1** (Sprint AH — PHP05 refinada para discriminar CVE-2026-48041
 + CS06 (TarEntry symlink-escape, CVE-2026-45491); 2265 testes verdes) ✅
 **v3.11.0** (Sprint AG — investigação paralela 6-way + 3 regras novas
@@ -921,7 +925,55 @@ motor avaliada e não implementada nesta rodada — ver nota abaixo],
 netty [SCA, fora de escopo SAST], scrapy, git), o usuário pediu para
 avaliar a construção de um motor de dataflow/taint-tracking real e/ou
 um híbrido UCO-Sensor + UCO v4 (propagação de ondas / HMC) para
-netty — avaliação em andamento, ver resposta dedicada na sessão.
+netty — concluído, ver Sprint AI abaixo.
+
+## Sprint AI — motor dataflow/taint real + veredito final HMC/SA/Propagation/netty (concluído)
+
+Em resposta direta ao pedido do usuário. Achados (todos validados
+empiricamente, ver `CHANGELOG.md` v3.11.2 para detalhe completo):
+
+1. **`algorithms/uco/universal_code_optimizer_v4.py::PythonCFGBuilder`**
+   já constrói uma CFG real (entry/exit, if/for/while/try, back-edges
+   de loop) com defs/uses por nó, mas só para `ast.Assign`. Estendido
+   **aditivamente** (zero regressão — 2273 testes verdes) para também
+   expor `uses` em `ast.Return` e no fallback genérico que cobre
+   `ast.Expr` (chamadas soltas, ex. `os.system(cmd)`).
+2. **O motor de dataflow/taint-tracking real que o usuário pediu já
+   existe** desde M7.2: `sast/taint_engine.py::TaintAnalyzer`. É uma DFA
+   intraprocedural real em AST — merge de branches (if/try/for/while),
+   sources/sinks/sanitizers tipados, emite SAST040-045 (SQLi/CMDi/SSTI/
+   code injection/path traversal). Já integrado em `uco_bridge.py` e
+   exposto via API (`/taint`, ver `api/server.py`). Não foi necessário
+   recriá-lo — confirmado funcionando com 8 novos testes
+   (`test_marco_m70.py`, TAM01-TAM08, incluindo merge de branch e
+   sanitização).
+3. **HMC e SA** (UCO v4) são, confirmadamente, otimizadores de busca de
+   autofix (Hamiltonian Monte Carlo / Simulated Annealing sobre o mesmo
+   "Hamiltoniano de qualidade de código") — não são detectores. **Não
+   aplicável** a netty nem a nenhum CVE.
+4. **Propagation** (`governance/propagation.py`) é correlação cruzada
+   com defasagem (lagged Pearson) + PELT sobre séries temporais de
+   métricas entre commits — proxy de precedência causal, não análise
+   de um único diff de código. **Não é SCA**, não aplicável a netty.
+5. **netty CVE-2019-20444**: `paper/cve_diff_check.py` re-executado
+   contra os SHAs reais (`cf63bc10` → `a7c18d44`,
+   `HttpObjectDecoder.java`). Nenhum dos 9 canais de métrica cruza o
+   threshold de 15%. Confirma numericamente: BLIND_SPOT — bug interno
+   de parsing (header HTTP sem dois-pontos), sem shape source→sink, sem
+   assinatura estrutural. **Cobertura correta = SCA** (Grype, Trivy,
+   OSV-Scanner, OWASP Dependency-Check — version-matching contra bases
+   de CVE, não análise do código-fonte da dependência). Grype
+   destacado por escanear diretório/imagem sem manifest/lockfile.
+
+**Honestidade sobre os outros 8 blind spots restantes**: mesmo com o
+motor real de taint confirmado, flask/werkzeug CVE-2023-30861 e scrapy
+CVE-2022-0577 permanecem BLIND_SPOT — já documentados (AC-3/AF) como
+bugs de **ausência de guard** (nenhum nó AST perigoso presente para
+ancorar), não fluxo source→sink. golang/go, curl, etcd, git são C/Go
+(fora do escopo do `TaintAnalyzer`, que é Python-only). rust-regex é bug
+interno do parser de regex (não há shape de código de usuário a
+flagar). lodash é gap documentado do `regex_analyzer.py` (alternação
+não-agrupada) — não relacionado a taint.
 
 ## Sprint AG — investigação paralela 6-way + JS11/JV11/RS01 + abre PHP/C#/Rust (concluído)
 

@@ -771,6 +771,9 @@ class PythonCFGBuilder:
         nid = self._add_stmt_node("return", stmt,
             f"RETURN {self._node_text(stmt.value) if stmt.value else ''}".strip())
         self._connect_all(prevs, nid)
+        uses = self._collect_uses(stmt.value)
+        self.graph.metadata.setdefault("python_defs_uses", {})[nid] = {
+            "defs": set(), "uses": uses}
         return []
 
     def _handle_raise(self, stmt: ast.Raise, prevs: List[int],
@@ -846,6 +849,14 @@ class PythonCFGBuilder:
         kind = stmt.__class__.__name__.lower()
         nid = self._add_stmt_node(kind, stmt)
         self._connect_all(prevs, nid)
+        # Taint-tracking (Sprint AI): expõe uses para statements sem defs
+        # (ex.: ast.Expr de uma chamada solta como `os.system(cmd)`), para
+        # que motores de dataflow downstream (sast/taint_engine.py) possam
+        # detectar variáveis tainted alcançando um sink sem precisar
+        # reimplementar a coleta de uses.
+        uses = self._collect_uses(stmt)
+        self.graph.metadata.setdefault("python_defs_uses", {})[nid] = {
+            "defs": set(), "uses": uses}
         return [nid]
 
 
