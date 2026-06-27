@@ -5,6 +5,72 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.11.8] — 2026-06-27 — Sprint AJ: capstone re-scan + re-investigação rust-regex/netty
+
+Resposta direta à cláusula final do `/goal`: *"depois de fazer essas
+atualizações quero que reescaneie todos históricos de commit e faça um
+relatório... isso em todos repositórios"*. Até esta versão, as
+atualizações de `AF_consolidated_timeline.md` eram edições incrementais
+linha-a-linha; esta versão entrega o capstone literal — uma re-execução
+única e fresca de todos os 19 pares (vulnerável, corrigido) rastreáveis
+contra o conteúdo real do GitHub.
+
+### Adicionado
+- `paper/capstone_rescan.py` — script novo, distinto de
+  `cve_diff_check.py` (que processa um par por invocação via CLI): roda
+  os 19 casos documentados em uma única execução, busca o conteúdo real
+  via API do GitHub nos SHAs vulnerável/corrigido, despacha para o
+  engine correto (`sast.scanner` para Python, `sast.multilang_scanner`
+  para JS/Java/Go/PHP/C#/Rust/C) e escreve um relatório único:
+  `paper/corpus_runs/AJ_capstone_rescan.json` (dados estruturados) e
+  `AJ_capstone_rescan.md` (tabela + sumário agregado).
+- `paper/corpus_runs/AJ_capstone_rescan.md` — capstone re-scan: 19/19
+  casos re-buscados e re-escaneados nesta rodada (não reaproveitando
+  vereditos antigos), 15/19 reconfirmados **SIGNAL** via SAST rule-set
+  (SAST046/047/048/049/050/051, C01, C05, GO11, GO12, JS11, JV11, RS01,
+  PHP05, CS06), 4/19 reconfirmados BLIND_SPOT (rust-regex, netty,
+  lodash — eixo SAST; rails é detectado por delta de métrica, fora do
+  escopo SAST-only deste script).
+
+### Validado empiricamente
+- Descoberto e corrigido durante a montagem da tabela: o sha
+  "vulnerável" de `psf/requests` CVE-2024-47081 listado em
+  `AF_consolidated_timeline.md` tinha um dígito incorreto
+  (`73416908` em vez de `7341690e`); e o caminho do arquivo mudou de
+  `requests/utils.py` para `src/requests/utils.py` no layout atual do
+  repositório nesse SHA. Corrigido no script; re-confirmado SAST046
+  dispara na versão vulnerável real, silencia na corrigida.
+- **Re-investigação rigorosa de rust-regex (CVE-2022-24713)**: lido o
+  diff real do fix (`ae70b41d`, `src/compile.rs`) — o shape é "um braço
+  de `match` que deveria incrementar um contador de custo
+  (`extra_inst_bytes`) não o faz, enquanto os braços-irmãos o fazem".
+  Shape real e nomeável, mas exige comparação inter-branch dentro de um
+  `match` Rust — nenhum parser Rust deste projeto agrupa braços de
+  `match`; o suporte Rust atual (`RS01`) é regex+cross-line por
+  arquivo. Implementar via regex de texto seria overfit ao CVE
+  específico (dispararia em qualquer `match` Rust idiomático com um
+  braço `=> Ok(None)`). Documentado como item de backlog explícito
+  ("Rust AST: agrupar braços de match"), não como recusa. BLIND_SPOT
+  mantido, com evidência nova.
+- **Re-investigação rigorosa de netty (CVE-2019-20444)**: lido o diff
+  real do fix (`a7c18d44`, `HttpObjectDecoder.java`) — o shape é "um
+  laço `for` que busca um delimitador pode terminar por exaustão do
+  índice sem que o código seguinte verifique o caso 'delimitador não
+  encontrado'". Shape real (CWE-20), mas exige fluxo de dados sobre
+  variáveis locais (`nameEnd`/`length`) dentro do método — não um
+  padrão de token único; regex equivalente geraria falsos positivos em
+  qualquer decoder Java "leniente" por design. BLIND_SPOT mantido,
+  classificação como cobertura apropriada de SCA (não SAST de
+  código-fonte arbitrário) reconfirmada com evidência nova, não apenas
+  reafirmada.
+
+### Estado do loop
+Capstone literal entregue: 19/19 casos re-escaneados em uma única
+rodada (`AJ_capstone_rescan.md`), 15/19 SIGNAL reconfirmados, 4/19
+BLIND_SPOT reconfirmados com investigação fresca e shape conceitual
+documentado (não apenas posição reafirmada). Suite completa sem
+regressões (ver bloco de teste abaixo).
+
 ## [3.11.7] — 2026-06-27 — Loop pesado: SAST050/051 fecham scrapy e flask
 
 Continuação do mesmo loop iterativo (v3.11.6 fechou etcd; esta versão

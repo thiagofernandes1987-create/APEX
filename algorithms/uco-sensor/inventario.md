@@ -31,6 +31,13 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.11.8** (Sprint AJ — capstone re-scan literal: `paper/capstone_rescan.py`
+roda os 19 casos rastreáveis em uma única execução fresca contra o
+GitHub real, gera `AJ_capstone_rescan.md/.json`; 15/19 SIGNAL
+reconfirmados, 4/19 BLIND_SPOT (rust-regex, netty, lodash) reconfirmados
+com re-investigação rigorosa documentada — shape conceitual de cada um
+identificado e motivo estrutural exato de não-implementação registrado
+como backlog, não como recusa; 2308 testes verdes, zero regressões) ✅
 **v3.11.7** (Loop pesado — SAST050/051 fecham scrapy CVE-2022-0577
 (redirect clonado via .replace(url=...) sem origin guard) e flask
 CVE-2023-30861 (return antes do vary.add("Cookie"), regra
