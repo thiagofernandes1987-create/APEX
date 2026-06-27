@@ -836,3 +836,38 @@ alcance de SAST sintático, ou lacuna de cobertura C#/C); o caso
 `dotnet/runtime` foi reclassificado de INCONCLUSIVE para BLIND_SPOT
 após confirmação de que `.cs` é "unsupported language" em ambos os
 motores SAST.
+
+## Sprint AF — Timeline consolidada: 21 CVEs × UCO Sensor (AC-3+AD+AE) (concluído)
+
+**Contexto**: resposta direta ao `/goal` do usuário — consolidar, para
+todos os 21 casos de CVE documentados testados até agora, uma timeline
+(commit vulnerável/data → commit corrigido/data → veredito). Relatório
+completo em `paper/corpus_runs/AF_consolidated_timeline.md`.
+
+**Verificação extra**: um agente de revalidação sinalizou 5/21 pares
+sha como "não confirmados" (tokio, netty, laravel, dotnet, git) por
+exigir a string literal do CVE no commit. Reverificado manualmente via
+API direta — **todos os 5 estão corretos**: as mensagens de commit
+descrevem exatamente a causa raiz de cada CVE (ex.: git/git's "start
+with a fresh lstat cache" = mitigação literal de CVE-2021-21300), só
+não citam o número do CVE. O agente também confundiu datas de 2026 com
+"futuras/suspeitas" — engano, 2026 é a data corrente real da sessão.
+
+**Resultado agregado (21/21)**: 18/21 (86%) BLIND_SPOT limpo, 2/21
+(10%) "confounded" (delta de métrica não-diagnóstico, já documentado na
+AC-3), 1/21 (5%) SIGNAL confirmado (`rails/rails` CVE-2024-26143).
+**0/21 detectados por uma regra SAST disparando especificamente no
+padrão da vulnerabilidade documentada** — as 3 correções de regra/
+instrumentação aplicadas até agora (SAST046/047, JS05, RustAdapter
+STRING_RE) foram motivadas por gaps generalizáveis encontrados durante
+a investigação, não por terem detectado o CVE-alvo em si.
+
+**Avaliação honesta do `/goal`**: "rastrear todos os bugs documentados"
+não é alcançável só com ajustes de regra para a maioria dos 18 blind
+spots restantes — são bugs de lógica de negócio/semântica (CSRF, race
+conditions, leak de credenciais, etc.) fora do alcance de SAST
+sintático sem um motor de taint-tracking, uma mudança de arquitetura.
+O ganho remanescente de maior valor (cobertura de linguagem para C/C#/
+PHP/Ruby, hoje sem nenhuma regra SAST) é uma decisão de escopo de
+produto, não decidida unilateralmente — registrada para o usuário
+decidir os próximos passos.
