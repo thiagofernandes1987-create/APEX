@@ -98,7 +98,10 @@ _JS_RULES: List[MLRule] = [
            "const data = JSON.parse(jsonString);"),
     MLRule("JS05", _JS, "CRITICAL", "CWE-95", "A03:2021",
            "Code injection via Function constructor",
-           _rx(r'\bnew\s+Function\s*\('),
+           # `Function(...)` without `new` builds a function exactly like
+           # `new Function(...)` (CVE-2021-23337, lodash _.template, used the
+           # bare-call form). `\b` keeps `isFunction(`/`castFunction(` excluded.
+           _rx(r'\b(?:new\s+)?Function\s*\('),
            "Avoid the Function constructor with dynamic input.",
            ""),
     MLRule("JS06", _JS, "CRITICAL", "CWE-78", "A03:2021",

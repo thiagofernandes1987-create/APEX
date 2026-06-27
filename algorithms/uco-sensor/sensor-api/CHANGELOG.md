@@ -5,6 +5,62 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.10.3] — 2026-06-27 — Sprint AE: workflow multi-agente (3 eixos) + fix de dispatch SAST na validação + JS05 bare-call
+
+Workflow multi-agente (22 agentes, 4 fases) rodando 3 eixos em
+paralelo: precisão CVE (8 novos casos: lodash, etcd, tokio, netty,
+laravel, rails, dotnet, git), sweep de falso-positivo (sqlite/guava +
+fallback Java maduro) e sweep de throughput (kubernetes/tensorflow/
+linux/vscode). Ver `paper/corpus_runs/AE_cross_ecosystem.md` para a
+auditoria completa.
+
+### Corrigido — `paper/cve_diff_check.py`: dispatch de SAST engine ausente (bug de tooling de validação, não do produto)
+
+O script de diff CVE antes/depois chamava `sast.scanner.scan()` (motor
+AST exclusivo de Python) incondicionalmente para qualquer linguagem,
+silenciosamente no-op'ando em todo arquivo não-Python — mesmo já
+existindo o dispatch correto em produção (`api/server.py`'s
+`handle_sast`, M9.0: JS/TS/Java/Go → `multilang_scanner.scan_multilang`).
+Isso invalidava o *processo* de todos os veredictos não-Python
+anteriores das Sprints AC-3/AD/AE (8 casos). Corrigido espelhando o
+dispatch do `handle_sast`. Re-rodando os 9 casos afetados com o
+dispatch corrigido: todos os veredictos BLIND_SPOT se mantiveram —
+right by coincidence, agora confirmados by rigor.
+
+### Corrigido — `sast/multilang_scanner.py`: regra JS05 não cobria `Function(...)` sem `new`
+
+Reverificando `lodash/lodash` CVE-2021-23337 com o motor corrigido, a
+regra JS05 ("Code injection via Function constructor") não disparava no
+ponto de chamada real do lodash (`Function(importsKeys, ...)`, forma
+bare-call, sem `new` — semanticamente idêntica a `new Function(...)`).
+Regex ampliado de `\bnew\s+Function\s*\(` para
+`\b(?:new\s+)?Function\s*\(` (o `\b` inicial continua excluindo
+`isFunction(`/`castFunction(`).
+
+Fixado em `tests/test_marco_m65.py` (TAE01-TAE06, 6 testes: bare-call
+detectado, `new Function` ainda detectado, `isFunction`/`castFunction`
+sem falso-positivo, outros `*Function(` arbitrários sem falso-positivo,
+roteamento `language_for_extension` pinado, caso real lodash
+vulnerável/corrigido ambos disparam JS05 corretamente). Suíte completa:
+2219 passed, 5 skipped, 0 regressões.
+
+### Achados sem correção aplicada (honestos, disclosed)
+
+- 6/8 novos CVEs permanecem BLIND_SPOT genuíno: bugs de lógica
+  semântica/concorrência (etcd-senha-retida, tokio-race-condition,
+  netty-smuggling, laravel-path-confusion, lodash-ReDoS, git-lstat-cache)
+  fora do alcance de SAST regex/AST sintático — decisão consciente de
+  não escrever regras frágeis overfit a um único CVE.
+- `dotnet/runtime` CVE-2026-45491: BLIND_SPOT por lacuna de cobertura —
+  UCO Sensor não possui ruleset SAST para C# (nem C), confirmado em 3
+  eixos independentes (CVE diff, sweep de falso-positivo, sweep de
+  throughput).
+- 1/8 SIGNAL genuíno: `rails/rails` CVE-2024-26143 — `cyclomatic_complexity`
+  +200%, `hamiltonian` +112%, atribuíveis à lógica de sanitização XSS
+  adicionada, sem refatoração confundidora.
+
+---
+
 ## [3.10.2] — 2026-06-26 — Sprint AD: cross-ecosystem CVE audit + RustAdapter fix
 
 Estende a metodologia de diff antes/depois ancorada em CVE da AC-3 para

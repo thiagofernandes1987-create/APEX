@@ -31,10 +31,11 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.10.3** (Sprint AE — workflow multi-agente 3 eixos + fix dispatch SAST em
+`cve_diff_check.py` + JS05 bare-call; 2219 testes verdes) ✅
+**v3.10.2** (Sprint AD — auditoria CVE-anchored cross-ecossistema (C/Go/JS/Java/Rust) +
+  fix de instrumentação no `RustAdapter`; 2213 testes verdes) ✅
 **v3.10.1** (Sprint AC-3 — CVE-anchored before/after nos 8 repos + SAST046/047; 2205 testes verdes) ✅
-+ Sprint AD — auditoria CVE-anchored cross-ecossistema (C/Go/JS/Java/Rust) +
-  fix de instrumentação no `RustAdapter` (ver §"Sprint AD" abaixo);
-  **versão alvo desta entrega: v3.10.2** (bump pendente nesta sessão)
 
 **v3.10.0** (Sprint AB — Deep-Eval P0 multi-tenant isolation + 4 quick-wins; AA-1 + AB-1..AB-5; 2191 testes verdes) ✅
 + Sprint AC-1/AC-2 (corpus validation, fora do release — ver §"Sprint AC" abaixo)
@@ -780,3 +781,58 @@ regressões**.
   falso-positivo (rodar contra `sqlite/sqlite`, `google/guava`) da lista
   original do usuário não foram executados nesta rodada — ficam em
   aberto para Sprint AE ou seguinte, se solicitado.
+
+## Sprint AE — Workflow multi-agente (3 eixos paralelos) + fix dispatch SAST + JS05 (concluído)
+
+**Contexto**: usuário escolheu via `AskUserQuestion` (1) orquestração
+por Workflow multi-agente e (2) os 3 eixos de teste (precisão CVE,
+falso-positivo, throughput) **em paralelo**. Rodado como Workflow de 4
+fases / 22 agentes / ~880s / 506k tokens. Relatório completo em
+`paper/corpus_runs/AE_cross_ecosystem.md`.
+
+**Achado #1 (mais importante)**: `paper/cve_diff_check.py` chamava
+`sast.scanner.scan()` (Python-only) incondicionalmente para qualquer
+linguagem — bug de *tooling de validação*, não do produto (que já
+despachava corretamente via `handle_sast`/M9.0). Invalidava o processo
+de todos os veredictos não-Python das Sprints AC-3/AD/AE. **Corrigido**
+espelhando o dispatch do `handle_sast` em `cve_diff_check.py`. Re-rodados
+os 9 casos afetados (6 desta rodada + 3 da AD) — todos os veredictos
+BLIND_SPOT se mantiveram idênticos (corretos por coincidência, agora
+confirmados por rigor).
+
+**Achado #2 (única correção de regra)**: regra JS05 ("Code injection
+via Function constructor") não cobria `Function(...)` sem `new` — a
+forma exata da causa do gap do lodash CVE-2021-23337. Regex ampliado de
+`\bnew\s+Function\s*\(` para `\b(?:new\s+)?Function\s*\(`.
+
+**Eixo 1 — CVE precisão (8 casos novos)**:
+
+| Repo | Linguagem | CVE/GHSA | Veredito |
+|---|---|---|---|
+| `lodash/lodash` | JS | CVE-2021-23337 | BLIND_SPOT |
+| `etcd-io/etcd` | Go | CVE-2021-28235 | BLIND_SPOT |
+| `tokio-rs/tokio` | Rust | CVE-2023-22466 | BLIND_SPOT |
+| `netty/netty` | Java | CVE-2019-20444 | BLIND_SPOT |
+| `laravel/framework` | PHP | GHSA-crmm-hgp2-wgrp | BLIND_SPOT |
+| `rails/rails` | Ruby | CVE-2024-26143 | **SIGNAL** (único positivo) |
+| `dotnet/runtime` | C# | CVE-2026-45491 | BLIND_SPOT (sem ruleset C#) |
+| `git/git` | C | CVE-2021-21300 | BLIND_SPOT |
+
+**Eixo 2 — falso-positivo** (sqlite/guava + fallback Java maduro):
+**0 findings HIGH/CRITICAL** em todo código de produção maduro testado.
+
+**Eixo 3 — throughput** (kubernetes/tensorflow/linux/vscode, arquivos
+54-177 KB): nenhum travamento/lentidão; `registry.analyze()` 5.5-6.1
+MB/s; mesmo achado de cobertura (Python-only `scanner.scan()` é no-op
+de 3µs para essas extensões).
+
+**Validação**: 6 testes de pinagem novos (`tests/test_marco_m65.py`,
+TAE01-TAE06). Suíte completa: **2219 passed, 5 skipped, 0 regressões**.
+Versão bump v3.10.2 → **v3.10.3**.
+
+**Pendente para futuras rodadas**: 6/8 CVEs desta rodada permanecem
+BLIND_SPOT honesto (bugs de lógica semântica/concorrência fora do
+alcance de SAST sintático, ou lacuna de cobertura C#/C); o caso
+`dotnet/runtime` foi reclassificado de INCONCLUSIVE para BLIND_SPOT
+após confirmação de que `.cs` é "unsupported language" em ambos os
+motores SAST.
