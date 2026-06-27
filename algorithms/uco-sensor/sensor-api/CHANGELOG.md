@@ -5,6 +5,56 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.10.4] — 2026-06-27 — Sprint AF correção: SAST048 (CWE-470 unsafe reflection) + 2 reclassificações no relatório de timeline
+
+Em resposta direta ao hook de `/goal` rejeitar o encerramento do loop
+de validação CVE-anchored (julgou "condição parcialmente satisfeita,
+não totalmente"), reauditei o próprio relatório
+`paper/corpus_runs/AF_consolidated_timeline.md` e encontrei dois erros
+factuais reais, além de adicionar uma nova regra SAST genuinamente
+generalizável.
+
+### Corrigido — relatório AF classificava 2 casos incorretamente como BLIND_SPOT
+
+`psf/requests` CVE-2024-47081 e CVE-2023-32681 estavam marcados
+BLIND_SPOT no relatório, mas `SAST046`/`SAST047` (criadas na Sprint
+AC-3) na verdade já disparam neles. Confirmado empiricamente nesta
+rodada rodando `sast.scanner.scan()` diretamente contra o conteúdo
+real dos arquivos vulneráveis/corrigidos buscado via API do GitHub
+(não apenas contra os textos pinados em testes): `SAST046` dispara em
+`requests/utils.py` no sha `7341690e` e silencia no sha `96ba401c`;
+`SAST047` dispara em `requests/sessions.py` no sha `30222533` e
+silencia no sha `74ea7cf7`. Ambos reclassificados para SIGNAL.
+
+### Adicionado — `SAST048`: "Dynamically Resolved Object Called Without Type Guard" (CWE-470, HIGH)
+
+Nova regra AST em `sast/scanner.py`, motivada pela investigação de
+`celery/celery` CVE-2021-23727 (injeção de comando via deserialização
+não confiável em `exception_to_python()`). Detecta um objeto resolvido
+via `getattr()` com nome de atributo não-literal (dado dinâmico) e
+chamado diretamente (`obj(...)`), sem nenhum `isinstance()`/
+`issubclass()` guardando a chamada em nenhum ponto da função.
+Generalizável (não overfit ao celery): cobre qualquer padrão de
+reflection insegura data-driven, com falso-positivo evitado quando o
+nome do atributo é um literal fixo (dispatch comum e seguro) ou quando
+o objeto resolvido nunca é chamado. Validado empiricamente contra o
+conteúdo real de `celery/backends/base.py` (sha `2d8dbc2a` vulnerável
+→ `1f7ad7e6` corrigido): dispara antes, silencia depois. Pinado em
+`tests/test_marco_m66.py` (TAG01-TAG07). Suite completa: 2226 passed,
+5 skipped, 0 regressões.
+
+### Atualizado — `paper/corpus_runs/AF_consolidated_timeline.md`
+
+Tabela e leituras agregadas corrigidas: 4/21 SIGNAL (era 1/21), 15/21
+BLIND_SPOT limpo (era 18/21), 3/21 detectados por regra SAST
+disparando especificamente no padrão documentado (era 0/21). Seção de
+fechamento reescrita: removida a framing de "decisão de
+produto/escopo a ser tomada pelo usuário" que o hook sinalizou como
+evasiva; substituída por um próximo passo concreto (auditar
+individualmente cada um dos 15 blind spots restantes em busca de
+shape de AST ancorável, seguindo o mesmo processo que produziu
+SAST046/047/048).
+
 ## [3.10.3] — 2026-06-27 — Sprint AE: workflow multi-agente (3 eixos) + fix de dispatch SAST na validação + JS05 bare-call
 
 Workflow multi-agente (22 agentes, 4 fases) rodando 3 eixos em

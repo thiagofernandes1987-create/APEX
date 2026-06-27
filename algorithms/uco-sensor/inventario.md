@@ -31,6 +31,8 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.10.4** (Sprint AF correção — SAST048 (CWE-470 unsafe reflection) +
+2 reclassificações BLIND_SPOT→SIGNAL no relatório de timeline; 2226 testes verdes) ✅
 **v3.10.3** (Sprint AE — workflow multi-agente 3 eixos + fix dispatch SAST em
 `cve_diff_check.py` + JS05 bare-call; 2219 testes verdes) ✅
 **v3.10.2** (Sprint AD — auditoria CVE-anchored cross-ecossistema (C/Go/JS/Java/Rust) +
@@ -862,12 +864,50 @@ instrumentação aplicadas até agora (SAST046/047, JS05, RustAdapter
 STRING_RE) foram motivadas por gaps generalizáveis encontrados durante
 a investigação, não por terem detectado o CVE-alvo em si.
 
-**Avaliação honesta do `/goal`**: "rastrear todos os bugs documentados"
-não é alcançável só com ajustes de regra para a maioria dos 18 blind
-spots restantes — são bugs de lógica de negócio/semântica (CSRF, race
-conditions, leak de credenciais, etc.) fora do alcance de SAST
-sintático sem um motor de taint-tracking, uma mudança de arquitetura.
-O ganho remanescente de maior valor (cobertura de linguagem para C/C#/
-PHP/Ruby, hoje sem nenhuma regra SAST) é uma decisão de escopo de
-produto, não decidida unilateralmente — registrada para o usuário
-decidir os próximos passos.
+**Avaliação inicial (incorreta, corrigida abaixo)**: a primeira versão
+desta seção dizia que "rastrear todos os bugs documentados" não era
+alcançável e enquadrava cobertura adicional como "decisão de escopo do
+usuário". O hook de `/goal` rejeitou essa framing explicitamente,
+classificando-a como "uma decisão consciente do agente de parar de
+tentar, não porque a condição foi atingida".
+
+## Sprint AF (correção) — SAST048 + 2 reclassificações no relatório de timeline (concluído)
+
+Reauditei o próprio relatório AF em resposta ao hook e encontrei dois
+erros factuais reais: `psf/requests` CVE-2024-47081/CVE-2023-32681
+estavam marcados BLIND_SPOT, mas `SAST046`/`SAST047` (Sprint AC-3) na
+verdade já disparam nesses dois casos — confirmado rodando
+`sast.scanner.scan()` diretamente contra o conteúdo real dos arquivos
+vulneráveis/corrigidos buscado via API do GitHub (shas `7341690e` →
+`96ba401c` e `30222533` → `74ea7cf7`), não apenas contra os textos
+pinados em `test_marco_m63.py`. Ambos reclassificados para SIGNAL.
+
+Em seguida, auditei os 16 blind spots restantes em busca de um shape
+de AST genuinamente generalizável (não overfit a um único CVE) e
+encontrei um: `celery/celery` CVE-2021-23727 (injeção de comando via
+deserialização não confiável em `exception_to_python()`) é um caso
+clássico de *unsafe reflection* — objeto resolvido via `getattr()` a
+partir de dados não confiáveis e chamado sem verificação de tipo.
+Implementei `SAST048` ("Dynamically Resolved Object Called Without
+Type Guard", CWE-470, HIGH) em `sast/scanner.py`, validada
+empiricamente contra o conteúdo real de `celery/backends/base.py`
+(sha `2d8dbc2a` vulnerável → `1f7ad7e6` corrigido): dispara antes,
+silencia depois. Pinada em `tests/test_marco_m66.py` (TAG01-TAG07,
+incluindo falso-positivo de atributo literal e de objeto resolvido mas
+nunca chamado). Suite completa: 2226 passed, 5 skipped, 0 regressões.
+
+**Resultado agregado corrigido (21/21)**: 15/21 (71%) BLIND_SPOT
+limpo, 2/21 (10%) confounded, **4/21 (19%) SIGNAL confirmado**
+(`rails/rails` + 3 detecções SAST diretas: SAST046, SAST047, SAST048).
+**3/21 detectados por uma regra SAST disparando especificamente no
+padrão da vulnerabilidade documentada**, todas as três re-verificadas
+contra conteúdo real do GitHub nesta rodada.
+
+**Próximo passo concreto** (não uma decisão de escopo, e sim o
+trabalho em si): continuar a auditoria individual dos 15 blind spots
+restantes (CSRF ausente no scrapy, race conditions, leak de
+credenciais via cache, sanitização I18n, SQL injection em template
+Oracle no django/QuerySet.extra, deserialização insegura, etc.) usando
+o mesmo processo que produziu SAST046/047/048: ler o diff real
+vulnerável→corrigido e isolar se há um nó AST ancorável antes de
+concluir que exige um motor de taint-tracking.

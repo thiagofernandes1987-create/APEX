@@ -642,6 +642,32 @@ RULES: List[SASTRuleInfo] = [
             "credentials) and drop the header on mismatch."
         ),
     ),
+    # ── Sprint AF — CVE-anchored before/after corpus audit (celery/celery
+    # CVE-2021-23727) found a generalizable unsafe-reflection shape missed
+    # by every existing rule (see paper/corpus_runs/AF_consolidated_timeline.md):
+    SASTRuleInfo(
+        rule_id="SAST048", title="Dynamically Resolved Object Called Without Type Guard",
+        cwe_id="CWE-470", owasp="A08:2021",
+        severity="HIGH",
+        description=(
+            "An object is resolved via 'getattr()' using a non-literal "
+            "(data-derived) attribute name and is later called directly "
+            "('obj(...)'), with no 'isinstance()'/'issubclass()' check on "
+            "that object anywhere in the function. If the module/attribute "
+            "names ultimately come from untrusted data (e.g. a deserialized "
+            "task result or stored error payload), an attacker can resolve "
+            "an arbitrary callable (such as 'os.system') and have it "
+            "invoked. Real-world root cause of CVE-2021-23727 "
+            "(celery/celery stored command injection via "
+            "exception_to_python())."
+        ),
+        remediation=(
+            "Before calling a dynamically resolved object, verify it is of "
+            "an expected, safe type — e.g. 'if not (isinstance(cls, type) "
+            "and issubclass(cls, BaseException)): raise SecurityError(...)' "
+            "— and reject anything else."
+        ),
+    ),
 ]
 
 _RULE_MAP: Dict[str, SASTRuleInfo] = {r.rule_id: r for r in RULES}
@@ -1514,6 +1540,40 @@ class _ASTScanner(ast.NodeVisitor):
                         sensitive_node = sensitive_node or target
         if (removed_keys & assigned_keys) and not self._has_origin_guard(node):
             self._add("SAST047", sensitive_node)
+
+        # ── Sprint AF — SAST048: dynamically resolved object (via
+        # getattr() with a non-literal attribute name) called directly,
+        # with no isinstance()/issubclass() guard anywhere in the
+        # function — see CVE-2021-23727 (celery/celery) case study in
+        # paper/corpus_runs/AF_consolidated_timeline.md. Requiring the
+        # attribute name to be non-literal keeps this specific to
+        # data-driven reflection and avoids flagging ordinary
+        # 'getattr(obj, "fixed_name")()' dispatch.
+        reflected_vars: set = set()
+        for child in ast.walk(node):
+            if (isinstance(child, ast.Assign) and len(child.targets) == 1
+                    and isinstance(child.targets[0], ast.Name)
+                    and isinstance(child.value, ast.Call)
+                    and isinstance(child.value.func, ast.Name)
+                    and child.value.func.id == "getattr"
+                    and len(child.value.args) >= 2
+                    and not isinstance(child.value.args[1], ast.Constant)):
+                reflected_vars.add(child.targets[0].id)
+
+        if reflected_vars:
+            guarded: set = set()
+            for child in ast.walk(node):
+                if (isinstance(child, ast.Call) and isinstance(child.func, ast.Name)
+                        and child.func.id in ("isinstance", "issubclass")
+                        and child.args and isinstance(child.args[0], ast.Name)
+                        and child.args[0].id in reflected_vars):
+                    guarded.add(child.args[0].id)
+
+            for child in ast.walk(node):
+                if (isinstance(child, ast.Call) and isinstance(child.func, ast.Name)
+                        and child.func.id in reflected_vars
+                        and child.func.id not in guarded):
+                    self._add("SAST048", child)
 
     # ── SAST038: exception swallowing ────────────────────────────────────────
 

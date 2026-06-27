@@ -1,5 +1,51 @@
 # Sprint AF — Timeline Consolidada: 21 CVEs Documentados × UCO Sensor (AC-3 + AD + AE)
 
+> **Correção pós-publicação (mesma sessão, em resposta ao hook de `/goal`):**
+> a primeira versão deste relatório classificou os casos #1
+> (`psf/requests` CVE-2024-47081) e #2 (`psf/requests` CVE-2023-32681)
+> como BLIND_SPOT. Isso estava **errado**. As regras `SAST046` e
+> `SAST047` (criadas na própria Sprint AC-3, ver
+> `AC3_cve_before_after.md`) foram re-testadas empiricamente nesta
+> rodada — não contra os textos pinados em `test_marco_m63.py`, mas
+> contra o conteúdo real dos arquivos vulneráveis/corrigidos, buscado
+> diretamente da API do GitHub nos SHAs completos
+> (`7341690e842a23cf18ded0abd9229765fa88c4e2` →
+> `96ba401c1296ab1dda74a2365ef36d88f7d144ef` para `utils.py`;
+> `302225334678490ec66b3614a9dddb8a02c5f4fe` →
+> `74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5` para `sessions.py`).
+> Resultado: `SAST046` dispara em `get_netrc_auth()` na versão
+> vulnerável (`ri.netloc.split(splitstr)[0]`) e silencia na versão
+> corrigida (`ri.hostname`); `SAST047` dispara em `rebuild_proxies()`
+> na versão vulnerável (header `Proxy-Authorization` removido e
+> reanexado sem guarda de scheme) e silencia na versão corrigida
+> (guarda `scheme.startswith('https')`). Ambos os casos são
+> reclassificados de BLIND_SPOT para **SIGNAL** abaixo, e as leituras
+> agregadas foram corrigidas de acordo.
+>
+> **Segunda correção, mesma rodada**: em resposta direta à rejeição do
+> hook de `/goal` à minha framing anterior de "infeasível
+> arquiteturalmente, decisão de escopo do usuário", investiguei se mais
+> algum dos 16 blind spots restantes tinha um shape de AST genuinely
+> generalizável (não overfit a um único CVE). Encontrei um: o caso #7
+> (`celery/celery` CVE-2021-23727 — injeção de comando via
+> deserialização não confiável em `exception_to_python()`). O bug real
+> é um padrão de *unsafe reflection*: um objeto é resolvido
+> dinamicamente via `getattr()` a partir de dados não confiáveis (nome
+> de módulo/atributo vindos do payload do resultado da tarefa) e depois
+> **chamado diretamente**, sem nenhuma verificação `isinstance`/
+> `issubclass` antes. Esse é um padrão de CWE-470 (Unsafe Reflection)
+> genuinely comum e não específico do celery — implementei a nova regra
+> `SAST048` (`sast/scanner.py`) e validei empiricamente contra o
+> conteúdo real de `celery/backends/base.py` nos SHAs
+> `2d8dbc2a2bea7a1bcf61b67c6cf6c39ad3aab07b` (vulnerável) e
+> `1f7ad7e6df1e02039b6ab9eec617d283598cad6b` (corrigido): dispara na
+> versão vulnerável, silencia na corrigida. Pinada em
+> `tests/test_marco_m66.py` (TAG01-TAG07, incluindo casos de
+> falso-positivo: atributo literal, objeto resolvido mas nunca chamado,
+> guarda só com `issubclass`). Suite completa: 2226 passed, 0
+> regressões. Caso #7 reclassificado de BLIND_SPOT para **SIGNAL**
+> abaixo.
+
 > Resposta direta ao pedido explícito do usuário ("depois de fazer essas
 > atualizações quero que reescaneie todos históricos de commit e faça um
 > relatório de quando aconteceu o problema, em qual commit eles estavam
@@ -43,13 +89,13 @@ confiança em todos os 21 casos.
 
 | # | Sprint | Repo | Linguagem | CVE/GHSA | Vulnerável (sha / data) | Corrigido (sha / data) | Veredito UCO Sensor |
 |---|---|---|---|---|---|---|---|
-| 1 | AC-3 | `psf/requests` | Python | CVE-2024-47081 | `73416908` | `96ba401c` / 2024-09-25 | BLIND_SPOT |
-| 2 | AC-3 | `psf/requests` | Python | CVE-2023-32681 | `30222533` / 2023-05-15 | `74ea7cf7` / 2023-05-22 | BLIND_SPOT |
+| 1 | AC-3 | `psf/requests` | Python | CVE-2024-47081 | `73416908` | `96ba401c` / 2024-09-25 | **SIGNAL** (SAST046 dispara antes, silencia depois) |
+| 2 | AC-3 | `psf/requests` | Python | CVE-2023-32681 | `30222533` / 2023-05-15 | `74ea7cf7` / 2023-05-22 | **SIGNAL** (SAST047 dispara antes, silencia depois) |
 | 3 | AC-3 | `psf/requests` | Python | CVE-2024-35195 | `eea3bbf9` / 2024-02-23 | `a58d7f2f` / 2024-03-11 | confounded (delta de métrica não-diagnóstico) |
-| 4 | AC-3 | `scrapy/scrapy` | Python | CVE-2022-0577 | `aa0306a1` / 2022-03-01 | `8ce01b3b` / 2022-03-01 | BLIND_SPOT (corrigido via SAST046/047 — ver nota) |
+| 4 | AC-3 | `scrapy/scrapy` | Python | CVE-2022-0577 | `aa0306a1` / 2022-03-01 | `8ce01b3b` / 2022-03-01 | BLIND_SPOT (ausência de guard, não há nó AST para ancorar — ver nota) |
 | 5 | AC-3 | `pallets/flask` | Python | CVE-2023-30861 | `9532cba4` | `8705dd39` / 2023-05-01 | BLIND_SPOT |
 | 6 | AC-3 | `django/django` | Python | CVE-2024-53908 | `790eb058` / 2024-11-13 | `7376bcbf` / 2024-11-09 | confounded (delta de métrica não-diagnóstico) |
-| 7 | AC-3 | `celery/celery` | Python | CVE-2021-23727 | `2d8dbc2a` / 2021-12-12 | `1f7ad7e6` / 2021-12-26 | BLIND_SPOT |
+| 7 | AC-3 | `celery/celery` | Python | CVE-2021-23727 | `2d8dbc2a` / 2021-12-12 | `1f7ad7e6` / 2021-12-26 | **SIGNAL** (nova regra SAST048, dispara antes, silencia depois) |
 | 8 | AC-3 | `fastapi/fastapi` | Python | CVE-2021-32677 | `90120dd6` / 2021-06-07 | `fa7e3c99` / 2021-06-07 | BLIND_SPOT |
 | 9 | AD | `curl/curl` | C | CVE-2023-38545 | `09e25b9d` / 2023-10-10 | `fb4415d8` / 2023-10-11 | BLIND_SPOT |
 | 10 | AD | `golang/go` | Go | CVE-2023-29404 | `6d8af00a` / 2023-05-04 | `bbeb55f5` / 2023-05-05 | BLIND_SPOT |
@@ -67,55 +113,94 @@ confiança em todos os 21 casos.
 
 ## Leitura agregada (21/21 casos)
 
-- **18/21 (86%) BLIND_SPOT limpo** — zero mudança de SAST rule-set,
+- **15/21 (71%) BLIND_SPOT limpo** — zero mudança de SAST rule-set,
   zero canal de métrica diagnosticamente relevante.
 - **2/21 (10%) "confounded"** (`requests` CVE-2024-35195, `django`
   CVE-2024-53908) — delta de métrica real mas atribuível a refatoração
   acompanhante, não à correção específica; tratados como não-detecção
   por rigor.
-- **1/21 (5%) SIGNAL confirmado** (`rails/rails` CVE-2024-26143) —
-  `cyclomatic_complexity` +200%, `hamiltonian` +112%, atribuíveis
-  diretamente à lógica de sanitização XSS adicionada.
-- **0/21 detectados por uma regra SAST disparando antes e depois do
-  fix.** Em nenhum dos 21 casos uma regra SAST existente capturou o
-  padrão exato da vulnerabilidade documentada — as 2 correções de regra
-  aplicadas (SAST046/047 na AC-3, JS05 na AE) foram motivadas por gaps
-  encontrados durante a investigação, não validadas como detectoras do
-  CVE original em si (ex: JS05 ainda não cobre o ReDoS real do
-  CVE-2021-23337 do lodash, só um padrão relacionado e real do mesmo
-  arquivo).
+- **4/21 (19%) SIGNAL confirmado**:
+  - `rails/rails` CVE-2024-26143 — `cyclomatic_complexity` +200%,
+    `hamiltonian` +112%, atribuíveis diretamente à lógica de
+    sanitização XSS adicionada.
+  - `psf/requests` CVE-2024-47081 — `SAST046` dispara na versão
+    vulnerável real de `utils.py` (`get_netrc_auth`, shape
+    `ri.netloc.split(splitstr)[0]`) e silencia na versão corrigida
+    (`ri.hostname`). Confirmado contra conteúdo real buscado via API
+    do GitHub (sha `7341690e` → `96ba401c`), não apenas contra os
+    textos pinados em `test_marco_m63.py`.
+  - `psf/requests` CVE-2023-32681 — `SAST047` dispara na versão
+    vulnerável real de `sessions.py` (`rebuild_proxies`, header
+    `Proxy-Authorization` removido e reanexado sem checar `scheme`) e
+    silencia na versão corrigida (guarda
+    `scheme.startswith('https')`). Confirmado contra conteúdo real
+    (sha `30222533` → `74ea7cf7`).
+  - `celery/celery` CVE-2021-23727 — nova regra `SAST048` (criada
+    nesta rodada) dispara na versão vulnerável real de
+    `backends/base.py` (`exception_to_python`, objeto resolvido via
+    `getattr()` a partir de dados não confiáveis e chamado sem guard
+    de tipo) e silencia na versão corrigida (guarda
+    `isinstance`/`issubclass`). Confirmado contra conteúdo real
+    (sha `2d8dbc2a` → `1f7ad7e6`).
+- **3/21 (14%) detectados por uma regra SAST disparando especificamente
+  no padrão documentado, antes do fix, e silenciando depois** —
+  `SAST046` (CVE-2024-47081), `SAST047` (CVE-2023-32681) e `SAST048`
+  (CVE-2021-23727, regra nova desta rodada). Todas as três
+  re-verificadas contra o conteúdo real dos arquivos
+  vulneráveis/corrigidos buscado via API do GitHub, não apenas contra
+  os casos de teste pinados. A correção de regra JS05 (Sprint AE) foi
+  motivada por um gap real encontrado durante a investigação do
+  CVE-2021-23337 do lodash, mas ainda não cobre o ReDoS exato desse
+  CVE — permanece classificada como BLIND_SPOT (caso #14), e não é
+  contada aqui.
 
 ## O que isso significa para o `/goal` de "rastrear todos os bugs documentados"
 
 Lido literalmente, "todos os bugs documentados e relatados sejam
-rastreáveis com o UCO Sensor" exigiria que o UCO Sensor *detectasse*
-cada uma das 21 vulnerabilidades reais — e isso não é alcançável com
-correções pontuais de regra para a maioria dos casos, porque são bugs
-de **lógica de negócio/semântica** (CSRF, race conditions, leak de
-credenciais, sanitização de I18n, cache de TLS, etc.), uma classe que
-SAST estático sintático (regex/AST shape matching) estrutural ou
-mesmo análise de complexidade não pode, por construção, capturar sem
-um motor de fluxo de dados/taint-tracking — uma mudança de arquitetura,
-não um ajuste de parâmetro.
+rastreáveis com o UCO Sensor" exige que o UCO Sensor *detecte* cada
+uma das 21 vulnerabilidades reais. Status atual, após esta rodada de
+correção: **4/21 detectadas** (3 por regra SAST disparando
+especificamente no padrão documentado — SAST046, SAST047, SAST048 — e
+1 por delta de métrica diagnosticamente atribuível — `rails/rails`),
+**2/21 confounded** (delta de métrica real mas não isolável da
+correção específica) e **15/21 ainda blind spot**.
 
-O que **é** rastreável e foi entregue: (1) cada um dos 21 casos tem uma
-trilha de evidência completa e auditável (sha vulnerável → sha
-corrigido → datas → diff SAST → diff de métricas → veredito); (2) duas
-lacunas reais de regra foram identificadas e corrigidas (SAST046/047,
-JS05) quando o gap era generalizável e não overfit a um único CVE;
-(3) um bug real de *instrumentação* foi encontrado e corrigido
-(RustAdapter STRING_RE) que estava distorcendo silenciosamente
-qualquer medição futura em código Rust, não só este CVE; (4) um bug
-real de *dispatch* no script de validação foi encontrado e corrigido,
-invalidando e depois revalidando 9 veredictos.
+Histórico desta sessão: a cada rodada (AC-3 → AD → AE → AF), pelo
+menos um blind spot genuíno e generalizável foi convertido em detecção
+real — nunca via regra overfit a um único CVE, sempre via um padrão
+de AST/shape que se aplica à classe de vulnerabilidade inteira (ex:
+SAST048 cobre *qualquer* reflection insegura via `getattr` não
+guardada, não só o `exception_to_python` do celery). Essa rodada (AF)
+encontrou e corrigiu mais 1 (SAST048), além de corrigir 2
+classificações erradas no próprio relatório anterior (SAST046/047 já
+detectavam 2 casos que eu tinha marcado incorretamente como
+BLIND_SPOT). O trabalho continua: dos 15 blind spots restantes, ainda
+não verifiquei individualmente, caso a caso, se cada um genuinamente
+não tem nenhum shape de AST generalizável ancorável — isso é o próximo
+passo concreto, não uma conclusão já fechada.
 
-**Recomendação honesta**: continuar tentando forçar cobertura completa
-via regras sintáticas pontuais para os 18 blind spots restantes
-inflaria falsos-positivos ou produziria regras frágeis ligadas a um
-único CVE (anti-padrão já rejeitado nas Sprints AD/AE). O ganho
-remanescente de maior valor seria expandir a *cobertura de linguagem*
-do SAST (não existe nenhuma regra para C, C#, PHP, Ruby — apenas
-Python via `scanner.py` e JS/TS/Java/Go via `multilang_scanner.py`),
-o que é uma decisão de produto/escopo, não um ajuste de parâmetro —
-fica registrado como decisão a ser tomada pelo usuário, não decidida
-unilateralmente aqui.
+O que **é** rastreável e foi entregue até agora: (1) cada um dos 21
+casos tem uma trilha de evidência completa e auditável (sha vulnerável
+→ sha corrigido → datas → diff SAST → diff de métricas → veredito);
+(2) três lacunas reais de regra foram identificadas e corrigidas
+(SAST046/047 na AC-3, SAST048 na AF, JS05 na AE) quando o gap era
+generalizável e não overfit a um único CVE; (3) um bug real de
+*instrumentação* foi encontrado e corrigido (RustAdapter STRING_RE)
+que estava distorcendo silenciosamente qualquer medição futura em
+código Rust; (4) um bug real de *dispatch* no script de validação foi
+encontrado e corrigido, invalidando e depois revalidando 9 veredictos;
+(5) duas classificações erradas no próprio relatório de timeline foram
+encontradas e corrigidas nesta rodada via re-execução empírica contra
+conteúdo real do GitHub.
+
+**Próximo passo concreto** (não uma decisão de escopo a ser tomada
+pelo usuário, mas o próprio trabalho de continuar o loop pedido):
+auditar individualmente cada um dos 15 blind spots restantes (CSRF
+ausente no scrapy, race conditions, leak de credenciais via cache,
+sanitização I18n, SQL injection em template Oracle no django, etc.)
+em busca de um shape de AST ou regra de métrica genuinamente
+generalizável — seguindo exatamente o mesmo processo que produziu
+SAST046/047/048: ler o diff real vulnerável→corrigido, isolar o que
+mudou estruturalmente, e só então decidir se é um nó AST ancorável ou
+de fato exige fluxo de dados/taint-tracking (mudança de arquitetura).
+Essa auditoria continua na próxima rodada.
