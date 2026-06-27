@@ -1,0 +1,166 @@
+# Sprint AE — Lista Master de Repositórios (curadoria original do usuário)
+
+> Salvo verbatim (recuperado do transcript da sessão) para servir de
+> fonte única de verdade do loop de análise contínua AE. Esta é a lista
+> completa de ~100 repositórios enviada pelo usuário em
+> 2026-06-26T22:32:36Z, organizada em 8 categorias de ecossistema, mais
+> as 3 dicas de estratégia de teste que orientam a metodologia.
+
+## Status de cobertura até agora (Sprint AD, antes deste loop)
+
+| Categoria | Testado em AD | Repo/CVE |
+|---|---|---|
+| C/C++ | ✅ 1/10 | `curl/curl` CVE-2023-38545 |
+| Go | ✅ 1/15 | `golang/go` CVE-2023-29404 |
+| JS/TS | ✅ 1/20 | `axios/axios` CVE-2023-45857 |
+| Java/Kotlin | ✅ 1/10 | `spring-projects/spring-framework` CVE-2022-22965 |
+| Rust | ✅ 1/10 | `rust-lang/regex` CVE-2022-24713 |
+| Python | ✅ 8/20 (Sprint AC-3) | requests(×2), scrapy, flask, django, celery, fastapi |
+| PHP/Ruby/C#/Mobile | ❌ 0/10 | — |
+| Infra de dados/cloud grande escala | ❌ 0/5 | — |
+
+---
+
+### 🌐 1. Ecossistema JavaScript / TypeScript (Alto volume de dependências e concorrência)
+*Ideal para testar análise de vulnerabilidades em cadeias de dependências (Supply Chain), gargalos de concorrência e degradação de performance na Web.*
+
+ 1. **microsoft/vscode**: Gigantesco, milhões de linhas de código em TS. Excelente para testar velocidade de escaneamento de monorepos.
+ 2. **facebook/react**: Histórico massivo de refatorações, perfeito para rastrear quebras de compatibilidade (breaking changes).
+ 3. **vercel/next.js**: Evolução rápida, alta densidade de features e atualizações constantes de segurança.
+ 4. **nodejs/node**: Código híbrido (C++ e JS). Ótimo para testar escaneadores híbridos e vazamentos de memória históricos.
+ 5. **denoland/deno**: Rust e TS. Excelente para verificar arquiteturas modernas e segurança de sandbox.
+ 6. **vuejs/core**: TypeScript estrito, arquitetura modular e documentação cirúrgica de bugs.
+ 7. **angular/angular**: Monorepo corporativo massivo. Um teste rigoroso para a velocidade de árvores de dependência complexas.
+ 8. **remix-run/remix**: Atualizações frequentes de arquitetura e padrões web.
+ 9. **tailwindlabs/tailwindcss**: Excelente para testar o parseamento de folhas de estilo e otimização de build em lote.
+ 10. **strapi/strapi**: Node.js massivo voltado para CMS, contendo muitas regras de permissão e endpoints vulneráveis no histórico.
+ 11. **axios/axios**: Código mais enxuto, porém com um histórico gigante de patches de segurança e concorrência HTTP. *(testado em AD: CVE-2023-45857)*
+ 12. **expressjs/express**: Base histórica do Node.js. Excelente para testar detecção de padrões de código legados (legacy patterns).
+ 13. **mrdoob/three.js**: Processamento gráfico em JS. Enorme volume de vetores e matemática propensa a bugs de performance.
+ 14. **electron/electron**: Integração pesada com Chromium. Um dos maiores repositórios em uso na indústria web/desktop.
+ 15. **vitejs/vite**: Ferramenta de build moderna. Ótimo para testar análise de ferramentas que manipulam AST (Abstract Syntax Tree).
+ 16. **metabase/metabase**: Clojure e TypeScript. Excelente para testar o comportamento de ferramentas em bases de código poliglotas.
+ 17. **elastic/kibana**: Um monorepo TypeScript absurdamente gigante e complexo. Vai estressar o motor do seu SaaS ao limite.
+ 18. **grafana/grafana**: Mistura Go e TypeScript em larga escala. Perfeito para testes de análise estática e concorrência.
+ 19. **lodash/lodash**: Histórico riquíssimo em otimizações extremas de algoritmos básicos e correção de bugs de mutabilidade.
+ 20. **yarnpkg/berry**: Arquitetura de gerenciamento de pacotes complexa, ideal para testar lógica de grafos de arquivos.
+
+### 🐍 2. Ecossistema Python (Análise Estática, IA e Ciência de Dados)
+*Ótimos para testar a detecção de bugs de tipagem dinâmica, complexidade ciclomática elevada e algoritmos pesados de processamento de dados.*
+
+ 21. **python/cpython**: O interpretador oficial do Python (C e Python). Histórico de décadas, massivo, excelente para testar regressões complexas.
+ 22. **pandas-dev/pandas**: Volume gigantesco de manipulação de matrizes. Ideal para capturar degradação de performance de memória. *(testado em AC-2; sem CVE indexado)*
+ 23. **scikit-learn/scikit-learn**: Padrão ouro em machine learning tradicional. Código limpo, mas matematicamente denso.
+ 24. **tensorflow/tensorflow**: C++ e Python. Um dos maiores repositórios do mundo. Se o seu SaaS escanear isso rápido, ele escaneia qualquer coisa.
+ 25. **pytorch/pytorch**: Semelhante ao TensorFlow, excelente para testar análise de bindings C++/Python e alocação de GPU.
+ 26. **fastapi/fastapi**: Uso intensivo de Pydantic e tipagem moderna. Perfeito para validar se o seu SaaS entende Type Hints. *(testado em AC-3: CVE-2021-32677)*
+ 27. **django/django**: O framework web clássico do Python. Histórico impecável de releases, Pull Requests detalhados e correções de segurança (CVEs). *(testado em AC-3: CVE-2024-53908)*
+ 28. **pallets/flask**: Microframework com decisões arquiteturais maduras e histórico de refatoração transparente. *(testado em AC-3: CVE-2023-30861)*
+ 29. **huggingface/transformers**: Mudanças de código em ritmo frenético. Excelente para testar como seu SaaS lida com obsolescência rápida de código.
+ 30. **ansible/ansible**: Automação de TI em larga escala. Excelente para testar análise sintática de módulos Python dinâmicos.
+ 31. **celery/celery**: Sistemas de filas assíncronas. Perfeito para caçar bugs de concorrência, deadlocks e race conditions. *(testado em AC-3: CVE-2021-23727)*
+ 32. **home-assistant/core**: Um dos maiores projetos de IoT em Python. Altamente modular, integra centenas de bibliotecas terceiras.
+ 33. **scipy/scipy**: Computação científica avançada. Teste severo para algoritmos numéricos de baixa performance.
+ 34. **boto3/boto3**: SDK da AWS para Python. Código gerado e atualizado constantemente, ideal para testar varredura de interfaces gigantescas.
+ 35. **apache/airflow**: Orquestrador de workflows massivo. Ótimo para analisar degradação em DAGs e agendamentos.
+ 36. **saltstack/salt**: Gerenciamento de infraestrutura. Histórico complexo com vulnerabilidades críticas de bypass já corrigidas no passado.
+ 37. **scrapy/scrapy**: Framework de web scraping. Ótimo para testar análise de vazamento de memória em loops assíncronos. *(testado em AC-3: CVE-2022-0577)*
+ 38. **psf/requests**: O padrão de requisições HTTP. Histórico focado em estabilidade de API e tratamento de exceções edge-case. *(testado em AC-3: CVE-2024-47081, CVE-2023-32681, CVE-2024-35195)*
+ 39. **SQLAlchemy/sqlalchemy**: ORM massivo e complexo. Excelente para testar geradores de queries e degradação em conexões de banco de dados.
+ 40. **localstack/localstack**: Emulação de nuvem AWS em Python. Código denso com simulação de múltiplos serviços.
+
+### 🐹 3. Ecossistema Go (Sistemas Distribuídos e Concorrência Nativa)
+*Essenciais para testar a capacidade do seu SaaS de rastrear vazamento de Goroutines, problemas de concorrência e gerenciamento de memória em microsserviços.*
+
+ 41. **kubernetes/kubernetes**: O colosso do ecossistema cloud-native. Indispensável para testes de estresse de velocidade de escaneamento em Go.
+ 42. **moby/moby**: O motor por trás do Docker. Histórico riquíssimo sobre isolamento de container e chamadas de sistema (syscalls).
+ 43. **hashicorp/terraform**: Infraestrutura como Código. Excelente para testar o parseamento de grafos de recursos e estados.
+ 44. **hashicorp/vault**: Focado em segurança extrema. Ideal para validar se o seu SaaS detecta vulnerabilidades de criptografia e vazamento de segredos.
+ 45. **prometheus/prometheus**: Banco de dados de séries temporais. Perfeito para caçar bugs de performance de escrita/leitura.
+ 46. **etcd-io/etcd**: Armazenamento distribuído de chave-valor. Excelente para testar consistência lógica e concorrência estrita (Raft).
+ 47. **istio/istio**: Service mesh massivo. Desafio gigante de arquitetura distribuída e configuração para qualquer analisador de código.
+ 48. **cockroachdb/cockroach**: Banco de dados SQL distribuído escrito em Go. Código gigantesco, altamente técnico e focado em resiliência.
+ 49. **caddyserver/caddy**: Servidor web moderno. Ótimo para testar concorrência HTTP/3 e recarga dinâmica de configurações.
+ 50. **gin-gonic/gin**: Framework web focado em performance. Histórico limpo, excelente para validar falsos positivos em APIs Go.
+ 51. **syncthing/syncthing**: Sincronização de arquivos P2P. Ótimo para testar lógica de IO de disco e rede.
+ 52. **rancher/rancher**: Gerenciador de clusters Kubernetes. Grande volume de regras de negócio e integrações de API.
+ 53. **influxdata/influxdb**: Banco de dados de alta volumetria. Excelente para avaliar como seu SaaS lida com refatorações estruturais massivas (Go para Rust no histórico).
+ 54. **argoproj/argo-cd**: Ferramenta GitOps de alta adoção corporativa. Ótimo para validar segurança em pipelines de entrega contínua.
+ 55. **gohugoio/hugo**: Gerador de sites estáticos ultraveloz. Excelente para testar o parseamento de arquivos template e strings em lote.
+
+*(`golang/go` em si — testado em AD: CVE-2023-29404 — não estava na lista numerada original, mas foi o caso usado na AD por já ter um CVE bem documentado e fácil de resolver via API.)*
+
+### 🦀 4. Ecossistema Rust (Segurança de Memória e Baixo Nível)
+*Para testar se o seu analisador consegue processar macros complexas, tipagem estrita e inferir gargalos lógicos onde o compilador do Rust não alcança (lógica de negócios).*
+
+ 56. **rust-lang/rust**: O próprio compilador e biblioteca padrão. Um dos repositórios mais complexos e densos da atualidade.
+ 57. **tokio-rs/tokio**: A espinha dorsal do ecossistema assíncrono em Rust. Perfeito para testar análise de concorrência avançada.
+ 58. **alacritty/alacritty**: Emulador de terminal acelerado por GPU. Ótimo para testar código Rust focado em performance gráfica direta.
+ 59. **serde-rs/serde**: Framework de serialização/deserialização baseado em macros fortes. Desafio clássico para engines de AST.
+ 60. **nushell (configuration-as-code / nushell)**: Um shell moderno escrito em Rust com código em rápida expansão e refatoração ativa.
+ 61. **tikv/tikv**: Banco de dados KV distribuído transacional. Engenharia de baixíssimo nível e alta performance.
+ 62. **diesel-rs/diesel**: ORM estrito e seguro para Rust. Excelente para testar inferência de tipos complexos em tempo de compilação.
+ 63. **swc-project/swc**: Plataforma de compilação JS/TS escrita em Rust. Extremamente veloz, ótimo teste de concorrência.
+ 64. **actix/actix-web**: Um dos frameworks web mais rápidos do planeta. Histórico famoso de discussões técnicas sobre o uso de blocos unsafe.
+ 65. **tauri-apps/tauri**: Alternativa ao Electron (Rust + Webview). Ótimo para testar segurança na ponte de comunicação IPC entre front e back.
+
+*(`rust-lang/regex` — testado em AD: CVE-2022-24713 — não estava na lista numerada original, mas foi escolhido por ter o CVE de ReDoS mais documentado e ter revelado o bug do `RustAdapter`.)*
+
+### ☕ 5. Ecossistema Java / Kotlin (Arquiteturas Corporativas Clássicas)
+*Ideais para testar escaneamento de padrões corporativos, injeção de dependências pesada, acoplamento estrutural e o clássico "Spaghetti Enterprise Code".*
+
+ 66. **spring-projects/spring-boot**: O framework Java mais utilizado no mundo. Indispensável para validar se o seu SaaS entende injeção de dependências e anotações complexas.
+ 67. **spring-projects/spring-framework**: A base do ecossistema Spring. Décadas de histórico de commits e evoluções arquiteturais. *(testado em AD: CVE-2022-22965/Spring4Shell)*
+ 68. **apache/commons-lang**: Biblioteca utilitária clássica. Excelente para testar a detecção de bugs lógicos de baixo nível em manipulação de objetos e strings.
+ 69. **apache/flink**: Processamento de stream de dados em larga escala. Código massivo focado em computação distribuída na JVM.
+ 70. **apache/kafka**: Inicialmente Scala/Java, hoje majoritariamente Java. Um dos sistemas de mensageria mais críticos do mundo. Ótimo teste para degradação de IO.
+ 71. **elastic/elasticsearch**: Mecanismo de busca massivo em Java. Altíssima complexidade de threads, alocação de memória e heap da JVM.
+ 72. **netty/netty**: Framework de rede assíncrono conduzido por eventos. Engenharia de alto nível para IO de rede.
+ 73. **redisson/redisson**: Cliente Redis para Java. Excelente para validar o tratamento de concorrência e travas distribuídas (locks).
+ 74. **google/guava**: Bibliotecas principais do Google para Java. Referência absoluta em design de código e otimização. **(reservado para teste de falsos positivos — ver dicas abaixo)**
+ 75. **JetBrains/kotlin**: O próprio compilador e ecossistema da linguagem Kotlin. Massivo e extremamente bem documentado.
+
+### 🛠️ 6. Ecossistema C / C++ (Sistemas Operacionais, Infraestrutura Básica e Bancos de Dados)
+*Indispensáveis para avaliar se o seu SaaS consegue capturar bugs críticos de gerenciamento manual de memória (Buffer Overflow, Use-After-Free, Race Conditions tradicionais).*
+
+ 76. **torvalds/linux**: O Kernel do Linux. O teste definitivo de escala e velocidade mundial. Se o seu SaaS indexar o Kernel do Linux sem travar, sua arquitetura de filas é sólida.
+ 77. **postgres/postgres**: O banco de dados relacional mais robusto do mundo. Histórico cirúrgico de correção de bugs de concorrência e escrita em disco.
+ 78. **antirez/redis**: Escrito em C limpo e minimalista. Excelente para testar detecção de vazamentos em estruturas de dados single-thread.
+ 79. **curl/curl**: Código C hiper-otimizado que roda em bilhões de dispositivos. Histórico público transparente de todas as falhas de segurança já encontradas (ótimo para testes de regressão de vulnerabilidades). *(testado em AD: CVE-2023-38545)*
+ 80. **ffmpeg/ffmpeg**: Processamento multimídia em C. Extremamente complexo, cheio de otimizações assembly. Desafio brutal para análise de fluxo de dados.
+ 81. **git/git**: O próprio motor do Git. Código focado em performance de sistema de arquivos e manipulação de hashes.
+ 82. **opencv/opencv**: Visão computacional massiva em C++. Excelente para testar alocação de matrizes gráficas e vazamento de ponteiros.
+ 83. **sqlite/sqlite**: (Espelho no GitHub). O banco de dados mais replicado do mundo. Famoso por sua cobertura de testes de 100%. Excelente para testar se seu SaaS gera falsos positivos em códigos ultra-estáveis. **(reservado para teste de falsos positivos)**
+ 84. **apache/httpd**: O servidor web Apache. Código legado misturado com atualizações modernas, ótimo para avaliar análise de código antigo.
+ 85. **wireshark/wireshark**: Analisador de pacotes de rede em C. Histórico vasto de correções de parsing de protocolos (vulneráveis a estouros de pilha).
+
+### 🐘 7. Ecossistema PHP / Ruby / C# / Mobile
+*Para garantir a cobertura poliglota do seu SaaS, avaliando desde ORMs clássicos até o gerenciamento de estados em plataformas móveis.*
+
+ 86. **laravel/laravel** (e laravel/framework): O padrão ouro em documentação PHP. Excelente para testar rotas e detecção de SQL Injection.
+ 87. **rails/rails**: O gigante do Ruby. Histórico de quase duas décadas de convenções de código sobre configuração.
+ 88. **dotnet/runtime**: O core do ecossistema .NET (C#). Repositório gigantesco, corporativo e com gerência estrita de bugs.
+ 89. **dotnet/roslyn**: O compilador do C# escrito em C#. Excelente para testar analisadores estáticos que mimetizam compiladores.
+ 90. **flutter/flutter**: Dart/C++. O maior repositório de ecossistema mobile. Excelente para testar análise de árvores de renderização (UI).
+ 91. **wordpress/wordpress**: (Espelho). A base de código PHP mais difundida do planeta. Excelente para testar detecção de código legado perigoso e padrões antiquados de segurança.
+ 92. **php/php-src**: O core do próprio interpretador PHP em C. Histórico denso focado em gerenciamento de memória interna da linguagem.
+ 93. **jekyll/jekyll**: Ruby. Gerador estático estável com histórico muito claro de transição de dependências.
+ 94. **Signal/Signal-Android**: Repositório focado em segurança de ponta a ponta. Excelente para caçar bugs em implementações criptográficas móveis.
+ 95. **shadowsocks/shadowsocks-windows**: C#. Excelente para verificar segurança de rede e tratamento de tunelamento criptografado.
+
+### 🏗️ 8. Repositórios de Grande Escala Focados em Infraestrutura de Dados e Cloud
+*Sistemas que misturam orquestração complexa com pipelines críticos de dados, ideais para testar "Architectural Decay" (degradação arquitetural).*
+
+ 96. **apache/spark**: Scala e Java. Sistema massivo de processamento de dados distribuídos. Perfeito para capturar bugs em lógica de lazy evaluation.
+ 97. **hashicorp/nomad**: Alternativa ao Kubernetes escrita em Go. Focado em agendamento de micro-tarefas e clusters em escala.
+ 98. **ceph/ceph**: Sistema de armazenamento distribuído massivo escrito em C++ e Python. Código de altíssima complexidade de rede e hardware.
+ 99. **trinodb/trino** (antigo PrestoSQL): Motor de query SQL distribuído massivo em Java, focado em Big Data e execução concorrente em memória.
+ 100. **clickhouse/clickhouse**: Banco de dados analítico (OLAP) em C++. Um monstro em termos de performance de leitura e paralelismo estrutural.
+
+---
+
+### 💡 Dica de Estratégia de Teste do usuário (orienta a metodologia do loop AE)
+
+ 1. **Teste de Velocidade Pura (Throughput)**: Monitorar uso de CPU/Memória do UCO Sensor enquanto monta a árvore sintática (AST) dos repositórios gigantes (linux, kubernetes, tensorflow, vscode, elasticsearch).
+ 2. **Teste de Precisão de Bugs Lógicos**: Usar `curl/curl` ou `django/django` (e por extensão qualquer repo da lista) voltando o histórico do Git para tags antigas com CVEs conhecidos, e ver se o UCO Sensor consegue apontá-los de forma preditiva. **Esta é exatamente a metodologia `cve_diff_check.py` já em uso desde AC-3/AD.**
+ 3. **Teste de Falsos Positivos**: Executar o escaneador em `sqlite/sqlite` ou `google/guava` — código de cobertura de teste cirúrgica e padrões de qualidade altíssimos. Qualquer achado CRITICAL/HIGH ali tem alta probabilidade de ser falso positivo do motor. **Ainda não executado em nenhum sprint até agora — abre o Eixo 3 do loop AE (ver `inventario.md` §Sprint AE).**
