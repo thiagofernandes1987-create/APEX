@@ -278,6 +278,24 @@ _GO_RULES: List[MLRule] = [
            _rx(r'http\.(?:Get|Post)\s*\(\s*(?:r\.URL|req\.|param|input|userURL)'),
            "Allowlist destination hosts before issuing the request.",
            ""),
+    # GO11 — cmd/go CVE-2023-29404: validLinkerFlags entries that accept a
+    # cgo linker flag's argument optionally instead of mandatorily, letting
+    # an attacker smuggle an unexpected flag in through what looks like the
+    # argument of a preceding flag (e.g. "-Wl,-O -Wl,-R,-bad-flag" parsed as
+    # "-O=-R -bad-flag"). Matches the 3 exact pre-fix regex literals from
+    # the real golang/go vulnerable security.go (sha 6d8af00a); the fix
+    # (sha bbeb55f5) tightens each to a mandatory, bounded argument.
+    MLRule("GO11", _GO, "HIGH", "CWE-88", "A03:2021",
+           "cgo linker-flag allowlist regex accepts an optional/unbounded argument",
+           _rx(
+               r'-Wl,-O\(\[\^@,\\-\]\[\^,\]\*\)\?'
+               r'|-Wl,-e\[=,\]\[a-zA-Z0-9\]\*(?!\+)'
+               r'|-Wl,-R\(\[\^@\\-\]\[\^,@\]\*\$\)'
+           ),
+           "Require the flag's argument explicitly (no trailing `?` on the "
+           "whole argument group) and bound the character class so the "
+           "linker cannot consume a following flag as this one's argument.",
+           "re(`-Wl,-O[0-9]+`)  // mandatory, bounded argument"),
 ]
 
 

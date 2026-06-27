@@ -5,6 +5,47 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.11.5] — 2026-06-27 — Loop pesado: GO11 fecha golang/go (CVE-2023-29404)
+
+Continuação do mesmo loop iterativo (v3.11.3 fechou curl, v3.11.4
+fechou git; esta versão fecha golang/go).
+
+### Adicionado
+- `sast/multilang_scanner.py` — **GO11** (CWE-88, HIGH): assinatura
+  literal dos 3 regexes exatos pré-fix em `validLinkerFlags`
+  (`src/cmd/go/internal/work/security.go`) que aceitavam o argumento de
+  uma flag de linker cgo como opcional/sem limite em vez de
+  obrigatório, permitindo contrabandear uma flag inesperada como se
+  fosse o argumento de uma flag anterior (`"-Wl,-O -Wl,-R,-bad-flag"`
+  interpretado como `"-O=-R -bad-flag"`) — o shape real de
+  CVE-2023-29404. Diferente de C01/C05 (cross-line, presença/ausência),
+  GO11 é uma regra de linha única porque o diff real do fix (sha
+  `bbeb55f5`) é a substituição exata desses 3 literais por versões
+  obrigatórias/limitadas — comparável a assinatura de versão vulnerável
+  em SCA, mas expressa como regra SAST de linha porque o "pacote" aqui
+  é o próprio arquivo-fonte do toolchain Go, não uma dependência
+  externa versionada.
+- `tests/test_marco_m71.py` (TAM24-TAM30) — GO11 dispara nos 3
+  literais vulneráveis exatos, silencioso nos 3 literais corrigidos
+  exatos, silencioso em código Go não relacionado.
+- `rule_count() == 50` (era 49).
+
+### Validado empiricamente
+- GO11 dispara nas 3 linhas exatas de `golang/go` sha real `6d8af00a`
+  (`security.go`, vulnerável) e fica silenciosa no sha real
+  `bbeb55f5` (fix) — fetch direto via GitHub raw content, replay via
+  `scan_multilang`.
+
+### Estado do loop (BLIND_SPOT)
+- curl: fechado (v3.11.3). git: fechado (v3.11.4).
+- golang/go: **fechado** (GO11, confirmado acima).
+- Restam: flask, etcd, rust-regex, lodash, netty (caso SCA, não SAST —
+  concluído em v3.11.2), scrapy — continuando o loop.
+
+Regressão completa: 2294 passed, 5 skipped, 0 failed.
+
+---
+
 ## [3.11.4] — 2026-06-27 — Loop pesado: C05 fecha git (CVE-2021-21300)
 
 Continuação do mesmo loop iterativo (v3.11.3 fechou curl; esta versão

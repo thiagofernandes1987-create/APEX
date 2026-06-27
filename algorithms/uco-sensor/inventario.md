@@ -31,6 +31,9 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.11.5** (Loop pesado — GO11 fecha golang/go CVE-2023-29404 (cgo
+linker-flag allowlist com argumento opcional, contrabando de flag);
+rule_count 49→50; 2294 testes verdes) ✅
 **v3.11.4** (Loop pesado — C05 fecha git CVE-2021-21300 (symlink
 TOCTOU, ausência de invalidate_lstat_cache() em check_updates());
 rule_count 48→49; 2287 testes verdes) ✅

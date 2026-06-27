@@ -157,6 +157,43 @@ def test_TAM23_c05_silent_on_prototype_declaration_only():
     assert "C05" not in _ids(src)
 
 
+# ── GO11 (golang/go CVE-2023-29404 shape) ───────────────────────────────────
+
+def test_TAM24_go11_fires_on_real_vulnerable_optional_arg_regex():
+    src = 're(`-Wl,-O([^@,\\-][^,]*)?`),\n'
+    assert "GO11" in _ids(src, ".go")
+
+
+def test_TAM25_go11_silent_on_real_fixed_mandatory_arg_regex():
+    src = "re(`-Wl,-O[0-9]+`),\n"
+    assert "GO11" not in _ids(src, ".go")
+
+
+def test_TAM26_go11_fires_on_vulnerable_e_flag_star_quantifier():
+    src = "re(`-Wl,-e[=,][a-zA-Z0-9]*`),\n"
+    assert "GO11" in _ids(src, ".go")
+
+
+def test_TAM27_go11_silent_on_fixed_e_flag_plus_quantifier():
+    src = "re(`-Wl,-e[=,][a-zA-Z0-9]+`),\n"
+    assert "GO11" not in _ids(src, ".go")
+
+
+def test_TAM28_go11_fires_on_vulnerable_r_flag_without_optional_comma():
+    src = "re(`-Wl,-R([^@\\-][^,@]*$)`),\n"
+    assert "GO11" in _ids(src, ".go")
+
+
+def test_TAM29_go11_silent_on_fixed_r_flag_with_optional_comma():
+    src = "re(`-Wl,-R,?([^@\\-,][^,@]*$)`),\n"
+    assert "GO11" not in _ids(src, ".go")
+
+
+def test_TAM30_go11_silent_on_unrelated_go_code():
+    src = "func main() {\n\tfmt.Println(\"hi\")\n}\n"
+    assert "GO11" not in _ids(src, ".go")
+
+
 # ── Dispatch / rule count ───────────────────────────────────────────────────
 
 def test_TAM18_unsupported_ext_still_empty():
@@ -164,4 +201,4 @@ def test_TAM18_unsupported_ext_still_empty():
 
 
 def test_TAM19_rule_count_reflects_c_rules():
-    assert rule_count() == 49
+    assert rule_count() == 50
