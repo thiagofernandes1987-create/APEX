@@ -31,6 +31,9 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.11.4** (Loop pesado — C05 fecha git CVE-2021-21300 (symlink
+TOCTOU, ausência de invalidate_lstat_cache() em check_updates());
+rule_count 48→49; 2287 testes verdes) ✅
 **v3.11.3** (Loop pesado — abertura de C/C++ (C01-C04), fecha curl
 CVE-2023-38545 (SOCKS5 heap overflow, shape log-and-fallthrough vs.
 return real); rule_count 44→48; 2283 testes verdes) ✅

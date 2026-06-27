@@ -1,10 +1,24 @@
 """
-Marco 71 — Sprint AI (loop pesado): abertura de C/C++ (C01-C04) para curl
-==========================================================================
+Marco 71 — loop pesado: abertura de C/C++ fecha curl (C01-C04) e git (C05)
+============================================================================
 
 Continuação do loop iterativo de fechamento de BLIND_SPOT por repositório.
-curl (CVE-2023-38545, SOCKS5 heap buffer overflow em ``lib/socks.c``) era
-um dos 9 casos sem regra SAST. C01 fecha esse caso:
+curl (CVE-2023-38545, SOCKS5 heap buffer overflow em ``lib/socks.c``) e git
+(CVE-2021-21300, symlink TOCTOU em ``unpack-trees.c``) eram 2 dos 9 casos
+sem regra SAST. C01 e C05 fecham esses casos.
+
+git/CVE-2021-21300: o bug real é a ausência de
+``invalidate_lstat_cache()`` em qualquer lugar do arquivo que define
+``check_updates()`` — a função vulnerável (sha real ``0d58fef5``) confia
+em um lstat cache potencialmente obsoleto ao decidir o que escrever no
+worktree, permitindo uma corrida de troca de symlink entre o preenchimento
+do cache e a escrita real. O fix (sha real ``22539ec3``) adiciona uma
+única chamada ``invalidate_lstat_cache();`` no topo de ``check_updates()``.
+Mesmo padrão whole-file presence/absence de CS06. Validado contra o
+``unpack-trees.c`` real nos dois SHAs: dispara na versão vulnerável,
+silencioso na corrigida.
+
+curl/CVE-2023-38545 — detalhes abaixo (regra C01):
 
 - O bug real não é a presença de uma chamada perigosa isolada, é a
   *ausência* de um ``return``/abort logo após o guard
@@ -103,6 +117,46 @@ def test_TAM17_c_silent_on_safe_code():
     assert _ids(src) == []
 
 
+# ── C05 (git CVE-2021-21300 shape) ──────────────────────────────────────────
+
+def test_TAM20_c05_fires_when_check_updates_never_invalidates_cache():
+    src = (
+        "static int check_updates(struct unpack_trees_options *o)\n"
+        "{\n"
+        "    int ret;\n"
+        "    struct progress *progress;\n"
+        "    progress = get_progress(o);\n"
+        "    if (o->update)\n"
+        "        git_attr_set_direction(GIT_ATTR_CHECKOUT, index);\n"
+        "    return ret;\n"
+        "}\n"
+    )
+    assert "C05" in _ids(src)
+
+
+def test_TAM21_c05_silent_when_cache_invalidated_anywhere_in_file():
+    src = (
+        "static int check_updates(struct unpack_trees_options *o)\n"
+        "{\n"
+        "    invalidate_lstat_cache();\n"
+        "    if (o->update)\n"
+        "        git_attr_set_direction(GIT_ATTR_CHECKOUT, index);\n"
+        "    return 0;\n"
+        "}\n"
+    )
+    assert "C05" not in _ids(src)
+
+
+def test_TAM22_c05_silent_without_check_updates_definition():
+    src = "static int some_other_fn(struct unpack_trees_options *o)\n{\n    return 0;\n}\n"
+    assert "C05" not in _ids(src)
+
+
+def test_TAM23_c05_silent_on_prototype_declaration_only():
+    src = "static int check_updates(struct unpack_trees_options *o);\n"
+    assert "C05" not in _ids(src)
+
+
 # ── Dispatch / rule count ───────────────────────────────────────────────────
 
 def test_TAM18_unsupported_ext_still_empty():
@@ -110,4 +164,4 @@ def test_TAM18_unsupported_ext_still_empty():
 
 
 def test_TAM19_rule_count_reflects_c_rules():
-    assert rule_count() == 48
+    assert rule_count() == 49

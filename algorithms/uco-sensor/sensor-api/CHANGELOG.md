@@ -5,6 +5,41 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.11.4] — 2026-06-27 — Loop pesado: C05 fecha git (CVE-2021-21300)
+
+Continuação do mesmo loop iterativo (v3.11.3 fechou curl; esta versão
+fecha git).
+
+### Adicionado
+- `sast/multilang_scanner.py` — **C05** (CWE-367, HIGH): mesma técnica
+  whole-file presence/absence de CS06. Dispara quando o arquivo define
+  `check_updates()` mas **nunca** chama `invalidate_lstat_cache()` em
+  lugar nenhum do arquivo — o shape real de CVE-2021-21300 (git,
+  symlink TOCTOU durante checkout em `unpack-trees.c`): o
+  `check_updates()` vulnerável confia em um lstat cache potencialmente
+  obsoleto ao decidir o que escrever no worktree; o fix adiciona uma
+  única chamada `invalidate_lstat_cache()` no topo da função.
+- `tests/test_marco_m71.py` (TAM20-TAM23) — C05 dispara no shape
+  vulnerável, silencioso quando o cache é invalidado em qualquer lugar
+  do arquivo, silencioso sem a definição de `check_updates()`, e
+  silencioso em declarações de protótipo (`;` em vez de corpo).
+- `rule_count() == 49` (era 48).
+
+### Validado empiricamente
+- C05 dispara em `git/git` sha real `0d58fef5` (`unpack-trees.c`,
+  vulnerável) e fica silenciosa no sha real `22539ec3` (fix) — fetch
+  direto via GitHub raw content, replay via `scan_multilang`.
+
+### Estado do loop (BLIND_SPOT)
+- curl: fechado (v3.11.3).
+- git: **fechado** (C05, confirmado acima).
+- Restam: flask, golang/go, etcd, rust-regex, lodash, netty (caso SCA,
+  não SAST — concluído em v3.11.2), scrapy — continuando o loop.
+
+Regressão completa: 2287 passed, 5 skipped, 0 failed.
+
+---
+
 ## [3.11.3] — 2026-06-27 — Loop pesado: abertura de C/C++ (C01-C04) fecha curl (CVE-2023-38545)
 
 Continuação do loop iterativo de fechamento de BLIND_SPOT por

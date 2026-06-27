@@ -165,7 +165,7 @@ confiança em todos os 21 casos.
 | 18 | AH | `laravel/framework` | PHP | GHSA-crmm-hgp2-wgrp | `071ac5c3` / 2026-05-14 | `cba82e4e` / 2026-05-15 | **SIGNAL** (PHP05 re-alvejada ao argumento `'path' => $var` sem `rawurlencode`, dispara antes, silencia depois) |
 | 19 | AE | `rails/rails` | Ruby | CVE-2024-26143 | `723f5456` / 2023-08-03 | `4c83b331` / 2024-01-05 | **SIGNAL** |
 | 20 | AH | `dotnet/runtime` | C# | CVE-2026-45491 | `b06f62fc` / 2026-04-29 | `8c91e3b2` / 2026-05-06 | **SIGNAL** (nova regra CS06, cross-line: null-check sem `FilePathEscapesDirectory` em todo o arquivo, dispara antes, silencia depois) |
-| 21 | AE | `git/git` | C | CVE-2021-21300 | `0d58fef5` / 2021-02-02 | `22539ec3` / 2021-02-02 | BLIND_SPOT |
+| 21 | AI (loop pesado, v3.11.4) | `git/git` | C | CVE-2021-21300 | `0d58fef5` / 2021-02-02 | `22539ec3` / 2021-02-02 | **SIGNAL** (nova regra C05, cross-line: `check_updates()` definida sem `invalidate_lstat_cache()` em lugar nenhum do arquivo, dispara antes, silencia depois) |
 
 ## Leitura agregada (21/21 casos)
 

@@ -167,8 +167,8 @@ class TestEngineIntegration(unittest.TestCase):
 
     def test_TG29_rule_inventory_and_dispatch(self):
         """TG29: 48 rules total; unsupported ext → empty; rating reflects worst sev."""
-        self.assertEqual(rule_count(), 48)
-        self.assertEqual(len(_ALL_RULES), 48)
+        self.assertEqual(rule_count(), 49)
+        self.assertEqual(len(_ALL_RULES), 49)
         # Unsupported extension returns an empty, error-free result
         empty = scan_multilang("x = 1", ".py")
         self.assertEqual(empty.findings, [])

@@ -506,7 +506,26 @@ _C_RULES: List[MLRule] = [
            "Avoid building shell commands from untrusted input; use exec*() "
            "with an argument array instead of a shell string.",
            "execvp(\"cmd\", argv);  // no shell involved"),
+    MLRule("C05", _C, "HIGH", "CWE-367", "A04:2021",
+           "check_updates() with no lstat-cache invalidation before checkout (TOCTOU)",
+           _rx(r'(?!)'),  # never matches directly; detection is whole-file (see below)
+           "Invalidate the lstat cache immediately before the checkout loop so "
+           "checkout decisions cannot rely on stale filesystem state.",
+           "invalidate_lstat_cache();  /* before the checkout/update loop */"),
 ]
+
+# C05 (git CVE-2021-21300, symlink TOCTOU during checkout): the vulnerable
+# `check_updates()` (unpack-trees.c, sha 0d58fef5) relies on a possibly-stale
+# lstat cache while deciding what to write to the worktree, letting an
+# attacker race a symlink swap (e.g. via a crafted .gitattributes/filter
+# combo) between the cache fill and the actual write. The fix (sha
+# 22539ec3) adds a single `invalidate_lstat_cache();` call at the top of
+# `check_updates()`, forcing every check in that pass to re-stat. No
+# single line is "bad" — the bug is the *absence* of that call anywhere in
+# a file that defines `check_updates()`. Same whole-file presence/absence
+# shape as CS06.
+
+C05 = _C_RULES[-1]
 
 _C_SOCKS_LEN_GUARD = re.compile(r'hostname_len\s*>\s*255\b')
 _C_SOCKS_LEN_GUARD_RETURN = re.compile(
@@ -532,6 +551,26 @@ def _scan_c_socks_overflow(source: str) -> List[Tuple[int, int]]:
     for lineno, raw in TreeSitterBridge.iter_lines(source):
         line = _strip_line_comment(raw)
         m = _C_SOCKS_DANGEROUS_MEMCPY.search(line)
+        if m:
+            hits.append((lineno, m.start()))
+    return hits
+
+
+_C_CHECK_UPDATES_DEF = re.compile(r'\bcheck_updates\s*\([^)]*\)\s*\{?\s*$')
+_C_INVALIDATE_LSTAT_CACHE_CALL = re.compile(r'\binvalidate_lstat_cache\s*\(')
+
+
+def _scan_c_stale_lstat_cache(source: str) -> List[Tuple[int, int]]:
+    """C05: a file that defines `check_updates()` (the worktree-checkout
+    decision pass) but never calls `invalidate_lstat_cache()` anywhere in
+    the file is the CVE-2021-21300 shape — checkout decisions can rely on
+    a stale lstat cache, enabling a symlink-swap TOCTOU race."""
+    if _C_INVALIDATE_LSTAT_CACHE_CALL.search(source):
+        return []
+    hits: List[Tuple[int, int]] = []
+    for lineno, raw in TreeSitterBridge.iter_lines(source):
+        line = _strip_line_comment(raw)
+        m = _C_CHECK_UPDATES_DEF.search(line)
         if m:
             hits.append((lineno, m.start()))
     return hits
@@ -694,6 +733,29 @@ def scan_multilang(source: str, file_extension: str = "") -> SASTResult:
                 remediation=C01.remediation,
                 debt_minutes=_DEBT.get(C01.severity, 20),
                 suggested_fix=C01.suggested_fix,
+                confidence=0.6,   # whole-file presence/absence heuristic
+                explanation="",
+            ))
+        for lineno, col in _scan_c_stale_lstat_cache(source):
+            key = ("C05", lineno)
+            if key in seen:
+                continue
+            seen.add(key)
+            snippet = lines[lineno - 1].strip()[:200] if 0 < lineno <= len(lines) else ""
+            findings.append(SASTFinding(
+                rule_id="C05",
+                severity=C05.severity,
+                cwe_id=C05.cwe_id,
+                owasp=C05.owasp,
+                title=C05.title,
+                description="check_updates() defined here but invalidate_lstat_cache() "
+                            "is never called anywhere in this file",
+                line=lineno,
+                col=col,
+                code_snippet=snippet,
+                remediation=C05.remediation,
+                debt_minutes=_DEBT.get(C05.severity, 20),
+                suggested_fix=C05.suggested_fix,
                 confidence=0.6,   # whole-file presence/absence heuristic
                 explanation="",
             ))
