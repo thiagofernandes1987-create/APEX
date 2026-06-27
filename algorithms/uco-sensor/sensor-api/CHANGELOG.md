@@ -5,6 +5,43 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.11.1] — 2026-06-27 — Sprint AH: refina PHP05 (discrimina o CVE real) + CS06 (TarEntry symlink-escape)
+
+Continuação direta da Sprint AG: dois agentes investigaram os fixes
+reais de Laravel CVE-2026-48041 e dotnet/runtime CVE-2026-45491 e
+encontraram, em ambos, um diff estrutural local genuinamente
+ancorável — diferente da hipótese original que motivou PHP05/CS05.
+
+### Corrigido — `PHP05` agora discrimina CVE-2026-48041
+
+O fix real do Laravel (sha `071ac5c3` → `cba82e4e`,
+`LocalFilesystemAdapter.php`) está isolado ao argumento ``'path' =>
+$var`` do array passado a `temporarySignedRoute()`/`signedRoute()` —
+a chamada em si nunca muda. Regex re-alvejada de "a chamada existe"
+para "a entrada `['path' => $var]` não está envolta em
+`rawurlencode()`/`urlencode()`". Validado: dispara no vulnerável,
+silencia no corrigido.
+
+### Adicionado — `CS06`: "Tar Entry Extraction Resolves Destination Without Symlink-Escape Validation" (CWE-59, A05:2021, HIGH)
+
+`CS05` permanece como triagem genérica (chamada à API pública
+`ExtractToDirectory`/`ExtractToFile`), mantida sem alteração. O bug
+real de CVE-2026-45491 (GHSA-7q4v-2mr6-5gpx) está no helper interno
+`TarEntry.ExtractRelativeToDirectoryAsync`: o fix (sha `b06f62fc` →
+`8c91e3b2`) adiciona uma chamada a `FilePathEscapesDirectory()` ao
+lado dos null-checks pré-existentes no path de destino/link
+resolvido. `CS06` é a segunda regra cross-line do codebase (depois de
+`RS01`): dispara quando o file inteiro tem o null-check característico
+mas nenhuma chamada a `FilePathEscapesDirectory()` em lugar nenhum.
+Validado contra `TarEntry.cs` real: dispara no vulnerável, silencia no
+corrigido.
+
+### Testes
+
+10 novos testes em `tests/test_marco_m69.py` (TAL01-TAL10). Suite
+completa: 2265 passed, 5 skipped, 0 regressões. Total de regras SAST
+multi-linguagem: 44.
+
 ## [3.11.0] — 2026-06-27 — Sprint AG: investigação paralela 6-way + JS11/JV11/RS01 + abre PHP/C#/Rust
 
 Resultado de 6 agentes investigando em paralelo os 11 blind spots

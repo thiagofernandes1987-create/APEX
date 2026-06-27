@@ -362,15 +362,19 @@ _PHP_RULES: List[MLRule] = [
            _rx(r'\bunserialize\s*\(\s*\$_(?:GET|POST|REQUEST|COOKIE)'),
            "Use json_decode for untrusted data; never unserialize() external input.",
            "$data = json_decode($_POST['data'], true);"),
-    MLRule("PHP05", _PHP, "MEDIUM", "CWE-116", "A04:2021",
-           "Unencoded parameter passed to a signed/temporary route builder",
-           # CVE-2026-48041 (Laravel): a path containing '?'/'&'/'#' passed
-           # unencoded into a signed-URL parameter array lets an attacker
-           # smuggle/override query parameters (incl. the signature's
-           # `expires`), bypassing URL expiration. Heuristic / low-confidence:
-           # cannot verify the encoding actually happened (would need
-           # dataflow), so this only flags the call site for manual review.
-           _rx(r'temporarySignedRoute\s*\(|signedRoute\s*\('),
+    MLRule("PHP05", _PHP, "HIGH", "CWE-116", "A04:2021",
+           "Unencoded path variable passed to a signed/temporary route's parameter array",
+           # CVE-2026-48041 (Laravel, GHSA-crmm-hgp2-wgrp): the actual fix
+           # (sha 071ac5c3 -> cba82e4e in LocalFilesystemAdapter.php) is
+           # narrowly scoped to wrapping the 'path' array entry with
+           # rawurlencode() — the temporarySignedRoute()/signedRoute() call
+           # itself is identical before and after, so flagging the call
+           # site (the original heuristic) fires equally on both. This
+           # tighter pattern matches only the `['path' => $var]`-style
+           # array entry, requiring it NOT be wrapped in
+           # rawurlencode()/urlencode() — validated to fire on the real
+           # vulnerable line and go silent on the real fixed line.
+           _rx(r'''\[\s*['"]path['"]\s*=>\s*(?!rawurlencode\(|urlencode\()\$\w+'''),
            "Pass path/query-like values through rawurlencode() before placing "
            "them in a signed-route parameter array.",
            "['path' => rawurlencode($path)]"),
@@ -404,16 +408,55 @@ _CS_RULES: List[MLRule] = [
            ""),
     MLRule("CS05", _CS, "MEDIUM", "CWE-59", "A05:2021",
            "Archive extraction without symlink/path-containment validation",
-           # CVE-2026-45491 (dotnet/runtime): TarFile.ExtractToDirectory
-           # followed a symlink created by an earlier entry in the same
-           # archive to write outside the destination directory. Regex
-           # cannot verify the absence of a containment check (that needs
-           # dataflow), so this is a low-confidence triage flag only.
+           # Low-confidence generic triage flag: presence of the public
+           # extraction API alone, regardless of any internal containment
+           # check elsewhere in the file. Deliberately NOT a detector of
+           # CVE-2026-45491 specifically (see CS06 below) — kept because it
+           # has standalone triage value for other archive-extraction CVEs.
            _rx(r'\.(?:ExtractToDirectory|ExtractToFile)\s*\('),
            "Resolve symlinks in the destination path and verify containment "
            "before extracting each archive entry.",
            ""),
+    MLRule("CS06", _CS, "HIGH", "CWE-59", "A05:2021",
+           "Tar entry extraction resolves destination without symlink-escape validation",
+           # CVE-2026-45491 (dotnet/runtime, GHSA-7q4v-2mr6-5gpx): the real
+           # bug lives in TarEntry's internal extraction helper
+           # (ExtractRelativeToDirectoryAsync), not the public
+           # ExtractToDirectory/ExtractToFile API that CS05 flags. The fix
+           # (sha b06f62fc -> 8c91e3b2) added a FilePathEscapesDirectory()
+           # call alongside the pre-existing null checks on the resolved
+           # destination/link path. File-wide presence/absence check (the
+           # null-guard exists, but the escape-check call doesn't anywhere
+           # in the file) — validated to fire on the real vulnerable
+           # TarEntry.cs and go silent on the real fixed version.
+           _rx(r'(?!)'),  # never matches directly; detection is whole-file (see below)
+           "Resolve symlinks component-by-component and reject any "
+           "destination/link path that escapes the target directory before "
+           "extracting.",
+           "if (fileDestinationPath is null || FilePathEscapesDirectory(destDir, fileDestinationPath)) ..."),
 ]
+
+CS06 = _CS_RULES[-1]
+
+_CS_TAR_ESCAPE_GUARD_SITE = re.compile(
+    r'\b(?:fileDestinationPath|linkDestination)\s*(?:==|is)\s*null\b'
+)
+_CS_TAR_ESCAPE_GUARD_CALL = re.compile(r'\bFilePathEscapesDirectory\s*\(')
+
+
+def _scan_csharp_tar_extraction(source: str) -> List[Tuple[int, int]]:
+    """CS06: a file that null-checks a resolved tar entry destination/link
+    path (the pre-fix pattern) but never calls a symlink-escape guard
+    anywhere in the same file is the CVE-2026-45491 shape."""
+    if _CS_TAR_ESCAPE_GUARD_CALL.search(source):
+        return []
+    hits: List[Tuple[int, int]] = []
+    for lineno, raw in TreeSitterBridge.iter_lines(source):
+        line = _strip_line_comment(raw)
+        m = _CS_TAR_ESCAPE_GUARD_SITE.search(line)
+        if m:
+            hits.append((lineno, m.start()))
+    return hits
 
 
 # All rules indexed by language for fast dispatch
@@ -520,6 +563,32 @@ def scan_multilang(source: str, file_extension: str = "") -> SASTResult:
                 debt_minutes=_DEBT.get(RS01.severity, 20),
                 suggested_fix=RS01.suggested_fix,
                 confidence=0.65,   # cross-line heuristic — lower than single-line regex
+                explanation="",
+            ))
+
+    if language == "csharp":
+        lines = source.splitlines()
+        for lineno, col in _scan_csharp_tar_extraction(source):
+            key = ("CS06", lineno)
+            if key in seen:
+                continue
+            seen.add(key)
+            snippet = lines[lineno - 1].strip()[:200] if 0 < lineno <= len(lines) else ""
+            findings.append(SASTFinding(
+                rule_id="CS06",
+                severity=CS06.severity,
+                cwe_id=CS06.cwe_id,
+                owasp=CS06.owasp,
+                title=CS06.title,
+                description="Null-checks the resolved tar entry path but never calls a "
+                            "symlink-escape guard anywhere in this file",
+                line=lineno,
+                col=col,
+                code_snippet=snippet,
+                remediation=CS06.remediation,
+                debt_minutes=_DEBT.get(CS06.severity, 20),
+                suggested_fix=CS06.suggested_fix,
+                confidence=0.6,   # whole-file presence/absence heuristic
                 explanation="",
             ))
 

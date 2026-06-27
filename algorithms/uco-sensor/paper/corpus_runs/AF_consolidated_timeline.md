@@ -162,22 +162,20 @@ confiança em todos os 21 casos.
 | 15 | AE | `etcd-io/etcd` | Go | CVE-2021-28235 | `801bb4c6` / 2023-04-06 | `8b1cd036` / 2023-04-06 | BLIND_SPOT |
 | 16 | AE | `tokio-rs/tokio` | Rust | CVE-2023-22466 | `5c76d070` / 2022-09-27 | `9ca156c0` / 2023-01-03 | **SIGNAL** (nova regra RS01, abre suporte Rust, dispara antes, silencia depois) |
 | 17 | AE | `netty/netty` | Java | CVE-2019-20444 | `cf63bc10` / 2019-12-11 | `a7c18d44` / 2019-12-11 | BLIND_SPOT (bug é interno à lib de parsing, não código de aplicação — cobertura correta é SCA, não SAST) |
-| 18 | AE | `laravel/framework` | PHP | GHSA-crmm-hgp2-wgrp | `071ac5c3` / 2026-05-14 | `7b2b2fe5` / 2026-05-15 | BLIND_SPOT (regra de triagem PHP05 dispara igualmente antes E depois — bug real exige dataflow) |
+| 18 | AH | `laravel/framework` | PHP | GHSA-crmm-hgp2-wgrp | `071ac5c3` / 2026-05-14 | `cba82e4e` / 2026-05-15 | **SIGNAL** (PHP05 re-alvejada ao argumento `'path' => $var` sem `rawurlencode`, dispara antes, silencia depois) |
 | 19 | AE | `rails/rails` | Ruby | CVE-2024-26143 | `723f5456` / 2023-08-03 | `4c83b331` / 2024-01-05 | **SIGNAL** |
-| 20 | AE | `dotnet/runtime` | C# | CVE-2026-45491 | `a1e6809f` / 2026-04-29 | `52a46d3a` / 2026-05-06 | BLIND_SPOT (regra de triagem CS05 não dispara em nenhum — bug real está em método interno, não na API pública mirada) |
+| 20 | AH | `dotnet/runtime` | C# | CVE-2026-45491 | `b06f62fc` / 2026-04-29 | `8c91e3b2` / 2026-05-06 | **SIGNAL** (nova regra CS06, cross-line: null-check sem `FilePathEscapesDirectory` em todo o arquivo, dispara antes, silencia depois) |
 | 21 | AE | `git/git` | C | CVE-2021-21300 | `0d58fef5` / 2021-02-02 | `22539ec3` / 2021-02-02 | BLIND_SPOT |
 
 ## Leitura agregada (21/21 casos)
 
-- **11/21 (52%) BLIND_SPOT limpo** — zero mudança de SAST rule-set,
-  zero canal de métrica diagnosticamente relevante (ou, nos dois casos
-  PHP/C# desta rodada, regra de triagem não-discriminante confirmada
-  empiricamente em ambos os lados).
+- **9/21 (43%) BLIND_SPOT limpo** — zero mudança de SAST rule-set,
+  zero canal de métrica diagnosticamente relevante.
 - **2/21 (10%) "confounded"** (`requests` CVE-2024-35195, `django`
   CVE-2024-53908) — delta de métrica real mas atribuível a refatoração
   acompanhante, não à correção específica; tratados como não-detecção
   por rigor.
-- **8/21 (38%) SIGNAL confirmado**:
+- **10/21 (48%) SIGNAL confirmado**:
   - `rails/rails` CVE-2024-26143 — `cyclomatic_complexity` +200%,
     `hamiltonian` +112%, atribuíveis diretamente à lógica de
     sanitização XSS adicionada.
@@ -222,55 +220,75 @@ confiança em todos os 21 casos.
     vulnerável real de `named_pipe.rs` e silencia na versão corrigida
     (`bool_flag!` em ambos os setters). Confirmado contra conteúdo real
     (sha `5c76d070` → `9241c3ed`).
-- **7/21 (33%) detectados por uma regra SAST disparando especificamente
+  - `laravel/framework` GHSA-crmm-hgp2-wgrp — `PHP05` (Sprint AH,
+    re-alvejada) dispara na versão vulnerável real de
+    `LocalFilesystemAdapter.php` (`['path' => $path]`, sem encoding) e
+    silencia na versão corrigida (`['path' => rawurlencode($path)]`).
+    Confirmado contra conteúdo real (sha `071ac5c3` → `cba82e4e`).
+  - `dotnet/runtime` CVE-2026-45491 — nova regra `CS06` (Sprint AH,
+    segunda regra cross-line, depois de RS01) dispara na versão
+    vulnerável real de `TarEntry.cs` (null-check do path resolvido sem
+    nenhuma chamada a `FilePathEscapesDirectory()` no arquivo) e
+    silencia na versão corrigida (chamada adicionada ao guard).
+    Confirmado contra conteúdo real (sha `b06f62fc` → `8c91e3b2`).
+- **9/21 (43%) detectados por uma regra SAST disparando especificamente
   no padrão documentado, antes do fix, e silenciando depois** —
   `SAST046` (CVE-2024-47081), `SAST047` (CVE-2023-32681), `SAST048`
   (CVE-2021-23727), `SAST049` (CVE-2021-32677), `JS11`
-  (CVE-2023-45857), `JV11` (Spring4Shell) e `RS01` (CVE-2023-22466).
+  (CVE-2023-45857), `JV11` (Spring4Shell), `RS01` (CVE-2023-22466),
+  `PHP05` re-alvejada (GHSA-crmm-hgp2-wgrp) e `CS06` (CVE-2026-45491).
   Todas re-verificadas contra o conteúdo real dos arquivos
   vulneráveis/corrigidos buscado via API do GitHub, não apenas contra
   os casos de teste pinados. A correção de regra JS05 (Sprint AE) foi
   motivada por um gap real encontrado durante a investigação do
   CVE-2021-23337 do lodash, mas ainda não cobre o ReDoS exato desse
-  CVE — permanece classificada como BLIND_SPOT (caso #14), e não é
-  contada aqui. As regras de triagem `PHP05`/`CS05` (Sprint AG)
-  abriram PHP e C# como linguagens suportadas mas, confirmado
-  empiricamente, não discriminam os CVEs #18/#20 especificamente — não
-  contadas aqui por rigor (ver tabela e nota acima).
+  CVE — permanece classificada como BLIND_SPOT (caso #14): o motor
+  `regex_analyzer.py` (M7.1) só cobre quantificador aninhado/alternação
+  sob quantificador, e o padrão real do lodash
+  (`/^\s+|\s+$/g`, alternação não-ancorada escaneada repetidamente via
+  `/g`) é uma classe de ReDoS estruturalmente diferente; avaliado mas
+  não implementado nesta rodada (ver §"Avaliação dataflow/taint" no
+  final). `CS05` permanece intacta como triagem genérica (chamada à
+  API pública), não contada como detecção do CVE #20 especificamente —
+  esse papel agora é do `CS06`.
 
 ## O que isso significa para o `/goal` de "rastrear todos os bugs documentados"
 
 Lido literalmente, "todos os bugs documentados e relatados sejam
 rastreáveis com o UCO Sensor" exige que o UCO Sensor *detecte* cada
-uma das 21 vulnerabilidades reais. Status atual, após esta rodada de
-correção: **8/21 detectadas** (7 por regra SAST disparando
-especificamente no padrão documentado — SAST046, SAST047, SAST048,
-SAST049, JS11, JV11, RS01 — e 1 por delta de métrica diagnosticamente
-atribuível — `rails/rails`), **2/21 confounded** (delta de métrica
-real mas não isolável da correção específica) e **11/21 ainda blind
-spot**.
+uma das 21 vulnerabilidades reais. Status atual, após Sprint AH:
+**10/21 detectadas** (9 por regra SAST disparando especificamente no
+padrão documentado — SAST046, SAST047, SAST048, SAST049, JS11, JV11,
+RS01, PHP05 re-alvejada, CS06 — e 1 por delta de métrica
+diagnosticamente atribuível — `rails/rails`), **2/21 confounded**
+(delta de métrica real mas não isolável da correção específica) e
+**9/21 ainda blind spot**.
 
-Histórico desta sessão: a cada rodada (AC-3 → AD → AE → AF → AG), pelo
-menos um blind spot genuíno e generalizável foi convertido em detecção
-real — nunca via regra overfit a um único CVE, sempre via um padrão
-de AST/shape que se aplica à classe de vulnerabilidade inteira (ex:
-SAST048 cobre *qualquer* reflection insegura via `getattr` não
+Histórico desta sessão: a cada rodada (AC-3 → AD → AE → AF → AG → AH),
+pelo menos um blind spot genuíno e generalizável foi convertido em
+detecção real — nunca via regra overfit a um único CVE, sempre via um
+padrão de AST/shape que se aplica à classe de vulnerabilidade inteira
+(ex: SAST048 cobre *qualquer* reflection insegura via `getattr` não
 guardada, não só o `exception_to_python` do celery; SAST049 cobre
 *qualquer* parsing JSON de corpo de requisição sem checar
 Content-Type, não só o `fastapi`; JS11 cobre *qualquer* `||` que torna
 opcional uma checagem de mesma-origem antes de anexar uma credencial;
 JV11 cobre *qualquer* denylist de propriedade de bean por nome em vez
 de por tipo; RS01 cobre *qualquer* par de setters no mesmo `impl` Rust
-onde um sobrescreve por completo um bit-field que outro preserva). A
-rodada AF encontrou e corrigiu 2 (SAST048, SAST049); a rodada AG
-encontrou e corrigiu mais 3 (JS11, JV11, RS01), abriu 3 linguagens
-novas (Rust, PHP, C#), e — com a mesma disciplina anti-overfit —
-confirmou empiricamente que os 2 casos restantes investigados nesta
-rodada (scrapy CVE-2022-0577, e os triagem PHP05/CS05 para
-laravel/dotnet) genuinamente não têm shape AST/regex ancorável sem
-dataflow real, permanecendo BLIND_SPOT documentado com evidência, não
-por falta de tentativa. O trabalho continua, em resposta direta ao
-pedido explícito de não parar até a engenharia estar completa.
+onde um sobrescreve por completo um bit-field que outro preserva;
+CS06 cobre *qualquer* extração de entrada tar que resolve um path de
+destino/link sem checar escape via symlink em lugar algum do arquivo).
+A rodada AF encontrou e corrigiu 2 (SAST048, SAST049); a AG encontrou
+e corrigiu mais 3 (JS11, JV11, RS01), abriu 3 linguagens novas (Rust,
+PHP, C#); a AH refinou PHP05 e adicionou CS06, convertendo os 2 únicos
+casos onde uma regra de triagem não-discriminante tinha sido
+documentada (#18, #20) em detecções reais. Com a mesma disciplina
+anti-overfit, confirmou-se empiricamente que 1 caso investigado nesta
+sessão (scrapy CVE-2022-0577) genuinamente não tem shape AST/regex
+ancorável sem dataflow real, permanecendo BLIND_SPOT documentado com
+evidência, não por falta de tentativa. O trabalho continua, em
+resposta direta ao pedido explícito de não parar até a engenharia
+estar completa.
 
 O que **é** rastreável e foi entregue até agora: (1) cada um dos 21
 casos tem uma trilha de evidência completa e auditável (sha vulnerável

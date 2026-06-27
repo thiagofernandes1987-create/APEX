@@ -31,6 +31,8 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.11.1** (Sprint AH — PHP05 refinada para discriminar CVE-2026-48041
++ CS06 (TarEntry symlink-escape, CVE-2026-45491); 2265 testes verdes) ✅
 **v3.11.0** (Sprint AG — investigação paralela 6-way + 3 regras novas
 (JS11/JV11/RS01) + abertura de PHP/C#/Rust ao SAST; 2255 testes verdes) ✅
 **v3.10.4** (Sprint AF correção — SAST048 (CWE-470 unsafe reflection) +
@@ -872,6 +874,54 @@ alcançável e enquadrava cobertura adicional como "decisão de escopo do
 usuário". O hook de `/goal` rejeitou essa framing explicitamente,
 classificando-a como "uma decisão consciente do agente de parar de
 tentar, não porque a condição foi atingida".
+
+## Sprint AH — refina PHP05 (discrimina CVE real) + CS06 TarEntry (concluído)
+
+Continuação direta da AG, em resposta ao Stop hook recusando "11/21
+ainda blind spot" como condição satisfeita. Disparei 2 agentes para
+re-investigar especificamente os fixes reais de `laravel` e `dotnet` —
+os dois únicos casos onde já havia uma regra de triagem (PHP05/CS05)
+que tinha sido honestamente documentada como não-discriminante.
+
+- **`PHP05` corrigida**: o fix real do Laravel CVE-2026-48041 (sha
+  `071ac5c3` → `cba82e4e`, `LocalFilesystemAdapter.php`) está isolado
+  ao argumento `'path' => $var` — nunca à chamada
+  `temporarySignedRoute()` em si. Regex re-alvejada para exigir
+  `['path' => $var]` SEM `rawurlencode()`/`urlencode()` envolvendo a
+  variável. Validado empiricamente: dispara no vulnerável, silencia no
+  corrigido. `laravel` reclassificado de BLIND_SPOT para SIGNAL.
+- **`CS06` (nova)**: o bug real de CVE-2026-45491 está no helper
+  interno `TarEntry.ExtractRelativeToDirectoryAsync`, não na API
+  pública que `CS05` cobre (mantida, inalterada, como triagem
+  genérica). O fix real (sha `b06f62fc` → `8c91e3b2`,
+  `TarEntry.cs`) adiciona `FilePathEscapesDirectory()` ao lado dos
+  null-checks pré-existentes no path resolvido. `CS06` é a segunda
+  regra cross-line do codebase (depois de `RS01`): dispara quando o
+  null-check característico existe em algum lugar do arquivo, mas
+  nenhuma chamada a `FilePathEscapesDirectory()` aparece em lugar
+  nenhum. Validado: dispara no vulnerável, silencia no corrigido.
+  `dotnet/runtime` reclassificado de BLIND_SPOT para SIGNAL.
+
+10 novos testes em `tests/test_marco_m69.py` (TAL01-TAL10). Suite
+completa: **2265 passed, 5 skipped, 0 regressões**. Total de regras
+SAST multi-linguagem: 44.
+
+**Resultado agregado corrigido (21/21)**: 9/21 (43%) BLIND_SPOT
+limpo, 2/21 (10%) confounded, **10/21 (48%) SIGNAL confirmado**.
+**9/21 detectados por uma regra SAST disparando especificamente no
+padrão da vulnerabilidade documentada** (SAST046/047/048/049 +
+JS11/JV11/RS01/PHP05/CS06).
+
+**Próximo passo concreto**: dos 9 blind spots restantes (flask,
+golang/go, curl, etcd, rust-regex/ReDoS, lodash/ReDoS [investigado:
+shape estrutural existe — `^\s+|\s+$` global, alternação não
+ancorada, mas o motor `regex_analyzer.py` atual só cobre quantificador
+aninhado/alternação-sob-quantificador, não esse caso; extensão do
+motor avaliada e não implementada nesta rodada — ver nota abaixo],
+netty [SCA, fora de escopo SAST], scrapy, git), o usuário pediu para
+avaliar a construção de um motor de dataflow/taint-tracking real e/ou
+um híbrido UCO-Sensor + UCO v4 (propagação de ondas / HMC) para
+netty — avaliação em andamento, ver resposta dedicada na sessão.
 
 ## Sprint AG — investigação paralela 6-way + JS11/JV11/RS01 + abre PHP/C#/Rust (concluído)
 
