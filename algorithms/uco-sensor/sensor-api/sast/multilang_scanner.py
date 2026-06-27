@@ -296,7 +296,57 @@ _GO_RULES: List[MLRule] = [
            "whole argument group) and bound the character class so the "
            "linker cannot consume a following flag as this one's argument.",
            "re(`-Wl,-O[0-9]+`)  // mandatory, bounded argument"),
+    MLRule("GO12", _GO, "HIGH", "CWE-316", "A04:2021",
+           "Authenticate() checks r.Password but never clears it from the request",
+           _rx(r'(?!)'),  # never matches directly; detection is function-scoped (see below)
+           "Clear the plaintext password from the request as soon as it has "
+           "been checked, on every exit path (e.g. via a `defer` right after "
+           "entering the function) — not just on specific success branches.",
+           'defer func() { if r != nil { r.Password = "" } }()'),
 ]
+
+GO12 = _GO_RULES[-1]
+
+# GO12 — etcd CVE-2021-28235: `EtcdServer.Authenticate()` (sha 801bb4c6)
+# calls `CheckPassword(r.Name, r.Password)` but never clears `r.Password`
+# anywhere within its own function body, so the plaintext password
+# lingers in memory/can be echoed by panics or instrumentation after the
+# check. The fix (sha 8b1cd036) adds an unconditional
+# `defer func() { r.Password = "" }()` right after entering the function,
+# guaranteeing the clear on every exit path. Function-scoped
+# presence/absence (narrower than CS06/C05's whole-file scope): the
+# `r.Password = ""` assignments that already exist elsewhere in the same
+# file (in unrelated functions like `UserAdd`/`UserChangePassword`) must
+# not suppress this finding, so the check is limited to the `Authenticate`
+# function's own body span.
+
+_GO_AUTH_FUNC_START = re.compile(r'^func\s+\([^)]*\)\s*Authenticate\s*\(')
+_GO_TOP_LEVEL_FUNC = re.compile(r'^func\s')
+_GO_PASSWORD_CHECK_CALL = re.compile(r'CheckPassword\([^)]*\.Password\)')
+_GO_PASSWORD_CLEAR = re.compile(r'\.Password\s*=\s*""')
+
+
+def _scan_go_password_retention(source: str) -> List[Tuple[int, int]]:
+    """GO12: an `Authenticate()` function body that checks `r.Password`
+    via `CheckPassword(...)` but never assigns `.Password = ""` anywhere
+    in its own body is the CVE-2021-28235 shape."""
+    lines = source.splitlines()
+    n = len(lines)
+    hits: List[Tuple[int, int]] = []
+    i = 0
+    while i < n:
+        if _GO_AUTH_FUNC_START.match(lines[i]):
+            start = i
+            j = i + 1
+            while j < n and not _GO_TOP_LEVEL_FUNC.match(lines[j]):
+                j += 1
+            body = "\n".join(lines[start:j])
+            if _GO_PASSWORD_CHECK_CALL.search(body) and not _GO_PASSWORD_CLEAR.search(body):
+                hits.append((start + 1, 0))
+            i = j
+        else:
+            i += 1
+    return hits
 
 
 # ── Rust rules ────────────────────────────────────────────────────────────────
@@ -775,6 +825,32 @@ def scan_multilang(source: str, file_extension: str = "") -> SASTResult:
                 debt_minutes=_DEBT.get(C05.severity, 20),
                 suggested_fix=C05.suggested_fix,
                 confidence=0.6,   # whole-file presence/absence heuristic
+                explanation="",
+            ))
+
+    if language == "go":
+        lines = source.splitlines()
+        for lineno, col in _scan_go_password_retention(source):
+            key = ("GO12", lineno)
+            if key in seen:
+                continue
+            seen.add(key)
+            snippet = lines[lineno - 1].strip()[:200] if 0 < lineno <= len(lines) else ""
+            findings.append(SASTFinding(
+                rule_id="GO12",
+                severity=GO12.severity,
+                cwe_id=GO12.cwe_id,
+                owasp=GO12.owasp,
+                title=GO12.title,
+                description="Authenticate() calls CheckPassword(r.Name, r.Password) but "
+                            "never clears r.Password anywhere in its own body",
+                line=lineno,
+                col=col,
+                code_snippet=snippet,
+                remediation=GO12.remediation,
+                debt_minutes=_DEBT.get(GO12.severity, 20),
+                suggested_fix=GO12.suggested_fix,
+                confidence=0.6,   # function-scoped presence/absence heuristic
                 explanation="",
             ))
 

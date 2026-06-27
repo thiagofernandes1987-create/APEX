@@ -31,6 +31,9 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.11.6** (Loop pesado — GO12 fecha etcd CVE-2021-28235 (retenção de
+senha em texto plano em Authenticate(), regra function-scoped nova);
+rule_count 50→51; 2298 testes verdes) ✅
 **v3.11.5** (Loop pesado — GO11 fecha golang/go CVE-2023-29404 (cgo
 linker-flag allowlist com argumento opcional, contrabando de flag);
 rule_count 49→50; 2294 testes verdes) ✅

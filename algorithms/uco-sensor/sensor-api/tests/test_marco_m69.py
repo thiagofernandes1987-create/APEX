@@ -112,4 +112,4 @@ def test_TAL09_cs06_guard_anywhere_in_file_suppresses_all_sites():
 
 def test_TAL10_rule_count_reflects_cs06():
     from sast.multilang_scanner import rule_count
-    assert rule_count() == 50
+    assert rule_count() == 51

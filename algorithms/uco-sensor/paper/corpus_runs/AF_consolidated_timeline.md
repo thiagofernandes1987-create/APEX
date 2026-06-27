@@ -159,7 +159,7 @@ confiança em todos os 21 casos.
 | 12 | AD | `spring-projects/spring-framework` | Java | CVE-2022-22965 | `1627f57f` / 2022-03-31 | `002546b3` / 2022-03-31 | **SIGNAL** (nova regra JV11, dispara antes, silencia depois) |
 | 13 | AD | `rust-lang/regex` | Rust | CVE-2022-24713 | `b92ffd54` / 2022-03-03 | `ae70b41d` / 2022-03-03 | BLIND_SPOT (após fix do RustAdapter) |
 | 14 | AE | `lodash/lodash` | JS | CVE-2021-23337 | `ded9bc66` / 2020-08-13 | `3469357c` / 2021-02-17 | BLIND_SPOT (após fix JS05) |
-| 15 | AE | `etcd-io/etcd` | Go | CVE-2021-28235 | `801bb4c6` / 2023-04-06 | `8b1cd036` / 2023-04-06 | BLIND_SPOT |
+| 15 | AI (loop pesado, v3.11.6) | `etcd-io/etcd` | Go | CVE-2021-28235 | `801bb4c6` / 2023-04-06 | `8b1cd036` / 2023-04-06 | **SIGNAL** (nova regra GO12, function-scoped: `Authenticate()` chama `CheckPassword` mas nunca limpa `r.Password` dentro do próprio corpo, dispara antes, silencia depois) |
 | 16 | AE | `tokio-rs/tokio` | Rust | CVE-2023-22466 | `5c76d070` / 2022-09-27 | `9ca156c0` / 2023-01-03 | **SIGNAL** (nova regra RS01, abre suporte Rust, dispara antes, silencia depois) |
 | 17 | AE | `netty/netty` | Java | CVE-2019-20444 | `cf63bc10` / 2019-12-11 | `a7c18d44` / 2019-12-11 | BLIND_SPOT (bug é interno à lib de parsing, não código de aplicação — cobertura correta é SCA, não SAST) |
 | 18 | AH | `laravel/framework` | PHP | GHSA-crmm-hgp2-wgrp | `071ac5c3` / 2026-05-14 | `cba82e4e` / 2026-05-15 | **SIGNAL** (PHP05 re-alvejada ao argumento `'path' => $var` sem `rawurlencode`, dispara antes, silencia depois) |

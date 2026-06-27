@@ -194,6 +194,68 @@ def test_TAM30_go11_silent_on_unrelated_go_code():
     assert "GO11" not in _ids(src, ".go")
 
 
+# ── GO12 (etcd CVE-2021-28235 shape) ────────────────────────────────────────
+
+def test_TAM31_go12_fires_when_authenticate_never_clears_password():
+    src = (
+        "func (s *EtcdServer) Authenticate(ctx context.Context, r *pb.AuthenticateRequest) (*pb.AuthenticateResponse, error) {\n"
+        "\tlg := s.Logger()\n"
+        "\tvar resp proto.Message\n"
+        "\tfor {\n"
+        "\t\tcheckedRevision, err := s.AuthStore().CheckPassword(r.Name, r.Password)\n"
+        "\t\tif err != nil {\n"
+        "\t\t\treturn nil, err\n"
+        "\t\t}\n"
+        "\t\tbreak\n"
+        "\t}\n"
+        "\treturn resp.(*pb.AuthenticateResponse), nil\n"
+        "}\n"
+        "\n"
+        "func (s *EtcdServer) UserAdd(ctx context.Context, r *pb.AuthUserAddRequest) (*pb.AuthUserAddResponse, error) {\n"
+        "\tr.Password = \"\"\n"
+        "\treturn nil, nil\n"
+        "}\n"
+    )
+    assert "GO12" in _ids(src, ".go")
+
+
+def test_TAM32_go12_silent_when_authenticate_clears_password_via_defer():
+    src = (
+        "func (s *EtcdServer) Authenticate(ctx context.Context, r *pb.AuthenticateRequest) (*pb.AuthenticateResponse, error) {\n"
+        "\tlg := s.Logger()\n"
+        "\tdefer func() {\n"
+        "\t\tif r != nil {\n"
+        "\t\t\tr.Password = \"\"\n"
+        "\t\t}\n"
+        "\t}()\n"
+        "\tvar resp proto.Message\n"
+        "\tfor {\n"
+        "\t\tcheckedRevision, err := s.AuthStore().CheckPassword(r.Name, r.Password)\n"
+        "\t\tif err != nil {\n"
+        "\t\t\treturn nil, err\n"
+        "\t\t}\n"
+        "\t\tbreak\n"
+        "\t}\n"
+        "\treturn resp.(*pb.AuthenticateResponse), nil\n"
+        "}\n"
+    )
+    assert "GO12" not in _ids(src, ".go")
+
+
+def test_TAM33_go12_silent_without_authenticate_definition():
+    src = "func (s *EtcdServer) UserAdd(ctx context.Context, r *pb.AuthUserAddRequest) (*pb.AuthUserAddResponse, error) {\n\tr.Password = \"\"\n\treturn nil, nil\n}\n"
+    assert "GO12" not in _ids(src, ".go")
+
+
+def test_TAM34_go12_silent_when_authenticate_does_not_check_password():
+    src = (
+        "func (s *EtcdServer) Authenticate(ctx context.Context, r *pb.AuthenticateRequest) (*pb.AuthenticateResponse, error) {\n"
+        "\treturn nil, nil\n"
+        "}\n"
+    )
+    assert "GO12" not in _ids(src, ".go")
+
+
 # ── Dispatch / rule count ───────────────────────────────────────────────────
 
 def test_TAM18_unsupported_ext_still_empty():
@@ -201,4 +263,4 @@ def test_TAM18_unsupported_ext_still_empty():
 
 
 def test_TAM19_rule_count_reflects_c_rules():
-    assert rule_count() == 50
+    assert rule_count() == 51

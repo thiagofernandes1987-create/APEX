@@ -5,6 +5,52 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.11.6] — 2026-06-27 — Loop pesado: GO12 fecha etcd (CVE-2021-28235)
+
+Continuação do mesmo loop iterativo (v3.11.5 fechou golang/go; esta
+versão fecha etcd).
+
+### Adicionado
+- `sast/multilang_scanner.py` — **GO12** (CWE-316, HIGH): regra
+  **function-scoped** (nova técnica — mais estreita que o
+  presence/absence whole-file de CS06/C05). Dispara quando o arquivo
+  define `Authenticate()` que chama `CheckPassword(r.Name, r.Password)`
+  mas **nunca** limpa `r.Password` dentro do próprio corpo dessa
+  função — o shape real de CVE-2021-28235 (etcd, retenção de senha em
+  texto plano na requisição de autenticação,
+  `server/etcdserver/v3_server.go`). Diferente de C05/CS06, o escopo
+  whole-file não funciona aqui: o arquivo vulnerável já contém
+  `r.Password = ""` em outras funções não relacionadas (`UserAdd`,
+  `UserChangePassword`), então a regra precisa extrair apenas o span do
+  corpo de `Authenticate()` (da linha `func (s *EtcdServer)
+  Authenticate(...)` até a próxima linha `^func\s` de nível superior) e
+  buscar a limpeza da senha somente dentro desse span.
+- `tests/test_marco_m71.py` (TAM31-TAM34) — GO12 dispara quando
+  `Authenticate()` nunca limpa a senha (com um `r.Password = ""` não
+  relacionado em `UserAdd` no mesmo arquivo, confirmando que o
+  escopo por função funciona), silencioso quando `Authenticate()` limpa
+  via `defer`, silencioso sem definição de `Authenticate()`, silencioso
+  quando `Authenticate()` não chama `CheckPassword`.
+- `rule_count() == 51` (era 50).
+
+### Validado empiricamente
+- GO12 dispara na linha de definição de `Authenticate()` (linha 441) do
+  `etcd` sha real `801bb4c6` (`server/etcdserver/v3_server.go`,
+  vulnerável) e fica silenciosa no sha real `8b1cd036` (fix, limpa via
+  `defer`) — fetch direto via GitHub raw content, replay via
+  `scan_multilang`.
+
+### Estado do loop (BLIND_SPOT)
+- curl: fechado (v3.11.3). git: fechado (v3.11.4). golang/go: fechado
+  (v3.11.5).
+- etcd: **fechado** (GO12, confirmado acima).
+- Restam: flask, rust-regex, lodash, netty (caso SCA, não SAST —
+  concluído em v3.11.2), scrapy — continuando o loop.
+
+Regressão completa: 2298 passed, 5 skipped, 0 failed.
+
+---
+
 ## [3.11.5] — 2026-06-27 — Loop pesado: GO11 fecha golang/go (CVE-2023-29404)
 
 Continuação do mesmo loop iterativo (v3.11.3 fechou curl, v3.11.4
