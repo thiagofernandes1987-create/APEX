@@ -692,6 +692,71 @@ RULES: List[SASTRuleInfo] = [
             "(sub)type before calling '.json()' on the request body."
         ),
     ),
+    # ── Loop pesado (v3.11.7) — scrapy/scrapy CVE-2022-0577: a redirect
+    # request is built by cloning the original via '.replace(url=...)',
+    # which carries every header (including 'Cookie') over to the new
+    # URL implicitly. SAST047 requires an explicit delete+reassign of the
+    # same header key and does not fire here, because the vulnerable code
+    # never touches 'Cookie' at all — it is just never stripped. This is
+    # a distinct, generalizable shape: any '.replace(url=...)' clone of a
+    # request-like object with no origin guard anywhere in the function.
+    SASTRuleInfo(
+        rule_id="SAST050", title="Redirect Request Cloned via .replace(url=...) With No Origin Guard",
+        cwe_id="CWE-200", owasp="A01:2021",
+        severity="MEDIUM",
+        description=(
+            "A function builds a redirected request by cloning the "
+            "original object with '.replace(url=<new_url>, ...)', which "
+            "implicitly carries every existing header (including "
+            "'Cookie', 'Authorization') over to the new URL. The function "
+            "body contains no comparison of scheme/host/hostname/netloc/"
+            "domain between the original and redirect target, so a "
+            "cross-origin redirect silently replays the original "
+            "session's cookies/credentials to an attacker-controlled "
+            "host. Real-world root cause of CVE-2022-0577 (scrapy/scrapy "
+            "cross-domain cookie leak via 'RedirectMiddleware')."
+        ),
+        remediation=(
+            "Before returning the cloned request, compare the original "
+            "and redirect target's netloc/hostname and drop sensitive "
+            "headers ('Cookie', 'Authorization') on mismatch — e.g. "
+            "'if urlparse(orig.url).netloc != urlparse(new.url).netloc: "
+            "del new.headers[\"Cookie\"]'."
+        ),
+    ),
+    # ── Loop pesado (v3.11.7) — pallets/flask CVE-2023-30861: the session
+    # save function returns early (the 'if not session: ... return'
+    # branch) on a code path that is reachable *before* the 'Vary:
+    # Cookie' header is ever added, so a shared HTTP cache can serve one
+    # user's cached response (keyed without the cookie) to another user.
+    # The bug is purely about *lexical order* within the function: the
+    # fix is moving the existing 'response.vary.add("Cookie")' call to
+    # before the first 'return', not adding a brand-new call — so a
+    # whole-file presence/absence rule (CS06/C05 style) cannot see it;
+    # this needs the relative line order of the early return vs. the
+    # header-set call.
+    SASTRuleInfo(
+        rule_id="SAST051", title="Cookie-Keyed Response Returns Early Before Vary Header Is Set",
+        cwe_id="CWE-525", owasp="A01:2021",
+        severity="MEDIUM",
+        description=(
+            "A function that conditionally sets a 'Vary: Cookie' (or "
+            "similar cache-key) response header contains a 'return' "
+            "statement that occurs, in source order, before the first "
+            "call that adds that header anywhere in the function body. "
+            "Any code path that hits the early return skips the header "
+            "entirely, so an HTTP cache sitting in front of the app can "
+            "store and replay one user's session-bearing response to a "
+            "different user. Real-world root cause of CVE-2023-30861 "
+            "(pallets/flask 'Vary: Cookie' header skipped on the "
+            "empty-session early-return path of 'save_session()')."
+        ),
+        remediation=(
+            "Set the 'Vary: Cookie' (or equivalent) header as the very "
+            "first statement of the function, before any conditional "
+            "'return', so every exit path is covered."
+        ),
+    ),
 ]
 
 _RULE_MAP: Dict[str, SASTRuleInfo] = {r.rule_id: r for r in RULES}
@@ -1619,6 +1684,42 @@ class _ASTScanner(ast.NodeVisitor):
                         and isinstance(child.func.value, ast.Name)
                         and child.func.value.id.lower() in ("request", "req")):
                     self._add("SAST049", child)
+
+        # ── Loop pesado (v3.11.7) — SAST050: a redirect/cloned request is
+        # built via '<obj>.replace(url=..., ...)' (carrying every existing
+        # header, including 'Cookie', over to the new URL implicitly), and
+        # the function has no origin guard anywhere — see CVE-2022-0577
+        # (scrapy/scrapy) case study above. Distinct from SAST047: that
+        # rule requires an explicit delete+reassign of the same header
+        # key; this one fires when the header is never touched at all
+        # because the whole request is cloned wholesale.
+        if not self._has_origin_guard(node):
+            for child in ast.walk(node):
+                if (isinstance(child, ast.Call) and isinstance(child.func, ast.Attribute)
+                        and child.func.attr == "replace"
+                        and any(kw.arg == "url" for kw in child.keywords)):
+                    self._add("SAST050", child)
+
+        # ── Loop pesado (v3.11.7) — SAST051: a 'return' statement occurs,
+        # in source order, before the first call that adds a 'Vary:
+        # Cookie' (or equivalent cache-key) header anywhere in the
+        # function — see CVE-2023-30861 (pallets/flask) case study above.
+        # Order-sensitive (not presence/absence): the header IS set
+        # somewhere in the function, just too late to cover every exit.
+        vary_cookie_lines = [
+            c.lineno for c in ast.walk(node)
+            if isinstance(c, ast.Call) and isinstance(c.func, ast.Attribute)
+                and c.func.attr == "add"
+                and isinstance(c.func.value, ast.Attribute) and c.func.value.attr == "vary"
+                and c.args and isinstance(c.args[0], ast.Constant)
+                and isinstance(c.args[0].value, str) and c.args[0].value.lower() == "cookie"
+        ]
+        if vary_cookie_lines:
+            first_vary_line = min(vary_cookie_lines)
+            for child in ast.walk(node):
+                if isinstance(child, ast.Return) and child.lineno < first_vary_line:
+                    self._add("SAST051", child)
+                    break
 
     # ── SAST038: exception swallowing ────────────────────────────────────────
 

@@ -31,6 +31,11 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.11.7** (Loop pesado — SAST050/051 fecham scrapy CVE-2022-0577
+(redirect clonado via .replace(url=...) sem origin guard) e flask
+CVE-2023-30861 (return antes do vary.add("Cookie"), regra
+order-sensitive nova); 2308 testes verdes; 7/9 BLIND_SPOT originais
+fechados) ✅
 **v3.11.6** (Loop pesado — GO12 fecha etcd CVE-2021-28235 (retenção de
 senha em texto plano em Authenticate(), regra function-scoped nova);
 rule_count 50→51; 2298 testes verdes) ✅

@@ -148,8 +148,8 @@ confiança em todos os 21 casos.
 | 1 | AC-3 | `psf/requests` | Python | CVE-2024-47081 | `73416908` | `96ba401c` / 2024-09-25 | **SIGNAL** (SAST046 dispara antes, silencia depois) |
 | 2 | AC-3 | `psf/requests` | Python | CVE-2023-32681 | `30222533` / 2023-05-15 | `74ea7cf7` / 2023-05-22 | **SIGNAL** (SAST047 dispara antes, silencia depois) |
 | 3 | AC-3 | `psf/requests` | Python | CVE-2024-35195 | `eea3bbf9` / 2024-02-23 | `a58d7f2f` / 2024-03-11 | confounded (delta de métrica não-diagnóstico) |
-| 4 | AC-3 | `scrapy/scrapy` | Python | CVE-2022-0577 | `aa0306a1` / 2022-03-01 | `8ce01b3b` / 2022-03-01 | BLIND_SPOT (ausência de guard, não há nó AST para ancorar — ver nota) |
-| 5 | AC-3 | `pallets/flask` | Python | CVE-2023-30861 | `9532cba4` | `8705dd39` / 2023-05-01 | BLIND_SPOT |
+| 4 | AI (loop pesado, v3.11.7) | `scrapy/scrapy` | Python | CVE-2022-0577 | `aa0306a1` / 2022-03-01 | `8ce01b3b` / 2022-03-01 | **SIGNAL** (nova regra SAST050: `.replace(url=...)` clona a requisição sem origin guard, dispara 2x antes, silencia depois) |
+| 5 | AI (loop pesado, v3.11.7) | `pallets/flask` | Python | CVE-2023-30861 | `9532cba4` | `8705dd39` / 2023-05-01 | **SIGNAL** (nova regra SAST051, order-sensitive: `return` antes do primeiro `vary.add("Cookie")` na função, dispara antes, silencia depois) |
 | 6 | AC-3 | `django/django` | Python | CVE-2024-53908 | `790eb058` / 2024-11-13 | `7376bcbf` / 2024-11-09 | confounded (delta de métrica não-diagnóstico) |
 | 7 | AC-3 | `celery/celery` | Python | CVE-2021-23727 | `2d8dbc2a` / 2021-12-12 | `1f7ad7e6` / 2021-12-26 | **SIGNAL** (nova regra SAST048, dispara antes, silencia depois) |
 | 8 | AC-3 | `fastapi/fastapi` | Python | CVE-2021-32677 | `90120dd6` / 2021-06-07 | `fa7e3c99` / 2021-06-07 | **SIGNAL** (nova regra SAST049, dispara antes, silencia depois) |

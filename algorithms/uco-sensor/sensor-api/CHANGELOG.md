@@ -5,6 +5,67 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.11.7] — 2026-06-27 — Loop pesado: SAST050/051 fecham scrapy e flask
+
+Continuação do mesmo loop iterativo (v3.11.6 fechou etcd; esta versão
+fecha os 2 BLIND_SPOT restantes do Python: scrapy e flask).
+
+### Adicionado
+- `sast/scanner.py` — **SAST050** (CWE-200, MEDIUM): dispara quando uma
+  função contém uma chamada `<obj>.replace(url=..., ...)` (clonando a
+  requisição inteira para uma nova URL, carregando todo header
+  existente — incluindo `Cookie` — implicitamente) e a função não tem
+  nenhum guard de origem (reuso de `_has_origin_guard`, o mesmo helper
+  do SAST047). Distinto de SAST047: aquele exige delete+reassign
+  explícito do mesmo header; este cobre o caso onde o header nunca é
+  tocado porque a requisição inteira é clonada — o shape real de
+  CVE-2022-0577 (scrapy/scrapy, `RedirectMiddleware._redirect_request_using_get`
+  e `process_response` clonam via `.replace(url=...)` sem checar
+  netloc).
+- `sast/scanner.py` — **SAST051** (CWE-525, MEDIUM): regra
+  **order-sensitive** (nova técnica — nem presence/absence whole-file
+  como CS06/C05, nem function-scoped presence/absence como GO12).
+  Dispara quando há um `return` cuja `lineno` é menor que a primeira
+  chamada `<x>.vary.add("Cookie")` na mesma função — ou seja, o header
+  já é setado em algum lugar da função, só que depois demais para
+  cobrir todo caminho de saída. O shape real de CVE-2023-30861
+  (pallets/flask, `save_session()`): o fix não adiciona uma chamada
+  nova, só move a já existente `response.vary.add("Cookie")` para
+  antes do primeiro `return`.
+- `tests/test_marco_m72.py` (TAN01-TAN14) — SAST050 dispara nos 2
+  shapes vulneráveis reais (`_redirect_request_using_get`,
+  `process_response`), silencioso quando há comparação de `netloc`
+  antes do clone, silencioso sem keyword `url=`, silencioso em
+  `.replace()` não relacionado (ex: `str.replace`); SAST051 dispara no
+  shape vulnerável real de `save_session()`, silencioso quando
+  `vary.add` é movido para antes do primeiro `return`, silencioso sem
+  nenhuma chamada `vary.add("Cookie")`, silencioso quando o único
+  `return` está depois do `vary.add`, silencioso em header `Vary`
+  não relacionado a `Cookie`.
+
+### Validado empiricamente
+- SAST050 dispara 2x em `scrapy/downloadermiddlewares/redirect.py` real
+  sha `aa0306a1` (vulnerável) e fica silencioso no sha real `8ce01b3b`
+  (fix) — fetch direto via GitHub raw content, replay via `scan()`.
+- SAST051 dispara em `flask/sessions.py` real sha `9532cba4`
+  (vulnerável) e fica silencioso no sha real `8705dd39` (fix) — fetch
+  direto via GitHub raw content, replay via `scan()`.
+
+### Estado do loop (BLIND_SPOT)
+- curl: fechado (v3.11.3). git: fechado (v3.11.4). golang/go: fechado
+  (v3.11.5). etcd: fechado (v3.11.6).
+- scrapy: **fechado** (SAST050, confirmado acima).
+- flask: **fechado** (SAST051, confirmado acima).
+- Restam: rust-regex (CVE-2022-24713, avaliado anteriormente como
+  genuinamente infactível — bug interno ao motor de regex, sem shape em
+  código de usuário) e netty (caso SCA, não SAST — concluído em
+  v3.11.2). Dos 9 casos originais BLIND_SPOT, 7 fechados, 2 com veredito
+  final justificado.
+
+Regressão completa: 2308 passed, 5 skipped, 0 failed.
+
+---
+
 ## [3.11.6] — 2026-06-27 — Loop pesado: GO12 fecha etcd (CVE-2021-28235)
 
 Continuação do mesmo loop iterativo (v3.11.5 fechou golang/go; esta
