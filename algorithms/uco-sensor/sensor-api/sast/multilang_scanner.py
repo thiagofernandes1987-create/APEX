@@ -459,9 +459,88 @@ def _scan_csharp_tar_extraction(source: str) -> List[Tuple[int, int]]:
     return hits
 
 
+# ── C / C++ rules ─────────────────────────────────────────────────────────────
+#
+# C01 is not a simple per-line regex: the bug (CVE-2023-38545, curl SOCKS5
+# heap buffer overflow) is the *absence* of a length guard, not the presence
+# of a bad call by itself. The pre-fix `do_SOCKS5()` (lib/socks.c, sha
+# 09e25b9d) detects `hostname_len > 255` but only *logs* it and flips
+# `socks5_resolve_local = TRUE` (a no-op downgrade attempt that does not
+# actually short-circuit the function) before falling through to
+# `memcpy(&socksreq[len], sx->hostname, hostname_len)` against the fixed
+# ~256-byte `socksreq` buffer. The fix (sha fb4415d8) replaces the log+flag
+# with `failf(...); return CURLPX_LONG_HOSTNAME;`, which aborts before the
+# memcpy is ever reached. A single-line regex cannot see this — it needs to
+# know whether *any* `return` follows the `hostname_len > 255` guard
+# elsewhere in the file. Handled by `_scan_c_socks_overflow` below; C01
+# still carries the standard MLRule metadata so findings shape the same as
+# every other multi-language rule.
+
+_C = ("c",)
+
+C01 = MLRule(
+    "C01", _C, "CRITICAL", "CWE-787", "A06:2021",
+    "Hostname copied into fixed-size buffer without a length-guard return",
+    _rx(r'(?!)'),  # never matches directly; detection is whole-file (see below)
+    "When a length check rejects an oversized hostname/buffer, return/abort "
+    "immediately — do not just log a warning and fall through to the copy.",
+    "if(len > 255) { failf(data, \"too long\"); return CURLPX_LONG_HOSTNAME; }",
+)
+
+_C_RULES: List[MLRule] = [
+    C01,
+    MLRule("C02", _C, "CRITICAL", "CWE-120", "A06:2021",
+           "Unbounded string copy via strcpy/strcat/gets",
+           _rx(r'\b(?:strcpy|strcat|gets)\s*\('),
+           "Use a bounded variant (strlcpy/strncpy/snprintf) and check the "
+           "source length against the destination buffer size first.",
+           "strlcpy(dst, src, sizeof(dst));"),
+    MLRule("C03", _C, "HIGH", "CWE-134", "A06:2021",
+           "Unbounded formatted write via sprintf",
+           _rx(r'\bsprintf\s*\('),
+           "Use snprintf with the destination buffer size.",
+           "snprintf(dst, sizeof(dst), fmt, ...);"),
+    MLRule("C04", _C, "CRITICAL", "CWE-78", "A03:2021",
+           "OS command injection via system()/popen() with concatenation",
+           _rx(r'\b(?:system|popen)\s*\([^)]*(?:\+|strcat|sprintf)'),
+           "Avoid building shell commands from untrusted input; use exec*() "
+           "with an argument array instead of a shell string.",
+           "execvp(\"cmd\", argv);  // no shell involved"),
+]
+
+_C_SOCKS_LEN_GUARD = re.compile(r'hostname_len\s*>\s*255\b')
+_C_SOCKS_LEN_GUARD_RETURN = re.compile(
+    r'hostname_len\s*>\s*255\b[\s\S]{0,200}?\breturn\b'
+)
+_C_SOCKS_DANGEROUS_MEMCPY = re.compile(
+    r'\bmemcpy\s*\([^;]*hostname[^;]*,\s*hostname_len\s*\)'
+)
+
+
+def _scan_c_socks_overflow(source: str) -> List[Tuple[int, int]]:
+    """C01: a file that copies a `hostname`-derived length into a fixed
+    buffer via memcpy(..., hostname_len) but never returns/aborts within
+    ~200 chars of the `hostname_len > 255` guard is the CVE-2023-38545
+    shape (log-and-continue instead of reject)."""
+    if not _C_SOCKS_DANGEROUS_MEMCPY.search(source):
+        return []
+    if not _C_SOCKS_LEN_GUARD.search(source):
+        return []
+    if _C_SOCKS_LEN_GUARD_RETURN.search(source):
+        return []
+    hits: List[Tuple[int, int]] = []
+    for lineno, raw in TreeSitterBridge.iter_lines(source):
+        line = _strip_line_comment(raw)
+        m = _C_SOCKS_DANGEROUS_MEMCPY.search(line)
+        if m:
+            hits.append((lineno, m.start()))
+    return hits
+
+
 # All rules indexed by language for fast dispatch
 _ALL_RULES: List[MLRule] = (
     _JS_RULES + _JAVA_RULES + _GO_RULES + _PHP_RULES + _CS_RULES + _RUST_RULES
+    + _C_RULES
 )
 
 _EXT_LANG: Dict[str, str] = {
@@ -473,6 +552,7 @@ _EXT_LANG: Dict[str, str] = {
     ".php": "php",
     ".cs": "csharp",
     ".rs": "rust",
+    ".c": "c", ".h": "c",
 }
 
 
@@ -588,6 +668,32 @@ def scan_multilang(source: str, file_extension: str = "") -> SASTResult:
                 remediation=CS06.remediation,
                 debt_minutes=_DEBT.get(CS06.severity, 20),
                 suggested_fix=CS06.suggested_fix,
+                confidence=0.6,   # whole-file presence/absence heuristic
+                explanation="",
+            ))
+
+    if language == "c":
+        lines = source.splitlines()
+        for lineno, col in _scan_c_socks_overflow(source):
+            key = ("C01", lineno)
+            if key in seen:
+                continue
+            seen.add(key)
+            snippet = lines[lineno - 1].strip()[:200] if 0 < lineno <= len(lines) else ""
+            findings.append(SASTFinding(
+                rule_id="C01",
+                severity=C01.severity,
+                cwe_id=C01.cwe_id,
+                owasp=C01.owasp,
+                title=C01.title,
+                description="hostname_len > 255 guard logs/flags but never returns "
+                            "before the memcpy(..., hostname_len) into the fixed buffer",
+                line=lineno,
+                col=col,
+                code_snippet=snippet,
+                remediation=C01.remediation,
+                debt_minutes=_DEBT.get(C01.severity, 20),
+                suggested_fix=C01.suggested_fix,
                 confidence=0.6,   # whole-file presence/absence heuristic
                 explanation="",
             ))

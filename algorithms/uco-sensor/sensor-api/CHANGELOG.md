@@ -5,6 +5,54 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.11.3] — 2026-06-27 — Loop pesado: abertura de C/C++ (C01-C04) fecha curl (CVE-2023-38545)
+
+Continuação do loop iterativo de fechamento de BLIND_SPOT por
+repositório (testes pesados com históricos de commit reais). curl era
+um dos 9 repositórios sem regra SAST funcional.
+
+### Adicionado
+- `sast/multilang_scanner.py` — suporte a C/C++ (`_C_RULES`, extensões
+  `.c`/`.h`): **C01** (CWE-787, CRITICAL) — regra cross-line (mesmo
+  padrão de RS01/CS06) para o shape real de CVE-2023-38545 (curl,
+  SOCKS5 heap buffer overflow em `lib/socks.c::do_SOCKS5`): dispara só
+  quando existe `memcpy(..., hostname_len)` perigoso, o guard
+  `hostname_len > 255` está presente, e **nenhum** `return` aparece nos
+  ~200 caracteres seguintes ao guard (o bug real era logar e cair para
+  o memcpy em vez de abortar). C02 (CWE-120, strcpy/strcat/gets
+  desprotegidos), C03 (CWE-134, sprintf desprotegido), C04 (CWE-78,
+  injeção via system()/popen() com concatenação) — regras genéricas de
+  triagem.
+- Faltava o dispatch block `if language == "c":` em `scan_multilang()`
+  (a função de detecção `_scan_c_socks_overflow` já existia mas nunca
+  era chamada) — adicionado, espelhando os blocks de RS01/CS06.
+- `tests/test_marco_m71.py` (TAM10-TAM19) — C01 dispara no shape
+  vulnerável e fica silenciosa quando o guard retorna; C02-C04 básicos;
+  `rule_count() == 48`.
+
+### Validado empiricamente
+- C01 dispara em `curl/curl` sha real `09e25b9d` (`lib/socks.c`,
+  vulnerável) e fica silenciosa no sha real `fb4415d8` (fix) — fetch
+  direto via GitHub raw content, replay via `scan_multilang`.
+
+### Corrigido
+- `tests/test_marco_m65.py::test_TAE05` assumia `.c` como extensão não
+  suportada (`is None`) — atualizado para `== "c"` agora que C/C++ tem
+  suporte real.
+- `rule_count()`-dependent assertions em `test_marco_m27.py`,
+  `test_marco_m68.py`, `test_marco_m69.py` atualizadas de `44` para
+  `48`.
+
+### Estado do loop (BLIND_SPOT)
+- curl: **fechado** (C01, confirmado acima).
+- Restam: flask, golang/go, etcd, rust-regex, lodash, netty (já
+  concluído como caso apropriado para SCA, não SAST — ver v3.11.2),
+  scrapy, git — continuando o loop.
+
+Regressão completa: 2283 passed, 5 skipped, 0 failed.
+
+---
+
 ## [3.11.2] — 2026-06-27 — Sprint AI: extensão aditiva da CFG do UCO core + avaliação dataflow/taint-tracking real para netty
 
 Resposta de engenharia ao pedido do usuário: "crie o motor

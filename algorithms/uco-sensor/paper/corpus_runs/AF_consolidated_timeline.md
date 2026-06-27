@@ -153,7 +153,7 @@ confiança em todos os 21 casos.
 | 6 | AC-3 | `django/django` | Python | CVE-2024-53908 | `790eb058` / 2024-11-13 | `7376bcbf` / 2024-11-09 | confounded (delta de métrica não-diagnóstico) |
 | 7 | AC-3 | `celery/celery` | Python | CVE-2021-23727 | `2d8dbc2a` / 2021-12-12 | `1f7ad7e6` / 2021-12-26 | **SIGNAL** (nova regra SAST048, dispara antes, silencia depois) |
 | 8 | AC-3 | `fastapi/fastapi` | Python | CVE-2021-32677 | `90120dd6` / 2021-06-07 | `fa7e3c99` / 2021-06-07 | **SIGNAL** (nova regra SAST049, dispara antes, silencia depois) |
-| 9 | AD | `curl/curl` | C | CVE-2023-38545 | `09e25b9d` / 2023-10-10 | `fb4415d8` / 2023-10-11 | BLIND_SPOT |
+| 9 | AI (loop pesado, v3.11.3) | `curl/curl` | C | CVE-2023-38545 | `09e25b9d` / 2023-10-10 | `fb4415d8` / 2023-10-11 | **SIGNAL** (nova regra C01, abre suporte C/C++, cross-line: `hostname_len > 255` sem `return` antes do `memcpy(..., hostname_len)`, dispara antes, silencia depois) |
 | 10 | AD | `golang/go` | Go | CVE-2023-29404 | `6d8af00a` / 2023-05-04 | `bbeb55f5` / 2023-05-05 | BLIND_SPOT |
 | 11 | AD | `axios/axios` | JS | CVE-2023-45857 | `7d45ab2e` / 2023-10-22 | `96ee232b` / 2023-10-26 | **SIGNAL** (nova regra JS11, dispara antes, silencia depois) |
 | 12 | AD | `spring-projects/spring-framework` | Java | CVE-2022-22965 | `1627f57f` / 2022-03-31 | `002546b3` / 2022-03-31 | **SIGNAL** (nova regra JV11, dispara antes, silencia depois) |

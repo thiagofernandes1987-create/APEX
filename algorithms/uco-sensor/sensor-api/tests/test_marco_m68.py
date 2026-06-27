@@ -224,4 +224,4 @@ def test_TAK22_cs_silent_on_safe_code():
 
 def test_TAK23_rule_count_reflects_new_rules():
     from sast.multilang_scanner import rule_count
-    assert rule_count() == 44
+    assert rule_count() == 48

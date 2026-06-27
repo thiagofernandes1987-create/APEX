@@ -31,6 +31,9 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.11.3** (Loop pesado — abertura de C/C++ (C01-C04), fecha curl
+CVE-2023-38545 (SOCKS5 heap overflow, shape log-and-fallthrough vs.
+return real); rule_count 44→48; 2283 testes verdes) ✅
 **v3.11.2** (Sprint AI — extensão aditiva da CFG do UCO core (defs/uses
 em Return/Expr) + confirmação de que o motor de taint-tracking real já
 existe (M7.2) + veredito final HMC/SA/Propagation/netty = não
