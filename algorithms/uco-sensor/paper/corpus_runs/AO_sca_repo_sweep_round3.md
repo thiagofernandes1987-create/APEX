@@ -114,6 +114,37 @@ menos um eixo (SAST e/ou SCA).**
 4. **`requirements.txt` nem sempre é um lockfile** — instalações editáveis
    (`-e git+...`) não fixam versões e não são scaneáveis.
 
+## Confirmação rigorosa: PHP/Ruby/C#/Mobile (categoria 86-95)
+
+O `/goal` pede explicitamente expandir "PHP/C#/Mobile além de rails".
+Em vez de repetir a inspeção de root-listing (já feita em AM/AN), esta
+rodada usou a **GitHub Code Search API** (`search/code?q=filename:X
+repo:owner/repo`, autenticada via `GITHUB_TOKEN` do ambiente) para
+buscar o lockfile correspondente em **todo o repositório**, não só na
+raiz — eliminando a possibilidade de um lockfile estar escondido em
+algum subdiretório:
+
+| Repo | Busca | Resultado |
+|---|---|---|
+| `dotnet/runtime` (#88) | `packages.lock.json` em todo o repo | **0 resultados** |
+| `dotnet/roslyn` (#89) | `packages.lock.json` em todo o repo | **0 resultados** |
+| `jekyll/jekyll` (#93) | `Gemfile.lock` em todo o repo | **0 resultados** |
+| `signalapp/Signal-Android` (#94) | `gradle.lockfile` em todo o repo | **0 resultados** |
+| `WordPress/WordPress` (#91) | `composer.lock` em todo o repo | **0 resultados** |
+| `php/php-src` (#92) | `composer.lock` em todo o repo | **0 resultados** |
+| `shadowsocks/shadowsocks-windows` (#95) | `packages.lock.json` em todo o repo | **0 resultados** |
+| `laravel/framework` (citado em #86, irmão de laravel/laravel) | `composer.lock` | 404 (repo não tem o arquivo); root-listing confirma só `composer.json` |
+
+**Resultado: confirmação rigorosa, não amostra de root.** Nenhum destes
+7 repositórios tem um lockfile committado em qualquer lugar da árvore —
+não é uma omissão de descoberta, é ausência real do artefato que o
+OSV-Scanner precisa para resolver versões exatas. A categoria
+PHP/Ruby/C#/Mobile **permanece honestamente em 4/10**: `laravel` (SAST),
+`rails` (SAST+SCA), `dotnet/runtime` (SAST), `flutter` (SCA) — os 6
+repositórios restantes da categoria exigiriam o eixo SAST CVE-diff
+(como já feito para laravel/dotnet) para ganhar cobertura, já que o
+eixo SCA está estruturalmente bloqueado por ausência de lockfile.
+
 ## Restante para 100/100 (não estruturalmente bloqueado)
 
 - **C/C++ (76-85, 8/10 restante)** e partes de Python/PHP/Ruby — estruturalmente

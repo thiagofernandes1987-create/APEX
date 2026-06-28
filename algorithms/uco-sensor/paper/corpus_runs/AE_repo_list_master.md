@@ -33,7 +33,7 @@
 | Rust (56-65) | **8/10** | #56 rust-lang/rust SCA (B, 8), #57 tokio CVE-2023-22466 (SAST), #58 alacritty SCA (B, 2), #60 nushell SCA (B, 9), #61 tikv SCA (D, 33), #63 swc SCA (E, 39), #64 actix-web SCA (D, 10), #65 tauri SCA (D, 36); `rust-lang/regex` (extra) CVE-2022-24713 |
 | Java/Kotlin (66-75) | **6/10** | #67 spring-framework CVE-2022-22965 (SAST), #68 commons-lang SCA (A, limpo), #69 flink SCA (A, limpo), #72 netty CVE-2019-20444 (SAST) + SCA (A, limpo, via pom.xml de submódulo: common/buffer/transport/handler/codec), #74 guava SCA (A, limpo, via guava/pom.xml de submódulo — não o pom-pai) |
 | C/C++ (76-85) | 2/10 | #79 curl CVE-2023-38545, #81 git CVE-2021-21300 — eixo SCA estruturalmente não aplicável a esta categoria (sem package manager de terceiros resolvível em C puro, ver AN) |
-| PHP/Ruby/C#/Mobile (86-95) | **4/10** | #86 laravel GHSA-crmm-hgp2-wgrp (SAST), #87 rails CVE-2024-26143 (SAST) + SCA (E, 61), #88 dotnet/runtime CVE-2026-45491 (SAST), #90 flutter SCA (A, limpo) |
+| PHP/Ruby/C#/Mobile (86-95) | **4/10** (confirmado rigorosamente via code-search full-repo em AO — 0 lockfile em #88, #89, #91, #92, #93, #94, #95) | #86 laravel GHSA-crmm-hgp2-wgrp (SAST), #87 rails CVE-2024-26143 (SAST) + SCA (E, 61), #88 dotnet/runtime CVE-2026-45491 (SAST), #90 flutter SCA (A, limpo) |
 | Infra dados/cloud (96-100) | **3/5** | #96 spark SCA (A, limpo), #97 nomad SCA (B, 2), #99 trino SCA (A, limpo, via pom.xml de submódulo: core/trino-main, client/trino-jdbc, lib/trino-filesystem); #98 ceph **confirmado não aplicável** (pom.xml com `${version}` não resolvido) e #100 clickhouse **confirmado não aplicável** (só pyproject.toml sem lock) |
 
 **Total real: 69/100 repositórios numerados com pelo menos um eixo de
