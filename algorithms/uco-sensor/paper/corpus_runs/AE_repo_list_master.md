@@ -6,18 +6,32 @@
 > 2026-06-26T22:32:36Z, organizada em 8 categorias de ecossistema, mais
 > as 3 dicas de estratégia de teste que orientam a metodologia.
 
-## Status de cobertura até agora (Sprint AD, antes deste loop)
+## Status de cobertura — atualizado Sprint AL (honesto, não amostra)
 
-| Categoria | Testado em AD | Repo/CVE |
+> Correção: a tabela anterior (Sprint AD) ficou obsoleta desde Sprint AG
+> (laravel/rails/dotnet/netty/lodash) e Sprint AJ (capstone re-scan).
+> Esta é a contagem real, repo-a-repo, contra a numeração 1-100 desta
+> lista. `golang/go` e `rust-lang/regex` continuam fora da numeração
+> original (extras de AD) e não contam para os denominadores abaixo.
+
+| Categoria | Cobertura real | Repo/CVE numerados já testados |
 |---|---|---|
-| C/C++ | ✅ 1/10 | `curl/curl` CVE-2023-38545 |
-| Go | ✅ 1/15 | `golang/go` CVE-2023-29404 |
-| JS/TS | ✅ 1/20 | `axios/axios` CVE-2023-45857 |
-| Java/Kotlin | ✅ 1/10 | `spring-projects/spring-framework` CVE-2022-22965 |
-| Rust | ✅ 1/10 | `rust-lang/regex` CVE-2022-24713 |
-| Python | ✅ 8/20 (Sprint AC-3) | requests(×2), scrapy, flask, django, celery, fastapi |
-| PHP/Ruby/C#/Mobile | ❌ 0/10 | — |
-| Infra de dados/cloud grande escala | ❌ 0/5 | — |
+| JS/TS (1-20) | 2/20 | #11 axios CVE-2023-45857, #19 lodash CVE-2021-23337 |
+| Python (21-40) | 8/20 | #26 fastapi, #27 django, #28 flask, #31 celery, #37 scrapy, #38 requests (×3 CVEs), #22 pandas (sem CVE) |
+| Go (41-55) | 2/15 | #46 etcd CVE-2021-28235; `golang/go` (extra, fora da numeração) CVE-2023-29404 |
+| Rust (56-65) | 1/10 | #57 tokio CVE-2023-22466; `rust-lang/regex` (extra) CVE-2022-24713 |
+| Java/Kotlin (66-75) | 2/10 | #67 spring-framework CVE-2022-22965, #72 netty CVE-2019-20444 |
+| C/C++ (76-85) | 2/10 | #79 curl CVE-2023-38545, #81 git CVE-2021-21300 |
+| PHP/Ruby/C#/Mobile (86-95) | 3/10 | #86 laravel GHSA-crmm-hgp2-wgrp, #87 rails CVE-2024-26143, #88 dotnet/runtime CVE-2026-45491 |
+| Infra dados/cloud (96-100) | 0/5 | — ainda não iniciado |
+
+**Total real: 20/100 repositórios numerados com caso CVE-anchorado
+validado** (mais 2 extras fora da numeração). Eixos de falso-positivo
+(dica 3: sqlite/guava) e throughput (dica 1: kubernetes/tensorflow/
+linux/vscode) foram amostrados **uma única vez cada**, em Sprint AE,
+nunca estendidos a outros repositórios da lista. Reconhecido
+explicitamente pelo usuário como requisito obrigatório, não amostra
+opcional — tratado como trabalho em andamento, task #68.
 
 ---
 
