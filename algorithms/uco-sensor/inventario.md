@@ -1274,3 +1274,50 @@ Infra dados/cloud (2/5) sem alteração — ambas precisam do eixo SAST ou
 de descoberta de lockfile mais profunda (submódulos) para avançar.
 Plano de fechamento dos 50 restantes (até 100/100) documentado na
 seção final de AN. Task #68 permanece em andamento.
+
+## Sprint AO — resolução trino/netty + 16 manifestos novos (v3.14.0)
+
+Continuação direta do mesmo `/goal`. Duas frentes:
+
+1. **Bloqueio histórico trino/netty resolvido.** O `pom.xml` raiz de
+   ambos é um agregador Maven puro (`<modules>` sem `<dependencies>`),
+   por isso falhava desde Sprint AM. Inspecionando os subdiretórios
+   reais via GitHub Contents API, desci a módulos-folha:
+   `core/trino-main`, `client/trino-jdbc`, `lib/trino-filesystem`
+   (trino) e `common`, `buffer`, `transport`, `handler`, `codec`
+   (netty) — todos escaneiam limpos (rating A) via `OSVScannerBridge`.
+   Ambos os repos agora têm cobertura SCA real.
+
+2. **16 manifestos novos** descobertos via inspeção direta de
+   root-listing (não candidatos genéricos): `electron`, `next.js`
+   (via `Cargo.lock` do Turbopack, contornando o `pnpm-lock.yaml`
+   truncado), `deno`, `remix`, `strapi`, `metabase` (`bun.lock` —
+   confirma suporte no OSV-Scanner 2.4.0), `kibana`, `grafana`
+   (`yarn.lock` + `go.mod`, polyglot), `tensorflow`, `pytorch`,
+   `airflow` (`uv.lock`), `localstack`, `rancher`, `rust-lang/rust`,
+   `nushell`, `commons-lang`, `guava` (via `guava/pom.xml` de
+   submódulo, não o pom-pai).
+
+   Achado técnico: a GitHub Contents API trunca silenciosamente
+   arquivos >~1MB (`content` vazio, `size` correto reportado) —
+   afetava `strapi`, `metabase`, `grafana`, `airflow`, `kibana`.
+   Contornado via `raw.githubusercontent.com`; o `airflow/uv.lock`
+   (~2.9MB) sofreu `IncompleteRead` repetido até via `urllib`, exigindo
+   `curl --retry` como fallback final.
+
+   Três confirmações honestas de não-aplicabilidade (documentadas, não
+   omitidas): `boto3` (requirements.txt só com instalação editável
+   `-e git+...`), `ceph` (único pom.xml com `${version}` não resolvido
+   fora do build), `clickhouse` (reconfirmado: só pyproject.toml sem
+   lock).
+
+Cobertura da lista master: **50/100 → 69/100**. Categoria Go (41-55)
+agora **fechada em 15/15**. Por categoria: JS/TS 10/20→18/20, Python
+9/20→13/20, Rust 6/10→8/10, Java/Kotlin 3/10→6/10, Infra
+dados/cloud 2/5→3/5; C/C++ (2/10) e PHP/Ruby/C#/Mobile (4/10) sem
+alteração nesta rodada. Relatório completo em
+`paper/corpus_runs/AO_sca_repo_sweep_round3.md`, tabela master
+atualizada em `AE_repo_list_master.md`. Restam 31/100 sem eixo —
+majoritariamente C/C++ puro (estruturalmente fora do eixo SCA, só o
+eixo SAST pode estender) e PHP/Ruby/C#/Mobile sem rodada de descoberta
+dedicada ainda. Task #68 permanece em andamento.

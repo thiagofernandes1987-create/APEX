@@ -5,6 +5,47 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.14.0] — 2026-06-28 — Sprint AO: 50→69/100, bloqueio trino/netty resolvido
+
+Continuação direta do `/goal`: resolve o bloqueio histórico de
+`trinodb/trino` e `netty/netty` (POM Maven agregador raiz só tem
+`<modules>`, nunca `<dependencies>`) descendo aos módulos-folha reais
+(`core/trino-main`, `client/trino-jdbc`, `lib/trino-filesystem` para
+trino; `common`, `buffer`, `transport`, `handler`, `codec` para netty)
+— ambos agora com cobertura SCA limpa (rating A). Descobertos e
+escaneados 16 manifestos novos via inspeção direta de root-listing dos
+repositórios (em vez de candidatos genéricos por ecossistema):
+`electron` (yarn.lock), `next.js` (Cargo.lock do Turbopack, contorna o
+pnpm-lock.yaml truncado), `deno` (Cargo.lock), `remix` (pnpm-lock.yaml),
+`strapi` (yarn.lock), `metabase` (bun.lock — confirma suporte no
+OSV-Scanner 2.4.0), `kibana` (yarn.lock — falha histórica resolvida),
+`grafana` (yarn.lock + go.mod, polyglot), `tensorflow`
+(requirements_lock_3_12.txt), `pytorch` (requirements.txt), `airflow`
+(uv.lock — falha histórica resolvida), `localstack`
+(requirements-basic.txt), `rancher` (go.mod), `rust-lang/rust`
+(Cargo.lock), `nushell` (Cargo.lock), `commons-lang` (pom.xml), `guava`
+(pom.xml de submódulo, não o pom-pai).
+
+**Correção de truncamento da GitHub Contents API**: arquivos >~1MB
+retornam `content` vazio mesmo reportando `size` correto — descoberto
+ao reexaminar as falhas de `strapi`/`metabase`/`grafana`/`airflow`/
+`kibana`. Contornado via `raw.githubusercontent.com`; para o
+`airflow/uv.lock` (~2.9MB) o próprio `urllib` sofreu `IncompleteRead`
+repetido, exigindo `curl --retry` como fallback final.
+
+Confirmações honestas de não-aplicabilidade ao eixo SCA (documentadas,
+não omitidas): `boto3` (requirements.txt contém só instalação editável
+`-e git+...`, sem lockfile real), `ceph` (único pom.xml usa
+`${version}` não resolvido fora do contexto de build), `clickhouse`
+(reconfirmado — só pyproject.toml sem lock).
+
+Categoria Go (41-55) agora **fechada em 15/15**. Tabela de cobertura
+recalculada em `AE_repo_list_master.md`: **69/100** (+19 desde Sprint
+AN). Relatório completo em
+`paper/corpus_runs/AO_sca_repo_sweep_round3.md`.
+
+---
+
 ## [3.13.0] — 2026-06-28 — Sprint AN: varredura SCA acelerada, 26→50/100 da lista master
 
 Resposta direta a "estender a varredura SCA a mais repos da lista (...)
