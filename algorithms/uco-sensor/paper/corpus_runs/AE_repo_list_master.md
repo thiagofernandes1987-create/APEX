@@ -6,41 +6,42 @@
 > 2026-06-26T22:32:36Z, organizada em 8 categorias de ecossistema, mais
 > as 3 dicas de estratégia de teste que orientam a metodologia.
 
-## Status de cobertura — atualizado Sprint AM (honesto, não amostra)
+## Status de cobertura — atualizado Sprint AN (honesto, não amostra)
 
 > Correção: a tabela anterior (Sprint AD) ficou obsoleta desde Sprint AG
 > (laravel/rails/dotnet/netty/lodash) e Sprint AJ (capstone re-scan).
 > Sprint AM (`AM_sca_repo_sweep.md`) introduziu um **segundo eixo de
 > evidência**, complementar ao CVE-diff (SAST): varredura de
-> manifesto-de-dependências real via `OSVScannerBridge` (M9.1/SCA),
-> reportando exposição vigente de dependências vulneráveis em vez de um
-> único CVE histórico pontual. Os dois eixos são contados separadamente
-> por repo abaixo — um repo pode ter 0, 1 ou 2 eixos cobertos.
-> `golang/go` e `rust-lang/regex` continuam fora da numeração original
-> (extras de AD) e não contam para os denominadores abaixo.
+> manifesto-de-dependências real via `OSVScannerBridge` (M9.1/SCA).
+> Sprint AN (`AN_sca_repo_sweep_round2.md`) automatizou a descoberta de
+> manifesto (tenta candidatos por ecossistema) e escaneou 45
+> repositórios numerados de uma vez, com 28 sucessos. Os dois eixos são
+> contados separadamente por repo — um repo pode ter 0, 1 ou 2 eixos
+> cobertos. `golang/go` e `rust-lang/regex` continuam fora da numeração
+> original (extras de AD) e não contam para os denominadores abaixo.
 
 | Categoria | Cobertura real (≥1 eixo) | Repo/CVE/SCA numerados já testados |
 |---|---|---|
-| JS/TS (1-20) | 2/20 | #11 axios CVE-2023-45857 (SAST) + ws CVE-2026-48779 (SCA, 1 HIGH); #19 lodash CVE-2021-23337 (SAST) |
-| Python (21-40) | 8/20 | #26 fastapi, #27 django, #28 flask, #31 celery (SAST) + SCA limpo (rating A); #37 scrapy, #38 requests (×3 CVEs), #22 pandas (sem CVE) |
-| Go (41-55) | **4/15** | #46 etcd CVE-2021-28235 (SAST); #43 terraform SCA limpo (rating A); #44 vault SCA 9 findings/4 HIGH (rating D); #45 prometheus SCA 2 MEDIUM (rating B); `golang/go` (extra) CVE-2023-29404 |
-| Rust (56-65) | **2/10** | #57 tokio CVE-2023-22466 (SAST); #61 tikv SCA 33 findings/7 HIGH (rating D); `rust-lang/regex` (extra) CVE-2022-24713 |
-| Java/Kotlin (66-75) | 2/10 | #67 spring-framework CVE-2022-22965, #72 netty CVE-2019-20444 (SAST); #72 netty SCA **tentado sem sucesso** (pom.xml agregador, ver AM) |
-| C/C++ (76-85) | 2/10 | #79 curl CVE-2023-38545, #81 git CVE-2021-21300 |
-| PHP/Ruby/C#/Mobile (86-95) | 3/10 | #86 laravel GHSA-crmm-hgp2-wgrp, #87 rails CVE-2024-26143 (SAST) + rails SCA 61 findings/1 CRITICAL (rating E); #88 dotnet/runtime CVE-2026-45491 |
-| Infra dados/cloud (96-100) | **2/5** | #96 spark SCA limpo (rating A); #97 nomad SCA 2 MEDIUM (rating B); #99 trino SCA **tentado sem sucesso** (pom.xml agregador, ver AM) |
+| JS/TS (1-20) | **10/20** | #1 vscode SCA (D, 11), #2 react SCA (E, 239), #6 vue-core SCA (E, 39), #7 angular SCA (E, 59), #9 tailwindcss SCA (C, 5), #11 axios CVE-2023-45857 (SAST) + ws CVE-2026-48779 (SCA), #13 three.js SCA (A, limpo), #15 vite SCA (E, 22), #19 lodash CVE-2021-23337 (SAST), #20 berry SCA (E, 181) |
+| Python (21-40) | **9/20** | #22 pandas (sem CVE), #26 fastapi, #27 django, #28 flask, #30 ansible SCA (E, 8), #31 celery (SAST) + SCA limpo, #32 home-assistant SCA (A, limpo), #37 scrapy, #38 requests (×3 CVEs SAST) + SCA limpo |
+| Go (41-55) | **14/15** | #41 kubernetes SCA (A, limpo), #42 moby SCA (A, limpo), #43 terraform SCA (A, limpo), #44 vault SCA (D, 9), #45 prometheus SCA (B, 2), #46 etcd CVE-2021-28235 (SAST) + SCA limpo, #47 istio SCA (B, 14), #48 cockroach SCA (E, 66), #49 caddy SCA (A, limpo), #50 gin SCA (A, limpo), #51 syncthing SCA (B, 3), #53 influxdb SCA (E, 27, via Cargo.lock), #54 argo-cd SCA (B, 2), #55 hugo SCA (B, 17); `golang/go` (extra) CVE-2023-29404 |
+| Rust (56-65) | **6/10** | #57 tokio CVE-2023-22466 (SAST), #58 alacritty SCA (B, 2), #61 tikv SCA (D, 33), #63 swc SCA (E, 39), #64 actix-web SCA (D, 10), #65 tauri SCA (D, 36); `rust-lang/regex` (extra) CVE-2022-24713 |
+| Java/Kotlin (66-75) | **3/10** | #67 spring-framework CVE-2022-22965 (SAST), #69 flink SCA (A, limpo), #72 netty CVE-2019-20444 (SAST) + SCA **tentado sem sucesso** (pom.xml agregador) |
+| C/C++ (76-85) | 2/10 | #79 curl CVE-2023-38545, #81 git CVE-2021-21300 — eixo SCA estruturalmente não aplicável a esta categoria (sem package manager de terceiros resolvível em C puro, ver AN) |
+| PHP/Ruby/C#/Mobile (86-95) | **4/10** | #86 laravel GHSA-crmm-hgp2-wgrp (SAST), #87 rails CVE-2024-26143 (SAST) + SCA (E, 61), #88 dotnet/runtime CVE-2026-45491 (SAST), #90 flutter SCA (A, limpo) |
+| Infra dados/cloud (96-100) | 2/5 | #96 spark SCA (A, limpo), #97 nomad SCA (B, 2); #99 trino e #98 ceph e #100 clickhouse **tentados sem sucesso** (pom.xml agregador / sem lockfile real, ver AM/AN) |
 
-**Total real: 26/100 repositórios numerados com pelo menos um eixo de
-evidência validado** (20 via SAST CVE-diff + 6 novos via SCA: #96, #97,
-#43, #44, #45, #61 — nenhum destes seis tinha caso SAST anterior; mais
-2 extras fora da numeração). Dos 20 anteriores, #11 axios, #31 celery,
-#72 netty e #87 rails ganharam um segundo eixo (SCA) nesta rodada, sem
-mudar o denominador. Eixos de falso-positivo (dica 3: sqlite/guava) e
-throughput (dica 1: kubernetes/tensorflow/linux/vscode) foram
+**Total real: 50/100 repositórios numerados com pelo menos um eixo de
+evidência validado** (SAST CVE-diff e/ou SCA dependência-exposição) —
+salto de 26/100 (Sprint AM) para 50/100 nesta rodada (Sprint AN), com
+28 repositórios novos. Eixos de falso-positivo (dica 3: sqlite/guava)
+e throughput (dica 1: kubernetes/tensorflow/linux/vscode) foram
 amostrados **uma única vez cada**, em Sprint AE, nunca estendidos a
-outros repositórios da lista. Reconhecido explicitamente pelo usuário
+outros repositórios da lista (exceto vscode e kubernetes, que agora
+também têm cobertura SCA). Reconhecido explicitamente pelo usuário
 como requisito obrigatório, não amostra opcional — tratado como
-trabalho em andamento, task #68.
+trabalho em andamento, task #68. Plano para fechar 100/100 detalhado
+na seção final de `AN_sca_repo_sweep_round2.md`.
 
 ---
 

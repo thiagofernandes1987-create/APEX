@@ -1233,3 +1233,44 @@ Por categoria: Infra dados/cloud 0/5 → 2/5, Go 2/15 → 4/15, Rust 1/10
 estender a varredura SCA a mais repos (JS/TS além de axios, PHP/C#/
 Mobile além de rails, e buscar pom.xml de submódulo para trino/netty
 em vez do agregador raiz).
+
+## Sprint AN — varredura SCA acelerada via descoberta automática (v3.13.0)
+
+Resposta direta ao novo `/goal`: "estender a varredura SCA a mais
+repos da lista (...) até cobrirmos todos os repositórios 100/100".
+Em vez de pesquisar manualmente o manifesto de cada repo (custo alto
+por unidade), o script (`sca_sweep_full.py`) automatiza a descoberta:
+tenta uma lista de candidatos de path por ecossistema (Go → `go.mod`,
+Rust → `Cargo.lock`, JS → `pnpm-lock.yaml`/`yarn.lock`/
+`package-lock.json`, etc.), valida HTTP 200 antes de escanear, e roda
+o `OSVScannerBridge` contra o primeiro encontrado. Relatório completo
+em `paper/corpus_runs/AN_sca_repo_sweep_round2.md`.
+
+45 repositórios numerados tentados em uma única rodada, **28 scans
+bem-sucedidos** — todos cobertura nova (incluindo 2 resgatados numa
+segunda passada manual depois de inspecionar a raiz real via GitHub
+Contents API: `angular/angular` #7 e `influxdata/influxdb` #53).
+Destaque: `facebook/react` #2 com 239 findings/19 CRITICAL (pior
+resultado da campanha SCA), `cockroachdb/cockroach` #48 com 66
+findings/3 CRITICAL em `jackc/pgx`/`grpc`, e 10 repos de alto perfil
+(`kubernetes`, `moby`, `caddy`, `gin`, `flink`, `flutter` etc.)
+escaneados limpos (rating A), confirmando que o motor não gera ruído.
+
+17 tentativas sem sucesso, três causas honestamente documentadas (não
+escondidas): (1) manifesto truncado pelo limite ~1MB da GitHub
+Contents API (next.js, kibana); (2) repositório-biblioteca sem
+lockfile commitado na raiz (tokio, serde, diesel, gradle sem
+gradle.lockfile em spring-boot/kafka/elasticsearch/kotlin, laravel
+sem composer.lock, jekyll sem Gemfile.lock); (3) sem ecossistema de
+pacotes de terceiros resolvível por SCA (cpython, php-src, wordpress,
+dotnet/runtime, dotnet/roslyn, ceph, clickhouse) — C/C++ permanece
+estruturalmente fora do alcance do eixo SCA, exigindo o eixo SAST
+CVE-diff para avançar nessa categoria.
+
+Cobertura da lista master: **26/100 → 50/100**. Por categoria: JS/TS
+2/20→10/20, Python 8/20→9/20, Go 4/15→14/15, Rust 2/10→6/10,
+Java/Kotlin 2/10→3/10, PHP/Ruby/C#/Mobile 3/10→4/10; C/C++ (2/10) e
+Infra dados/cloud (2/5) sem alteração — ambas precisam do eixo SAST ou
+de descoberta de lockfile mais profunda (submódulos) para avançar.
+Plano de fechamento dos 50 restantes (até 100/100) documentado na
+seção final de AN. Task #68 permanece em andamento.

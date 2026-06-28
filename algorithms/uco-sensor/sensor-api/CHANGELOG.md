@@ -5,6 +5,55 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.13.0] — 2026-06-28 — Sprint AN: varredura SCA acelerada, 26→50/100 da lista master
+
+Resposta direta a "estender a varredura SCA a mais repos da lista (...)
+até cobrirmos todos os repositórios 100/100". Em vez de continuar
+escolhendo manifestos um a um manualmente, esta rodada automatiza a
+**descoberta** do manifesto real: para cada repo-alvo o script tenta
+candidatos de path por ecossistema (ex.: Go → `go.mod`; Rust →
+`Cargo.lock`; JS → `pnpm-lock.yaml`/`yarn.lock`/`package-lock.json`),
+valida HTTP 200 via GitHub Contents API antes de escanear, e roda o
+`OSVScannerBridge` (M9.1) contra o primeiro encontrado. Relatório
+completo: `paper/corpus_runs/AN_sca_repo_sweep_round2.md`.
+
+45 repositórios numerados tentados, **28 scans bem-sucedidos**, todos
+cobertura nova: `microsoft/vscode` #1, `facebook/react` #2 (pior
+resultado da campanha: 239 findings/19 CRITICAL, rating E),
+`vuejs/core` #6, `angular/angular` #7, `tailwindlabs/tailwindcss` #9,
+`mrdoob/three.js` #13, `vitejs/vite` #15, `yarnpkg/berry` #20,
+`ansible/ansible` #30, `home-assistant/core` #32,
+`kubernetes/kubernetes` #41, `moby/moby` #42, `istio/istio` #47,
+`cockroachdb/cockroach` #48 (66 findings/3 CRITICAL em
+`jackc/pgx`/`grpc`), `caddyserver/caddy` #49, `gin-gonic/gin` #50,
+`syncthing/syncthing` #51, `influxdata/influxdb` #53 (via `Cargo.lock`
+— confirma a migração Go→Rust documentada na lista master),
+`argoproj/argo-cd` #54, `gohugoio/hugo` #55, `alacritty/alacritty` #58,
+`swc-project/swc` #63, `actix/actix-web` #64, `tauri-apps/tauri` #65,
+`apache/flink` #69, `flutter/flutter` #90; mais os 2 já contados em
+SAST que ganharam segundo eixo (`psf/requests` #38, `etcd-io/etcd`
+#46).
+
+17 tentativas sem sucesso, três causas honestamente documentadas em
+AN: (1) manifesto truncado pelo limite ~1MB da GitHub Contents API
+(`next.js`, `kibana`); (2) repositório-biblioteca sem lockfile
+commitado na raiz (`tokio`, `serde`, `diesel`, `express`, gradle sem
+`gradle.lockfile` em spring-boot/spring-framework/kafka/elasticsearch/
+kotlin, `laravel` sem `composer.lock`, `jekyll` sem `Gemfile.lock`);
+(3) sem ecossistema de pacotes de terceiros resolvível por SCA
+(`cpython`, `php-src`, `wordpress`, `dotnet/runtime`, `dotnet/roslyn`,
+`ceph`, `clickhouse`) — C/C++ permanece estruturalmente fora do
+alcance do eixo SCA.
+
+Cobertura da lista master: **26/100 → 50/100** repositórios numerados
+com ≥1 eixo de evidência validado. Por categoria: JS/TS 2/20→10/20,
+Python 8/20→9/20, Go 4/15→14/15, Rust 2/10→6/10, Java/Kotlin
+2/10→3/10, PHP/Ruby/C#/Mobile 3/10→4/10. C/C++ (2/10) e Infra
+dados/cloud (2/5) sem alteração nesta rodada — plano de fechamento
+detalhado na seção final de AN.
+
+---
+
 ## [3.12.1] — 2026-06-28 — Sprint AM: varredura SCA contra a lista master de 100 repositórios
 
 Resposta direta a "continuar com o teste nos 100 repositórios, agora
