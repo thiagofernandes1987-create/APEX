@@ -5,6 +5,43 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.12.1] — 2026-06-28 — Sprint AM: varredura SCA contra a lista master de 100 repositórios
+
+Resposta direta a "continuar com o teste nos 100 repositórios, agora
+utilizando a ponte com o SCA". Eixo de teste novo e complementar ao
+CVE-diff (SAST): em vez de um único CVE histórico por repositório,
+busca-se o manifesto real de dependências (lockfile/`go.mod`/`pom.xml`/
+etc.) na branch principal atual e roda-se o `OSVScannerBridge` (M9.1)
+contra ele, reportando TODAS as dependências vulneráveis conhecidas
+hoje. Relatório completo: `paper/corpus_runs/AM_sca_repo_sweep.md`.
+
+11 repositórios da lista master tentados, 9 com scan bem-sucedido. Seis
+são cobertura **nova** de repos numerados que nunca tinham caso
+SAST/SCA anterior: `apache/spark` #96 (rating A, 0 findings),
+`hashicorp/nomad` #97 (rating B, 2 MEDIUM), `hashicorp/terraform` #43
+(rating A, 0 findings), `hashicorp/vault` #44 (rating D, 9 findings/4
+HIGH em `docker/cli`/`docker/docker` vendorizados), `prometheus/prometheus`
+#45 (rating B, 2 MEDIUM), `tikv/tikv` #61 (rating D, 33 findings/7 HIGH,
+todos na mesma dependência `openssl@0.10.73` desatualizada). Quatro
+repos já tinham caso SAST anterior e ganharam um segundo eixo de
+evidência: `axios/axios` #11 (1 HIGH, `ws@8.20.1`), `celery/celery` #31
+(limpo), `rails/rails` #87 (pior resultado do lote: 1 CRITICAL
+`rack-session` CVE-2026-39324 + 19 HIGH, rating E), `netty/netty` #72
+(scan falhou).
+
+Dois scans falharam por limitação real do OSV-Scanner: `trinodb/trino`
+#99 e `netty/netty` #72 têm `pom.xml` raiz **agregador/parent** (só
+`<modules>`, sem `<dependencies>` diretas) — o extrator Maven do
+OSV-Scanner sai com "No package sources found" (não é bug do
+`sca_bridge.py`; documentado honestamente, não contabilizado como
+cobertura).
+
+Cobertura agregada da lista master atualizada em
+`paper/corpus_runs/AE_repo_list_master.md`: **20/100 → 26/100**
+repositórios numerados com pelo menos um eixo de evidência validado.
+Por categoria: Infra dados/cloud 0/5 → 2/5, Go 2/15 → 4/15, Rust 1/10 →
+2/10.
+
 ## [3.12.0] — 2026-06-27 — Sprint AK/AL: validação do fingerprint espectral + SCA via OSV-Scanner
 
 Resposta direta a três pedidos explícitos do usuário na mesma mensagem:

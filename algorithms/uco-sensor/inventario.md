@@ -1198,3 +1198,38 @@ amostra)**: expandir cobertura real dos ~100 repositórios de
 têm caso CVE-anchorado real; os eixos de falso-positivo e throughput
 foram amostrados uma única vez (Sprint AE) e nunca estendidos. Tratado
 como task #68, ainda não iniciada.
+
+## Sprint AM — varredura SCA contra a lista master de 100 (v3.12.1)
+
+Resposta direta a "continuar com o teste nos 100 repositórios, agora
+utilizando a ponte com o SCA" — primeiro avanço concreto na task #68
+usando o `OSVScannerBridge` (Sprint AL) como eixo de teste novo:
+em vez de CVE histórico + diff, busca-se o manifesto real de
+dependências de cada repo (via GitHub Contents API) e roda-se o scan
+contra ele, reportando exposição vigente. Relatório completo em
+`paper/corpus_runs/AM_sca_repo_sweep.md`.
+
+11 repos tentados, 9 scans bem-sucedidos. Seis são cobertura **nova**
+de repos numerados sem caso anterior: `apache/spark` #96 (A, limpo),
+`hashicorp/nomad` #97 (B, 2 MEDIUM), `hashicorp/terraform` #43 (A,
+limpo), `hashicorp/vault` #44 (D, 9 findings/4 HIGH em
+docker/cli+docker vendorizados), `prometheus/prometheus` #45 (B, 2
+MEDIUM), `tikv/tikv` #61 (D, 33 findings/7 HIGH, todos em
+`openssl@0.10.73`). Quatro repos (`axios` #11, `celery` #31, `rails`
+#87, `netty` #72) já tinham caso SAST e ganharam um segundo eixo de
+evidência — destaque para `rails/rails`: pior rating do lote (E), 1
+CRITICAL (`rack-session` CVE-2026-39324) + 19 HIGH.
+
+Duas falhas honestamente documentadas (não escondidas): `trinodb/trino`
+#99 e `netty/netty` #72 têm `pom.xml` raiz agregador/parent (Maven
+multi-módulo), sem `<dependencies>` diretas — OSV-Scanner sai com "No
+package sources found"; limitação real da ferramenta contra esse
+padrão de repo, não bug do `sca_bridge.py`.
+
+Cobertura da lista master atualizada em `AE_repo_list_master.md`:
+**20/100 → 26/100** repositórios numerados com ≥1 eixo de evidência.
+Por categoria: Infra dados/cloud 0/5 → 2/5, Go 2/15 → 4/15, Rust 1/10
+→ 2/10. Task #68 permanece em andamento — próximo passo natural é
+estender a varredura SCA a mais repos (JS/TS além de axios, PHP/C#/
+Mobile além de rails, e buscar pom.xml de submódulo para trino/netty
+em vez do agregador raiz).

@@ -6,32 +6,41 @@
 > 2026-06-26T22:32:36Z, organizada em 8 categorias de ecossistema, mais
 > as 3 dicas de estratégia de teste que orientam a metodologia.
 
-## Status de cobertura — atualizado Sprint AL (honesto, não amostra)
+## Status de cobertura — atualizado Sprint AM (honesto, não amostra)
 
 > Correção: a tabela anterior (Sprint AD) ficou obsoleta desde Sprint AG
 > (laravel/rails/dotnet/netty/lodash) e Sprint AJ (capstone re-scan).
-> Esta é a contagem real, repo-a-repo, contra a numeração 1-100 desta
-> lista. `golang/go` e `rust-lang/regex` continuam fora da numeração
-> original (extras de AD) e não contam para os denominadores abaixo.
+> Sprint AM (`AM_sca_repo_sweep.md`) introduziu um **segundo eixo de
+> evidência**, complementar ao CVE-diff (SAST): varredura de
+> manifesto-de-dependências real via `OSVScannerBridge` (M9.1/SCA),
+> reportando exposição vigente de dependências vulneráveis em vez de um
+> único CVE histórico pontual. Os dois eixos são contados separadamente
+> por repo abaixo — um repo pode ter 0, 1 ou 2 eixos cobertos.
+> `golang/go` e `rust-lang/regex` continuam fora da numeração original
+> (extras de AD) e não contam para os denominadores abaixo.
 
-| Categoria | Cobertura real | Repo/CVE numerados já testados |
+| Categoria | Cobertura real (≥1 eixo) | Repo/CVE/SCA numerados já testados |
 |---|---|---|
-| JS/TS (1-20) | 2/20 | #11 axios CVE-2023-45857, #19 lodash CVE-2021-23337 |
-| Python (21-40) | 8/20 | #26 fastapi, #27 django, #28 flask, #31 celery, #37 scrapy, #38 requests (×3 CVEs), #22 pandas (sem CVE) |
-| Go (41-55) | 2/15 | #46 etcd CVE-2021-28235; `golang/go` (extra, fora da numeração) CVE-2023-29404 |
-| Rust (56-65) | 1/10 | #57 tokio CVE-2023-22466; `rust-lang/regex` (extra) CVE-2022-24713 |
-| Java/Kotlin (66-75) | 2/10 | #67 spring-framework CVE-2022-22965, #72 netty CVE-2019-20444 |
+| JS/TS (1-20) | 2/20 | #11 axios CVE-2023-45857 (SAST) + ws CVE-2026-48779 (SCA, 1 HIGH); #19 lodash CVE-2021-23337 (SAST) |
+| Python (21-40) | 8/20 | #26 fastapi, #27 django, #28 flask, #31 celery (SAST) + SCA limpo (rating A); #37 scrapy, #38 requests (×3 CVEs), #22 pandas (sem CVE) |
+| Go (41-55) | **4/15** | #46 etcd CVE-2021-28235 (SAST); #43 terraform SCA limpo (rating A); #44 vault SCA 9 findings/4 HIGH (rating D); #45 prometheus SCA 2 MEDIUM (rating B); `golang/go` (extra) CVE-2023-29404 |
+| Rust (56-65) | **2/10** | #57 tokio CVE-2023-22466 (SAST); #61 tikv SCA 33 findings/7 HIGH (rating D); `rust-lang/regex` (extra) CVE-2022-24713 |
+| Java/Kotlin (66-75) | 2/10 | #67 spring-framework CVE-2022-22965, #72 netty CVE-2019-20444 (SAST); #72 netty SCA **tentado sem sucesso** (pom.xml agregador, ver AM) |
 | C/C++ (76-85) | 2/10 | #79 curl CVE-2023-38545, #81 git CVE-2021-21300 |
-| PHP/Ruby/C#/Mobile (86-95) | 3/10 | #86 laravel GHSA-crmm-hgp2-wgrp, #87 rails CVE-2024-26143, #88 dotnet/runtime CVE-2026-45491 |
-| Infra dados/cloud (96-100) | 0/5 | — ainda não iniciado |
+| PHP/Ruby/C#/Mobile (86-95) | 3/10 | #86 laravel GHSA-crmm-hgp2-wgrp, #87 rails CVE-2024-26143 (SAST) + rails SCA 61 findings/1 CRITICAL (rating E); #88 dotnet/runtime CVE-2026-45491 |
+| Infra dados/cloud (96-100) | **2/5** | #96 spark SCA limpo (rating A); #97 nomad SCA 2 MEDIUM (rating B); #99 trino SCA **tentado sem sucesso** (pom.xml agregador, ver AM) |
 
-**Total real: 20/100 repositórios numerados com caso CVE-anchorado
-validado** (mais 2 extras fora da numeração). Eixos de falso-positivo
-(dica 3: sqlite/guava) e throughput (dica 1: kubernetes/tensorflow/
-linux/vscode) foram amostrados **uma única vez cada**, em Sprint AE,
-nunca estendidos a outros repositórios da lista. Reconhecido
-explicitamente pelo usuário como requisito obrigatório, não amostra
-opcional — tratado como trabalho em andamento, task #68.
+**Total real: 26/100 repositórios numerados com pelo menos um eixo de
+evidência validado** (20 via SAST CVE-diff + 6 novos via SCA: #96, #97,
+#43, #44, #45, #61 — nenhum destes seis tinha caso SAST anterior; mais
+2 extras fora da numeração). Dos 20 anteriores, #11 axios, #31 celery,
+#72 netty e #87 rails ganharam um segundo eixo (SCA) nesta rodada, sem
+mudar o denominador. Eixos de falso-positivo (dica 3: sqlite/guava) e
+throughput (dica 1: kubernetes/tensorflow/linux/vscode) foram
+amostrados **uma única vez cada**, em Sprint AE, nunca estendidos a
+outros repositórios da lista. Reconhecido explicitamente pelo usuário
+como requisito obrigatório, não amostra opcional — tratado como
+trabalho em andamento, task #68.
 
 ---
 
