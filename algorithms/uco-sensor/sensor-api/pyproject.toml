@@ -4,7 +4,7 @@ build-backend = "setuptools.backends.legacy:build"
 
 [project]
 name        = "uco-sensor"
-version     = "3.15.0"
+version     = "3.16.0"
 description = "Spectral code-quality API powered by UCO v4 + FrequencyEngine"
 readme      = "README.md"
 license     = { text = "MIT" }
@@ -41,6 +41,12 @@ parsers = [
   "tree-sitter-typescript>=0.21.0",
   "tree-sitter-java>=0.21.0",
   "tree-sitter-go>=0.21.0",
+  # M9.2 — AST structural diff for the regex-Tier-2 languages
+  "tree-sitter-c>=0.21.0",
+  "tree-sitter-cpp>=0.21.0",
+  "tree-sitter-php>=0.22.0",
+  "tree-sitter-ruby>=0.21.0",
+  "tree-sitter-c-sharp>=0.21.0",
 ]
 dev = [
   "pytest>=7.4",

@@ -5,6 +5,42 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.16.0] — 2026-06-28 — Sprint AR: motor AST tree-sitter (M9.2) + deep research, 74→75/100
+
+Disparada pelo pedido do usuário (`/deep-research`) de pesquisar um
+método real para superar a barreira dos 74/100, autorizando
+explicitamente um novo módulo AST se necessário. Workflow multi-agente
+de 5 ângulos (20 fontes primárias: papers USENIX/ICSE/arXiv + specs
+OSV/GHSA) diagnosticou 3 limitações de motor — não falta de esforço —
+documentadas em `paper/corpus_runs/AR_deep_research_synthesis.md`.
+
+### Added — M9.2 AST Structural Diff (motor novo)
+- `lang_adapters/ast_structural_diff.py`: assinatura estrutural (histograma
+  de tipos de nó + profundidade) e diff before/after via tree-sitter real,
+  com `security_operator_delta` (operadores de bounds-check/guard) e churn
+  escalar. Degradação graciosa: gramática ausente → `None`, nunca quebra.
+- `lang_adapters/tree_sitter_bridge.py`: `_GRAMMARS` estendido a C, C++,
+  PHP, Ruby, C# (+ entry-point override para `tree_sitter_php.language_php`).
+- `tests/test_marco_m75.py`: 11 testes (TX75), incluindo a reprodução
+  offline do padrão php-src e parametrização multilíngue.
+
+### Why — fecha a limitação "delta=0 em fix de 1 linha"
+O eixo regex Tier-2 (C/C++/PHP/Ruby/C#) tinha piso de granularidade
+acima de um operador adicionado: o fix de `php/php-src` CVE-2019-11043
+(bounds-check `pilen > slen` + null-guard) registrava **delta = 0** em
+todos os 9 canais. O motor AST mostra churn=12 com o operador `>` do
+bounds-check — o sinal exato que faltava. Validado em 6 fixes C reais
+(php-src, linux, postgres, redis, ffmpeg, opencv).
+
+### Coverage
+- php-src (#89) ganha eixo SAST AST-anchored. Categoria PHP/Ruby/C#/Mobile
+  4/10 → 5/10. Total da lista master: **74/100 → 75/100**.
+- Roadmap pesquisado para os 25 restantes: Sprint AS (OSV/GHSA fix-commit
+  resolver, esforço baixo, ganho parcial) e Sprint AT (SCA por
+  similaridade de função à la V1SCAN/CENTRIS, esforço médio-alto).
+
+---
+
 ## [3.15.0] — 2026-06-28 — Sprint AP: 69→74/100, eixo SAST estendido a C/C++
 
 Resposta ao feedback do Stop hook ("100/100 requer mais que SCA"): a

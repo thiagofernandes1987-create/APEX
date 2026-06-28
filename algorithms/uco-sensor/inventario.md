@@ -1389,3 +1389,36 @@ de teste foi contado para inflar o número. Relatório completo em
 permanece em andamento — os 26/100 restantes continuam genuinamente
 sem eixo de evidência válido, com barreiras estruturais confirmadas em
 AO/AP/AQ.
+
+## Sprint AR — deep research + motor AST tree-sitter (M9.2), 74→75/100 (v3.16.0)
+
+O usuário rejeitou o "teto estrutural" e disparou `/deep-research`
+pedindo um método real de superar os 74/100, autorizando explicitamente
+um novo módulo AST. Workflow multi-agente de 5 ângulos (20 fontes
+primárias). **Nota honesta:** a verificação adversarial do workflow
+morreu por limite de sessão da API (votos `0-0`, "all refuted" é
+artefato — nenhuma claim foi de fato refutada); as fontes primárias
+(VFFinder, V1SCAN, CENTRIS, difftastic, OSV schema, CommitShield) são
+tratadas como leads de alta qualidade. Síntese em
+`paper/corpus_runs/AR_deep_research_synthesis.md`.
+
+Diagnóstico: 74/100 não é falta de esforço, são 3 limitações de motor —
+(B1) adapters Tier-2 são regex e perdem fix de 1 linha; (B2) SCA exige
+lockfile commitado; (B3) descoberta de fix-commit via commit-message
+search falha em SVN/GitLab.
+
+**Entregue (B1 resolvido):** motor novo M9.2 — `ast_structural_diff.py`
+(assinatura/diff estrutural via tree-sitter real) + `tree_sitter_bridge`
+estendido a C/C++/PHP/Ruby/C#. Prova empírica: `php/php-src`
+CVE-2019-11043 dava **delta=0** no eixo regex; o eixo AST mostra
+churn=12 com o bounds-check `>`+1 visível. Validado em 6 fixes C reais.
+11 testes novos (TX75, `tests/test_marco_m75.py`). php-src (#89) ganha
+eixo SAST AST-anchored → categoria PHP/Ruby/C#/Mobile 4/10→5/10, total
+**74→75/100**.
+
+Roadmap pesquisado para os 25 restantes: Sprint AS (resolver OSV/GHSA
+de fix-commit — `api.osv.dev` bloqueado pelo proxy, mas
+`api.github.com/advisories` é permitido e carrega o mesmo dado upstream;
+fecha gaps GitHub-nativos, não httpd/wireshark SVN/GitLab); Sprint AT
+(SCA por similaridade de função à la V1SCAN/CENTRIS para os repos sem
+lockfile). Task #68 e #69 em andamento — o "teto" virou roadmap.

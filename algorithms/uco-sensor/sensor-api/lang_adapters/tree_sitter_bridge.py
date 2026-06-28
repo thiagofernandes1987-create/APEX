@@ -37,12 +37,31 @@ from __future__ import annotations
 import re
 from typing import Any, Iterator, Optional, Tuple
 
-# Map our language name → (tree_sitter_language module, pip grammar package)
+# Map our language name → tree_sitter grammar module name.
+#
+# Most grammars expose a top-level ``language()`` callable returning the
+# capsule.  A handful use a differently-named entry point (notably
+# ``tree_sitter_php`` which ships ``language_php()`` because the wheel bundles
+# both the full-PHP and PHP-only grammars).  ``_GRAMMAR_ENTRYPOINTS`` records
+# those exceptions; everything else falls back to ``language``.
 _GRAMMARS = {
     "javascript": "tree_sitter_javascript",
     "typescript": "tree_sitter_typescript",
     "java":       "tree_sitter_java",
     "go":         "tree_sitter_go",
+    "python":     "tree_sitter_python",
+    # M9.2 — AST coverage extended to the regex-Tier-2 languages whose
+    # one-line security fixes the GenericRegexAdapter family under-detects.
+    "c":          "tree_sitter_c",
+    "cpp":        "tree_sitter_cpp",
+    "php":        "tree_sitter_php",
+    "ruby":       "tree_sitter_ruby",
+    "csharp":     "tree_sitter_c_sharp",
+}
+
+# language name → entry-point function on the grammar module (default: language)
+_GRAMMAR_ENTRYPOINTS = {
+    "php": "language_php",
 }
 
 
@@ -95,8 +114,16 @@ class TreeSitterBridge:
             import importlib
             import tree_sitter
             mod = importlib.import_module(grammar_mod)
-            # tree-sitter ≥0.22 API: Language(capsule), Parser(language)
-            lang_capsule = mod.language() if hasattr(mod, "language") else mod.LANGUAGE
+            # tree-sitter ≥0.22 API: Language(capsule), Parser(language).
+            # Resolve the grammar entry point, honouring per-grammar overrides
+            # (e.g. tree_sitter_php → language_php()).
+            entry = _GRAMMAR_ENTRYPOINTS.get(self.language, "language")
+            if hasattr(mod, entry):
+                lang_capsule = getattr(mod, entry)()
+            elif hasattr(mod, "language"):
+                lang_capsule = mod.language()
+            else:
+                lang_capsule = mod.LANGUAGE
             language = tree_sitter.Language(lang_capsule)
             parser = tree_sitter.Parser(language)
             return parser
