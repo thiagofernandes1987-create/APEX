@@ -5,6 +5,32 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.15.0] — 2026-06-28 — Sprint AP: 69→74/100, eixo SAST estendido a C/C++
+
+Resposta ao feedback do Stop hook ("100/100 requer mais que SCA"): a
+categoria C/C++ é estruturalmente sem ecossistema de terceiros
+resolvível por SCA (confirmado desde AN). O único caminho restante é o
+eixo SAST CVE-anchored before/after, já usado para `curl`/`git` desde
+Sprint AD — agora estendido a 5 repositórios C/C++ adicionais via busca
+de commit de correção real (GitHub Search Commits API, autenticada):
+`linux` (CVE-2016-5195 Dirty COW, `mm/gup.c`), `postgres`
+(CVE-2021-32027, `arrayfuncs.c`), `redis` (CVE-2022-24834, Lua cjson),
+`ffmpeg` (CVE-2020-22015, `movenc.c`), `opencv` (CVE-2019-7317, libpng
+vendorizado). Todos os 5 mostram delta espectral não-nulo (hamiltonian,
+cyclomatic_complexity, lines_of_code) no commit de fix, confirmando que
+o adapter `CAdapter`/`CppAdapter` (M6.2) detecta a mudança estrutural.
+
+Documentadas honestamente 3 tentativas sem sucesso (não infladas):
+`sqlite` (reservado para teste de FP, não consumido), `httpd`
+(commit indexado é só teste unitário, não o fix real) e `wireshark`
+(usa advisories `wnpa-sec-*` sem referência cruzada direta indexável).
+
+Categoria C/C++ (76-85): **2/10 → 7/10**. Cobertura da lista master:
+**69/100 → 74/100**. Relatório completo em
+`paper/corpus_runs/AP_cve_anchored_cpp.md`.
+
+---
+
 ## [3.14.0] — 2026-06-28 — Sprint AO: 50→69/100, bloqueio trino/netty resolvido
 
 Continuação direta do `/goal`: resolve o bloqueio histórico de

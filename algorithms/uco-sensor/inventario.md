@@ -1321,3 +1321,41 @@ atualizada em `AE_repo_list_master.md`. Restam 31/100 sem eixo —
 majoritariamente C/C++ puro (estruturalmente fora do eixo SCA, só o
 eixo SAST pode estender) e PHP/Ruby/C#/Mobile sem rodada de descoberta
 dedicada ainda. Task #68 permanece em andamento.
+
+## Sprint AP — eixo SAST estendido a C/C++, 69→74/100 (v3.15.0)
+
+Resposta ao feedback do Stop hook: "100/100" via SCA é impossível para
+C/C++ puro (sem ecossistema de terceiros, confirmado desde AN). Único
+caminho restante: estender o eixo SAST CVE-anchored before/after (já
+usado em `curl`/`git` desde AD) a mais repositórios C/C++. Usando a
+GitHub Search Commits API (autenticada via `GITHUB_TOKEN` do ambiente)
+para localizar o commit de correção real referenciando o CVE,
+resolvendo o commit-pai como versão vulnerável, e comparando os 9
+canais UCO via `lang_adapters.registry` (`CAdapter`/`CppAdapter`,
+M6.2):
+
+- `torvalds/linux` (#76) CVE-2016-5195 Dirty COW, `mm/gup.c`: delta
+  hamiltonian +0.217, cyclomatic -4, LOC +16.
+- `postgres/postgres` (#77) CVE-2021-32027, `arrayfuncs.c`: delta
+  hamiltonian +0.129, cyclomatic +1, LOC +6.
+- `antirez/redis` (#78) CVE-2022-24834 Lua cjson overflow: delta
+  hamiltonian +0.794, cyclomatic +1, LOC +3.
+- `FFmpeg/FFmpeg` (#80) CVE-2020-22015, `movenc.c`: delta hamiltonian
+  +0.090, cyclomatic +2, LOC +2.
+- `opencv/opencv` (#82) CVE-2019-7317 (libpng vendorizado): delta
+  hamiltonian -0.003, halstead_bugs -0.018, LOC -1.
+
+**5/5 com delta espectral confirmado** — todos detectam a mudança
+estrutural do fix. Três tentativas honestamente documentadas como sem
+sucesso: `sqlite` (reservado para teste de FP, não consumido), `httpd`
+(único commit indexado é teste unitário, não o fix real) e `wireshark`
+(advisories `wnpa-sec-*` sem referência cruzada indexável pela busca).
+
+Categoria C/C++ (76-85): **2/10 → 7/10**. Cobertura da lista master:
+**69/100 → 74/100**. Relatório completo em
+`paper/corpus_runs/AP_cve_anchored_cpp.md`. Restam 26/100: Python (7),
+Rust (2), Java/Kotlin (4), PHP/Ruby/C#/Mobile (6, estruturalmente sem
+lockfile, confirmado em AO), Infra (2), C/C++ (3: sqlite reservado,
+httpd/wireshark sem commit localizável). Task #68 permanece em
+andamento — 74/100 é o piso honesto até nova descoberta de manifesto
+ou CVE viabilizar mais casos.
