@@ -1359,3 +1359,33 @@ lockfile, confirmado em AO), Infra (2), C/C++ (3: sqlite reservado,
 httpd/wireshark sem commit localizável). Task #68 permanece em
 andamento — 74/100 é o piso honesto até nova descoberta de manifesto
 ou CVE viabilizar mais casos.
+
+## Sprint AQ — tentativa SAST para PHP/Ruby/C#/Mobile restantes, sem novo eixo (74/100 inalterado)
+
+Tentativa de boa fé de estender o eixo SAST CVE-anchored (técnica de
+AP) aos 6 repositórios da categoria 86-95 ainda sem nenhum eixo
+(`dotnet/roslyn`, `WordPress/WordPress`, `php/php-src`,
+`jekyll/jekyll`, `signalapp/Signal-Android`,
+`shadowsocks/shadowsocks-windows`). Resultado: **nenhum novo sucesso
+legítimo**.
+
+- `php/php-src` CVE-2019-11043: commit de fix real localizado
+  (`ab061f95`, arquivo `sapi/fpm/fpm/fpm_main.c`), mas a análise
+  antes/depois via `CAdapter` produziu **delta = 0 em todos os 9
+  canais** — o fix é uma correção de bounds-check de uma linha,
+  estruturalmente abaixo da sensibilidade do adapter regex-based.
+  Resultado nulo honesto, não contado como sucesso.
+- `jekyll/jekyll`: único candidato encontrado para CVE-2014-9490 é um
+  commit que só altera `test/test_sass.rb` (arquivo de teste) — não é
+  o fix de produção. Descartado.
+- `dotnet/roslyn`, `WordPress/WordPress`, `signalapp/Signal-Android`,
+  `shadowsocks/shadowsocks-windows`: zero commits retornados pela
+  busca por CVE-ID (WordPress em particular tem seus fixes reais via
+  SVN, não preservados como referência de CVE no mirror GitHub).
+
+Cobertura permanece **74/100**. Nenhum resultado de delta=0 ou commit
+de teste foi contado para inflar o número. Relatório completo em
+`paper/corpus_runs/AQ_sast_php_ruby_csharp_attempt.md`. Task #68
+permanece em andamento — os 26/100 restantes continuam genuinamente
+sem eixo de evidência válido, com barreiras estruturais confirmadas em
+AO/AP/AQ.
