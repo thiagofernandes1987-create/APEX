@@ -5,6 +5,35 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.23.0] — 2026-06-29 — Sprint AY: resolução de Central Package Management, fecha roslyn (true-positive), 87→88/100
+
+Fecha o near-miss de AX: resolução do NuGet **Central Package Management**
+(versões indiretas via MSBuild), com o primeiro **true-positive** do motor
+M9.4.
+
+### Added — parsers de manifesto no M9.4
+- `sca/vendored_scanner.py`: `parse_packages_config` (NuGet old-style) e
+  `parse_msbuild_cpm` (resolve `Packages.props` × `Versions.props`,
+  descartando variáveis sem definição — nunca chuta versão → evita FP).
+- `tests/test_marco_m77.py`: +4 testes (22 total) incl. fixture real do
+  padrão roslyn e a confirmação da janela vulnerável do MessagePack.
+
+### Coverage — #89 roslyn fechado (E, VULNERÁVEL — true-positive)
+- `dotnet/roslyn` (#89): CPM resolvido (123 pacotes via
+  `eng/Packages.props`+`eng/Versions.props`). `MessagePack`@2.5.198 cai na
+  janela vulnerável **[≥2.5.187, <2.5.301]** de 11 CVEs (CVE-2026-485xx,
+  patched em 2.5.301). Verificado rigorosamente: o range-matcher inclui
+  `< 2.5.301` e corretamente **exclui** `< 2.5.187` (CVE-2024-48924, já
+  patched) e os ranges `>= 3.0`. Rating E. PHP/Ruby/C#/Mobile 7/10 →
+  **8/10**. Total: **87 → 88/100**.
+- Primeiro achado vulnerável do M9.4 (até aqui só vereditos limpos),
+  demonstrando que o motor distingue a janela vulnerável real — não só
+  reporta "tem CVE".
+
+Documentação em `paper/corpus_runs/AY_roslyn_cpm_messagepack.md`.
+
+---
+
 ## [3.22.0] — 2026-06-29 — Sprint AX: M9.4 aplicado a packages.config NuGet, fecha shadowsocks-windows, 86→87/100
 
 Aplicação do motor M9.4 (SCA por versão + range GHSA) a um manifesto que

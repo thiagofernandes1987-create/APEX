@@ -119,6 +119,58 @@ def version_in_range(version: str, vrange: str) -> bool:
 
 # ── advisory → verdict ────────────────────────────────────────────────────────
 
+_PKGCONFIG_RE = re.compile(
+    r'<package\s+id="([^"]+)"\s+version="([^"]+)"', re.IGNORECASE
+)
+_PKGVERSION_RE = re.compile(
+    r'<PackageVersion\s+Include="([^"]+)"\s+Version="([^"]+)"', re.IGNORECASE
+)
+_MSBUILD_VAR_RE = re.compile(r"\$\((\w+)\)")
+_PROP_RE = re.compile(r"<(\w+)>([^<]+)</\1>")
+
+
+def parse_packages_config(xml: str) -> Dict[str, str]:
+    """
+    Parse a NuGet **old-style** ``packages.config`` into ``{name: version}``.
+
+    ``packages.config`` pins exact versions (``<package id="X" version="Y.Z"/>``)
+    so it is, for SCA purposes, equivalent to a lockfile.  Sprint AX found
+    this format went unscanned by earlier ``*.lock`` code-searches.
+    """
+    out: Dict[str, str] = {}
+    for name, ver in _PKGCONFIG_RE.findall(xml or ""):
+        if re.match(r"\d", ver.strip()):
+            out[name] = ver.strip()
+    return out
+
+
+def parse_msbuild_cpm(packages_props: str, versions_props: str) -> Dict[str, str]:
+    """
+    Resolve NuGet **Central Package Management** into ``{name: version}``.
+
+    ``Packages.props`` lists ``<PackageVersion Include="X" Version="$(XVer)"/>``
+    where ``$(XVer)`` is defined in ``Versions.props`` as ``<XVer>1.2.3</XVer>``.
+    Literal (non-indirected) versions are kept as-is.  Unresolved variables
+    are dropped (never guessed) so a missing definition can't produce a wrong
+    version → false positive.
+    """
+    varmap: Dict[str, str] = {}
+    for name, ver in _PROP_RE.findall(versions_props or ""):
+        v = ver.strip()
+        if re.match(r"\d", v):
+            varmap[name] = v
+    out: Dict[str, str] = {}
+    for pid, vexpr in _PKGVERSION_RE.findall(packages_props or ""):
+        vexpr = vexpr.strip()
+        m = _MSBUILD_VAR_RE.match(vexpr)
+        if m:
+            if m.group(1) in varmap:
+                out[pid] = varmap[m.group(1)]
+        elif re.match(r"\d", vexpr):
+            out[pid] = vexpr
+    return out
+
+
 @dataclass(frozen=True)
 class VendorHit:
     """One advisory that the vendored version actually falls into."""

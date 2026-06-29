@@ -29,6 +29,8 @@ from sca.vendored_scanner import (
     verdict_for,
     VendoredScanner,
     VendorVerdict,
+    parse_packages_config,
+    parse_msbuild_cpm,
 )
 
 # Advisory REAL: rmccue/requests CVE-2021-29476, range ">= 1.6.0, < 1.8.0".
@@ -126,3 +128,71 @@ def test_T77_scanner_fetch_failure_returns_none():
     def boom(url):
         raise RuntimeError("network down")
     assert VendoredScanner(fetcher=boom).scan_package("composer", "x/y", "1.0.0") is None
+
+
+# ── parsers de manifesto: packages.config (NuGet old-style) ───────────────────
+
+# Recorte REAL de shadowsocks-csharp/packages.config (Sprint AX).
+_PACKAGES_CONFIG = """\
+<?xml version="1.0" encoding="utf-8"?>
+<packages>
+  <package id="Newtonsoft.Json" version="13.0.3" targetFramework="net472" />
+  <package id="Google.Protobuf" version="3.27.2" targetFramework="net472" />
+  <package id="System.Net.Http" version="4.3.4" targetFramework="net472" />
+</packages>
+"""
+
+
+def test_T77_parse_packages_config():
+    pkgs = parse_packages_config(_PACKAGES_CONFIG)
+    assert pkgs == {
+        "Newtonsoft.Json": "13.0.3",
+        "Google.Protobuf": "3.27.2",
+        "System.Net.Http": "4.3.4",
+    }
+
+
+def test_T77_parse_packages_config_empty():
+    assert parse_packages_config("") == {}
+    assert parse_packages_config("<packages></packages>") == {}
+
+
+# ── parsers de manifesto: Central Package Management (MSBuild) ─────────────────
+
+# Recorte REAL do padrão roslyn eng/Packages.props + eng/Versions.props (AY).
+_PACKAGES_PROPS = """\
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="MessagePack" Version="$(MessagePackVersion)" />
+    <PackageVersion Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+    <PackageVersion Include="LiteralPkg" Version="1.2.3" />
+    <PackageVersion Include="UnresolvedPkg" Version="$(MissingVersion)" />
+  </ItemGroup>
+</Project>
+"""
+_VERSIONS_PROPS = """\
+<Project>
+  <PropertyGroup>
+    <MessagePackVersion>2.5.198</MessagePackVersion>
+    <NewtonsoftJsonVersion>13.0.3</NewtonsoftJsonVersion>
+  </PropertyGroup>
+</Project>
+"""
+
+
+def test_T77_parse_msbuild_cpm_resolves_indirection():
+    pkgs = parse_msbuild_cpm(_PACKAGES_PROPS, _VERSIONS_PROPS)
+    assert pkgs["MessagePack"] == "2.5.198"
+    assert pkgs["Newtonsoft.Json"] == "13.0.3"
+    # versão literal mantida
+    assert pkgs["LiteralPkg"] == "1.2.3"
+    # variável sem definição é DESCARTADA (nunca chuta → evita FP)
+    assert "UnresolvedPkg" not in pkgs
+
+
+def test_T77_msbuild_cpm_messagepack_window_is_a_true_positive():
+    # 2.5.198 cai em "< 2.5.301" (vulnerável) mas NÃO em "< 2.5.187" (patched)
+    # — confirma que o range-matching distingue a janela vulnerável real.
+    assert version_in_range("2.5.198", "< 2.5.301") is True
+    assert version_in_range("2.5.198", "< 2.5.187") is False
+    assert version_in_range("2.5.198", ">= 3.0, < 3.1.7") is False

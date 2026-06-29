@@ -1551,3 +1551,23 @@ requer property-resolution; **adiado** em vez de apressado (disciplina
 anti-FP). jekyll/signal seguem sem lockfile. Relatório em
 `paper/corpus_runs/AX_nuget_packages_config.md`. **De 74 a 87/100 nesta
 sessão.** Task #68 em andamento.
+
+## Sprint AY — Central Package Management, fecha roslyn com true-positive, 87→88/100 (v3.23.0)
+
+Fecha o near-miss de AX: parsers `parse_packages_config` e
+`parse_msbuild_cpm` adicionados ao M9.4 (resolvem indireção MSBuild
+descartando variáveis sem definição → anti-FP). +4 testes (TX77, 22
+total).
+
+**#89 roslyn FECHADO (E, VULNERÁVEL — primeiro true-positive do M9.4):**
+CPM resolvido (123 pacotes via eng/Packages.props×eng/Versions.props).
+`MessagePack`@2.5.198 cai na janela vulnerável [≥2.5.187, <2.5.301] de 11
+CVEs CVE-2026-485xx (patched em 2.5.301). Range-matcher verificado:
+inclui `<2.5.301`, exclui corretamente `<2.5.187` (CVE-2024-48924 já
+patched) e `>=3.0`. PHP/Ruby/C#/Mobile 7/10→8/10, total **87→88/100**.
+
+M9.4 cobre agora 3 formatos: composer vendorizado (AW), packages.config
+(AX), CPM indireto (AY) — e produz true-positives precisos, não só
+vereditos limpos. Relatório em
+`paper/corpus_runs/AY_roslyn_cpm_messagepack.md`. **De 74 a 88/100 nesta
+sessão.** Task #68 em andamento.
