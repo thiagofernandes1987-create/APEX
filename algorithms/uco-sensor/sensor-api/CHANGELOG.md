@@ -5,6 +5,32 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.28.0] — 2026-06-29 — Sprint BD: fecha kotlin via grammar tree-sitter-kotlin, Java/Kotlin 10/10, →94/100
+
+Fecha #75 kotlin estendendo o motor AST (M9.2) a uma 7ª gramática
+tree-sitter, fechando a categoria Java/Kotlin.
+
+### Added — gramática kotlin no M9.2
+- `tree_sitter_bridge`: `kotlin` (`tree_sitter_kotlin`). `pyproject`
+  parsers: `tree-sitter-kotlin`. `tests/test_marco_m75.py`: caso kotlin
+  na parametrização multilíngue (13 testes). O motor AST cobre agora 7
+  linguagens (C/C++/PHP/Ruby/C#/Rust/Kotlin).
+
+### Coverage — #75 kotlin fechado (SAST AST-anchored)
+- `JetBrains/kotlin` (#75): fix de segurança real KT-63103 ("Fix security
+  vulnerability in Path recursive functions"), commit `f8c587dd`, em
+  `libraries/stdlib/jdk7/src/kotlin/io/path/PathRecursiveFunctions.kt`
+  (+100-8) — corrige symlink-following em `deleteRecursively`/
+  `copyRecursively` da stdlib. Diff AST kotlin churn=526. É um fix de
+  produção rotulado de segurança pelo mantenedor (distinto do autofix
+  CodeQL do redisson, que foi rejeitado por não ser CVE-anchored).
+  **Categoria Java/Kotlin 9/10 → 10/10 — fechada.** Total: **93 → 94/100**.
+
+Quatro categorias fechadas: JS/TS, Go, Java/Kotlin, Infra. Restam 6/100.
+Documentação em `paper/corpus_runs/BD_kotlin_grammar.md`.
+
+---
+
 ## [3.27.0] — 2026-06-29 — Sprint BC: fecha signal-android via catálogo Gradle, →93/100
 
 Fecha #94 signal-android e adiciona o parser de catálogo de versões

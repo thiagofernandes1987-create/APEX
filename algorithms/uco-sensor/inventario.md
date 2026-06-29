@@ -1646,3 +1646,21 @@ total **92→93/100**. Resta só #93 jekyll na categoria.
 Restam 7/100 (teto honesto 99 — sqlite reservado). Relatório em
 `paper/corpus_runs/BC_signal_gradle_catalog.md`. **De 74 a 93/100 nesta
 sessão.** Task #68 em andamento.
+
+## Sprint BD — fecha kotlin via grammar tree-sitter-kotlin, Java/Kotlin 10/10, →94/100 (v3.28.0)
+
+Estende o motor AST (M9.2) a uma 7ª gramática (`tree-sitter-kotlin`) e
+fecha a categoria Java/Kotlin pelo eixo SAST (o SCA fora adiado em AZ por
+versions.properties sem coordenada Maven).
+
+**#75 kotlin FECHADO (SAST AST-anchored):** fix de segurança real
+KT-63103 (symlink-following em `Path.deleteRecursively`/`copyRecursively`
+da stdlib), commit `f8c587dd`, `PathRecursiveFunctions.kt` (+100-8), diff
+AST kotlin churn=526. Fix de produção rotulado de segurança pelo
+mantenedor — distinto do autofix-CodeQL do redisson (rejeitado em AT).
+Java/Kotlin 9→10/10 — **categoria fechada**. Total **93→94/100**.
+
+Motor AST cobre 7 linguagens. **Quatro categorias fechadas** (JS/TS, Go,
+Java/Kotlin, Infra). Restam 6/100 (teto honesto 99 — sqlite reservado).
+Relatório em `paper/corpus_runs/BD_kotlin_grammar.md`. **De 74 a 94/100
+nesta sessão.** Task #68 em andamento.

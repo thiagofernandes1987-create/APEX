@@ -58,6 +58,7 @@ _GRAMMARS = {
     "ruby":       "tree_sitter_ruby",
     "csharp":     "tree_sitter_c_sharp",
     "rust":       "tree_sitter_rust",
+    "kotlin":     "tree_sitter_kotlin",
 }
 
 # language name → entry-point function on the grammar module (default: language)

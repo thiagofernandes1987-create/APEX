@@ -4,7 +4,7 @@ build-backend = "setuptools.backends.legacy:build"
 
 [project]
 name        = "uco-sensor"
-version     = "3.27.0"
+version     = "3.28.0"
 description = "Spectral code-quality API powered by UCO v4 + FrequencyEngine"
 readme      = "README.md"
 license     = { text = "MIT" }
@@ -48,6 +48,7 @@ parsers = [
   "tree-sitter-ruby>=0.21.0",
   "tree-sitter-c-sharp>=0.21.0",
   "tree-sitter-rust>=0.21.0",
+  "tree-sitter-kotlin>=0.21.0",
 ]
 dev = [
   "pytest>=7.4",
