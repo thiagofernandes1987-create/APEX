@@ -5,6 +5,37 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.22.0] — 2026-06-29 — Sprint AX: M9.4 aplicado a packages.config NuGet, fecha shadowsocks-windows, 86→87/100
+
+Aplicação do motor M9.4 (SCA por versão + range GHSA) a um manifesto que
+os sprints anteriores marcaram como "sem lockfile" mas que, na verdade,
+pina versões exatas: o `packages.config` do NuGet (estilo antigo).
+
+### Coverage — #95 shadowsocks-windows fechado (A, limpo)
+- `shadowsocks/shadowsocks-windows` (#95): `shadowsocks-csharp/packages.config`
+  declara 35 pacotes NuGet com versão fixa (Newtonsoft.Json 13.0.3,
+  Google.Protobuf 3.27.2, System.Net.Http 4.3.4, etc.). M9.4 checou cada
+  um por range contra GHSA (ecosystem nuget) → **todos patched, veredito A
+  (limpo)**. Eixo SCA validado. PHP/Ruby/C#/Mobile 6/10 → **7/10**. Total:
+  **86 → 87/100**.
+- Descoberta metodológica: `packages.config` (NuGet old-style) é um
+  manifesto com versões resolvidas — equivalente a lockfile para fins de
+  SCA. Os code-searches de AO procuraram `packages.lock.json`/`composer.lock`
+  e não cobriram esse formato.
+
+### Near-miss documentado
+- #89 roslyn usa Central Package Management (`Directory.Packages.props`)
+  com versões indiretas via propriedades MSBuild `$(...)` definidas em
+  `eng/Versions.props`. Resolvível, mas requer lógica de property-resolution
+  — adiado em vez de apressado (disciplina anti-FP). jekyll (gemspec com
+  ranges) e signal-android (sem lockfile gradle) seguem gaps.
+
+Sem mudança de código — aplicação do M9.4 (testado em TX77) a um novo
+formato de manifesto. Documentação em
+`paper/corpus_runs/AX_nuget_packages_config.md`.
+
+---
+
 ## [3.21.0] — 2026-06-29 — Sprint AW: terceiro motor SCA vendorizado (M9.4), fecha wordpress, 85→86/100
 
 Terceiro eixo de evidência, da deep research (ANGLE 2: SCA source-tree

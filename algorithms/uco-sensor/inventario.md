@@ -1531,3 +1531,23 @@ sensibilidade AST), M9.3 (B3 descoberta de patch), M9.4 (B2 SCA sem
 manifesto). **De 74 a 86/100 nesta sessão, 3 motores novos, zero
 fabricação.** Relatório em `paper/corpus_runs/AW_vendored_sca_wordpress.md`.
 Task #68 em andamento.
+
+## Sprint AX — M9.4 a packages.config NuGet, fecha shadowsocks-windows, 86→87/100 (v3.22.0)
+
+Ampliando o registry de manifesto do M9.4, descobrimos que repos antes
+marcados "sem lockfile" expõem versões resolvidas em formato não
+procurado pelos code-searches de AO: o `packages.config` do NuGet
+old-style pina versões exatas.
+
+**#95 shadowsocks-windows FECHADO (A, limpo):** `shadowsocks-csharp/
+packages.config` tem 35 pacotes NuGet com versão fixa; M9.4 checou cada
+por range contra GHSA (Newtonsoft.Json 13.0.3, Google.Protobuf 3.27.2,
+System.Net.Http 4.3.4 etc.) → todos patched. PHP/Ruby/C#/Mobile 6/10→
+7/10, total **86→87/100**.
+
+**#89 roslyn near-miss:** Central Package Management com versões
+indiretas via MSBuild `$(...)` em eng/Versions.props — resolvível, mas
+requer property-resolution; **adiado** em vez de apressado (disciplina
+anti-FP). jekyll/signal seguem sem lockfile. Relatório em
+`paper/corpus_runs/AX_nuget_packages_config.md`. **De 74 a 87/100 nesta
+sessão.** Task #68 em andamento.
