@@ -1571,3 +1571,26 @@ M9.4 cobre agora 3 formatos: composer vendorizado (AW), packages.config
 vereditos limpos. Relatório em
 `paper/corpus_runs/AY_roslyn_cpm_messagepack.md`. **De 74 a 88/100 nesta
 sessão.** Task #68 em andamento.
+
+## Sprint AZ — SCA Gradle/Cargo + auditoria de contagem, →89/100 (v3.24.0)
+
+Estende o M9.4 a Gradle/Cargo e audita a contagem. `parse_cargo_lock`
+adicionado (+3 testes TX77, 25 total).
+
+**#100 clickhouse FECHADO (A, limpo):** root só pyproject, mas
+`rust/workspace/Cargo.lock` pina 267 crates (34 com advisory cargo, todas
+patched). **Categoria Infra fechada 5/5.**
+**#71 elasticsearch FECHADO (E, true-positive):** `build.versions.toml`
+resolve jackson-databind 2.15.0, em `>=2.8.0,<2.18.9` (CVE-2026-54515 +3).
+Java/Kotlin 7→8/10.
+**#75 kotlin adiado:** versions.properties sem coordenada Maven (anti-FP).
+
+**AUDITORIA:** o total acumulado havia derivado +1 (reportado 88 após AY,
+soma real das categorias era 87) e a lista de restantes omitia 2 gaps
+JS/TS (#4 node, #12 express — deno é #5 numerado, não "extra"; rótulos
+#3/#5/#14 trocados na tabela). Corrigido: soma das categorias
+(18+19+15+9+8+7+8+5)=**89** é a fonte de verdade. Total real **89/100**,
+restam 11. Integridade da contagem acima do número — corrigi para baixo
+e expus a omissão em vez de manter número inflado. Relatório em
+`paper/corpus_runs/AZ_gradle_cargo_sca_audit.md`. **De 74 a 89/100 nesta
+sessão.** Task #68 em andamento.

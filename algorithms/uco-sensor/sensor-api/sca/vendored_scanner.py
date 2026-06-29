@@ -144,6 +144,26 @@ def parse_packages_config(xml: str) -> Dict[str, str]:
     return out
 
 
+_CARGO_PKG_RE = re.compile(
+    r'\[\[package\]\]\s*\nname = "([^"]+)"\s*\nversion = "([^"]+)"'
+)
+
+
+def parse_cargo_lock(toml_text: str) -> Dict[str, str]:
+    """
+    Parse a Rust ``Cargo.lock`` into ``{crate: version}``.
+
+    ``Cargo.lock`` pins exact resolved versions per ``[[package]]`` stanza —
+    a real lockfile for the ``cargo`` ecosystem.  Sprint AZ used this to give
+    `ClickHouse` (whose root only had a `pyproject.toml`) a resolvable SCA
+    axis via its `rust/workspace/Cargo.lock`.
+    """
+    out: Dict[str, str] = {}
+    for name, ver in _CARGO_PKG_RE.findall(toml_text or ""):
+        out[name] = ver
+    return out
+
+
 def parse_msbuild_cpm(packages_props: str, versions_props: str) -> Dict[str, str]:
     """
     Resolve NuGet **Central Package Management** into ``{name: version}``.

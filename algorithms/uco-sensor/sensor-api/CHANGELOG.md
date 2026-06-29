@@ -5,6 +5,40 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.24.0] — 2026-06-29 — Sprint AZ: SCA Gradle/Cargo, fecha elasticsearch+clickhouse + auditoria de contagem, →89/100
+
+Estende o M9.4 a mais formatos de manifesto resolvido e audita a contagem
+acumulada.
+
+### Added — parse_cargo_lock no M9.4
+- `sca/vendored_scanner.py`: `parse_cargo_lock` (Rust `Cargo.lock`,
+  `[[package]] name/version`). +3 testes (TX77, 25 total).
+
+### Coverage — +2 repos, categoria Infra fechada
+- `#100 clickhouse` (A, limpo): o root só tem `pyproject.toml` (antes
+  marcado N/A), mas `rust/workspace/Cargo.lock` pina 267 crates; 34 com
+  advisory GHSA cargo, todas patched. Categoria Infra **5/5 — fechada**.
+- `#71 elasticsearch` (E, VULNERÁVEL — true-positive): `gradle/
+  build.versions.toml` resolve jackson-databind 2.15.0, que cai em
+  `>= 2.8.0, < 2.18.9` (CVE-2026-54515 + 3 outras, patched 2.18.9).
+  Verificado por range. Categoria Java/Kotlin 7/10 → **8/10**.
+
+### Auditoria de contagem (importante)
+Auditoria revelou que o total acumulado havia derivado **+1** (reportado
+88 após AY; a soma real das categorias era 87) e a lista de "restantes"
+**omitia 2 gaps de JS/TS** (`#4 nodejs/node`, `#12 expressjs/express` —
+o `deno` é #5 numerado, não "extra"; a tabela trocara rótulos #3/#5/#14).
+Corrigido: a soma das categorias (18+19+15+9+8+7+8+5 = **89**) é a fonte
+de verdade. Total real após AZ: **89/100**, restam 11 (incluindo os 2
+JS/TS antes omitidos). Integridade da contagem acima do número.
+
+- #75 kotlin adiado: `gradle/versions.properties` usa nomes curtos sem
+  coordenada Maven resolvível → não chuta (anti-FP).
+
+Documentação em `paper/corpus_runs/AZ_gradle_cargo_sca_audit.md`.
+
+---
+
 ## [3.23.0] — 2026-06-29 — Sprint AY: resolução de Central Package Management, fecha roslyn (true-positive), 87→88/100
 
 Fecha o near-miss de AX: resolução do NuGet **Central Package Management**

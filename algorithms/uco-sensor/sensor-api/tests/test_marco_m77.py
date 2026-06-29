@@ -31,6 +31,7 @@ from sca.vendored_scanner import (
     VendorVerdict,
     parse_packages_config,
     parse_msbuild_cpm,
+    parse_cargo_lock,
 )
 
 # Advisory REAL: rmccue/requests CVE-2021-29476, range ">= 1.6.0, < 1.8.0".
@@ -188,6 +189,29 @@ def test_T77_parse_msbuild_cpm_resolves_indirection():
     assert pkgs["LiteralPkg"] == "1.2.3"
     # variável sem definição é DESCARTADA (nunca chuta → evita FP)
     assert "UnresolvedPkg" not in pkgs
+
+
+def test_T77_parse_cargo_lock():
+    # recorte real de estilo Cargo.lock (clickhouse rust/workspace, Sprint AZ)
+    cargo = (
+        '[[package]]\nname = "serde"\nversion = "1.0.197"\n'
+        'source = "registry+https://github.com/rust-lang/crates.io-index"\n\n'
+        '[[package]]\nname = "tokio"\nversion = "1.36.0"\n'
+    )
+    pkgs = parse_cargo_lock(cargo)
+    assert pkgs == {"serde": "1.0.197", "tokio": "1.36.0"}
+
+
+def test_T77_parse_cargo_lock_empty():
+    assert parse_cargo_lock("") == {}
+
+
+def test_T77_jackson_databind_elasticsearch_true_positive():
+    # elasticsearch build.versions.toml resolve jackson-databind 2.15.0 ->
+    # cai em ">= 2.8.0, < 2.18.9" (CVE-2026-54515 série), patched 2.18.9.
+    assert version_in_range("2.15.0", ">= 2.8.0, < 2.18.9") is True
+    assert version_in_range("2.15.0", ">= 2.10.0, <= 2.18.7") is True
+    assert version_in_range("2.18.9", ">= 2.8.0, < 2.18.9") is False  # patched
 
 
 def test_T77_msbuild_cpm_messagepack_window_is_a_true_positive():
