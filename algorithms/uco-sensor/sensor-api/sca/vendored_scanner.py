@@ -197,6 +197,41 @@ def parse_package_lock(json_text: str) -> Dict[str, str]:
     return out
 
 
+_POM_DEP_RE = re.compile(r"<dependency>(.*?)</dependency>", re.S)
+_POM_G_RE = re.compile(r"<groupId>([^<]+)</groupId>")
+_POM_A_RE = re.compile(r"<artifactId>([^<]+)</artifactId>")
+_POM_V_RE = re.compile(r"<version>([^<]+)</version>")
+
+
+def parse_maven_pom(pom_xml: str) -> Dict[str, str]:
+    """
+    Parse a Maven ``pom.xml`` into ``{group:artifact: version}``.
+
+    CRITICAL — parses **per ``<dependency>`` block** and only takes a
+    version that appears *inside the same block*.  A naive
+    ``<dependency>.*?<version>`` regex bleeds across block boundaries and
+    pairs an artifact with a neighbouring block's version — a real
+    false-positive seen in Sprint BB (redisson's ``netty-transport-native-
+    kqueue`` and test-scoped ``assertj-core`` have NO inline version
+    because the parent BOM manages them; the greedy regex mis-assigned
+    ``1.1.1``/``2.12.6`` from adjacent blocks and flagged phantom CVEs).
+    Dependencies whose version is managed elsewhere (no inline
+    ``<version>``) are skipped, never guessed.
+    """
+    out: Dict[str, str] = {}
+    for block in _POM_DEP_RE.findall(pom_xml or ""):
+        g = _POM_G_RE.search(block)
+        a = _POM_A_RE.search(block)
+        v = _POM_V_RE.search(block)
+        if not (g and a and v):
+            continue
+        ver = v.group(1).strip()
+        if not re.match(r"[0-9]", ver):  # skip ${prop} placeholders
+            continue
+        out[f"{g.group(1).strip()}:{a.group(1).strip()}"] = ver
+    return out
+
+
 def parse_msbuild_cpm(packages_props: str, versions_props: str) -> Dict[str, str]:
     """
     Resolve NuGet **Central Package Management** into ``{name: version}``.

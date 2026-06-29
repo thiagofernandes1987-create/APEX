@@ -33,6 +33,7 @@ from sca.vendored_scanner import (
     parse_msbuild_cpm,
     parse_cargo_lock,
     parse_package_lock,
+    parse_maven_pom,
 )
 
 # Advisory REAL: rmccue/requests CVE-2021-29476, range ">= 1.6.0, < 1.8.0".
@@ -229,6 +230,54 @@ def test_T77_parse_package_lock_v1():
 def test_T77_parse_package_lock_malformed_is_empty():
     assert parse_package_lock("") == {}
     assert parse_package_lock("not json") == {}
+
+
+def test_T77_parse_maven_pom_per_block_no_version_bleed():
+    # Regressão do FP de Sprint BB: um dep SEM <version> inline (gerenciado
+    # por BOM) NÃO pode herdar a versão de um bloco adjacente.
+    pom = """
+    <dependencies>
+      <dependency>
+        <groupId>io.reactivex.rxjava3</groupId>
+        <artifactId>rxjava</artifactId>
+        <version>3.1.12</version>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>2.6</version>
+      </dependency>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-transport-native-kqueue</artifactId>
+        <classifier>osx-x86_64</classifier>
+      </dependency>
+    </dependencies>
+    """
+    pkgs = parse_maven_pom(pom)
+    # só os 2 com <version> inline entram
+    assert pkgs == {
+        "io.reactivex.rxjava3:rxjava": "3.1.12",
+        "org.yaml:snakeyaml": "2.6",
+    }
+    # os sem versão inline NÃO aparecem (e não herdam versão vizinha)
+    assert "org.assertj:assertj-core" not in pkgs
+    assert "io.netty:netty-transport-native-kqueue" not in pkgs
+
+
+def test_T77_parse_maven_pom_skips_property_placeholders():
+    pom = (
+        "<dependency><groupId>g</groupId><artifactId>a</artifactId>"
+        "<version>${netty.version}</version></dependency>"
+        "<dependency><groupId>g2</groupId><artifactId>a2</artifactId>"
+        "<version>1.2.3</version></dependency>"
+    )
+    assert parse_maven_pom(pom) == {"g2:a2": "1.2.3"}
 
 
 def test_T77_jackson_databind_elasticsearch_true_positive():

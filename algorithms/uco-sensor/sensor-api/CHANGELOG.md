@@ -5,6 +5,35 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.26.0] — 2026-06-29 — Sprint BB: fecha redisson via SCA Maven (parsing por-bloco anti-FP), →92/100
+
+Fecha #73 redisson e adiciona o parser de `pom.xml` ao M9.4 — com uma
+proteção explícita contra um falso-positivo de parsing.
+
+### Added — parse_maven_pom no M9.4 (anti-FP)
+- `sca/vendored_scanner.py`: `parse_maven_pom` parseia **por bloco
+  `<dependency>`**, tomando a versão só se ela aparece *dentro do mesmo
+  bloco*. +2 testes (TX77, 30 total).
+
+### Por que importa — FP evitado
+Um regex guloso `<dependency>.*?<version>` cruza fronteiras de bloco e
+pareia um artefato com a versão de um bloco vizinho. No redisson isso
+flagrou 2 CVEs fantasma: `netty-transport-native-kqueue` e
+`assertj-core` (scope test) **não têm `<version>` inline** (geridos por
+BOM/parent) — o regex pegou `1.1.1`/`2.12.6` de blocos adjacentes. A
+verificação manual do `pom.xml` mostrou o erro; o parser por-bloco o
+elimina. **Nenhum FP foi contado.**
+
+### Coverage — #73 redisson fechado (A, limpo)
+- `redisson/redisson` (#73): `redisson/pom.xml` tem 24 deps Maven com
+  versão inline; 6 com advisory GHSA (commons-compress, snappy-java,
+  snakeyaml, protobuf-java…), **todas patched** → veredito A.
+  Categoria Java/Kotlin 8/10 → **9/10**. Total: **91 → 92/100**.
+
+Restam 8/100. Documentação em `paper/corpus_runs/BB_redisson_maven_fp.md`.
+
+---
+
 ## [3.25.0] — 2026-06-29 — Sprint BA: fecha JS/TS (node+express), categoria 20/20, →91/100
 
 Fecha os 2 gaps de JS/TS expostos pela auditoria de AZ, fechando a

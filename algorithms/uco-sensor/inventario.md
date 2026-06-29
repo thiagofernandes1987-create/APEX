@@ -1613,3 +1613,21 @@ categorias fechadas (JS/TS, Go, Infra; Python 19/20 só boto3 N/A). Restam
 `paper/corpus_runs/BA_jsts_node_express.md`. **De 74 a 91/100 nesta
 sessão, 3 motores, auditoria de contagem, zero fabricação.** Task #68 em
 andamento.
+
+## Sprint BB — fecha redisson via SCA Maven (anti-FP), →92/100 (v3.26.0)
+
+`parse_maven_pom` adicionado ao M9.4 — parseia **por bloco
+`<dependency>`** (versão só se inline no mesmo bloco). +2 testes (TX77,
+30 total). M9.4 cobre agora 7 formatos.
+
+**#73 redisson FECHADO (A, limpo):** `redisson/pom.xml`, 24 deps Maven
+inline, 6 com advisory GHSA (commons-compress, snappy-java, snakeyaml,
+protobuf...), todas patched. Java/Kotlin 8→9/10, total **91→92/100**.
+
+**FP barrado:** a primeira tentativa (regex guloso) cruzou fronteiras de
+bloco e flagrou 2 CVEs fantasma (netty-kqueue@1.1.1, assertj@2.12.6 — ambos
+sem versão inline, geridos por BOM). netty 1.1.1 é implausível → verifiquei
+o pom → corrigi para parsing por-bloco. **Nenhum FP contado.** Segundo FP
+barrado na sessão (1º: autofix-CodeQL do redisson em AT). Relatório em
+`paper/corpus_runs/BB_redisson_maven_fp.md`. **De 74 a 92/100 nesta
+sessão.** Task #68 em andamento.
