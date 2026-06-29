@@ -1422,3 +1422,25 @@ de fix-commit — `api.osv.dev` bloqueado pelo proxy, mas
 fecha gaps GitHub-nativos, não httpd/wireshark SVN/GitLab); Sprint AT
 (SCA por similaridade de função à la V1SCAN/CENTRIS para os repos sem
 lockfile). Task #68 e #69 em andamento — o "teto" virou roadmap.
+
+## Sprint AS — motor AST → Rust, fecha diesel, 75→76/100 (v3.17.0)
+
+O motor M9.2 generaliza para qualquer gramática tree-sitter. Estendido
+a Rust (`tree-sitter-rust`, pip) e aplicado aos 2 gaps reais da
+categoria (faltavam #59 serde e #62 diesel).
+
+**#62 diesel FECHADO:** fix de soundness `c9776e384f52` ("Remove the
+unsound `SerializedDatabase::new`"), arquivo
+`serialized_database.rs`. Motor AST detecta `unsafe` 2→3 e
+`function_modifiers` 0→1 (a função passou a exigir contrato `unsafe` —
+transferência formal do requisito de memory-safety), churn=20. Eixo
+SAST AST-anchored válido. Validação cruzada: `rust-lang/rust` (#56, já
+coberto) CVE-2024-24576 BatBadBut → churn=640, confirmando sinal forte
+em fix de larga escala.
+
+**#59 serde:** gap honesto — lib de serialização sem CVE/RUSTSEC de
+memory-safety indexada (busca retornou 0), sem lockfile. Não forçado.
+
+Categoria Rust 8/10→9/10, total **75→76/100**. Relatório em
+`paper/corpus_runs/AS_ast_motor_rust_diesel.md`. Restam 24/100. Task
+#68 em andamento.

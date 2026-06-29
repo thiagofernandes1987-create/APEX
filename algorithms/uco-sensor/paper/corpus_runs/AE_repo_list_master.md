@@ -30,24 +30,27 @@
 | JS/TS (1-20) | **18/20** | #1 vscode SCA (D, 11), #2 react SCA (E, 239), #3 electron SCA (D, 48), #5 next.js SCA (D, 58, via Cargo.lock), #6 vue-core SCA (E, 39), #7 angular SCA (E, 59), #8 remix SCA (D, 21), #9 tailwindcss SCA (C, 5), #10 strapi SCA (E, 119), #11 axios CVE-2023-45857 (SAST) + ws CVE-2026-48779 (SCA), #13 three.js SCA (A, limpo), #15 vite SCA (E, 22), #16 metabase SCA (E, 151, via bun.lock), #17 kibana SCA (E, 45); deno (extra, mesmo bloco #5/#17) SCA (D, 12), #18 grafana SCA (D, 32 yarn.lock + B, 8 go.mod), #19 lodash CVE-2021-23337 (SAST), #20 berry SCA (E, 181) |
 | Python (21-40) | **13/20** | #22 pandas (sem CVE), #24 tensorflow SCA (B, 6), #25 pytorch SCA (A, limpo), #26 fastapi, #27 django, #28 flask, #30 ansible SCA (E, 8), #31 celery (SAST) + SCA limpo, #32 home-assistant SCA (A, limpo), #35 airflow SCA (B, 8, via uv.lock), #37 scrapy, #38 requests (×3 CVEs SAST) + SCA limpo, #40 localstack SCA (B, 8); #34 boto3 **confirmado não aplicável** (requirements.txt só com `-e git+...`, sem lockfile real) |
 | Go (41-55) | **15/15 — categoria fechada** | #41 kubernetes SCA (A, limpo), #42 moby SCA (A, limpo), #43 terraform SCA (A, limpo), #44 vault SCA (D, 9), #45 prometheus SCA (B, 2), #46 etcd CVE-2021-28235 (SAST) + SCA limpo, #47 istio SCA (B, 14), #48 cockroach SCA (E, 66), #49 caddy SCA (A, limpo), #50 gin SCA (A, limpo), #51 syncthing SCA (B, 3), #52 rancher SCA (B, 5), #53 influxdb SCA (E, 27, via Cargo.lock), #54 argo-cd SCA (B, 2), #55 hugo SCA (B, 17); `golang/go` (extra) CVE-2023-29404 |
-| Rust (56-65) | **8/10** | #56 rust-lang/rust SCA (B, 8), #57 tokio CVE-2023-22466 (SAST), #58 alacritty SCA (B, 2), #60 nushell SCA (B, 9), #61 tikv SCA (D, 33), #63 swc SCA (E, 39), #64 actix-web SCA (D, 10), #65 tauri SCA (D, 36); `rust-lang/regex` (extra) CVE-2022-24713 |
+| Rust (56-65) | **9/10** | #56 rust-lang/rust SCA (B, 8) + CVE-2024-24576 BatBadBut (SAST AST-anchored M9.2, validação cruzada: churn=640), #57 tokio CVE-2023-22466 (SAST), #58 alacritty SCA (B, 2), #60 nushell SCA (B, 9), #61 tikv SCA (D, 33), **#62 diesel soundness fix (SAST AST-anchored M9.2: `unsafe` 2→3, churn=20 — fechado em Sprint AS)**, #63 swc SCA (E, 39), #64 actix-web SCA (D, 10), #65 tauri SCA (D, 36); `rust-lang/regex` (extra) CVE-2022-24713. Resta #59 serde sem CVE/fix localizável (lib de serialização, sem memory-safety CVE indexada) |
 | Java/Kotlin (66-75) | **6/10** | #67 spring-framework CVE-2022-22965 (SAST), #68 commons-lang SCA (A, limpo), #69 flink SCA (A, limpo), #72 netty CVE-2019-20444 (SAST) + SCA (A, limpo, via pom.xml de submódulo: common/buffer/transport/handler/codec), #74 guava SCA (A, limpo, via guava/pom.xml de submódulo — não o pom-pai) |
 | C/C++ (76-85) | **7/10** | #76 linux CVE-2016-5195 (SAST), #77 postgres CVE-2021-32027 (SAST), #78 redis CVE-2022-24834 (SAST), #79 curl CVE-2023-38545 (SAST), #80 ffmpeg CVE-2020-22015 (SAST), #81 git CVE-2021-21300 (SAST), #82 opencv CVE-2019-7317 (SAST) — eixo SCA estruturalmente não aplicável a esta categoria (sem package manager de terceiros resolvível em C puro, ver AN); #83 sqlite reservado para teste de FP, #84 httpd e #85 wireshark sem commit de fix localizável via busca automatizada (ver AP) |
 | PHP/Ruby/C#/Mobile (86-95) | **5/10** (php-src fechado em Sprint AR via novo motor AST M9.2 — ver `AR_deep_research_synthesis.md`; restantes confirmados sem lockfile via code-search full-repo em AO) | #86 laravel GHSA-crmm-hgp2-wgrp (SAST), #87 rails CVE-2024-26143 (SAST) + SCA (E, 61), #88 dotnet/runtime CVE-2026-45491 (SAST), #89 php-src CVE-2019-11043 (SAST AST-anchored M9.2: regex dava delta=0, AST churn=12 com bounds-check `>`+1), #90 flutter SCA (A, limpo) |
 | Infra dados/cloud (96-100) | **3/5** | #96 spark SCA (A, limpo), #97 nomad SCA (B, 2), #99 trino SCA (A, limpo, via pom.xml de submódulo: core/trino-main, client/trino-jdbc, lib/trino-filesystem); #98 ceph **confirmado não aplicável** (pom.xml com `${version}` não resolvido) e #100 clickhouse **confirmado não aplicável** (só pyproject.toml sem lock) |
 
-**Total real: 75/100 repositórios numerados com pelo menos um eixo de
+**Total real: 76/100 repositórios numerados com pelo menos um eixo de
 evidência validado** (SAST CVE-diff e/ou SCA dependência-exposição) —
 salto de 50/100 (Sprint AN) para 69/100 (Sprint AO), **74/100 (Sprint
-AP)**, e **75/100 (Sprint AR)**. Sprint AP estendeu o eixo SAST
+AP)**, **75/100 (Sprint AR)**, e **76/100 (Sprint AS)**. Sprint AP estendeu o eixo SAST
 CVE-anchored before/after a 5 repositórios C/C++ (`linux`, `postgres`,
 `redis`, `ffmpeg`, `opencv`). Sprint AR introduziu um **motor novo**
 (M9.2 — diff estrutural AST via tree-sitter, ver
 `AR_deep_research_synthesis.md`) que resolve a limitação onde o eixo
 regex dava delta=0 em fixes de uma linha, fechando `php-src`
 (CVE-2019-11043: AST churn=12 com o bounds-check `>`+1 visível, contra
-delta=0 do adapter regex). Restam 25/100 sem eixo: Python (7),
-Rust (2), Java/Kotlin (4), PHP/Ruby/C#/Mobile (5, confirmado
+delta=0 do adapter regex). Sprint AS estendeu o motor M9.2 à gramática
+Rust e fechou `#62 diesel` (fix de soundness `unsafe` 2→3), validando
+de passagem `rust-lang/rust` CVE-2024-24576 (já coberto por SCA).
+Restam 24/100 sem eixo: Python (7), Rust (1: `#59 serde`, sem CVE/fix
+localizável), Java/Kotlin (4), PHP/Ruby/C#/Mobile (5, confirmado
 rigorosamente sem lockfile em Sprint AO), Infra (2), e C/C++ (3:
 `sqlite` reservado para teste de FP, `httpd`/`wireshark` sem commit de
 fix localizável via busca automatizada do GitHub). Eixos de

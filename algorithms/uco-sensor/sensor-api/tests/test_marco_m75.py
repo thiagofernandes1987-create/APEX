@@ -142,6 +142,7 @@ def test_T75_binary_expression_count_increases():
     ("php", "<?php if ($a && $b > $c) { echo 1; }"),
     ("ruby", "def f(a,b)\n  return 1 if a && b > 0\n  0\nend\n"),
     ("csharp", "class C { int F(int a,int b){ if (a > 0 && b > a) return 1; return 0; } }"),
+    ("rust", "fn f(a: i32, b: i32) -> i32 { if a > 0 && b > a { 1 } else { 0 } }"),
 ])
 def test_T75_additional_grammars_parse(lang, snippet):
     differ = ASTStructuralDiff(lang)

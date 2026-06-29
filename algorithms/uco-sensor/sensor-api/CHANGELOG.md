@@ -5,6 +5,32 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.17.0] — 2026-06-29 — Sprint AS: motor AST M9.2 → Rust, fecha diesel, 75→76/100
+
+Continuação direta de AR: o motor AST estrutural generaliza para
+qualquer gramática tree-sitter. Estendido a Rust e aplicado aos gaps
+reais da categoria Rust (56-65).
+
+### Added
+- `tree_sitter_bridge`: gramática `rust` (`tree_sitter_rust`).
+- `pyproject` parsers: `tree-sitter-rust`.
+- `tests/test_marco_m75.py`: caso Rust na parametrização multilíngue.
+
+### Coverage — #62 diesel fechado
+- `diesel-rs/diesel` (#62): fix de soundness "Remove the unsound
+  `SerializedDatabase::new`" — o motor AST detecta `unsafe` 2→3 e
+  `function_modifiers` 0→1 (a função passou a exigir contrato `unsafe`),
+  churn=20. Eixo SAST AST-anchored válido.
+- Validação cruzada: `rust-lang/rust` (#56, já coberto por SCA)
+  CVE-2024-24576 (BatBadBut, escaping de argumentos no Windows) —
+  churn=640 com `if_expression`+9, `binary_expression`+10, `==`+5.
+- Categoria Rust 8/10 → **9/10**. Total da lista master:
+  **75/100 → 76/100**.
+- Gap honesto remanescente em Rust: #59 `serde` (lib de serialização
+  sem CVE/RUSTSEC de memory-safety indexada — busca retornou 0).
+
+---
+
 ## [3.16.0] — 2026-06-28 — Sprint AR: motor AST tree-sitter (M9.2) + deep research, 74→75/100
 
 Disparada pelo pedido do usuário (`/deep-research`) de pesquisar um
