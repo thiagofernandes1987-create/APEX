@@ -1470,3 +1470,23 @@ honestos: kafka/elasticsearch/redisson (sem `/commit/` no GHSA), kotlin
 "resolve-commit (M9.3) → diff-AST (M9.2)" agora é reutilizável nas 6
 linguagens cobertas. Task #68 em andamento — de 74 a 77/100 nesta
 sessão, sem fabricar um único dado.
+
+## Sprint AU — pipeline GHSA→AST fecha 5 repos Python, 77→82/100 (v3.19.0)
+
+Primeira aplicação **em lote** do pipeline resolve-commit(M9.3)→diff-AST
+(M9.2). Para os gaps Python (21-40), o resolver GHSA localizou o
+fix-commit real de 5 CVEs e o motor AST confirmou churn não-nulo:
+
+- #23 scikit-learn CVE-2024-5206 → text.py, churn=28
+- #29 transformers CVE-2023-6730 → tokenization_transfo_xl.py, churn=117
+- #33 scipy CVE-2023-25399 → nd_image.c (grammar **C**), churn=7
+- #36 salt CVE-2024-22232 → roots.py, churn=213
+- #39 sqlalchemy CVE-2019-7164 → elements.py, churn=188
+
+Nenhum commit adivinhado — todos das `references` do GHSA. Python
+13/20→**18/20**, total **77→82/100** (maior salto desde o 2º eixo).
+Gaps Python honestos: #21 cpython (GHSA sem `/commit/`), #34 boto3 (N/A).
+Sem mudança de código — só aplicação dos motores já testados (TX75/TX76)
+a dados de corpus. Relatório em
+`paper/corpus_runs/AU_python_ghsa_ast.md`. **De 74 a 82/100 nesta
+sessão, com 2 motores novos e zero fabricação.** Task #68 em andamento.

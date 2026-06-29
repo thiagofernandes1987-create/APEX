@@ -5,6 +5,31 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.19.0] — 2026-06-29 — Sprint AU: pipeline GHSA→AST fecha 5 repos Python, 77→82/100
+
+Primeira aplicação em lote do pipeline resolve-commit (M9.3) → diff-AST
+(M9.2), construído nas Sprints AR/AS/AT. Para os gaps Python (21-40),
+o resolver GHSA localizou o fix-commit real de 5 CVEs e o motor AST
+confirmou churn não-nulo no arquivo corrigido:
+
+| # | Repo | CVE | fix-commit (via GHSA) | arquivo | churn |
+|---|------|-----|----------------------|---------|-------|
+| #23 | scikit-learn | CVE-2024-5206 | 70ca21f1 | text.py | 28 |
+| #29 | transformers | CVE-2023-6730 | 1d63b0ec | tokenization_transfo_xl.py | 117 |
+| #33 | scipy | CVE-2023-25399 | 9b652119 | nd_image.c (grammar C) | 7 |
+| #36 | salt | CVE-2024-22232 | e0cdb80b | roots.py | 213 |
+| #39 | sqlalchemy | CVE-2019-7164 | 30307c46 | elements.py | 188 |
+
+Nenhum fix-commit foi adivinhado: todos vieram das `references` do GHSA.
+Categoria Python 13/20 → **18/20**. Total da lista master: **77 → 82/100**.
+
+Gaps Python honestos remanescentes: #21 cpython (GHSA sem `/commit/`),
+#34 boto3 (N/A, sem lockfile). Sem mudança de código nesta sprint —
+apenas a aplicação dos motores M9.2/M9.3 já testados (TX75/TX76) a dados
+de corpus reais; documentação em `paper/corpus_runs/AU_python_ghsa_ast.md`.
+
+---
+
 ## [3.18.0] — 2026-06-29 — Sprint AT: GHSA fix-commit resolver (M9.3), fecha spring-boot, 76→77/100
 
 Resolve o bloqueio B3 (descoberta do fix-commit) diagnosticado na deep
