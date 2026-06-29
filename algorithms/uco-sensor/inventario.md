@@ -1594,3 +1594,22 @@ restam 11. Integridade da contagem acima do número — corrigi para baixo
 e expus a omissão em vez de manter número inflado. Relatório em
 `paper/corpus_runs/AZ_gradle_cargo_sca_audit.md`. **De 74 a 89/100 nesta
 sessão.** Task #68 em andamento.
+
+## Sprint BA — fecha JS/TS (node+express), categoria 20/20, →91/100 (v3.25.0)
+
+`parse_package_lock` adicionado ao M9.4 (npm v1/v2/v3; +3 testes TX77, 28
+total). M9.4 cobre agora 6 formatos de manifesto.
+
+**#4 nodejs/node FECHADO (A, limpo):** root sem lockfile, mas
+`tools/lint-md/package-lock.json` resolve 155 pacotes npm (6 com advisory,
+todos patched).
+**#12 expressjs/express FECHADO (SAST AST-anchored):** sem lockfile (lib),
+via CVE-2024-29041 (open redirect), fix-commit `0867302d` resolvido pelo
+GHSA, diff AST JS em lib/response.js churn=171.
+
+Categoria JS/TS 18/20→**20/20 — fechada**. Total **89→91/100**. Quatro
+categorias fechadas (JS/TS, Go, Infra; Python 19/20 só boto3 N/A). Restam
+9/100 (teto honesto 99/100 — sqlite reservado p/ FP). Relatório em
+`paper/corpus_runs/BA_jsts_node_express.md`. **De 74 a 91/100 nesta
+sessão, 3 motores, auditoria de contagem, zero fabricação.** Task #68 em
+andamento.

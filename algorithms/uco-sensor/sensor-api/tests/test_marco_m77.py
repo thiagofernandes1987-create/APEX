@@ -32,6 +32,7 @@ from sca.vendored_scanner import (
     parse_packages_config,
     parse_msbuild_cpm,
     parse_cargo_lock,
+    parse_package_lock,
 )
 
 # Advisory REAL: rmccue/requests CVE-2021-29476, range ">= 1.6.0, < 1.8.0".
@@ -204,6 +205,30 @@ def test_T77_parse_cargo_lock():
 
 def test_T77_parse_cargo_lock_empty():
     assert parse_cargo_lock("") == {}
+
+
+def test_T77_parse_package_lock_v3():
+    # formato npm v2/v3: packages{ "node_modules/<name>": {version} }
+    lock = (
+        '{"lockfileVersion": 3, "packages": {'
+        '"": {"name": "root"},'
+        '"node_modules/lodash": {"version": "4.17.21"},'
+        '"node_modules/@babel/core": {"version": "7.24.0"}'
+        '}}'
+    )
+    pkgs = parse_package_lock(lock)
+    assert pkgs == {"lodash": "4.17.21", "@babel/core": "7.24.0"}
+
+
+def test_T77_parse_package_lock_v1():
+    # formato npm v1: dependencies{ "<name>": {version} }
+    lock = '{"lockfileVersion": 1, "dependencies": {"ms": {"version": "2.1.3"}}}'
+    assert parse_package_lock(lock) == {"ms": "2.1.3"}
+
+
+def test_T77_parse_package_lock_malformed_is_empty():
+    assert parse_package_lock("") == {}
+    assert parse_package_lock("not json") == {}
 
 
 def test_T77_jackson_databind_elasticsearch_true_positive():

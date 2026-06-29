@@ -164,6 +164,39 @@ def parse_cargo_lock(toml_text: str) -> Dict[str, str]:
     return out
 
 
+def parse_package_lock(json_text: str) -> Dict[str, str]:
+    """
+    Parse an npm ``package-lock.json`` (v1/v2/v3) into ``{name: version}``.
+
+    v2/v3 carry a ``packages`` map keyed by install path
+    (``node_modules/<name>``); v1 carries a ``dependencies`` map keyed by
+    name.  Both pin exact resolved versions.  Used in Sprint BA to give
+    `nodejs/node` (whose root has no lockfile) an SCA axis via its
+    ``tools/*/package-lock.json``.
+    """
+    import json
+
+    try:
+        data = json.loads(json_text or "{}")
+    except Exception:
+        return {}
+    out: Dict[str, str] = {}
+    pkgs = data.get("packages")
+    if isinstance(pkgs, dict):
+        for key, meta in pkgs.items():
+            if not key.startswith("node_modules/"):
+                continue
+            if isinstance(meta, dict) and isinstance(meta.get("version"), str):
+                name = key.rsplit("node_modules/", 1)[-1]
+                out[name] = meta["version"]
+    deps = data.get("dependencies")
+    if isinstance(deps, dict):
+        for name, meta in deps.items():
+            if isinstance(meta, dict) and isinstance(meta.get("version"), str):
+                out.setdefault(name, meta["version"])
+    return out
+
+
 def parse_msbuild_cpm(packages_props: str, versions_props: str) -> Dict[str, str]:
     """
     Resolve NuGet **Central Package Management** into ``{name: version}``.

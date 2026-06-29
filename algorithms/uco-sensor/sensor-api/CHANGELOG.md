@@ -5,6 +5,32 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.25.0] — 2026-06-29 — Sprint BA: fecha JS/TS (node+express), categoria 20/20, →91/100
+
+Fecha os 2 gaps de JS/TS expostos pela auditoria de AZ, fechando a
+categoria.
+
+### Added — parse_package_lock no M9.4
+- `sca/vendored_scanner.py`: `parse_package_lock` (npm `package-lock.json`
+  v1/v2/v3). +3 testes (TX77, 28 total). O motor M9.4 cobre agora 6
+  formatos de manifesto resolvido.
+
+### Coverage — JS/TS fechada 20/20
+- `#4 nodejs/node` (A, limpo): root sem lockfile, mas
+  `tools/lint-md/package-lock.json` resolve 155 pacotes npm; 6 com
+  advisory GHSA npm, todos patched. Eixo SCA validado.
+- `#12 expressjs/express` (SAST AST-anchored): sem lockfile (lib), então
+  via CVE — `CVE-2024-29041` (open redirect em `res.location`),
+  fix-commit `0867302d` resolvido pelo GHSA, diff AST JS em
+  `lib/response.js` churn=171. (Também CVE-2024-43796 resolve, churn=9.)
+- Categoria JS/TS 18/20 → **20/20 — fechada**. Total: **89 → 91/100**.
+  Quatro categorias agora fechadas: JS/TS, Go, Infra (e Python 19/20 só
+  com boto3 N/A).
+
+Restam 9/100. Documentação em `paper/corpus_runs/BA_jsts_node_express.md`.
+
+---
+
 ## [3.24.0] — 2026-06-29 — Sprint AZ: SCA Gradle/Cargo, fecha elasticsearch+clickhouse + auditoria de contagem, →89/100
 
 Estende o M9.4 a mais formatos de manifesto resolvido e audita a contagem

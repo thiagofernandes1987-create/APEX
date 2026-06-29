@@ -27,7 +27,7 @@
 
 | Categoria | Cobertura real (≥1 eixo) | Repo/CVE/SCA numerados já testados |
 |---|---|---|
-| JS/TS (1-20) | **18/20** | #1 vscode SCA (D, 11), #2 react SCA (E, 239), #14 electron SCA (D, 48), #3 next.js SCA (D, 58, via Cargo.lock), #6 vue-core SCA (E, 39), #7 angular SCA (E, 59), #8 remix SCA (D, 21), #9 tailwindcss SCA (C, 5), #10 strapi SCA (E, 119), #11 axios CVE-2023-45857 (SAST) + ws CVE-2026-48779 (SCA), #13 three.js SCA (A, limpo), #15 vite SCA (E, 22), #16 metabase SCA (E, 151, via bun.lock), #17 kibana SCA (E, 45); #5 deno SCA (D, 12), #18 grafana SCA (D, 32 yarn.lock + B, 8 go.mod), #19 lodash CVE-2021-23337 (SAST), #20 berry SCA (E, 181). Gaps: #4 nodejs/node, #12 expressjs/express (não escaneados ainda) |
+| JS/TS (1-20) | **20/20 — categoria fechada** | #1 vscode SCA (D, 11), #2 react SCA (E, 239), #14 electron SCA (D, 48), #3 next.js SCA (D, 58, via Cargo.lock), #6 vue-core SCA (E, 39), #7 angular SCA (E, 59), #8 remix SCA (D, 21), #9 tailwindcss SCA (C, 5), #10 strapi SCA (E, 119), #11 axios CVE-2023-45857 (SAST) + ws CVE-2026-48779 (SCA), #13 three.js SCA (A, limpo), #15 vite SCA (E, 22), #16 metabase SCA (E, 151, via bun.lock), #17 kibana SCA (E, 45); #5 deno SCA (D, 12), #18 grafana SCA (D, 32 yarn.lock + B, 8 go.mod), #19 lodash CVE-2021-23337 (SAST), #20 berry SCA (E, 181), **#4 nodejs/node SCA (A, limpo — Sprint BA: `tools/lint-md/package-lock.json`, 155 pacotes npm, 6 com advisory, todos patched)**, **#12 expressjs/express CVE-2024-29041 (SAST AST-anchored JS em lib/response.js, churn=171 — Sprint BA via fix-commit resolvido pelo GHSA)** |
 | Python (21-40) | **19/20** | #21 cpython CVE-2024-6232 (SAST AST-anchored em tarfile.py, churn=196 — Sprint AV, via GHSA), #22 pandas (sem CVE), #23 scikit-learn CVE-2024-5206 (SAST AST-anchored, churn=28 — Sprint AU), #24 tensorflow SCA (B, 6), #25 pytorch SCA (A, limpo), #26 fastapi, #27 django, #28 flask, #29 transformers CVE-2023-6730 (SAST AST-anchored, churn=117 — AU), #30 ansible SCA (E, 8), #31 celery (SAST) + SCA limpo, #32 home-assistant SCA (A, limpo), #33 scipy CVE-2023-25399 (SAST AST-anchored em nd_image.c via grammar C, churn=7 — AU), #35 airflow SCA (B, 8, via uv.lock), #36 salt CVE-2024-22232 (SAST AST-anchored, churn=213 — AU), #37 scrapy, #38 requests (×3 CVEs SAST) + SCA limpo, #39 sqlalchemy CVE-2019-7164 (SAST AST-anchored, churn=188 — AU), #40 localstack SCA (B, 8); #34 boto3 **confirmado não aplicável** (requirements.txt só com `-e git+...`, sem lockfile real). Todos os 5 da Sprint AU via fix-commit resolvido pelo GHSA M9.3 + diff AST M9.2 |
 | Go (41-55) | **15/15 — categoria fechada** | #41 kubernetes SCA (A, limpo), #42 moby SCA (A, limpo), #43 terraform SCA (A, limpo), #44 vault SCA (D, 9), #45 prometheus SCA (B, 2), #46 etcd CVE-2021-28235 (SAST) + SCA limpo, #47 istio SCA (B, 14), #48 cockroach SCA (E, 66), #49 caddy SCA (A, limpo), #50 gin SCA (A, limpo), #51 syncthing SCA (B, 3), #52 rancher SCA (B, 5), #53 influxdb SCA (E, 27, via Cargo.lock), #54 argo-cd SCA (B, 2), #55 hugo SCA (B, 17); `golang/go` (extra) CVE-2023-29404 |
 | Rust (56-65) | **9/10** | #56 rust-lang/rust SCA (B, 8) + CVE-2024-24576 BatBadBut (SAST AST-anchored M9.2, validação cruzada: churn=640), #57 tokio CVE-2023-22466 (SAST), #58 alacritty SCA (B, 2), #60 nushell SCA (B, 9), #61 tikv SCA (D, 33), **#62 diesel soundness fix (SAST AST-anchored M9.2: `unsafe` 2→3, churn=20 — fechado em Sprint AS)**, #63 swc SCA (E, 39), #64 actix-web SCA (D, 10), #65 tauri SCA (D, 36); `rust-lang/regex` (extra) CVE-2022-24713. Resta #59 serde sem CVE/fix localizável (lib de serialização, sem memory-safety CVE indexada) |
@@ -36,9 +36,12 @@
 | PHP/Ruby/C#/Mobile (86-95) | **8/10** | #86 laravel GHSA-crmm-hgp2-wgrp (SAST), #87 rails CVE-2024-26143 (SAST) + SCA (E, 61), #88 dotnet/runtime CVE-2026-45491 (SAST), #90 flutter SCA (A, limpo), **#91 wordpress SCA vendorizado (A, limpo — Sprint AW, motor M9.4: libs embutidas `rmccue/requests`@2.0.17 e `phpmailer/phpmailer`@7.0.2 checadas por range contra 1+14 advisories GHSA, ambas patched)**, #92 php-src CVE-2019-11043 (SAST AST-anchored M9.2: regex dava delta=0, AST churn=12 com bounds-check `>`+1), **#95 shadowsocks-windows SCA (A, limpo — Sprint AX: `shadowsocks-csharp/packages.config` é manifesto NuGet com 35 versões fixas, antes não detectado; todos checados por range contra GHSA — Google.Protobuf/Newtonsoft.Json/System.Net.Http patched)**. **#89 roslyn SCA (E, VULNERÁVEL — Sprint AY: resolvido o Central Package Management via `eng/Packages.props`+`eng/Versions.props`, 123 pacotes; `MessagePack`@2.5.198 cai na janela vulnerável [≥2.5.187, <2.5.301] de 11 CVEs CVE-2026-485xx — true-positive verificado por range)**. Gaps: #93 jekyll (gemspec com ranges, sem Gemfile.lock), #94 signal-android (sem lockfile gradle) |
 | Infra dados/cloud (96-100) | **5/5 — categoria fechada** | #96 spark SCA (A, limpo), #97 nomad SCA (B, 2), **#98 ceph CVE-2021-3979 (SAST AST-anchored Python em encryption.py, churn=105 — Sprint AV via GHSA; o eixo SCA continua N/A, mas o SAST fecha o repo)**, #99 trino SCA (A, limpo, via pom.xml de submódulo: core/trino-main, client/trino-jdbc, lib/trino-filesystem); **#100 clickhouse SCA (A, limpo — Sprint AZ: o root tem só pyproject.toml, mas `rust/workspace/Cargo.lock` pina 267 crates; 34 checadas contra GHSA cargo, todas patched)** |
 
-**Total real: 89/100 repositórios numerados com pelo menos um eixo de
+**Total real: 91/100 repositórios numerados com pelo menos um eixo de
 evidência validado** (SAST CVE-diff e/ou SCA dependência-exposição) —
-soma auditada das categorias: 18+19+15+9+8+7+8+5 = **89**.
+soma auditada das categorias: 20+19+15+9+8+7+8+5 = **91**. Sprint BA
+fechou os 2 gaps de JS/TS (`#4 nodejs/node` via package-lock.json npm,
+`#12 expressjs/express` via SAST AST-anchored CVE-2024-29041) — **JS/TS
+fechada 20/20**.
 
 > **Auditoria de contagem (Sprint AZ):** o total acumulado havia derivado
 > +1 (reportado 88 após AY, mas a soma real das categorias era 87) e a
@@ -75,15 +78,14 @@ Sprint AT adicionou o **resolver GHSA de fix-commit (M9.3)** — localiza
 o commit de correção direto das `references` do GitHub Advisory quando o
 projeto não cita o CVE na mensagem — e fechou `#66 spring-boot`
 (CVE-2023-20883: fix resolvido via GHSA-xf96-w227-r7c4, churn AST=180).
-Restam **11/100** sem eixo: JS/TS (2: `#4 nodejs/node`, `#12
-expressjs/express` — não escaneados ainda; antes omitidos da contagem de
-restantes), Python (1: `#34 boto3` N/A), Rust (1: `#59 serde`, sem
-CVE/fix localizável), Java/Kotlin (2: `#73 redisson` só autofix CodeQL
-sem CVE, `#75 kotlin` sem coordenada Maven resolvível), PHP/Ruby/C#/Mobile
-(2: `#93 jekyll`/`#94 signal` — sem lockfile), e C/C++ (3:
-`sqlite` reservado para teste de FP, `httpd`/`wireshark` sem commit de
-fix localizável via busca automatizada do GitHub). Soma: 2+1+1+2+2+3 = 11.
-Python e Infra agora têm gap só estrutural (boto3 N/A) ou estão fechadas.
+Restam **9/100** sem eixo: Python (1: `#34 boto3` N/A), Rust (1: `#59
+serde`, sem CVE/fix localizável), Java/Kotlin (2: `#73 redisson` só
+autofix CodeQL sem CVE, `#75 kotlin` sem coordenada Maven resolvível),
+PHP/Ruby/C#/Mobile (2: `#93 jekyll`/`#94 signal` — sem lockfile), e
+C/C++ (3: `sqlite` reservado para teste de FP, `httpd`/`wireshark` sem
+commit de fix localizável via busca automatizada do GitHub). Soma:
+1+1+2+2+3 = 9. Três categorias fechadas (JS/TS, Go, Infra). O teto
+honesto da lista é 99/100 (sqlite fora por reserva do usuário p/ FP).
 Eixos de
 falso-positivo (dica 3: sqlite/guava)
 e throughput (dica 1: kubernetes/tensorflow/linux/vscode) foram
