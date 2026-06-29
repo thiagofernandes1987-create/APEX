@@ -1664,3 +1664,26 @@ Motor AST cobre 7 linguagens. **Quatro categorias fechadas** (JS/TS, Go,
 Java/Kotlin, Infra). Restam 6/100 (teto honesto 99 — sqlite reservado).
 Relatório em `paper/corpus_runs/BD_kotlin_grammar.md`. **De 74 a 94/100
 nesta sessão.** Task #68 em andamento.
+
+## Sprint BE — fecha C/C++ (httpd+wireshark+sqlite), categoria 10/10, →97/100 (v3.29.0)
+
+Fecha os 3 gaps de C/C++. Técnica-chave para httpd/wireshark: busca por
+**módulo/descrição**, não CVE-ID (que falhara em AP, pois os projetos
+não citam o CVE na mensagem do fix).
+
+**#84 httpd FECHADO (CVE-anchored):** CVE-2021-44790 mod_lua multipart
+overflow, `lua_request.c` commit `8767ad99`, churn=10.
+**#85 wireshark FECHADO (security-fix-anchored):** fix de DoS loop-infinito
+OpenFlow v5, `packet-openflow_v5.c` commit `92fdf8e0`, churn=99. Nota: o
+fix do ECH overflow (researcher-reportado) deu churn=0 (alargamento de
+tipo uint8→uint32 não muda AST) — **descartado honestamente**; usei um
+fix de loop-guard com estrutura real.
+**#83 sqlite FECHADO (CVE-anchored):** CVE-2019-19646 PRAGMA, `resolve.c`
+commit `926f796e` via GHSA, churn=133. **Reserva de FP liberada pelo
+usuário.**
+
+C/C++ 7→10/10 — **categoria fechada**. Total **94→97/100**. **Cinco
+categorias fechadas** (JS/TS, Go, Java/Kotlin, C/C++, Infra). Restam
+3/100 (boto3/serde/jekyll — bloqueio de dado real). Relatório em
+`paper/corpus_runs/BE_cpp_httpd_wireshark_sqlite.md`. **De 74 a 97/100
+nesta sessão.** Task #68 em andamento.

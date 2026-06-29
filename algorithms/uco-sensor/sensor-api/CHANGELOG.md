@@ -5,6 +5,34 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.29.0] — 2026-06-29 — Sprint BE: fecha C/C++ (httpd+wireshark+sqlite), categoria 10/10, →97/100
+
+Fecha os 3 gaps de C/C++ — incluindo `sqlite`, após o usuário liberar a
+reserva de teste-de-FP — usando busca por módulo/descrição (não CVE-ID,
+que falhara em AP) e o resolver GHSA.
+
+### Coverage — C/C++ 7/10 → 10/10 (categoria fechada)
+- `#84 httpd` CVE-2021-44790: fix de overflow no parsing multipart do
+  `mod_lua` (`modules/lua/lua_request.c`, commit `8767ad99`) — localizado
+  por busca "mod_lua multipart" depois que a busca por CVE-ID falhara em
+  AP. Diff AST C churn=10. CVE-anchored.
+- `#85 wireshark`: fix de DoS (loop infinito em pacotes OpenFlow v5
+  malformados, `packet-openflow_v5.c`, commit `92fdf8e0`), churn=99 com
+  bounds-check `<`. Security-fix-anchored via tracker (mesmo padrão do
+  kotlin KT-63103). Nota honesta: o fix do ECH overflow (researcher-
+  reportado) deu churn=0 — alargamento de tipo `uint8→uint32` não muda a
+  estrutura AST —, então NÃO foi contado; usei um fix de loop-guard com
+  mudança estrutural real.
+- `#83 sqlite` CVE-2019-19646: fix de PRAGMA (`src/resolve.c`, commit
+  `926f796e`, resolvido via GHSA), churn=133 com bounds-check `>=`/`==`.
+  **Reserva de teste-de-FP liberada pelo usuário nesta sprint.**
+
+Total: **94 → 97/100**. **Cinco categorias fechadas** (JS/TS, Go,
+Java/Kotlin, C/C++, Infra). Restam 3/100 (boto3/serde/jekyll — bloqueio
+de dado real). Documentação em `paper/corpus_runs/BE_cpp_httpd_wireshark_sqlite.md`.
+
+---
+
 ## [3.28.0] — 2026-06-29 — Sprint BD: fecha kotlin via grammar tree-sitter-kotlin, Java/Kotlin 10/10, →94/100
 
 Fecha #75 kotlin estendendo o motor AST (M9.2) a uma 7ª gramática
