@@ -5,6 +5,28 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.27.0] — 2026-06-29 — Sprint BC: fecha signal-android via catálogo Gradle, →93/100
+
+Fecha #94 signal-android e adiciona o parser de catálogo de versões
+Gradle ao M9.4.
+
+### Added — parse_gradle_version_catalog no M9.4
+- `sca/vendored_scanner.py`: `parse_gradle_version_catalog` resolve
+  `libs.versions.toml`/`build.versions.toml` (formas `version.ref` e
+  `module`/`group`+`name`+`version`) contra a tabela `[versions]`. +2
+  testes (TX77, 32 total). M9.4 cobre agora **8 formatos** de manifesto.
+
+### Coverage — #94 signal-android fechado (A, limpo)
+- `signalapp/Signal-Android` (#94): `gradle/libs.versions.toml` resolve
+  53 libs Maven (androidx/kotlin/compose/media3). Coordenadas validadas
+  como reais; 0 com advisory GHSA aplicável → veredito A. Eixo SCA
+  validado (mesmo status que three.js/pytorch "A, limpo"). Categoria
+  PHP/Ruby/C#/Mobile 8/10 → **9/10**. Total: **92 → 93/100**.
+
+Restam 7/100. Documentação em `paper/corpus_runs/BC_signal_gradle_catalog.md`.
+
+---
+
 ## [3.26.0] — 2026-06-29 — Sprint BB: fecha redisson via SCA Maven (parsing por-bloco anti-FP), →92/100
 
 Fecha #73 redisson e adiciona o parser de `pom.xml` ao M9.4 — com uma

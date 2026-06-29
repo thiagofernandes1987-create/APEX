@@ -197,6 +197,49 @@ def parse_package_lock(json_text: str) -> Dict[str, str]:
     return out
 
 
+def parse_gradle_version_catalog(toml_text: str) -> Dict[str, str]:
+    """
+    Parse a Gradle version catalog (``libs.versions.toml`` /
+    ``build.versions.toml``) into ``{group:artifact: version}``.
+
+    Resolves the two library shapes against the ``[versions]`` table:
+      * ``foo = { module = "g:a", version.ref = "v" }``
+      * ``foo = { group = "g", name = "a", version = "1.2.3" }``
+    A ``version.ref`` is looked up in ``[versions]``; an inline numeric
+    ``version`` is taken as-is.  Entries without a resolvable numeric
+    version are skipped (never guessed) — used in Sprint AZ (elasticsearch)
+    and BC (signal-android).
+    """
+    text = toml_text or ""
+    vstart = text.find("[versions]")
+    lstart = text.find("[libraries]")
+    versions: Dict[str, str] = {}
+    if vstart >= 0:
+        seg = text[vstart : lstart if lstart > vstart else len(text)]
+        for name, ver in re.findall(r'^\s*([\w.\-]+)\s*=\s*"([^"]+)"', seg, re.M):
+            if re.match(r"\d", ver):
+                versions[name] = ver
+    out: Dict[str, str] = {}
+    if lstart < 0:
+        return out
+    for body in re.findall(r"\{([^}]+)\}", text[lstart:]):
+        mod = re.search(r'module\s*=\s*"([^"]+)"', body)
+        grp = re.search(r'group\s*=\s*"([^"]+)"', body)
+        nam = re.search(r'name\s*=\s*"([^"]+)"', body)
+        vref = re.search(r'version\.ref\s*=\s*"([^"]+)"', body)
+        vlit = re.search(r'version\s*=\s*"([0-9][^"]*)"', body)
+        if mod:
+            pkg = mod.group(1)
+        elif grp and nam:
+            pkg = f"{grp.group(1)}:{nam.group(1)}"
+        else:
+            continue
+        ver = versions.get(vref.group(1)) if vref else (vlit.group(1) if vlit else None)
+        if ver and re.match(r"\d", ver):
+            out[pkg] = ver
+    return out
+
+
 _POM_DEP_RE = re.compile(r"<dependency>(.*?)</dependency>", re.S)
 _POM_G_RE = re.compile(r"<groupId>([^<]+)</groupId>")
 _POM_A_RE = re.compile(r"<artifactId>([^<]+)</artifactId>")

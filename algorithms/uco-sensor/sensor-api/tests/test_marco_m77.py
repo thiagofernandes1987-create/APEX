@@ -34,6 +34,7 @@ from sca.vendored_scanner import (
     parse_cargo_lock,
     parse_package_lock,
     parse_maven_pom,
+    parse_gradle_version_catalog,
 )
 
 # Advisory REAL: rmccue/requests CVE-2021-29476, range ">= 1.6.0, < 1.8.0".
@@ -268,6 +269,32 @@ def test_T77_parse_maven_pom_per_block_no_version_bleed():
     # os sem versão inline NÃO aparecem (e não herdam versão vizinha)
     assert "org.assertj:assertj-core" not in pkgs
     assert "io.netty:netty-transport-native-kqueue" not in pkgs
+
+
+def test_T77_parse_gradle_version_catalog():
+    # ambas as formas: version.ref e module/group+name inline (signal/elastic)
+    toml = """
+    [versions]
+    jackson = "2.15.0"
+    okhttp = "4.12.0"
+
+    [libraries]
+    jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+    okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+    inline = { group = "g", name = "a", version = "1.2.3" }
+    noversion = { module = "x:y" }
+    """
+    pkgs = parse_gradle_version_catalog(toml)
+    assert pkgs["com.fasterxml.jackson.core:jackson-databind"] == "2.15.0"
+    assert pkgs["com.squareup.okhttp3:okhttp"] == "4.12.0"
+    assert pkgs["g:a"] == "1.2.3"
+    # sem versão resolvível → não entra (anti-FP)
+    assert "x:y" not in pkgs
+
+
+def test_T77_parse_gradle_catalog_empty():
+    assert parse_gradle_version_catalog("") == {}
+    assert parse_gradle_version_catalog("[versions]\nfoo = \"1.0\"\n") == {}  # sem [libraries]
 
 
 def test_T77_parse_maven_pom_skips_property_placeholders():

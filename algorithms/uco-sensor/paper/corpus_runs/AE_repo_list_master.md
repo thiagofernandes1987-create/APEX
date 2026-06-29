@@ -33,16 +33,18 @@
 | Rust (56-65) | **9/10** | #56 rust-lang/rust SCA (B, 8) + CVE-2024-24576 BatBadBut (SAST AST-anchored M9.2, validação cruzada: churn=640), #57 tokio CVE-2023-22466 (SAST), #58 alacritty SCA (B, 2), #60 nushell SCA (B, 9), #61 tikv SCA (D, 33), **#62 diesel soundness fix (SAST AST-anchored M9.2: `unsafe` 2→3, churn=20 — fechado em Sprint AS)**, #63 swc SCA (E, 39), #64 actix-web SCA (D, 10), #65 tauri SCA (D, 36); `rust-lang/regex` (extra) CVE-2022-24713. Resta #59 serde sem CVE/fix localizável (lib de serialização, sem memory-safety CVE indexada) |
 | Java/Kotlin (66-75) | **9/10** | **#66 spring-boot CVE-2023-20883 (SAST AST-anchored M9.2 via fix-commit resolvido pelo GHSA M9.3: churn=180 — fechado em Sprint AT)**, #67 spring-framework CVE-2022-22965 (SAST), #68 commons-lang SCA (A, limpo), #69 flink SCA (A, limpo), **#70 kafka CVE-2022-34917 (SAST AST-anchored Java em DataInputStreamReadable.java, churn=71 — Sprint AV via GHSA)**, #72 netty CVE-2019-20444 (SAST) + SCA (A, limpo, via pom.xml de submódulo: common/buffer/transport/handler/codec), #74 guava SCA (A, limpo, via guava/pom.xml de submódulo — não o pom-pai), **#71 elasticsearch SCA (E, VULNERÁVEL — Sprint AZ: `gradle/build.versions.toml` resolve jackson-databind 2.15.0, que cai em `>=2.8.0,<2.18.9` de CVE-2026-54515 e 3 outras — true-positive verificado por range)**. **#73 redisson SCA (A, limpo — Sprint BB: `redisson/pom.xml`, 24 deps Maven com versão inline; 6 com advisory GHSA, todas patched. Parsing por-bloco evitou 2 falso-positivos — netty-kqueue/assertj-core sem versão inline, geridos por BOM)**. Gap: #75 kotlin (`gradle/versions.properties` usa nomes curtos sem coordenada Maven resolvível — adiado anti-FP) |
 | C/C++ (76-85) | **7/10** | #76 linux CVE-2016-5195 (SAST), #77 postgres CVE-2021-32027 (SAST), #78 redis CVE-2022-24834 (SAST), #79 curl CVE-2023-38545 (SAST), #80 ffmpeg CVE-2020-22015 (SAST), #81 git CVE-2021-21300 (SAST), #82 opencv CVE-2019-7317 (SAST) — eixo SCA estruturalmente não aplicável a esta categoria (sem package manager de terceiros resolvível em C puro, ver AN); #83 sqlite reservado para teste de FP, #84 httpd e #85 wireshark sem commit de fix localizável via busca automatizada (ver AP) |
-| PHP/Ruby/C#/Mobile (86-95) | **8/10** | #86 laravel GHSA-crmm-hgp2-wgrp (SAST), #87 rails CVE-2024-26143 (SAST) + SCA (E, 61), #88 dotnet/runtime CVE-2026-45491 (SAST), #90 flutter SCA (A, limpo), **#91 wordpress SCA vendorizado (A, limpo — Sprint AW, motor M9.4: libs embutidas `rmccue/requests`@2.0.17 e `phpmailer/phpmailer`@7.0.2 checadas por range contra 1+14 advisories GHSA, ambas patched)**, #92 php-src CVE-2019-11043 (SAST AST-anchored M9.2: regex dava delta=0, AST churn=12 com bounds-check `>`+1), **#95 shadowsocks-windows SCA (A, limpo — Sprint AX: `shadowsocks-csharp/packages.config` é manifesto NuGet com 35 versões fixas, antes não detectado; todos checados por range contra GHSA — Google.Protobuf/Newtonsoft.Json/System.Net.Http patched)**. **#89 roslyn SCA (E, VULNERÁVEL — Sprint AY: resolvido o Central Package Management via `eng/Packages.props`+`eng/Versions.props`, 123 pacotes; `MessagePack`@2.5.198 cai na janela vulnerável [≥2.5.187, <2.5.301] de 11 CVEs CVE-2026-485xx — true-positive verificado por range)**. Gaps: #93 jekyll (gemspec com ranges, sem Gemfile.lock), #94 signal-android (sem lockfile gradle) |
+| PHP/Ruby/C#/Mobile (86-95) | **9/10** | #86 laravel GHSA-crmm-hgp2-wgrp (SAST), #87 rails CVE-2024-26143 (SAST) + SCA (E, 61), #88 dotnet/runtime CVE-2026-45491 (SAST), #90 flutter SCA (A, limpo), **#91 wordpress SCA vendorizado (A, limpo — Sprint AW, motor M9.4: libs embutidas `rmccue/requests`@2.0.17 e `phpmailer/phpmailer`@7.0.2 checadas por range contra 1+14 advisories GHSA, ambas patched)**, #92 php-src CVE-2019-11043 (SAST AST-anchored M9.2: regex dava delta=0, AST churn=12 com bounds-check `>`+1), **#95 shadowsocks-windows SCA (A, limpo — Sprint AX: `shadowsocks-csharp/packages.config` é manifesto NuGet com 35 versões fixas, antes não detectado; todos checados por range contra GHSA — Google.Protobuf/Newtonsoft.Json/System.Net.Http patched)**. **#89 roslyn SCA (E, VULNERÁVEL — Sprint AY: resolvido o Central Package Management via `eng/Packages.props`+`eng/Versions.props`, 123 pacotes; `MessagePack`@2.5.198 cai na janela vulnerável [≥2.5.187, <2.5.301] de 11 CVEs CVE-2026-485xx — true-positive verificado por range)**. **#94 signal-android SCA (A, limpo — Sprint BC: `gradle/libs.versions.toml` resolve 53 libs Maven; 0 com advisory GHSA aplicável — androidx/kotlin/compose com versões recentes)**. Gap: #93 jekyll (gemspec com ranges, sem Gemfile.lock nem versão resolvível) |
 | Infra dados/cloud (96-100) | **5/5 — categoria fechada** | #96 spark SCA (A, limpo), #97 nomad SCA (B, 2), **#98 ceph CVE-2021-3979 (SAST AST-anchored Python em encryption.py, churn=105 — Sprint AV via GHSA; o eixo SCA continua N/A, mas o SAST fecha o repo)**, #99 trino SCA (A, limpo, via pom.xml de submódulo: core/trino-main, client/trino-jdbc, lib/trino-filesystem); **#100 clickhouse SCA (A, limpo — Sprint AZ: o root tem só pyproject.toml, mas `rust/workspace/Cargo.lock` pina 267 crates; 34 checadas contra GHSA cargo, todas patched)** |
 
-**Total real: 92/100 repositórios numerados com pelo menos um eixo de
+**Total real: 93/100 repositórios numerados com pelo menos um eixo de
 evidência validado** (SAST CVE-diff e/ou SCA dependência-exposição) —
-soma auditada das categorias: 20+19+15+9+9+7+8+5 = **92**. Sprint BA
+soma auditada das categorias: 20+19+15+9+9+7+9+5 = **93**. Sprint BA
 fechou os 2 gaps de JS/TS (`#4 nodejs/node` via package-lock.json npm,
 `#12 expressjs/express` via SAST AST-anchored CVE-2024-29041) — **JS/TS
 fechada 20/20**. Sprint BB fechou `#73 redisson` (SCA Maven via
-`redisson/pom.xml` com parsing por-bloco anti-FP).
+`redisson/pom.xml` com parsing por-bloco anti-FP). Sprint BC fechou `#94
+signal-android` (SCA via `gradle/libs.versions.toml`, 53 libs Maven,
+limpo).
 
 > **Auditoria de contagem (Sprint AZ):** o total acumulado havia derivado
 > +1 (reportado 88 após AY, mas a soma real das categorias era 87) e a
@@ -79,14 +81,14 @@ Sprint AT adicionou o **resolver GHSA de fix-commit (M9.3)** — localiza
 o commit de correção direto das `references` do GitHub Advisory quando o
 projeto não cita o CVE na mensagem — e fechou `#66 spring-boot`
 (CVE-2023-20883: fix resolvido via GHSA-xf96-w227-r7c4, churn AST=180).
-Restam **8/100** sem eixo: Python (1: `#34 boto3` N/A), Rust (1: `#59
+Restam **7/100** sem eixo: Python (1: `#34 boto3` N/A), Rust (1: `#59
 serde`, sem CVE/fix localizável), Java/Kotlin (1: `#75 kotlin` sem
-coordenada Maven resolvível), PHP/Ruby/C#/Mobile (2: `#93 jekyll`/`#94
-signal` — sem lockfile/versão resolvida), e C/C++ (3: `sqlite` reservado
-para teste de FP, `httpd`/`wireshark` sem commit de fix localizável via
-busca automatizada do GitHub). Soma: 1+1+1+2+3 = 8. Três categorias
-fechadas (JS/TS, Go, Infra). O teto honesto da lista é 99/100 (sqlite
-fora por reserva do usuário p/ FP). Eixos de
+coordenada Maven resolvível), PHP/Ruby/C#/Mobile (1: `#93 jekyll` — sem
+Gemfile.lock nem versão resolvível), e C/C++ (3: `sqlite` reservado para
+teste de FP, `httpd`/`wireshark` sem commit de fix localizável via busca
+automatizada do GitHub). Soma: 1+1+1+1+3 = 7. Três categorias fechadas
+(JS/TS, Go, Infra). O teto honesto da lista é 99/100 (sqlite fora por
+reserva do usuário p/ FP). Eixos de
 falso-positivo (dica 3: sqlite/guava)
 e throughput (dica 1: kubernetes/tensorflow/linux/vscode) foram
 amostrados **uma única vez cada**, em Sprint AE, nunca estendidos a

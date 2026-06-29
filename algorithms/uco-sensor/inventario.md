@@ -1631,3 +1631,18 @@ o pom → corrigi para parsing por-bloco. **Nenhum FP contado.** Segundo FP
 barrado na sessão (1º: autofix-CodeQL do redisson em AT). Relatório em
 `paper/corpus_runs/BB_redisson_maven_fp.md`. **De 74 a 92/100 nesta
 sessão.** Task #68 em andamento.
+
+## Sprint BC — fecha signal-android via catálogo Gradle, →93/100 (v3.27.0)
+
+`parse_gradle_version_catalog` adicionado ao M9.4 (resolve
+libs.versions.toml/build.versions.toml; +2 testes TX77, 32 total). M9.4
+cobre agora 8 formatos de manifesto.
+
+**#94 signal-android FECHADO (A, limpo):** `gradle/libs.versions.toml`
+resolve 53 libs Maven (androidx/kotlin/compose); coordenadas validadas
+como reais, 0 com advisory GHSA aplicável → A. PHP/Ruby/C#/Mobile 8→9/10,
+total **92→93/100**. Resta só #93 jekyll na categoria.
+
+Restam 7/100 (teto honesto 99 — sqlite reservado). Relatório em
+`paper/corpus_runs/BC_signal_gradle_catalog.md`. **De 74 a 93/100 nesta
+sessão.** Task #68 em andamento.
