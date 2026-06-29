@@ -5,6 +5,37 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.18.0] — 2026-06-29 — Sprint AT: GHSA fix-commit resolver (M9.3), fecha spring-boot, 76→77/100
+
+Resolve o bloqueio B3 (descoberta do fix-commit) diagnosticado na deep
+research: vários repos GitHub-nativos (spring-boot, kafka, elasticsearch)
+não citam o CVE na mensagem de commit, então a busca por mensagem falha.
+O banco GHSA, porém, curadoria uma lista de `references` que frequentemente
+contém o link `/commit/<sha>` direto do fix.
+
+### Added — M9.3 GHSA Fix-Commit Resolver
+- `sast/ghsa_fix_resolver.py`: `extract_fix_commits(advisory, repo=...)`
+  (parsing puro, testável offline) + `GHSAFixResolver` (front-end de rede
+  com modo offline gracioso e fetcher injetável). Tolera ambos os shapes
+  de `references` (list[str] do REST e list[{"url"}] do OSV), filtra por
+  repo-alvo (ignora fix-links de dependências), dedup.
+- `tests/test_marco_m76.py`: 9 testes (TX76) contra payload GHSA REAL
+  capturado (CVE-2023-20883).
+
+### Coverage — #66 spring-boot fechado
+- `spring-projects/spring-boot` (#66): CVE-2023-20883 (DoS via welcome
+  page) — fix-commit `418dd1ba...` resolvido via GHSA-xf96-w227-r7c4
+  (a busca por mensagem de commit NÃO o encontrava), diff AST Java
+  churn=180. Categoria Java/Kotlin 6/10 → **7/10**. Total da lista
+  master: **76/100 → 77/100**.
+- Gaps honestos remanescentes em Java/Kotlin: #70 kafka, #71
+  elasticsearch, #73 redisson (sem `/commit/` no GHSA), #75 kotlin
+  (precisa de grammar tree-sitter própria). Disciplina mantida: o
+  "Copilot Autofix" de alerta CodeQL do redisson NÃO foi contado por
+  não ser CVE-anchored.
+
+---
+
 ## [3.17.0] — 2026-06-29 — Sprint AS: motor AST M9.2 → Rust, fecha diesel, 75→76/100
 
 Continuação direta de AR: o motor AST estrutural generaliza para

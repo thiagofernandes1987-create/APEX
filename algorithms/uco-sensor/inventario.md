@@ -1444,3 +1444,29 @@ memory-safety indexada (busca retornou 0), sem lockfile. Não forçado.
 Categoria Rust 8/10→9/10, total **75→76/100**. Relatório em
 `paper/corpus_runs/AS_ast_motor_rust_diesel.md`. Restam 24/100. Task
 #68 em andamento.
+
+## Sprint AT — resolver GHSA de fix-commit (M9.3), fecha spring-boot, 76→77/100 (v3.18.0)
+
+Operacionaliza o ANGLE 3 da deep research: localizar o fix-commit pelo
+banco GHSA quando o projeto não cita o CVE na mensagem (bloqueio B3).
+Confirmado que a busca por mensagem falha para spring-boot/kafka/
+elasticsearch (0 resultados), mas o GHSA traz `/commit/` direto para
+alguns.
+
+**Módulo M9.3 `sast/ghsa_fix_resolver.py`:** `extract_fix_commits`
+(parsing puro, filtra por repo-alvo, dedup, tolera shapes REST+OSV) +
+`GHSAFixResolver` (rede com modo offline gracioso + fetcher injetável).
+9 testes TX76 contra payload GHSA real de CVE-2023-20883.
+
+**#66 spring-boot FECHADO:** CVE-2023-20883 (DoS welcome-page), fix
+`418dd1ba...` resolvido via GHSA-xf96-w227-r7c4 (commit-search dava 0),
+diff AST Java churn=180. Java/Kotlin 6/10→7/10, total **76→77/100**.
+
+**Disciplina:** o "Copilot Autofix" de alerta CodeQL do redisson NÃO
+foi contado — não é CVE-anchored (0 advisories no repo). Gaps Java
+honestos: kafka/elasticsearch/redisson (sem `/commit/` no GHSA), kotlin
+(sem grammar). Relatório em
+`paper/corpus_runs/AT_ghsa_resolver_springboot.md`. Pipeline
+"resolve-commit (M9.3) → diff-AST (M9.2)" agora é reutilizável nas 6
+linguagens cobertas. Task #68 em andamento — de 74 a 77/100 nesta
+sessão, sem fabricar um único dado.
