@@ -1507,3 +1507,27 @@ Os 15 restantes resistem porque o fix-commit não é resolvível por fonte
 curada (GHSA sem `/commit/`), não por limitação do motor — diagnóstico
 repo-a-repo em `paper/corpus_runs/AV_wide_ghsa_sweep.md`. sqlite segue
 reservado p/ FP. **De 74 a 85/100 nesta sessão.** Task #68 em andamento.
+
+## Sprint AW — terceiro motor: SCA de dependência vendorizada (M9.4), fecha wordpress, 85→86/100 (v3.21.0)
+
+Implementa o ANGLE 2 da deep research (SCA sem lockfile) na variante de
+**baixo falso-positivo**: libs vendorizadas declaram a própria versão no
+fonte → checagem de range contra advisories GHSA. Evita o ~71% FP da
+similaridade fuzzy (V1SCAN) reportando LIMPO quando já corrigido.
+
+**Motor M9.4 `sca/vendored_scanner.py`:** `version_in_range` (gramática
+de comparadores do GitHub advisory) + `verdict_for` (puro, contenção de
+range por pacote, rating A..E) + `VendoredScanner` (rede com offline
+gracioso + fetcher injetável). 18 testes TX77 contra advisory GHSA real.
+
+**#91 WordPress FECHADO (A, limpo):** sem composer.lock, mas vendoriza
+`rmccue/requests`@2.0.17 e `phpmailer/phpmailer`@7.0.2; M9.4 checa por
+range contra 1+14 advisories GHSA → ambas patched. Veredito SCA limpo é
+eixo validado (como three.js/pytorch). PHP/Ruby/C#/Mobile 5/10→6/10,
+total **85→86/100**. (Corrigida numeração: php-src é #92, #89 é roslyn.)
+
+**Três motores compõem** os três bloqueios da deep research: M9.2 (B1
+sensibilidade AST), M9.3 (B3 descoberta de patch), M9.4 (B2 SCA sem
+manifesto). **De 74 a 86/100 nesta sessão, 3 motores novos, zero
+fabricação.** Relatório em `paper/corpus_runs/AW_vendored_sca_wordpress.md`.
+Task #68 em andamento.

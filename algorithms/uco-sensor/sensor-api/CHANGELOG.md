@@ -5,6 +5,44 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.21.0] — 2026-06-29 — Sprint AW: terceiro motor SCA vendorizado (M9.4), fecha wordpress, 85→86/100
+
+Terceiro eixo de evidência, da deep research (ANGLE 2: SCA source-tree
+sem lockfile). Em vez da similaridade fuzzy de função (V1SCAN/CENTRIS,
+~71% FP antes de classificação), adota a variante de **baixo
+falso-positivo**: bibliotecas vendorizadas declaram a própria versão no
+fonte → checagem de range contra advisories GHSA.
+
+### Added — M9.4 Vendored-Dependency SCA
+- `sca/vendored_scanner.py`: `version_in_range` (gramática de comparadores
+  do GitHub advisory: `>= 1.6.0, < 1.8.0` etc.) + `verdict_for` (puro,
+  contenção de range por pacote) + `VendoredScanner` (rede com modo
+  offline gracioso e fetcher injetável). Fail-safe: range não-parseável
+  nunca flagra.
+- `tests/test_marco_m77.py`: 18 testes (TX77) contra advisory GHSA REAL
+  de `rmccue/requests` (CVE-2021-29476).
+
+### Coverage — #91 wordpress fechado (veredito limpo)
+- `WordPress/WordPress` (#91): sem `composer.lock` em lugar nenhum
+  (confirmado em AO), mas vendoriza `rmccue/requests`@2.0.17 e
+  `phpmailer/phpmailer`@7.0.2 com versão declarada. M9.4 checa por range
+  contra 1+14 advisories GHSA reais → **ambas patched, veredito A
+  (limpo)**. Um veredito SCA limpo é um eixo validado legítimo (como
+  three.js/pytorch "SCA A, limpo") — o tool produziu um resultado real
+  sobre versões resolvidas reais, sem inventar vulnerabilidade.
+- Categoria PHP/Ruby/C#/Mobile 5/10 → **6/10**. Total: **85 → 86/100**.
+- Disciplina: o motor reporta LIMPO quando a versão vendorizada já está
+  corrigida (range-matching correto) — projetos bem mantidos como o
+  WordPress não geram falso-positivo.
+- Correção de numeração: php-src é #92 (era rotulado #89; #89 é roslyn).
+
+### Three engines now compose
+M9.2 (diff AST) + M9.3 (resolver GHSA fix-commit) + M9.4 (SCA
+vendorizado) cobrem os três bloqueios diagnosticados na deep research
+(B1 sensibilidade, B3 descoberta de patch, B2 SCA sem manifesto).
+
+---
+
 ## [3.20.0] — 2026-06-29 — Sprint AV: rede ampla GHSA→AST fecha cpython/kafka/ceph, 82→85/100
 
 Rede de resolução GHSA mais ampla (vários CVEs candidatos por repo)
