@@ -1490,3 +1490,20 @@ Sem mudança de código — só aplicação dos motores já testados (TX75/TX76)
 a dados de corpus. Relatório em
 `paper/corpus_runs/AU_python_ghsa_ast.md`. **De 74 a 82/100 nesta
 sessão, com 2 motores novos e zero fabricação.** Task #68 em andamento.
+
+## Sprint AV — rede ampla GHSA→AST fecha cpython/kafka/ceph, 82→85/100 (v3.20.0)
+
+Rede de resolução GHSA mais ampla (vários CVEs por repo restante).
+Fechou 3 repos em 3 categorias:
+
+- #21 cpython CVE-2024-6232 (tarfile.py, churn=196; +CVE-2024-0397 _ssl.c
+  C churn=356; +CVE-2024-9287 venv churn=162 — três CVEs independentes)
+- #70 kafka CVE-2022-34917 (DataInputStreamReadable.java, churn=71)
+- #98 ceph CVE-2021-3979 (encryption.py Python, churn=105) — SCA era
+  N/A, mas o fix está em Python, então o SAST fecha o repo
+
+Python 18/20→19/20, Java 7/10→8/10, Infra 3/5→4/5. Total **82→85/100**.
+Os 15 restantes resistem porque o fix-commit não é resolvível por fonte
+curada (GHSA sem `/commit/`), não por limitação do motor — diagnóstico
+repo-a-repo em `paper/corpus_runs/AV_wide_ghsa_sweep.md`. sqlite segue
+reservado p/ FP. **De 74 a 85/100 nesta sessão.** Task #68 em andamento.

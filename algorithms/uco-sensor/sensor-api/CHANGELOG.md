@@ -5,6 +5,34 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.20.0] — 2026-06-29 — Sprint AV: rede ampla GHSA→AST fecha cpython/kafka/ceph, 82→85/100
+
+Rede de resolução GHSA mais ampla (vários CVEs candidatos por repo)
+sobre os gaps restantes. Fechou 3 repos em 3 categorias distintas:
+
+| # | Repo | CVE | fix-commit (GHSA) | arquivo | grammar | churn |
+|---|------|-----|-------------------|---------|---------|-------|
+| #21 | cpython | CVE-2024-6232 | 4eaf4891 | tarfile.py | python | 196 |
+| #70 | kafka | CVE-2022-34917 | 14951a83 | DataInputStreamReadable.java | java | 71 |
+| #98 | ceph | CVE-2021-3979 | 47c33179 | encryption.py | python | 105 |
+
+Destaque #98 ceph: o eixo SCA era N/A (pom com `${version}`), mas o fix
+da CVE-2021-3979 está num arquivo **Python** — então o eixo SAST
+AST-anchored fecha o repo. Mostra o valor de ter os dois eixos: um
+"repo de infra C++" cuja correção de segurança está em Python ainda é
+coberto.
+
+Categorias: Python 18/20→**19/20**, Java/Kotlin 7/10→**8/10**, Infra
+3/5→**4/5**. Total da lista master: **82/100 → 85/100**.
+
+Gaps honestos remanescentes (15): boto3 (N/A), serde, elasticsearch,
+redisson, kotlin (sem grammar), 5× PHP/Ruby/C#/Mobile, clickhouse,
+sqlite (reservado FP), httpd, wireshark. Sem mudança de código —
+aplicação dos motores M9.2/M9.3 a dados de corpus. Documentação em
+`paper/corpus_runs/AV_wide_ghsa_sweep.md`.
+
+---
+
 ## [3.19.0] — 2026-06-29 — Sprint AU: pipeline GHSA→AST fecha 5 repos Python, 77→82/100
 
 Primeira aplicação em lote do pipeline resolve-commit (M9.3) → diff-AST
