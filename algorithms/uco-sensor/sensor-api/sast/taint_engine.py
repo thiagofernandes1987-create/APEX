@@ -146,6 +146,19 @@ _SINK_METHODS: Dict[Tuple[str, str], Tuple[str, str, str, str]] = {
     ("Template", "render"):   ("SAST042", "CRITICAL", "TEMPLATE_INJECTION", "CWE-94"),
     ("template", "render"):   ("SAST042", "CRITICAL", "TEMPLATE_INJECTION", "CWE-94"),
     ("env",      "get_template"): ("SAST042", "CRITICAL", "TEMPLATE_INJECTION", "CWE-94"),
+    # M16.1 — Deserialização insegura (CWE-502): pickle/marshal/dill carregam
+    # código arbitrário; yaml.load sem SafeLoader idem; torch.load usa pickle.
+    ("pickle",  "load"):     ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("pickle",  "loads"):    ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("cPickle", "load"):     ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("cPickle", "loads"):    ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("marshal", "load"):     ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("marshal", "loads"):    ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("dill",    "load"):     ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("dill",    "loads"):    ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("yaml",    "load"):     ("SAST046", "HIGH",     "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("torch",   "load"):     ("SAST046", "HIGH",     "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("joblib",  "load"):     ("SAST046", "HIGH",     "UNSAFE_DESERIALIZATION", "CWE-502"),
 }
 
 # Bare function names → sink metadata

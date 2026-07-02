@@ -1926,3 +1926,18 @@ rodar taint/M12 before/after nos pares Python.
 - [ ] Auditar sinks/sanitizers (subprocess, eval, jinja, cursor.execute, shlex.quote)
 - [ ] Cobrir classes redis/ffmpeg/sqlite no M11
 - [ ] Taint inter-procedural via CFG do V4 (uses/defs)
+
+## Sprint BO — Sinks de deserialização insegura no taint (M16.1) (v3.39.0)
+
+Adicionados sinks CWE-502 (pickle/cPickle/marshal/dill.load/loads, yaml.load,
+torch.load, joblib.load → SAST046). Before/after real: pickle.loads(request)
+dispara (2 caminhos); json.loads **para de disparar** (0). 4 testes TX85,
+regressão 2414 verdes. Motor de taint agora cobre injeção web (M16) +
+deserialização (M16.1).
+
+### CHECKLIST
+- [x] M16 fontes acessoras (BN) / [x] M16.1 sinks deserialização (BO)
+- [x] Auditoria sinks+sanitizers (SQL/cmd/SSTI/eval/open/deser)
+- [ ] Fonte "arquivo baixado/remoto" p/ CVE exata do transformers
+- [ ] Classes redis/ffmpeg/sqlite no M11
+- [ ] Taint inter-procedural via CFG do V4
