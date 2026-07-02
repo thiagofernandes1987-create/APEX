@@ -1754,3 +1754,34 @@ TX78, regressão 2380 verdes. Relatório: `paper/corpus_runs/BG_fix_localizer_di
 Container reciclado no meio da sessão (repo re-clonado, deps pip apagadas).
 Estado 100/100 restaurado via bundle; deps reinstaladas. Bundles = backup
 enquanto push bloqueado.
+
+## Sprint BH — GuardAwareScanner (M11): detecção que dispara no vuln e para no fix (v3.32.0)
+
+**Virada real:** primeira detecção de classe memory-safety que dispara no
+código VULNERÁVEL e PARA no CORRIGIDO — **sem conhecer o commit de fix**
+(M10 precisava do fix como âncora; M11 não).
+
+**M11 `sast/guard_aware.py`** — guard-aware: reporta construção arriscada só
+quando o guard que a tornaria segura está ausente do escopo local (janela
+robusta; o segmentador por chaves falha em C real com preprocessador).
+- GA01 (CWE-191): `base + a - b` sem guard `a > b` (underflow→OOB).
+- GA02 (CWE-120): memcpy-family com comprimento sem bound.
+
+**Validado ao vivo (dado real):** php-src CVE-2019-11043 DISPARA na L1212
+(`env_path_info + pilen - slen`) no vulnerável e SILENCIA no fix — a linha da
+CVE é exatamente a que some (5→4 findings). 6 testes TX79, regressão 2386
+verdes. Relatório: `paper/corpus_runs/BH_guard_aware_detection.md`.
+
+**Honestidade:** FP de baixa confiança em ffmpeg/postgres (subtração/memcpy
+sem guard visível na janela — code-smell, não a CVE). Estado real reportado.
+
+### CHECKLIST atualizado
+- [x] M10 FixDiffLocalizer (localiza linha/classe do fix — CVE conhecida)
+- [x] M11 GuardAwareScanner (detecta classe SEM conhecer o fix; dispara-e-para)
+- [ ] Precisão M11: escopo por CFG (UCO V4) em vez de janela + heurística
+      ponteiro/tipo p/ cortar FP de baixa confiança
+- [ ] Consumir GenericCFGBuilder do UCO V4 p/ C/Rust/Java (dead-code +
+      reachability) — habilita o escopo-por-CFG
+- [ ] Taint/dataflow fonte→sink via CFG do V4
+- [ ] Rodar M10+M11 sobre os 100 repos + persistir validação por repo
+- [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)

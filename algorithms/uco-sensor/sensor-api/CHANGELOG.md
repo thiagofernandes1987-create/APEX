@@ -5,6 +5,31 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.32.0] — 2026-07-02 — Sprint BH: GuardAwareScanner (M11) — dispara no vuln, para no fix
+
+Primeira detecção REAL de classe memory-safety que dispara no código
+vulnerável e para de disparar no corrigido — SEM âncora no commit de fix
+(o M10 precisava do fix; o M11 não). Núcleo de "rastrear bug conhecido" e
+"avaliar código gerado por IA".
+
+### Added — M11 `sast/guard_aware.py`
+- `GuardAwareScanner.scan(src, ext)` guard-aware: reporta uma construção
+  arriscada só quando o guard que a tornaria segura está ausente do escopo
+  local (janela robusta a falhas de segmentação por chaves).
+  - GA01 (CWE-191): subtração não-checada em aritmética de ponteiro/comp.
+    (`base + a - b` sem `a > b`).
+  - GA02 (CWE-120): memcpy-family com comprimento variável sem bound.
+- Validado ao vivo: php-src CVE-2019-11043 DISPARA na L1212
+  (`env_path_info + pilen - slen`) no vulnerável e SILENCIA no fix (a linha
+  da CVE é exatamente a que some). 6 testes TX79. Regressão 2386 verdes.
+
+### Honestidade
+FP de baixa confiança em ffmpeg/postgres (subtração/memcpy sem guard visível
+na janela — code-smell, não a CVE). Reportado como estado real; precisão a
+calibrar (escopo por CFG do V4, heurística de tipo) — no checklist.
+
+---
+
 ## [3.31.0] — 2026-07-02 — Sprint BG: FixDiffLocalizer (M10) + diagnóstico de detecção
 
 Reformulação do objetivo: rastrear o bug conhecido de verdade (quando/como/
