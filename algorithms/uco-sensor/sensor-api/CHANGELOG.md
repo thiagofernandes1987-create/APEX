@@ -5,6 +5,23 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.37.0] — 2026-07-02 — Sprint BM: CorpusValidator (M12) rodado sobre pares reais + artefato
+
+Executado o M12 (M10 FixDiffLocalizer + M11 GuardAwareScanner) sobre 6 pares
+CVE C/C++ reais (fetch raw.githubusercontent). Artefato persistido em
+`paper/corpus_runs/corpus_validation_artifact.json`.
+
+Sumário: total=6, tracked=4, m10_localized=4, m11_stopped_firing=1
+(php-src CVE-2019-11043 — caso-ouro: M11 detecta o underflow SEM âncora do
+fix, aponta L1212, e para de disparar na versão corrigida), not_tracked=2
+(linux race-condition / postgres recálculo). redis/ffmpeg/sqlite: M10
+localiza o fix mas classe não coberta pelo M11 sem âncora (widening/
+early-return/clamp — checklist). "perpetuou" = GA01 em outros sites (triagem).
+
+Bloqueio honesto: rodar M12 nos ~40 pares Python/JS exige parent SHA da API
+de commits do GitHub, bloqueada (403) neste ambiente; só raw passa.
+2405 testes verdes. Relatório: `paper/corpus_runs/BM_corpus_validation_run.md`.
+
 ## [3.36.0] — 2026-07-02 — Sprint BL: GenericCFG do UCO V4 consumido pelo sensor (M15)
 
 Fecha o item de checklist "consumir o GenericCFG do V4 para C/Rust/Java".

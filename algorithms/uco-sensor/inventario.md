@@ -1880,3 +1880,24 @@ reachable_ratio 0.875.
 - [ ] Taint/dataflow fonte→sink via CFG do V4 (reachable_from_entry + uses/defs)
 - [ ] Rodar M12 nos ~40 SAST (bloqueado: commits API p/ parent SHA)
 - [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
+
+## Sprint BM — CorpusValidator (M12) rodado sobre pares CVE reais + artefato (v3.37.0)
+
+Executei o M12 (M10+M11) sobre 6 pares C/C++ reais (fetch raw, dado real).
+Artefato persistido: `paper/corpus_runs/corpus_validation_artifact.json`.
+Sumário: total=6, tracked=4, m10_localized=4, **m11_stopped_firing=1
+(php-src — caso-ouro: detecta o underflow sem âncora, L1212, e para no
+fix)**, not_tracked=2 (linux race / postgres recálculo).
+
+Honesto: redis(widening)/ffmpeg(early-return)/sqlite(clamp) têm o fix
+localizado (M10) mas classe não coberta pelo M11 sem âncora; linux/postgres
+corretamente not_tracked. "perpetuou" = GA01 em outros sites (triagem
+pendente). Relatório: `paper/corpus_runs/BM_corpus_validation_run.md`.
+
+### CHECKLIST — evolução
+- [x] M12 rodado sobre pares reais + artefato persistido
+- [x] Validação before/after com dado real (php-src detect→resolve completo)
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (widening/early-return/clamp)
+- [ ] Triagem dos "perpetuou" (FP vs risco real não-CVE)
+- [ ] Rodar M12 nos pares Python/JS via tags de release (API commits 403 bloqueia parent SHA)
+- [ ] Taint fonte→sink (Python) validado before/after (path-traversal/injection)
