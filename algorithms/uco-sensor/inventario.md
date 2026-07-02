@@ -1813,3 +1813,30 @@ pares com parent conhecido; restante pendente da API.
 - [ ] Taint/dataflow fonte→sink via CFG do V4
 - [ ] Rodar M12 nos ~40 SAST (bloqueado: API de commits p/ parent SHA)
 - [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
+
+## Sprint BJ — ABSORÇÃO do UCO V4 no sensor (uco_core) + correção honesta (v3.34.0)
+
+**Diretriz do usuário:** o UCO V4 deve ser absorvido pelo UCO Sensor e virar
+parte dele. Feito (M13):
+- Novo pacote interno `sensor-api/uco_core/` (cópia fiel do V4, 4255 LOC) +
+  `__init__` expondo a API pública. Registrado no pyproject (`uco_core*`).
+- Bridges de autofix (`uco_transform_bridge`, `hmc_repair`) resolvem o V4 pela
+  cópia INTERNA (fallback externo por retrocompat). O sensor não depende mais
+  de `algorithms/uco` via sys.path.
+- 5 testes TX81. Regressão 2395 verdes.
+
+**CORREÇÃO DE HONESTIDADE:** o diagnóstico BG ("V4 retorna None p/ não-Python")
+estava ERRADO — mis-invocação com kwarg `language=` engolida por try/except. O
+V4 computa métricas C ricas via GenericCFG (cyclomatic/hamiltonian/dead_code/
+infinite_loop_risk/reachable_count). Corrigido em BG. Ressalva: no nível-
+arquivo, Δ~0 para fixes pequenos — M11 segue como detector.
+
+### CHECKLIST atualizado
+- [x] M10 FixDiffLocalizer / [x] M11 GuardAwareScanner / [x] M12 CorpusValidator
+- [x] **Absorver UCO V4 no sensor (uco_core)** — feito (M13)
+- [ ] Precisão M11 via CFG do UCO V4 (escopo real de função) + heurística tipo
+- [ ] Consumir GenericCFG do V4 na análise-padrão do sensor p/ C/Rust/Java
+      (agora acessível internamente via uco_core)
+- [ ] Taint/dataflow fonte→sink via CFG do V4 (reachable_from_entry + uses/defs)
+- [ ] Rodar M12 nos ~40 SAST (bloqueado: commits API p/ parent SHA)
+- [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)

@@ -5,6 +5,33 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.34.0] — 2026-07-02 — Sprint BJ: absorção do UCO V4 no sensor (`uco_core`) + correção de honestidade
+
+O Universal Code Optimizer V4 foi **ABSORVIDO** pelo UCO Sensor — deixou de
+ser dependência externa (import via `sys.path` para `algorithms/uco`) e virou
+o pacote interno `uco_core`, versionado com o sensor.
+
+### Changed — M13 absorção
+- Novo pacote `uco_core/` (cópia fiel do V4, 4255 LOC) + `__init__` expondo a
+  API pública (`UniversalCodeOptimizer`, `UniversalAnalyzer`,
+  `GenericCFGBuilder`, `CFG`, `DSMEngine`, `HalsteadMetrics`, …).
+- `pyproject` inclui `uco_core*` nos pacotes.
+- Bridges de autofix (`uco_transform_bridge`, `hmc_repair`) passam a resolver
+  o V4 pela cópia interna (fallback externo por retrocompat).
+- 5 testes TX81. Regressão 2395 verdes.
+
+### Correção de honestidade (importante)
+O diagnóstico da Sprint BG afirmou que o V4 retornava `bugs/score None` para
+não-Python. **Estava ERRADO** — foi mis-invocado com `analyze(src,
+language=...)` (kwarg inexistente), exceção engolida por try/except no script.
+A assinatura real é `analyze(code, language_hint=...) -> AnalysisResult`, e o
+V4 **computa métricas ricas para C** (cyclomatic, hamiltonian, dead_code,
+`infinite_loop_risk`, `reachable_count`). Corrigido no relatório BG.
+Ressalva real: no nível-arquivo essas métricas quase não distinguem fixes
+pequenos (Δ~0) — o M11 guard-aware segue como detector.
+
+---
+
 ## [3.33.0] — 2026-07-02 — Sprint BI: CorpusValidator (M12) — validação before/after persistida
 
 Orquestra M10+M11 sobre pares CVE e persiste um artefato estruturado por

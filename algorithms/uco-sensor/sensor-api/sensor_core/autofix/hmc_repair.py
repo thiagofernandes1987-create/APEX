@@ -236,9 +236,13 @@ def hmc_repair(
         r.summary_text = _make_summary(r)
         return r
 
-    # Defensive imports — UCO core may not be reachable in some sandboxes.
+    # Defensive imports — UCO core absorvido em ``uco_core`` (M13/Sprint BJ);
+    # fallback ao caminho externo por retrocompatibilidade.
     try:
-        import universal_code_optimizer_v4 as ucm
+        try:
+            from uco_core import universal_code_optimizer_v4 as ucm
+        except Exception:
+            import universal_code_optimizer_v4 as ucm
     except Exception as exc:
         r.status = "ERROR"
         r.error  = f"UCO core unavailable: {exc}"

@@ -30,10 +30,19 @@ CVEs C/C++ reais. Resultado cru:
    sabe dizer "disparou antes / parou depois".
 2. **`halstead_bugs` não distingue** vulnerável de corrigido (Δ ~0, e às
    vezes sobe no fix porque o fix adiciona código).
-3. **UCO V4 `analyze()` retorna `bugs=None`/`score=None` para não-Python** —
-   sua análise profunda (Halstead/score) é baseada em AST do Python. O
-   `GenericCFGBuilder` (via Pygments) existe mas o pipeline de bugs/score não
-   o consome para C/Rust/Java. **Potencial subutilizado.**
+3. **UCO V4 `analyze()` — correção (Sprint BJ):** o diagnóstico original desta
+   sprint afirmou que o V4 retornava `bugs/score None` para não-Python. **Isso
+   estava ERRADO** — eu o invoquei com `analyze(src, language=...)` (kwarg
+   inexistente), e a exceção foi engolida por um `try/except` no script de
+   avaliação, aparecendo como `None`. A assinatura real é
+   `analyze(code, language_hint=...) -> AnalysisResult`, e o V4 **computa
+   métricas ricas para C** via `UniversalAnalyzer`/`GenericCFGBuilder`
+   (cyclomatic, hamiltonian, syntactic_dead_code, `infinite_loop_risk`,
+   `reachable_count`, dsm_density…). O potencial NÃO estava inacessível —
+   estava mal-invocado. Corrigido e absorvido em BJ (`uco_core`). Ressalva
+   real: no nível-arquivo essas métricas quase não distinguem fixes pequenos
+   (Δ~0), então não são o sinal de "parou de disparar" — o M11 guard-aware
+   continua sendo o detector.
 
 Ou seja: hoje o M9.2 (diff AST) só diz que *algo mudou* (churn) — não
 localiza o bug, não classifica, não valida que parou. Isso é o gap real:

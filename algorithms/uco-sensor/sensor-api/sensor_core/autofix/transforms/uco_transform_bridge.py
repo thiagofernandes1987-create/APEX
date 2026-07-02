@@ -61,9 +61,19 @@ def _safe_parse(source: str) -> ast.AST:
 
 
 def _ucotx(class_name: str):
-    """Lazy-import a UCO transform class.  Returns None on miss."""
+    """Lazy-import a UCO transform class.  Returns None on miss.
+
+    M13 (Sprint BJ): o UCO V4 foi ABSORVIDO no pacote do sensor (``uco_core``).
+    Preferimos a cópia interna; caímos para o caminho externo (``sys.path`` →
+    ``algorithms/uco``) só por retrocompatibilidade se o pacote interno faltar.
+    """
     try:
-        import universal_code_optimizer_v4 as ucm
+        from uco_core import universal_code_optimizer_v4 as ucm
+        return getattr(ucm, class_name, None)
+    except Exception:
+        pass
+    try:
+        import universal_code_optimizer_v4 as ucm  # fallback externo
         return getattr(ucm, class_name, None)
     except Exception:
         return None
