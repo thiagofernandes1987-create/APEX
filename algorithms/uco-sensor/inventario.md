@@ -1962,3 +1962,12 @@ o que corrigir, fechando Sensor→fix) + META A (precisão), depois E→B→D→
 - [ ] D — weak_point_score (propagação de sinal + SA + HMC)
 - [ ] E — M12 nos ~40 pares via tags (dataset de regressão)
 - [ ] F — Camada APEX (API p/ IA + loop de auto-correção + MCP)
+
+## Sprint BQ — FixSuggester (M18): elo Sensor→UCO Core→patch (META C) (v3.40.0)
+
+Dado um finding do Sensor, o UCO Core emite o patch mínimo sugerido.
+Validado com dado real: php-src — Sensor detecta GA01 L1212 sobre
+(pilen,slen), Core sugere guard `pilen > slen`, e COINCIDE com o fix real
+dos mantenedores. Deser: Core sugere json.loads (fix real satisfaz). 5
+testes TX86, regressão 2419 verdes. Relatório: `paper/corpus_runs/BQ_fix_suggester.md`.
+META C parcial (suggest+validate-vs-real feito; falta aplicar+re-scan).
