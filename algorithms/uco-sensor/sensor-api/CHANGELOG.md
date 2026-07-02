@@ -5,6 +5,23 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.36.0] — 2026-07-02 — Sprint BL: GenericCFG do UCO V4 consumido pelo sensor (M15)
+
+Fecha o item de checklist "consumir o GenericCFG do V4 para C/Rust/Java".
+Até BJ o V4 estava absorvido mas o CFG genérico não era consumido.
+
+### Added — M15 `metrics/cfg_signals.py`
+- `cfg_signals(source, language)` expõe sinais de fluxo de controle do V4
+  (`UniversalAnalyzer`/`GenericCFGBuilder`) para QUALQUER linguagem:
+  `reachable_ratio` (código morto por CFG), `infinite_loop_risk` (classe DoS
+  — a classe da CVE de loop infinito do wireshark), `cyclomatic`,
+  `loop_count`, `max_depth`, `syntactic_dead_code`. `unreachable_after_return`.
+- Degradação graciosa (nunca levanta). 5 testes TX83. Regressão 2405 verdes.
+- Validado: C `for(;;)` → infinite_loop_risk=0.45 + reachable_ratio 0.875
+  (pega o loop infinito E o código morto); Rust/Java/Python idem.
+
+---
+
 ## [3.35.0] — 2026-07-02 — Sprint BK: escopo real de função por AST (M14) no M11 — corta FP/FN
 
 Substitui a janela de ±45 linhas do M11 pelo **escopo real da função** via

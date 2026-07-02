@@ -1862,3 +1862,21 @@ L1212, agora com guard buscado na função inteira.
 - [ ] Taint/dataflow fonte→sink via CFG do V4 (reachable_from_entry + uses/defs)
 - [ ] Rodar M12 nos ~40 SAST (bloqueado: commits API p/ parent SHA)
 - [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
+
+## Sprint BL — GenericCFG do UCO V4 consumido pelo sensor (M15) (v3.36.0)
+
+Fecha "consumir o GenericCFG do V4 para C/Rust/Java". M15
+`metrics/cfg_signals.py`: `cfg_signals(source, language)` expõe sinais de CFG
+do V4 (UniversalAnalyzer) para qualquer linguagem — reachable_ratio (código
+morto), infinite_loop_risk (classe DoS = CVE loop-infinito wireshark),
+cyclomatic, loop_count, max_depth. Degradação graciosa. 5 testes TX83,
+regressão 2405 verdes. Validado: C `for(;;)` → infinite_loop_risk=0.45 +
+reachable_ratio 0.875.
+
+### CHECKLIST atualizado
+- [x] M10 FixDiffLocalizer / [x] M11 GuardAwareScanner / [x] M12 CorpusValidator
+- [x] M13 Absorver UCO V4 (uco_core) / [x] M14 escopo de função AST no M11
+- [x] **M15 consumir GenericCFG do V4 no sensor (C/Rust/Java + infinite_loop_risk)**
+- [ ] Taint/dataflow fonte→sink via CFG do V4 (reachable_from_entry + uses/defs)
+- [ ] Rodar M12 nos ~40 SAST (bloqueado: commits API p/ parent SHA)
+- [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
