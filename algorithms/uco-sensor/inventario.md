@@ -1901,3 +1901,28 @@ pendente). Relatório: `paper/corpus_runs/BM_corpus_validation_run.md`.
 - [ ] Triagem dos "perpetuou" (FP vs risco real não-CVE)
 - [ ] Rodar M12 nos pares Python/JS via tags de release (API commits 403 bloqueia parent SHA)
 - [ ] Taint fonte→sink (Python) validado before/after (path-traversal/injection)
+
+## Sprint BN — Expansão da detecção de fonte do taint (M16) (v3.38.0)
+
+Diagnóstico real: o TaintAnalyzer detectava `request.args["x"]` mas NÃO
+`request.args.get("x")` (padrão Flask/Django mais comum) nem cadeia
+`flask.request.args...` — perdia a maioria dos fluxos web reais (sources=0).
+
+M16 (`sast/taint_engine.py`): reconhece métodos acessores
+(get/getlist/get_json/…) sobre atributo-fonte + casa último segmento do
+objeto (tolera prefixo de módulo). Revalidado: `request.args.get` →
+sources=1/2 caminhos; `flask.request.args.get`, `.getlist`, `.get_json`
+detectados; regressão `["x"]` mantida; **`dict.get()` benigno NÃO é fonte
+(sem FP)**. 5 testes TX84, regressão 2410 verdes.
+
+Contorno de dados: API de commits 403 (sem parent SHA) é contornável por
+**tags de release** (raw aceita tag) — confirmado salt/django. Desbloqueia
+rodar taint/M12 before/after nos pares Python.
+
+### CHECKLIST — evolução
+- [x] M16 expansão de fonte do taint (acessores + cadeia), testado, sem FP
+- [x] Contorno de dados via tags de release confirmado
+- [ ] Taint before/after num par Python real via tags (validar "parou")
+- [ ] Auditar sinks/sanitizers (subprocess, eval, jinja, cursor.execute, shlex.quote)
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11
+- [ ] Taint inter-procedural via CFG do V4 (uses/defs)

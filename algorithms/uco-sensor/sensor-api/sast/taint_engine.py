@@ -88,6 +88,19 @@ _SOURCE_ATTRS: FrozenSet[Tuple[str, str]] = frozenset({
 })
 
 # Bare function names that return tainted data when called
+# M16 — métodos acessores que, chamados sobre um atributo-fonte, retornam
+# valor controlado pelo usuário (ex.: request.args.get("x")).
+_SOURCE_ACCESSOR_METHODS: FrozenSet[str] = frozenset({
+    "get", "getlist", "getall", "getvalue", "getone", "get_json",
+    "first", "dict", "to_dict", "read", "getvalue",
+})
+# Acessores chamados DIRETAMENTE sobre o objeto request (Flask/Werkzeug/aiohttp).
+_REQUEST_ACCESSOR_METHODS: FrozenSet[str] = frozenset({
+    "get_json", "get_data", "read", "text", "json",
+})
+# Raízes de objeto que representam entrada do usuário.
+_SOURCE_ROOTS: FrozenSet[str] = frozenset({"request", "req", "flask"})
+
 _SOURCE_CALLS: FrozenSet[str] = frozenset({
     "input",
     "raw_input",       # Python 2 compat
@@ -830,24 +843,53 @@ class TaintAnalyzer:
                 obj = _node_name(expr.func.value)
                 if (obj, expr.func.attr) in _SOURCE_MODULE_CALLS:
                     return f"{obj}.{expr.func.attr}()"
+                # M16 — accessor method on a source attribute:
+                #   request.args.get("x") / request.form.getlist(...) /
+                #   request.get_json() / flask.request.args.get(...)
+                if expr.func.attr in _SOURCE_ACCESSOR_METHODS:
+                    base = self._attr_source_label(expr.func.value)
+                    if base is not None:
+                        return f"{base}.{expr.func.attr}()"
+                    # request.get_json()/get_data() — accessor directly on request
+                    if expr.func.attr in _REQUEST_ACCESSOR_METHODS:
+                        head = _node_name(expr.func.value).split(".")[-1]
+                        if head in _SOURCE_ROOTS:
+                            return f"{head}.{expr.func.attr}()"
 
-        # request.args / request.form / etc.
+        # request.args / request.form / etc.  (M16: tolera cadeia com prefixo)
         if isinstance(expr, ast.Attribute):
-            obj = _node_name(expr.value)
-            if (obj, expr.attr) in _SOURCE_ATTRS:
-                return f"{obj}.{expr.attr}"
+            lbl = self._attr_source_label(expr)
+            if lbl is not None:
+                return lbl
 
-        # os.environ[key] / sys.argv[n]
+        # os.environ[key] / sys.argv[n] / request.args["x"]
         if isinstance(expr, ast.Subscript):
             if isinstance(expr.value, ast.Attribute):
-                obj  = _node_name(expr.value.value)
+                obj  = _node_name(expr.value.value).split(".")[-1]
                 attr = expr.value.attr
                 if (obj, attr) in _SOURCE_SUBSCRIPT_BASES:
+                    return f"{obj}.{attr}[...]"
+                # request.args["x"] — subscript de um atributo-fonte
+                if self._attr_source_label(expr.value) is not None:
                     return f"{obj}.{attr}[...]"
             elif isinstance(expr.value, ast.Name):
                 if expr.value.id in ("environ",):
                     return "environ[...]"
 
+        return None
+
+    @staticmethod
+    def _attr_source_label(node) -> Optional[str]:
+        """
+        Se *node* é um atributo-fonte (ex.: ``request.args``), retorna o rótulo,
+        tolerando cadeia com prefixo de módulo (``flask.request.args`` casa por
+        casar o ÚLTIMO segmento do objeto: ``request``).  Caso contrário None.
+        """
+        if not isinstance(node, ast.Attribute):
+            return None
+        obj_last = _node_name(node.value).split(".")[-1]
+        if (obj_last, node.attr) in _SOURCE_ATTRS:
+            return f"{obj_last}.{node.attr}"
         return None
 
     def _get_sink_meta(
