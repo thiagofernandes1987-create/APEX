@@ -1785,3 +1785,31 @@ sem guard visível na janela — code-smell, não a CVE). Estado real reportado.
 - [ ] Taint/dataflow fonte→sink via CFG do V4
 - [ ] Rodar M10+M11 sobre os 100 repos + persistir validação por repo
 - [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
+
+## Sprint BI — CorpusValidator (M12): validação before/after persistida (v3.33.0)
+
+**M12 `scan/corpus_validator.py`** orquestra M10 (localiza fix) + M11
+(dispara-no-vuln/para-no-fix) sobre pares CVE e persiste artefato estruturado
+por repo: onde/como/qual-versão + parou de disparar + perpetuados. Fetch
+injetável (raw/dict). Artefato: `paper/corpus_runs/validation_results.json`.
+
+**Resultado real (6 pares C/C++):** 3 tracked, 3 not_tracked (fixes sem
+guard reconhecível — race/recálculo). **php-src CVE-2019-11043 totalmente
+rastreado:** M10 localizou L1212 + M11 disparou no vuln e parou no fix.
+4 testes TX80, regressão 2390 verdes. Relatório em
+`paper/corpus_runs/BH_guard_aware_detection.md` + JSON persistido.
+
+**Constraint ambiental honesto:** expandir aos ~40 repos SAST exige a GitHub
+commits API (resolver parent SHA de cada fix) — bloqueada (403) neste
+container reciclado, e git-fetch idem; só raw funciona. Processados os 6
+pares com parent conhecido; restante pendente da API.
+
+### CHECKLIST atualizado
+- [x] M10 FixDiffLocalizer (localiza linha/classe do fix)
+- [x] M11 GuardAwareScanner (detecta classe sem conhecer o fix; dispara-e-para)
+- [x] M12 CorpusValidator (persiste validação before/after por repo)
+- [ ] Precisão M11 via CFG do UCO V4 (escopo real) + heurística ponteiro/tipo
+- [ ] Consumir GenericCFGBuilder do V4 p/ C/Rust/Java
+- [ ] Taint/dataflow fonte→sink via CFG do V4
+- [ ] Rodar M12 nos ~40 SAST (bloqueado: API de commits p/ parent SHA)
+- [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)

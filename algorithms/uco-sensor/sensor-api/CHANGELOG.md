@@ -5,6 +5,28 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.33.0] — 2026-07-02 — Sprint BI: CorpusValidator (M12) — validação before/after persistida
+
+Orquestra M10+M11 sobre pares CVE e persiste um artefato estruturado por
+repo (onde/como/qual-versão + parou de disparar + perpetuados). Dado real.
+
+### Added — M12 `scan/corpus_validator.py`
+- `CorpusValidator(fetcher).validate_pair/validate_all` + `summarize`.
+  Fetch injetável (raw em produção, dict nos testes). Nunca levanta em
+  fetch-error (vira `status='fetch_error'`).
+- Artefato persistido: `paper/corpus_runs/validation_results.json` — 6 pares
+  C/C++ reais. Sumário: 3 tracked, 3 not_tracked (fixes sem guard), php-src
+  totalmente rastreado (M10 localizou L1212 + M11 parou de disparar).
+- 4 testes TX80. Regressão 2390 verdes.
+
+### Constraint ambiental (honesto)
+Expandir o before/after aos ~40 repos SAST exige a GitHub commits API (para
+resolver o parent SHA de cada fix) — bloqueada (403) neste container
+reciclado, assim como git-fetch. Só raw funciona. Os 6 pares com parent
+conhecido do contexto foram processados; o restante fica pendente da API.
+
+---
+
 ## [3.32.0] — 2026-07-02 — Sprint BH: GuardAwareScanner (M11) — dispara no vuln, para no fix
 
 Primeira detecção REAL de classe memory-safety que dispara no código

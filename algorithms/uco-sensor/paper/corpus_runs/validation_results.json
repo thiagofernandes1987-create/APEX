@@ -1,0 +1,177 @@
+{
+  "summary": {
+    "total": 6,
+    "tracked": 3,
+    "m10_localized": 3,
+    "m11_stopped_firing": 1,
+    "not_tracked": 3,
+    "fetch_error": 0
+  },
+  "records": [
+    {
+      "repo": "php/php-src",
+      "cve": "CVE-2019-11043",
+      "file": "sapi/fpm/fpm/fpm_main.c",
+      "ext": ".c",
+      "parent": "fadd7f0f1e7a44d6209b5c5cf30870e4b73efa7d",
+      "fix": "ab061f95ca966731b1c84cf5b7b20155c0a1c06a",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 1212,
+          "text": "\t\t\t\t\t\t\t\tpath_info = (env_path_info && pilen > slen) ? env_path_info + pilen - slen : NULL;",
+          "kind": "bounds-check-ternary",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 1213,
+          "text": "\t\t\t\t\t\t\t\ttflag = path_info && (orig_path_info != path_info);",
+          "kind": "null-guard",
+          "cwe_class": "CWE-476"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-190/125",
+        "CWE-476"
+      ],
+      "m11_vuln_findings": 5,
+      "m11_fix_findings": 4,
+      "m11_stopped_firing": true,
+      "m11_stopped": [
+        {
+          "line": 1212,
+          "rule": "GA01",
+          "guard_on": [
+            "pilen",
+            "slen"
+          ],
+          "snippet": "path_info = env_path_info ? env_path_info + pilen - slen : NULL;"
+        }
+      ],
+      "m11_persisted_count": 4,
+      "status": "tracked"
+    },
+    {
+      "repo": "torvalds/linux",
+      "cve": "CVE-2016-5195",
+      "file": "mm/gup.c",
+      "ext": ".c",
+      "parent": "37887783b3fe",
+      "fix": "5535be309971",
+      "fix_localized": false,
+      "fix_guards": [],
+      "vuln_classes": [],
+      "m11_vuln_findings": 0,
+      "m11_fix_findings": 0,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 0,
+      "status": "not_tracked"
+    },
+    {
+      "repo": "postgres/postgres",
+      "cve": "CVE-2021-32027",
+      "file": "src/backend/utils/adt/arrayfuncs.c",
+      "ext": ".c",
+      "parent": "6206454bdac1",
+      "fix": "f02b9085ad2f",
+      "fix_localized": false,
+      "fix_guards": [],
+      "vuln_classes": [],
+      "m11_vuln_findings": 3,
+      "m11_fix_findings": 3,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 3,
+      "status": "not_tracked"
+    },
+    {
+      "repo": "antirez/redis",
+      "cve": "CVE-2022-24834",
+      "file": "deps/lua/src/lua_cjson.c",
+      "ext": ".c",
+      "parent": "14f802b360ef",
+      "fix": "936cfa464f37",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 145,
+          "text": "    size_t index;",
+          "kind": "type-widening",
+          "cwe_class": "CWE-190"
+        },
+        {
+          "line": 151,
+          "text": "    size_t string_len;",
+          "kind": "type-widening",
+          "cwe_class": "CWE-190"
+        },
+        {
+          "line": 477,
+          "text": "    if (len > SIZE_MAX / 6 - 3)",
+          "kind": "bounds-check-if",
+          "cwe_class": "CWE-125/787"
+        },
+        {
+          "line": 712,
+          "text": "    size_t len;",
+          "kind": "type-widening",
+          "cwe_class": "CWE-190"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-125/787",
+        "CWE-190"
+      ],
+      "m11_vuln_findings": 0,
+      "m11_fix_findings": 0,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 0,
+      "status": "tracked"
+    },
+    {
+      "repo": "FFmpeg/FFmpeg",
+      "cve": "CVE-2020-22015",
+      "file": "libavformat/movenc.c",
+      "ext": ".c",
+      "parent": "38d18fb57863",
+      "fix": "4c1afa292520",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 2168,
+          "text": "            return AVERROR(EINVAL);",
+          "kind": "early-return-guard",
+          "cwe_class": "CWE-20"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-20"
+      ],
+      "m11_vuln_findings": 3,
+      "m11_fix_findings": 3,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 3,
+      "status": "tracked"
+    },
+    {
+      "repo": "opencv/opencv",
+      "cve": "CVE-2019-7317",
+      "file": "3rdparty/libpng/png.c",
+      "ext": ".c",
+      "parent": "9c748beef5d8",
+      "fix": "00171ca935d9",
+      "fix_localized": false,
+      "fix_guards": [],
+      "vuln_classes": [],
+      "m11_vuln_findings": 15,
+      "m11_fix_findings": 15,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 15,
+      "status": "not_tracked"
+    }
+  ]
+}
