@@ -1985,3 +1985,17 @@ re-scan.** Próximo: META A (precisão M11).
 - [x] META C — Core sugere + aplica patch, Sensor silencia, V4 não-regressão
 - [ ] META A — precisão M11 (site-aware/dataflow; cortar FP ffmpeg/postgres)
 - [ ] META B — multi-linguagem · META D — weak_point_score · META E — 40 pares · META F — APEX
+
+## Sprint BS — META A: precisão do M11 GA01 (gate anti-cadeia) (v3.42.0)
+
+Diagnóstico real: GA01 disparava em `overheadlen + olddatasize - olditemsize
++ newitemsize` (postgres) — FP: subtração é fragmento de cadeia maior, o
+`+ newitemsize` compensa. Correção: se `base + a - b` é seguida de `+`/`-`,
+não é risco isolado → não dispara. Resultado (dado real): php-src(TP)
+mantém L1212; postgres(FP) 1→0; ffmpeg mantém L4725 (isolado, mesma classe).
+4 testes TX88, regressão 2426 verdes.
+
+### METAS
+- [x] META C (Core sugere+aplica+silencia) · [x] META A parcial (GA01 anti-FP)
+- [ ] META A restante — gate por dataflow (result usado como índice/size)
+- [ ] META B — multi-linguagem (próximo) · D · E · F

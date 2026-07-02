@@ -164,6 +164,14 @@ class GuardAwareScanner:
                 base, a, b = m.group(1), m.group(2), m.group(3)
                 if a == b:
                     continue
+                # META A (precisão): se a subtração é FRAGMENTO de uma cadeia
+                # aritmética maior (`... - b + c` / `... - b - d`), o termo
+                # seguinte tende a compensar o underflow — não é o padrão
+                # de risco isolado.  Corta FP como postgres arrayfuncs.c
+                # (`overheadlen + olddatasize - olditemsize + newitemsize`).
+                tail = ln[m.end():].lstrip()
+                if tail[:1] in ("+", "-"):
+                    continue
                 if scope is None:
                     scope = self._scope(spans, lines, lineno)
                 if _guard_present(scope, a, b):
