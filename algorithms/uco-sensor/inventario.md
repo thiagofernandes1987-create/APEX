@@ -1971,3 +1971,17 @@ Validado com dado real: php-src — Sensor detecta GA01 L1212 sobre
 dos mantenedores. Deser: Core sugere json.loads (fix real satisfaz). 5
 testes TX86, regressão 2419 verdes. Relatório: `paper/corpus_runs/BQ_fix_suggester.md`.
 META C parcial (suggest+validate-vs-real feito; falta aplicar+re-scan).
+
+## Sprint BR — META C COMPLETA: auto-fix + re-scan silencia (v3.41.0)
+
+`FixSuggester.apply_fix` insere o guard sugerido antes da linha do finding.
+Loop completo validado com dado real (php-src): Sensor M11 detecta GA01
+L1212 (pilen,slen) → Core sugere `pilen > slen` → apply_fix insere → re-scan:
+o site SILENCIOU (5→4 findings) → UCO V4 não-regressão (hamiltonian ~flat).
+3 testes TX87, regressão 2422 verdes. **META C fechada: Sensor→Core→fix→
+re-scan.** Próximo: META A (precisão M11).
+
+### METAS
+- [x] META C — Core sugere + aplica patch, Sensor silencia, V4 não-regressão
+- [ ] META A — precisão M11 (site-aware/dataflow; cortar FP ffmpeg/postgres)
+- [ ] META B — multi-linguagem · META D — weak_point_score · META E — 40 pares · META F — APEX

@@ -140,6 +140,29 @@ class FixSuggester:
             vuln_type=vt, suggested_patch=patch, rationale=rationale,
         )
 
+    # ── Aplicação do patch (auto-fix mínimo) ──────────────────────────────────
+    @staticmethod
+    def apply_fix(source: str, sug: FixSuggestion) -> str:
+        """
+        Aplica o guard sugerido inserindo-o **imediatamente antes** da linha do
+        finding, preservando a indentação.  Suficiente para o M11 reconhecer o
+        guard no escopo da função e parar de disparar naquele site.  Só atua
+        quando há `guard_expr` + `guard_vars` (classes memory-safety); para
+        taint retorna o fonte inalterado (a mitigação é uma reescrita do sink,
+        não uma inserção — reportada como sugestão).
+        """
+        if not sug.guard_expr or sug.line < 1:
+            return source
+        lines = source.splitlines(keepends=False)
+        idx = sug.line - 1
+        if idx >= len(lines):
+            return source
+        indent = re.match(r"[ \t]*", lines[idx]).group(0)
+        guard_line = (f"{indent}if (!({sug.guard_expr})) {{ /* UCO auto-fix "
+                      f"{sug.cwe_id}: previne {sug.vuln_type.lower()} */ }}")
+        patched = lines[:idx] + [guard_line] + lines[idx:]
+        return "\n".join(patched) + ("\n" if source.endswith("\n") else "")
+
     # ── Validação: a sugestão coincide com o fix real? ────────────────────────
     @staticmethod
     def explains_real_fix(sug: FixSuggestion, fixed_source: str) -> bool:
