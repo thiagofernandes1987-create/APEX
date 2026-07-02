@@ -31,6 +31,31 @@ from sast.guard_aware import GuardAwareScanner
 
 _EXT = {'.py','.rb','.rs','.c','.h','.cpp','.cc','.cxx','.hpp','.java','.js','.ts','.go','.php'}
 
+_UCO_LANG = {'.py':'python','.rb':'ruby','.rs':'rust','.c':'c','.h':'c','.cpp':'cpp',
+             '.cc':'cpp','.cxx':'cpp','.hpp':'cpp','.java':'java','.js':'javascript',
+             '.go':'go','.php':'php'}
+
+
+def _cfg_delta(vuln: str, fixed: str, ext: str) -> dict:
+    """Sinais de CFG do V4 (M15) — dead-code e loop-infinito — antes/depois."""
+    try:
+        from metrics.cfg_signals import cfg_signals
+    except Exception:
+        return {}
+    lang = _UCO_LANG.get(ext, 'generic')
+    v = cfg_signals(vuln, lang); f = cfg_signals(fixed, lang)
+    if v.get('status') != 'ok' or f.get('status') != 'ok':
+        return {}
+    return {
+        "reachable_ratio_vuln": round(v['reachable_ratio'], 3),
+        "reachable_ratio_fix": round(f['reachable_ratio'], 3),
+        "infinite_loop_risk_vuln": round(v['infinite_loop_risk'], 3),
+        "infinite_loop_risk_fix": round(f['infinite_loop_risk'], 3),
+        "dead_code_vuln": v['syntactic_dead_code'],
+        "dead_code_fix": f['syntactic_dead_code'],
+        "cyclomatic_delta": f['cyclomatic'] - v['cyclomatic'],
+    }
+
 
 def _ext_of(path: str) -> str:
     return ('.' + path.rsplit('.', 1)[-1]) if '.' in path else ''
