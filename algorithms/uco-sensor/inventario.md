@@ -2014,3 +2014,19 @@ managed via Python; portar taint p/ JS/PHP/Java é META B restante.
 - [x] C (completa) · [x] A (GA01 anti-FP) · [x] B memory-safety (C/C++/Rust)
 - [ ] B restante — taint multi-linguagem (JS/PHP/Java) via tree-sitter
 - [ ] D — weak_point_score (SA/HMC) · E — 40 pares · F — APEX
+
+## Sprint BU — META B: Taint-Lite multi-linguagem (PHP + JS/TS) (M20) (v3.44.0)
+
+`sast/taint_lite.py`: detecção de injeção sem-âncora p/ PHP e JS/TS (fontes
+$_GET/$_POST/req.query…, sinks system/eval/unserialize/exec…), fluxo
+fonte→sink por escopo de função (M14), FP-controlado. Validado: PHP cmd/
+unserialize + JS eval detectados; casos seguros (param sem fonte, console.log)
+limpos. 7 testes TX90, regressão 2437 verdes.
+
+**Cobertura de detecção sem-âncora agora:** memory-safety C/C++/Rust (M11) +
+injeção/deser Python (taint AST) + PHP/JS/TS (taint-lite M20).
+
+### METAS
+- [x] C · [x] A (anti-FP) · [x] B memory-safety (C/C++/Rust) · [x] B injeção (Py/PHP/JS)
+- [ ] B restante — Java/Go taint (managed, menor prioridade)
+- [ ] D — weak_point_score (SA/HMC) — PRÓXIMO · E — 40 pares · F — APEX
