@@ -1999,3 +1999,18 @@ mantém L1212; postgres(FP) 1→0; ffmpeg mantém L4725 (isolado, mesma classe).
 - [x] META C (Core sugere+aplica+silencia) · [x] META A parcial (GA01 anti-FP)
 - [ ] META A restante — gate por dataflow (result usado como índice/size)
 - [ ] META B — multi-linguagem (próximo) · D · E · F
+
+## Sprint BT — META B: M11 guard-aware language-aware (C/C++/Rust) (v3.43.0)
+
+Achado: GA01 disparava em TODAS as linguagens (regex universal), mas o
+underflow só é memory-unsafe em C/C++/Rust. Em Go/Java (int signed +
+bounds-check) e JS (floats), disparar é FP. Gate `_MEMORY_UNSAFE_EXTS`:
+memory-safety só nas memory-unsafe. Resultado: C/C++/Rust disparam;
+Go/Java/JS/TS/Py silenciam (FP eliminado). **Rust agora suportado** no M11.
+4 testes TX89, regressão 2430 verdes. Taint (injeção/deser) cobre as
+managed via Python; portar taint p/ JS/PHP/Java é META B restante.
+
+### METAS
+- [x] C (completa) · [x] A (GA01 anti-FP) · [x] B memory-safety (C/C++/Rust)
+- [ ] B restante — taint multi-linguagem (JS/PHP/Java) via tree-sitter
+- [ ] D — weak_point_score (SA/HMC) · E — 40 pares · F — APEX

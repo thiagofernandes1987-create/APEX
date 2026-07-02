@@ -47,6 +47,13 @@ from typing import List, Optional, Set, Tuple
 _C_LIKE = {".c", ".h", ".cpp", ".cc", ".cxx", ".hpp", ".rs", ".java", ".js", ".ts", ".go", ".php"}
 
 # base + a - b   (pointer/length arithmetic with a subtraction)
+# META B — extensões memory-unsafe onde GA01/GA02 se aplicam (C/C++/Rust).
+_MEMORY_UNSAFE_EXTS = frozenset({
+    ".c", ".h", ".cpp", ".cc", ".cxx", ".hpp", ".hxx", ".h++", ".c++",
+    ".cp", ".inl", ".m", ".mm",          # C/C++/Objective-C
+    ".rs",                               # Rust (wraparound em release)
+})
+
 _SUBTRACT_ARITH = re.compile(
     r"([A-Za-z_]\w*)\s*\+\s*([A-Za-z_]\w*)\s*-\s*([A-Za-z_]\w*)"
 )
@@ -145,6 +152,14 @@ class GuardAwareScanner:
         return "\n".join(lines[lo:hi])
 
     def scan(self, source: str, ext: str = ".c") -> List[GuardFinding]:
+        # META B — language-aware: as classes GA01 (underflow em subtração) e
+        # GA02 (memcpy sem bound) só têm sentido em linguagens com aritmética
+        # unsigned/ponteiro e sem bounds-check de runtime: C/C++/Rust.  Em
+        # Go/Java (int com signed + arrays bounds-checked) ou JS (floats), o
+        # `a - b` NÃO é memory-unsafe → disparar seria falso-positivo.  Rust
+        # entra porque faz wraparound em release (checagem só em debug).
+        if ext.lower() not in _MEMORY_UNSAFE_EXTS:
+            return []
         lines = source.splitlines()
         findings: List[GuardFinding] = []
         seen: Set[Tuple[str, int]] = set()
