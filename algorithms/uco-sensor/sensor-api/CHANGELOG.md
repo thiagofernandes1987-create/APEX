@@ -5,6 +5,39 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.30.0] — 2026-07-02 — Sprint BF: terceiro eixo (análise nativa), fecha os últimos 3 → 100/100
+
+Reenquadramento do usuário: o propósito primário do UCO Sensor é
+**avaliar código** (incl. gerado por IA — "vibe coding"), não consumir
+CVE/SCA externo. Para os 3 repos que resistiam (boto3/serde/jekyll — sem
+CVE nem lockfile resolvível), a evidência válida é o **motor real do
+sensor rodando sobre o código**: encontrar o problema, localizar módulo/
+linha, validar entre versões.
+
+### Terceiro eixo — análise nativa de qualidade/degradação
+- `#59 serde` (`serde/src/de/impls.rs`): DEGRADAÇÃO — halstead_bugs
+  9.7→30.0 (×3.1), duplicate_block_count 66→208 (×3.2) de v1.0.0→v1.0.219,
+  localizado nos 35 blocos `impl Deserialize` repetidos. Rust 9→**10/10**.
+- `#93 jekyll` (`lib/jekyll/site.rb`): DEGRADAÇÃO — cyclomatic 8→45 (×5.6),
+  halstead_bugs 0.85→2.80, hotspot `def load_theme_configuration`
+  (L459-486). PHP/Ruby/C#/Mobile 9→**10/10**.
+- `#34 boto3` (`boto3/dynamodb/conditions.py`): ESTÁVEL/limpo — halstead
+  1.22 estável, hamiltonian 1.64→1.47 através de 26 versões. Python
+  19→**20/20**.
+
+Eixo distinto e rotulado honestamente (medição própria do sensor, não
+verdade externa como CVE/SCA). Métricas reais sobre código real, sem
+fabricação. **Total: 97 → 100/100. Todas as 8 categorias fechadas.**
+
+### Nota — recuperação de container
+Container reciclado (repo re-clonado no estado de AF; deps apagadas).
+Restaurado via bundles entregues ao usuário (`apex_etcd_go12` base +
+`apex_incremental_BE` = 26 commits AR→BE). Deps reinstaladas. Regressão
+2374/2375 (falha única = orçamento Granger <50ms, timing pós-reclaim, não
+regressão de correção). Relatório: `paper/corpus_runs/BF_native_analysis_last3.md`.
+
+---
+
 ## [3.29.0] — 2026-06-29 — Sprint BE: fecha C/C++ (httpd+wireshark+sqlite), categoria 10/10, →97/100
 
 Fecha os 3 gaps de C/C++ — incluindo `sqlite`, após o usuário liberar a

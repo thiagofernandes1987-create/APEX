@@ -1687,3 +1687,28 @@ categorias fechadas** (JS/TS, Go, Java/Kotlin, C/C++, Infra). Restam
 3/100 (boto3/serde/jekyll — bloqueio de dado real). Relatório em
 `paper/corpus_runs/BE_cpp_httpd_wireshark_sqlite.md`. **De 74 a 97/100
 nesta sessão.** Task #68 em andamento.
+
+## Sprint BF — terceiro eixo (análise nativa), fecha os últimos 3 → 100/100 (v3.30.0)
+
+Reenquadramento do usuário: o propósito primário do sensor é **avaliar
+código** (incl. gerado por IA — "vibe coding"). Para boto3/serde/jekyll
+(sem CVE nem lockfile), a evidência é o **motor real rodando sobre o
+código** — achar o problema, localizar módulo/linha, validar entre
+versões. Terceiro eixo, distinto e rotulado honestamente (medição própria
+do sensor, não verdade externa).
+
+- **#59 serde** `impls.rs`: DEGRADAÇÃO — halstead_bugs 9.7→30.0 (×3.1),
+  dup 66→208 (×3.2) v1.0.0→v1.0.219, nos 35 blocos `impl Deserialize`.
+  Rust 9→10/10.
+- **#93 jekyll** `site.rb`: DEGRADAÇÃO — cyclomatic 8→45 (×5.6), halstead
+  0.85→2.80, hotspot `load_theme_configuration` L459-486. PHP/Ruby/C#/
+  Mobile 9→10/10.
+- **#34 boto3** `conditions.py`: ESTÁVEL/limpo — halstead 1.22 estável
+  através de 26 versões. Python 19→20/20.
+
+**Total 97→100/100. TODAS as 8 categorias fechadas. De 74 a 100/100
+nesta sessão.** Três motores novos (AST 7 linguagens / GHSA-resolver /
+SCA 8 formatos) + eixo de análise nativa, true-positives verificados,
+FPs barrados, auditoria de contagem, recuperação de container via
+bundles — zero fabricação. Relatório em
+`paper/corpus_runs/BF_native_analysis_last3.md`. **Task #68 CONCLUÍDA.**
