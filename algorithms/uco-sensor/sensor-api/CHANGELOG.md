@@ -5,6 +5,42 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.31.0] — 2026-07-02 — Sprint BG: FixDiffLocalizer (M10) + diagnóstico de detecção
+
+Reformulação do objetivo: rastrear o bug conhecido de verdade (quando/como/
+onde quebrou, versão que resolveu, validar que parou de disparar) — não só
+cobrir 100/100.
+
+### Diagnóstico honesto (dados reais, 6 CVEs C/C++ vuln-vs-fix)
+- O SAST de padrão NÃO detecta classes de memory-safety (rating A na maioria;
+  quando dispara, persiste idêntico no fix → não sabe "parou de disparar").
+- `halstead_bugs` não distingue vuln de fix (Δ~0).
+- UCO V4 `analyze()` retorna bugs/score None para não-Python (GenericCFG
+  existe mas não é consumido) — potencial subutilizado.
+
+### Added — M10 FixDiffLocalizer (`sast/fix_localizer.py`)
+- `localize(vuln_src, fixed_src)` ancora no diff do fix: extrai a construção
+  de segurança ADICIONADA (bounds-check, null-guard, type-widening,
+  early-return) com linha exata + classe CWE, e valida presente-no-fix/
+  ausente-no-vuln (o "parou de disparar" fiel para CVE conhecida).
+- Validado em 7 pares C/C++ reais: 4/7 localizados com linha+classe
+  (php-src L1212 `pilen>slen`, redis L145 size_t, ffmpeg L2168 AVERROR,
+  sqlite L647 clamp); 3 misses honestos (linux/postgres/opencv — fixes
+  sem guard). 5 testes TX78. Regressão 2380 verdes.
+
+### Checklist para o objetivo pleno (ver BG_fix_localizer_diagnostic.md)
+Regras SAST de memory-safety que disparam no vuln e não no fix; consumir
+GenericCFG do V4 para C/Rust/Java; taint/dataflow via CFG do V4; rodar M10
+sobre os 100 repos.
+
+### Nota operacional
+Container reciclado no meio da sessão — repo re-clonado e deps pip apagadas.
+Estado (100/100, motores M9.2/M9.3/M9.4) restaurado via bundle entregue;
+deps reinstaladas (numpy/scipy/PyWavelets/pytest/8 gramáticas tree-sitter).
+Bundles seguem sendo o backup enquanto `git push` estiver bloqueado.
+
+---
+
 ## [3.30.0] — 2026-07-02 — Sprint BF: terceiro eixo (análise nativa), fecha os últimos 3 → 100/100
 
 Reenquadramento do usuário: o propósito primário do UCO Sensor é

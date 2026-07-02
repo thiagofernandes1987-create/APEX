@@ -1712,3 +1712,45 @@ SCA 8 formatos) + eixo de análise nativa, true-positives verificados,
 FPs barrados, auditoria de contagem, recuperação de container via
 bundles — zero fabricação. Relatório em
 `paper/corpus_runs/BF_native_analysis_last3.md`. **Task #68 CONCLUÍDA.**
+
+## Sprint BG — FixDiffLocalizer (M10) + diagnóstico de detecção (v3.31.0)
+
+**Reformulação do objetivo (usuário):** o UCO Sensor deve rastrear o bug
+conhecido de verdade — quando/como/onde quebrou, versão que resolveu, e
+validar se na versão corrigida **parou de disparar** e se algo perpetuou.
+Extrair potencial do UCO V4. Dados reais, sem inventar.
+
+**Diagnóstico honesto (6 CVEs C/C++ vuln-vs-fix, dado real):**
+- SAST de padrão NÃO detecta memory-safety (rating A; quando dispara —
+  postgres C02/C03 — persiste idêntico no fix, não sabe "parou").
+- halstead_bugs não distingue vuln de fix (Δ~0).
+- UCO V4 `analyze()` → bugs/score None p/ não-Python (GenericCFG existe mas
+  não é consumido). Potencial subutilizado.
+
+**Entregue — M10 `sast/fix_localizer.py`:** ancora no diff do fix, extrai
+guard de segurança adicionado (bounds-check/null-guard/type-widening/
+early-return) com LINHA exata + classe CWE, valida presente-no-fix/
+ausente-no-vuln. 4/7 pares C/C++ localizados (php-src L1212 `pilen>slen`,
+redis L145 size_t, ffmpeg L2168, sqlite L647); 3 misses honestos. 5 testes
+TX78, regressão 2380 verdes. Relatório: `paper/corpus_runs/BG_fix_localizer_diagnostic.md`.
+
+### CHECKLIST — o que criar para o rastreio pleno
+- [x] M10 FixDiffLocalizer (localiza linha/classe do fix + valida before/after)
+- [ ] Ampliar assinaturas de guard (race-condition/locking, recálculo de
+      comprimento) p/ cobrir linux/postgres — anti-FP
+- [ ] Regras SAST de memory-safety que disparam no VULN e não no fix
+      (pointer-arith sem check de underflow, memcpy/alloca sem bound,
+      signed/unsigned) — detecção sem conhecer o fix
+- [ ] Consumir GenericCFGBuilder do UCO V4 p/ C/Rust/Java (dead-code +
+      reachability por CFG genérico) — extrair potencial do V4
+- [ ] Taint/dataflow real: CFG.reachable_from_entry + uses/defs do V4
+      (fonte→sink) — ampliar o motor de fluxo de dados
+- [ ] Persistir validação por repo (quando/como/onde/versão) em artefato
+      estruturado navegável
+- [ ] Rodar M10 sobre os 100 repos (não só os 7 C) — pares de fix-commit já
+      resolvidos em AR–BF p/ Python/JS/Java/Rust
+
+### Nota operacional
+Container reciclado no meio da sessão (repo re-clonado, deps pip apagadas).
+Estado 100/100 restaurado via bundle; deps reinstaladas. Bundles = backup
+enquanto push bloqueado.
