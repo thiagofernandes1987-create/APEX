@@ -1941,3 +1941,24 @@ deserialização (M16.1).
 - [ ] Fonte "arquivo baixado/remoto" p/ CVE exata do transformers
 - [ ] Classes redis/ffmpeg/sqlite no M11
 - [ ] Taint inter-procedural via CFG do V4
+
+## Sprint BP — Revalidação + Missão/Metas (alinhamento estratégico)
+
+Reset estratégico do usuário: definir a missão e as metas. Revalidação com
+dado real confirmou sinais em TODAS as dimensões de rastreio (degradação,
+loops/deadcode via CFG V4, memory-safety M11, taint injeção+deser, localizar
+fix M10, before/after M12). Gaps: precisão (M11 ruidoso), cobertura de
+linguagem (sem-âncora só C+Python), elo Core→patch (V4 não sugere fix por
+finding), camada APEX (não iniciada).
+
+Documento: `paper/UCO_SENSAO_E_METAS.md` (missão 3 camadas + matriz
+missão×motor + metas A–F). **Prioridade proposta: META C (UCO Core determina
+o que corrigir, fechando Sensor→fix) + META A (precisão), depois E→B→D→F.**
+
+### METAS (resumo)
+- [ ] A — Precisão de rastreio (M11 site-aware/dataflow, classes faltantes)
+- [ ] B — Detecção sem-âncora nas 8 categorias (taint/guard multi-linguagem)
+- [ ] C — UCO Core sugere patch por finding + revalida "parou de disparar"
+- [ ] D — weak_point_score (propagação de sinal + SA + HMC)
+- [ ] E — M12 nos ~40 pares via tags (dataset de regressão)
+- [ ] F — Camada APEX (API p/ IA + loop de auto-correção + MCP)
