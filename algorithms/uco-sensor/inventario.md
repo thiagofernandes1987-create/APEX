@@ -2030,3 +2030,18 @@ injeção/deser Python (taint AST) + PHP/JS/TS (taint-lite M20).
 - [x] C · [x] A (anti-FP) · [x] B memory-safety (C/C++/Rust) · [x] B injeção (Py/PHP/JS)
 - [ ] B restante — Java/Go taint (managed, menor prioridade)
 - [ ] D — weak_point_score (SA/HMC) — PRÓXIMO · E — 40 pares · F — APEX
+
+## Sprint BV — META D: Weak-Point Score (M21) (v3.45.0)
+
+`sast/weak_point.py`: score probabilístico 0-100 de ponto fraco por módulo,
+combinando segurança (M11+taint+taint-lite, ponderado por severidade),
+superfície de injeção, complexidade ciclomática e hamiltoniano — com
+BREAKDOWN e top_reasons (explicável, acionável). Validado (dado real):
+handler injetável 56.1 > php-src vuln 48.3 > php-src fix 46.1 > util limpo
+0.4; e diz POR QUE cada um é fraco. 5 testes TX91, regressão 2442 verdes.
+É o "onde alguém pode quebrar/invadir" da missão.
+
+### METAS
+- [x] C · [x] A · [x] B (memory-safety C/C++/Rust + injeção Py/PHP/JS) · [x] D
+- [ ] E — rodar M12/weak-point nos ~40 pares (via tags) → dataset dos 100
+- [ ] F — camada APEX (API p/ IA + loop auto-correção + MCP)
