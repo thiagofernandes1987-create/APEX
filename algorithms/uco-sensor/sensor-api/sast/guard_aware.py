@@ -120,12 +120,26 @@ def _bound_present(block: str, var: str) -> bool:
 class GuardAwareScanner:
     """Guard-aware detection of unchecked memory-safety constructs."""
 
-    # guard-scope window (linhas antes/depois da construção onde procuramos o guard).
-    # O brace-matcher de função é frágil em C real (diretivas de preprocessador
-    # quebram a contagem de profundidade), então usamos uma janela local robusta.
+    # guard-scope: preferimos o ESCOPO REAL DA FUNÇÃO via tree-sitter (M14);
+    # se a gramática não estiver disponível ou a linha estiver fora de função,
+    # caímos para uma janela local de ±WINDOW linhas.  A janela sozinha gerava
+    # FP por atravessar fronteiras de função (Sprint BH); o escopo por AST corta.
     WINDOW = 45
 
-    def _scope(self, lines: List[str], lineno: int) -> str:
+    def __init__(self) -> None:
+        try:
+            from sast.scope import FunctionScoper
+            self._scoper = FunctionScoper()
+        except Exception:  # pragma: no cover
+            self._scoper = None
+
+    def _scope(self, spans, lines: List[str], lineno: int) -> str:
+        if spans is not None:
+            from sast.scope import FunctionScoper as _FS
+            span = _FS.smallest_enclosing(spans, lineno)
+            if span is not None:
+                s, e = span
+                return "\n".join(lines[s - 1:e])
         lo = max(0, lineno - 1 - self.WINDOW)
         hi = min(len(lines), lineno - 1 + self.WINDOW + 1)
         return "\n".join(lines[lo:hi])
@@ -134,6 +148,13 @@ class GuardAwareScanner:
         lines = source.splitlines()
         findings: List[GuardFinding] = []
         seen: Set[Tuple[str, int]] = set()
+        # UM parse por scan: spans de função via AST (None → fallback janela)
+        spans = None
+        if self._scoper is not None:
+            try:
+                spans = self._scoper.function_spans(source, ext)
+            except Exception:  # pragma: no cover
+                spans = None
 
         for lineno, ln in enumerate(lines, start=1):
             scope = None  # lazy — só monta a janela quando há um match
@@ -144,7 +165,7 @@ class GuardAwareScanner:
                 if a == b:
                     continue
                 if scope is None:
-                    scope = self._scope(lines, lineno)
+                    scope = self._scope(spans, lines, lineno)
                 if _guard_present(scope, a, b):
                     continue
                 key = ("GA01", lineno, a, b)
@@ -165,7 +186,7 @@ class GuardAwareScanner:
             for m in _COPY_CALL.finditer(ln):
                 fn, nvar = m.group(1), m.group(2)
                 if scope is None:
-                    scope = self._scope(lines, lineno)
+                    scope = self._scope(spans, lines, lineno)
                 if _bound_present(scope, nvar):
                     continue
                 key = ("GA02", lineno, nvar)

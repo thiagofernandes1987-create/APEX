@@ -5,6 +5,28 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.35.0] — 2026-07-02 — Sprint BK: escopo real de função por AST (M14) no M11 — corta FP/FN
+
+Substitui a janela de ±45 linhas do M11 pelo **escopo real da função** via
+tree-sitter (mesmo motor do M9.2). O brace-matcher falhava em C real (macros
+function-like, preprocessador) — em php-src a função `init_request_info` tem
+394 linhas, então a janela perdia guards distantes (FP) ou via guards de
+outra função (FN). O escopo por AST resolve os dois.
+
+### Added — M14 `sast/scope.py`
+- `FunctionScoper.function_spans(source, ext)` (1 parse) + `enclosing_span` +
+  `smallest_enclosing`. Cobre C/C++/Rust/Java/JS/Go/PHP/Ruby/C#/Kotlin via os
+  tipos de nó de função de cada gramática. Degradação graciosa (sem gramática
+  → None → M11 usa a janela).
+- M11 agora faz 1 parse por scan e usa o span de função como escopo do guard.
+- 5 testes TX82. Regressão 2400 verdes.
+
+### Validação
+php-src CVE-2019-11043 segue DISPARANDO na L1212 no vulnerável e PARANDO no
+fix, agora com o guard buscado na função inteira (394 linhas) — robusto.
+
+---
+
 ## [3.34.0] — 2026-07-02 — Sprint BJ: absorção do UCO V4 no sensor (`uco_core`) + correção de honestidade
 
 O Universal Code Optimizer V4 foi **ABSORVIDO** pelo UCO Sensor — deixou de

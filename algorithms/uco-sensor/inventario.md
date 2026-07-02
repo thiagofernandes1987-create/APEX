@@ -1840,3 +1840,25 @@ arquivo, Δ~0 para fixes pequenos — M11 segue como detector.
 - [ ] Taint/dataflow fonte→sink via CFG do V4 (reachable_from_entry + uses/defs)
 - [ ] Rodar M12 nos ~40 SAST (bloqueado: commits API p/ parent SHA)
 - [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
+
+## Sprint BK — escopo real de função por AST (M14) no M11 (v3.35.0)
+
+Substitui a janela ±45 do M11 pelo **escopo real da função** via tree-sitter
+(M9.2). O brace-matcher falha em C real (macros/preprocessador); em php-src a
+função tem 394 linhas → janela perdia guards distantes (FP) ou via guards de
+outra função (FN). Escopo AST corta ambos.
+
+**M14 `sast/scope.py`:** FunctionScoper.function_spans (1 parse) +
+enclosing_span + smallest_enclosing. Cobre 10 linguagens via nós de função de
+cada gramática. Degradação graciosa → fallback janela. M11 faz 1 parse/scan.
+5 testes TX82, regressão 2400 verdes. php-src segue disparando-e-parando na
+L1212, agora com guard buscado na função inteira.
+
+### CHECKLIST atualizado
+- [x] M10 FixDiffLocalizer / [x] M11 GuardAwareScanner / [x] M12 CorpusValidator
+- [x] M13 Absorver UCO V4 no sensor (uco_core)
+- [x] **M14 Precisão M11 via escopo real de função (AST tree-sitter)**
+- [ ] Consumir GenericCFG do V4 na análise-padrão do sensor p/ C/Rust/Java
+- [ ] Taint/dataflow fonte→sink via CFG do V4 (reachable_from_entry + uses/defs)
+- [ ] Rodar M12 nos ~40 SAST (bloqueado: commits API p/ parent SHA)
+- [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
