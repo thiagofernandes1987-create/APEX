@@ -2045,3 +2045,33 @@ handler injetável 56.1 > php-src vuln 48.3 > php-src fix 46.1 > util limpo
 - [x] C · [x] A · [x] B (memory-safety C/C++/Rust + injeção Py/PHP/JS) · [x] D
 - [ ] E — rodar M12/weak-point nos ~40 pares (via tags) → dataset dos 100
 - [ ] F — camada APEX (API p/ IA + loop auto-correção + MCP)
+
+## Sprint BW — M17 taint inter-procedural + loop APEX MVP (M19) (v3.46.0)
+
+**Prioridade do usuário:** executar o taint inter-procedural (M17) e o MVP do
+loop APEX (Sensor→corretor→revalida, local, sem IA externa). Ambos feitos.
+
+**M17 `sast/taint_interproc.py` (InterprocTaintAnalyzer):** taint fonte→sink
+que atravessa funções — mini call-graph + ponto-fixo sobre `tainted_params`,
+reusando SOURCE/SINK/SANITIZER do `taint_engine`. Prova real: detecta
+SQL-injection cross-fn (`view`→`query_db`) que o intra perde (intra=0,
+inter=1); respeita sanitizer no caminho (anti-FP); não reporta intra como
+inter. 5 testes TX92.
+
+**M19 `apex_integration/apex_loop.py` (ApexLoop):** o ciclo do produto, 100%
+local: Sensor emite sinal (GuardAwareScanner + M17 taint p/ Python) → corretor
+(FixSuggester M18) aplica patch determinístico → Sensor revalida e silencia.
+`corrector` injetável (IA/MCP pluga depois). Caso php-src: 1 sinal→1 fix→
+silenced=1→fully_resolved. 4 testes TX93.
+
+**Qualidade:** dead code removido (pyflakes limpo), integração verificada,
+2451 testes verdes.
+
+### CHECKLIST — evolução
+- [x] **M17 Taint inter-procedural fonte→sink (cross-function)** — FEITO
+- [x] **F(parcial) — MVP do loop APEX local (Sensor→corretor→revalida)** — FEITO
+- [ ] F restante — plugar IA/MCP real como `corrector` (troca só a fonte do patch)
+- [ ] Ampliar source-recognition (`req.args.get`, `self.helper(x)` hops via atributo)
+- [ ] Cobrir classes redis(widening)/ffmpeg(early-return)/sqlite(clamp) no M11
+- [ ] E — rodar M12/loop nos ~40 pares (via tags de release; API commits 403)
+- [ ] Taint inter-procedural multi-linguagem (hoje Python; JS/PHP via tree-sitter)
