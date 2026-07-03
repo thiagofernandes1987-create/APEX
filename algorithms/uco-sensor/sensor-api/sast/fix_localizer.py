@@ -47,9 +47,16 @@ import re
 from dataclasses import dataclass, field
 from typing import List, Optional, Set, Tuple
 
-# Security-relevant construct signatures.  Each maps a regex (matched on an
-# ADDED line) to a (kind, cwe_class) tuple.  Ordered most-specific first.
+# Security-relevant construct signatures.  Each mapeia um regex (casado numa
+# linha ADICIONADA pelo fix) a (kind, cwe_class).  Ordem: mais-específico
+# primeiro.  Dois grupos:
+#   • memory-safety (C/C++/Rust) — bounds/null/widening/overflow/copy;
+#   • injeção/escaping (Python/JS/PHP/Java) — sanitização e validação de
+#     entrada.  (CB v3.51.0: adicionado o 2º grupo para o M10 localizar fixes
+#     de XSS/injeção/SSTI, não só memory-safety.  Ex.: jinja CVE-2024-22195
+#     adiciona `escape(key)` + `raise ValueError` para chave com espaço.)
 _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
+    # ── memory-safety ────────────────────────────────────────────────────────
     (re.compile(r"\b(\w+)\s*[><]=?\s*(\w+).*\?"), "bounds-check-ternary", "CWE-190/125"),
     (re.compile(r"\bif\s*\([^)]*\b(len|size|count|n|idx|index|off|offset|pos)\b[^)]*[<>]"), "bounds-check-if", "CWE-125/787"),
     (re.compile(r"[!=]=\s*NULL|NULL\s*[!=]=|\b(\w+)\s*&&"), "null-guard", "CWE-476"),
@@ -57,13 +64,23 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     (re.compile(r"\bunsafe\b"), "unsafe-contract", "RUST-soundness"),
     (re.compile(r"\b(overflow|underflow|bounds?|clamp|saturat)\w*\b", re.I), "overflow-guard", "CWE-190"),
     (re.compile(r"\b(memcpy|memmove|strncpy|snprintf)\b"), "safe-copy", "CWE-120"),
+    # ── injeção / escaping / validação de entrada (CB) ───────────────────────
+    # output-encoding: escapar antes de emitir → XSS/SSTI/log/command injection.
+    (re.compile(r"\b(escape|escapejs|html\.escape|markupsafe|escape_html|"
+                r"shlex\.quote|pipes\.quote|urllib\.parse\.quote|quote_plus|"
+                r"escape_string|real_escape|htmlspecialchars|encodeURIComponent)\s*\("),
+     "output-encoding", "CWE-79/116/78"),
+    # validação de entrada que aborta (raise/return) em valor perigoso.
+    (re.compile(r"\braise\s+\w*(Error|Exception)\b"), "input-validation-raise", "CWE-20"),
     (re.compile(r"\breturn\b.*\b(EINVAL|ERANGE|-1|error|Err)\b", re.I), "early-return-guard", "CWE-20"),
 ]
 
-# A pure "guard" keyword set used to decide whether a changed line is
-# security-relevant at all (avoids counting comment/format-only edits).
+# Conjunto de tokens que marca uma linha como "candidata a guard" (evita
+# contar edições só de comentário/formatação).  (CB: +escape/raise/quote para
+# habilitar o grupo de injeção/escaping.)
 _SECURITY_TOKENS = re.compile(
-    r"[<>]=?|[!=]=|&&|\|\||\bNULL\b|\bif\b|\breturn\b|\buint\d+_t\b|\bsize_t\b|\bunsafe\b",
+    r"[<>]=?|[!=]=|&&|\|\||\bNULL\b|\bif\b|\breturn\b|\buint\d+_t\b|\bsize_t\b|"
+    r"\bunsafe\b|\bescape\w*\(|\braise\b|\bquote\w*\(|htmlspecialchars|encodeURI",
 )
 
 

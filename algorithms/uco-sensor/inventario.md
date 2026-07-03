@@ -2189,3 +2189,21 @@ Regressão 2460 verdes. Princípio: FP afirmado é pior que miss — corrigir se
 - [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (com validação anti-FP real)
 - [ ] Rodar M12 nos pares Python/JS via tags (API commits 403)
 - [ ] Camada APEX real (IA/MCP) sobre o loop MVP
+
+## Sprint CB — M10 rastreia injeção/escaping + corpus via tags (v3.51.0)
+
+Estendido o FixDiffLocalizer (M10) com assinaturas de INJEÇÃO/ESCAPING
+(output-encoding: escape/markupsafe/shlex.quote/htmlspecialchars/encodeURI;
+input-validation-raise), baixo-FP. Antes só memory-safety.
+
+**jinja CVE-2024-22195 → TRACKED** (M10 localiza escape(key)+raise, CWE-79/20),
+dado real via TAGS de release (contorna API commits 403). Desbloqueia validar
+pares Python/JS por tag. Sem regressão nos 6 C. Artefato expandido:
+total=7, tracked=3 (php-src, redis, jinja). +2 testes TX78. Regressão 2462 verdes.
+
+### CHECKLIST
+- [x] M10 cobre injeção/escaping (jinja tracked via tags) — CB
+- [x] Desbloqueio de fetch por tags de release (sem API commits)
+- [ ] Ampliar corpus por tags: +Django/Flask/PyYAML/npm reais (rodar M12)
+- [ ] M17 taint before/after num par real de injeção (source->sink)
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP

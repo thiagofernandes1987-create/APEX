@@ -95,3 +95,24 @@ def test_T78_relocated_guard_is_not_counted_as_new():
     fixed = f"void f(){{\n  /* nota */\n  {guard}\n}}\n"
     r = FixDiffLocalizer().localize(vuln, fixed, filename="s.c")
     assert r.guard_present_in_fix_absent_in_vuln is False   # relocação, não correção
+
+
+# ── CB (v3.51.0): M10 localiza fixes de injeção/escaping (não só memory-safety) ─
+def test_T78_localizes_output_encoding_fix():
+    """Fix que adiciona escape() em saída → localizado como output-encoding (XSS)."""
+    vuln = 'def render(k, v):\n    items.append(f\'{k}="{escape(v)}"\')\n'
+    fixed = 'def render(k, v):\n    items.append(f\'{escape(k)}="{escape(v)}"\')\n'
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="filters.py")
+    assert r.guard_present_in_fix_absent_in_vuln is True
+    assert any(g.kind == "output-encoding" for g in r.added_guards)
+
+
+def test_T78_localizes_input_validation_raise():
+    """Fix que adiciona `raise ValueError` sobre entrada perigosa → validação."""
+    vuln = 'def attr(key):\n    return key\n'
+    fixed = ('def attr(key):\n'
+             '    if _space_re.search(key) is not None:\n'
+             '        raise ValueError("Spaces not allowed")\n'
+             '    return key\n')
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="filters.py")
+    assert any(g.kind == "input-validation-raise" for g in r.added_guards)

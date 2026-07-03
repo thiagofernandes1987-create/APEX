@@ -5,6 +5,23 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.51.0] — 2026-07-03 — Sprint CB: M10 rastreia injeção/escaping (não só memory-safety) + corpus via tags
+
+Extensão do FixDiffLocalizer (M10) com o grupo de assinaturas de INJEÇÃO/
+ESCAPING (Python/JS/PHP/Java), de baixo-FP: output-encoding (escape, markupsafe,
+shlex.quote, htmlspecialchars, encodeURIComponent...) e validação-com-raise.
+Antes o M10 só localizava memory-safety (bounds/null/widening).
+
+- **jinja CVE-2024-22195 (xmlattr SSTI/XSS) → agora TRACKED**: M10 localiza o
+  fix (input-validation-raise L291 + escape(key)), classes CWE-20 + CWE-79/116/78.
+  Dado real via TAGS de release (3.1.2 vuln → 3.1.3 fix) — desbloqueia pares
+  Python/JS sem depender da API de commits (403).
+- Sem regressão nos 6 pares C (php-src/redis localizados; sqlite/ffmpeg seguem
+  corretamente não-localizados após a correção CA anti-relocação).
+- Artefato do corpus expandido: total=7, tracked=3, m10_localized=3. +2 testes TX78.
+
+Regressão 2462 verdes.
+
 ## [3.50.0] — 2026-07-03 — Sprint CA: correção de FP de deslocamento no M10 (dado honesto)
 
 Auditoria de dado real: o M10 reportava sqlite e ffmpeg como localizações de

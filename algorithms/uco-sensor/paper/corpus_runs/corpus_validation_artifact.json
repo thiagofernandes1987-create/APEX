@@ -1,8 +1,8 @@
 {
   "summary": {
-    "total": 6,
-    "tracked": 2,
-    "m10_localized": 2,
+    "total": 7,
+    "tracked": 3,
+    "m10_localized": 3,
     "m11_stopped_firing": 1,
     "not_tracked": 4,
     "fetch_error": 0
@@ -211,6 +211,48 @@
         "cyclomatic_delta": 1
       },
       "status": "not_tracked"
+    },
+    {
+      "repo": "pallets/jinja",
+      "cve": "CVE-2024-22195",
+      "file": "src/jinja2/filters.py",
+      "ext": ".py",
+      "parent": "3.1.2",
+      "fix": "3.1.3",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 291,
+          "text": "            raise ValueError(f\"Spaces are not allowed in attributes: '{key}'\")",
+          "kind": "input-validation-raise",
+          "cwe_class": "CWE-20"
+        },
+        {
+          "line": 293,
+          "text": "        items.append(f'{escape(key)}=\"{escape(value)}\"')",
+          "kind": "output-encoding",
+          "cwe_class": "CWE-79/116/78"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-20",
+        "CWE-79/116/78"
+      ],
+      "m11_vuln_findings": 0,
+      "m11_fix_findings": 0,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 0,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.985,
+        "reachable_ratio_fix": 0.985,
+        "infinite_loop_risk_vuln": 0.0,
+        "infinite_loop_risk_fix": 0.0,
+        "dead_code_vuln": 0,
+        "dead_code_fix": 0,
+        "cyclomatic_delta": 2
+      },
+      "status": "tracked"
     }
   ]
 }
