@@ -101,3 +101,35 @@ def test_T92_request_alias_source_recognized_directly():
     from sast.taint_engine import _REQUEST_DATA_ATTRS
     # os atributos de dados foram derivados corretamente de _SOURCE_ATTRS
     assert "args" in _REQUEST_DATA_ATTRS and "GET" in _REQUEST_DATA_ATTRS
+
+
+# ── hops via atributo de objeto (Sprint BY): self.<metodo>(tainted) ──────────
+_OO_HOP = '''
+class View:
+    def handle(self, request):
+        name = request.GET["name"]
+        self.render(name)
+    def render(self, value):
+        cursor.execute("SELECT " + value)
+'''
+_OO_HOP_SAFE = '''
+import html
+class View:
+    def handle(self, request):
+        name = request.GET["name"]
+        self.render(html.escape(name))
+    def render(self, value):
+        cursor.execute("SELECT " + value)
+'''
+
+
+def test_T92_object_method_hop():
+    # `self.render(name)` resolve o hop com offset do `self` implícito.
+    flows = InterprocTaintAnalyzer().analyze(_OO_HOP)
+    assert len(flows) >= 1
+    assert flows[0].source_fn == "handle" and flows[0].sink_fn == "render"
+
+
+def test_T92_object_method_hop_respects_sanitizer():
+    # sanitizado antes do hop → não dispara (anti-FP também no caminho OO).
+    assert InterprocTaintAnalyzer().analyze(_OO_HOP_SAFE) == []

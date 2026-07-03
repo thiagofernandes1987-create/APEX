@@ -2091,3 +2091,18 @@ com `req.args.get` agora dispara. +2 testes TX92. 2451 verdes.
 - [ ] Taint inter-procedural multi-linguagem (JS/PHP via tree-sitter)
 - [ ] E — rodar loop/M12 nos ~40 pares (via tags de release)
 - [ ] F restante — plugar IA/MCP real como corrector
+
+## Sprint BY — M17 hops via atributo (self.metodo) (v3.48.0)
+
+`_call_user_fn_name` resolve `obj.metodo(...)` além de `func(...)`, com offset
+do receptor implícito (arg 0 → 2º param quando o 1º é self/cls). Proteção
+`callee in funcs` auto-limita FP. `handle→render` OO cross-fn dispara;
+sanitizado não. Dead code removido (params_of). +2 testes TX92. 2453 verdes.
+
+### CHECKLIST — evolução
+- [x] Hops via atributo de objeto (`self.helper(x)`) no M17 — FEITO
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (widening/early-return/clamp)
+- [ ] Taint inter-procedural multi-linguagem (JS/PHP via tree-sitter)
+- [ ] E — rodar loop/M12 nos ~40 pares (via tags de release)
+- [ ] F restante — plugar IA/MCP real como corrector
+- [ ] Retomar deep-research científico (bloqueado por limite de sessão, reset UTC)

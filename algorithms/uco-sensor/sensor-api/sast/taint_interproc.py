@@ -84,9 +84,19 @@ class InterprocFlow:
 
 
 def _call_user_fn_name(call: ast.Call) -> Optional[str]:
-    """Nome simples da função chamada, se for `nome(...)` (não atributo)."""
+    """
+    Nome da função-alvo de uma chamada, para resolução de hop inter-procedural.
+    Cobre `nome(...)` (função de módulo) e `obj.metodo(...)` (o nome do método,
+    ex.: `self.render(x)`). A resolução por nome é conservadora: só vira hop se
+    o nome existir na tabela de funções do módulo (`callee in funcs`, no
+    chamador) — métodos de lib (`list.append`) não casam; sinks
+    (`cursor.execute`) já foram tratados antes. Captura o padrão dominante
+    `self.<metodo>(tainted)` de código OO/gerado por IA sem abrir FP externo.
+    """
     if isinstance(call.func, ast.Name):
         return call.func.id
+    if isinstance(call.func, ast.Attribute):
+        return call.func.attr
     return None
 
 
@@ -178,13 +188,21 @@ class InterprocTaintAnalyzer:
                                 hops=[fn.name], rule_id=rule, cwe_id=cwe, severity=sev,
                             ))
                     continue
-                # hop: chamada a função de usuário com argumento contaminado
+                # hop: chamada a função de usuário com argumento contaminado.
+                # Resolve o NOME do parâmetro-alvo já com o offset do receptor
+                # implícito: em `self.render(x)` o `x` (arg 0) mapeia para o
+                # 2º parâmetro (`value`), pois `self` ocupa o índice 0.
                 callee = _call_user_fn_name(node)
                 if callee and callee in funcs and callee != fn.name:
+                    cparams = self._params(funcs[callee])
+                    is_method_call = isinstance(node.func, ast.Attribute)
+                    offset = 1 if (is_method_call and cparams and cparams[0] in ("self", "cls")) else 0
                     for idx, arg in enumerate(node.args):
                         org = expr_taint(arg)
                         if org and not is_sanitized_call(arg):
-                            propagations.append((callee, idx, org[0], org[1]))
+                            p_idx = idx + offset
+                            if p_idx < len(cparams):
+                                propagations.append((callee, cparams[p_idx], org[0], org[1]))
         return flows, propagations
 
     # ── ponto-fixo sobre tainted_params de todas as funções ─────────────────────
@@ -197,7 +215,6 @@ class InterprocTaintAnalyzer:
         if not funcs:
             return []
 
-        params_of = {name: self._params(fn) for name, fn in funcs.items()}
         tainted_params: Dict[str, Set[str]] = {name: set() for name in funcs}
         # origem que semeou cada param contaminado (para o caminho)
         seed_origin: Dict[Tuple[str, str], Tuple[str, int, List[str]]] = {}
@@ -209,16 +226,13 @@ class InterprocTaintAnalyzer:
             guard += 1
             for name, fn in funcs.items():
                 _, props = self._analyze_fn(fn, tainted_params[name], funcs)
-                for callee, idx, org_desc, org_line in props:
-                    plist = params_of.get(callee, [])
-                    if idx < len(plist):
-                        p = plist[idx]
-                        if p not in tainted_params[callee]:
-                            tainted_params[callee].add(p)
-                            prev = seed_origin.get((name, ""), None)
-                            chain = (prev[2] if prev else [name]) + [callee]
-                            seed_origin[(callee, p)] = (org_desc, org_line, chain)
-                            changed = True
+                for callee, pname, org_desc, org_line in props:
+                    if pname and pname not in tainted_params[callee]:
+                        tainted_params[callee].add(pname)
+                        prev = seed_origin.get((name, ""), None)
+                        chain = (prev[2] if prev else [name]) + [callee]
+                        seed_origin[(callee, pname)] = (org_desc, org_line, chain)
+                        changed = True
 
         # coleta de fluxos finais: rodar cada função com seus params contaminados
         out: List[InterprocFlow] = []
