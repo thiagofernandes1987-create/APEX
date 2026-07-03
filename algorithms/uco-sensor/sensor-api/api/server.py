@@ -137,6 +137,19 @@ except ImportError:
     _FlowVector     = None  # type: ignore[assignment,misc]
     _TAINT_ENGINE_AVAILABLE = False
 
+# M22 — CFGTaintAnalyzer (taint fluxo-sensível sobre a CFG do UCO V4).
+# Onde entra: opera dentro de handle_scan_flow() como CAMADA path-sensitive
+# aditiva — reporta fluxos que o motor linear M7.2 perde (sanitização só num
+# braço do `if`) sob a chave `cfg_taint` da resposta, sem tocar no contrato de
+# `flows`/`flow_vector`.  Import guardado: degradação graciosa se o UCO V4 ou o
+# módulo faltar.  (Sprint CG v3.56.0 — operacionaliza o M22 no pipeline/API.)
+try:
+    from sast.taint_cfg import CFGTaintAnalyzer as _CFGTaintAnalyzer
+    _CFG_TAINT_AVAILABLE = True
+except ImportError:
+    _CFGTaintAnalyzer = None  # type: ignore[assignment,misc]
+    _CFG_TAINT_AVAILABLE = False
+
 # M7.4 — PerformanceAnalyzer + PerformanceVector
 try:
     from metrics.performance_analyzer import PerformanceAnalyzer as _PerformanceAnalyzer
@@ -206,7 +219,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.55.0"
+    version:      str   = "3.56.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -3538,7 +3551,7 @@ def handle_scan_flow(data: Dict) -> Tuple[int, Dict]:
 
     fv = _FlowVector.from_taint_result(result, module_id=module_id)
 
-    return 200, {
+    resp = {
         "module_id":   module_id,
         "flow_vector": fv.to_dict(),
         "flows":       [f.to_dict() for f in result.flows],
@@ -3552,6 +3565,45 @@ def handle_scan_flow(data: Dict) -> Tuple[int, Dict]:
             "cross_fn_risk":         result.cross_fn_risk,
         },
     }
+
+    # ── M22 (Sprint CG): camada de taint fluxo-sensível sobre a CFG do V4 ──────
+    # Aditiva e não-bloqueante: roda o CFGTaintAnalyzer e anexa seus fluxos
+    # path-sensitive em `cfg_taint`, mais o DELTA (linhas de sink que a CFG
+    # confirma mas o motor linear M7.2 não reportou — tipicamente sanitização
+    # condicional).  Nunca derruba o /scan-flow: qualquer erro → cfg_taint
+    # marcado como unavailable.  Onde vai: consumido pelo cliente/loop APEX que
+    # queira a precisão de caminho sem perder o contrato legado de `flows`.
+    if _CFG_TAINT_AVAILABLE:
+        try:
+            cfg_flows = _CFGTaintAnalyzer().analyze(source)
+            # linhas de sink já cobertas pelo motor linear (para computar delta)
+            linear_sink_lines = {getattr(f, "sink_line", None) for f in result.flows}
+            cfg_dicts = [{
+                "rule_id":     cf.rule_id,
+                "severity":    cf.severity,
+                "cwe_id":      cf.cwe_id,
+                "source_desc": cf.source_desc,
+                "sink_desc":   cf.sink_desc,
+                "line":        cf.sink_line,
+                "var":         cf.var,
+                # marca os fluxos que SÓ a análise de caminho encontrou
+                "path_only":   cf.sink_line not in linear_sink_lines,
+            } for cf in cfg_flows]
+            resp["cfg_taint"] = {
+                "status":         "ok",
+                "engine":         "M22-CFGTaintAnalyzer",
+                "path_sensitive": True,
+                "flow_count":     len(cfg_dicts),
+                "path_only_count": sum(1 for d in cfg_dicts if d["path_only"]),
+                "flows":          cfg_dicts,
+            }
+        except Exception as exc:  # noqa: BLE001 — nunca derruba o endpoint
+            resp["cfg_taint"] = {"status": "unavailable", "reason": str(exc)}
+    else:
+        resp["cfg_taint"] = {"status": "unavailable",
+                             "reason": "sast.taint_cfg missing"}
+
+    return 200, resp
 
 
 def handle_metrics_flow(module_id: Optional[str], window: int = 50) -> Tuple[int, Dict]:

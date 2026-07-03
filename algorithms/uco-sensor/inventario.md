@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.55.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.56.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
@@ -2349,7 +2349,28 @@ caminhos → não dispara. +8 testes TX94. Regressão 2478 verdes.
 - [x] Reuso do vocabulário M7.2 + gating SQL arg[0] do M17/CD
 - [x] Controle: cond-sanitize dispara / uncond-sanitize limpo (path-sensitivity)
 - [x] Contrato "nunca levanta" (V4 ausente / sintaxe → [])
-- [ ] Integrar M22 ao pipeline principal de scan (hoje é standalone) — próximo
+- [x] Integrar M22 ao pipeline principal de scan (`/scan-flow`) — CG ✅
 - [ ] Estender def-use da CFG para condições de `if`/`while` (hoje só assign/expr/return)
 - [ ] Ampliar M22 a AugAssign (`x += tainted`) e multi-target
 - [ ] Camada APEX real (IA/MCP) sobre o loop MVP local (M19)
+
+## Sprint CG — M22 operacionalizado no pipeline (/scan-flow) (v3.56.0)
+
+**"Operacionalizar" = rodar em produção, não só existir.** O M22 (Sprint CF) era
+standalone; agora roda no endpoint `/scan-flow` (M7.2) como camada path-sensitive
+ADITIVA. Onde entra (auditoria): `api/server.py::handle_scan_flow` instancia
+`_CFGTaintAnalyzer` (import guardado `_CFG_TAINT_AVAILABLE`) e anexa à resposta:
+    resp["cfg_taint"] = { status, engine, path_sensitive, flow_count,
+                          path_only_count, flows:[{...,path_only}] }
+onde `path_only` marca os fluxos que SÓ a CFG encontra (ausentes no motor linear
+M7.2 — tipicamente sanitização condicional). Contrato legado
+(`flows`/`flow_vector`/`summary`) preservado; erro do M22 → status="unavailable"
+sem derrubar o endpoint. +2 testes TF30. Regressão 2480 verdes.
+
+### CHECKLIST
+- [x] `/scan-flow` expõe `cfg_taint` (M22) — operacional
+- [x] Contrato legado preservado (aditivo, não-bloqueante)
+- [x] Flag `path_only` para o delta CFG-vs-linear
+- [ ] Estender def-use da CFG a condições `if`/`while` (recall)
+- [ ] M22 em AugAssign e multi-target
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP (M19)

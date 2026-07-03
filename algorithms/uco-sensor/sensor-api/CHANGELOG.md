@@ -5,6 +5,20 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.56.0] — 2026-07-03 — Sprint CG: M22 operacionalizado no pipeline (/scan-flow)
+
+Fecha o "operacionalizar" do ANGLE 1: o M22 deixa de ser standalone e passa a
+rodar no endpoint `/scan-flow` (M7.2) como **camada path-sensitive aditiva**.
+
+- `handle_scan_flow` agora anexa `cfg_taint` à resposta: fluxos do
+  CFGTaintAnalyzer + flag `path_only` (fluxos que SÓ a análise de caminho da CFG
+  encontra, ausentes no motor linear) + `path_only_count`.
+- Aditivo e não-bloqueante: o contrato legado (`flows`/`flow_vector`/`summary`)
+  é preservado byte-a-byte; qualquer erro do M22 → `cfg_taint.status="unavailable"`
+  sem derrubar o endpoint. Import guardado (`_CFG_TAINT_AVAILABLE`).
+- +2 testes TF30 (camada presente e operacional em código tainted; presente e
+  vazia em código limpo). Regressão 2480 verdes.
+
 ## [3.55.0] — 2026-07-03 — Sprint CF: M22 taint fluxo-sensível sobre a CFG do UCO V4 (ANGLE 1)
 
 Operacionaliza o taint-tracking **sobre a CFG real do UCO V4** — o ANGLE 1 do

@@ -688,6 +688,34 @@ class TestTF30_FullPipelineAndAPI:
         assert body["summary"]["taint_path_count"] >= 1
         assert body["flow_vector"]["flow_rating"] in {"B", "C", "D", "E"}
 
+    # ── Sprint CG (v3.56.0): camada M22 (CFG path-sensitive) no /scan-flow ─────
+    def test_scan_flow_exposes_cfg_taint_layer(self):
+        """O endpoint /scan-flow agora anexa a camada `cfg_taint` (M22) sem
+        quebrar o contrato legado de flows/flow_vector/summary."""
+        src = (
+            "def f(request):\n"
+            "    x = request.GET['id']\n"
+            "    cursor.execute('SELECT ' + x)\n"
+        )
+        code, body = self.scan_flow({"code": src, "module_id": "tf30g"})
+        assert code == 200
+        # contrato legado preservado
+        assert "flows" in body and "flow_vector" in body and "summary" in body
+        # nova camada presente e operacional
+        assert "cfg_taint" in body
+        ct = body["cfg_taint"]
+        assert ct["status"] == "ok"
+        assert ct["path_sensitive"] is True
+        assert ct["flow_count"] >= 1
+        assert any(f["cwe_id"] == "CWE-89" for f in ct["flows"])
+
+    def test_scan_flow_cfg_taint_clean_code_empty(self):
+        """Código sem source→sink → camada cfg_taint presente e vazia (ok)."""
+        code, body = self.scan_flow({"code": "x = 1", "module_id": "tf30h"})
+        assert code == 200
+        assert body["cfg_taint"]["status"] == "ok"
+        assert body["cfg_taint"]["flow_count"] == 0
+
     def test_metrics_flow_no_module_400(self):
         code, body = self.metrics_flow(None)
         assert code == 400
