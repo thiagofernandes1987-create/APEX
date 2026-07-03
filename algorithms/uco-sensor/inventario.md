@@ -31,13 +31,14 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.54.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.55.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
 > M12 CorpusValidator · M13 uco_core (UCO V4 absorvido) · M14 FunctionScoper ·
 > M15 GenericCFG signals · M17 InterprocTaint · M18 FixSuggester ·
-> M19 ApexLoop (Sensor→Corretor→Revalida) · M20 taint_lite · M21 weak_point.
+> M19 ApexLoop (Sensor→Corretor→Revalida) · M20 taint_lite · M21 weak_point ·
+> M22 CFGTaintAnalyzer (taint fluxo-sensível sobre a CFG do UCO V4).
 >
 > **Sprint CD (v3.53.0)** — M17 precisão anti-FP: cast numérico
 > (int/float/bool/complex) reconhecido como sanitizador FORTE e sinks SQL
@@ -2312,4 +2313,43 @@ número forçado.
 - [x] sqlite/linux mantidos not_tracked sem FP forçado (honestidade)
 - [ ] linux Dirty-COW: precisa de detector de RACE/TOCTOU (M11 não cobre) — backlog
 - [ ] sqlite: precisa de assinatura clamp `if(nCol>=64)` sem FP — avaliar em par real
-- [ ] Operacionalizar taint via uses/defs da CFG do UCO V4 (ANGLE 1) — próximo
+- [x] Operacionalizar taint via uses/defs da CFG do UCO V4 (ANGLE 1) — CF ✅
+
+## Sprint CF — M22 taint fluxo-sensível sobre a CFG do UCO V4 (ANGLE 1) (v3.55.0)
+
+**Pedido explícito do usuário:** "operacionalizar o taint via uses/defs da CFG do
+UCO V4 (ANGLE 1 do deep-research, que amplifica o motor real de data-flow)."
+
+**Entrega:** novo módulo `sast/taint_cfg.py` (M22, `CFGTaintAnalyzer`). Extrai
+TODO o potencial da CFG do V4 que estava absorvida mas subutilizada para taint:
+o `PythonCFGBuilder` já computava `python_defs_uses` (defs/uses por nó) — canal
+captado e não processado para dataflow. O M22 consome isso e roda um ponto-fixo
+forward **path-sensitive**:
+    IN[n]  = ∪ OUT[predecessores(n)]        (may-analysis)
+    OUT[n] = (IN[n] − KILL[n]) ∪ GEN[n]
+    GEN     = defs se source OU (uses∩IN e não-sanit); KILL = defs se limpo/sanit.
+    FLOW    = nó-sink com uso relevante ∈ IN.
+
+**Onde entra / para onde vai (auditoria):**
+- `CFGTaintAnalyzer.analyze(source)` → `List[CFGTaintFlow]`. Import tardio de
+  `uco_core.PythonCFGBuilder` (degradação graciosa). Consome
+  `cfg.metadata["python_defs_uses"]` e `cfg.nodes[*].predecessors/line_start`.
+- Reusa (sinergia, zero duplicação de vocabulário): `TaintAnalyzer._is_source`,
+  `._get_sink_meta`, `._is_sanitizer` (M7.2) e `_unpack_sink` (M17). Gating SQL
+  arg[0] idêntico ao M17/CD (query parametrizada é segura).
+
+**Diferencial provado (o que só a CFG dá):** sanitização CONDICIONAL num braço do
+`if` → o MERGE une o caminho `else` não-sanitizado → sink DISPARA (motor linear
+"viu escape ⇒ limpo" daria FN); sanitização INCONDICIONAL → mata em todos os
+caminhos → não dispara. +8 testes TX94. Regressão 2478 verdes.
+
+### CHECKLIST
+- [x] M22 consome defs/uses da CFG do V4 (não recomputa) — sinergia
+- [x] Ponto-fixo forward path-sensitive (IN=∪preds, OUT=(IN−KILL)∪GEN)
+- [x] Reuso do vocabulário M7.2 + gating SQL arg[0] do M17/CD
+- [x] Controle: cond-sanitize dispara / uncond-sanitize limpo (path-sensitivity)
+- [x] Contrato "nunca levanta" (V4 ausente / sintaxe → [])
+- [ ] Integrar M22 ao pipeline principal de scan (hoje é standalone) — próximo
+- [ ] Estender def-use da CFG para condições de `if`/`while` (hoje só assign/expr/return)
+- [ ] Ampliar M22 a AugAssign (`x += tainted`) e multi-target
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP local (M19)

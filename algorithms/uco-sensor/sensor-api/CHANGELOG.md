@@ -5,6 +5,30 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.55.0] — 2026-07-03 — Sprint CF: M22 taint fluxo-sensível sobre a CFG do UCO V4 (ANGLE 1)
+
+Operacionaliza o taint-tracking **sobre a CFG real do UCO V4** — o ANGLE 1 do
+deep-research ("amplificar o motor de dataflow"). Novo módulo `sast/taint_cfg.py`
+(M22, `CFGTaintAnalyzer`): consome os `python_defs_uses` (defs/uses por nó) que a
+`PythonCFGBuilder` já computa e roda um ponto-fixo forward **path-sensitive** nas
+arestas do grafo — `IN[n] = ∪ OUT[predecessores]`, `OUT[n] = (IN−KILL)∪GEN`.
+
+Diferencial que só a CFG entrega (validado em controle):
+- **sanitização CONDICIONAL** (só num braço do `if`) → o nó de MERGE une o
+  caminho `else` (não-sanitizado) → o sink DISPARA. Um motor "viu escape ⇒
+  limpo" daria falso-negativo.
+- **sanitização INCONDICIONAL** antes do sink → mata o taint em todos os
+  caminhos → NÃO dispara.
+
+Sinergia máxima (não reimplementa vocabulário): reusa `_is_source`/
+`_get_sink_meta`/`_is_sanitizer` do M7.2 e o gating SQL arg[0] do M17/CD (query
+parametrizada segura), e o `_unpack_sink` do M17. Só Python (a def-use rica é
+AST). Degradação graciosa: V4 ausente / sintaxe inválida → [] (nunca levanta).
+
++8 testes TX94 (direto, cond-sanitize dispara, uncond-sanitize limpo, cast int,
+sem-source, parametrizada segura, syntax-error, cmd-injection cross-statement).
+Regressão 2478 verdes.
+
 ## [3.54.0] — 2026-07-03 — Sprint CE: M10 destrava postgres + ffmpeg (canal captado, não processado)
 
 "Verifique para os que falharam se tinham informação nos canais que captamos e
