@@ -73,3 +73,18 @@ pais quando a API voltar.
 De cobertura 100/100 para **rastreio validado com artefato real**: 4/6 C
 rastreados, 1 caso-ouro completo (php-src detect→resolve), limites honestos
 mapeados. Zero fabricação.
+
+---
+## Correção (Sprint CA, v3.50.0) — FP de deslocamento de linha no M10
+
+Auditoria posterior revelou que **sqlite e ffmpeg eram FALSAS localizações**:
+o guard reportado (sqlite `iCol>=BMS ? BMS-1 : iCol`; ffmpeg `AVERROR(EINVAL)`)
+**já existia na versão vulnerável** — o difflib o via como "insert" só porque o
+fix inseriu linhas acima (deslocamento). Confirmado: `AVERROR(EINVAL)` aparece
+25× no ffmpeg vulnerável; o clamp do sqlite está no vulnerável (V635).
+
+Correção no `FixDiffLocalizer`: um guard só conta se seu conteúdo NÃO existe já
+no vulnerável. **Sumário corrigido e honesto: total=6, tracked=2 (php-src,
+redis), m10_localized=2, m11_stopped_firing=1, not_tracked=4.** php-src segue
+como caso-ouro completo. Isto é exatamente "algo que perpetuou e não foi
+identificado" — uma afirmação errada, agora corrigida. +1 teste TX78.

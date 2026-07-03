@@ -79,3 +79,19 @@ def test_T78_summary_is_localized_and_human():
     r = FixDiffLocalizer().localize(_VULN, _FIXED, filename="fpm_main.c")
     s = r.summary()
     assert "fpm_main.c" in s and "L" in s
+
+
+# ── BZ+ (v3.50.0): guard relocado NÃO conta como adição de segurança ──────────
+def test_T78_relocated_guard_is_not_counted_as_new():
+    """
+    Se o fix apenas DESLOCA (por inserir linhas acima) um guard que já existia
+    no vulnerável, o difflib o vê como 'insert' — mas NÃO é uma correção nova.
+    O localizador deve ignorá-lo (anti-FP de relocação). Reproduz o padrão real
+    do sqlite CVE-2019-19646 (clamp `iCol>=BMS ? BMS-1 : iCol` presente em ambos).
+    """
+    guard = "colUsed |= (1)<<(iCol>=BMS ? BMS-1 : iCol);"
+    vuln = f"void f(){{\n  {guard}\n}}\n"
+    # fix só adiciona um comentário ACIMA — o guard fica relocado, não novo:
+    fixed = f"void f(){{\n  /* nota */\n  {guard}\n}}\n"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="s.c")
+    assert r.guard_present_in_fix_absent_in_vuln is False   # relocação, não correção

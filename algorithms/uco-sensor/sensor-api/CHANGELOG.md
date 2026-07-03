@@ -5,6 +5,18 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.50.0] — 2026-07-03 — Sprint CA: correção de FP de deslocamento no M10 (dado honesto)
+
+Auditoria de dado real: o M10 reportava sqlite e ffmpeg como localizações de
+fix, mas o guard "adicionado" JÁ existia no vulnerável — o difflib marcava a
+linha relocada como insert (o fix inseriu linhas acima). Confirmado:
+AVERROR(EINVAL) aparece 25x no ffmpeg vulnerável.
+
+Correção: FixDiffLocalizer descarta guard cujo conteúdo (stripped) já está no
+vulnerável. Artefato do corpus corrigido: tracked 4->2 (php-src, redis),
+m10_localized 4->2, honesto. php-src segue como caso-ouro. +1 teste TX78.
+Princípio: um FP afirmado é pior que um miss. Regressão 2460 verdes.
+
 ## [3.49.0] — 2026-07-03 — Sprint BZ: dead-code = chamada esquecida (auditoria) + anti-regressão no loop
 
 Princípio (usuário): dead-code que criamos deve ser DIAGNOSTICADO antes de

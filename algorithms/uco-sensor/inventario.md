@@ -2173,3 +2173,19 @@ importante com propósito + versão para auditoria futura.
 - [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (widening/early-return/clamp)
 - [ ] Rodar M12 nos pares Python/JS via tags de release (API commits 403)
 - [ ] Camada APEX real (IA/MCP) sobre o loop MVP local
+
+## Sprint CA — Correção de FP de deslocamento no M10 (v3.50.0)
+
+Auditoria de dado real expôs 2 falsas localizações no artefato do corpus:
+sqlite e ffmpeg reportavam "guard adicionado" que na verdade JÁ existia no
+vulnerável (difflib marca linha relocada como insert quando o fix insere
+linhas acima). Confirmado com dado real (AVERROR(EINVAL) 25× no ffmpeg vuln).
+Corrigido: `FixDiffLocalizer` descarta guard cujo conteúdo já está no vuln.
+Artefato corrigido: **tracked 4→2 (php-src, redis)**, honesto. +1 teste TX78.
+Regressão 2460 verdes. Princípio: FP afirmado é pior que miss — corrigir sempre.
+
+### CHECKLIST
+- [x] Corrigir FP de deslocamento de linha no M10 (dado honesto)
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (com validação anti-FP real)
+- [ ] Rodar M12 nos pares Python/JS via tags (API commits 403)
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP

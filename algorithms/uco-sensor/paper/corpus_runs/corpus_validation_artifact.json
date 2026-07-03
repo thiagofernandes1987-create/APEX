@@ -1,10 +1,10 @@
 {
   "summary": {
     "total": 6,
-    "tracked": 4,
-    "m10_localized": 4,
+    "tracked": 2,
+    "m10_localized": 2,
     "m11_stopped_firing": 1,
-    "not_tracked": 2,
+    "not_tracked": 4,
     "fetch_error": 0
   },
   "records": [
@@ -34,8 +34,8 @@
         "CWE-190/125",
         "CWE-476"
       ],
-      "m11_vuln_findings": 5,
-      "m11_fix_findings": 4,
+      "m11_vuln_findings": 3,
+      "m11_fix_findings": 2,
       "m11_stopped_firing": true,
       "m11_stopped": [
         {
@@ -48,7 +48,16 @@
           "snippet": "path_info = env_path_info ? env_path_info + pilen - slen : NULL;"
         }
       ],
-      "m11_persisted_count": 4,
+      "m11_persisted_count": 2,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.039,
+        "reachable_ratio_fix": 0.039,
+        "infinite_loop_risk_vuln": 0.5,
+        "infinite_loop_risk_fix": 0.5,
+        "dead_code_vuln": 2,
+        "dead_code_fix": 2,
+        "cyclomatic_delta": 0
+      },
       "status": "tracked"
     },
     {
@@ -77,12 +86,6 @@
           "text": "    if (len > SIZE_MAX / 6 - 3)",
           "kind": "bounds-check-if",
           "cwe_class": "CWE-125/787"
-        },
-        {
-          "line": 712,
-          "text": "    size_t len;",
-          "kind": "type-widening",
-          "cwe_class": "CWE-190"
         }
       ],
       "vuln_classes": [
@@ -94,6 +97,15 @@
       "m11_stopped_firing": false,
       "m11_stopped": [],
       "m11_persisted_count": 0,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.065,
+        "reachable_ratio_fix": 0.065,
+        "infinite_loop_risk_vuln": 0.7,
+        "infinite_loop_risk_fix": 0.7,
+        "dead_code_vuln": 70,
+        "dead_code_fix": 70,
+        "cyclomatic_delta": 0
+      },
       "status": "tracked"
     },
     {
@@ -103,24 +115,24 @@
       "ext": ".c",
       "parent": "38d18fb57863",
       "fix": "4c1afa292520",
-      "fix_localized": true,
-      "fix_guards": [
-        {
-          "line": 2168,
-          "text": "            return AVERROR(EINVAL);",
-          "kind": "early-return-guard",
-          "cwe_class": "CWE-20"
-        }
-      ],
-      "vuln_classes": [
-        "CWE-20"
-      ],
-      "m11_vuln_findings": 3,
-      "m11_fix_findings": 3,
+      "fix_localized": false,
+      "fix_guards": [],
+      "vuln_classes": [],
+      "m11_vuln_findings": 2,
+      "m11_fix_findings": 2,
       "m11_stopped_firing": false,
       "m11_stopped": [],
-      "m11_persisted_count": 3,
-      "status": "tracked"
+      "m11_persisted_count": 2,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.002,
+        "reachable_ratio_fix": 0.002,
+        "infinite_loop_risk_vuln": 0.35,
+        "infinite_loop_risk_fix": 0.35,
+        "dead_code_vuln": 601,
+        "dead_code_fix": 603,
+        "cyclomatic_delta": -1
+      },
+      "status": "not_tracked"
     },
     {
       "repo": "sqlite/sqlite",
@@ -129,24 +141,24 @@
       "ext": ".c",
       "parent": "ebd70eedd5",
       "fix": "926f796e8f",
-      "fix_localized": true,
-      "fix_guards": [
-        {
-          "line": 647,
-          "text": "        pItem->colUsed |= ((Bitmask)1)<<(iCol>=BMS ? BMS-1 : iCol);",
-          "kind": "bounds-check-ternary",
-          "cwe_class": "CWE-190/125"
-        }
-      ],
-      "vuln_classes": [
-        "CWE-190/125"
-      ],
+      "fix_localized": false,
+      "fix_guards": [],
+      "vuln_classes": [],
       "m11_vuln_findings": 0,
       "m11_fix_findings": 0,
       "m11_stopped_firing": false,
       "m11_stopped": [],
       "m11_persisted_count": 0,
-      "status": "tracked"
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.006,
+        "reachable_ratio_fix": 0.006,
+        "infinite_loop_risk_vuln": 0.8,
+        "infinite_loop_risk_fix": 0.8,
+        "dead_code_vuln": 3,
+        "dead_code_fix": 3,
+        "cyclomatic_delta": 5
+      },
+      "status": "not_tracked"
     },
     {
       "repo": "torvalds/linux",
@@ -163,6 +175,15 @@
       "m11_stopped_firing": false,
       "m11_stopped": [],
       "m11_persisted_count": 0,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.018,
+        "reachable_ratio_fix": 0.018,
+        "infinite_loop_risk_vuln": 0.8,
+        "infinite_loop_risk_fix": 0.8,
+        "dead_code_vuln": 507,
+        "dead_code_fix": 522,
+        "cyclomatic_delta": 0
+      },
       "status": "not_tracked"
     },
     {
@@ -175,11 +196,20 @@
       "fix_localized": false,
       "fix_guards": [],
       "vuln_classes": [],
-      "m11_vuln_findings": 3,
-      "m11_fix_findings": 3,
+      "m11_vuln_findings": 2,
+      "m11_fix_findings": 2,
       "m11_stopped_firing": false,
       "m11_stopped": [],
-      "m11_persisted_count": 3,
+      "m11_persisted_count": 2,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.062,
+        "reachable_ratio_fix": 0.062,
+        "infinite_loop_risk_vuln": 0.6,
+        "infinite_loop_risk_fix": 0.6,
+        "dead_code_vuln": 266,
+        "dead_code_fix": 267,
+        "cyclomatic_delta": 1
+      },
       "status": "not_tracked"
     }
   ]

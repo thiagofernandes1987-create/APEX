@@ -119,6 +119,16 @@ class FixDiffLocalizer:
         fixed_lines = fixed_src.splitlines()
         sm = difflib.SequenceMatcher(a=vuln_lines, b=fixed_lines, autojunk=False)
 
+        # Conjunto de linhas (stripped) já presentes na versão VULNERÁVEL.
+        # Serve para descartar falsos "guards adicionados" que na verdade são
+        # apenas RELOCADOS: quando o fix insere linhas acima, o difflib desloca
+        # a numeração e reporta uma linha idêntica como "insert". Um guard só é
+        # genuinamente novo se seu conteúdo NÃO existe já no vulnerável.
+        # (BZ+ v3.50.0: corrige o FP de deslocamento — ex.: sqlite CVE-2019-19646,
+        #  onde o clamp `iCol>=BMS ? BMS-1 : iCol` já existia no vulnerável e era
+        #  contado erroneamente como correção.)
+        vuln_stripped = {ln.strip() for ln in vuln_lines if ln.strip()}
+
         res = LocalizeResult(filename=filename)
         for tag, i1, i2, j1, j2 in sm.get_opcodes():
             if tag in ("replace", "insert"):
@@ -127,6 +137,10 @@ class FixDiffLocalizer:
                     lineno = j1 + off + 1
                     res.added_lines += 1
                     if not _SECURITY_TOKENS.search(text):
+                        continue
+                    # anti-FP de relocação: ignora guard cujo conteúdo já estava
+                    # no vulnerável (não é uma adição real de segurança).
+                    if text.strip() in vuln_stripped:
                         continue
                     kind, cwe = _classify(text)
                     if kind is None:
