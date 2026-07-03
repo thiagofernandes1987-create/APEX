@@ -2075,3 +2075,19 @@ silenced=1→fully_resolved. 4 testes TX93.
 - [ ] Cobrir classes redis(widening)/ffmpeg(early-return)/sqlite(clamp) no M11
 - [ ] E — rodar M12/loop nos ~40 pares (via tags de release; API commits 403)
 - [ ] Taint inter-procedural multi-linguagem (hoje Python; JS/PHP via tree-sitter)
+
+## Sprint BX — amplia source-recognition (aliases de request) (v3.47.0)
+
+Gap da BW fechado: `req.args.get(...)` não era source (só `request.args.get`).
+`_attr_source_label` agora aceita `<raiz>.<attr-de-dados>` p/ raízes em
+`_SOURCE_ROOTS` (request/req/flask) com `_REQUEST_DATA_ATTRS` (derivado de
+`_SOURCE_ATTRS`). Anti-FP: raízes e atributos restritos. cmd-injection cross-fn
+com `req.args.get` agora dispara. +2 testes TX92. 2451 verdes.
+
+### CHECKLIST — evolução
+- [x] Ampliar source-recognition (`req.args.get` — alias de request) — FEITO
+- [ ] Hops via atributo de objeto (`self.helper(x)`) no M17 — PRÓXIMO
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (widening/early-return/clamp)
+- [ ] Taint inter-procedural multi-linguagem (JS/PHP via tree-sitter)
+- [ ] E — rodar loop/M12 nos ~40 pares (via tags de release)
+- [ ] F restante — plugar IA/MCP real como corrector

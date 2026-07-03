@@ -76,3 +76,28 @@ def test_T92_pure_intra_not_reported_as_interproc():
 
 def test_T92_syntax_error_is_empty_not_raises():
     assert InterprocTaintAnalyzer().analyze("def (:::") == []
+
+
+# ── ampliação de source-recognition (Sprint BX): aliases de request ──────────
+_CMDI_REQ_ALIAS = '''
+def handler(req):
+    cmd = req.args.get("cmd")
+    runner(cmd)
+def runner(value):
+    import os
+    os.system(value)
+'''
+
+
+def test_T92_request_alias_source_cross_fn():
+    # `req.args.get(...)` (alias `req` de request) agora é reconhecido como
+    # source; o fluxo cmd-injection cruza handler->runner.
+    flows = InterprocTaintAnalyzer().analyze(_CMDI_REQ_ALIAS)
+    assert len(flows) >= 1
+    assert flows[0].source_fn == "handler" and flows[0].sink_fn == "runner"
+
+
+def test_T92_request_alias_source_recognized_directly():
+    from sast.taint_engine import _REQUEST_DATA_ATTRS
+    # os atributos de dados foram derivados corretamente de _SOURCE_ATTRS
+    assert "args" in _REQUEST_DATA_ATTRS and "GET" in _REQUEST_DATA_ATTRS

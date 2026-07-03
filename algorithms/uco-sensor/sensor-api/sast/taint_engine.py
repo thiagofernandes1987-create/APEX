@@ -87,6 +87,13 @@ _SOURCE_ATTRS: FrozenSet[Tuple[str, str]] = frozenset({
     ("os",  "environ"),
 })
 
+# Atributos de DADOS de um objeto request (derivado de _SOURCE_ATTRS): valem
+# para qualquer alias de request em _SOURCE_ROOTS (request/req/flask), cobrindo
+# ``req.args.get(...)`` além de ``request.args.get(...)``.
+_REQUEST_DATA_ATTRS: FrozenSet[str] = frozenset(
+    attr for (obj, attr) in _SOURCE_ATTRS if obj == "request"
+)
+
 # Bare function names that return tainted data when called
 # M16 — métodos acessores que, chamados sobre um atributo-fonte, retornam
 # valor controlado pelo usuário (ex.: request.args.get("x")).
@@ -897,11 +904,20 @@ class TaintAnalyzer:
         Se *node* é um atributo-fonte (ex.: ``request.args``), retorna o rótulo,
         tolerando cadeia com prefixo de módulo (``flask.request.args`` casa por
         casar o ÚLTIMO segmento do objeto: ``request``).  Caso contrário None.
+
+        Além do casamento exato ``(obj, attr) ∈ _SOURCE_ATTRS``, aceita
+        **aliases de request** (``req``/``flask`` além de ``request``) com os
+        mesmos atributos de dados já whitelistados — cobrindo o padrão comum
+        ``req.args.get(...)`` sem ampliar a superfície de FP (raízes e atributos
+        continuam restritos aos conjuntos conhecidos).
         """
         if not isinstance(node, ast.Attribute):
             return None
         obj_last = _node_name(node.value).split(".")[-1]
         if (obj_last, node.attr) in _SOURCE_ATTRS:
+            return f"{obj_last}.{node.attr}"
+        # alias de request (req/flask) com atributo de dados de request conhecido
+        if obj_last in _SOURCE_ROOTS and node.attr in _REQUEST_DATA_ATTRS:
             return f"{obj_last}.{node.attr}"
         return None
 
