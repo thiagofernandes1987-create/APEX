@@ -1,8 +1,8 @@
 {
   "summary": {
-    "total": 7,
-    "tracked": 3,
-    "m10_localized": 3,
+    "total": 9,
+    "tracked": 5,
+    "m10_localized": 5,
     "m11_stopped_firing": 1,
     "not_tracked": 4,
     "fetch_error": 0
@@ -251,6 +251,101 @@
         "dead_code_vuln": 0,
         "dead_code_fix": 0,
         "cyclomatic_delta": 2
+      },
+      "status": "tracked"
+    },
+    {
+      "repo": "psf/requests",
+      "cve": "CVE-2023-32681",
+      "file": "requests/sessions.py",
+      "ext": ".py",
+      "parent": "v2.30.0",
+      "fix": "v2.31.0",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 329,
+          "text": "        if not scheme.startswith('https') and username and password:",
+          "kind": "security-conditional-guard",
+          "cwe_class": "CWE-287/863/200"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-287/863/200"
+      ],
+      "m11_vuln_findings": 0,
+      "m11_fix_findings": 0,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 0,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 1.0,
+        "reachable_ratio_fix": 1.0,
+        "infinite_loop_risk_vuln": 0.15,
+        "infinite_loop_risk_fix": 0.15,
+        "dead_code_vuln": 0,
+        "dead_code_fix": 0,
+        "cyclomatic_delta": 0
+      },
+      "status": "tracked"
+    },
+    {
+      "repo": "pallets/werkzeug",
+      "cve": "CVE-2023-25577",
+      "file": "src/werkzeug/formparser.py",
+      "ext": ".py",
+      "parent": "2.2.2",
+      "fix": "2.2.3",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 182,
+          "text": "    :param max_form_parts: The maximum number of parts to be parsed. If this is",
+          "kind": "resource-limit",
+          "cwe_class": "CWE-400"
+        },
+        {
+          "line": 196,
+          "text": "        max_form_parts: t.Optional[int] = None,",
+          "kind": "resource-limit",
+          "cwe_class": "CWE-400"
+        },
+        {
+          "line": 206,
+          "text": "        self.max_form_parts = max_form_parts",
+          "kind": "resource-limit",
+          "cwe_class": "CWE-400"
+        },
+        {
+          "line": 289,
+          "text": "            max_form_parts=self.max_form_parts,",
+          "kind": "resource-limit",
+          "cwe_class": "CWE-400"
+        },
+        {
+          "line": 355,
+          "text": "        max_form_parts: t.Optional[int] = None,",
+          "kind": "resource-limit",
+          "cwe_class": "CWE-400"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-190",
+        "CWE-400"
+      ],
+      "m11_vuln_findings": 0,
+      "m11_fix_findings": 0,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 0,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.952,
+        "reachable_ratio_fix": 0.953,
+        "infinite_loop_risk_vuln": 0.65,
+        "infinite_loop_risk_fix": 0.65,
+        "dead_code_vuln": 0,
+        "dead_code_fix": 0,
+        "cyclomatic_delta": 0
       },
       "status": "tracked"
     }

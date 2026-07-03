@@ -5,6 +5,25 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.52.0] — 2026-07-03 — Sprint CC: M10 cobre guard condicional (and/or) + limite DoS; corpus 9 CVEs
+
+Diagnóstico "processar o canal que captávamos": vários not_tracked eram
+ARQUIVO ERRADO (ex.: requests fix está em sessions.py, não utils.py) OU
+construção que o M10 (C-only) não reconhecia.
+
+Duas assinaturas novas (baixo-FP, validadas no arquivo correto):
+- **security-conditional-guard** — `if/and/or` com termo sensível (scheme/
+  https/auth/password/token/permission/origin...). Python/JS usam `and`/`or`,
+  não `&&` — o M10 os perdia. Ex.: requests CVE-2023-32681 (não vazar
+  Proxy-Authorization em http) → TRACKED (L329, CWE-287/200).
+- **resource-limit** — max_* de partes/tamanho/profundidade / RequestEntityTooLarge
+  (DoS/CWE-400). Ex.: werkzeug CVE-2023-25577 (max_form_parts) → TRACKED.
+
+Sem regressão nos 6 C (php-src 2 guards, redis 3, sqlite/ffmpeg/linux 0 — a
+correção CA anti-relocação se mantém). Corpus expandido: total=9, tracked=5
+(php-src, redis, jinja, requests, werkzeug), m10_localized=5. +2 testes TX78.
+Regressão 2464 verdes.
+
 ## [3.51.0] — 2026-07-03 — Sprint CB: M10 rastreia injeção/escaping (não só memory-safety) + corpus via tags
 
 Extensão do FixDiffLocalizer (M10) com o grupo de assinaturas de INJEÇÃO/

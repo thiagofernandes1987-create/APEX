@@ -116,3 +116,24 @@ def test_T78_localizes_input_validation_raise():
              '    return key\n')
     r = FixDiffLocalizer().localize(vuln, fixed, filename="filters.py")
     assert any(g.kind == "input-validation-raise" for g in r.added_guards)
+
+
+# ── CC (v3.52.0): guard condicional de segurança (and/or) e limite de recurso ──
+def test_T78_python_conditional_security_guard():
+    """`if ... and ...` com termo sensível (scheme/password) — guard que o C-only perdia."""
+    vuln = "def rebuild(proxies, u, p):\n    proxies['Proxy-Authorization'] = basic(u, p)\n"
+    fixed = ("def rebuild(proxies, u, p):\n"
+             "    if not scheme.startswith('https') and u and p:\n"
+             "        del proxies['Proxy-Authorization']\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="sessions.py")
+    assert any(g.kind == "security-conditional-guard" for g in r.added_guards)
+
+
+def test_T78_resource_limit_dos_guard():
+    """Introdução de limite de recurso (max_form_parts) → classe DoS/CWE-400."""
+    vuln = "def parse(stream):\n    return list(iter_parts(stream))\n"
+    fixed = ("def parse(stream, max_form_parts=1000):\n"
+             "    self.max_form_parts = max_form_parts\n"
+             "    return list(iter_parts(stream, max_parts=max_form_parts))\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="formparser.py")
+    assert any(g.kind == "resource-limit" for g in r.added_guards)

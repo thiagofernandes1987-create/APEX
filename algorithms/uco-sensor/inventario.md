@@ -2207,3 +2207,24 @@ total=7, tracked=3 (php-src, redis, jinja). +2 testes TX78. Regressão 2462 verd
 - [ ] Ampliar corpus por tags: +Django/Flask/PyYAML/npm reais (rodar M12)
 - [ ] M17 taint before/after num par real de injeção (source->sink)
 - [ ] Camada APEX real (IA/MCP) sobre o loop MVP
+
+## Sprint CC — guard condicional (and/or) + limite DoS; corpus 9 CVEs (v3.52.0)
+
+"Processar o canal que captávamos": diagnostiquei que vários not_tracked eram
+ARQUIVO ERRADO (requests: fix em sessions.py, não utils.py) ou construção não
+reconhecida. Duas assinaturas novas no M10 (baixo-FP):
+- security-conditional-guard: `if/and/or` + termo sensível (scheme/auth/senha/
+  token/permissão/origem). Python/JS usam `and`, não `&&` → M10 C-only perdia.
+  requests CVE-2023-32681 → TRACKED (não vazar Proxy-Authorization em http).
+- resource-limit: max_*(parts/size/depth)/RequestEntityTooLarge (DoS/CWE-400).
+  werkzeug CVE-2023-25577 → TRACKED.
+
+Sem regressão nos 6 C. Corpus: total=9, tracked=5 (php-src, redis, jinja,
+requests, werkzeug). +2 testes TX78. Regressão 2464 verdes.
+
+### CHECKLIST
+- [x] M10 cobre guard condicional Python/JS (and/or) e limite DoS — CC
+- [x] Diagnóstico arquivo-errado nos not_tracked (dado honesto)
+- [ ] Ampliar corpus: identificar arquivo correto por CVE (sem API commits) e validar +N
+- [ ] M17 taint before/after num par real de injeção (source->sink)
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP

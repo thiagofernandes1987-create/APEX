@@ -71,16 +71,34 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
                 r"escape_string|real_escape|htmlspecialchars|encodeURIComponent)\s*\("),
      "output-encoding", "CWE-79/116/78"),
     # validação de entrada que aborta (raise/return) em valor perigoso.
-    (re.compile(r"\braise\s+\w*(Error|Exception)\b"), "input-validation-raise", "CWE-20"),
+    (re.compile(r"\braise\s+\w*(Error|Exception|TooLarge|Denied|Forbidden)\b"), "input-validation-raise", "CWE-20"),
     (re.compile(r"\breturn\b.*\b(EINVAL|ERANGE|-1|error|Err)\b", re.I), "early-return-guard", "CWE-20"),
+    # guard condicional de SEGURANÇA (Python/JS/PHP usam `and`/`or`, não `&&`):
+    # um `if`/condição numa linha ADICIONADA que referencia um termo sensível
+    # (scheme/https/auth/senha/token/permissão/origem…).  Baixo-FP porque exige
+    # o termo de segurança + ser adição do fix.  (CC v3.52.0 — ex.: requests
+    # CVE-2023-32681 adiciona `if not scheme.startswith('https') and username
+    # and password:` para não vazar Proxy-Authorization em http.)
+    (re.compile(r"\b(if|elif|while|assert|and|or|unless)\b.*\b(https?|scheme|"
+                r"auth\w*|authoriz\w*|password|passwd|token|secret|credential|"
+                r"cred|permission|allow\w*|is_safe|verif\w*|valid\w*|sanitiz\w*|"
+                r"escap\w*|origin|csrf|referer|hostname|redirect)\b", re.I),
+     "security-conditional-guard", "CWE-287/863/200"),
+    # limite de recurso contra DoS/exaustão (CWE-400): max_* de partes/tamanho/
+    # profundidade, ou exceções de limite excedido.  (CC — ex.: werkzeug
+    # CVE-2023-25577 introduz `max_form_parts` → RequestEntityTooLarge.)
+    (re.compile(r"\b(max_\w*(parts|size|count|length|len|depth|iter\w*|form)|"
+                r"RequestEntityTooLarge|LimitExceeded|too_large|recursion_limit)\b", re.I),
+     "resource-limit", "CWE-400"),
 ]
 
 # Conjunto de tokens que marca uma linha como "candidata a guard" (evita
 # contar edições só de comentário/formatação).  (CB: +escape/raise/quote para
 # habilitar o grupo de injeção/escaping.)
 _SECURITY_TOKENS = re.compile(
-    r"[<>]=?|[!=]=|&&|\|\||\bNULL\b|\bif\b|\breturn\b|\buint\d+_t\b|\bsize_t\b|"
-    r"\bunsafe\b|\bescape\w*\(|\braise\b|\bquote\w*\(|htmlspecialchars|encodeURI",
+    r"[<>]=?|[!=]=|&&|\|\||\bNULL\b|\bif\b|\belif\b|\bwhile\b|\bassert\b|"
+    r"\breturn\b|\band\b|\bor\b|\buint\d+_t\b|\bsize_t\b|\bunsafe\b|"
+    r"\bescape\w*\(|\braise\b|\bquote\w*\(|htmlspecialchars|encodeURI|max_\w+",
 )
 
 
