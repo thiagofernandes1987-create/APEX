@@ -43,3 +43,30 @@ def test_T89_c_still_works_regression():
     src = "int f(char* base,int pilen,int slen){ char* p = base + pilen - slen; return *p; }"
     finds = _ga01(src, ".c")
     assert finds and finds[0].needs_guard_on == ("pilen", "slen")
+
+
+def test_T89_ga02_allocated_to_fit_is_not_flagged():
+    """Sprint CA: memcpy cujo comprimento foi usado para dimensionar o buffer
+    (idioma allocated-to-fit) NÃO deve disparar GA02 — era FP real (php-src
+    L1666/L1672: realloc(..., off + len + ...) antes de memcpy(..., ..., len))."""
+    from sast.guard_aware import GuardAwareScanner
+    safe = (
+        "void f(char *src, int off, int len) {\n"
+        "    buf = erealloc(buf, off + len + 2);\n"
+        "    memcpy(buf + off, src, len);\n"
+        "}\n"
+    )
+    findings = GuardAwareScanner().scan(safe, ".c")
+    assert not any(g.rule_id == "GA02" for g in findings)
+
+
+def test_T89_ga02_unbounded_still_flags():
+    """Contraprova: memcpy com length sem bound nem alloc-to-fit ainda dispara."""
+    from sast.guard_aware import GuardAwareScanner
+    vuln = (
+        "void f(char *dst, char *src, int len) {\n"
+        "    memcpy(dst, src, len);\n"
+        "}\n"
+    )
+    findings = GuardAwareScanner().scan(vuln, ".c")
+    assert any(g.rule_id == "GA02" for g in findings)

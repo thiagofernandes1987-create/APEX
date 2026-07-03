@@ -41,8 +41,8 @@ Public API
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, field
-from typing import List, Optional, Set, Tuple
+from dataclasses import dataclass
+from typing import List, Set, Tuple
 
 _C_LIKE = {".c", ".h", ".cpp", ".cc", ".cxx", ".hpp", ".rs", ".java", ".js", ".ts", ".go", ".php"}
 
@@ -118,10 +118,35 @@ def _guard_present(block: str, a: str, b: str) -> bool:
     return any(re.search(p, block) for p in patterns)
 
 
+# Funções de alocação cujo argumento de TAMANHO, se contém a variável de
+# comprimento, prova que o buffer foi dimensionado para caber a cópia — o
+# idioma "allocated-to-fit". Reconhecê-lo elimina FP do GA02 (Sprint CA:
+# triagem real do php-src L1666/L1672 `realloc(..., ini_entries_len + len + ...)`
+# imediatamente antes de `memcpy(..., ..., len)`).
+_ALLOC_FN = re.compile(
+    r"\b(?:[epcx]?re?alloc\w*|malloc|calloc|alloca|safe_emalloc|"
+    r"[a-z_]*_(?:m|re|c)alloc\w*)\s*\("
+)
+
+
 def _bound_present(block: str, var: str) -> bool:
-    """True if *var* is compared against something (a limit/size) in the block."""
+    """
+    True se *var* está limitada no escopo — por uma comparação (`var < X`,
+    `X >= var`, ...) OU pelo idioma "allocated-to-fit": uma chamada de
+    alocação cujo argumento de tamanho menciona *var* (o buffer foi
+    dimensionado para conter a cópia). Ambos são bounds legítimos; reconhecê-los
+    evita falso-positivo do GA02 em código correto.
+    """
     esc = re.escape(var)
-    return bool(re.search(rf"\b{esc}\s*[<>]=?", block) or re.search(rf"[<>]=?\s*{esc}\b", block))
+    if re.search(rf"\b{esc}\s*[<>]=?", block) or re.search(rf"[<>]=?\s*{esc}\b", block):
+        return True
+    # allocated-to-fit: alloc(...  var ...) no escopo (tamanho inclui a var)
+    for m in _ALLOC_FN.finditer(block):
+        # examina os argumentos da chamada de alloc (até o ; ou fim de linha)
+        tail = block[m.end(): m.end() + 200]
+        if re.search(rf"\b{esc}\b", tail):
+            return True
+    return False
 
 
 class GuardAwareScanner:

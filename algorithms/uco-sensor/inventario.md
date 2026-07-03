@@ -2122,3 +2122,20 @@ entrega. Relatório: `paper/corpus_runs/BZ_perpetuation_scan.md`.
 - [ ] Triagem dos 9 residuais (risco real vs FP GA02)
 - [ ] Cobrir classes redis/ffmpeg/sqlite no M11
 - [ ] Taint multi-linguagem (JS/PHP) · [ ] loop/M12 nos ~40 pares · [ ] IA/MCP corrector
+
+## Sprint CA — Triagem dos residuais + precisão GA02 (allocated-to-fit) (v3.49.0)
+
+Triagem real dos 9 residuais da BZ (li os sites no código). Achado: os 4 do
+php-src eram FP do GA02 — L1666/L1672 são `realloc(..., off+len+...)` ANTES do
+`memcpy(...,len)` (buffer dimensionado para caber = idioma allocated-to-fit).
+`_bound_present` agora reconhece esse idioma (alloc no escopo cujo tamanho
+menciona a var de comprimento). Residuais 9→6 (php-src 4→2, ffmpeg 3→2). Os 2
+do php-src restantes (L1276/L1295) dependem de `path_translated_len>=l`
+(não-local) — mantidos como "revisar", honesto. Imports mortos removidos.
++2 testes TX89. 2455 verdes. Relatório: `BZ_perpetuation_scan.md` (atualizado).
+
+### CHECKLIST
+- [x] Triagem dos residuais + precisão GA02 (allocated-to-fit) — FEITO
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11
+- [ ] Taint multi-linguagem (JS/PHP) · [ ] loop/M12 nos ~40 pares · [ ] IA/MCP corrector
+- [ ] Retomar deep-research (bloqueado: limite de sessão)
