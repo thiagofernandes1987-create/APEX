@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import difflib
 import re
+from collections import Counter
 from dataclasses import dataclass, field
 from typing import List, Optional, Set, Tuple
 
@@ -63,6 +64,19 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     (re.compile(r"\b(uint32_t|uint64_t|size_t|int64_t|long long)\b"), "type-widening", "CWE-190"),
     (re.compile(r"\bunsafe\b"), "unsafe-contract", "RUST-soundness"),
     (re.compile(r"\b(overflow|underflow|bounds?|clamp|saturat)\w*\b", re.I), "overflow-guard", "CWE-190"),
+    # chamada a um helper de verificação de limites/overflow — inclusive em
+    # CamelCase (`ArrayCheckBounds(...)`), que a regra overflow-guard acima
+    # PERDE porque o seu `\b` não casa "Bounds" embutido no meio do identificador.
+    # Esta casa a FORMA-DE-CHAMADA independentemente de caixa; baixo-FP porque
+    # exige verbo (check/valid/verif/guard) adjacente ao substantivo
+    # (bound/overflow/range/limit) + parêntese de chamada.  Onde entra: `_classify`
+    # a testa em cada linha ADICIONADA pelo fix.  (CE v3.54.0 — destrava
+    # postgres CVE-2021-32027, cujo fix insere `ArrayCheckBounds()` em 8 sites.)
+    (re.compile(r"(?i)\b\w*(?:check\w*(?:bound|overflow|range|limit)|"
+                r"(?:bound|overflow|range|limit)\w*check|"
+                r"(?:valid|verif|guard|assert)\w*(?:bound|overflow|range|limit))"
+                r"\w*\s*\("),
+     "bounds-check-call", "CWE-190/125"),
     (re.compile(r"\b(memcpy|memmove|strncpy|snprintf)\b"), "safe-copy", "CWE-120"),
     # ── injeção / escaping / validação de entrada (CB) ───────────────────────
     # output-encoding: escapar antes de emitir → XSS/SSTI/log/command injection.
@@ -98,7 +112,14 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
 _SECURITY_TOKENS = re.compile(
     r"[<>]=?|[!=]=|&&|\|\||\bNULL\b|\bif\b|\belif\b|\bwhile\b|\bassert\b|"
     r"\breturn\b|\band\b|\bor\b|\buint\d+_t\b|\bsize_t\b|\bunsafe\b|"
-    r"\bescape\w*\(|\braise\b|\bquote\w*\(|htmlspecialchars|encodeURI|max_\w+",
+    r"\bescape\w*\(|\braise\b|\bquote\w*\(|htmlspecialchars|encodeURI|max_\w+|"
+    # (CE v3.54.0) chamada a helper de bounds/overflow-check em CamelCase ou
+    # snake_case — habilita o gate para a assinatura `bounds-check-call` (a
+    # linha `ArrayCheckBounds(...)` não tem if/return/<>, então sem este token
+    # seria descartada antes de chegar ao _classify).
+    r"(?i:\w*(?:check\w*(?:bound|overflow|range|limit)|"
+    r"(?:bound|overflow|range|limit)\w*check|"
+    r"(?:valid|verif|guard)\w*(?:bound|overflow|range|limit))\w*\s*\()",
 )
 
 
@@ -154,15 +175,20 @@ class FixDiffLocalizer:
         fixed_lines = fixed_src.splitlines()
         sm = difflib.SequenceMatcher(a=vuln_lines, b=fixed_lines, autojunk=False)
 
-        # Conjunto de linhas (stripped) já presentes na versão VULNERÁVEL.
-        # Serve para descartar falsos "guards adicionados" que na verdade são
-        # apenas RELOCADOS: quando o fix insere linhas acima, o difflib desloca
-        # a numeração e reporta uma linha idêntica como "insert". Um guard só é
-        # genuinamente novo se seu conteúdo NÃO existe já no vulnerável.
-        # (BZ+ v3.50.0: corrige o FP de deslocamento — ex.: sqlite CVE-2019-19646,
-        #  onde o clamp `iCol>=BMS ? BMS-1 : iCol` já existia no vulnerável e era
-        #  contado erroneamente como correção.)
-        vuln_stripped = {ln.strip() for ln in vuln_lines if ln.strip()}
+        # Anti-relocação POR CONTAGEM (não por presença).  Quando o fix insere
+        # linhas acima, o difflib desloca a numeração e reporta uma linha
+        # idêntica como "insert".  Distinguir relocação de adição real:
+        #   • relocação preserva a CONTAGEM daquela linha (vuln==fix);
+        #   • adição genuína INCREMENTA a contagem (fix > vuln).
+        # Comparar por presença global (o conjunto antigo) descartava um guard
+        # legítimo sempre que seu texto — tipicamente um idioma comum como
+        # `return AVERROR(EINVAL);` — também aparecesse em qualquer outro ponto
+        # do arquivo.  (CE v3.54.0: corrige o FN do ffmpeg CVE-2020-22015, cujo
+        # `return AVERROR(EINVAL);` do fix era descartado por existir 22× no
+        # arquivo [vuln] → 23× [fix]; AINDA preserva o anti-FP do sqlite
+        # CVE-2019-19646, cujo clamp relocado mantém contagem constante 1→1.)
+        vuln_counts = Counter(ln.strip() for ln in vuln_lines if ln.strip())
+        fixed_counts = Counter(ln.strip() for ln in fixed_lines if ln.strip())
 
         res = LocalizeResult(filename=filename)
         for tag, i1, i2, j1, j2 in sm.get_opcodes():
@@ -173,9 +199,10 @@ class FixDiffLocalizer:
                     res.added_lines += 1
                     if not _SECURITY_TOKENS.search(text):
                         continue
-                    # anti-FP de relocação: ignora guard cujo conteúdo já estava
-                    # no vulnerável (não é uma adição real de segurança).
-                    if text.strip() in vuln_stripped:
+                    # anti-FP de relocação: só é adição REAL se o fix aumentou a
+                    # contagem daquela linha; contagem preservada = relocação.
+                    s = text.strip()
+                    if fixed_counts[s] <= vuln_counts[s]:
                         continue
                     kind, cwe = _classify(text)
                     if kind is None:

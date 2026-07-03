@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.53.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.54.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
@@ -2272,6 +2272,44 @@ pos/neg). Regressão 2464 verdes, sem regressão.
 - [x] M17 query parametrizada não dispara (só arg[0] em sinks SQL)
 - [x] Controle pos/neg travado em teste (dispara-no-bug/para-no-fix)
 - [ ] Ampliar corpus por tags: identificar arquivo correto por CVE e validar +N (herdado de CC)
-- [ ] Cobrir memory-safety redis(widening)/ffmpeg(early-return)/sqlite(clamp) no M11 com anti-FP em par real
-- [ ] Operacionalizar taint via uses/defs da CFG do UCO V4 (deep-research ANGLE 1)
+- [x] Cobrir ffmpeg(early-return) — CE ✅ (via M10, dado real)
+- [ ] Cobrir redis(widening)/sqlite(clamp)/linux(race) no M10/M11 com anti-FP em par real
+- [ ] Operacionalizar taint via uses/defs da CFG do UCO V4 (deep-research ANGLE 1) — EM ANDAMENTO
 - [ ] Camada APEX real (IA/MCP) sobre o loop MVP local (M19)
+
+## Sprint CE — M10 destrava postgres + ffmpeg (canal captado, não processado) (v3.54.0)
+
+**Mandato do goal:** "verifique para os que falharam se tinham informação nos
+canais que captamos e só não estávamos processando e faça as correções." Ataquei
+os 4 not_tracked do corpus com DADO REAL (diffs por SHA via raw.githubusercontent,
+o único canal HTTP liberado). Dois tinham o sinal no diff mas o M10 não o lia:
+
+- **postgres CVE-2021-32027** (`arrayfuncs.c`) → TRACKED. Fix insere
+  `ArrayCheckBounds(...)` (8 sites). A regra overflow-guard perdia por `\b` não
+  casar "Bounds" em CamelCase. **Correção:** nova assinatura `bounds-check-call`
+  em `_GUARD_SIGNATURES` + token no gate `_SECURITY_TOKENS`. Onde entra:
+  `FixDiffLocalizer._classify` testa a linha adicionada. v3.54.0.
+- **ffmpeg CVE-2020-22015** (`movenc.c`) → TRACKED. Fix:
+  `if(bits<0||bits>8) return AVERROR(EINVAL);` antes de `1<<bits`. O guard casava
+  early-return-guard mas o **filtro anti-relocação por presença** o descartava
+  (idioma existe 22× no arquivo). **Correção:** filtro por **CONTAGEM** — adição
+  real ⟺ `fixed_counts[linha] > vuln_counts[linha]`. Onde entra:
+  `FixDiffLocalizer.localize`. v3.54.0.
+
+**Anti-FP preservado:** o filtro por contagem mantém o clamp relocado do sqlite
+(1→1) descartado (correção CA intacta). sqlite (logic-clamp) e linux (Dirty-COW
+race TOCTOU) seguem HONESTAMENTE not_tracked — fora do vocabulário do M10, sem
+número forçado.
+
+**Corpus real:** total=9, tracked **5→7**, m10_localized **5→7**, not_tracked
+**4→2**. +3 testes TX78. Regressão 2470 verdes. Artefato
+`paper/corpus_runs/corpus_validation_artifact.json` regenerado com dado real.
+
+### CHECKLIST
+- [x] Diagnóstico dos 4 not_tracked com diff real (SHA via raw) — dado honesto
+- [x] postgres destravado (bounds-check-call, CamelCase) — TP real
+- [x] ffmpeg destravado (early-return via filtro por contagem) — TP real
+- [x] sqlite/linux mantidos not_tracked sem FP forçado (honestidade)
+- [ ] linux Dirty-COW: precisa de detector de RACE/TOCTOU (M11 não cobre) — backlog
+- [ ] sqlite: precisa de assinatura clamp `if(nCol>=64)` sem FP — avaliar em par real
+- [ ] Operacionalizar taint via uses/defs da CFG do UCO V4 (ANGLE 1) — próximo

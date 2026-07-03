@@ -137,3 +137,55 @@ def test_T78_resource_limit_dos_guard():
              "    return list(iter_parts(stream, max_parts=max_form_parts))\n")
     r = FixDiffLocalizer().localize(vuln, fixed, filename="formparser.py")
     assert any(g.kind == "resource-limit" for g in r.added_guards)
+
+
+# ── CE (v3.54.0): dois canais reais que o M10 captava mas não processava ──────
+# Diagnóstico dos not_tracked do corpus: o sinal existia no diff, mas (1) uma
+# chamada a helper de bounds-check em CamelCase escapava do gate/assinaturas e
+# (2) o filtro anti-relocação por PRESENÇA descartava um early-return genuíno
+# só porque o mesmo idioma existia noutro ponto do arquivo.  Ambos corrigidos.
+
+def test_T78_bounds_check_call_camelcase():
+    """postgres CVE-2021-32027: fix insere `ArrayCheckBounds(...)` (CamelCase).
+    A regra overflow-guard (`\\bbounds`) perdia por causa do `\\b` no meio do
+    identificador; a nova `bounds-check-call` casa a forma-de-chamada."""
+    vuln = ("ArrayType *construct(int ndim, int *dim) {\n"
+            "    nitems = ArrayGetNItems(ndim, dim);\n"
+            "    return build(ndim, dim, nitems);\n}\n")
+    fixed = ("ArrayType *construct(int ndim, int *dim) {\n"
+             "    nitems = ArrayGetNItems(ndim, dim);\n"
+             "    ArrayCheckBounds(ndim, dim, lBound);\n"
+             "    return build(ndim, dim, nitems);\n}\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="arrayfuncs.c")
+    assert any(g.kind == "bounds-check-call" for g in r.added_guards)
+    assert r.guard_present_in_fix_absent_in_vuln
+
+
+def test_T78_early_return_not_dropped_when_idiom_repeats():
+    """ffmpeg CVE-2020-22015: o fix adiciona `return AVERROR(EINVAL);` como
+    guard de range antes de `1 << bits`.  O idioma já existe noutro ponto do
+    arquivo — o filtro por CONTAGEM (fix=2 > vuln=1) o mantém; o antigo filtro
+    por presença o descartava."""
+    vuln = ("int a(int x){ if(x) return AVERROR(EINVAL); return 0; }\n"
+            "int b(int bits){\n"
+            "    int pal = 1 << bits;\n"
+            "    return pal;\n}\n")
+    fixed = ("int a(int x){ if(x) return AVERROR(EINVAL); return 0; }\n"
+             "int b(int bits){\n"
+             "    if (bits < 0 || bits > 8)\n"
+             "        return AVERROR(EINVAL);\n"
+             "    int pal = 1 << bits;\n"
+             "    return pal;\n}\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="movenc.c")
+    assert any(g.kind == "early-return-guard" for g in r.added_guards)
+
+
+def test_T78_relocation_still_filtered_by_count():
+    """Anti-FP preservado: uma linha só RELOCADA (contagem constante 1→1) NÃO
+    conta como guard adicionado (sqlite CVE-2019-19646 — o clamp relocado)."""
+    clamp = "colUsed |= 1 << (iCol>=BMS ? BMS-1 : iCol);"
+    vuln = f"void f(){{\n    a();\n    {clamp}\n}}\n"
+    fixed = f"void f(){{\n    a();\n    b();\n    {clamp}\n}}\n"  # clamp só desce 1 linha
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="resolve.c")
+    # o clamp relocado não deve aparecer como guard adicionado
+    assert all(clamp not in g.text for g in r.added_guards)

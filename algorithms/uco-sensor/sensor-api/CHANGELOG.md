@@ -5,6 +5,35 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.54.0] — 2026-07-03 — Sprint CE: M10 destrava postgres + ffmpeg (canal captado, não processado)
+
+"Verifique para os que falharam se tinham informação nos canais que captamos e
+só não processávamos." Diagnóstico dos 4 not_tracked do corpus com DADO REAL
+(diffs buscados por SHA via raw.githubusercontent): dois tinham o sinal presente
+no diff, mas o M10 não o processava.
+
+- **postgres CVE-2021-32027** (`arrayfuncs.c`) → agora TRACKED. O fix insere
+  `ArrayCheckBounds(...)` em 8 sites (bounds-check nomeado). A regra overflow-guard
+  perdia porque seu `\b` não casa "Bounds" embutido em CamelCase. Nova assinatura
+  **bounds-check-call** (baixo-FP: verbo check/valid/verif/guard adjacente a
+  bound/overflow/range/limit + parêntese) + token no gate `_SECURITY_TOKENS`.
+  CWE-190/125 (OOB por overflow de dimensão de array).
+- **ffmpeg CVE-2020-22015** (`movenc.c`) → agora TRACKED. O fix adiciona
+  `if (bits<0||bits>8) return AVERROR(EINVAL);` antes de `1<<bits` (shift
+  overflow). O guard `return AVERROR(EINVAL);` casava early-return-guard mas era
+  **descartado pelo filtro anti-relocação por presença** — o idioma existe 22×
+  no arquivo. Trocado para filtro **por CONTAGEM** (fix 23× > vuln 22× = adição
+  real). CWE-190/125.
+
+O filtro por contagem PRESERVA o anti-FP da Sprint CA: o clamp relocado do sqlite
+mantém contagem constante (1→1) → segue descartado. sqlite (logic-clamp de
+generated-columns) e linux (Dirty-COW, race TOCTOU) permanecem honestamente
+not_tracked — fora do vocabulário de guard do M10, sem FP forçado.
+
+Corpus REAL: total=9, **tracked 5→7**, m10_localized 5→7, not_tracked 4→2.
++3 testes TX78 (bounds-check-call CamelCase, early-return não-descartado por
+idioma repetido, relocação ainda filtrada por contagem). Regressão 2470 verdes.
+
 ## [3.53.0] — 2026-07-03 — Sprint CD: M17 precisão anti-FP (cast numérico + query parametrizada)
 
 Diagnóstico via controle pos/neg do taint inter-procedural (M17): a versão

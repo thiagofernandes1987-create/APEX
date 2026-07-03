@@ -1,10 +1,10 @@
 {
   "summary": {
     "total": 9,
-    "tracked": 5,
-    "m10_localized": 5,
+    "tracked": 7,
+    "m10_localized": 7,
     "m11_stopped_firing": 1,
-    "not_tracked": 4,
+    "not_tracked": 2,
     "fetch_error": 0
   },
   "records": [
@@ -115,9 +115,18 @@
       "ext": ".c",
       "parent": "38d18fb57863",
       "fix": "4c1afa292520",
-      "fix_localized": false,
-      "fix_guards": [],
-      "vuln_classes": [],
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 2168,
+          "text": "return AVERROR(EINVAL);",
+          "kind": "early-return-guard",
+          "cwe_class": "CWE-20"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-20"
+      ],
       "m11_vuln_findings": 2,
       "m11_fix_findings": 2,
       "m11_stopped_firing": false,
@@ -132,7 +141,8 @@
         "dead_code_fix": 603,
         "cyclomatic_delta": -1
       },
-      "status": "not_tracked"
+      "status": "tracked",
+      "note_CE": "destravado v3.54.0: early-return count-based (return AVERROR)"
     },
     {
       "repo": "sqlite/sqlite",
@@ -193,9 +203,48 @@
       "ext": ".c",
       "parent": "6206454bdac1",
       "fix": "f02b9085ad2f",
-      "fix_localized": false,
-      "fix_guards": [],
-      "vuln_classes": [],
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 375,
+          "text": "ArrayCheckBounds(ndim, dim, lBound);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 1351,
+          "text": "ArrayCheckBounds(ndim, dim, lBound);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 2374,
+          "text": "ArrayCheckBounds(ndim, dim, lb);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 2640,
+          "text": "ArrayCheckBounds(ndim, dim, lb);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 2962,
+          "text": "ArrayCheckBounds(ndim, dim, lb);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 3379,
+          "text": "ArrayCheckBounds(ndims, dims, lbs);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-190/125"
+      ],
       "m11_vuln_findings": 2,
       "m11_fix_findings": 2,
       "m11_stopped_firing": false,
@@ -210,7 +259,8 @@
         "dead_code_fix": 267,
         "cyclomatic_delta": 1
       },
-      "status": "not_tracked"
+      "status": "tracked",
+      "note_CE": "destravado v3.54.0: bounds-check-call (ArrayCheckBounds)"
     },
     {
       "repo": "pallets/jinja",
