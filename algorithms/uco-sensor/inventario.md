@@ -2106,3 +2106,19 @@ sanitizado não. Dead code removido (params_of). +2 testes TX92. 2453 verdes.
 - [ ] E — rodar loop/M12 nos ~40 pares (via tags de release)
 - [ ] F restante — plugar IA/MCP real como corrector
 - [ ] Retomar deep-research científico (bloqueado por limite de sessão, reset UTC)
+
+## Sprint BZ — Scan de perpetuação nas versões corrigidas (v3.48.0+)
+
+Responde "algo perpetuou e não foi identificado": M11 rodado nas versões
+CORRIGIDAS (fix SHA, dado real). 9 sinais residuais — php-src(4 GA02),
+ffmpeg(3), postgres(2); redis/sqlite limpos. Artefato:
+`paper/corpus_runs/residual_perpetuation_artifact.json`. Enquadramento honesto:
+são candidatos guard-aware, NÃO bugs confirmados (GA02 tem FP) — requerem
+triagem. A capacidade de PRODUZIR a lista de perpetuação com dado real é a
+entrega. Relatório: `paper/corpus_runs/BZ_perpetuation_scan.md`.
+
+### CHECKLIST
+- [x] Scan de perpetuação nas versões corrigidas + artefato — FEITO
+- [ ] Triagem dos 9 residuais (risco real vs FP GA02)
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11
+- [ ] Taint multi-linguagem (JS/PHP) · [ ] loop/M12 nos ~40 pares · [ ] IA/MCP corrector
