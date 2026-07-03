@@ -54,12 +54,30 @@ def _guard_key(gf: GuardFinding) -> Tuple[str, Tuple[str, ...]]:
 
 @dataclass
 class ApexLoopReport:
-    """Resultado de uma passada do loop de auto-correção."""
+    """
+    Resultado de UMA passada do loop de auto-correção Sensor→Corretor→Revalida.
+
+    Campos (o que cada um significa numa auditoria):
+      * signals_before   — findings que o Sensor emitiu no código ORIGINAL.
+      * fixes_applied    — patches que o corretor de fato aplicou (mudaram o
+                           texto). Finding sem `guard_expr` não gera patch.
+      * silenced         — findings originais que SUMIRAM após o patch
+                           (o objetivo: "parou de disparar").
+      * still_firing     — findings originais que PERSISTIRAM após o patch.
+      * newly_introduced — findings que NÃO existiam no original e apareceram
+                           SÓ depois do patch: regressões que o próprio
+                           auto-fix criou. É a razão de existir do
+                           `before_keys` (comparar antes×depois). Adicionado
+                           no Sprint BZ (v3.49.0).
+      * taint_flows      — fluxos fonte→sink do M17 (informativo por ora).
+      * patched_source   — código já com todos os patches aplicados.
+    """
     ext: str
     signals_before: List[Dict[str, Any]] = field(default_factory=list)
     fixes_applied: List[Dict[str, Any]] = field(default_factory=list)
     silenced: List[Dict[str, Any]] = field(default_factory=list)
     still_firing: List[Dict[str, Any]] = field(default_factory=list)
+    newly_introduced: List[Dict[str, Any]] = field(default_factory=list)  # BZ: regressão do auto-fix
     taint_flows: List[Dict[str, Any]] = field(default_factory=list)
     patched_source: str = ""
 
@@ -68,9 +86,20 @@ class ApexLoopReport:
         return len(self.silenced)
 
     @property
+    def regressed(self) -> bool:
+        """True se o auto-fix INTRODUZIU algum sinal novo (regressão)."""
+        return bool(self.newly_introduced)
+
+    @property
     def fully_resolved(self) -> bool:
-        """True se todos os sinais iniciais foram silenciados pelos patches."""
-        return bool(self.signals_before) and not self.still_firing
+        """
+        True só quando o loop resolveu tudo COM SEGURANÇA: havia sinais,
+        nenhum persistiu, E o patch não introduziu sinal novo. A cláusula
+        anti-regressão (`not self.regressed`) entrou no Sprint BZ — antes,
+        um patch que silenciava o alvo mas criava outro problema ainda era
+        contado como "resolvido", o que é falso.
+        """
+        return bool(self.signals_before) and not self.still_firing and not self.regressed
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -79,11 +108,14 @@ class ApexLoopReport:
             "fixes_applied": len(self.fixes_applied),
             "silenced": len(self.silenced),
             "still_firing": len(self.still_firing),
+            "newly_introduced": len(self.newly_introduced),
+            "regressed": self.regressed,
             "taint_flows": len(self.taint_flows),
             "fully_resolved": self.fully_resolved,
             "detail": {
                 "silenced": self.silenced,
                 "still_firing": self.still_firing,
+                "newly_introduced": self.newly_introduced,
                 "fixes": self.fixes_applied,
             },
         }
@@ -134,17 +166,32 @@ class ApexLoop:
                 rep.fixes_applied.append(sug.to_dict())
         rep.patched_source = patched
 
-        # revalidação — o Sensor re-escaneia o código corrigido
+        # ── revalidação ──────────────────────────────────────────────────────
+        # O Sensor re-escaneia o código JÁ corrigido. Comparamos o conjunto de
+        # findings ANTES (before_keys) com o DEPOIS (after_keys) por chave
+        # estável (regra + variáveis-do-guard):
+        #   • silenced          = estava em before, sumiu em after   → resolvido
+        #   • still_firing      = estava em before e continua em after → não resolvido
+        #   • newly_introduced  = está em after mas NÃO estava em before → o
+        #                         próprio patch criou (regressão). Sem esta
+        #                         comparação (before_keys) o loop não perceberia
+        #                         que "consertou" criando outro bug — daí o
+        #                         `before_keys` ser essencial, não dead code.
+        before_keys = {_guard_key(g) for g in signals}         # BZ: baseline p/ detectar regressão
         after = self._emit_signals(patched, ext)
         after_keys = {_guard_key(g) for g in after}
 
-        for g in signals:
+        for g in signals:                                       # veredito por finding original
             k = _guard_key(g)
             d = self._finding_dict(g)
             if k not in after_keys:
-                rep.silenced.append(d)
+                rep.silenced.append(d)                          # parou de disparar ✓
             else:
-                rep.still_firing.append(d)
+                rep.still_firing.append(d)                      # persistiu
+
+        for g in after:                                         # BZ: sinais que só existem pós-patch
+            if _guard_key(g) not in before_keys:
+                rep.newly_introduced.append(self._finding_dict(g))  # regressão criada pelo corretor
         return rep
 
     @staticmethod

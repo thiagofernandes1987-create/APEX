@@ -5,6 +5,24 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.49.0] — 2026-07-03 — Sprint BZ: dead-code = chamada esquecida (auditoria) + anti-regressão no loop
+
+Princípio (usuário): dead-code que criamos deve ser DIAGNOSTICADO antes de
+remover — em geral é chamada esquecida. Auditoria dos módulos M10–M21+loop
+resolveu 3 casos por INTEGRAÇÃO (não deleção), com comentários de auditoria:
+
+- **apex_loop `newly_introduced`** — o `before_keys` era a base de detectar
+  sinais que o AUTO-FIX introduz (regressão do corretor). `run()` compara
+  before×after; `fully_resolved` agora exige `not regressed`. +2 testes TX93.
+- **corpus_validator `_cfg_delta`** — definido, nunca chamado: o sinal de CFG
+  do V4/M15 ficava fora do artefato. Cabeado em `validate_pair`.
+- **guard_aware `_split_functions`** — órfão: quando o M14 scoper retorna None,
+  o `_scope` caía na janela fixa. Cabeado como fallback estruturado.
+
+`_arg_is_sanitized` (M17): já resolvido antes (is_sanitized_call gating o sink).
+Nota: CHANGELOG saltou de 3.37.0 (BM) a 3.49.0 — sprints BN–BY foram em turnos
+compactados; a evolução está registrada no `inventario.md`. Regressão 2459 verdes.
+
 ## [3.37.0] — 2026-07-02 — Sprint BM: CorpusValidator (M12) rodado sobre pares reais + artefato
 
 Executado o M12 (M10 FixDiffLocalizer + M11 GuardAwareScanner) sobre 6 pares

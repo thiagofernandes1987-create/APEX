@@ -2139,3 +2139,37 @@ do php-src restantes (L1276/L1295) dependem de `path_translated_len>=l`
 - [ ] Cobrir classes redis/ffmpeg/sqlite no M11
 - [ ] Taint multi-linguagem (JS/PHP) · [ ] loop/M12 nos ~40 pares · [ ] IA/MCP corrector
 - [ ] Retomar deep-research (bloqueado: limite de sessão)
+
+## Sprint BZ — Auditoria de dead-code (chamadas esquecidas) + anti-regressão no loop (v3.49.0)
+
+**Princípio reforçado pelo usuário:** dead-code que NÓS criamos deve ser
+diagnosticado antes de remover — quase sempre é uma **chamada esquecida**,
+não lixo. Auditei os módulos M10–M21 + loop. Três achados, todos resolvidos
+por INTEGRAÇÃO (não deleção), com comentários de auditoria (o quê/para-onde/
+o-que-faz/versão):
+
+1. **`before_keys` (apex_loop)** — não era lixo: era a base da feature
+   **`newly_introduced`** (detectar sinais que o próprio auto-fix INTRODUZ =
+   regressão do corretor). Implementado: `run()` compara before×after;
+   `fully_resolved` agora exige `not regressed`. +2 testes TX93.
+2. **`_cfg_delta` (corpus_validator)** — definido mas nunca chamado: o sinal
+   de CFG do V4/M15 (reachability, loop-infinito, dead-code, cyclomatic)
+   ficava fora do artefato. **Cabeado** em `validate_pair` → `rec["cfg_delta"]`.
+3. **`_split_functions` (guard_aware)** — órfão porque, quando o M14
+   FunctionScoper retorna None, o `_scope` caía direto na janela fixa. **Cabeado**
+   como fallback estruturado (mais preciso que a janela) antes do window.
+
+`_arg_is_sanitized` (M17): verificado — JÁ estava resolvido corretamente
+(virou `is_sanitized_call(arg)` gating o sink, L202), não foi deleção cega.
+
+Regressão: **2459 verdes**. Prática adotada: comentar toda função/chamada
+importante com propósito + versão para auditoria futura.
+
+### CHECKLIST — evolução
+- [x] newly_introduced no loop APEX (regressão do auto-fix) — BZ
+- [x] _cfg_delta cabeado no CorpusValidator (sinal V4/M15) — BZ
+- [x] _split_functions cabeado como fallback do M14 no guard_aware — BZ
+- [x] Auditoria de dead-code dos módulos recentes (diagnosticar, não deletar)
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (widening/early-return/clamp)
+- [ ] Rodar M12 nos pares Python/JS via tags de release (API commits 403)
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP local

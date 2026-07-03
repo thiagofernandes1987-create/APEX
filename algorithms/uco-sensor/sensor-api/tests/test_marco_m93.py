@@ -70,3 +70,30 @@ def test_T93_taint_signal_included_for_python():
     rep = ApexLoop().run(py, ext=".py")
     assert len(rep.taint_flows) >= 1
     assert rep.taint_flows[0]["interprocedural"] is True
+
+
+# ── BZ (v3.49.0): detecção de regressão introduzida pelo próprio auto-fix ──────
+# Estes testes existem porque o `before_keys` (comparar findings antes×depois)
+# não era dead code — era a base da feature "newly_introduced", que faltava.
+
+def test_T93_clean_fix_introduces_no_regression():
+    """Um patch de guard bem-formado não deve criar sinais novos."""
+    rep = ApexLoop().run(_VULN_C, ext=".c")
+    assert rep.newly_introduced == []      # nada novo criado pelo corretor
+    assert rep.regressed is False
+    assert "newly_introduced" in rep.to_dict()
+
+
+def test_T93_regression_makes_not_fully_resolved():
+    """
+    Se o auto-fix introduz um sinal novo (newly_introduced), o loop NÃO pode
+    reportar fully_resolved — mesmo que o alvo original tenha sido silenciado.
+    Validado montando o relatório diretamente (unidade da regra de veredito).
+    """
+    rep = ApexLoopReport(ext=".c")
+    rep.signals_before = [{"rule_id": "GA01", "line": 3}]     # havia 1 sinal
+    rep.silenced = [{"rule_id": "GA01", "line": 3}]           # foi silenciado
+    rep.newly_introduced = [{"rule_id": "GA02", "line": 9}]   # mas o patch criou outro
+    assert rep.regressed is True
+    assert rep.fully_resolved is False                        # anti-regressão barra o "resolvido"
+    assert rep.to_dict()["regressed"] is True

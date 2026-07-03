@@ -100,6 +100,14 @@ class CorpusValidator:
                                 "guard_on": list(g.needs_guard_on),
                                 "snippet": g.snippet[:120]} for g in stopped[:5]]
         rec["m11_persisted_count"] = len(persisted)
+
+        # Sinais de CFG do UCO V4 (M15) antes×depois — reachability, risco de
+        # loop-infinito, dead-code e delta de complexidade. Enriquece o registro
+        # com a leitura de degradação estrutural do V4, complementar ao guard.
+        # (BZ v3.49.0: a chamada a _cfg_delta estava definida mas nunca era
+        #  invocada — o sinal do V4 ficava de fora do artefato. Cabeada aqui.)
+        rec["cfg_delta"] = _cfg_delta(vuln, fixed, ext)
+
         # veredito de degradação
         if loc.guard_present_in_fix_absent_in_vuln or stopped:
             rec["status"] = "tracked"          # rastreamos onde/como e/ou o dispara-para

@@ -188,13 +188,23 @@ class GuardAwareScanner:
         lines = source.splitlines()
         findings: List[GuardFinding] = []
         seen: Set[Tuple[str, int]] = set()
-        # UM parse por scan: spans de função via AST (None → fallback janela)
+        # Spans de função que delimitam o escopo onde procuramos o guard.
+        # Ordem de preferência (mais preciso → mais grosseiro):
+        #   1. M14 FunctionScoper (AST tree-sitter) — spans reais por função;
+        #   2. _split_functions() — splitter por chaves/blocos; fallback usado
+        #      quando o scoper AST não está presente ou falha. É MAIS preciso
+        #      que a janela fixa ±WINDOW do _scope;
+        #   3. janela ±WINDOW (dentro do _scope, se 1 e 2 não delimitam).
+        # (BZ v3.49.0: o passo 2 estava órfão — a chamada fora esquecida e o
+        #  fallback caía direto na janela fixa, perdendo precisão de escopo.)
         spans = None
         if self._scoper is not None:
             try:
-                spans = self._scoper.function_spans(source, ext)
+                spans = self._scoper.function_spans(source, ext)   # M14: escopo AST real
             except Exception:  # pragma: no cover
                 spans = None
+        if spans is None:
+            spans = _split_functions(source, ext) or None          # fallback estruturado (BZ)
 
         for lineno, ln in enumerate(lines, start=1):
             scope = None  # lazy — só monta a janela quando há um match
