@@ -31,6 +31,20 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+> **CORRENTE: v3.53.0** (pyproject.toml + api/server.py). O histórico abaixo
+> lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
+> (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
+> M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
+> M12 CorpusValidator · M13 uco_core (UCO V4 absorvido) · M14 FunctionScoper ·
+> M15 GenericCFG signals · M17 InterprocTaint · M18 FixSuggester ·
+> M19 ApexLoop (Sensor→Corretor→Revalida) · M20 taint_lite · M21 weak_point.
+>
+> **Sprint CD (v3.53.0)** — M17 precisão anti-FP: cast numérico
+> (int/float/bool/complex) reconhecido como sanitizador FORTE e sinks SQL
+> (SAST040/CWE-89) só avaliam arg[0] (query), ignorando a tupla de params de
+> prepared-statements. Controle pos/neg trava "dispara-no-bug/para-no-fix".
+> +3 testes TX92; 2464 verdes. Ver `CHANGELOG.md` §3.53.0.
+
 **Protótipo (não versionado, exploratório)**: `frequency-engine/receptor/code_spectral_fingerprint.py`
 + `frequency-engine/tests/test_code_spectral_fingerprint.py` — MVP
 pedido pelo usuário ("versão mínima iniciar antes de aprimorar") em
@@ -2226,5 +2240,38 @@ requests, werkzeug). +2 testes TX78. Regressão 2464 verdes.
 - [x] M10 cobre guard condicional Python/JS (and/or) e limite DoS — CC
 - [x] Diagnóstico arquivo-errado nos not_tracked (dado honesto)
 - [ ] Ampliar corpus: identificar arquivo correto por CVE (sem API commits) e validar +N
-- [ ] M17 taint before/after num par real de injeção (source->sink)
+- [x] M17 taint before/after num par real de injeção (source->sink) — CD ✅
 - [ ] Camada APEX real (IA/MCP) sobre o loop MVP
+
+## Sprint CD — M17 precisão anti-FP (cast numérico + query parametrizada) (v3.53.0)
+
+**Diagnóstico via controle pos/neg do M17:** a versão CORRIGIDA de um SQLi ainda
+disparava — dois FPs independentes que quebravam a assinatura de produto
+"dispara-no-bug / para-no-fix". Ambos eram "sinal no canal que já captávamos mas
+não processávamos": o taint via até o sink mas ignorava (a) que `int()` já tinha
+neutralizado o dado e (b) que uma query parametrizada isola o dado na tupla.
+
+Correções cirúrgicas (arquivo → o que faz → versão, para auditoria):
+- **`sast/taint_engine.py::_SANITIZER_FUNCTIONS`** — +int/float/bool/complex
+  (casts numéricos = sanitizador FORTE) +shlex.quote/pipes.quote/escapejs.
+  Onde entra: `TaintAnalyzer.is_sanitized_call` consulta esse frozenset ao
+  propagar taint; M17 herda via `_t`. v3.53.0.
+- **`sast/taint_interproc.py` (loop de sinks)** — sinks SQL (rule==SAST040 ou
+  cwe==CWE-89) passam a checar só `node.args[:1]` (a query string); demais sinks
+  seguem checando args+kwargs. Onde entra: `InterprocTaintAnalyzer.analyze` ao
+  varrer chamadas de cada função do call-graph. v3.53.0.
+
+**Controle final (dado real, sem inventar):** VULN (`request.GET['id']` →
+`run_query` → `execute('...'+uid)`) DISPARA 1 fluxo SQL_INJECTION/CWE-89 hops
+[handler,run_query]; FIXED (`int()` + `execute('...%s',(x,))`) → 0 fluxos.
++3 testes TX92 (cast_int_is_sanitizer, parameterized_query_is_safe, controle
+pos/neg). Regressão 2464 verdes, sem regressão.
+
+### CHECKLIST
+- [x] M17 cast numérico reconhecido como sanitizador (anti-FP)
+- [x] M17 query parametrizada não dispara (só arg[0] em sinks SQL)
+- [x] Controle pos/neg travado em teste (dispara-no-bug/para-no-fix)
+- [ ] Ampliar corpus por tags: identificar arquivo correto por CVE e validar +N (herdado de CC)
+- [ ] Cobrir memory-safety redis(widening)/ffmpeg(early-return)/sqlite(clamp) no M11 com anti-FP em par real
+- [ ] Operacionalizar taint via uses/defs da CFG do UCO V4 (deep-research ANGLE 1)
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP local (M19)

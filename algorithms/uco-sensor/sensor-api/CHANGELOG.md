@@ -5,6 +5,26 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.53.0] — 2026-07-03 — Sprint CD: M17 precisão anti-FP (cast numérico + query parametrizada)
+
+Diagnóstico via controle pos/neg do taint inter-procedural (M17): a versão
+CORRIGIDA de um SQLi ainda disparava — dois falsos-positivos independentes que o
+Sensor precisava eliminar para honrar a assinatura "dispara-no-bug / para-no-fix".
+
+Correções (baixo-FP, cirúrgicas):
+- **cast numérico é sanitizador FORTE** — `int()/float()/bool()/complex()`
+  neutralizam injeção. Adicionados a `taint_engine._SANITIZER_FUNCTIONS` (junto
+  de `shlex.quote`/`pipes.quote`/`escapejs`). Antes, `x = int(request.GET['id'])`
+  seguia marcado como tainted → FP em código já seguro.
+- **query parametrizada é segura** — para sinks SQL (SAST040/CWE-89), só o
+  `arg[0]` (a query string) carrega risco. `taint_interproc` deixou de inspecionar
+  a tupla de params do prepared-statement. Antes, `execute('...%s', (x,))`
+  disparava por causa do dado na tupla — que é seguro por construção.
+
+Controle final: VULN (`request.GET['id']` → `execute('...' + uid)`) DISPARA 1
+fluxo SQL_INJECTION/CWE-89; FIXED (`int()` + parametrizada) fica SILENCIOSO.
++3 testes TX92 (cast, parametrizada, controle pos/neg). Regressão 2464 verdes.
+
 ## [3.52.0] — 2026-07-03 — Sprint CC: M10 cobre guard condicional (and/or) + limite DoS; corpus 9 CVEs
 
 Diagnóstico "processar o canal que captávamos": vários not_tracked eram

@@ -177,10 +177,21 @@ class InterprocTaintAnalyzer:
                 # sink dentro desta função?
                 sink = self._t._get_sink_meta(node)  # (rule_id, severity, vuln_type, cwe_id) ou None
                 if sink:
-                    for arg in list(node.args) + [kw.value for kw in node.keywords]:
+                    desc, rule, cwe, sev = _unpack_sink(sink)
+                    # (CD v3.53.0) Query PARAMETRIZADA é segura: em
+                    # `cursor.execute(sql, params)` só o 1º argumento (a query)
+                    # carrega risco de injeção — os demais são bound parameters,
+                    # que o driver escapa.  Para sinks SQL (SAST040/CWE-89)
+                    # checamos SÓ o arg 0; isso elimina o FP de flagrar
+                    # `execute('... %s', (x,))` (uso correto) como injeção.
+                    is_sql = (rule == "SAST040") or (cwe == "CWE-89")
+                    if is_sql:
+                        args_to_check = node.args[:1]
+                    else:
+                        args_to_check = list(node.args) + [kw.value for kw in node.keywords]
+                    for arg in args_to_check:
                         org = expr_taint(arg)
                         if org:
-                            desc, rule, cwe, sev = _unpack_sink(sink)
                             flows.append(InterprocFlow(
                                 source_desc=org[0], source_fn=fn.name, source_line=org[1],
                                 sink_desc=desc, sink_fn=fn.name, sink_line=getattr(node, "lineno", fn.lineno),

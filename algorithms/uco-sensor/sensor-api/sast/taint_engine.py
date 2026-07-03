@@ -207,10 +207,18 @@ _SANITIZER_METHODS: FrozenSet[Tuple[str, str]] = frozenset({
     ("secrets",           "token_bytes"),
 })
 
-# Bare function names that sanitize taint
+# Bare function names that sanitize taint.
+# (CD v3.53.0) Casts numéricos (int/float/bool/complex) são sanitizadores
+# FORTES contra injeção/path-traversal: levantam em entrada não-numérica e o
+# resultado não pode conter metacaracteres de SQL/shell/caminho.  shlex/pipes
+# `quote` neutralizam command injection.  Antes só {quote, escape} — o que
+# deixava `x = int(x)` propagar taint (FP contra código já seguro).
 _SANITIZER_FUNCTIONS: FrozenSet[str] = frozenset({
     "quote",
     "escape",
+    "escapejs",
+    "int", "float", "bool", "complex",   # casts numéricos → neutralizam injeção
+    "shlex.quote", "pipes.quote",         # quoting de shell
 })
 
 

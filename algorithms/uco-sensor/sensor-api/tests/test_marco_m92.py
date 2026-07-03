@@ -133,3 +133,66 @@ def test_T92_object_method_hop():
 def test_T92_object_method_hop_respects_sanitizer():
     # sanitizado antes do hop → não dispara (anti-FP também no caminho OO).
     assert InterprocTaintAnalyzer().analyze(_OO_HOP_SAFE) == []
+
+
+# ── precisão anti-FP (Sprint CD v3.53.0): cast numérico + query parametrizada ─
+# CONTEXTO: num controle pos/neg, a versão CORRIGIDA de um SQLi (que usa
+# `int()` para sanitizar E query parametrizada `execute('...%s', (x,))`) ainda
+# disparava como injeção — dois falsos-positivos distintos. Correções:
+#   (1) taint_engine._SANITIZER_FUNCTIONS: casts (int/float/bool/complex) são
+#       sanitizadores FORTES contra injeção;
+#   (2) taint_interproc: para sinks SQL (SAST040/CWE-89) só o arg[0] (a query
+#       string) carrega risco — a tupla de params de um prepared-statement é
+#       segura por construção.
+# O par abaixo trava as duas correções para evitar regressão futura.
+_SQLI_VULN_CONCAT = '''
+def run_query(uid):
+    cursor.execute('SELECT * FROM u WHERE id=' + uid)
+def handler():
+    x = request.GET['id']
+    run_query(x)
+'''
+_SQLI_FIXED_CAST_PARAM = '''
+def run_query(uid):
+    cursor.execute('SELECT * FROM u WHERE id=%s', (uid,))
+def handler():
+    x = request.GET['id']
+    x = int(x)
+    run_query(x)
+'''
+
+
+def test_T92_cast_int_is_sanitizer():
+    # `int(x)` neutraliza a injeção: mesmo com sink por concatenação não dispara.
+    code = '''
+def run_query(uid):
+    cursor.execute('SELECT * FROM u WHERE id=' + uid)
+def handler():
+    x = int(request.GET['id'])
+    run_query(x)
+'''
+    assert InterprocTaintAnalyzer().analyze(code) == []
+
+
+def test_T92_parameterized_query_is_safe():
+    # prepared-statement: a query é literal (arg[0]) e o dado vai só na tupla
+    # de params → não é injeção, não deve disparar.
+    code = '''
+def run_query(uid):
+    cursor.execute('SELECT * FROM u WHERE id=%s', (uid,))
+def handler():
+    x = request.GET['id']
+    run_query(x)
+'''
+    assert InterprocTaintAnalyzer().analyze(code) == []
+
+
+def test_T92_fix_control_vuln_fires_fixed_silent():
+    # Controle pos/neg completo: a versão vulnerável DISPARA (SQLi cross-fn) e a
+    # versão corrigida (cast + parametrizada) fica SILENCIOSA. É a assinatura
+    # "dispara-no-bug / para-no-fix" que o APEX Sensor precisa garantir.
+    an = InterprocTaintAnalyzer()
+    vuln = an.analyze(_SQLI_VULN_CONCAT)
+    fixed = an.analyze(_SQLI_FIXED_CAST_PARAM)
+    assert len(vuln) >= 1 and vuln[0].cwe_id == "CWE-89"
+    assert fixed == []
