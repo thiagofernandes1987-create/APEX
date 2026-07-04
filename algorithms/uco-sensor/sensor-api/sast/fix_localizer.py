@@ -332,6 +332,14 @@ class FixDiffLocalizer:
             dec = _detect_decode_before_validate(added_all, fixed_lines)
             if dec is not None:
                 res.added_guards.append(dec)
+
+        # ── M31c (DP): rejeição de path absoluto (isabs/startswith('/')) num
+        # contexto de path — estende uma checagem de traversal.  Ex.: werkzeug
+        # CVE-2024-49766 (`or filename.startswith("/")` no safe_join).
+        if not res.added_guards:
+            absr = _detect_abspath_reject(added_all, fixed_lines)
+            if absr is not None:
+                res.added_guards.append(absr)
         return res
 
 
@@ -439,8 +447,29 @@ _DECODE_RE = re.compile(
     r"\b(?:urllib\.parse\.)?unquote(?:_plus|_to_bytes)?\s*\(|\.\s*unescape\s*\(")
 # contexto de validação de PATH no arquivo corrigido (gate anti-FP).
 _PATH_VALIDATION_CTX_RE = re.compile(
-    r"validate\w*path|is_safe|_is_safe|safe_path|normpath|realpath|abspath|"
+    r"validate\w*path|is_safe|_is_safe|safe_path|safe_join|normpath|realpath|abspath|"
     r"\.\.\s*(?:in|not in)\b|['\"]\.\.['\"]")
+
+# (DP) rejeição de PATH ABSOLUTO adicionada num fix de traversal — estende uma
+# checagem de path com isabs/splitdrive/startswith('/').  Ex.: werkzeug
+# CVE-2024-49766 (`or filename.startswith("/")` no safe_join).  Gate anti-FP:
+# contexto de path no arquivo corrigido.
+_ABSPATH_REJECT_RE = re.compile(
+    r"\.\s*startswith\s*\(\s*['\"]/['\"]|(?:nt|posix|os\.)?path?\.isabs\b|"
+    r"\bisabs\s*\(|\bsplitdrive\b|\bstartswith\s*\(\s*['\"]\\\\['\"]")
+
+
+def _detect_abspath_reject(
+    added_lines: List[Tuple[int, str]], fixed_lines: List[str]
+) -> Optional["GuardHit"]:
+    """Rejeição de path absoluto adicionada em contexto de path.  CWE-22."""
+    hit = next(((ln, t) for ln, t in added_lines if _ABSPATH_REJECT_RE.search(t)), None)
+    if hit is None:
+        return None
+    if not any(_PATH_VALIDATION_CTX_RE.search(ln) for ln in fixed_lines):
+        return None
+    return GuardHit(line=hit[0], text=hit[1].strip()[:120],
+                    kind="abspath-reject", cwe_class="CWE-22")
 
 
 def _detect_decode_before_validate(

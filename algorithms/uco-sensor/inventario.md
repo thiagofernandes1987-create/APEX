@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.90.0 · **2561 testes verdes** · corpus **46/51 CVEs completos
+**Estado atual:** v3.91.0 · **2563 testes verdes** · corpus **47/52 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -246,6 +246,10 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 - Corpus 10→12. Provado: coleto 2-3 CVEs reais por rodada inline, sem os agentes.
 
 ### TETO HONESTO (não contornável sem inventar — proibido)
+> **Confirmado via M26 (DP):** postgres CVE-2021-32027 e ffmpeg CVE-2020-22015
+> ficam em 3/4 (onde/como/qual-versão OK; **quando quebrou = N/A**) porque a CNA
+> NÃO informou a versão `introduced` no CVE-record do cvelistV5. Teto de DADO
+> real (não da ferramenta) — o M26 buscou e confirmou vazio. Não inventar.
 - Alguns CVEs C e fixes-refactor NÃO têm as 4 respostas no dado público
   (ex.: sqlite logic-clamp, linux Dirty-COW race, sqlparse refactor). Registrados
   como `partial`/`metadata_only` — honestidade, não falha.
@@ -254,7 +258,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.90.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.91.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

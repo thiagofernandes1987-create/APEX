@@ -512,3 +512,21 @@ def test_T78_m31b_no_fp_unquote_without_path_ctx():
     fixed = "def f(q):\n    q = urllib.parse.unquote(q)\n    return q.upper()\n"
     r = FixDiffLocalizer().localize(vuln, fixed, filename="m.py")
     assert not any(g.kind == "decode-before-validate" for g in r.added_guards)
+
+
+# ── DP (v3.91.0): abspath-reject (rejeição de path absoluto em contexto de path) ─
+def test_T78_abspath_reject():
+    """werkzeug CVE-2024-49766: `or filename.startswith('/')` no safe_join."""
+    vuln = "def safe_join(directory, filename):\n    if os.path.isabs(filename):\n        return None\n    return join(directory, filename)\n"
+    fixed = ("def safe_join(directory, filename):\n"
+             "    if os.path.isabs(filename) or filename.startswith('/'):\n"
+             "        return None\n    return join(directory, filename)\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="security.py")
+    assert any(g.kind == "abspath-reject" for g in r.added_guards)
+
+def test_T78_abspath_reject_no_fp_without_path_ctx():
+    """Anti-FP: `startswith('/')` FORA de contexto de path não dispara."""
+    vuln = "def f(s):\n    return s\n"
+    fixed = "def f(s):\n    if s.startswith('/'):\n        s = s[1:]\n    return s\n"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="m.py")
+    assert not any(g.kind == "abspath-reject" for g in r.added_guards)

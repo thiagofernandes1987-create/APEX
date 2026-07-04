@@ -5,6 +5,20 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.91.0] — 2026-07-04 — Sprint DP: abspath-reject (M31c) + confirmação de teto de dado C via M26 — corpus 46→47
+
+- **Nova assinatura `abspath-reject` (CWE-22):** rejeição de path absoluto
+  (`startswith('/')`/`isabs`/`splitdrive`) adicionada em contexto de path — estende
+  uma checagem de traversal. Gate anti-FP (contexto de path no arquivo corrigido).
+  Destrava **werkzeug CVE-2024-49766** (`or filename.startswith("/")` no safe_join,
+  merge-commit via 1º pai) → 4/4. +2 testes TX78.
+- **Confirmação honesta via M26 (NVD):** postgres CVE-2021-32027 e ffmpeg
+  CVE-2020-22015 NÃO completam 4/4 — o M26 buscou o cvelistV5 e a versão
+  `introduced` ("quando quebrou") está VAZIA (CNA não informou). Teto de DADO
+  real, não da ferramenta. Registrado; não inventado.
+
+Corpus 46→47 completos 4/4 (47%). Regressão 2563 verdes. M10 com 19 assinaturas.
+
 ## [3.90.0] — 2026-07-04 — Sprint DO: NOVO MOTOR M30 (diff multi-arquivo) — 5º padrão de teto coberto — corpus 45→46
 
 Último dos 5 padrões de teto. `scan/corpus_expander.build_degradation_multi`:

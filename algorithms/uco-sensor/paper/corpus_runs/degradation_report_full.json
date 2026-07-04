@@ -1360,6 +1360,32 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-49766",
+      "ghsa": "GHSA-f9vj-2wh5-fj8j",
+      "package": "Werkzeug",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.0.6",
+      "fix_commit": "2767bcb10a7dd1c297d812cc5e6d11a474c1f092",
+      "where_file": "security.py",
+      "where_lines": [
+        154
+      ],
+      "how_constructs": [
+        "abspath-reject"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }
