@@ -138,8 +138,10 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     # escapou do diretório; `os.path.commonpath([...])` idem.  Baixo-FP: são APIs
     # específicas de caminho.  (CO v3.64.0 — ex.: aiohttp CVE-2024-23334, cujo fix
     # adiciona `normalized_path.relative_to(self._directory)`.)
+    # (DE) +os.path.commonprefix: idioma de contenção usado p/ barrar traversal
+    # (ex.: streamlit CVE-2022-35918 — `commonprefix([root, abspath]) != root`).
     (re.compile(r"\.\s*(?:is_relative_to|relative_to)\s*\(|"
-                r"\bos\.path\.commonpath\s*\("),
+                r"\bos\.path\.common(?:path|prefix)\s*\("),
      "path-containment-guard", "CWE-22"),
 ]
 
@@ -153,7 +155,7 @@ _SECURITY_TOKENS = re.compile(
     # (CX) idiomas de hardening XXE — passam o gate mesmo sem `==`/`<>`.
     r"resolve_entities|no_network|defusedxml|XMLParser|forbid_(?:dtd|entities)|"
     r"\bvary\b|"  # (CN) habilita cache-vary-guard (ex.: response.vary.add("Cookie"))
-    r"relative_to\s*\(|commonpath\s*\(|"  # (CO) habilita path-containment-guard
+    r"relative_to\s*\(|common(?:path|prefix)\s*\(|"  # (CO/DE) habilita path-containment-guard
     # (CE v3.54.0) chamada a helper de bounds/overflow-check em CamelCase ou
     # snake_case — habilita o gate para a assinatura `bounds-check-call` (a
     # linha `ArrayCheckBounds(...)` não tem if/return/<>, então sem este token

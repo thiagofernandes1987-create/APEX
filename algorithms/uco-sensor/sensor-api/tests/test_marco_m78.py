@@ -390,3 +390,18 @@ def test_T78_input_validation_raise_invalid_exception():
              "    self.chunked = True\n")
     r = FixDiffLocalizer().localize(vuln, fixed, filename="message.py")
     assert any(g.kind == "input-validation-raise" for g in r.added_guards)
+
+
+# ── DE (v3.80.0): path-containment via os.path.commonprefix ───────────────────
+def test_T78_path_containment_commonprefix():
+    """streamlit CVE-2022-35918: contenção de path via `os.path.commonprefix`
+    (antes só reconhecíamos commonpath/relative_to)."""
+    vuln = "def get(self, filename):\n    self.serve(filename)\n"
+    fixed = ("def get(self, filename):\n"
+             "    abspath = os.path.realpath(os.path.join(root, filename))\n"
+             "    if os.path.commonprefix([root, abspath]) != root:\n"
+             "        self.set_status(403)\n"
+             "        return\n"
+             "    self.serve(filename)\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="components.py")
+    assert any(g.kind == "path-containment-guard" for g in r.added_guards)

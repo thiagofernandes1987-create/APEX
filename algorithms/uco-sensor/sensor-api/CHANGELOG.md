@@ -5,6 +5,19 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.80.0] — 2026-07-04 — Sprint DE: werkzeug + streamlit 4/4 (corpus 29→31, 31%)
+
+- **werkzeug CVE-2024-49767 (DoS por memória em multipart) → 4/4:** enforce de
+  `max_form_memory_size` acumulado + `raise RequestEntityTooLarge` → resource-limit +
+  input-validation-raise. formparser.py, CWE-400. (3ª CVE distinta do werkzeug.)
+- **streamlit CVE-2022-35918 (path traversal em componentes) → 4/4:** `realpath` +
+  `os.path.commonprefix([root, abspath]) != root` → path-containment-guard.
+  components.py:L325, CWE-22.
+- **M10: path-containment-guard reconhece `os.path.commonprefix`** (antes só
+  commonpath/relative_to) — destravou o streamlit. +1 teste TX78.
+
+Corpus 29→31 completos 4/4 (31%). Regressão 2550 verdes.
+
 ## [3.79.0] — 2026-07-04 — Sprint DD: lote inline +4 (starlette, gunicorn, babel, langchain) — corpus 25→29
 
 Maior lote da sessão — 4/4 completos numa rodada:

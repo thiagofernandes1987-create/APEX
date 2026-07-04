@@ -898,6 +898,61 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-49767",
+      "ghsa": "GHSA-q34m-jh98-gwm2",
+      "package": "Werkzeug",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 2.0.0rc1",
+      "resolved_in": "versão 3.0.6",
+      "fix_commit": "5e78c4169b8eb66b91ead3e62d44721b9e1644ee",
+      "where_file": "formparser.py",
+      "where_lines": [
+        383,
+        388,
+        389
+      ],
+      "how_constructs": [
+        "resource-limit",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-400"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2022-35918",
+      "ghsa": "GHSA-v4hr-4jpx-56gc",
+      "package": "streamlit",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 0.63.0",
+      "resolved_in": "versão 1.11.1",
+      "fix_commit": "80d9979d5f4a00217743d607078a1d867fad8acf",
+      "where_file": "components.py",
+      "where_lines": [
+        325
+      ],
+      "how_constructs": [
+        "path-containment-guard"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }

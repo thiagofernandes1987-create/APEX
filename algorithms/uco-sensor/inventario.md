@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.79.0 · **2549 testes verdes** · corpus **29/34 CVEs completos
+**Estado atual:** v3.80.0 · **2550 testes verdes** · corpus **31/36 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -112,6 +112,11 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
   coleta sem depender dos agentes (que estavam no limite de sessão).
 - wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
   pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
+
+### Sprint DE (v3.80.0) — werkzeug + streamlit 4/4 (corpus 29→31, 31%)
+- werkzeug CVE-2024-49767 (DoS multipart) → 4/4 (max_form_memory_size + raise).
+- streamlit CVE-2022-35918 (path traversal) → 4/4 (commonprefix).
+- M10: path-containment-guard reconhece os.path.commonprefix. +1 teste.
 
 ### Sprint DD (v3.79.0) — lote inline +4 (starlette, gunicorn, babel, langchain)
 - starlette CVE-2024-47874 (DoS multipart) → 4/4 (max_part_size, resource-limit).
@@ -212,7 +217,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.79.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.80.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
