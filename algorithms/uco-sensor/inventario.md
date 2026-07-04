@@ -40,8 +40,9 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.65.0 · **2522 testes verdes** · corpus **9/14 CVEs completos
-4/4** (`paper/corpus_runs/degradation_report_full.json`).
+**Estado atual:** v3.69.0 · **2539 testes verdes** · corpus **10/15 CVEs completos
+4/4** (`paper/corpus_runs/degradation_report_full.json`) — +setuptools CVE-2022-40897
+(ReDoS) coletado inline na CT via a esteira automática.
 
 **Pipeline automático (coração do sistema — provado, deployável):**
 `CVE →WebSearch→ GHSA →M25→ advisory →WebFetch(commit)→ arquivos →M27→ arquivo
@@ -86,11 +87,14 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
       CS ✅. `stopped_firing`/`perpetuated` + contagens reais no DegradationRecord.
       Semântica honesta: N/A quando nenhum detector dispara no vuln (CVE interno
       de lib localizado por diff), sim/não quando dispara (caso vibe-coding).
-- [ ] **M7.2 TaintAnalyzer FP em query parametrizada** (não herdou o gating SQL
-      arg[0] do M17/M22/CD) — descoberto na CS ao montar o painel. Afeta o campo
-      `flows` legado do `/scan-flow`. PORTAR o gating do M17 → M7.2. ← PRÓXIMO da dívida
+- [x] **M7.2 TaintAnalyzer FP em query parametrizada** — CT ✅ (portado o gating
+      SQL arg[0] do M17→M7.2 em `_check_args_for_sink`; fixed parametrizado agora
+      dá 0 flows, era 2). Melhora o `flows` legado do `/scan-flow`. +1 teste.
+- [x] **M10 aprende ReDoS por quantificador limitado** (`\s*`→`\s{0,10}`) — CT ✅
+      (2º padrão canônico; antes só reconhecia remove-regex+string-parse). Destravou
+      setuptools CVE-2022-40897. +2 testes anti-FP.
 - [ ] **Ligar M24→M12** (fetch por tag no lote roda o before/after do M12
-      automaticamente) — pendente desde CI/CJ. Simples, alto ROI.
+      automaticamente) — pendente desde CI/CJ. Simples, alto ROI. ← PRÓXIMO da dívida
 - [ ] **M23 capturar sinais não-usados do advisory**: `published`/`modified`
       (datas — reforçam "quando" e ranqueamento VFC), `severity` (CVSS vector).
       Estão no JSON, não processamos. (Diretriz #8.)
@@ -99,6 +103,15 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 - [ ] **M11 memory-safety**: cobrir redis(widening)/sqlite(clamp) com anti-FP.
 - [ ] **M26 NVD em lote** para os C (postgres/ffmpeg 4/4; sqlite/linux teto de dado).
 - [ ] **Camada APEX real (IA/MCP)** sobre o loop MVP local (M19).
+
+### Sprint CT (v3.69.0) — coleta inline + 2 fixes de motor (resumo; detalhe no CHANGELOG)
+- M7.2 herdou o gating SQL arg[0] do M17 → some o FP de query parametrizada.
+- M10 aprendeu o 2º padrão ReDoS (quantificador limitado `\s{0,10}`).
+- **setuptools CVE-2022-40897 coletado INLINE 4/4** (WebSearch→M25→WebFetch commit
+  →par limpo commit+pai→M24). Corpus 9→10. Prova que o loop principal escala a
+  coleta sem depender dos agentes (que estavam no limite de sessão).
+- wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
+  pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
 
 ### TETO HONESTO (não contornável sem inventar — proibido)
 - Alguns CVEs C e fixes-refactor NÃO têm as 4 respostas no dado público
@@ -109,7 +122,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.68.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.69.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

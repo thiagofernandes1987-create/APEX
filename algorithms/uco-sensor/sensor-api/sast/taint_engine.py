@@ -993,6 +993,17 @@ class TaintAnalyzer:
                     cwe_id      = cwe_id,
                 ))
 
+        # (CS v3.68.0) Gating SQL arg[0] — portado do M17/M22 (Sprint CD).  Em
+        # `cursor.execute(sql, params)` só o 1º argumento (a query) carrega risco
+        # de injeção; os demais são bound parameters, que o driver escapa.  Sem
+        # isto, o M7.2 marcava `execute('... %s', (x,))` (uso CORRETO, seguro)
+        # como injeção → FP (o mesmo FP já corrigido no M17/M22).  Para sinks SQL
+        # (SAST040/CWE-89) checamos SÓ args[0]; demais sinks checam tudo.
+        is_sql = (rule_id == "SAST040") or (cwe_id == "CWE-89")
+        if is_sql:
+            if call.args:
+                _check(call.args[0])
+            return
         for arg in call.args:
             _check(arg)
         for kw in call.keywords:

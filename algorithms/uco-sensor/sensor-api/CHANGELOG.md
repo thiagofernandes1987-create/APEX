@@ -5,6 +5,29 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.69.0] — 2026-07-04 — Sprint CT: 2 fixes de motor + coleta inline (setuptools 4/4, corpus 9→10)
+
+Ataque direto ao número do corpus + limpeza de dívida, tudo com dado real e sem
+depender dos agentes de pesquisa (que estavam no limite de sessão).
+
+- **M7.2 herda o gating SQL arg[0]** (portado do M17/M22, Sprint CD): em
+  `_check_args_for_sink`, sinks SQL (SAST040/CWE-89) checam só `args[0]`. Some o
+  FP de query parametrizada no motor base (`execute('...%s',(x,))` dava 2 flows,
+  agora 0) — melhora o campo `flows` legado do `/scan-flow`. +1 teste TF.
+- **M10 aprende o 2º padrão de mitigação ReDoS:** MANTÉM o regex mas LIMITA o
+  quantificador (`\s*` → `\s{0,10}`). Antes só reconhecia remove-regex+string-parse.
+  Baixo-FP (exige regex nos dois lados + unbounded→bounded). +2 testes TX78.
+- **setuptools CVE-2022-40897 coletado INLINE, 4/4:** WebSearch (CVE→GHSA) → M25
+  resolve advisory (fixed 65.5.1, commit 43a9c9b) → WebFetch da página do commit
+  (pai 5791343) → par LIMPO commit+pai por raw → M24 compõe. QUANDO=introduced 0,
+  ONDE=package_index.py:L220, COMO=redos-mitigation, QUAL=65.5.1. Corpus 9→10
+  completos (degradation_report_full.json). Lição: comparar commit+pai (não
+  tag+tag) evita o ruído de reformat entre releases.
+- wheel CVE-2022-40898: tentado, bloqueado (reformat py2→py3 entre as tags +
+  advisory sem commit-ref) → teto de dado honesto, registrado.
+
+Regressão 2539 verdes (2536+3).
+
 ## [3.68.0] — 2026-07-04 — Sprint CS: validação "parou de disparar?" generalizada (painel de detectores)
 
 Fecha o gap do goal "compare se nas versões corrigidas o programa parou de

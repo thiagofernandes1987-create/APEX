@@ -270,6 +270,15 @@ _REDOS_REMOVED_RE = re.compile(
 _REDOS_ADDED_RE = re.compile(
     r"\.\s*(?:rpartition|rsplit|partition|split|find|rfind|index)\s*\(")
 
+# (CT v3.69.0) 2º padrão canônico de mitigação ReDoS: MANTÉM o regex mas LIMITA
+# o quantificador (`\s*` → `\s{0,10}`), cortando o backtracking catastrófico.
+# Ex.: setuptools CVE-2022-40897 (REL regex em package_index.py).  Baixo-FP:
+# exige linha regex (re.compile / raw-string) nos DOIS lados, com quantificador
+# ILIMITADO no removido e LIMITADO `{m,n}` no adicionado.
+_REGEXISH_RE = re.compile(r"re\.compile\s*\(|r(?:'''|\"\"\"|['\"]).*\\")
+_BOUNDED_QUANT_RE = re.compile(r"\{\d*,\s*\d+\}")
+_UNBOUNDED_QUANT_RE = re.compile(r"(?:\\[swdSWD]|\.|\]|\))[*+]")
+
 
 def _detect_redos_mitigation(
     removed_lines: List[str], added_lines: List[Tuple[int, str]]
@@ -280,11 +289,23 @@ def _detect_redos_mitigation(
     sintético (kind='redos-mitigation', CWE-1333/400) ancorado na 1ª linha de
     string-parse adicionada, ou None.  Baixo-FP: exige os DOIS sinais juntos.
     """
+    # Padrão A — remove regex, adiciona parsing por string (ex.: urllib3).
     removed_regex = any(_REDOS_REMOVED_RE.search(ln) for ln in removed_lines)
-    if not removed_regex:
-        return None
-    for lineno, text in added_lines:
-        if _REDOS_ADDED_RE.search(text):
-            return GuardHit(line=lineno, text=text.strip()[:120],
-                            kind="redos-mitigation", cwe_class="CWE-1333/400")
+    if removed_regex:
+        for lineno, text in added_lines:
+            if _REDOS_ADDED_RE.search(text):
+                return GuardHit(line=lineno, text=text.strip()[:120],
+                                kind="redos-mitigation", cwe_class="CWE-1333/400")
+
+    # Padrão B — mantém o regex mas LIMITA o quantificador (ex.: setuptools
+    # CVE-2022-40897: `\s*` → `\s{0,10}`).  Exige regex ilimitado no removido e
+    # regex com quantificador limitado `{m,n}` no adicionado (baixo-FP).
+    removed_unbounded = any(
+        _REGEXISH_RE.search(ln) and _UNBOUNDED_QUANT_RE.search(ln)
+        for ln in removed_lines)
+    if removed_unbounded:
+        for lineno, text in added_lines:
+            if _REGEXISH_RE.search(text) and _BOUNDED_QUANT_RE.search(text):
+                return GuardHit(line=lineno, text=text.strip()[:120],
+                                kind="redos-mitigation", cwe_class="CWE-1333/400")
     return None

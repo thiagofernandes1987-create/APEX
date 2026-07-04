@@ -723,3 +723,19 @@ class TestTF30_FullPipelineAndAPI:
     def test_metrics_flow_unknown_module_404(self):
         code, body = self.metrics_flow("__tf30_no_such_module__")
         assert code == 404
+
+
+# ── Sprint CS (v3.68.0): M7.2 herda o gating SQL arg[0] do M17/M22 (anti-FP) ──
+def test_TF_m7_2_parameterized_query_no_fp():
+    """O M7.2 base deixou de marcar query parametrizada como injeção: em
+    `execute(sql, (x,))` só a query (arg[0]) carrega risco; o dado na tupla de
+    params é seguro. Portado do M17/M22 (Sprint CD). Fecha o FP achado na CS."""
+    from sast.taint_engine import TaintAnalyzer
+    vuln = ("def v(request):\n"
+            "    q = request.GET['id']\n"
+            "    cursor.execute('SELECT * FROM u WHERE id=' + q)\n")
+    fixed = ("def v(request):\n"
+             "    q = request.GET['id']\n"
+             "    cursor.execute('SELECT * FROM u WHERE id=%s', (q,))\n")
+    assert len(TaintAnalyzer().analyze(vuln).flows) >= 1     # concatenado dispara
+    assert TaintAnalyzer().analyze(fixed).flows == []        # parametrizado não

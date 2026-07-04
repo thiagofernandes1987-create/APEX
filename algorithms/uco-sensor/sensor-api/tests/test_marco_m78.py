@@ -253,3 +253,21 @@ def test_T78_relocation_still_filtered_by_count():
     r = FixDiffLocalizer().localize(vuln, fixed, filename="resolve.c")
     # o clamp relocado não deve aparecer como guard adicionado
     assert all(clamp not in g.text for g in r.added_guards)
+
+
+# ── CT (v3.69.0): ReDoS por quantificador LIMITADO (setuptools CVE-2022-40897) ─
+def test_T78_redos_bounded_quantifier():
+    """2º padrão canônico de mitigação ReDoS: mantém o regex mas limita o
+    quantificador (`\\s*` → `\\s{0,10}`). Dado REAL do fix do setuptools."""
+    vuln = ('REL = re.compile(r"""<([^>]*\\srel\\s*=\\s*[\'"]?([^\'">]+)[^>]*)>""", re.I)\n')
+    fixed = ('REL = re.compile(r"""<([^>]*\\srel\\s{0,10}=\\s{0,10}[\'"]?([^\'" >]+)[^>]*)>""", re.I)\n')
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="package_index.py")
+    assert any(g.kind == "redos-mitigation" for g in r.added_guards)
+
+
+def test_T78_redos_bounded_no_fp_on_plain_regex():
+    """Anti-FP: adicionar um regex SEM limitar quantificador não é mitigação ReDoS."""
+    vuln = "x = 1\n"
+    fixed = "x = 1\nPAT = re.compile(r'\\d+')\n"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="m.py")
+    assert not any(g.kind == "redos-mitigation" for g in r.added_guards)

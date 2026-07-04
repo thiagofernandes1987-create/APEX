@@ -350,6 +350,32 @@
       "perpetuated": true,
       "status": "partial",
       "answers_all_four": false
+    },
+    {
+      "cve": "CVE-2022-40897",
+      "ghsa": "GHSA-r9hx-vwmv-q579",
+      "package": "setuptools",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 65.5.1",
+      "fix_commit": "43a9c9bfa6aa626ec2a22540bea28d2ca77964be",
+      "where_file": "package_index.py",
+      "where_lines": [
+        220
+      ],
+      "how_constructs": [
+        "redos-mitigation"
+      ],
+      "cwe_ids": [
+        "CWE-1333"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }
