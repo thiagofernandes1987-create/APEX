@@ -104,6 +104,12 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     (re.compile(r"\b(max_\w*(parts|size|count|length|len|depth|iter\w*|form)|"
                 r"RequestEntityTooLarge|LimitExceeded|too_large|recursion_limit)\b", re.I),
      "resource-limit", "CWE-400"),
+    # guard de cache-poisoning: adicionar `Vary: Cookie` (ou vary.add("Cookie"))
+    # sinaliza ao cache que a resposta depende do cookie — impede que uma resposta
+    # com sessão vaze para outro usuário.  Baixo-FP: exige `vary` + (`.add(` ou
+    # `cookie`).  (CN v3.63.0 — ex.: Flask CVE-2023-30861, CWE-525/539.)
+    (re.compile(r"\bvary\b[^\n]*(?:\.add\s*\(|cookie)", re.I),
+     "cache-vary-guard", "CWE-525/539"),
 ]
 
 # Conjunto de tokens que marca uma linha como "candidata a guard" (evita
@@ -113,6 +119,7 @@ _SECURITY_TOKENS = re.compile(
     r"[<>]=?|[!=]=|&&|\|\||\bNULL\b|\bif\b|\belif\b|\bwhile\b|\bassert\b|"
     r"\breturn\b|\band\b|\bor\b|\buint\d+_t\b|\bsize_t\b|\bunsafe\b|"
     r"\bescape\w*\(|\braise\b|\bquote\w*\(|htmlspecialchars|encodeURI|max_\w+|"
+    r"\bvary\b|"  # (CN) habilita cache-vary-guard (ex.: response.vary.add("Cookie"))
     # (CE v3.54.0) chamada a helper de bounds/overflow-check em CamelCase ou
     # snake_case — habilita o gate para a assinatura `bounds-check-call` (a
     # linha `ArrayCheckBounds(...)` não tem if/return/<>, então sem este token

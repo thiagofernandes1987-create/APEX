@@ -1,8 +1,8 @@
 {
-  "generated_by": "M25/M26 harvest + M24 compose (dado real, sem fabricacao)",
-  "channels": "advisory-database (PyPI) + cvelistV5 (C) via raw; file pairs by tag via raw",
-  "total": 7,
-  "complete_4of4": 4,
+  "generated_by": "M25/M26 harvest + M27 auto-file + M24 compose (dado real, sem fabricacao)",
+  "channels": "advisory-database + cvelistV5 via raw; commit files via WebFetch; pairs by tag via raw",
+  "total": 8,
+  "complete_4of4": 5,
   "partial": 3,
   "records": [
     {
@@ -104,6 +104,32 @@
       ],
       "cwe_ids": [
         "CWE-400"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-30861",
+      "ghsa": "GHSA-m2qf-hxjv-5gpq",
+      "package": "Flask",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 2.3.0",
+      "resolved_in": "versão 2.3.2",
+      "fix_commit": "70f906c51ce49c485f1d355703e9cc3386b1cc2b",
+      "where_file": "sessions.py",
+      "where_lines": [
+        334,
+        348,
+        367
+      ],
+      "how_constructs": [
+        "cache-vary-guard"
+      ],
+      "cwe_ids": [
+        "CWE-539"
       ],
       "localized": true,
       "stopped_firing": null,

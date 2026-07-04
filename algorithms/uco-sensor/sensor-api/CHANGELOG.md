@@ -5,6 +5,30 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.63.0] — 2026-07-03 — Sprint CN: M27 automatiza identificação do arquivo + Flask 4/4 automático
+
+Destrava o ÚLTIMO gargalo da automação do corpus (identificar o arquivo alterado
+sem a API de commits) e prova a esteira 100% automática num CVE novo.
+
+- **Descoberta de canal:** o WebFetch do harness LÊ a página de um commit no
+  GitHub e lista os arquivos alterados (a API `.patch` está 403, mas a página
+  não). Isso automatiza o passo que faltava.
+- **Novo `scan/fix_file_locator.py` (M27):** `pick_source_file` (escolhe o
+  arquivo-fonte, descarta teste/doc), `prior_version` (deriva a tag anterior:
+  2.3.2→2.3.1, 2.31.0→2.30.0), `tag_candidates` (com/sem 'v'), `build_pair`
+  (monta before/after por tag; fetchers injetáveis → testável offline).
+- **Flask CVE-2023-30861 processado 100% automático → 4/4:** só forneci o GHSA
+  (via WebSearch); M27+WebFetch acharam o arquivo (sessions.py), a versão
+  anterior (2.3.1), o par; M25/M24 compuseram. quando=2.3.0, versão=2.3.2,
+  onde=sessions.py, como=cache-vary-guard.
+- **Nova assinatura M10 `cache-vary-guard`** (CWE-525/539): adicionar
+  `Vary: Cookie` (anti cache-poisoning). Baixo-FP (exige `vary`+`.add(`/`cookie`);
+  zero FP nos 5 pares não-Flask).
+- Relatório `degradation_report_full.json`: **8 registros = 5 completos 4/4**
+  (jinja, requests, werkzeug, urllib3, Flask) + 3 parciais.
+
++11 testes (TX99 M27 + 2 TX78 cache-vary). Regressão 2520 verdes.
+
 ## [3.62.0] — 2026-07-03 — Sprint CM: corpus real 7 CVEs + honestidade em fix-refactor (sqlparse)
 
 Consolida o corpus de degradação com dado real verificado e demonstra a

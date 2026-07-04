@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.62.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.63.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
@@ -42,7 +42,8 @@ ordem, em toda sessão futura:
 > M23 AdvisoryHarvester (advisory OSV → registro de degradação, escala do corpus) ·
 > M24 CorpusExpander (funde M23+M10+M11 → as 4 perguntas num DegradationRecord) ·
 > M25 AdvisoryResolver (auto-resolve GHSA→ano/mês; habilita o batch sem seed manual) ·
-> M26 NvdHarvester (cvelistV5 via raw → registro de degradação para C sem GHSA).
+> M26 NvdHarvester (cvelistV5 via raw → registro de degradação para C sem GHSA) ·
+> M27 FixFileLocator (auto-identifica arquivo do commit + monta par por tag).
 >
 > **Sprint CD (v3.53.0)** — M17 precisão anti-FP: cast numérico
 > (int/float/bool/complex) reconhecido como sanitizador FORTE e sinks SQL
@@ -2493,18 +2494,38 @@ parciais). Release de corpus/dado, sem mudança de código. 2509 verdes.
 > engenharia — são limites de DADO ou de forma-do-fix. Escalar o número =
 > alimentar mais CVEs PyPI de fix-limpo (mecânico, canal desbloqueado).
 
+## Sprint CN — M27 automatiza identificação do arquivo + Flask 4/4 automático (v3.63.0)
+
+**Gargalo #2 RESOLVIDO:** o WebFetch lê a página do commit no GitHub e lista os
+arquivos alterados (a API `.patch` é 403, a página não). `scan/fix_file_locator.py`
+(M27): `pick_source_file` + `prior_version` + `build_pair` (fetchers injetáveis).
+Flask CVE-2023-30861 processado 100% AUTOMÁTICO (só dei o GHSA) → 4/4:
+quando=2.3.0, versão=2.3.2, onde=sessions.py, como=cache-vary-guard. Nova
+assinatura M10 `cache-vary-guard` (CWE-525/539), zero FP. Relatório: 8 registros,
+**5 completos 4/4**. +11 testes. 2520 verdes.
+
+### PIPELINE AUTOMÁTICO (deployável, provado)
+    CVE --WebSearch--> GHSA --M25--> advisory(versão fixed, commit)
+        --WebFetch(commit)--> arquivos --M27.pick--> arquivo-fonte
+        --M27.prior_version+raw--> par(vuln,fixed) --M24--> 4 respostas
+Só o 1º passo (CVE→GHSA) usa WebSearch; o resto é determinístico.
+
 ### DIAGNÓSTICO FRANCO DO 100/100 (para o dono do projeto)
-O gap para 100/100 tem TRÊS naturezas, todas identificadas com dado real:
-1. **Volume** (a maior parte): faltam ~93 CVEs coletados. Mecânico — cada um custa
-   1 WebSearch (CVE→GHSA) + verificação por tag. Não bloqueado, só trabalhoso.
-2. **Identificação do arquivo alterado em escala**: hoje eu forneço o arquivo por
-   CVE (conhecimento/WebSearch). Automatizar 100% = problema de pesquisa
-   (VFCFinder) — os agentes de pesquisa (retomáveis) estavam nisso.
-3. **Qualidade do dado público**: alguns CVEs (C, fixes-refactor) simplesmente
-   NÃO têm as 4 respostas no dado público. Teto real, não contornável sem inventar
-   (o que o dono proibiu explicitamente: "dados reais, sem inventar dados").
-> A esteira (M23→M26 + M10/M11/M17/M22) responde 4/4 sempre que o dado existe e o
-> fix é localizável. Isso É a engenharia top pedida; o resto é coleta e dado.
+Restam DUAS naturezas de gap (a #2 foi resolvida na CN):
+1. **Volume** (a maior parte): faltam ~92 CVEs coletados. Agora quase todo o
+   trabalho por CVE é AUTOMÁTICO (1 WebSearch + a esteira). Escala é rodar o
+   pipeline repetidamente — mecânico, não bloqueado.
+2. **Qualidade do dado público**: alguns CVEs (C, fixes-refactor) NÃO têm as 4
+   respostas no dado público. Teto real, não contornável sem inventar (proibido).
+> [RESOLVIDO na CN] ~~Identificação do arquivo alterado em escala~~ → M27+WebFetch.
+> A esteira responde 4/4 sempre que o dado existe e o fix é localizável.
+
+### CHECKLIST
+- [x] M27 auto-identifica arquivo do commit (WebFetch) + monta par por tag
+- [x] Flask 4/4 processado 100% automático (só GHSA fornecido)
+- [x] Assinatura cache-vary-guard (Flask) — zero FP
+- [ ] Rodar o pipeline automático em lote sobre N GHSA (escala de volume)
+- [ ] Ampliar assinaturas M10 conforme novos fixes aparecerem (sem FP)
 
 ## Sprint CJ — M25 Advisory Resolver + BATCH REAL (v3.59.0)
 

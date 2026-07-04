@@ -195,6 +195,25 @@ def test_T78_redos_mitigation_regex_to_string():
     assert any(g.kind == "redos-mitigation" for g in r.added_guards)
 
 
+def test_T78_cache_vary_guard():
+    """CN v3.63.0: fix que adiciona `Vary: Cookie` (anti cache-poisoning) →
+    kind 'cache-vary-guard' (CWE-525/539). Ex.: Flask CVE-2023-30861."""
+    vuln = "def save(self, app, session, response):\n    response.set_cookie('s', 'x')\n"
+    fixed = ("def save(self, app, session, response):\n"
+             "    response.vary.add('Cookie')\n"
+             "    response.set_cookie('s', 'x')\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="sessions.py")
+    assert any(g.kind == "cache-vary-guard" for g in r.added_guards)
+
+
+def test_T78_cache_vary_no_fp_plain_cookie():
+    """Anti-FP: mexer em cookie SEM `vary` não vira cache-vary-guard."""
+    vuln = "def f(r):\n    return r\n"
+    fixed = "def f(r):\n    r.set_cookie('a', 'b')\n    return r\n"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="x.py")
+    assert not any(g.kind == "cache-vary-guard" for g in r.added_guards)
+
+
 def test_T78_redos_no_fp_without_regex_removal():
     """Anti-FP: adicionar um `.split()` SEM remover regex não vira redos-mitigation."""
     vuln = "def f(s):\n    return s\n"
