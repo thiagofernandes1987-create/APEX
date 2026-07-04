@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.81.0 · **2551 testes verdes** · corpus **33/38 CVEs completos
+**Estado atual:** v3.82.0 · **2551 testes verdes** · corpus **35/40 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -112,6 +112,12 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
   coleta sem depender dos agentes (que estavam no limite de sessão).
 - wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
   pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
+
+### Sprint DG (v3.82.0) — gradio + Django 4/4 (corpus 33→35, 35%)
+- gradio CVE-2024-1728 (LFI) → 4/4 (is_in_or_equal + raise). Django CVE-2023-31047
+  (upload bypass) → 4/4 (allow_multiple_selected + raise).
+- Teto: mlflow (só unquote — FP alto p/ assinatura); aiohttp (commit ambíguo).
+- Padrão do teto emergindo: race/merge/default-flip/decode-only/raise-indireto.
 
 ### Sprint DF (v3.81.0) — Pillow + gradio 4/4 (corpus 31→33, 33%)
 - Pillow CVE-2023-44271 (DoS ImageFont) → 4/4 (MAX_STRING_LENGTH + raise).
@@ -223,7 +229,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.81.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.82.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

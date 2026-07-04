@@ -1009,6 +1009,62 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "",
+      "ghsa": "GHSA-3f95-mxq2-2f63",
+      "package": "gradio",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 4.19.2",
+      "fix_commit": "16fbe9cd0cffa9f2a824a0165beb43446114eec7",
+      "where_file": "processing_utils.py",
+      "where_lines": [
+        275
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-31047",
+      "ghsa": "GHSA-r3xc-prgr-mg9p",
+      "package": "Django",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 3.2a1",
+      "resolved_in": "versão 3.2.19",
+      "fix_commit": "21b1b1fc03e5f9e9f8c977ee6e35618dd3b353dd",
+      "where_file": "widgets.py",
+      "where_lines": [
+        424,
+        427,
+        431,
+        445
+      ],
+      "how_constructs": [
+        "security-conditional-guard",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-20"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }

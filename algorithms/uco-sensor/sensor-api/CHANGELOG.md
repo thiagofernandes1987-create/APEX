@@ -5,6 +5,20 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.82.0] — 2026-07-04 — Sprint DG: gradio + Django 4/4 (corpus 33→35, 35%)
+
+- **gradio CVE-2024-1728 (LFI UploadButton) → 4/4:** `if not is_in_or_equal(path,
+  upload_folder): raise ValueError` → input-validation-raise. processing_utils.py:L275, CWE-22.
+- **Django CVE-2023-31047 (bypass de validação em upload múltiplo) → 4/4:**
+  `allow_multiple_selected` + getlist + `raise ValueError` (multiple sem opt-in)
+  → security-conditional-guard + input-validation-raise. widgets.py:L424+, CWE-20.
+- Pulados (teto honesto): mlflow CVE-2023-6909 (fix é só `urllib.parse.unquote(path)`
+  antes de validação já existente — adicionar `unquote` como assinatura teria
+  FP alto; não vale); aiohttp CVE-2024-30251 (commit resolvido é relocação de
+  validação, não o loop-fix; ambíguo). Sem fix de motor (assinaturas já cobriam).
+
+Corpus 33→35 completos 4/4 (35%). Regressão 2551 verdes.
+
 ## [3.81.0] — 2026-07-04 — Sprint DF: Pillow + gradio 4/4 (corpus 31→33, 33%)
 
 - **Pillow CVE-2023-44271 (DoS ImageFont) → 4/4:** `MAX_STRING_LENGTH` +
