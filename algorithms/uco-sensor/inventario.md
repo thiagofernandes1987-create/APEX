@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.57.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.58.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
@@ -39,7 +39,8 @@ ordem, em toda sessão futura:
 > M15 GenericCFG signals · M17 InterprocTaint · M18 FixSuggester ·
 > M19 ApexLoop (Sensor→Corretor→Revalida) · M20 taint_lite · M21 weak_point ·
 > M22 CFGTaintAnalyzer (taint fluxo-sensível sobre a CFG do UCO V4) ·
-> M23 AdvisoryHarvester (advisory OSV → registro de degradação, escala do corpus).
+> M23 AdvisoryHarvester (advisory OSV → registro de degradação, escala do corpus) ·
+> M24 CorpusExpander (funde M23+M10+M11 → as 4 perguntas num DegradationRecord).
 >
 > **Sprint CD (v3.53.0)** — M17 precisão anti-FP: cast numérico
 > (int/float/bool/complex) reconhecido como sanitizador FORTE e sinks SQL
@@ -2410,15 +2411,44 @@ funciona.)
 - [x] M23 parseia advisory OSV → registro de degradação (when/which-version)
 - [x] Canal advisory-database via raw provado (2 casos reais)
 - [x] Método fundamentado na literatura (CVEfixes/VFCFinder/D2A)
-- [ ] M24 — resolver CVE→GHSA→(ano/mês) para montar a URL raw automaticamente
-      (o advisory-database indexa por GHSA+data; precisamos do índice ou de
-      WebSearch por CVE→GHSA)
-- [ ] Harvester em lote: N GHSA → N AdvisoryRecords → M12 before/after por TAG
-      (introduced→fixed) → relatório de degradação completo (4 perguntas)
-- [ ] Ligar M23 ao M12 CorpusValidator (hoje o par de versões é manual)
+- [x] M24 CorpusExpander funde as 4 perguntas — provado end-to-end no jinja (real) — CI ✅
+- [x] Runner em lote `expand_batch(seeds, fetch_pair)` (fetcher injetável) — CI ✅
+- [ ] M25 — resolver CVE→GHSA→(ano/mês) automático p/ montar a URL raw (via
+      WebSearch CVE→GHSA + campo `published` do advisory p/ ano/mês)
+- [ ] M26 — harvester NVD para projetos C SEM GHSA (postgres/ffmpeg/sqlite/redis/
+      php-src/linux): versões afetadas vêm do NVD/vendor, não do GHSA
+- [ ] Ligar M24 ao M12 CorpusValidator (fetch por tag automático no lote)
 - [ ] Detector de RACE/TOCTOU (linux Dirty-COW) — classe ainda não coberta
 - [ ] Ampliar linguagens não-Python no taint (C/Go/Java) via GenericCFG
 - [ ] Camada APEX real (IA/MCP) sobre o loop MVP (M19)
+
+## Sprint CI — M24 Corpus Expander: as 4 perguntas num registro (v3.58.0)
+
+**Entrega:** `scan/corpus_expander.py` (M24). `build_degradation(advisory,
+vuln_src, fixed_src, filename)` funde M23 (quando/qual-versão) + M10 (onde/como)
++ M11 (parou-de-disparar/perpetuou) num `DegradationRecord`. `expand_batch` roda
+em lote com `fetch_pair` injetável (offline-testável). `narrative()` = as 4
+respostas em texto auditável.
+
+**Prova end-to-end (dado 100% real):** jinja CVE-2024-22195 → advisory real
+(GHSA-h5c8-rqwp-cp95) + par `filters.py` 3.1.2→3.1.3 por tag →
+  QUANDO=introduced=0 · QUAL-VERSÃO=3.1.3 (commit 716795349a41) ·
+  ONDE=filters.py:L291,293 · COMO=input-validation-raise+output-encoding →
+  status="complete", answers_all_four=True.
+
+**Achado arquitetural (honestidade, para não reintroduzir expectativa errada):**
+o GHSA cobre ecossistemas EMPACOTADOS (PyPI/npm/Go/…) — o alvo de código gerado
+por IA. Projetos C de servidor NÃO têm GHSA → precisam de harvester NVD (M26).
+Por isso os 2 not_tracked residuais do corpus (sqlite/linux) e os C tracked não
+escalam pelo canal GHSA; escalam pelo NVD.
+
+### CHECKLIST
+- [x] M24 funde M23+M10+M11 nas 4 perguntas (DegradationRecord)
+- [x] Prova real end-to-end (jinja) status=complete
+- [x] `expand_batch` com fetcher injetável (lote, offline-testável)
+- [x] Achado GHSA-só-empacotado registrado (evita expectativa errada p/ C)
+- [ ] M25 auto-resolver CVE→GHSA→data · M26 harvester NVD para C
+- [ ] Ligar M24→M12 (fetch por tag no lote) p/ rodar dezenas de CVEs PyPI/npm reais
 
 > NOTA de sessão: a rodada de 3 agentes de pesquisa (CVEfixes/VFCFinder/D2A)
 > encerrou no limite de sessão (reseta 1h UTC) após capturar o núcleo do método

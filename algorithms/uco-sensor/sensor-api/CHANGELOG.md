@@ -5,6 +5,29 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.58.0] — 2026-07-03 — Sprint CI: M24 Corpus Expander — as 4 perguntas num registro (dado real)
+
+Fecha o compositor que faltava: `scan/corpus_expander.py` (M24) funde M23
+(quando/qual-versão) + M10/M11 (onde/como) num único `DegradationRecord` que
+responde as QUATRO perguntas do objetivo por CVE.
+
+- **Prova end-to-end com dado 100% real** (jinja CVE-2024-22195): advisory real
+  (GHSA-h5c8-rqwp-cp95) + par `filters.py` 3.1.2→3.1.3 buscado por TAG via raw →
+    • QUANDO quebrou: desde a introdução (introduced=0)
+    • EM QUAL versão resolveu: 3.1.3 (commit 716795349a41)
+    • ONDE: filters.py:L291,293
+    • COMO: input-validation-raise + output-encoding
+  → status="complete", answers_all_four=True.
+- `expand_batch(seeds, fetch_pair)` — runner em lote com fetcher injetável
+  (testável offline, desacoplado da rede). `narrative()` emite as 4 respostas.
+- **Achado arquitetural honesto:** o GitHub Advisory Database (GHSA) cobre
+  ecossistemas EMPACOTADOS (PyPI/npm/Go/…) — o alvo comercial de código gerado
+  por IA. Projetos C de servidor (postgres/ffmpeg/sqlite/redis/php-src/linux)
+  NÃO têm GHSA; suas versões vêm do NVD/vendor → harvester NVD é trabalho futuro
+  (M25). Registrado no inventário para não reintroduzir a expectativa errada.
+
++7 testes TX96. Regressão 2495 verdes.
+
 ## [3.57.0] — 2026-07-03 — Sprint CH: M23 Advisory Harvester + método de escala do corpus (APEX scientific)
 
 Ataca a barreira do corpus (rumo a 100/100) pela raiz: o gargalo nunca foi o
