@@ -5,6 +5,26 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.65.0] — 2026-07-03 — Sprint CP: lote automático +4 (PyJWT/tornado/Django 4/4) → 9/14 completos
+
+Rodada de escala pela esteira automática: 4 CVEs novos processados só com o GHSA
+(WebSearch→advisory→WebFetch commit→arquivo→par→compõe).
+
+- **+3 completos 4/4 automáticos:** PyJWT CVE-2022-29217 (algorithm-confusion,
+  jwt/algorithms.py), tornado CVE-2023-28370 (open-redirect, web.py), Django
+  CVE-2022-28346 (SQLi em QuerySet.annotate, query.py) — todos localizam
+  input-validation-raise.
+- **+1 parcial honesto:** python-multipart CVE-2024-53981 (DoS por byte-a-byte;
+  o fix muda a máquina de estados, não adiciona guard localizável).
+- **M27 melhora `pick_source_file`:** deprioriza `__init__.py` (só reexporta) —
+  escolhe o arquivo com o guard real em fixes multi-arquivo (ex.: PyJWT).
+- Relatório `degradation_report_full.json`: **14 registros = 9 completos 4/4**
+  (jinja, requests, werkzeug, urllib3, Flask, aiohttp, PyJWT, tornado, Django)
+  + 5 parciais.
+
+Regressão 2522 verdes (sem novo teste unitário; escala de dado real + melhoria
+de heurística coberta pelos testes M99 existentes).
+
 ## [3.64.0] — 2026-07-03 — Sprint CO: escala automática +2 (aiohttp, lxml) → 6/10 completos
 
 Roda a esteira automática em lote e amplia cobertura de linguagem-de-fix.

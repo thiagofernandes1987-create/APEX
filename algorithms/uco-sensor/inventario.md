@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.64.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.65.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
@@ -2542,7 +2542,11 @@ Restam DUAS naturezas de gap (a #2 foi resolvida na CN):
 | CI | 2 | 2 | jinja, requests |
 | CL | 4 | 6 | +werkzeug, +urllib3 |
 | CN | 5 | 8 | +Flask (automático) |
-| CO | **6** | **10** | +aiohttp (automático), +lxml/sqlparse (parciais) |
+| CO | 6 | 10 | +aiohttp (automático), +lxml/sqlparse (parciais) |
+| CP | **9** | **14** | +PyJWT, +tornado, +Django (todos 4/4 automáticos); +python-multipart (parcial) |
+> 9 CVEs completos 4/4 cobrindo 5 classes: XSS/SSTI, proxy-leak, DoS, ReDoS,
+> cache-poisoning, path-traversal, algorithm-confusion, open-redirect, SQLi.
+> Ritmo: ~3-4 CVEs completos por rodada, cada um ~1 WebSearch + 1 WebFetch.
 > Assinaturas M10 acumuladas: input-validation-raise, output-encoding,
 > security-conditional-guard, resource-limit, overflow-guard, bounds-check-call,
 > early-return-guard, redos-mitigation, cache-vary-guard, path-containment-guard.

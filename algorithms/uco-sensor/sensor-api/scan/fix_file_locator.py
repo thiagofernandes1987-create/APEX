@@ -56,9 +56,11 @@ def pick_source_file(changed_files: List[str]) -> Optional[str]:
     pool = primary or [f for f in cands if f.lower().endswith(_CODE_EXTS)]
     if not pool:
         return None
-    # menor profundidade (arquivos de topo do pacote costumam ser o alvo), depois
-    # ordem alfabética para determinismo.
-    pool.sort(key=lambda f: (f.count("/"), f))
+    # ordena por: (1) NÃO ser __init__.py (que costuma só reexportar, raramente
+    # carrega o guard do fix), (2) menor profundidade de path, (3) alfabético
+    # (determinismo).  Se só houver __init__.py, ele ainda é escolhido.
+    pool.sort(key=lambda f: (f.rsplit("/", 1)[-1] == "__init__.py",
+                             f.count("/"), f))
     return pool[0]
 
 
