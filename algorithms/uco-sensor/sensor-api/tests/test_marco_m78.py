@@ -271,3 +271,17 @@ def test_T78_redos_bounded_no_fp_on_plain_regex():
     fixed = "x = 1\nPAT = re.compile(r'\\d+')\n"
     r = FixDiffLocalizer().localize(vuln, fixed, filename="m.py")
     assert not any(g.kind == "redos-mitigation" for g in r.added_guards)
+
+
+def test_T78_redos_regex_simplification():
+    """3º padrão ReDoS: SIMPLIFICA o regex removendo o segmento catastrófico
+    (`\\s+.*\\s+`), mantendo uma chamada de regex. Dado REAL do Pygments
+    CVE-2022-40896 (templates.py)."""
+    vuln = ("        if re.search(\n"
+            "            r'\\{%-?\\s*macro \\w+\\(.*\\)\\s*-?%\\}\\s+.*\\s+\\{%-?\\s*endmacro\\s*-?%\\}',\n"
+            "            text, re.S):\n"
+            "            return 0.1\n")
+    fixed = ("        if re.search(r'\\{%-?\\s*macro \\w+\\(.*\\)\\s*-?%\\}', text):\n"
+             "            return 0.1\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="templates.py")
+    assert any(g.kind == "redos-mitigation" for g in r.added_guards)

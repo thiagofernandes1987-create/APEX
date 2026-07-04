@@ -376,6 +376,63 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2022-24439",
+      "ghsa": "GHSA-hcpj-qp55-gfph",
+      "package": "GitPython",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.1.30",
+      "fix_commit": "2625ed9fc074091c531c27ffcba7902771130261",
+      "where_file": "base.py",
+      "where_lines": [
+        1255,
+        1263,
+        1297,
+        1304
+      ],
+      "how_constructs": [
+        "unsafe-contract",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-20",
+        "CWE-94"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2022-40896",
+      "ghsa": "GHSA-mrwq-x4v8-fh7p",
+      "package": "Pygments",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 2.15.0",
+      "fix_commit": "97eb3d5ec7c1b3ea4fcf9dee30a2309cf92bd194",
+      "where_file": "templates.py",
+      "where_lines": [
+        2294
+      ],
+      "how_constructs": [
+        "redos-mitigation"
+      ],
+      "cwe_ids": [
+        "CWE-434"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }

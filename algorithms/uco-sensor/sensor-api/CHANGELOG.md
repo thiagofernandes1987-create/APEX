@@ -5,6 +5,24 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.70.0] — 2026-07-04 — Sprint CU: lote inline +2 (GitPython, Pygments) + 3º padrão ReDoS (corpus 10→12)
+
+Continuação da coleta inline (o loop principal escala sem os agentes de pesquisa):
+
+- **GitPython CVE-2022-24439 (RCE via `ext::` URL) → 4/4:** WebSearch→M25 (fixed
+  3.1.30, commit 2625ed9)→WebFetch commit (pai 787359d, arquivo git/repo/base.py)
+  →par limpo→M24. COMO=input-validation-raise (`raise UnsafeOptionsUsedError`),
+  ONDE=base.py:L1255+, CWE-20/94.
+- **Pygments CVE-2022-40896 (ReDoS) → 4/4:** templates.py:L2294, fixed 2.15.0.
+- **M10 aprende o 3º padrão de mitigação ReDoS:** SIMPLIFICA o regex removendo o
+  segmento de backtracking catastrófico (`\s+.*\s+` adjacente a `.*`), sem
+  adicionar bound nem string-parse (o caso do Pygments). Baixo-FP: o marcador
+  catastrófico é específico + o fix mantém uma chamada de regex. +1 teste TX78.
+- **py CVE-2022-42969: advisory RETIRADO** (não é vuln reproduzível) → NÃO
+  adicionado ao corpus (honestidade — não inflar o número com CVE inválido).
+
+Corpus 10→12 completos 4/4 (degradation_report_full.json). Regressão 2540 verdes.
+
 ## [3.69.0] — 2026-07-04 — Sprint CT: 2 fixes de motor + coleta inline (setuptools 4/4, corpus 9→10)
 
 Ataque direto ao número do corpus + limpeza de dívida, tudo com dado real e sem

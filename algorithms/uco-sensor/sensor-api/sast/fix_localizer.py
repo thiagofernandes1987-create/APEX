@@ -279,6 +279,15 @@ _REGEXISH_RE = re.compile(r"re\.compile\s*\(|r(?:'''|\"\"\"|['\"]).*\\")
 _BOUNDED_QUANT_RE = re.compile(r"\{\d*,\s*\d+\}")
 _UNBOUNDED_QUANT_RE = re.compile(r"(?:\\[swdSWD]|\.|\]|\))[*+]")
 
+# (CT v3.69.0) 3º padrão canônico de mitigação ReDoS: SIMPLIFICA o regex,
+# removendo o segmento de backtracking catastrófico — whitespace quantificado
+# adjacente a `.*`/`.+` (`\s+.*\s+`, `.*\s+`), a assinatura clássica do
+# catastrophic backtracking.  Ex.: Pygments CVE-2022-40896 (templates.py remove
+# `\s+.*\s+\{%...endmacro` + re.S).  Baixo-FP: o marcador catastrófico é
+# específico e o fix mantém uma chamada de regex (simplificada).
+_REDOS_CATASTROPHIC_RE = re.compile(r"\\s[*+]\.[*+]|\.[*+]\\s[*+]|\.[*+].*\.[*+]")
+_REGEXCALL_RE = re.compile(r"re\.(?:search|compile|match|fullmatch)\s*\(")
+
 
 def _detect_redos_mitigation(
     removed_lines: List[str], added_lines: List[Tuple[int, str]]
@@ -306,6 +315,16 @@ def _detect_redos_mitigation(
     if removed_unbounded:
         for lineno, text in added_lines:
             if _REGEXISH_RE.search(text) and _BOUNDED_QUANT_RE.search(text):
+                return GuardHit(line=lineno, text=text.strip()[:120],
+                                kind="redos-mitigation", cwe_class="CWE-1333/400")
+
+    # Padrão C — simplifica o regex removendo o segmento catastrófico
+    # (`\s+.*\s+`), mantendo uma chamada de regex (ex.: Pygments CVE-2022-40896).
+    removed_catastrophic = any(
+        _REDOS_CATASTROPHIC_RE.search(ln) for ln in removed_lines)
+    if removed_catastrophic:
+        for lineno, text in added_lines:
+            if _REGEXCALL_RE.search(text):
                 return GuardHit(line=lineno, text=text.strip()[:120],
                                 kind="redos-mitigation", cwe_class="CWE-1333/400")
     return None

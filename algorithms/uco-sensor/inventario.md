@@ -40,9 +40,9 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.69.0 · **2539 testes verdes** · corpus **10/15 CVEs completos
-4/4** (`paper/corpus_runs/degradation_report_full.json`) — +setuptools CVE-2022-40897
-(ReDoS) coletado inline na CT via a esteira automática.
+**Estado atual:** v3.70.0 · **2540 testes verdes** · corpus **12/17 CVEs completos
+4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
+(CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
 **Pipeline automático (coração do sistema — provado, deployável):**
 `CVE →WebSearch→ GHSA →M25→ advisory →WebFetch(commit)→ arquivos →M27→ arquivo
@@ -113,6 +113,16 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 - wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
   pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
 
+### Sprint CU (v3.70.0) — lote inline +2 (GitPython, Pygments) + 3º padrão ReDoS
+- **GitPython CVE-2022-24439 (RCE via ext::) → 4/4** inline. onde=base.py:L1255+,
+  como=input-validation-raise (`raise UnsafeOptionsUsedError`), qual=3.1.30. CWE-94.
+- **Pygments CVE-2022-40896 (ReDoS) → 4/4** inline. onde=templates.py:L2294,
+  como=redos-mitigation, qual=2.15.0. Precisou do 3º padrão ReDoS.
+- **M10 aprende o 3º padrão ReDoS:** SIMPLIFICA o regex removendo o segmento
+  catastrófico `\s+.*\s+` (sem bound nem string-parse). +1 teste, anti-FP mantido.
+- py CVE-2022-42969: advisory RETIRADO (não é vuln válida) → NÃO adicionado (honesto).
+- Corpus 10→12. Provado: coleto 2-3 CVEs reais por rodada inline, sem os agentes.
+
 ### TETO HONESTO (não contornável sem inventar — proibido)
 - Alguns CVEs C e fixes-refactor NÃO têm as 4 respostas no dado público
   (ex.: sqlite logic-clamp, linux Dirty-COW race, sqlparse refactor). Registrados
@@ -122,7 +132,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.69.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.70.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
