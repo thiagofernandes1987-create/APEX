@@ -5,6 +5,19 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.85.0] — 2026-07-04 — Sprint DJ: Django IPv6 DoS 4/4 (corpus 38→39, 39%)
+
+- **Django CVE-2024-56374 (DoS por IPv6 longo) → 4/4:** `MAX_IPV6_ADDRESS_LENGTH=39`
+  + `if len(ip_str) > max_length: raise ValueError` → resource-limit +
+  input-validation-raise. django/utils/ipv6.py:L9-40, CWE-770, fixed 4.2.20.
+- Sem fix de motor (assinaturas já cobriam).
+- Lote de baixo rendimento honesto (5 misses): mlflow (OSV sem commit), pypdf
+  CVE-2023-46250 (duplicata do CVE-2023-36464), setuptools CVE-2024-6345 (commit
+  resolvido não bate o arquivo), PyJWT CVE-2024-53861 (comparação sutil list→Sequence),
+  Jinja2 CVE-2024-56326 (merge-commit + wrapper de str.format). NADA forçado.
+
+Corpus 38→39 completos 4/4 (39%). Regressão 2553 verdes.
+
 ## [3.84.0] — 2026-07-04 — Sprint DI: pymdown-extensions 4/4 (corpus 37→38, 38%)
 
 - **pymdown-extensions CVE-2023-32309 (arbitrary file read via snippets) → 4/4:**

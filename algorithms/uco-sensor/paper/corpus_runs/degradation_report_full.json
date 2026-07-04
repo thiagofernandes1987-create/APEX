@@ -1144,6 +1144,37 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2025-26699",
+      "ghsa": "GHSA-p3fp-8748-vqfq",
+      "package": "Django",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 4.2",
+      "resolved_in": "versão 4.2.20",
+      "fix_commit": "",
+      "where_file": "ipv6.py",
+      "where_lines": [
+        9,
+        10,
+        11,
+        21,
+        40
+      ],
+      "how_constructs": [
+        "resource-limit",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-770"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }
