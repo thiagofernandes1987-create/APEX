@@ -31,14 +31,15 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.56.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.57.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
 > M12 CorpusValidator · M13 uco_core (UCO V4 absorvido) · M14 FunctionScoper ·
 > M15 GenericCFG signals · M17 InterprocTaint · M18 FixSuggester ·
 > M19 ApexLoop (Sensor→Corretor→Revalida) · M20 taint_lite · M21 weak_point ·
-> M22 CFGTaintAnalyzer (taint fluxo-sensível sobre a CFG do UCO V4).
+> M22 CFGTaintAnalyzer (taint fluxo-sensível sobre a CFG do UCO V4) ·
+> M23 AdvisoryHarvester (advisory OSV → registro de degradação, escala do corpus).
 >
 > **Sprint CD (v3.53.0)** — M17 precisão anti-FP: cast numérico
 > (int/float/bool/complex) reconhecido como sanitizador FORTE e sinks SQL
@@ -2374,3 +2375,53 @@ sem derrubar o endpoint. +2 testes TF30. Regressão 2480 verdes.
 - [ ] Estender def-use da CFG a condições `if`/`while` (recall)
 - [ ] M22 em AugAssign e multi-target
 - [ ] Camada APEX real (IA/MCP) sobre o loop MVP (M19)
+
+## Sprint CH — M23 Advisory Harvester + método de escala do corpus (v3.57.0)
+
+**O problema real dos 100/100 (diagnóstico honesto):** o scanner nunca foi o
+gargalo. Era IDENTIFICAR, por CVE e sem a API de commits (403), o par de versões
+e o commit do fix. Acionei o **modo APEX scientific** (3 agentes de pesquisa +
+WebSearch) e fundamentei o método na literatura:
+- **CVEfixes** (arXiv:2107.08760) — coleta automática CVE→fix-commit→arquivos/
+  métodos num BD relacional. O padrão do corpus-builder.
+- **VFCFinder** (arXiv:2311.01532) — ranqueia commits candidatos p/ achar o
+  Vulnerability-Fixing-Commit quando o advisory não aponta explicitamente.
+- **D2A** (arXiv:2102.07995) — análise diferencial before/after classificando
+  achados em fixed / pre-existing(perpetuado) / introduced(regressão). É
+  EXATAMENTE o que M12/M19 já fazem — nossa engenharia está alinhada ao SOTA.
+
+**Canal destravado (dado real, provado):** o GitHub Advisory Database é um repo
+git de JSONs OSV acessível via `raw.githubusercontent.com` (HTTP 200). Fornece
+aliases CVE↔GHSA, `affected.ranges` (introduced/fixed) e `references` (commit +
+tag do fix). Era um canal captado e NÃO processado. (osv.dev REST e
+api.github.com/.patch seguem 403, inclusive via WebFetch do harness; WebSearch
+funciona.)
+
+**Entrega — `scan/advisory_harvester.py` (M23):**
+- `parse_advisory(osv_json)` → `AdvisoryRecord{ghsa,cve,package,ecosystem,
+  introduced,fixed,fix_commit,fix_tag,cwe_ids,severity,...}`. Puro/offline,
+  nunca levanta. Onde vai: alimenta o M12 (qual par de versões buscar) e
+  scripts de expansão. Responde **quando quebrou** (introduced) e **em qual
+  versão resolveu** (fixed) para QUALQUER CVE do banco, em escala.
+- `advisory_raw_url()` / `fetch_advisory()` — busca via raw (guardada).
+- Validado em 2 advisories REAIS (jinja, requests). +8 testes TX95. 2488 verdes.
+
+### PLANO DE ESCALA rumo a 100/100 (deployável, dado real — checklist)
+- [x] M23 parseia advisory OSV → registro de degradação (when/which-version)
+- [x] Canal advisory-database via raw provado (2 casos reais)
+- [x] Método fundamentado na literatura (CVEfixes/VFCFinder/D2A)
+- [ ] M24 — resolver CVE→GHSA→(ano/mês) para montar a URL raw automaticamente
+      (o advisory-database indexa por GHSA+data; precisamos do índice ou de
+      WebSearch por CVE→GHSA)
+- [ ] Harvester em lote: N GHSA → N AdvisoryRecords → M12 before/after por TAG
+      (introduced→fixed) → relatório de degradação completo (4 perguntas)
+- [ ] Ligar M23 ao M12 CorpusValidator (hoje o par de versões é manual)
+- [ ] Detector de RACE/TOCTOU (linux Dirty-COW) — classe ainda não coberta
+- [ ] Ampliar linguagens não-Python no taint (C/Go/Java) via GenericCFG
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP (M19)
+
+> NOTA de sessão: a rodada de 3 agentes de pesquisa (CVEfixes/VFCFinder/D2A)
+> encerrou no limite de sessão (reseta 1h UTC) após capturar o núcleo do método
+> — retomável via SendMessage aos agentes. O método essencial já está
+> incorporado acima e no M23; a retomada refina features de ranqueamento (VFC)
+> e o casamento antes↔depois por função (D2A) para os próximos módulos.

@@ -5,6 +5,32 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.57.0] — 2026-07-03 — Sprint CH: M23 Advisory Harvester + método de escala do corpus (APEX scientific)
+
+Ataca a barreira do corpus (rumo a 100/100) pela raiz: o gargalo nunca foi o
+scanner, e sim IDENTIFICAR, por CVE e sem a API de commits (403), o par de
+versões e o commit do fix. Pesquisa multi-agente (modo APEX scientific) +
+WebSearch fundamentaram o método na literatura (CVEfixes arXiv:2107.08760,
+VFCFinder arXiv:2311.01532, D2A arXiv:2102.07995) e provaram o canal:
+
+- **Canal destravado (dado real):** o GitHub Advisory Database é um repo git de
+  JSONs OSV acessível via `raw.githubusercontent.com` (HTTP 200 — provado em 2
+  advisories reais: jinja GHSA-h5c8-rqwp-cp95, requests GHSA-j8r2-6x86-q33q).
+  Traz de graça: aliases CVE↔GHSA, `affected.ranges` (introduced/fixed) e
+  `references` (commit + tag do fix). (osv.dev REST e api.github.com seguem 403.)
+- **Novo módulo `scan/advisory_harvester.py` (M23):** `parse_advisory(osv_json)`
+  → `AdvisoryRecord` com introduced (**quando quebrou**), fixed (**em qual versão
+  resolveu**), fix_commit, fix_tag, CWE, pacote/ecossistema. Puro/offline,
+  nunca levanta; `fetch_advisory()` busca via raw (guardado). Responde 2 das 4
+  perguntas do goal para QUALQUER CVE do banco, em escala.
+- Método alinhado ao D2A: o par introduced→fixed alimenta o before/after que
+  M12/M19 já classificam (fixed / pre-existing-perpetuado / introduced-regressão).
+
++8 testes TX95 (fixtures = recortes REAIS dos advisories). Regressão 2488 verdes.
+Inventário atualizado com o método de escala e checklist. NOTA: a rodada de
+agentes de pesquisa encerrou no limite de sessão (reseta 1h UTC) após capturar o
+núcleo do método; retomável.
+
 ## [3.56.0] — 2026-07-03 — Sprint CG: M22 operacionalizado no pipeline (/scan-flow)
 
 Fecha o "operacionalizar" do ANGLE 1: o M22 deixa de ser standalone e passa a
