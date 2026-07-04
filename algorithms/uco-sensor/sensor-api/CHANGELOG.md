@@ -5,6 +5,23 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.86.0] — 2026-07-04 — Sprint DK: NOVO MOTOR M31 (sinais diff-semânticos) rompe o teto — corpus 39→41
+
+Primeiro dos "novos motores" mapeados no teto dos 4/4. M31 = 2 detectores
+diff-level de baixo-FP no M10, gated como fallback (só se nenhum guard textual
+explicou o fix):
+- **security-default-flip (CWE-1188):** kwarg cujo NOME é de segurança
+  (allow*/autoescape/scripting/verify/dangerous/shell/resolve_entities/…) e cujo
+  default INVERTE True↔False entre vuln e fix. Destrava **bleach CVE-2020-6802**
+  (`scripting=False→True`) → 4/4.
+- **raise-indirect (CWE-20):** erro CONSTRUÍDO numa var e levantado indiretamente
+  (`exc = BadHttpMessage(...)` + `set_exception` + `raise exc`) — que o
+  input-validation-raise (raise <Erro> direto) perdia. Destrava **aiohttp
+  CVE-2024-52304** (CRLF via chunk-ext) → 4/4.
+
+Ambos anti-FP validados (kwarg não-segurança não dispara). +3 testes TX78.
+Corpus 39→41 completos 4/4 (41%). Regressão 2556 verdes. M10 agora tem 16 assinaturas.
+
 ## [3.85.0] — 2026-07-04 — Sprint DJ: Django IPv6 DoS 4/4 (corpus 38→39, 39%)
 
 - **Django CVE-2024-56374 (DoS por IPv6 longo) → 4/4:** `MAX_IPV6_ADDRESS_LENGTH=39`

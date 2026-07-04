@@ -443,3 +443,31 @@ def test_T78_path_containment_samefile():
              "    return open(filename).read()\n")
     r = FixDiffLocalizer().localize(vuln, fixed, filename="snippets.py")
     assert any(g.kind == "path-containment-guard" for g in r.added_guards)
+
+
+# ── DK (v3.86.0): M31 sinais diff-semânticos (default-flip + raise-indirect) ──
+def test_T78_m31_security_default_flip():
+    """bleach CVE-2020-6802: kwarg de segurança `scripting=False→True` (flip)."""
+    vuln = "def _parse(self, stream, scripting=False, **kw):\n    return go(stream)\n"
+    fixed = "def _parse(self, stream, scripting=True, **kw):\n    return go(stream)\n"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="html5lib_shim.py")
+    assert any(g.kind == "security-default-flip" for g in r.added_guards)
+
+def test_T78_m31_default_flip_no_fp_on_nonsecurity_kwarg():
+    """Anti-FP: kwarg NÃO-segurança (`verbose=False→True`) não dispara."""
+    vuln = "def f(verbose=False):\n    pass\n"
+    fixed = "def f(verbose=True):\n    pass\n"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="m.py")
+    assert not any(g.kind == "security-default-flip" for g in r.added_guards)
+
+def test_T78_m31_raise_indirect():
+    """aiohttp CVE-2024-52304: erro construído numa var + `raise exc`."""
+    vuln = "def parse(self, ext):\n    return process(ext)\n"
+    fixed = ("def parse(self, ext):\n"
+             "    if b'\\n' in ext:\n"
+             "        exc = BadHttpMessage('bad chunk-ext')\n"
+             "        set_exception(self.payload, exc)\n"
+             "        raise exc\n"
+             "    return process(ext)\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="http_parser.py")
+    assert any(g.kind == "raise-indirect" for g in r.added_guards)

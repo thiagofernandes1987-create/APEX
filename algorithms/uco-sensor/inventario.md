@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.85.0 · **2553 testes verdes** · corpus **39/44 CVEs completos
+**Estado atual:** v3.86.0 · **2556 testes verdes** · corpus **41/46 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -114,7 +114,11 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
       pai. Fixes que são refactor multi-arquivo (pysaml2 schema, twisted pages.py)
       ou merge-commit precisam agregar guards de VÁRIOS arquivos e escolher o pai
       certo. Destrava a classe "refactor de segurança".
-- [ ] **M31 — sinais diff-semânticos finos** (sem novo `raise`/guard textual):
+- [x] **M31 — sinais diff-semânticos finos** — DK ✅ (default-flip + raise-indirect
+      implementados e validados: bleach CVE-2020-6802 + aiohttp CVE-2024-52304 → 4/4).
+      Falta ainda o (b) decode-before-validate (mlflow) — FP alto, adiado.
+      [detalhe original abaixo]
+- [ ] ~~M31 diff-semânticos~~ (sub-item decode-before-validate pendente):
       (a) DEFAULT-FLIP de segurança (`allow_private_network=True→False` flask-cors;
       `scripting=False→True` bleach) — comparar valor-default de kwarg de segurança;
       (b) DECODE-before-validate (`unquote(path)` mlflow) — decode adicionado antes
@@ -251,7 +255,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.85.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.86.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

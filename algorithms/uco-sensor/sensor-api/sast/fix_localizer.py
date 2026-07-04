@@ -293,6 +293,23 @@ class FixDiffLocalizer:
                         line=anchor, text=s[:120],
                         kind="dangerous-sink-removed", cwe_class="CWE-95/94"))
                     break
+
+        # ── M31 (DK v3.86.0): sinais diff-semânticos finos — fallbacks só se
+        # NENHUM guard textual explicou o fix.  Cobrem 2 dos 5 padrões de teto:
+        #  (a) DEFAULT-FLIP de kwarg de SEGURANÇA (`scripting=False→True` bleach;
+        #      `allow_private_network=True→False` flask-cors) — endurecimento por
+        #      inversão de default;
+        #  (b) RAISE-INDIRETO (`exc = BadHttpMessage(...)` + `raise exc`
+        #      aiohttp CVE-2024-52304) — erro construído numa var e levantado,
+        #      que o input-validation-raise (raise <Erro> direto) não pega.
+        if not res.added_guards:
+            flip = _detect_default_flip(removed_all, added_all)
+            if flip is not None:
+                res.added_guards.append(flip)
+        if not res.added_guards:
+            ind = _detect_raise_indirect(added_all)
+            if ind is not None:
+                res.added_guards.append(ind)
         return res
 
 
@@ -301,6 +318,54 @@ def _classify(line: str) -> Tuple[Optional[str], Optional[str]]:
         if rx.search(line):
             return kind, cwe
     return None, None
+
+
+# ── M31 (DK): sinais diff-semânticos finos ───────────────────────────────────
+# (a) DEFAULT-FLIP: kwarg cujo NOME é de segurança e cujo default inverte
+#     True↔False entre vuln e fix.  Baixo-FP: exige nome de segurança E inversão.
+_SEC_KWARG_RE = re.compile(
+    r"\b(\w*(?:allow|autoescape|scripting|verify|dangerous|shell|secure|"
+    r"strict|resolve_entities|trust|sanitize|escape)\w*)\s*=\s*(True|False)\b")
+
+
+def _detect_default_flip(
+    removed_lines: List[str], added_lines: List[Tuple[int, str]]
+) -> Optional["GuardHit"]:
+    """Kwarg de segurança cujo default foi INVERTIDO (endurecimento). CWE-1188."""
+    rem: dict = {}
+    for ln in removed_lines:
+        for m in _SEC_KWARG_RE.finditer(ln):
+            rem[m.group(1)] = m.group(2)
+    for lineno, text in added_lines:
+        for m in _SEC_KWARG_RE.finditer(text):
+            k, v = m.group(1), m.group(2)
+            if k in rem and rem[k] != v:          # inverteu True↔False
+                return GuardHit(line=lineno, text=text.strip()[:120],
+                                kind="security-default-flip", cwe_class="CWE-1188/16")
+    return None
+
+
+# (b) RAISE-INDIRETO: um erro é CONSTRUÍDO numa variável e depois levantado
+#     (`exc = BadHttpMessage(...)` … `raise exc`) — o input-validation-raise só
+#     pega `raise <Erro>(...)` direto.  Baixo-FP: exige construção de exceção de
+#     erro E um `raise <var>`/`set_exception` nas linhas adicionadas.
+_ERR_CONSTRUCT_RE = re.compile(
+    r"=\s*\w*(?:Error|Exception|TooLarge|Bad\w*|Invalid\w*|Message|Denied|Forbidden)\s*\(")
+_RAISE_VAR_RE = re.compile(r"\braise\s+\w+\s*$|\braise\s+\w+\s*#|\bset_exception\s*\(")
+
+
+def _detect_raise_indirect(
+    added_lines: List[Tuple[int, str]]
+) -> Optional["GuardHit"]:
+    """Exceção de erro construída e levantada indiretamente. CWE-20."""
+    has_construct = any(_ERR_CONSTRUCT_RE.search(t) for _, t in added_lines)
+    if not has_construct:
+        return None
+    for lineno, text in added_lines:
+        if _RAISE_VAR_RE.search(text):
+            return GuardHit(line=lineno, text=text.strip()[:120],
+                            kind="raise-indirect", cwe_class="CWE-20")
+    return None
 
 
 # ── ReDoS mitigation (diff-level) ────────────────────────────────────────────

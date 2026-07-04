@@ -1175,6 +1175,58 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2020-6802",
+      "ghsa": "GHSA-q65m-pv3f-wr5r",
+      "package": "bleach",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.1.1",
+      "fix_commit": "f77e0f6392177a06e46a49abd61a4d9f035e57fd",
+      "where_file": "html5lib_shim.py",
+      "where_lines": [
+        380
+      ],
+      "how_constructs": [
+        "security-default-flip"
+      ],
+      "cwe_ids": [
+        "CWE-79"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-52304",
+      "ghsa": "GHSA-8495-4g3g-x7pr",
+      "package": "aiohttp",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.10.11",
+      "fix_commit": "259edc369075de63e6f3a4eaade058c62af0df71",
+      "where_file": "http_parser.py",
+      "where_lines": [
+        853
+      ],
+      "how_constructs": [
+        "raise-indirect"
+      ],
+      "cwe_ids": [
+        "CWE-444"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }
