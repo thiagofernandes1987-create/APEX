@@ -310,6 +310,17 @@ class FixDiffLocalizer:
             ind = _detect_raise_indirect(added_all)
             if ind is not None:
                 res.added_guards.append(ind)
+
+        # ── M29 (DL v3.87.0): detector de RACE — o fix adiciona um LOCK
+        # (`with <lock>:` / `.acquire()`) guardando uma checagem de estado/close
+        # (will_close/close_when_flushed/return).  Abre a classe de race
+        # conditions (CWE-362), 100% teto até aqui.  Ex.: waitress CVE-2024-49768
+        # (`with self.requests_lock: if self.will_close or ...: return False`).
+        # Fallback + baixo-FP: exige AMBOS lock E termo de estado/close.
+        if not res.added_guards:
+            race = _detect_race_lock_guard(added_all)
+            if race is not None:
+                res.added_guards.append(race)
         return res
 
 
@@ -365,6 +376,50 @@ def _detect_raise_indirect(
         if _RAISE_VAR_RE.search(text):
             return GuardHit(line=lineno, text=text.strip()[:120],
                             kind="raise-indirect", cwe_class="CWE-20")
+    return None
+
+
+# ── M29 (DL): detector de RACE (lock + guard de estado) ──────────────────────
+# aquisição de LOCK adicionada (`with <lock>:` ou `.acquire()`) — o núcleo de um
+# fix de race condition.
+_LOCK_ACQUIRE_RE = re.compile(
+    r"\bwith\s+[\w.]*(?:lock|mutex|semaphore|rlock)\b|"
+    r"\b[\w.]*(?:lock|mutex|rlock)\s*\.\s*acquire\s*\(")
+# termo de ESTADO/close que o lock passa a proteger (a condição de corrida).
+_RACE_STATE_RE = re.compile(
+    r"\bwill_close\b|\bclose_when\w*\b|\bis_closing\b|\bclosed\b|\bclosing\b|"
+    r"\bshutdown\b|\bflush\w*\b|\breturn\s+(?:False|None)\b|\bdisconnect\w*\b")
+# guard de CLOSE-STATE: `if <estado de conexão fechando>` — o padrão real de fix
+# de race sobre conexão (waitress CVE-2024-49768) mesmo SEM adicionar lock novo
+# (o lock já existia; o fix adiciona o CHECK dentro da seção crítica).
+_RACE_CLOSE_GUARD_RE = re.compile(
+    r"\b(?:if|elif|while)\b.*\b(?:will_close|close_when\w+|is_closing|is_closed|"
+    r"shutdown|disconnect\w*)\b")
+
+
+def _detect_race_lock_guard(
+    added_lines: List[Tuple[int, str]]
+) -> Optional["GuardHit"]:
+    """
+    Fix de RACE (CWE-362): (1) adiciona um LOCK guardando uma checagem de estado,
+    OU (2) adiciona um GUARD de close-state (`if will_close/is_closing: return`)
+    dentro de uma seção crítica já existente.  Baixo-FP: termos de ciclo-de-vida
+    de conexão (will_close/close_when_flushed/is_closing) são específicos.
+    Ex.: waitress CVE-2024-49768 (padrão 2 — o lock já existia).
+    """
+    # (1) lock NOVO + estado
+    has_lock = any(_LOCK_ACQUIRE_RE.search(t) for _, t in added_lines)
+    has_state = any(_RACE_STATE_RE.search(t) for _, t in added_lines)
+    if has_lock and has_state:
+        for lineno, text in added_lines:
+            if _LOCK_ACQUIRE_RE.search(text):
+                return GuardHit(line=lineno, text=text.strip()[:120],
+                                kind="race-lock-guard", cwe_class="CWE-362")
+    # (2) guard de close-state (if will_close/is_closing/...)
+    for lineno, text in added_lines:
+        if _RACE_CLOSE_GUARD_RE.search(text):
+            return GuardHit(line=lineno, text=text.strip()[:120],
+                            kind="race-close-guard", cwe_class="CWE-362")
     return None
 
 

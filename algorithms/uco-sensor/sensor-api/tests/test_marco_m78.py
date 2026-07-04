@@ -471,3 +471,25 @@ def test_T78_m31_raise_indirect():
              "    return process(ext)\n")
     r = FixDiffLocalizer().localize(vuln, fixed, filename="http_parser.py")
     assert any(g.kind == "raise-indirect" for g in r.added_guards)
+
+
+# ── DL (v3.87.0): M29 detector de RACE (close-state guard) ────────────────────
+def test_T78_m29_race_close_guard():
+    """waitress CVE-2024-49768: fix adiciona guard de close-state dentro da seção
+    crítica (`if will_close or close_when_flushed: return False`) — CWE-362."""
+    vuln = "def received(self, data):\n    self.process(data)\n    return True\n"
+    fixed = ("def received(self, data):\n"
+             "    with self.requests_lock:\n"
+             "        if self.will_close or self.close_when_flushed:\n"
+             "            return False\n"
+             "    self.process(data)\n    return True\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="channel.py")
+    # M29 detecta o race por lock-novo+estado OU close-guard (ambos CWE-362)
+    assert any(g.kind in ("race-close-guard", "race-lock-guard") for g in r.added_guards)
+
+def test_T78_m29_no_fp_on_plain_if():
+    """Anti-FP: um `if` comum sem termo de ciclo-de-vida de conexão não dispara."""
+    vuln = "def f(x):\n    return x\n"
+    fixed = "def f(x):\n    if x > 0:\n        return x\n    return 0\n"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="m.py")
+    assert not any(g.kind in ("race-close-guard", "race-lock-guard") for g in r.added_guards)

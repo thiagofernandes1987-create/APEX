@@ -5,6 +5,22 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.87.0] — 2026-07-04 — Sprint DL: NOVO MOTOR M29 (detector de RACE) abre a classe race — corpus 41→42
+
+2º novo motor. M29 detecta fixes de race condition (CWE-362), classe que era
+100% teto (nem M10 nem M28 pegavam). Dois padrões, gated como fallback:
+- **race-lock-guard:** o fix ADICIONA um lock (`with <lock>:`/`.acquire()`)
+  guardando um termo de estado (will_close/is_closing/…);
+- **race-close-guard:** o fix adiciona um GUARD de close-state
+  (`if will_close or close_when_flushed: return`) dentro de uma seção crítica já
+  existente — o padrão do **waitress CVE-2024-49768** (o lock já existia).
+
+Também exercitou o desafio de MERGE-COMMIT: o fix é merge de 2 pais; o before/after
+correto usa o 1º pai (mainline) — validado buscando channel.py em
+`fdd2ecfd325…` (mainline) vs o merge. +2 testes TX78 (anti-FP: `if` comum não dispara).
+
+Corpus 41→42 completos 4/4 (42%). Regressão 2558 verdes. M10 com 17 assinaturas.
+
 ## [3.86.0] — 2026-07-04 — Sprint DK: NOVO MOTOR M31 (sinais diff-semânticos) rompe o teto — corpus 39→41
 
 Primeiro dos "novos motores" mapeados no teto dos 4/4. M31 = 2 detectores

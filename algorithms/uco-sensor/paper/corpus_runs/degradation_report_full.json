@@ -1227,6 +1227,33 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-49768",
+      "ghsa": "GHSA-9298-4cf8-g4wj",
+      "package": "waitress",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 2.0.0",
+      "resolved_in": "versão 3.0.1",
+      "fix_commit": "e4359018537af376cf24bd13616d861e2fb76f65",
+      "where_file": "channel.py",
+      "where_lines": [
+        205
+      ],
+      "how_constructs": [
+        "race-close-guard"
+      ],
+      "cwe_ids": [
+        "CWE-367",
+        "CWE-444"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }
