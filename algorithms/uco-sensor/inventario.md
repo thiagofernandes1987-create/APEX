@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.58.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.59.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
@@ -40,7 +40,8 @@ ordem, em toda sessão futura:
 > M19 ApexLoop (Sensor→Corretor→Revalida) · M20 taint_lite · M21 weak_point ·
 > M22 CFGTaintAnalyzer (taint fluxo-sensível sobre a CFG do UCO V4) ·
 > M23 AdvisoryHarvester (advisory OSV → registro de degradação, escala do corpus) ·
-> M24 CorpusExpander (funde M23+M10+M11 → as 4 perguntas num DegradationRecord).
+> M24 CorpusExpander (funde M23+M10+M11 → as 4 perguntas num DegradationRecord) ·
+> M25 AdvisoryResolver (auto-resolve GHSA→ano/mês; habilita o batch sem seed manual).
 >
 > **Sprint CD (v3.53.0)** — M17 precisão anti-FP: cast numérico
 > (int/float/bool/complex) reconhecido como sanitizador FORTE e sinks SQL
@@ -2413,14 +2414,45 @@ funciona.)
 - [x] Método fundamentado na literatura (CVEfixes/VFCFinder/D2A)
 - [x] M24 CorpusExpander funde as 4 perguntas — provado end-to-end no jinja (real) — CI ✅
 - [x] Runner em lote `expand_batch(seeds, fetch_pair)` (fetcher injetável) — CI ✅
-- [ ] M25 — resolver CVE→GHSA→(ano/mês) automático p/ montar a URL raw (via
-      WebSearch CVE→GHSA + campo `published` do advisory p/ ano/mês)
+- [x] M25 — resolver GHSA→(ano/mês) automático (brute-force HEAD) — CJ ✅
+- [x] BATCH REAL rodado: 2/2 CVEs PyPI completos (jinja, requests) — CJ ✅
+      (`paper/corpus_runs/degradation_report_pypi.json`)
 - [ ] M26 — harvester NVD para projetos C SEM GHSA (postgres/ffmpeg/sqlite/redis/
       php-src/linux): versões afetadas vêm do NVD/vendor, não do GHSA
+- [ ] Escalar o batch: alimentar N GHSA de CVEs PyPI/npm reais (WebSearch
+      CVE→GHSA) + arquivo alterado por CVE → dezenas de registros completos
 - [ ] Ligar M24 ao M12 CorpusValidator (fetch por tag automático no lote)
 - [ ] Detector de RACE/TOCTOU (linux Dirty-COW) — classe ainda não coberta
 - [ ] Ampliar linguagens não-Python no taint (C/Go/Java) via GenericCFG
 - [ ] Camada APEX real (IA/MCP) sobre o loop MVP (M19)
+
+## Sprint CJ — M25 Advisory Resolver + BATCH REAL (v3.59.0)
+
+**Entrega:** `scan/advisory_resolver.py` (M25). `resolve_advisory(ghsa_id,
+years|cve_hint)` acha a URL do advisory varrendo (ano, mês) até HTTP 200 —
+o ano-base sai do próprio CVE. Elimina o seed manual do harvester. Onde entra:
+topo do batch, antes do M23 parse + M24 compose.
+
+**BATCH REAL rodado (dado 100%, sem fabricação)** — `M25 → M23 → M24`,
+persistido em `paper/corpus_runs/degradation_report_pypi.json`:
+- jinja CVE-2024-22195: introduced 0 → 3.1.3 (commit 716795349a41);
+  filters.py:L291,293; input-validation-raise + output-encoding. COMPLETO.
+- requests CVE-2023-32681: 2.3.0 → 2.31.0 (commit 74ea7cf7a6a2);
+  sessions.py:L329; security-conditional-guard; CWE-200. COMPLETO.
+→ **2/2 com as 4 perguntas**. Resolver validado ao vivo (jinja→2024/01,
+requests→2023/05). +5 testes TX97. Regressão 2500 verdes.
+
+**Estado do objetivo (honesto):** o motor que responde as 4 perguntas em escala
+para o ecossistema-alvo (PyPI/npm — código gerado por IA) está COMPLETO e
+provado em dado real. Escalar a contagem = alimentar mais GHSA reais (mecânico,
+não bloqueado). Projetos C precisam do M26 (NVD). Não há mais bloqueio
+arquitetural — o gap remanescente aos 100/100 é volume de coleta, não engenharia.
+
+### CHECKLIST
+- [x] M25 auto-resolve GHSA→ano/mês (brute-force determinístico)
+- [x] Batch real M25→M23→M24: 2/2 PyPI completos, persistido em JSON
+- [x] Testes com fetch mockado (sem rede no CI)
+- [ ] Alimentar +N GHSA reais (escala mecânica) · M26 NVD para C · ligar M24→M12
 
 ## Sprint CI — M24 Corpus Expander: as 4 perguntas num registro (v3.58.0)
 

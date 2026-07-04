@@ -5,6 +5,27 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.59.0] — 2026-07-03 — Sprint CJ: M25 Advisory Resolver + BATCH REAL (2/2 CVEs completos)
+
+Fecha o motor de escala e RODA em dado real. `scan/advisory_resolver.py` (M25)
+resolve automaticamente a URL do advisory a partir do GHSA id — varrendo (ano,
+mês) com requisições até HTTP 200 — eliminando o seed manual do harvester.
+
+- **Batch real end-to-end** (M25 resolve → M23 parse → M24 compõe as 4 perguntas),
+  persistido em `paper/corpus_runs/degradation_report_pypi.json`:
+    • jinja CVE-2024-22195: quando=introduced 0 · versão=3.1.3 (716795349a41) ·
+      onde=filters.py:L291,293 · como=input-validation-raise+output-encoding.
+    • requests CVE-2023-32681: quando=2.3.0 · versão=2.31.0 (74ea7cf7a6a2) ·
+      onde=sessions.py:L329 · como=security-conditional-guard (CWE-200).
+  → **2/2 registros COMPLETOS**, answers_all_four=True, dado 100% real.
+- Resolver validado ao vivo: jinja→2024/01, requests→2023/05 (HEAD determinístico).
+- +5 testes TX97 (year_hint puro + varredura com fetch mockado, sem rede no CI).
+  Regressão 2500 verdes.
+
+O caminho para dezenas de CVEs PyPI/npm reais está agora automatizado: dado um
+GHSA (ou CVE→GHSA via WebSearch) + o arquivo alterado, o pipeline emite as 4
+respostas sem intervenção manual.
+
 ## [3.58.0] — 2026-07-03 — Sprint CI: M24 Corpus Expander — as 4 perguntas num registro (dado real)
 
 Fecha o compositor que faltava: `scan/corpus_expander.py` (M24) funde M23
