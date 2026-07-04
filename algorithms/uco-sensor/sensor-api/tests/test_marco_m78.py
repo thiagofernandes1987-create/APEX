@@ -356,3 +356,14 @@ def test_T78_dangerous_sink_removed_no_fp_when_eval_stays():
     fixed = "def f(v):\n    log('x')\n    return eval(v)\n"  # eval continua
     r = FixDiffLocalizer().localize(vuln, fixed, filename="m.py")
     assert not any(g.kind == "dangerous-sink-removed" for g in r.added_guards)
+
+
+# ── DA (v3.76.0): ReDoS bounded em regex de CLASSE-DE-CARACTERE (sem backslash) ─
+def test_T78_redos_bounded_char_class_regex():
+    """ReDoS bounded num regex de char-class sem backslash (oauthlib
+    CVE-2022-36087): `([A-Fa-f0-9:]+:+)+[A-Fa-f0-9]+` → `...[A-Fa-f0-9]{1,4}`.
+    O `_REGEXISH_RE` relaxado passa a reconhecer `[...]`+quantificador."""
+    vuln = 'IPv6 = r"([A-Fa-f0-9:]+:+)+[A-Fa-f0-9]+"\n'
+    fixed = 'IPv6 = r"([A-Fa-f0-9:]+[:$])[A-Fa-f0-9]{1,4}"\n'
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="uri_validate.py")
+    assert any(g.kind == "redos-mitigation" for g in r.added_guards)

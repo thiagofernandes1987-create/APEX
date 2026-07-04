@@ -309,7 +309,10 @@ _REDOS_ADDED_RE = re.compile(
 # Ex.: setuptools CVE-2022-40897 (REL regex em package_index.py).  Baixo-FP:
 # exige linha regex (re.compile / raw-string) nos DOIS lados, com quantificador
 # ILIMITADO no removido e LIMITADO `{m,n}` no adicionado.
-_REGEXISH_RE = re.compile(r"re\.compile\s*\(|r(?:'''|\"\"\"|['\"]).*\\")
+# (DA) +classe-de-caractere-com-quantificador (`[...]+`/`[...]{m,n}`) para casar
+# regex SEM backslash (ex.: oauthlib IPv6 `([A-Fa-f0-9:]+:+)+` → `{1,4}`).
+_REGEXISH_RE = re.compile(
+    r"re\.compile\s*\(|r(?:'''|\"\"\"|['\"]).*\\|\[[^\]]+\][*+?{]")
 _BOUNDED_QUANT_RE = re.compile(r"\{\d*,\s*\d+\}")
 _UNBOUNDED_QUANT_RE = re.compile(r"(?:\\[swdSWD]|\.|\]|\))[*+]")
 

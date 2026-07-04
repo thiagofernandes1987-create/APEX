@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.75.0 · **2546 testes verdes** · corpus **21/27 CVEs completos
+**Estado atual:** v3.76.0 · **2547 testes verdes** · corpus **23/28 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -113,6 +113,15 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 - wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
   pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
 
+### Sprint DA (v3.76.0) — lote inline +2 (aiohttp, oauthlib) — corpus 21→23
+- **aiohttp CVE-2023-49082 (CRLF via method) → 4/4**: `raise ValueError` em char
+  de controle (input-validation-raise). client_reqrep.py:L284, CWE-20.
+- **oauthlib CVE-2022-36087 (ReDoS URI) → 4/4**: IPv6 regex bounded `{1,4}`
+  (redos-mitigation). uri_validate.py:L69, CWE-1333/601.
+- **M10 `_REGEXISH_RE` relaxado**: reconhece regex de char-class `[...]`+quant
+  sem backslash (antes perdia o regex do oauthlib). +1 teste.
+- Pulados: httpie (refactor multi-arquivo); cookiecutter (merge + `insert(0,"--")`).
+
 ### Sprint CY–CZ (v3.74–3.75.0) — PyMySQL 4/4 + detector eval-removal + bundle full
 - **PyMySQL CVE-2024-36039 (SQLi via dict) → 4/4** (CY): `escape_dict` passa a
   `raise TypeError` (input-validation-raise). converters.py:L30. Corpus 20→21.
@@ -182,7 +191,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.75.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.76.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

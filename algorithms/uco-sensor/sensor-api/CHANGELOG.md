@@ -5,6 +5,23 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.76.0] — 2026-07-04 — Sprint DA: lote inline +2 (aiohttp, oauthlib) — corpus 21→23
+
+- **aiohttp CVE-2023-49082 (CRLF injection via method) → 4/4:** o fix valida o
+  método HTTP e `raise ValueError` em caracteres de controle → input-validation-raise.
+  client_reqrep.py:L284, CWE-20, fixed 3.9.0 (commit e4ae01c2, pai 476c4f24).
+- **oauthlib CVE-2022-36087 (ReDoS no validador de URI) → 4/4:** o regex IPv6
+  `([A-Fa-f0-9:]+:+)+[A-Fa-f0-9]+` (backtracking) vira `...[A-Fa-f0-9]{1,4}`
+  (bounded). uri_validate.py:L69, CWE-1333/601, fixed 3.2.2.
+- **M10: `_REGEXISH_RE` relaxado** para reconhecer regex de CLASSE-DE-CARACTERE
+  (`[...]`+quantificador) sem backslash — antes o padrão B/ReDoS exigia `re.compile`
+  ou backslash e perdia o regex do oauthlib. +1 teste TX78.
+- Pulados com honestidade: httpie CVE-2022-24737 (refactor multi-arquivo de
+  cookie-domain); cookiecutter CVE-2022-24065 (merge commit + fix `insert(0,"--")`
+  não é guard reconhecível).
+
+Corpus 21→23 completos 4/4. Regressão 2547 verdes.
+
 ## [3.75.0] — 2026-07-04 — Sprint CZ: M10 aprende "sink perigoso removido" (RCE via eval) — 12ª assinatura
 
 Novo sinal de localização (diff-level): fixes de code-injection que REMOVEM uma
