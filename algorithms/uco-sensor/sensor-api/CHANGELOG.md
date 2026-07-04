@@ -5,6 +5,18 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.74.0] — 2026-07-04 — Sprint CY: PyMySQL 4/4 (corpus 20→21) + tentativa multi-agente
+
+- **PyMySQL CVE-2024-36039 (SQLi via dict key) → 4/4:** o fix faz `escape_dict`
+  levantar `TypeError("dict can not be used as parameter")` → input-validation-raise.
+  converters.py:L30, CWE-89, fixed 1.1.1 (commit 521e4005, pai 7f032a69).
+- Multi-agente (3 agentes de coleta APEX scientific) tentado; os 3 bateram no
+  limite de sessão (reseta 14:20 UTC) antes de retornar JSON — confirmado que a
+  coleta inline é o caminho confiável neste ambiente. ipython CVE-2023-24816
+  pulado (merge commit + fix é REMOÇÃO de os.system, não guard adicionado).
+
+Corpus 20→21 completos 4/4. Regressão 2544 verdes.
+
 ## [3.73.0] — 2026-07-04 — Sprint CX: lote inline +3 (gradio, fonttools, werkzeug-debugger) + 2 sinais novos (corpus 17→20)
 
 Lote de 6 buscas paralelas; 3 completados 4/4, processando 2 sinais que faltavam:

@@ -649,6 +649,32 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-36039",
+      "ghsa": "GHSA-v9hf-5j83-6xpp",
+      "package": "pymysql",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 1.1.1",
+      "fix_commit": "521e40050cb386a499f68f483fefd144c493053c",
+      "where_file": "converters.py",
+      "where_lines": [
+        30
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-89"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }
