@@ -338,3 +338,21 @@ def test_T78_security_guard_trust_in_snake_case():
              "    return run()\n")
     r = FixDiffLocalizer().localize(vuln, fixed, filename="debug.py")
     assert any(g.kind == "security-conditional-guard" for g in r.added_guards)
+
+
+# ── CY (v3.74.0): remoção de sink dinâmico perigoso (RCE via eval/exec) ───────
+def test_T78_dangerous_sink_removed_eval():
+    """Fixes de code-injection que REMOVEM `eval(...)` sem adicionar um guard
+    reconhecível são localizados pela ausência do eval no fix (CWE-95/94)."""
+    vuln = "def f(t, v):\n    return eval(t + '(' + v + ')')\n"
+    fixed = "def f(t, v):\n    if t == 'int':\n        return int(v)\n    return v\n"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="cli.py")
+    assert any(g.kind == "dangerous-sink-removed" for g in r.added_guards)
+
+
+def test_T78_dangerous_sink_removed_no_fp_when_eval_stays():
+    """Anti-FP: se o `eval` PERMANECE no fix (não foi removido), não dispara."""
+    vuln = "def f(v):\n    return eval(v)\n"
+    fixed = "def f(v):\n    log('x')\n    return eval(v)\n"  # eval continua
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="m.py")
+    assert not any(g.kind == "dangerous-sink-removed" for g in r.added_guards)

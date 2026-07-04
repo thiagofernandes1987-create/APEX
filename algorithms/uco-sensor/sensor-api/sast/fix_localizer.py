@@ -266,6 +266,22 @@ class FixDiffLocalizer:
         redos = _detect_redos_mitigation(removed_all, added_all)
         if redos is not None:
             res.added_guards.append(redos)
+
+        # ── remoção de sink perigoso (CY v3.74.0): fallback só se NENHUM guard
+        # adicionado explicou o fix.  Fixes de RCE por eval/exec dinâmico removem
+        # a chamada perigosa (o sinal está na REMOÇÃO, não numa adição).  Baixo-FP:
+        # a linha removida tem eval/exec/os.system/pickle.loads E sumiu por
+        # completo do fix (fixed_counts==0).  Ancora na 1ª linha adicionada (onde
+        # entrou o parsing seguro).  Ex.: tqdm CVE-2024-34062 (CWE-95/94).
+        if not res.added_guards:
+            for text in removed_all:
+                s = text.strip()
+                if _DANGEROUS_SINK_RE.search(text) and fixed_counts[s] == 0:
+                    anchor = added_all[0][0] if added_all else 1
+                    res.added_guards.append(GuardHit(
+                        line=anchor, text=s[:120],
+                        kind="dangerous-sink-removed", cwe_class="CWE-95/94"))
+                    break
         return res
 
 
@@ -304,6 +320,15 @@ _UNBOUNDED_QUANT_RE = re.compile(r"(?:\\[swdSWD]|\.|\]|\))[*+]")
 # `\s+.*\s+\{%...endmacro` + re.S).  Baixo-FP: o marcador catastrófico é
 # específico e o fix mantém uma chamada de regex (simplificada).
 _REDOS_CATASTROPHIC_RE = re.compile(r"\\s[*+]\.[*+]|\.[*+]\\s[*+]|\.[*+].*\.[*+]")
+
+# (CY v3.74.0) sink dinâmico perigoso (RCE/CWE-95/94).  Fixes de code-injection
+# frequentemente REMOVEM a chamada perigosa e a substituem por parsing seguro —
+# o guard não é ADICIONADO, é a AUSÊNCIA do eval no fix.  Ex.: tqdm CVE-2024-34062
+# remove `eval(typ+'("'+val+'")')`.  Detectado como remoção completa (sumiu do fix).
+_DANGEROUS_SINK_RE = re.compile(
+    r"\b(?:eval|exec)\s*\(|\bos\.system\s*\(|"
+    r"\b(?:pickle|cPickle)\.loads?\s*\(|\b__import__\s*\(|"
+    r"subprocess\.\w+\([^)]*shell\s*=\s*True")
 # linha que É um regex — chamada `re.` OU um pedaço de padrão com metacaracteres
 # típicos (`(?:`, `[^`, `\s`, `\w`, `\d`).  (CU: relaxado para casar o fix do
 # mako CVE-2022-40023, cujo regex é multi-linha e a linha do fix não contém

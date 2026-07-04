@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.74.0 · **2544 testes verdes** · corpus **21/26 CVEs completos
+**Estado atual:** v3.75.0 · **2546 testes verdes** · corpus **21/27 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -113,6 +113,20 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 - wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
   pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
 
+### Sprint CY–CZ (v3.74–3.75.0) — PyMySQL 4/4 + detector eval-removal + bundle full
+- **PyMySQL CVE-2024-36039 (SQLi via dict) → 4/4** (CY): `escape_dict` passa a
+  `raise TypeError` (input-validation-raise). converters.py:L30. Corpus 20→21.
+- **M10 12ª assinatura `dangerous-sink-removed`** (CZ, CWE-95/94): localiza fixes
+  de RCE que REMOVEM `eval`/`exec`/`os.system`/`pickle.loads` sem guard adicionado.
+  Fallback gated + anti-FP. Validado sinteticamente (+2 testes).
+- Multi-agente (3 agentes de coleta) tentado 2× — sempre bate no limite de sessão.
+  Coleta INLINE é o método confiável neste ambiente.
+- HONESTIDADE: tqdm CVE-2024-34062 NÃO adicionado (par público ambíguo — eval
+  permanece idêntico nos dois lados; provável pai não-imediato). ipython idem
+  (merge commit + remoção, não guard). Corpus fica 21 (sem inflar).
+- **Entregue bundle FULL** (git --all, 236MB) particionado em 10×≤24MB + LEIA-ME
+  com comandos de pull p/ o main (pedido do dono).
+
 ### Sprint CX (v3.73.0) — lote inline +3 (gradio, fonttools, werkzeug-debugger) + 2 sinais novos
 - **gradio CVE-2023-51449 (path traversal) → 4/4**: `".." in relative_to()`
   (path-containment-guard). utils.py:L935, CWE-22.
@@ -168,7 +182,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.74.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.75.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

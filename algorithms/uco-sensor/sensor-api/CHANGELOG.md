@@ -5,6 +5,24 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.75.0] — 2026-07-04 — Sprint CZ: M10 aprende "sink perigoso removido" (RCE via eval) — 12ª assinatura
+
+Novo sinal de localização (diff-level): fixes de code-injection que REMOVEM uma
+chamada dinâmica perigosa (`eval`/`exec`/`os.system`/`pickle.loads`/subprocess
+shell=True) sem adicionar um guard reconhecível. O guard não é ADICIONADO — é a
+AUSÊNCIA do sink no fix (CWE-95/94). Fallback gated (só se nenhum guard-adicionado
+explicou o fix) + anti-FP (o sink precisa ter SUMIDO por completo do fix).
+
+- Validado sinteticamente (dispara em eval-only-removal; NÃO dispara se o eval
+  permanece). +2 testes TX78. M10 agora tem 12 assinaturas.
+- HONESTIDADE: tqdm CVE-2024-34062 foi o motivador, mas o par público
+  (b53348c7→4e613f84) é AMBÍGUO — o `eval(f'"{val}"')` permanece idêntico nos
+  dois lados (provável pai não-imediato / fix multi-commit). Por isso tqdm NÃO
+  foi adicionado ao corpus (sem inflar o número). A assinatura fica pronta para
+  o próximo CVE real de eval-removal.
+
+Regressão 2546 verdes. Corpus mantém 21 completos 4/4 (honesto).
+
 ## [3.74.0] — 2026-07-04 — Sprint CY: PyMySQL 4/4 (corpus 20→21) + tentativa multi-agente
 
 - **PyMySQL CVE-2024-36039 (SQLi via dict key) → 4/4:** o fix faz `escape_dict`
