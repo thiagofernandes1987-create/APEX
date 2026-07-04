@@ -65,10 +65,12 @@ class WeakPointScorer:
         from sast.guard_aware import GuardAwareScanner
         from sast.taint_engine import TaintAnalyzer
         from sast.taint_lite import TaintLite
+        from sast.toctou import TOCTOUDetector          # M28 — race/TOCTOU
         self._reg = get_registry()
         self._m11 = GuardAwareScanner()
         self._taint = TaintAnalyzer()
         self._lite = TaintLite()
+        self._toctou = TOCTOUDetector()                 # M28 (CWE-367)
 
     def score(self, source: str, ext: str = "", module_id: str = "") -> WeakPoint:
         reasons: List[str] = []
@@ -93,6 +95,16 @@ class WeakPointScorer:
             if n_flows:
                 reasons.append(f"{n_flows} fluxo(s) fonte→sink (taint Python)")
             n_sec += n_flows
+            # M28 (Sprint CR): TOCTOU/race (CWE-367) é risco de segurança direto
+            # e entra no score.  Onde entra: aqui, no fator `security` do
+            # WeakPoint, só para Python (o detector é AST-Python).  Severidade
+            # MEDIUM por finding.
+            toctou = self._toctou.scan(source)
+            for _tf in toctou:
+                sec_w += _SEV_W["MEDIUM"]
+            if toctou:
+                reasons.append(f"{len(toctou)} janela(s) TOCTOU/race (M28, CWE-367)")
+                n_sec += len(toctou)
         lite = self._lite.scan(source, ext)
         for lf in lite:
             sec_w += _SEV_W.get(lf.severity, 0.7)

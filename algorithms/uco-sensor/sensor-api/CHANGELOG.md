@@ -5,6 +5,27 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.67.0] — 2026-07-04 — Sprint CR: M28 detector de RACE/TOCTOU (CWE-367)
+
+Cobre a classe de RACE que nem M10 (guard-por-diff) nem M11 (memory-safety)
+pegavam — e que é comum em código gerado por IA (objetivo comercial nº1):
+Time-Of-Check to Time-Of-Use em recurso de FS.
+
+- **Novo `sast/toctou.py` (M28, `TOCTOUDetector`):** detecta check→use não-atômico
+  na MESMA variável de caminho (ex.: `os.path.exists(p)` … `open(p,'w')`),
+  CWE-367/SAST060. AST-Python, escopo por função + nível de módulo.
+- **Anti-FP rigoroso** (um FP afirmado é pior que um miss): NÃO dispara em
+  abertura atômica (`open(p,'x')`, `os.open(...,O_EXCL)` = o padrão-fix), em
+  variáveis diferentes, use-antes-do-check, ou reatribuição da var entre check
+  e use. 11 controles positivos/negativos travados (TX100).
+- **Integrado ao WeakPointScorer (M21):** TOCTOU entra no fator `security` do
+  score (Python), MEDIUM por finding — sinal acionável, não módulo órfão.
+- Nota honesta: o linux Dirty-COW (CVE-2016-5195) NÃO é alvo deste detector —
+  seu fix é um refactor estrutural de 1532 linhas (teto de dado public-diff),
+  já registrado como `partial` no corpus.
+
+Regressão 2533 verdes (2522+11).
+
 ## [3.66.0] — 2026-07-04 — Sprint CQ: consolidação (prompt de auditoria + inventário como memória única)
 
 Sprint de organização pedida pelo dono ("primeira coisa é criar um prompt para

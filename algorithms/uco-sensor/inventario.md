@@ -53,7 +53,8 @@ M11 guard-aware (parou-de-disparar) · M12 corpus-validator · M13 UCO V4 ·
 M17 taint interproc · M18/M19 loop corretor · M20 taint-lite (PHP/JS) ·
 M22 taint CFG path-sensitive (no /scan-flow) · M23 advisory-harvester ·
 M24 corpus-expander (4 perguntas) · M25 advisory-resolver · M26 NVD (C) ·
-M27 fix-file-locator (auto-arquivo).
+M27 fix-file-locator (auto-arquivo) ·
+M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ### FEITO (CD→CP, dado real, auditado)
 - [x] M17 anti-FP: cast numérico sanitiza + SQL só arg[0] (CD)
@@ -73,10 +74,12 @@ M27 fix-file-locator (auto-arquivo).
 ### PENDENTE — ordem de prioridade do dono (Próximo foco, 2026-07-04)
 1. [x] **Prompt de auditoria** p/ outro LLM (`AUDIT_PROMPT.md`) — CQ ✅
 2. [x] **Consolidar inventário** (este checklist mestre) — CQ ✅
-3. [ ] **Detector de RACE/TOCTOU** (linux Dirty-COW CVE-2016-5195; classe ainda
-      não coberta — nem M10 nem M11 pegam race). NOVO MÓDULO. ← PRÓXIMO
+3. [x] **Detector de RACE/TOCTOU** (M28, CWE-367) — CR ✅ (check→use não-atômico
+      na mesma var; anti-FP: atômico open('x')/O_EXCL, vars distintas, ordem,
+      reatribuição). Integrado ao WeakPointScorer. +11 testes. Foco no smell de
+      código gerado por IA (o linux Dirty-COW é teto de dado — refactor estrutural).
 4. [ ] **Ampliar corpus com mais CVEs reais** (volume; mecânico via pipeline
-      automático). BLOQUEADO até 08:40 UTC pelo limite de sessão dos agentes.
+      automático). BLOQUEADO até 08:40 UTC pelo limite de sessão dos agentes. ← PRÓXIMO
 
 ### ⚠️ ALTO ROI que ficou para trás (dívida — o dono cobrou "você pulou coisa simples")
 - [ ] **Ligar M24→M12** (fetch por tag no lote roda o before/after do M12
@@ -99,7 +102,7 @@ M27 fix-file-locator (auto-arquivo).
 
 ## Versão atual
 
-> **CORRENTE: v3.66.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.67.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
