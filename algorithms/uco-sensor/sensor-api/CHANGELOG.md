@@ -5,6 +5,26 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.73.0] — 2026-07-04 — Sprint CX: lote inline +3 (gradio, fonttools, werkzeug-debugger) + 2 sinais novos (corpus 17→20)
+
+Lote de 6 buscas paralelas; 3 completados 4/4, processando 2 sinais que faltavam:
+
+- **gradio CVE-2023-51449 (path traversal /file) → 4/4:** `".." in
+  str(path_1.relative_to(path_2))` → path-containment-guard. utils.py:L935, CWE-22.
+- **fonttools CVE-2023-45139 (XXE em OT-SVG) → 4/4:** NOVA assinatura
+  **xxe-hardening** (CWE-611) — reconhece `resolve_entities=False`/`no_network=True`/
+  `defusedxml`/`forbid_dtd`. svg.py:L230, fixed 4.43.0. 1ª classe XXE do corpus.
+- **werkzeug CVE-2024-34069 (debugger RCE via Host) → 4/4:** o fix valida
+  `check_host_trust(...)`. A security-conditional-guard usava `\bhost\b`, que não
+  casa `check_host_trust` (host embutido em snake_case) → `\w*trust\w*` adicionado.
+  __init__.py:L357+, CWE-94, fixed 3.0.3.
+
+Pulado com honestidade: sqlparse CVE-2023-30608 (o fix remove uma alternação
+redundante `\\\\` de um grupo quantificado — 4º shape de ReDoS, niche; fica partial).
+
+Corpus 17→20 completos 4/4. M10 agora tem 11 assinaturas. +2 testes TX78.
+Regressão 2544 verdes.
+
 ## [3.72.0] — 2026-07-04 — Sprint CW: lote inline +3 (starlette, werkzeug, python-jose) — corpus 14→17
 
 Lote de 3 CVEs reais coletados inline, TODOS localizados na 1ª tentativa (sem fix

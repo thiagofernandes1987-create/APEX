@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.72.0 · **2542 testes verdes** · corpus **17/22 CVEs completos
+**Estado atual:** v3.73.0 · **2544 testes verdes** · corpus **20/25 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -113,6 +113,17 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 - wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
   pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
 
+### Sprint CX (v3.73.0) — lote inline +3 (gradio, fonttools, werkzeug-debugger) + 2 sinais novos
+- **gradio CVE-2023-51449 (path traversal) → 4/4**: `".." in relative_to()`
+  (path-containment-guard). utils.py:L935, CWE-22.
+- **fonttools CVE-2023-45139 (XXE) → 4/4**: `resolve_entities=False` — NOVA
+  assinatura **xxe-hardening** (CWE-611). svg.py:L230. 1ª classe XXE do corpus.
+- **werkzeug CVE-2024-34069 (debugger RCE) → 4/4**: `check_host_trust` — corrigido
+  `\bhost\b` (não casava snake_case) com `\w*trust\w*`. __init__.py:L357+, CWE-94.
+- Pulado honesto: sqlparse CVE-2023-30608 (4º shape ReDoS = remover alternação
+  redundante `\\\\` de grupo quantificado; niche, fica partial).
+- Corpus 17→20. +11ª assinatura M10 (xxe-hardening). +2 testes.
+
 ### Sprint CW (v3.72.0) — lote inline +3 (starlette, werkzeug, python-jose) — 3/3 na 1ª tentativa
 - **starlette CVE-2023-29159 (path traversal) → 4/4**: `commonprefix`→`commonpath`
   (path-containment-guard). staticfiles.py:L172, CWE-22.
@@ -157,7 +168,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.72.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.73.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

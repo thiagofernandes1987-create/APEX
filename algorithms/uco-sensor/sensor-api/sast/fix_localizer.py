@@ -84,6 +84,14 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
                 r"shlex\.quote|pipes\.quote|urllib\.parse\.quote|quote_plus|"
                 r"escape_string|real_escape|htmlspecialchars|encodeURIComponent)\s*\("),
      "output-encoding", "CWE-79/116/78"),
+    # (CX) hardening de parser XML contra XXE (CWE-611): desabilitar resolução
+    # de entidades / rede externa / usar defusedxml.  Baixo-FP: idiomas
+    # específicos de segurança XML.  Ex.: fonttools CVE-2023-45139 adiciona
+    # `resolve_entities=False` no XMLParser do subset SVG.
+    (re.compile(r"resolve_entities\s*=\s*False|\bno_network\s*=\s*True|"
+                r"\bdefusedxml\b|forbid_(?:dtd|entities|external)|"
+                r"\bXMLParser\([^)]*resolve_entities"),
+     "xxe-hardening", "CWE-611"),
     # validação de entrada que aborta (raise/return) em valor perigoso.
     (re.compile(r"\braise\s+\w*(Error|Exception|TooLarge|Denied|Forbidden)\b"), "input-validation-raise", "CWE-20"),
     (re.compile(r"\breturn\b.*\b(EINVAL|ERANGE|-1|error|Err)\b", re.I), "early-return-guard", "CWE-20"),
@@ -97,11 +105,14 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     # domain/host adicionados: destrava scrapy CVE-2022-0577 (dropa Cookie em
     # redirect cross-domain comparando netloc).  O `\bredirect\b` antigo perdia
     # `redirect_request` porque `_` é word-char (sem fronteira).
+    # (CX) `\w*trust\w*` casa `check_host_trust`/`trusted_hosts`/`host_is_trusted`
+    # (host/trust embutidos em snake_case, que `\bhost\b` perdia): destrava
+    # werkzeug CVE-2024-34069 (debugger valida Host contra trusted_hosts).
     (re.compile(r"\b(if|elif|while|assert|and|or|unless)\b.*\b(https?|scheme|"
                 r"auth\w*|authoriz\w*|password|passwd|token|secret|credential|"
                 r"cred|permission|allow\w*|is_safe|verif\w*|valid\w*|sanitiz\w*|"
                 r"escap\w*|origin|csrf|referer|hostname|host|redirect\w*|"
-                r"netloc|domain)\b", re.I),
+                r"netloc|domain|\w*trust\w*)\b", re.I),
      "security-conditional-guard", "CWE-287/863/200"),
     # limite de recurso contra DoS/exaustão (CWE-400): max_* de partes/tamanho/
     # profundidade, ou exceções de limite excedido.  (CC — ex.: werkzeug
@@ -132,6 +143,8 @@ _SECURITY_TOKENS = re.compile(
     r"[<>]=?|[!=]=|&&|\|\||\bNULL\b|\bif\b|\belif\b|\bwhile\b|\bassert\b|"
     r"\breturn\b|\band\b|\bor\b|\buint\d+_t\b|\bsize_t\b|\bunsafe\b|"
     r"\bescape\w*\(|\braise\b|\bquote\w*\(|htmlspecialchars|encodeURI|max_\w+|"
+    # (CX) idiomas de hardening XXE — passam o gate mesmo sem `==`/`<>`.
+    r"resolve_entities|no_network|defusedxml|XMLParser|forbid_(?:dtd|entities)|"
     r"\bvary\b|"  # (CN) habilita cache-vary-guard (ex.: response.vary.add("Cookie"))
     r"relative_to\s*\(|commonpath\s*\(|"  # (CO) habilita path-containment-guard
     # (CE v3.54.0) chamada a helper de bounds/overflow-check em CamelCase ou

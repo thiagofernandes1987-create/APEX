@@ -313,3 +313,28 @@ def test_T78_security_guard_netloc_redirect_prefix():
              "    return r\n")
     res = FixDiffLocalizer().localize(vuln, fixed, filename="redirect.py")
     assert any(g.kind == "security-conditional-guard" for g in res.added_guards)
+
+
+# ── CX (v3.73.0): XXE-hardening + trust embutido em snake_case ────────────────
+def test_T78_xxe_hardening_resolve_entities():
+    """Assinatura XXE nova (fonttools CVE-2023-45139): `resolve_entities=False`
+    no XMLParser desabilita entidades externas → CWE-611."""
+    vuln = "    parser = etree.XMLParser()\n"
+    fixed = ("    parser = etree.XMLParser(\n"
+             "        resolve_entities=False,  # anti-XXE\n"
+             "    )\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="svg.py")
+    assert any(g.kind == "xxe-hardening" for g in r.added_guards)
+
+
+def test_T78_security_guard_trust_in_snake_case():
+    """security-conditional-guard casa `check_host_trust` (host/trust embutidos
+    em snake_case, sem fronteira) — werkzeug CVE-2024-34069 (debugger valida
+    Host). O `\\bhost\\b` antigo perdia `check_host_trust`."""
+    vuln = "def exec_cmd(self, request):\n    return run()\n"
+    fixed = ("def exec_cmd(self, request):\n"
+             "    if not self.check_host_trust(request.environ):\n"
+             "        return SecurityError()\n"
+             "    return run()\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="debug.py")
+    assert any(g.kind == "security-conditional-guard" for g in r.added_guards)

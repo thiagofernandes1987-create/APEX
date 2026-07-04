@@ -567,6 +567,88 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-51449",
+      "ghsa": "GHSA-6qm2-wpxq-7qh2",
+      "package": "gradio",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 4.11.0",
+      "fix_commit": "1b9d4234d6c25ef250d882c7b90e1f4039ed2d76",
+      "where_file": "utils.py",
+      "where_lines": [
+        935
+      ],
+      "how_constructs": [
+        "path-containment-guard"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": false,
+      "perpetuated": true,
+      "findings_vuln": 1,
+      "findings_fixed": 1,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-45139",
+      "ghsa": "GHSA-6673-4983-2vx5",
+      "package": "fonttools",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 4.28.2",
+      "resolved_in": "versão 4.43.0",
+      "fix_commit": "9f61271dc1ca82ed91f529b130fe5dc5c9bf1f4c",
+      "where_file": "svg.py",
+      "where_lines": [
+        230
+      ],
+      "how_constructs": [
+        "xxe-hardening"
+      ],
+      "cwe_ids": [
+        "CWE-611"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-34069",
+      "ghsa": "GHSA-2g68-c3qc-8985",
+      "package": "Werkzeug",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.0.3",
+      "fix_commit": "3386395b24c7371db11a5b8eaac0c91da5362692",
+      "where_file": "__init__.py",
+      "where_lines": [
+        357,
+        385,
+        398,
+        462,
+        516
+      ],
+      "how_constructs": [
+        "security-conditional-guard"
+      ],
+      "cwe_ids": [
+        "CWE-352"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }
