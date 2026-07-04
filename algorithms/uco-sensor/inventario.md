@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.77.0 · **2548 testes verdes** · corpus **24/29 CVEs completos
+**Estado atual:** v3.78.0 · **2548 testes verdes** · corpus **25/30 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -112,6 +112,12 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
   coleta sem depender dos agentes (que estavam no limite de sessão).
 - wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
   pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
+
+### Sprint DC (v3.78.0) — jupyter-server 4/4 (marco de 25%)
+- **jupyter-server CVE-2023-39968 (open redirect) → 4/4**: valida `next`
+  (scheme/netloc/base_url) → security-conditional-guard. login.py:L44+, CWE-601.
+- Pulado: python-multipart CVE-2024-53981 (skip de bytes, sem guard; partial).
+- **Corpus 25/30 completos 4/4 = 25% do objetivo.**
 
 ### Sprint DB (v3.77.0) — pypdf 4/4 + assinatura loop-termination (CWE-835)
 - **pypdf CVE-2023-36464 (loop infinito) → 4/4**: fix adiciona `b""` ao
@@ -198,7 +204,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.77.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.78.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

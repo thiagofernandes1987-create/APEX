@@ -754,6 +754,36 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-39968",
+      "ghsa": "GHSA-r726-vmfq-j9j3",
+      "package": "jupyter-server",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 2.7.2",
+      "fix_commit": "290362593b2ffb23c59f8114d76f77875de4b925",
+      "where_file": "login.py",
+      "where_lines": [
+        44,
+        56,
+        57,
+        58,
+        62
+      ],
+      "how_constructs": [
+        "security-conditional-guard"
+      ],
+      "cwe_ids": [
+        "CWE-601"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }

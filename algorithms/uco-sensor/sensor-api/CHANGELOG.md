@@ -5,6 +5,17 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.78.0] — 2026-07-04 — Sprint DC: jupyter-server 4/4 (corpus 24→25, marco de 25%)
+
+- **jupyter-server CVE-2023-39968 (open redirect no login) → 4/4:** o fix valida
+  o `next` — `if (parsed.scheme or parsed.netloc) or not path.startswith(base_url):
+  allow=False` → security-conditional-guard (scheme/netloc). login.py:L44+,
+  CWE-601, fixed 2.7.2 (commit 29036259, pai 87a49272). Sem fix de motor.
+- Pulado: python-multipart CVE-2024-53981 (o fix é um skip de bytes CR/LF para
+  evitar log por-byte — otimização de laço, sem guard reconhecível; segue partial).
+
+Corpus 24→25 completos 4/4 (25% do objetivo de 100). Regressão 2548 verdes.
+
 ## [3.77.0] — 2026-07-04 — Sprint DB: pypdf 4/4 + assinatura loop-termination (CWE-835) — corpus 23→24
 
 - **pypdf CVE-2023-36464 (loop infinito no parser de PDF) → 4/4:** o fix adiciona
