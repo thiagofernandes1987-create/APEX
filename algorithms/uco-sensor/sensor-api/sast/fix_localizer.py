@@ -80,7 +80,7 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     (re.compile(r"\b(memcpy|memmove|strncpy|snprintf)\b"), "safe-copy", "CWE-120"),
     # ── injeção / escaping / validação de entrada (CB) ───────────────────────
     # output-encoding: escapar antes de emitir → XSS/SSTI/log/command injection.
-    (re.compile(r"\b(escape|escapejs|html\.escape|markupsafe|escape_html|"
+    (re.compile(r"\b(escape|escapejs|html\.escape|html_escape|markupsafe|escape_html|"
                 r"shlex\.quote|pipes\.quote|urllib\.parse\.quote|quote_plus|"
                 r"escape_string|real_escape|htmlspecialchars|encodeURIComponent)\s*\("),
      "output-encoding", "CWE-79/116/78"),

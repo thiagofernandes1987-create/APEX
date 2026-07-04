@@ -418,3 +418,14 @@ def test_T78_input_validation_raise_bad_exception():
              "    return process(r)\n")
     r = FixDiffLocalizer().localize(vuln, fixed, filename="parser.py")
     assert any(g.kind == "input-validation-raise" for g in r.added_guards)
+
+
+# ── DH (v3.83.0): output-encoding reconhece o alias html_escape ───────────────
+def test_T78_output_encoding_html_escape_alias():
+    """aiohttp CVE-2024-27306: escape via alias `html_escape(name)` (partial de
+    html.escape) — antes só `html.escape(`/`escape(` diretos."""
+    vuln = "def index(files):\n    return ''.join(f'<a>{n}</a>' for n in files)\n"
+    fixed = ("def index(files):\n"
+             "    return ''.join(f'<a>{html_escape(n)}</a>' for n in files)\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="web_urldispatcher.py")
+    assert any(g.kind == "output-encoding" for g in r.added_guards)

@@ -1065,6 +1065,58 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-4340",
+      "ghsa": "GHSA-2m57-hf25-phgg",
+      "package": "sqlparse",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 0.5.0",
+      "fix_commit": "b4a39d9850969b4e1d6940d32094ee0b42a2cf03",
+      "where_file": "sql.py",
+      "where_lines": [
+        220
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-674"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-27306",
+      "ghsa": "GHSA-7gpw-8wmc-pm8g",
+      "package": "aiohttp",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.9.4",
+      "fix_commit": "28335525d1eac015a7e7584137678cbb6ff19397",
+      "where_file": "web_urldispatcher.py",
+      "where_lines": [
+        732
+      ],
+      "how_constructs": [
+        "output-encoding"
+      ],
+      "cwe_ids": [
+        "CWE-79"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }

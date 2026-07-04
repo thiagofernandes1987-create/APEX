@@ -5,6 +5,18 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.83.0] — 2026-07-04 — Sprint DH: sqlparse + aiohttp 4/4 (corpus 35→37, 37%)
+
+- **sqlparse CVE-2024-4340 (RecursionError DoS) → 4/4:** `except RecursionError:
+  raise SQLParseError` → input-validation-raise. sql.py:L220, CWE-674.
+- **aiohttp CVE-2024-27306 (XSS em index de estáticos) → 4/4:** `html_escape(name)`
+  (alias de html.escape) → output-encoding. web_urldispatcher.py, CWE-79.
+- **M10: output-encoding reconhece o alias `html_escape(`** (antes só
+  `html.escape(`/`escape(`). +1 teste TX78.
+- Pulados: gradio CVE-2024-51751 e authlib CVE-2024-37568 (advisory sem commit-ref).
+
+Corpus 35→37 completos 4/4 (37%). Regressão 2552 verdes.
+
 ## [3.82.0] — 2026-07-04 — Sprint DG: gradio + Django 4/4 (corpus 33→35, 35%)
 
 - **gradio CVE-2024-1728 (LFI UploadButton) → 4/4:** `if not is_in_or_equal(path,

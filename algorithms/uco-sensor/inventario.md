@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.82.0 · **2551 testes verdes** · corpus **35/40 CVEs completos
+**Estado atual:** v3.83.0 · **2552 testes verdes** · corpus **37/42 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -103,6 +103,28 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 - [ ] **M11 memory-safety**: cobrir redis(widening)/sqlite(clamp) com anti-FP.
 - [ ] **M26 NVD em lote** para os C (postgres/ffmpeg 4/4; sqlite/linux teto de dado).
 - [ ] **Camada APEX real (IA/MCP)** sobre o loop MVP local (M19).
+
+### 🔧 NOVOS MOTORES p/ romper o teto dos 4/4 (mapeado empiricamente nos ~15 pulados)
+> Estado: corpus 35/40 = 35% (v3.82.0). Os CVEs que NÃO completam 4/4 caem em
+> 5 padrões de teto identificados com dado real. Cada um vira um motor/assinatura:
+- [ ] **M29 — detector de RACE real** (além do M28 TOCTOU-FS): fixes que adicionam
+      LOCK + close/flag-check (waitress CVE-2024-49768, paramiko). Assinatura:
+      `with <lock>:` novo guardando um estado + retorno antecipado. CWE-362/367.
+- [ ] **M30 — diff multi-arquivo / multi-parent**: hoje o M24 pega 1 arquivo e 1
+      pai. Fixes que são refactor multi-arquivo (pysaml2 schema, twisted pages.py)
+      ou merge-commit precisam agregar guards de VÁRIOS arquivos e escolher o pai
+      certo. Destrava a classe "refactor de segurança".
+- [ ] **M31 — sinais diff-semânticos finos** (sem novo `raise`/guard textual):
+      (a) DEFAULT-FLIP de segurança (`allow_private_network=True→False` flask-cors;
+      `scripting=False→True` bleach) — comparar valor-default de kwarg de segurança;
+      (b) DECODE-before-validate (`unquote(path)` mlflow) — decode adicionado antes
+      de validação de path (CWE-29); (c) RAISE-INDIRETO (`exc=BadX(); raise exc`
+      aiohttp) — construção de exceção de erro + raise da var. Cada um é baixo-FP
+      SE ancorado ao contexto (kwarg de segurança / path / except).
+- [ ] **M26+ NVD em lote (C/Go/Java)**: ampliar linguagens além de Python via
+      cvelistV5 (M26 já existe, parcial) — a esteira GHSA cobre só empacotados PyPI/npm.
+- [ ] Loop-fix por FLAG-de-EOF (`self._at_eof=True` aiohttp CVE-2024-30251) — variante
+      do M28 loop-termination para quando o terminador é um flag, não `not in (...)`.
 
 ### Sprint CT (v3.69.0) — coleta inline + 2 fixes de motor (resumo; detalhe no CHANGELOG)
 - M7.2 herdou o gating SQL arg[0] do M17 → some o FP de query parametrizada.
@@ -229,7 +251,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.82.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.83.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
