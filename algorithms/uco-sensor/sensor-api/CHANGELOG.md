@@ -5,6 +5,18 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.84.0] — 2026-07-04 — Sprint DI: pymdown-extensions 4/4 (corpus 37→38, 38%)
+
+- **pymdown-extensions CVE-2023-32309 (arbitrary file read via snippets) → 4/4:**
+  `abspath` + `os.path.samefile(base, dirname(filename))` + `continue` → path-
+  containment-guard. snippets.py:L166,176, CWE-22.
+- **M10: path-containment-guard reconhece `os.path.samefile`** (antes commonpath/
+  commonprefix/relative_to). +1 teste TX78.
+- Pulado: webob CVE-2024-42353 (fix é transform sutil `if startswith("//")` →
+  prepend `/%2f`, sem guard textual reconhecível).
+
+Corpus 37→38 completos 4/4 (38%). Regressão 2553 verdes.
+
 ## [3.83.0] — 2026-07-04 — Sprint DH: sqlparse + aiohttp 4/4 (corpus 35→37, 37%)
 
 - **sqlparse CVE-2024-4340 (RecursionError DoS) → 4/4:** `except RecursionError:

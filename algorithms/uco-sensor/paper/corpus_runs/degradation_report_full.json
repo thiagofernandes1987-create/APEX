@@ -1117,6 +1117,33 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-32309",
+      "ghsa": "GHSA-jh85-wwv9-24hv",
+      "package": "pymdown-extensions",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 1.5",
+      "resolved_in": "versão 10.0",
+      "fix_commit": "b7bb4878d6017c03c8dc97c42d8d3bb6ee81db9d",
+      "where_file": "snippets.py",
+      "where_lines": [
+        166,
+        176
+      ],
+      "how_constructs": [
+        "path-containment-guard"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }

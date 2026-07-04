@@ -140,8 +140,10 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     # adiciona `normalized_path.relative_to(self._directory)`.)
     # (DE) +os.path.commonprefix: idioma de contenção usado p/ barrar traversal
     # (ex.: streamlit CVE-2022-35918 — `commonprefix([root, abspath]) != root`).
+    # (DI) +os.path.samefile: contenção comparando o dir resolvido com a base
+    # (pymdown-extensions CVE-2023-32309 — `samefile(base, dirname(abspath))`).
     (re.compile(r"\.\s*(?:is_relative_to|relative_to)\s*\(|"
-                r"\bos\.path\.common(?:path|prefix)\s*\("),
+                r"\bos\.path\.(?:common(?:path|prefix)|samefile)\s*\("),
      "path-containment-guard", "CWE-22"),
 ]
 

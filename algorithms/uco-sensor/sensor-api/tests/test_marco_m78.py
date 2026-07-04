@@ -429,3 +429,17 @@ def test_T78_output_encoding_html_escape_alias():
              "    return ''.join(f'<a>{html_escape(n)}</a>' for n in files)\n")
     r = FixDiffLocalizer().localize(vuln, fixed, filename="web_urldispatcher.py")
     assert any(g.kind == "output-encoding" for g in r.added_guards)
+
+
+# ── DI (v3.84.0): path-containment via os.path.samefile ───────────────────────
+def test_T78_path_containment_samefile():
+    """pymdown-extensions CVE-2023-32309: contenção via `os.path.samefile(base,
+    dirname(abspath))` (antes só commonpath/commonprefix/relative_to)."""
+    vuln = "def get(base, path):\n    return open(os.path.join(base, path)).read()\n"
+    fixed = ("def get(base, path):\n"
+             "    filename = os.path.abspath(os.path.join(base, path))\n"
+             "    if not os.path.samefile(base, os.path.dirname(filename)):\n"
+             "        continue\n"
+             "    return open(filename).read()\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="snippets.py")
+    assert any(g.kind == "path-containment-guard" for g in r.added_guards)
