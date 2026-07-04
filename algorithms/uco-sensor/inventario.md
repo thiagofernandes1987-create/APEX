@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.60.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.61.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
@@ -2451,16 +2451,36 @@ ausência ("não disponível"/"n/a"/"desconhecida"). +7 testes TX98. 2507 verdes
 - [x] answers_all_four endurecido (ausência ≠ resposta) — honestidade p/ máquina
 - [ ] Escalar volume (N CVEs) · ligar M24→M12 fetch-por-tag · M-race p/ Dirty-COW
 
-### MAPA DE COBERTURA DAS 4 PERGUNTAS (estado real, honesto)
+## Sprint CL — escala real do corpus PyPI + M10 aprende ReDoS (v3.61.0)
+
+Escala de VOLUME no ecossistema-alvo + fecha lacuna descoberta ao escalar.
+- **+2 PyPI 4/4 verificados** (par por tag via raw): werkzeug CVE-2023-25577
+  (resource-limit) e urllib3 CVE-2021-33503 (redos-mitigation).
+- **M10 aprende ReDoS:** `_detect_redos_mitigation` (diff-level, baixo-FP) —
+  o sinal do fix de ReDoS está na REMOÇÃO da regex + adição de string-split, que
+  as assinaturas de guard-adicionado não viam. Zero FP nos 4 pares não-ReDoS.
+  Onde entra: `FixDiffLocalizer.localize` após o loop de opcodes. v3.61.0.
+- Relatório `degradation_report_full.json`: 4 completos 4/4 + 2 parciais.
+
+### CHECKLIST
+- [x] werkzeug + urllib3 PyPI 4/4 (dado real verificado por tag)
+- [x] M10 detecta redos-mitigation (canal na remoção, antes não processado)
+- [x] Anti-FP verificado (0 FP em jinja/requests/werkzeug/postgres)
+- [ ] Continuar escala PyPI/npm (mecânico): +N CVEs reais → aproximar 100
+- [ ] M26 NVD: só onde a CNA preencheu (limite de dado público, não engenharia)
+
+### MAPA DE COBERTURA DAS 4 PERGUNTAS (estado real, honesto — 6 CVEs)
 | CVE | quando | qual-versão | onde | como | canal |
 |---|---|---|---|---|---|
-| jinja CVE-2024-22195 | ✅ (0) | ✅ 3.1.3 | ✅ | ✅ | GHSA (PyPI) |
-| requests CVE-2023-32681 | ✅ 2.3.0 | ✅ 2.31.0 | ✅ | ✅ | GHSA (PyPI) |
-| postgres CVE-2021-32027 | ❌ n/a | ✅ 13.3+ | ✅ | ✅ | cvelistV5 (C) |
-| ffmpeg CVE-2020-22015 | ❌ | ❌ n/a | ✅ | ✅ | cvelistV5 (C, escasso) |
-> A esteira responde 4/4 no ecossistema-alvo (PyPI/npm). Nos C, o teto é a
-> qualidade do CVE-record (o `introduced`/versão às vezes não existe no dado
-> público) — limite de DADO, não de engenharia. Escalar = alimentar mais CVEs.
+| jinja CVE-2024-22195 | ✅ 0 | ✅ 3.1.3 | ✅ | ✅ input-validation-raise | GHSA (PyPI) |
+| requests CVE-2023-32681 | ✅ 2.3.0 | ✅ 2.31.0 | ✅ | ✅ security-conditional | GHSA (PyPI) |
+| werkzeug CVE-2023-25577 | ✅ 0 | ✅ 2.2.3 | ✅ | ✅ resource-limit | GHSA (PyPI) |
+| urllib3 CVE-2021-33503 | ✅ 1.25.4 | ✅ 1.26.5 | ✅ | ✅ redos-mitigation | GHSA (PyPI) |
+| postgres CVE-2021-32027 | ❌ n/a | ✅ 13.3+ | ✅ | ✅ bounds-check-call | cvelistV5 (C) |
+| ffmpeg CVE-2020-22015 | ❌ | ❌ n/a | ✅ | ✅ early-return | cvelistV5 (C, escasso) |
+> **4/6 completas 4/4** — todas do ecossistema-alvo PyPI. Nos C, o teto é a
+> qualidade do CVE-record público (limite de DADO, não de engenharia). Escalar o
+> número = alimentar mais CVEs PyPI/npm reais (mecânico, canal desbloqueado).
 
 ## Sprint CJ — M25 Advisory Resolver + BATCH REAL (v3.59.0)
 

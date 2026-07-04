@@ -180,6 +180,29 @@ def test_T78_early_return_not_dropped_when_idiom_repeats():
     assert any(g.kind == "early-return-guard" for g in r.added_guards)
 
 
+def test_T78_redos_mitigation_regex_to_string():
+    """CL v3.61.0: fix de ReDoS que REMOVE regex propensa a backtracking e
+    ADICIONA parsing por string → kind 'redos-mitigation' (canal na REMOÇÃO que
+    as assinaturas de guard-adicionado perdiam). Ex.: urllib3 CVE-2021-33503."""
+    vuln = ("SUBAUTHORITY_RE = re.compile(PAT, re.UNICODE)\n"
+            "def split(authority):\n"
+            "    auth, host, port = SUBAUTHORITY_RE.match(authority).groups()\n"
+            "    return host\n")
+    fixed = ("def split(authority):\n"
+             "    auth, _, host_port = authority.rpartition('@')\n"
+             "    return host_port\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="url.py")
+    assert any(g.kind == "redos-mitigation" for g in r.added_guards)
+
+
+def test_T78_redos_no_fp_without_regex_removal():
+    """Anti-FP: adicionar um `.split()` SEM remover regex não vira redos-mitigation."""
+    vuln = "def f(s):\n    return s\n"
+    fixed = "def f(s):\n    a, b = s.partition('@')[::2]\n    return a\n"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="x.py")
+    assert not any(g.kind == "redos-mitigation" for g in r.added_guards)
+
+
 def test_T78_relocation_still_filtered_by_count():
     """Anti-FP preservado: uma linha só RELOCADA (contagem constante 1→1) NÃO
     conta como guard adicionado (sqlite CVE-2019-19646 — o clamp relocado)."""

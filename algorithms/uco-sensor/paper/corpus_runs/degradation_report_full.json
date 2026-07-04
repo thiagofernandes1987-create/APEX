@@ -1,9 +1,9 @@
 {
   "generated_by": "M25/M26 harvest + M24 compose (dado real, sem fabricacao)",
-  "channels": "advisory-database (PyPI) + cvelistV5 (C) via raw; file pairs by tag/SHA via raw",
-  "total": 4,
-  "complete_4of4": 2,
-  "partial_3of4": 2,
+  "channels": "advisory-database (PyPI) + cvelistV5 (C) via raw; file pairs by tag via raw",
+  "total": 6,
+  "complete_4of4": 4,
+  "partial": 2,
   "records": [
     {
       "cve": "CVE-2024-22195",
@@ -48,6 +48,62 @@
       ],
       "cwe_ids": [
         "CWE-200"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-25577",
+      "ghsa": "GHSA-xg9f-g7g7-2323",
+      "package": "Werkzeug",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 2.2.3",
+      "fix_commit": "517cac5a804e8c4dc4ed038bb20dacd038e7a9f1",
+      "where_file": "formparser.py",
+      "where_lines": [
+        182,
+        196,
+        206,
+        289,
+        355,
+        360,
+        421
+      ],
+      "how_constructs": [
+        "resource-limit",
+        "overflow-guard"
+      ],
+      "cwe_ids": [
+        "CWE-400",
+        "CWE-770"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2021-33503",
+      "ghsa": "GHSA-q2q7-5pp4-w6pg",
+      "package": "urllib3",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 1.25.4",
+      "resolved_in": "versão 1.26.5",
+      "fix_commit": "2d4a3fee6de2fa45eb82169361918f759269b4ec",
+      "where_file": "url.py",
+      "where_lines": [
+        368
+      ],
+      "how_constructs": [
+        "redos-mitigation"
+      ],
+      "cwe_ids": [
+        "CWE-400"
       ],
       "localized": true,
       "stopped_firing": null,

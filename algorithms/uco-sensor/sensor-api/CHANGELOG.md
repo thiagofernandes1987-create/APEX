@@ -5,6 +5,28 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.61.0] — 2026-07-03 — Sprint CL: escala real do corpus PyPI (4 completos) + M10 aprende ReDoS
+
+Escala de VOLUME no ecossistema-alvo (PyPI, código gerado por IA) e fecha uma
+lacuna de cobertura descoberta ao escalar — tudo com dado real verificado.
+
+- **+2 CVEs PyPI 4/4** (verificados par-a-par por tag via raw):
+    • werkzeug CVE-2023-25577 (GHSA-xg9f-g7g7-2323): 0→2.2.3; formparser.py;
+      resource-limit + overflow-guard (max_form_parts, CWE-400/770).
+    • urllib3 CVE-2021-33503 (GHSA-q2q7-5pp4-w6pg): 1.25.4→1.26.5; url.py;
+      redos-mitigation (CWE-1333/400).
+- **M10 aprende ReDoS (canal na REMOÇÃO, não processado):** o fix de urllib3
+  falhava (metadata_only) porque a mitigação de ReDoS REMOVE a regex vulnerável
+  e ADICIONA parsing por string — as assinaturas de guard-ADICIONADO não viam.
+  Nova detecção diff-level `_detect_redos_mitigation` (baixo-FP: exige AMBOS —
+  regex propensa a backtracking removida [`.match`/`.search`/`re.compile` com
+  `.*`/alternância] + string-split adicionado [rpartition/rsplit/…]). Zero FP
+  verificado nos 4 pares não-ReDoS (jinja/requests/werkzeug/postgres).
+- Relatório real `paper/corpus_runs/degradation_report_full.json`: 6 registros =
+  **4 completos 4/4** (jinja, requests, werkzeug, urllib3) + 2 parciais 3/4 C.
+
++2 testes TX78 (ReDoS localiza + anti-FP). Regressão 2509 verdes.
+
 ## [3.60.0] — 2026-07-03 — Sprint CK: M26 NVD Harvester (cvelistV5) — estende as 4 perguntas ao C
 
 Destrava os projetos C do corpus (sem GHSA) pela raiz: o CVE Project publica

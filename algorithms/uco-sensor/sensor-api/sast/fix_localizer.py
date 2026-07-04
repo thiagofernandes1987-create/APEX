@@ -191,12 +191,18 @@ class FixDiffLocalizer:
         fixed_counts = Counter(ln.strip() for ln in fixed_lines if ln.strip())
 
         res = LocalizeResult(filename=filename)
+        # Acumuladores p/ análise DIFF-level (não só linha-a-linha): o fix de
+        # ReDoS caracteriza-se por REMOVER uma regex vulnerável e ADICIONAR
+        # parsing por string — só visível olhando removidas + adicionadas juntas.
+        added_all: List[Tuple[int, str]] = []
+        removed_all: List[str] = []
         for tag, i1, i2, j1, j2 in sm.get_opcodes():
             if tag in ("replace", "insert"):
                 # added lines are fixed_lines[j1:j2], 1-based line numbers j+1
                 for off, text in enumerate(fixed_lines[j1:j2]):
                     lineno = j1 + off + 1
                     res.added_lines += 1
+                    added_all.append((lineno, text))
                     if not _SECURITY_TOKENS.search(text):
                         continue
                     # anti-FP de relocação: só é adição REAL se o fix aumentou a
@@ -211,8 +217,21 @@ class FixDiffLocalizer:
             if tag in ("replace", "delete"):
                 for text in vuln_lines[i1:i2]:
                     res.removed_lines += 1
+                    removed_all.append(text)
                     if _SECURITY_TOKENS.search(text):
                         res.removed_security_lines.append(text.strip())
+
+        # ── mitigação de ReDoS (CL v3.61.0): canal já captado (removidas +
+        # adicionadas) que não processávamos.  Baixo-FP: exige AMBOS — remoção de
+        # uma regex com construção propensa a backtracking (`.*`/alternação +
+        # `.match`/`.search`/`re.compile`) E adição de parsing por string
+        # (rpartition/rsplit/partition/split).  Ex.: urllib3 CVE-2021-33503,
+        # cujo fix troca `SUBAUTHORITY_RE.match(authority)` por
+        # `authority.rpartition("@")` (CWE-1333/400).  Não localizado pelas
+        # assinaturas de guard-adicionado porque o sinal está na REMOÇÃO. ──────
+        redos = _detect_redos_mitigation(removed_all, added_all)
+        if redos is not None:
+            res.added_guards.append(redos)
         return res
 
 
@@ -221,3 +240,35 @@ def _classify(line: str) -> Tuple[Optional[str], Optional[str]]:
         if rx.search(line):
             return kind, cwe
     return None, None
+
+
+# ── ReDoS mitigation (diff-level) ────────────────────────────────────────────
+# regex REMOVIDA com risco de backtracking: uma aplicação de regex
+# (.match/.search/fullmatch) OU um re.compile de um padrão com `.*`/`.+`/
+# alternância — os construtos que causam catastrophic backtracking.
+_REDOS_REMOVED_RE = re.compile(
+    r"\b\w*(?:_RE|_re|regex|pat|PAT)\w*\s*\.\s*(?:match|search|fullmatch)\s*\(|"
+    r"\bre\.(?:match|search|fullmatch)\s*\(|"
+    r"\bre\.compile\s*\(")
+# parsing por STRING ADICIONADO no lugar (sem regex → sem backtracking).
+_REDOS_ADDED_RE = re.compile(
+    r"\.\s*(?:rpartition|rsplit|partition|split|find|rfind|index)\s*\(")
+
+
+def _detect_redos_mitigation(
+    removed_lines: List[str], added_lines: List[Tuple[int, str]]
+) -> Optional["GuardHit"]:
+    """
+    Detecta o padrão canônico de correção de ReDoS: o fix REMOVE uma regex
+    propensa a backtracking e ADICIONA parsing por string.  Retorna um GuardHit
+    sintético (kind='redos-mitigation', CWE-1333/400) ancorado na 1ª linha de
+    string-parse adicionada, ou None.  Baixo-FP: exige os DOIS sinais juntos.
+    """
+    removed_regex = any(_REDOS_REMOVED_RE.search(ln) for ln in removed_lines)
+    if not removed_regex:
+        return None
+    for lineno, text in added_lines:
+        if _REDOS_ADDED_RE.search(text):
+            return GuardHit(line=lineno, text=text.strip()[:120],
+                            kind="redos-mitigation", cwe_class="CWE-1333/400")
+    return None
