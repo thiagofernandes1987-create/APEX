@@ -206,6 +206,28 @@ def test_T78_cache_vary_guard():
     assert any(g.kind == "cache-vary-guard" for g in r.added_guards)
 
 
+def test_T78_path_containment_guard():
+    """CO v3.64.0: fix de path-traversal que adiciona `.relative_to(root)` para
+    confinar o caminho normalizado à raiz → kind 'path-containment-guard'
+    (CWE-22). Ex.: aiohttp CVE-2024-23334."""
+    vuln = "def serve(self, filename):\n    filepath = self._directory.joinpath(filename)\n    return filepath\n"
+    fixed = ("def serve(self, filename):\n"
+             "    unresolved = self._directory.joinpath(filename)\n"
+             "    normalized = Path(os.path.normpath(unresolved))\n"
+             "    normalized.relative_to(self._directory)\n"
+             "    return normalized.resolve()\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="web_urldispatcher.py")
+    assert any(g.kind == "path-containment-guard" for g in r.added_guards)
+
+
+def test_T78_path_containment_no_fp():
+    """Anti-FP: um `.resolve()` sem containment não vira path-containment-guard."""
+    vuln = "def f(p):\n    return p\n"
+    fixed = "def f(p):\n    return p.resolve()\n"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="x.py")
+    assert not any(g.kind == "path-containment-guard" for g in r.added_guards)
+
+
 def test_T78_cache_vary_no_fp_plain_cookie():
     """Anti-FP: mexer em cookie SEM `vary` não vira cache-vary-guard."""
     vuln = "def f(r):\n    return r\n"

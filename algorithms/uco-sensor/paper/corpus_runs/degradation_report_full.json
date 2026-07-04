@@ -1,9 +1,9 @@
 {
-  "generated_by": "M25/M26 harvest + M27 auto-file + M24 compose (dado real, sem fabricacao)",
+  "generated_by": "esteira automatica M25/M26/M27 + M24 (dado real, sem fabricacao)",
   "channels": "advisory-database + cvelistV5 via raw; commit files via WebFetch; pairs by tag via raw",
-  "total": 8,
-  "complete_4of4": 5,
-  "partial": 3,
+  "total": 10,
+  "complete_4of4": 6,
+  "partial": 4,
   "records": [
     {
       "cve": "CVE-2024-22195",
@@ -136,6 +136,52 @@
       "perpetuated": null,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-23334",
+      "ghsa": "GHSA-5h86-8mv2-jq9f",
+      "package": "aiohttp",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 1.0.5",
+      "resolved_in": "versão 3.9.2",
+      "fix_commit": "1c335944d6a8b1298baf179b7c0b3069f10c514b",
+      "where_file": "web_urldispatcher.py",
+      "where_lines": [
+        602,
+        673
+      ],
+      "how_constructs": [
+        "path-containment-guard"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2021-43818",
+      "ghsa": "GHSA-55x5-fj6c-h6m8",
+      "package": "lxml",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 4.6.5",
+      "fix_commit": "12fa9669007180a7bb87d990c375cf91ca5b664a",
+      "where_file": "clean.py",
+      "where_lines": [],
+      "how_constructs": [],
+      "cwe_ids": [
+        "CWE-74",
+        "CWE-79"
+      ],
+      "localized": false,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "status": "metadata_only",
+      "answers_all_four": false
     },
     {
       "cve": "CVE-2023-30608",

@@ -113,10 +113,16 @@ def build_pair(
     if not prior or not source_file:
         return None
 
-    fixed_src = _first_ok(raw_fetch_fn, repo, tag_candidates(fixed_version), source_file)
+    # tags candidatas incluem o prefixo do NOME do repo (alguns projetos usam
+    # `<nome>-<versão>`, ex.: lxml → `lxml-4.6.5`), além de `X` e `vX`.
+    repo_name = repo.rsplit("/", 1)[-1]
+    def _cands(v: str) -> List[str]:
+        return tag_candidates(v) + ([f"{repo_name}-{v}"] if v else [])
+
+    fixed_src = _first_ok(raw_fetch_fn, repo, _cands(fixed_version), source_file)
     if fixed_src is None:
         return None
-    vuln_src = _first_ok(raw_fetch_fn, repo, tag_candidates(prior), source_file)
+    vuln_src = _first_ok(raw_fetch_fn, repo, _cands(prior), source_file)
     if vuln_src is None:
         return None
     filename = source_file.rsplit("/", 1)[-1]

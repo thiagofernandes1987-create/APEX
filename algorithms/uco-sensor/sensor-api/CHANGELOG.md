@@ -5,6 +5,24 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.64.0] — 2026-07-03 — Sprint CO: escala automática +2 (aiohttp, lxml) → 6/10 completos
+
+Roda a esteira automática em lote e amplia cobertura de linguagem-de-fix.
+
+- **aiohttp CVE-2024-23334 → 4/4 automático:** GHSA→advisory→WebFetch(commit)→
+  arquivo (web_urldispatcher.py)→par por tag `v3.9.1/v3.9.2`→compõe. quando=1.0.5,
+  versão=3.9.2, onde=web_urldispatcher.py, como=path-containment-guard.
+- **Nova assinatura M10 `path-containment-guard`** (CWE-22): `.relative_to(root)`/
+  `.is_relative_to(...)`/`os.path.commonpath(...)` confinam o caminho normalizado
+  à raiz (anti directory-traversal). Baixo-FP, zero FP nos pares não-aiohttp.
+- **M27 amplia tags:** além de `X`/`vX`, tenta `<nome-do-repo>-X` (ex.: lxml usa
+  `lxml-4.6.5`). Destrava o par do lxml CVE-2021-43818 (registro parcial honesto —
+  o fix do HTML Cleaner não localiza guard limpo).
+- Relatório `degradation_report_full.json`: **10 registros = 6 completos 4/4**
+  (jinja, requests, werkzeug, urllib3, Flask, aiohttp) + 4 parciais.
+
++2 testes TX78 (path-containment + anti-FP). Regressão 2522 verdes.
+
 ## [3.63.0] — 2026-07-03 — Sprint CN: M27 automatiza identificação do arquivo + Flask 4/4 automático
 
 Destrava o ÚLTIMO gargalo da automação do corpus (identificar o arquivo alterado

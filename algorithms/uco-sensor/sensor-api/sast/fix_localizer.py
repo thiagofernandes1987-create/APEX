@@ -110,6 +110,14 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     # `cookie`).  (CN v3.63.0 — ex.: Flask CVE-2023-30861, CWE-525/539.)
     (re.compile(r"\bvary\b[^\n]*(?:\.add\s*\(|cookie)", re.I),
      "cache-vary-guard", "CWE-525/539"),
+    # guard de path-traversal (CWE-22): confinar um caminho normalizado à raiz.
+    # `.relative_to(root)` / `.is_relative_to(root)` levantam/testam se o caminho
+    # escapou do diretório; `os.path.commonpath([...])` idem.  Baixo-FP: são APIs
+    # específicas de caminho.  (CO v3.64.0 — ex.: aiohttp CVE-2024-23334, cujo fix
+    # adiciona `normalized_path.relative_to(self._directory)`.)
+    (re.compile(r"\.\s*(?:is_relative_to|relative_to)\s*\(|"
+                r"\bos\.path\.commonpath\s*\("),
+     "path-containment-guard", "CWE-22"),
 ]
 
 # Conjunto de tokens que marca uma linha como "candidata a guard" (evita
@@ -120,6 +128,7 @@ _SECURITY_TOKENS = re.compile(
     r"\breturn\b|\band\b|\bor\b|\buint\d+_t\b|\bsize_t\b|\bunsafe\b|"
     r"\bescape\w*\(|\braise\b|\bquote\w*\(|htmlspecialchars|encodeURI|max_\w+|"
     r"\bvary\b|"  # (CN) habilita cache-vary-guard (ex.: response.vary.add("Cookie"))
+    r"relative_to\s*\(|commonpath\s*\(|"  # (CO) habilita path-containment-guard
     # (CE v3.54.0) chamada a helper de bounds/overflow-check em CamelCase ou
     # snake_case — habilita o gate para a assinatura `bounds-check-call` (a
     # linha `ArrayCheckBounds(...)` não tem if/return/<>, então sem este token

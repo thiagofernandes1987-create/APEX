@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.63.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.64.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
@@ -2524,8 +2524,29 @@ Restam DUAS naturezas de gap (a #2 foi resolvida na CN):
 - [x] M27 auto-identifica arquivo do commit (WebFetch) + monta par por tag
 - [x] Flask 4/4 processado 100% automático (só GHSA fornecido)
 - [x] Assinatura cache-vary-guard (Flask) — zero FP
-- [ ] Rodar o pipeline automático em lote sobre N GHSA (escala de volume)
-- [ ] Ampliar assinaturas M10 conforme novos fixes aparecerem (sem FP)
+- [x] Rodar o pipeline automático em lote (CO: +aiohttp 4/4, +lxml parcial)
+- [x] Ampliar assinaturas M10 (CO: path-containment-guard; sem FP)
+
+## Sprint CO — escala automática +2 (aiohttp, lxml) → 6/10 completos (v3.64.0)
+
+- **aiohttp CVE-2024-23334 → 4/4 automático** (path-containment-guard, CWE-22).
+- Nova assinatura M10 `path-containment-guard`: `.relative_to`/`is_relative_to`/
+  `os.path.commonpath` (anti directory-traversal). Zero FP.
+- M27 amplia tags para `<repo>-X` (lxml usa `lxml-4.6.5`) → destrava par do lxml
+  (parcial honesto — HTML Cleaner não localiza guard limpo).
+- Relatório: **10 registros, 6 completos 4/4**. +2 testes. 2522 verdes.
+
+### PROGRESSO DO CORPUS (real, auditável)
+| rodada | completos 4/4 | total | novos |
+|---|---|---|---|
+| CI | 2 | 2 | jinja, requests |
+| CL | 4 | 6 | +werkzeug, +urllib3 |
+| CN | 5 | 8 | +Flask (automático) |
+| CO | **6** | **10** | +aiohttp (automático), +lxml/sqlparse (parciais) |
+> Assinaturas M10 acumuladas: input-validation-raise, output-encoding,
+> security-conditional-guard, resource-limit, overflow-guard, bounds-check-call,
+> early-return-guard, redos-mitigation, cache-vary-guard, path-containment-guard.
+> Cada CVE novo custa ~1 WebSearch + 1 WebFetch; o resto é a esteira automática.
 
 ## Sprint CJ — M25 Advisory Resolver + BATCH REAL (v3.59.0)
 
