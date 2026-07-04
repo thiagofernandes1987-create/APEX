@@ -487,6 +487,86 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-29159",
+      "ghsa": "GHSA-v5gw-mw7f-84px",
+      "package": "starlette",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 0.13.5",
+      "resolved_in": "versão 0.27.0",
+      "fix_commit": "1797de464124b090f10cf570441e8292936d63e3",
+      "where_file": "staticfiles.py",
+      "where_lines": [
+        172
+      ],
+      "how_constructs": [
+        "path-containment-guard"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-46136",
+      "ghsa": "GHSA-hrfv-mqp8-q5rw",
+      "package": "Werkzeug",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 3.0.0",
+      "resolved_in": "versão 3.0.1",
+      "fix_commit": "b1916c0c083e0be1c9d887ee2f3d696922bfc5c1",
+      "where_file": "multipart.py",
+      "where_lines": [
+        256,
+        266
+      ],
+      "how_constructs": [
+        "overflow-guard"
+      ],
+      "cwe_ids": [
+        "CWE-400",
+        "CWE-787"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-33664",
+      "ghsa": "GHSA-cjwg-qfpm-7377",
+      "package": "python-jose",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.4.0",
+      "fix_commit": "",
+      "where_file": "jwe.py",
+      "where_lines": [
+        82
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-400"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }

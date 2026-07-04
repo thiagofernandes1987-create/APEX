@@ -5,6 +5,26 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.72.0] — 2026-07-04 — Sprint CW: lote inline +3 (starlette, werkzeug, python-jose) — corpus 14→17
+
+Lote de 3 CVEs reais coletados inline, TODOS localizados na 1ª tentativa (sem fix
+de motor) — o vocabulário de 10 assinaturas do M10 já cobre as classes comuns:
+
+- **starlette CVE-2023-29159 (path traversal em StaticFiles) → 4/4:** o fix troca
+  `os.path.commonprefix` por `os.path.commonpath` → path-containment-guard.
+  staticfiles.py:L172, CWE-22. fixed 0.27.0 (commit 1797de4).
+- **werkzeug CVE-2023-46136 (DoS multipart via CR/LF) → 4/4:** limita o
+  crescimento do buffer (`if (len(data)-data_end) > len(boundary)`) →
+  overflow-guard. multipart.py:L256,266, CWE-400/787. fixed 2.3.8/3.0.1.
+- **python-jose CVE-2024-33664 (JWT bomb DoS) → 4/4:** `if len(jwe_str) > 250KB:
+  raise JWEError` → input-validation-raise. jwe.py:L82, CWE-400. fixed 3.3.1.
+
+Pulados com honestidade: idna CVE-2024-3651 (o commit do fix é refactor de
+otimização — elif/break — não um guard de segurança localizável); black
+CVE-2024-21503 e aiohttp CVE-2023-49082 (advisory sem commit-ref).
+
+Corpus 14→17 completos 4/4. Regressão 2542 verdes (sem novo código, +3 dados reais).
+
 ## [3.71.0] — 2026-07-04 — Sprint CV: lote inline +2 (mako, scrapy) processando 2 sinais que perdíamos (corpus 12→14)
 
 Lote paralelizado (6 WebSearches simultâneas). Cada CVE que falhou expôs um sinal

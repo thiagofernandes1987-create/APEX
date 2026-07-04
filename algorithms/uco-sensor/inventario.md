@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.71.0 · **2542 testes verdes** · corpus **14/19 CVEs completos
+**Estado atual:** v3.72.0 · **2542 testes verdes** · corpus **17/22 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -113,6 +113,20 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 - wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
   pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
 
+### Sprint CW (v3.72.0) — lote inline +3 (starlette, werkzeug, python-jose) — 3/3 na 1ª tentativa
+- **starlette CVE-2023-29159 (path traversal) → 4/4**: `commonprefix`→`commonpath`
+  (path-containment-guard). staticfiles.py:L172, CWE-22.
+- **werkzeug CVE-2023-46136 (DoS multipart) → 4/4**: bound do buffer
+  (overflow-guard). multipart.py:L256,266, CWE-400/787.
+- **python-jose CVE-2024-33664 (JWT bomb DoS) → 4/4**: `if len(jwe_str)>250KB:
+  raise JWEError` (input-validation-raise). jwe.py:L82, CWE-400.
+- 3/3 localizados SEM fix de motor (as 10 assinaturas do M10 já cobriam) — sinal
+  de que o vocabulário amadureceu. Pulados: idna CVE-2024-3651 (fix é refactor de
+  otimização, não guard); black/aiohttp (sem commit no advisory).
+- Corpus 14→17. Classes acumuladas: XSS/SSTI, proxy-leak, DoS, ReDoS(×4 shapes),
+  cache-poison, path-traversal, algo-confusion, open-redirect, SQLi, RCE-injection,
+  cookie-leak, JWT-bomb.
+
 ### Sprint CV (v3.71.0) — lote inline +2 (mako, scrapy) processando 2 sinais que perdíamos
 - **mako CVE-2022-40023 (ReDoS) → 4/4**: `.*?`→`[^"]*?` (classe negada, regex
   MULTI-LINHA). Corrigido: predicado do padrão C aceitava só `re.compile(`, agora
@@ -143,7 +157,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.71.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.72.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
