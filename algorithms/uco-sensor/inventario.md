@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.61.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.62.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
@@ -2469,18 +2469,42 @@ Escala de VOLUME no ecossistema-alvo + fecha lacuna descoberta ao escalar.
 - [ ] Continuar escala PyPI/npm (mecânico): +N CVEs reais → aproximar 100
 - [ ] M26 NVD: só onde a CNA preencheu (limite de dado público, não engenharia)
 
-### MAPA DE COBERTURA DAS 4 PERGUNTAS (estado real, honesto — 6 CVEs)
+## Sprint CM — corpus real 7 CVEs + honestidade em fix-refactor (v3.62.0)
+
++sqlparse CVE-2023-30608 (ReDoS embutido em REFACTOR). A assinatura
+redos-mitigation (CL) corretamente NÃO dispara (padrões removidos são relocados,
+não a regex vulnerável) — forçar seria FP. Registro honesto 3/4. Prova de que a
+esteira NÃO inventa "como". Relatório com 7 registros reais (4 completos + 3
+parciais). Release de corpus/dado, sem mudança de código. 2509 verdes.
+
+### MAPA DE COBERTURA DAS 4 PERGUNTAS (estado real, honesto — 7 CVEs)
 | CVE | quando | qual-versão | onde | como | canal |
 |---|---|---|---|---|---|
 | jinja CVE-2024-22195 | ✅ 0 | ✅ 3.1.3 | ✅ | ✅ input-validation-raise | GHSA (PyPI) |
 | requests CVE-2023-32681 | ✅ 2.3.0 | ✅ 2.31.0 | ✅ | ✅ security-conditional | GHSA (PyPI) |
 | werkzeug CVE-2023-25577 | ✅ 0 | ✅ 2.2.3 | ✅ | ✅ resource-limit | GHSA (PyPI) |
 | urllib3 CVE-2021-33503 | ✅ 1.25.4 | ✅ 1.26.5 | ✅ | ✅ redos-mitigation | GHSA (PyPI) |
+| sqlparse CVE-2023-30608 | ✅ 0.1.15 | ✅ 0.4.4 | ✅ | ⚠️ refactor (não localiza; sem FP) | GHSA (PyPI) |
 | postgres CVE-2021-32027 | ❌ n/a | ✅ 13.3+ | ✅ | ✅ bounds-check-call | cvelistV5 (C) |
 | ffmpeg CVE-2020-22015 | ❌ | ❌ n/a | ✅ | ✅ early-return | cvelistV5 (C, escasso) |
-> **4/6 completas 4/4** — todas do ecossistema-alvo PyPI. Nos C, o teto é a
-> qualidade do CVE-record público (limite de DADO, não de engenharia). Escalar o
-> número = alimentar mais CVEs PyPI/npm reais (mecânico, canal desbloqueado).
+> **4/7 completas 4/4** (todas PyPI). Os 3 parciais têm razões HONESTAS e
+> distintas: sqlparse (fix é refactor — "como" não isolável sem FP); postgres
+> (CVE-record sem `introduced`); ffmpeg (CVE-record "n/a"). Nenhuma é falha de
+> engenharia — são limites de DADO ou de forma-do-fix. Escalar o número =
+> alimentar mais CVEs PyPI de fix-limpo (mecânico, canal desbloqueado).
+
+### DIAGNÓSTICO FRANCO DO 100/100 (para o dono do projeto)
+O gap para 100/100 tem TRÊS naturezas, todas identificadas com dado real:
+1. **Volume** (a maior parte): faltam ~93 CVEs coletados. Mecânico — cada um custa
+   1 WebSearch (CVE→GHSA) + verificação por tag. Não bloqueado, só trabalhoso.
+2. **Identificação do arquivo alterado em escala**: hoje eu forneço o arquivo por
+   CVE (conhecimento/WebSearch). Automatizar 100% = problema de pesquisa
+   (VFCFinder) — os agentes de pesquisa (retomáveis) estavam nisso.
+3. **Qualidade do dado público**: alguns CVEs (C, fixes-refactor) simplesmente
+   NÃO têm as 4 respostas no dado público. Teto real, não contornável sem inventar
+   (o que o dono proibiu explicitamente: "dados reais, sem inventar dados").
+> A esteira (M23→M26 + M10/M11/M17/M22) responde 4/4 sempre que o dado existe e o
+> fix é localizável. Isso É a engenharia top pedida; o resto é coleta e dado.
 
 ## Sprint CJ — M25 Advisory Resolver + BATCH REAL (v3.59.0)
 

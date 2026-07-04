@@ -1,9 +1,9 @@
 {
   "generated_by": "M25/M26 harvest + M24 compose (dado real, sem fabricacao)",
   "channels": "advisory-database (PyPI) + cvelistV5 (C) via raw; file pairs by tag via raw",
-  "total": 6,
+  "total": 7,
   "complete_4of4": 4,
-  "partial": 2,
+  "partial": 3,
   "records": [
     {
       "cve": "CVE-2024-22195",
@@ -110,6 +110,26 @@
       "perpetuated": null,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-30608",
+      "ghsa": "GHSA-rrm6-wvj7-cwh2",
+      "package": "sqlparse",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 0.1.15",
+      "resolved_in": "versão 0.4.4",
+      "fix_commit": "c457abd5f097dd13fb21543381e7cfafe7d31cfb",
+      "where_file": "keywords.py",
+      "where_lines": [],
+      "how_constructs": [],
+      "cwe_ids": [
+        "CWE-1333"
+      ],
+      "localized": false,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "status": "metadata_only",
+      "answers_all_four": false
     },
     {
       "cve": "CVE-2021-32027",

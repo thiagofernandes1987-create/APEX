@@ -5,6 +5,23 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.62.0] — 2026-07-03 — Sprint CM: corpus real 7 CVEs + honestidade em fix-refactor (sqlparse)
+
+Consolida o corpus de degradação com dado real verificado e demonstra a
+DISCIPLINA anti-fabricação num fix "sujo".
+
+- **+sqlparse CVE-2023-30608** (GHSA-rrm6-wvj7-cwh2): introduced 0.1.15 → 0.4.4;
+  keywords.py. É um ReDoS cujo fix vem embutido num REFACTOR (o `SQL_REGEX`
+  inteiro mudou de arquivo). A assinatura `redos-mitigation` (CL) corretamente
+  NÃO dispara — os padrões removidos são relocados, não a regex vulnerável
+  isolada; forçar seria FALSO-POSITIVO. Registro honesto: 3/4 (quando/qual-versão/
+  onde ✅; como="não localizado"). Prova de que a esteira não inventa "como".
+- `paper/corpus_runs/degradation_report_full.json` agora com **7 registros reais**:
+  4 completos 4/4 (jinja, requests, werkzeug, urllib3) + 3 parciais 3/4
+  (sqlparse, postgres, ffmpeg).
+
+Sem mudança de código (release de corpus/dado). Regressão 2509 verdes.
+
 ## [3.61.0] — 2026-07-03 — Sprint CL: escala real do corpus PyPI (4 completos) + M10 aprende ReDoS
 
 Escala de VOLUME no ecossistema-alvo (PyPI, código gerado por IA) e fecha uma
