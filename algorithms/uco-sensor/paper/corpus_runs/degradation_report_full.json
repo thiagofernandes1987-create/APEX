@@ -1254,6 +1254,32 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-6909",
+      "ghsa": "GHSA-5r3q-93q3-f978",
+      "package": "mlflow",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 2.9.2",
+      "fix_commit": "1da75dfcecd4d169e34809ade55748384e8af6c1",
+      "where_file": "uri.py",
+      "where_lines": [
+        434
+      ],
+      "how_constructs": [
+        "decode-before-validate"
+      ],
+      "cwe_ids": [
+        "CWE-29"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }

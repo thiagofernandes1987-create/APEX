@@ -5,6 +5,19 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.88.0] — 2026-07-04 — Sprint DM: M31 completo (decode-before-validate) — corpus 42→43
+
+Fecha o 3º sub-sinal do M31: **decode-before-validate (CWE-29)** — o fix adiciona
+um decode (`unquote`/`unescape`) num contexto de validação de path, fechando o
+bypass de traversal codificado (%2e%2e). Gate anti-FP forte: exige o decode
+adicionado E contexto de validação de path no arquivo corrigido (validate*path/
+is_safe/normpath/`..`). Destrava **mlflow CVE-2023-6909** → 4/4 (era o partial
+mais antigo do corpus, antes considerado FP-alto). +2 testes (anti-FP: unquote
+sem contexto de path não dispara).
+
+Corpus 42→43 completos 4/4 (43%). Regressão 2560 verdes. M10 com 18 assinaturas.
+M31 agora cobre os 3 sub-padrões: default-flip, raise-indirect, decode-before-validate.
+
 ## [3.87.0] — 2026-07-04 — Sprint DL: NOVO MOTOR M29 (detector de RACE) abre a classe race — corpus 41→42
 
 2º novo motor. M29 detecta fixes de race condition (CWE-362), classe que era

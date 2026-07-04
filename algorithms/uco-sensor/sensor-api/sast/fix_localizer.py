@@ -321,6 +321,17 @@ class FixDiffLocalizer:
             race = _detect_race_lock_guard(added_all)
             if race is not None:
                 res.added_guards.append(race)
+
+        # ── M31b (DM v3.88.0): DECODE-before-validate — o fix adiciona um decode
+        # (`unquote`/`unescape`) ANTES de uma validação de path, fechando o bypass
+        # por traversal codificado (%2e%2e).  Ex.: mlflow CVE-2023-6909 adiciona
+        # `path = urllib.parse.unquote(path)` em `validate_path_is_safe`.  Baixo-FP:
+        # exige o decode adicionado E contexto de validação de path no arquivo
+        # corrigido (validate*path / is_safe / normpath / `..`).  CWE-29.
+        if not res.added_guards:
+            dec = _detect_decode_before_validate(added_all, fixed_lines)
+            if dec is not None:
+                res.added_guards.append(dec)
         return res
 
 
@@ -421,6 +432,34 @@ def _detect_race_lock_guard(
             return GuardHit(line=lineno, text=text.strip()[:120],
                             kind="race-close-guard", cwe_class="CWE-362")
     return None
+
+
+# ── M31b (DM): decode-before-validate (traversal codificado) ─────────────────
+_DECODE_RE = re.compile(
+    r"\b(?:urllib\.parse\.)?unquote(?:_plus|_to_bytes)?\s*\(|\.\s*unescape\s*\(")
+# contexto de validação de PATH no arquivo corrigido (gate anti-FP).
+_PATH_VALIDATION_CTX_RE = re.compile(
+    r"validate\w*path|is_safe|_is_safe|safe_path|normpath|realpath|abspath|"
+    r"\.\.\s*(?:in|not in)\b|['\"]\.\.['\"]")
+
+
+def _detect_decode_before_validate(
+    added_lines: List[Tuple[int, str]], fixed_lines: List[str]
+) -> Optional["GuardHit"]:
+    """
+    Decode (`unquote`/`unescape`) adicionado num contexto de validação de path —
+    fecha o bypass de traversal codificado (%2e%2e).  Baixo-FP: exige o decode
+    ADICIONADO E que o arquivo corrigido tenha contexto de validação de path.
+    Ex.: mlflow CVE-2023-6909 (CWE-29).
+    """
+    dec_line = next(((ln, t) for ln, t in added_lines if _DECODE_RE.search(t)), None)
+    if dec_line is None:
+        return None
+    has_path_ctx = any(_PATH_VALIDATION_CTX_RE.search(ln) for ln in fixed_lines)
+    if not has_path_ctx:
+        return None
+    return GuardHit(line=dec_line[0], text=dec_line[1].strip()[:120],
+                    kind="decode-before-validate", cwe_class="CWE-29")
 
 
 # ── ReDoS mitigation (diff-level) ────────────────────────────────────────────

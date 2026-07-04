@@ -493,3 +493,22 @@ def test_T78_m29_no_fp_on_plain_if():
     fixed = "def f(x):\n    if x > 0:\n        return x\n    return 0\n"
     r = FixDiffLocalizer().localize(vuln, fixed, filename="m.py")
     assert not any(g.kind in ("race-close-guard", "race-lock-guard") for g in r.added_guards)
+
+
+# ── DM (v3.88.0): M31b decode-before-validate ────────────────────────────────
+def test_T78_m31b_decode_before_validate():
+    """mlflow CVE-2023-6909: `unquote(path)` adicionado em contexto de validação
+    de path (função tem checks de `..`) → decode-before-validate (CWE-29)."""
+    vuln = "def validate_path_is_safe(path):\n    if '..' in path:\n        raise ValueError('bad')\n"
+    fixed = ("def validate_path_is_safe(path):\n"
+             "    path = urllib.parse.unquote(path)\n"
+             "    if '..' in path:\n        raise ValueError('bad')\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="uri.py")
+    assert any(g.kind == "decode-before-validate" for g in r.added_guards)
+
+def test_T78_m31b_no_fp_unquote_without_path_ctx():
+    """Anti-FP: `unquote` SEM contexto de validação de path não dispara."""
+    vuln = "def f(q):\n    return q\n"
+    fixed = "def f(q):\n    q = urllib.parse.unquote(q)\n    return q.upper()\n"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="m.py")
+    assert not any(g.kind == "decode-before-validate" for g in r.added_guards)
