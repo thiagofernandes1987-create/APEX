@@ -5,6 +5,26 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.71.0] — 2026-07-04 — Sprint CV: lote inline +2 (mako, scrapy) processando 2 sinais que perdíamos (corpus 12→14)
+
+Lote paralelizado (6 WebSearches simultâneas). Cada CVE que falhou expôs um sinal
+REAL que o M10 captava mas não processava — corrigidos, não contornados:
+
+- **mako CVE-2022-40023 (ReDoS) → 4/4:** `".*?"` → `"[^"]*?"` (classe negada num
+  regex MULTI-LINHA). O predicado do 3º padrão ReDoS exigia `re.compile(` na linha
+  do fix, mas o regex do mako é multi-linha e a linha alterada é só corpo do
+  padrão. Relaxado para aceitar linha regex-ish (`(?:`/`[^`/`\s`). lexer.py:L280.
+- **scrapy CVE-2022-0577 (cookie leak cross-domain) → 4/4:** o fix dropa o Cookie
+  quando o netloc difere no redirect. A security-conditional-guard usava
+  `\bredirect\b`, que NÃO casa `redirect_request_netloc` (`_` é word-char, sem
+  fronteira) → `redirect\w*`; + `netloc`/`domain`/`host` no vocabulário.
+  redirect.py:L22,25, CWE-200/863.
+- Pulados com honestidade: Twisted CVE-2022-39348 (merge commit de 2 pais +
+  refactor para novo arquivo pages.py = não localizável limpo por diff);
+  cookiecutter CVE-2022-24065 (SHA 404, re-tentar).
+
+Corpus 12→14 completos 4/4. +2 testes TX78. Regressão 2542 verdes.
+
 ## [3.70.0] — 2026-07-04 — Sprint CU: lote inline +2 (GitPython, Pygments) + 3º padrão ReDoS (corpus 10→12)
 
 Continuação da coleta inline (o loop principal escala sem os agentes de pesquisa):

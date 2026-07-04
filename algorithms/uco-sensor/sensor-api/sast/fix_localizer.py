@@ -93,10 +93,15 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     # o termo de segurança + ser adição do fix.  (CC v3.52.0 — ex.: requests
     # CVE-2023-32681 adiciona `if not scheme.startswith('https') and username
     # and password:` para não vazar Proxy-Authorization em http.)
+    # (CU) `redirect`→`redirect\w*` (casa `redirect_request_netloc`) + netloc/
+    # domain/host adicionados: destrava scrapy CVE-2022-0577 (dropa Cookie em
+    # redirect cross-domain comparando netloc).  O `\bredirect\b` antigo perdia
+    # `redirect_request` porque `_` é word-char (sem fronteira).
     (re.compile(r"\b(if|elif|while|assert|and|or|unless)\b.*\b(https?|scheme|"
                 r"auth\w*|authoriz\w*|password|passwd|token|secret|credential|"
                 r"cred|permission|allow\w*|is_safe|verif\w*|valid\w*|sanitiz\w*|"
-                r"escap\w*|origin|csrf|referer|hostname|redirect)\b", re.I),
+                r"escap\w*|origin|csrf|referer|hostname|host|redirect\w*|"
+                r"netloc|domain)\b", re.I),
      "security-conditional-guard", "CWE-287/863/200"),
     # limite de recurso contra DoS/exaustão (CWE-400): max_* de partes/tamanho/
     # profundidade, ou exceções de limite excedido.  (CC — ex.: werkzeug
@@ -286,7 +291,12 @@ _UNBOUNDED_QUANT_RE = re.compile(r"(?:\\[swdSWD]|\.|\]|\))[*+]")
 # `\s+.*\s+\{%...endmacro` + re.S).  Baixo-FP: o marcador catastrófico é
 # específico e o fix mantém uma chamada de regex (simplificada).
 _REDOS_CATASTROPHIC_RE = re.compile(r"\\s[*+]\.[*+]|\.[*+]\\s[*+]|\.[*+].*\.[*+]")
-_REGEXCALL_RE = re.compile(r"re\.(?:search|compile|match|fullmatch)\s*\(")
+# linha que É um regex — chamada `re.` OU um pedaço de padrão com metacaracteres
+# típicos (`(?:`, `[^`, `\s`, `\w`, `\d`).  (CU: relaxado para casar o fix do
+# mako CVE-2022-40023, cujo regex é multi-linha e a linha do fix não contém
+# `re.compile(` — é só o corpo do padrão.)
+_REGEXCALL_RE = re.compile(
+    r"re\.(?:search|compile|match|fullmatch)\s*\(|\(\?:|\[\^|\\[swd]")
 
 
 def _detect_redos_mitigation(

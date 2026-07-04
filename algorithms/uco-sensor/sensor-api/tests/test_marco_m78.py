@@ -285,3 +285,31 @@ def test_T78_redos_regex_simplification():
              "            return 0.1\n")
     r = FixDiffLocalizer().localize(vuln, fixed, filename="templates.py")
     assert any(g.kind == "redos-mitigation" for g in r.added_guards)
+
+
+def test_T78_redos_negated_class_multiline_regex():
+    """ReDoS via classe negada num regex MULTI-LINHA (mako CVE-2022-40023):
+    `".*?"` → `"[^"]*?"`. A linha do fix é corpo de padrão (sem `re.compile(`),
+    então o predicado do padrão C aceita linha regex-ish (`(?:`/`[^`/`\\s`)."""
+    vuln = ('    tag = re.compile(r"""\n'
+            '            ((?:\\s+\\w+|\\s*=\\s*|".*?"|\'.*?\')*)  # attr\n'
+            '        """, re.X)\n')
+    fixed = ('    tag = re.compile(r"""\n'
+             '            ((?:\\s+\\w+|\\s*=\\s*|"[^"]*?"|\'[^\']*?\'|\\s*,\\s*)*)  # attr\n'
+             '        """, re.X)\n')
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="lexer.py")
+    assert any(g.kind == "redos-mitigation" for g in r.added_guards)
+
+
+def test_T78_security_guard_netloc_redirect_prefix():
+    """security-conditional-guard casa `redirect_request_netloc` (redirect como
+    PREFIXO, `_` é word-char) e `netloc` — scrapy CVE-2022-0577 (dropa Cookie em
+    redirect cross-domain). O `\\bredirect\\b` antigo perdia `redirect_request`."""
+    vuln = "def build(src):\n    return src.replace()\n"
+    fixed = ("def build(src):\n"
+             "    r = src.replace()\n"
+             "    if source_netloc != redirect_request_netloc:\n"
+             "        del r.headers['Cookie']\n"
+             "    return r\n")
+    res = FixDiffLocalizer().localize(vuln, fixed, filename="redirect.py")
+    assert any(g.kind == "security-conditional-guard" for g in res.added_guards)

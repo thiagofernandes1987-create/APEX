@@ -433,6 +433,60 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2022-40023",
+      "ghsa": "GHSA-v973-fxgf-6xhp",
+      "package": "mako",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 1.2.2",
+      "fix_commit": "925760291d6efec64fda6e9dd1fd9cfbd5be068c",
+      "where_file": "lexer.py",
+      "where_lines": [
+        280
+      ],
+      "how_constructs": [
+        "redos-mitigation"
+      ],
+      "cwe_ids": [
+        "CWE-1333"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2022-0577",
+      "ghsa": "GHSA-cjvr-mfj7-j4j8",
+      "package": "scrapy",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 1.8.2",
+      "fix_commit": "8ce01b3b76d4634f55067d6cfdf632ec70ba304a",
+      "where_file": "redirect.py",
+      "where_lines": [
+        22,
+        25
+      ],
+      "how_constructs": [
+        "security-conditional-guard"
+      ],
+      "cwe_ids": [
+        "CWE-200",
+        "CWE-863"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }
