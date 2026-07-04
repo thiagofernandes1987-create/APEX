@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.89.0 · **2560 testes verdes** · corpus **45/50 CVEs completos
+**Estado atual:** v3.90.0 · **2561 testes verdes** · corpus **46/51 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -109,10 +109,10 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 > 5 padrões de teto identificados com dado real. Cada um vira um motor/assinatura:
 - [x] **M29 — detector de RACE real** — DL ✅ (race-lock-guard + race-close-guard;
       waitress CVE-2024-49768 → 4/4 com o 1º pai do merge-commit). CWE-362.
-- [ ] **M30 — diff multi-arquivo / multi-parent**: hoje o M24 pega 1 arquivo e 1
-      pai. Fixes que são refactor multi-arquivo (pysaml2 schema, twisted pages.py)
-      ou merge-commit precisam agregar guards de VÁRIOS arquivos e escolher o pai
-      certo. Destrava a classe "refactor de segurança".
+- [x] **M30 — diff multi-arquivo** — DO ✅ (`build_degradation_multi` tenta o M10
+      em N arquivos e escolhe o que localiza; pysaml2 CVE-2021-21238 → 4/4).
+      Merge-parent (1º pai) validado manualmente em waitress/ipython/pysaml2 —
+      automação do fetcher fica p/ M27+.
 - [x] **M31 — sinais diff-semânticos finos** — DK ✅ (default-flip + raise-indirect
       implementados e validados: bleach CVE-2020-6802 + aiohttp CVE-2024-52304 → 4/4).
       Inclui (b) decode-before-validate (mlflow CVE-2023-6909 → 4/4) — DM ✅.
@@ -254,7 +254,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.89.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.90.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

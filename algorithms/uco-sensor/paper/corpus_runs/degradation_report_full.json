@@ -1333,6 +1333,33 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2021-21238",
+      "ghsa": "GHSA-f4g9-h89h-jgv9",
+      "package": "pysaml2",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 6.5.0",
+      "fix_commit": "1d8fd268f5bf887480a403a7a5ef8f048157cc14",
+      "where_file": "sigver.py",
+      "where_lines": [
+        1476,
+        1488
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-347"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }

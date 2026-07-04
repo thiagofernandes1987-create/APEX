@@ -300,3 +300,50 @@ def _ext_of(filename: str) -> str:
     if "." not in filename:
         return ""
     return "." + filename.rsplit(".", 1)[-1].lower()
+
+
+# ── M30 (DO v3.90.0): degradação MULTI-ARQUIVO ───────────────────────────────
+# Fixes que espalham a correção por VÁRIOS arquivos (refactor de segurança,
+# merge-commits) não completam quando olhamos 1 arquivo só.  `build_degradation_multi`
+# roda o M24 em CADA par (arquivo) e escolhe o registro que MELHOR responde as 4
+# perguntas (prioriza `complete` > `partial` > `metadata_only`), agregando o
+# ONDE (arquivo:linha) de todos os arquivos que localizaram guard.  Onde entra:
+# chamado pela esteira quando o commit toca >1 arquivo-fonte.  O par de cada
+# arquivo já deve vir do 1º pai (mainline) em merge-commits (responsabilidade do
+# M27/fetcher — o before/after tem que ser honesto).
+def build_degradation_multi(
+    advisory: "AdvisoryRecord",
+    file_pairs: List[Tuple[str, str, str]],
+) -> DegradationRecord:
+    """
+    file_pairs: lista de (vuln_src, fixed_src, filename).  Retorna o melhor
+    DegradationRecord (o que responde as 4 perguntas), agregando o ONDE dos
+    demais arquivos que também localizaram guard.  PURO e defensivo.
+    """
+    best: Optional[DegradationRecord] = None
+    extra_where: List[str] = []
+    _rank = {"complete": 3, "partial": 2, "metadata_only": 1}
+    for vuln_src, fixed_src, filename in file_pairs:
+        rec = build_degradation(advisory, vuln_src, fixed_src, filename)
+        if rec.where_lines and rec.where_file:
+            extra_where.append(f"{rec.where_file}:L{','.join(map(str, rec.where_lines))}")
+        if best is None or _rank.get(rec.status, 0) > _rank.get(best.status, 0):
+            best = rec
+    if best is None:                       # nenhum arquivo → só metadados
+        return _with_status(build_degradation(advisory, "", "", ""), "metadata_only")
+    # anexa, no registro vencedor, as localizações dos OUTROS arquivos (auditoria)
+    if len(extra_where) > 1:
+        d = best.to_dict()
+        d["where_file"] = " + ".join(
+            sorted({w.split(":")[0] for w in extra_where}))
+        return _with_status(DegradationRecord(
+            cve=d["cve"], ghsa=d["ghsa"], package=d["package"],
+            ecosystem=d["ecosystem"], when_broke=d["when_broke"],
+            resolved_in=d["resolved_in"], fix_commit=d["fix_commit"],
+            where_file=d["where_file"], where_lines=d["where_lines"],
+            how_constructs=d["how_constructs"], cwe_ids=d["cwe_ids"],
+            localized=d["localized"], stopped_firing=d["stopped_firing"],
+            perpetuated=d["perpetuated"],
+            findings_vuln=d.get("findings_vuln"), findings_fixed=d.get("findings_fixed"),
+        ), best.status)
+    return best

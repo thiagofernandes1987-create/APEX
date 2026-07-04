@@ -172,3 +172,15 @@ def test_T96_panel_na_when_no_detector_fires():
     rec = build_degradation(_jinja_advisory(), _VULN, _FIX, filename="filters.py")
     assert rec.findings_vuln == 0 and rec.findings_fixed == 0
     assert rec.stopped_firing is None
+
+
+# ── DO (v3.90.0): M30 build_degradation_multi (multi-arquivo) ─────────────────
+def test_T96_multi_file_picks_localized():
+    """build_degradation_multi tenta vários arquivos e escolhe o que localiza."""
+    from scan.corpus_expander import build_degradation_multi
+    adv = _jinja_advisory()
+    no_guard = ("def a():\n    return 1\n", "def a():\n    return 2\n", "a.py")
+    with_guard = (_VULN, _FIX, "filters.py")   # tem input-validation-raise
+    rec = build_degradation_multi(adv, [no_guard, with_guard])
+    assert rec.status == "complete"
+    assert "filters.py" in rec.where_file

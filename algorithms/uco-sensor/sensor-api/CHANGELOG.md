@@ -5,6 +5,22 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.90.0] — 2026-07-04 — Sprint DO: NOVO MOTOR M30 (diff multi-arquivo) — 5º padrão de teto coberto — corpus 45→46
+
+Último dos 5 padrões de teto. `scan/corpus_expander.build_degradation_multi`:
+roda o M10 em CADA arquivo alterado pelo fix e escolhe o registro que responde
+as 4 perguntas (complete>partial>metadata_only), agregando o ONDE dos demais.
+Destrava a classe "refactor de segurança multi-arquivo" e os merge-commits.
+- **pysaml2 CVE-2021-21238 (XML Signature Wrapping) → 4/4:** fix espalhado por
+  sigver.py + saml.py + xml/… ; o M30 acha o `raise` de validação em sigver.py:L1476,
+  1488 (input-validation-raise). Merge-commit resolvido via 1º pai (46578df0);
+  o novo arquivo xml/__init__.py (404 no pai) é corretamente ignorado. CWE-347.
++1 teste TX96. Corpus 45→46 (46%). Regressão 2561 verdes.
+
+Com M30, os 5 PADRÕES DE TETO estão cobertos: race (M29), default-flip +
+raise-indirect + decode-before-validate (M31/M31b), dangerous-sink-removed (CY),
+multi-arquivo/merge (M30). Resta ampliar LINGUAGENS (M26+ NVD C/Go/Java).
+
 ## [3.89.0] — 2026-07-04 — Sprint DN: RE-SWEEP com os motores novos — corpus 43→45
 
 Aplicada a diretriz "verifique para os que falharam se tinham info nos canais que
