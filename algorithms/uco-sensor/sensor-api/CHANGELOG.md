@@ -5,6 +5,30 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.60.0] — 2026-07-03 — Sprint CK: M26 NVD Harvester (cvelistV5) — estende as 4 perguntas ao C
+
+Destrava os projetos C do corpus (sem GHSA) pela raiz: o CVE Project publica
+CADA CVE como JSON em `CVEProject/cvelistV5`, acessível via raw (HTTP 200 — mesmo
+padrão do M23). `scan/nvd_harvester.py` (M26) parseia esse schema (CVE 5.x) num
+`NvdRecord` duck-compatível com o AdvisoryRecord (M23) — o compositor M24 consome
+sem alteração. (A REST API do NVD, `services.nvd.nist.gov`, está BLOQUEADA; este
+canal a substitui.)
+
+- **postgres CVE-2021-32027** (dado real via cvelistV5): versões corrigidas
+  13.3/12.7/11.12/10.17/9.6.22 + refs do vendor. Composto com M10 →
+  arrayfuncs.c:8 sites `bounds-check-call` (CWE-190). Registro PARCIAL (3/4:
+  quando/onde/como + qual-versão; `introduced` não consta no CVE-record).
+- **Honestidade sobre qualidade de dado (sem inventar):** ffmpeg CVE-2020-22015
+  e sqlite CVE-2019-19646 têm product/versions "n/a" no cvelistV5 — dado
+  GENUINAMENTE ausente nesse canal, reportado como tal (`resolved_in` vazio),
+  não fabricado. `answers_all_four` foi endurecido: respostas que sinalizam
+  ausência ("não disponível"/"n/a"/"desconhecida") NÃO contam.
+- Relatório real combinado `paper/corpus_runs/degradation_report_full.json`:
+  4 registros reais = 2 completos 4/4 (jinja, requests) + 2 parciais 3/4
+  (postgres, ffmpeg).
+
++7 testes TX98. Regressão 2507 verdes.
+
 ## [3.59.0] — 2026-07-03 — Sprint CJ: M25 Advisory Resolver + BATCH REAL (2/2 CVEs completos)
 
 Fecha o motor de escala e RODA em dado real. `scan/advisory_resolver.py` (M25)

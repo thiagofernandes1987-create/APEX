@@ -73,10 +73,21 @@ class DegradationRecord:
 
     @property
     def answers_all_four(self) -> bool:
-        """True se as 4 perguntas têm resposta concreta (não-vazia)."""
-        return bool(
-            self.when_broke and self.resolved_in and self.resolved_in != ""
-            and self.where_file and self.where_lines and self.how_constructs
+        """
+        True só se as 4 perguntas têm resposta CONCRETA.  Uma resposta que
+        sinaliza AUSÊNCIA de dado ("não disponível", "n/a", "desconhecida") NÃO
+        conta — honestidade legível por máquina (ex.: postgres, cujo CVE-record
+        não traz `introduced`, fica corretamente em 3/4, não 4/4).
+        """
+        def _real(s: str) -> bool:
+            low = (s or "").lower()
+            return bool(s) and not any(
+                mark in low for mark in ("não disponível", "nao disponivel",
+                                         "n/a", "desconhecid"))
+        return (
+            _real(self.when_broke) and _real(self.resolved_in)
+            and bool(self.where_file) and bool(self.where_lines)
+            and bool(self.how_constructs)
         )
 
     def narrative(self) -> str:

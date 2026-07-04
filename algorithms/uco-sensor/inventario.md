@@ -31,7 +31,7 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
-> **CORRENTE: v3.59.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.60.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
@@ -41,7 +41,8 @@ ordem, em toda sessão futura:
 > M22 CFGTaintAnalyzer (taint fluxo-sensível sobre a CFG do UCO V4) ·
 > M23 AdvisoryHarvester (advisory OSV → registro de degradação, escala do corpus) ·
 > M24 CorpusExpander (funde M23+M10+M11 → as 4 perguntas num DegradationRecord) ·
-> M25 AdvisoryResolver (auto-resolve GHSA→ano/mês; habilita o batch sem seed manual).
+> M25 AdvisoryResolver (auto-resolve GHSA→ano/mês; habilita o batch sem seed manual) ·
+> M26 NvdHarvester (cvelistV5 via raw → registro de degradação para C sem GHSA).
 >
 > **Sprint CD (v3.53.0)** — M17 precisão anti-FP: cast numérico
 > (int/float/bool/complex) reconhecido como sanitizador FORTE e sinks SQL
@@ -2417,14 +2418,49 @@ funciona.)
 - [x] M25 — resolver GHSA→(ano/mês) automático (brute-force HEAD) — CJ ✅
 - [x] BATCH REAL rodado: 2/2 CVEs PyPI completos (jinja, requests) — CJ ✅
       (`paper/corpus_runs/degradation_report_pypi.json`)
-- [ ] M26 — harvester NVD para projetos C SEM GHSA (postgres/ffmpeg/sqlite/redis/
-      php-src/linux): versões afetadas vêm do NVD/vendor, não do GHSA
-- [ ] Escalar o batch: alimentar N GHSA de CVEs PyPI/npm reais (WebSearch
-      CVE→GHSA) + arquivo alterado por CVE → dezenas de registros completos
+- [x] M26 — harvester NVD via cvelistV5 (raw) para projetos C SEM GHSA — CK ✅
+      (postgres real 3/4; ffmpeg/sqlite "n/a" no canal → reportado honesto)
+- [ ] Escalar o batch: alimentar N GHSA/CVE reais (WebSearch CVE→GHSA) +
+      arquivo alterado por CVE → dezenas de registros (mecânico, não bloqueado)
 - [ ] Ligar M24 ao M12 CorpusValidator (fetch por tag automático no lote)
 - [ ] Detector de RACE/TOCTOU (linux Dirty-COW) — classe ainda não coberta
 - [ ] Ampliar linguagens não-Python no taint (C/Go/Java) via GenericCFG
 - [ ] Camada APEX real (IA/MCP) sobre o loop MVP (M19)
+
+## Sprint CK — M26 NVD Harvester (cvelistV5) estende as 4 perguntas ao C (v3.60.0)
+
+**Canal destravado (dado real):** o CVE Project publica cada CVE como JSON em
+`CVEProject/cvelistV5` via raw (HTTP 200 — mesmo padrão do M23; a REST API do
+NVD está bloqueada). `scan/nvd_harvester.py` (M26) `parse_cve_record` → `NvdRecord`
+duck-compatível com o AdvisoryRecord (M23), consumido pelo M24 sem alteração.
+
+**Resultado real (`paper/corpus_runs/degradation_report_full.json`):** 4 registros
+= 2 completos 4/4 (jinja, requests — PyPI) + 2 parciais 3/4 (postgres, ffmpeg).
+- postgres: versões 13.3/12.7/11.12/10.17/9.6.22 (M26) + arrayfuncs.c:8 sites
+  bounds-check-call (M10) + commit f02b9085ad2f. Falta só `introduced`.
+
+**Honestidade (sem inventar):** ffmpeg/sqlite têm product/versions "n/a" no
+cvelistV5 → dado GENUINAMENTE ausente nesse canal (não gap de processamento);
+reportado como tal. `answers_all_four` endurecido para não contar respostas de
+ausência ("não disponível"/"n/a"/"desconhecida"). +7 testes TX98. 2507 verdes.
+
+### CHECKLIST
+- [x] M26 parseia cvelistV5 (schema CVE 5.x) → NvdRecord duck-compat M23
+- [x] postgres real 3/4 composto (M26+M10); commit + versões corrigidas reais
+- [x] ffmpeg/sqlite "n/a" reportado honesto (dado ausente no canal)
+- [x] answers_all_four endurecido (ausência ≠ resposta) — honestidade p/ máquina
+- [ ] Escalar volume (N CVEs) · ligar M24→M12 fetch-por-tag · M-race p/ Dirty-COW
+
+### MAPA DE COBERTURA DAS 4 PERGUNTAS (estado real, honesto)
+| CVE | quando | qual-versão | onde | como | canal |
+|---|---|---|---|---|---|
+| jinja CVE-2024-22195 | ✅ (0) | ✅ 3.1.3 | ✅ | ✅ | GHSA (PyPI) |
+| requests CVE-2023-32681 | ✅ 2.3.0 | ✅ 2.31.0 | ✅ | ✅ | GHSA (PyPI) |
+| postgres CVE-2021-32027 | ❌ n/a | ✅ 13.3+ | ✅ | ✅ | cvelistV5 (C) |
+| ffmpeg CVE-2020-22015 | ❌ | ❌ n/a | ✅ | ✅ | cvelistV5 (C, escasso) |
+> A esteira responde 4/4 no ecossistema-alvo (PyPI/npm). Nos C, o teto é a
+> qualidade do CVE-record (o `introduced`/versão às vezes não existe no dado
+> público) — limite de DADO, não de engenharia. Escalar = alimentar mais CVEs.
 
 ## Sprint CJ — M25 Advisory Resolver + BATCH REAL (v3.59.0)
 
