@@ -119,5 +119,56 @@ def test_T96_to_dict_roundtrip_keys():
     rec = build_degradation(_jinja_advisory(), _VULN, _FIX, filename="filters.py")
     d = rec.to_dict()
     for k in ("cve", "when_broke", "resolved_in", "where_file",
-              "how_constructs", "answers_all_four", "status"):
+              "how_constructs", "answers_all_four", "status",
+              "findings_vuln", "findings_fixed"):
         assert k in d
+
+
+# ── Sprint CS (v3.68.0): validação "parou de disparar?" com painel de detectores ──
+# Antes, a validação usava só o M11 (memory-safety) → null para injeção.  Agora o
+# painel (M11 + M22 taint + M28 TOCTOU + M20 lite) mede a contagem de achados
+# antes/depois. Semântica honesta: stopped_firing = a contagem caiu vuln→fix.
+
+_SQLI_VULN = '''\
+def view(request):
+    q = request.GET['id']
+    cursor.execute('SELECT * FROM u WHERE id=' + q)
+'''
+_SQLI_FIX = '''\
+def view(request):
+    q = request.GET['id']
+    cursor.execute('SELECT * FROM u WHERE id=%s', (q,))
+'''
+
+
+def _sqli_advisory() -> AdvisoryRecord:
+    return AdvisoryRecord(
+        ghsa_id="GHSA-sqli", cve="CVE-sqli", package="demo", ecosystem="PyPI",
+        introduced="1.0.0", fixed="1.1.0", fix_commit="deadbeef1234",
+        fix_tag="1.1.0", cwe_ids=["CWE-89"])
+
+
+def test_T96_panel_stopped_firing_on_injection():
+    # o par SQLi: vuln concatenado dispara (M22 taint), fixed parametrizado não →
+    # o painel detecta que PAROU DE DISPARAR (o M11-only dava null aqui).
+    rec = build_degradation(_sqli_advisory(), _SQLI_VULN, _SQLI_FIX, "views.py")
+    d = rec.to_dict()
+    assert d["findings_vuln"] == 1 and d["findings_fixed"] == 0
+    assert d["stopped_firing"] is True
+    assert d["perpetuated"] is False
+
+
+def test_T96_panel_uses_m22_not_m7_2_no_fp_on_parameterized():
+    # trava a decisão de usar o M22 (com gating SQL arg[0]) e não o M7.2 base:
+    # a query parametrizada do fix NÃO pode contar como achado (senão FP).
+    from scan.corpus_expander import _count_sensor_findings
+    assert _count_sensor_findings(_SQLI_FIX, ".py") == 0
+
+
+def test_T96_panel_na_when_no_detector_fires():
+    # jinja (XSS em filtro) não tem detector do Sensor que dispare → contagem 0
+    # nos dois lados → stopped_firing permanece null (N/A honesto, localizado por
+    # diff via M10), sem inventar um "sim/não".
+    rec = build_degradation(_jinja_advisory(), _VULN, _FIX, filename="filters.py")
+    assert rec.findings_vuln == 0 and rec.findings_fixed == 0
+    assert rec.stopped_firing is None

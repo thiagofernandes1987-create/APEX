@@ -82,6 +82,13 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
       automático). BLOQUEADO até 08:40 UTC pelo limite de sessão dos agentes. ← PRÓXIMO
 
 ### ⚠️ ALTO ROI que ficou para trás (dívida — o dono cobrou "você pulou coisa simples")
+- [x] **Generalizar "parou de disparar"** além do M11 (painel M11+M22+M28+M20) —
+      CS ✅. `stopped_firing`/`perpetuated` + contagens reais no DegradationRecord.
+      Semântica honesta: N/A quando nenhum detector dispara no vuln (CVE interno
+      de lib localizado por diff), sim/não quando dispara (caso vibe-coding).
+- [ ] **M7.2 TaintAnalyzer FP em query parametrizada** (não herdou o gating SQL
+      arg[0] do M17/M22/CD) — descoberto na CS ao montar o painel. Afeta o campo
+      `flows` legado do `/scan-flow`. PORTAR o gating do M17 → M7.2. ← PRÓXIMO da dívida
 - [ ] **Ligar M24→M12** (fetch por tag no lote roda o before/after do M12
       automaticamente) — pendente desde CI/CJ. Simples, alto ROI.
 - [ ] **M23 capturar sinais não-usados do advisory**: `published`/`modified`
@@ -102,7 +109,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.67.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.68.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

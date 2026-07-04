@@ -50,6 +50,57 @@ except Exception:  # noqa: BLE001
     _M11_AVAILABLE = False
 
 
+# ── Painel de detectores para a validação "parou de disparar?" (Sprint CS) ────
+# DIAGNÓSTICO (sinal captado e não processado): até a CR, a validação before/after
+# usava SÓ o M11 (memory-safety, GA01/GA02 — C-oriented).  Para os CVEs PyPI de
+# injeção/XSS/DoS (a maioria do corpus) o M11 não dispara em nenhum lado →
+# `stopped_firing` ficava null.  Os detectores CERTOS para essas classes já
+# existiam no Sensor mas NÃO eram usados aqui: M7.2 taint (Python), M20 taint-lite
+# (PHP/JS), M28 TOCTOU.  Este painel os inclui → a validação passa a ser
+# significativa para todas as classes, não só memory-safety.
+def _count_sensor_findings(src: str, ext: str) -> int:
+    """
+    Nº total de achados dos detectores de SEGURANÇA do Sensor aplicáveis a *src*.
+    Usado para o before/after: se a contagem cai do vuln para o fixed, o sinal
+    "parou de disparar".  Cada import é guardado — degrada sem levantar.  Onde
+    entra: chamado por `build_degradation` para vuln_src e fixed_src. (CS v3.68.0)
+    """
+    total = 0
+    # M11 — memory-safety (C/C++/qualquer ext)
+    if _M11_AVAILABLE:
+        try:
+            total += len(GuardAwareScanner().scan(src, ext))
+        except Exception:  # noqa: BLE001
+            pass
+    is_py = ext.lower() in (".py", "py")
+    if is_py:
+        # M22 — taint fluxo-sensível sobre a CFG do UCO V4.  USAMOS O M22 (não o
+        # M7.2) DE PROPÓSITO: o M22 herda o gating SQL arg[0] e o sanitizador
+        # int()/cast do M17/CD, então NÃO marca query parametrizada como injeção
+        # (o M7.2 base ainda tem esse FP — ver dívida no inventário CS).  Assim a
+        # validação before/after fica correta: vuln concatenado dispara, fixed
+        # parametrizado não → stopped_firing=True.
+        try:
+            from sast.taint_cfg import CFGTaintAnalyzer   # M22
+            total += len(CFGTaintAnalyzer().analyze(src))
+        except Exception:  # noqa: BLE001
+            pass
+        # M28 — TOCTOU / race (CWE-367)
+        try:
+            from sast.toctou import TOCTOUDetector       # M28
+            total += len(TOCTOUDetector().scan(src))
+        except Exception:  # noqa: BLE001
+            pass
+    else:
+        # M20 — taint-lite (PHP/JS), onde o AST-Python não se aplica
+        try:
+            from sast.taint_lite import TaintLite         # M20
+            total += len(TaintLite().scan(src, ext))
+        except Exception:  # noqa: BLE001
+            pass
+    return total
+
+
 @dataclass(frozen=True)
 class DegradationRecord:
     """As 4 perguntas do goal, respondidas para um CVE com dado real."""
@@ -67,8 +118,10 @@ class DegradationRecord:
     how_constructs: List[str] = field(default_factory=list)   # kinds dos guards
     cwe_ids: List[str] = field(default_factory=list)
     localized: bool = False
-    stopped_firing: Optional[bool] = None    # M11: guard parou de disparar?
-    perpetuated: Optional[bool] = None        # M11: algo persistiu no fix?
+    stopped_firing: Optional[bool] = None    # painel: contagem caiu vuln→fix?
+    perpetuated: Optional[bool] = None        # painel: ainda dispara no fix?
+    findings_vuln: Optional[int] = None       # evidência real: nº achados no vuln
+    findings_fixed: Optional[int] = None      # evidência real: nº achados no fix
     status: str = "partial"                   # complete | partial | metadata_only
 
     @property
@@ -120,7 +173,10 @@ class DegradationRecord:
             "where_file": self.where_file, "where_lines": list(self.where_lines),
             "how_constructs": list(self.how_constructs), "cwe_ids": list(self.cwe_ids),
             "localized": self.localized, "stopped_firing": self.stopped_firing,
-            "perpetuated": self.perpetuated, "status": self.status,
+            "perpetuated": self.perpetuated,
+            "findings_vuln": self.findings_vuln,
+            "findings_fixed": self.findings_fixed,
+            "status": self.status,
             "answers_all_four": self.answers_all_four,
         }
 
@@ -153,19 +209,26 @@ def build_degradation(
     except Exception:  # noqa: BLE001 — M10 nunca deve derrubar o compositor
         pass
 
-    # ── COMO (validação): M11 diz se o guard parou de disparar / perpetuou ───
+    # ── COMO (validação): o Sensor parou de disparar no fix? Algo perpetuou? ──
+    # Painel de detectores (M11 + M7.2 + M20 + M28), não só memory-safety (CS).
+    # Semântica HONESTA e mensurável: stopped_firing = a contagem de achados dos
+    # detectores do Sensor CAIU do vuln para o fixed; perpetuated = ainda há
+    # achado no fixed.  Quando NENHUM detector dispara no vuln (nv==0), a questão
+    # é N/A para esta classe (localizada por diff via M10) → mantém-se null,
+    # honestamente, e as contagens reais ficam registradas para auditoria.
     stopped_firing: Optional[bool] = None
     perpetuated: Optional[bool] = None
+    findings_vuln: Optional[int] = None
+    findings_fixed: Optional[int] = None
     ext = _ext_of(filename)
-    if _M11_AVAILABLE and ext:
+    if ext:
         try:
-            scanner = GuardAwareScanner()
-            v_find = scanner.scan(vuln_src, ext)
-            f_find = scanner.scan(fixed_src, ext)
-            nv, nf = len(v_find), len(f_find)
-            if nv or nf:
-                stopped_firing = nf < nv          # menos achados no fix
-                perpetuated = nf > 0               # algo persistiu no fix
+            nv = _count_sensor_findings(vuln_src, ext)
+            nf = _count_sensor_findings(fixed_src, ext)
+            findings_vuln, findings_fixed = nv, nf
+            if nv > 0:                              # só é significativo se disparou no vuln
+                stopped_firing = nf < nv
+                perpetuated = nf > 0
         except Exception:  # noqa: BLE001
             pass
 
@@ -180,6 +243,7 @@ def build_degradation(
         where_file=filename, where_lines=where_lines,
         how_constructs=how_constructs, cwe_ids=cwe_ids, localized=localized,
         stopped_firing=stopped_firing, perpetuated=perpetuated,
+        findings_vuln=findings_vuln, findings_fixed=findings_fixed,
         status="partial",
     )
     status = "complete" if rec.answers_all_four else (
@@ -198,7 +262,9 @@ def _with_status(rec: DegradationRecord, status: str) -> DegradationRecord:
         where_file=d["where_file"], where_lines=d["where_lines"],
         how_constructs=d["how_constructs"], cwe_ids=d["cwe_ids"],
         localized=d["localized"], stopped_firing=d["stopped_firing"],
-        perpetuated=d["perpetuated"], status=status,
+        perpetuated=d["perpetuated"],
+        findings_vuln=d.get("findings_vuln"), findings_fixed=d.get("findings_fixed"),
+        status=status,
     )
 
 

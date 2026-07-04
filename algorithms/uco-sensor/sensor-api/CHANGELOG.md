@@ -5,6 +5,29 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.68.0] — 2026-07-04 — Sprint CS: validação "parou de disparar?" generalizada (painel de detectores)
+
+Fecha o gap do goal "compare se nas versões corrigidas o programa parou de
+disparar e se algo perpetuou" — que estava incompleto: o M24 usava SÓ o M11
+(memory-safety) para essa validação, então para os CVEs PyPI de injeção/XSS/DoS
+o `stopped_firing` ficava sempre null (o M11 não dispara nessas classes).
+
+- **Painel de detectores em `corpus_expander._count_sensor_findings`** (M11 +
+  M22 taint fluxo-sensível + M28 TOCTOU + M20 taint-lite): mede a contagem de
+  achados dos detectores do Sensor no vuln e no fixed. `stopped_firing` = a
+  contagem CAIU (vuln→fix); `perpetuated` = ainda dispara no fix. Novos campos
+  `findings_vuln`/`findings_fixed` no DegradationRecord (evidência real).
+- **Semântica HONESTA:** quando nenhum detector dispara no vuln (CVE interno de
+  lib, localizado por diff via M10), `stopped_firing` permanece null (N/A
+  explícito, não um "sim/não" inventado). Quando dispara (caso vibe-coding:
+  código de app com source→sink real), o before/after é medido de verdade.
+- **Achado (dívida registrada):** ao montar o painel, descobri que o M7.2
+  TaintAnalyzer base NÃO herdou o gating SQL arg[0] do M17/M22 (Sprint CD) →
+  marca query parametrizada como injeção (FP). Por isso o painel usa o **M22**
+  (que tem o gating) e não o M7.2. Portar o gating p/ o M7.2 fica no checklist.
+- Prova real: par SQLi (concatenado→parametrizado) dá findings_vuln=1,
+  findings_fixed=0, stopped_firing=True. +3 testes TX96. Regressão 2536 verdes.
+
 ## [3.67.0] — 2026-07-04 — Sprint CR: M28 detector de RACE/TOCTOU (CWE-367)
 
 Cobre a classe de RACE que nem M10 (guard-por-diff) nem M11 (memory-safety)
