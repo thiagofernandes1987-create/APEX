@@ -26,12 +26,80 @@ ordem, em toda sessão futura:
    reiniciar a suíte completa e atualizar o checklist com motivo + step.
 6. **Push direto para `main`** está bloqueado pela proxy policy 403 — sempre
    gerar bundle incremental e entregar via SendUserFile.
+7. **Comentar TUDO que é importante** em módulos/funções/chamadas: o quê, para
+   onde vai, o que faz e a versão. Auditabilidade > brevidade.
+8. **Sempre validar se há SINAL chegando aos motores que não processamos** e
+   ligar (ex.: cfg_delta, int() sanitizer, and/or guards, advisory dates).
+9. **Nunca declarar "dead code" sem diagnosticar** se é chamada esquecida.
+
+---
+
+## ✅ CHECKLIST MESTRE (fonte única — ler PRIMEIRO, atualizar SEMPRE)
+
+> Consolidação da Sprint CQ (v3.66.0) para não me perder. Estado real em disco,
+> auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
+> abaixo como histórico detalhado).
+
+**Estado atual:** v3.65.0 · **2522 testes verdes** · corpus **9/14 CVEs completos
+4/4** (`paper/corpus_runs/degradation_report_full.json`).
+
+**Pipeline automático (coração do sistema — provado, deployável):**
+`CVE →WebSearch→ GHSA →M25→ advisory →WebFetch(commit)→ arquivos →M27→ arquivo
+→raw→ par(vuln,fixed) →M24(=M23+M10+M11)→ 4 respostas`. Só o 1º passo usa
+WebSearch; o resto é determinístico. Cada CVE novo ≈ 1 WebSearch + 1 WebFetch.
+
+**Motores (mapa rápido):** M7.2 taint intra · M10 fix-localizer (10 assinaturas) ·
+M11 guard-aware (parou-de-disparar) · M12 corpus-validator · M13 UCO V4 ·
+M17 taint interproc · M18/M19 loop corretor · M20 taint-lite (PHP/JS) ·
+M22 taint CFG path-sensitive (no /scan-flow) · M23 advisory-harvester ·
+M24 corpus-expander (4 perguntas) · M25 advisory-resolver · M26 NVD (C) ·
+M27 fix-file-locator (auto-arquivo).
+
+### FEITO (CD→CP, dado real, auditado)
+- [x] M17 anti-FP: cast numérico sanitiza + SQL só arg[0] (CD)
+- [x] M10 destrava postgres+ffmpeg via bounds-check-call + filtro por contagem (CE)
+- [x] M22 taint fluxo-sensível sobre a CFG do UCO V4 (CF)
+- [x] **M22 integrado ao Scan** (`/scan-flow` expõe `cfg_taint`) (CG) ✅
+- [x] M23 advisory-harvester (advisory OSV via raw → introduced/fixed/commit) (CH)
+- [x] M24 corpus-expander: as 4 perguntas num DegradationRecord (CI)
+- [x] M25 advisory-resolver (auto GHSA→ano/mês) + batch real (CJ)
+- [x] M26 NVD harvester (cvelistV5 via raw) para C (CK)
+- [x] M27 fix-file-locator (WebFetch da página do commit → arquivo) (CN)
+- [x] Corpus escalado a 9/14 completos, 9 classes de vuln (CL→CP)
+- [x] 10 assinaturas M10 acumuladas (input-validation-raise, output-encoding,
+      security-conditional-guard, resource-limit, overflow-guard, bounds-check-call,
+      early-return-guard, redos-mitigation, cache-vary-guard, path-containment-guard)
+
+### PENDENTE — ordem de prioridade do dono (Próximo foco, 2026-07-04)
+1. [x] **Prompt de auditoria** p/ outro LLM (`AUDIT_PROMPT.md`) — CQ ✅
+2. [x] **Consolidar inventário** (este checklist mestre) — CQ ✅
+3. [ ] **Detector de RACE/TOCTOU** (linux Dirty-COW CVE-2016-5195; classe ainda
+      não coberta — nem M10 nem M11 pegam race). NOVO MÓDULO. ← PRÓXIMO
+4. [ ] **Ampliar corpus com mais CVEs reais** (volume; mecânico via pipeline
+      automático). BLOQUEADO até 08:40 UTC pelo limite de sessão dos agentes.
+
+### ⚠️ ALTO ROI que ficou para trás (dívida — o dono cobrou "você pulou coisa simples")
+- [ ] **Ligar M24→M12** (fetch por tag no lote roda o before/after do M12
+      automaticamente) — pendente desde CI/CJ. Simples, alto ROI.
+- [ ] **M23 capturar sinais não-usados do advisory**: `published`/`modified`
+      (datas — reforçam "quando" e ranqueamento VFC), `severity` (CVSS vector).
+      Estão no JSON, não processamos. (Diretriz #8.)
+- [ ] **M22 recall**: estender def-use da CFG a condições `if`/`while` e a
+      AugAssign (`x += tainted`)/multi-target. Simples, amplia detecção.
+- [ ] **M11 memory-safety**: cobrir redis(widening)/sqlite(clamp) com anti-FP.
+- [ ] **M26 NVD em lote** para os C (postgres/ffmpeg 4/4; sqlite/linux teto de dado).
+- [ ] **Camada APEX real (IA/MCP)** sobre o loop MVP local (M19).
+
+### TETO HONESTO (não contornável sem inventar — proibido)
+- Alguns CVEs C e fixes-refactor NÃO têm as 4 respostas no dado público
+  (ex.: sqlite logic-clamp, linux Dirty-COW race, sqlparse refactor). Registrados
+  como `partial`/`metadata_only` — honestidade, não falha.
 
 ---
 
 ## Versão atual
 
-> **CORRENTE: v3.65.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.66.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

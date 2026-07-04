@@ -5,6 +5,26 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.66.0] — 2026-07-04 — Sprint CQ: consolidação (prompt de auditoria + inventário como memória única)
+
+Sprint de organização pedida pelo dono ("primeira coisa é criar um prompt para
+outro LLM auditar; depois organizar tudo e atualizar o inventário para você não
+se perder; você pulou coisa simples de alto ROI"). Sem mudança de motor.
+
+- **`algorithms/uco-sensor/AUDIT_PROMPT.md`** (novo): prompt adversarial para um
+  LLM especializado auditar/validar todo o trabalho — mapa dos módulos M7.2→M27,
+  o pipeline automático, e alvos específicos (anti-FP, dado-real, dead-code,
+  casamento antes↔depois, sinais não-processados). Fiel a v3.66.0 / 2522 testes.
+- **`inventario.md`**: novo "CHECKLIST MESTRE" no topo (fonte única) reconciliando
+  FEITO (CD→CP) e PENDENTE por prioridade do dono, com os itens de ALTO ROI que
+  ficaram para trás explicitados como dívida (ligar M24→M12; capturar
+  published/modified/severity do advisory no M23; recall do M22 em if/while e
+  AugAssign; memory-safety redis/sqlite no M11). +3 diretrizes permanentes
+  (comentar tudo; validar sinais não-usados; nunca declarar dead-code sem
+  diagnóstico). Corpus real confirmado: 9/14 completos em degradation_report_full.json.
+- Próximo foco declarado: detector de RACE/TOCTOU (classe não coberta), depois
+  ampliar corpus (mecânico; bloqueado até 08:40 UTC pelo limite de sessão).
+
 ## [3.65.0] — 2026-07-03 — Sprint CP: lote automático +4 (PyJWT/tornado/Django 4/4) → 9/14 completos
 
 Rodada de escala pela esteira automática: 4 CVEs novos processados só com o GHSA
