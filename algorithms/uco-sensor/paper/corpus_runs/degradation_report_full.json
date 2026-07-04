@@ -784,6 +784,120 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-47874",
+      "ghsa": "GHSA-f96h-pmfr-66vw",
+      "package": "starlette",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 0.40.0",
+      "fix_commit": "fd038f3070c302bff17ef7d173dbb0b007617733",
+      "where_file": "formparsers.py",
+      "where_lines": [
+        120,
+        121,
+        153,
+        154
+      ],
+      "how_constructs": [
+        "resource-limit",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-770"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-1135",
+      "ghsa": "GHSA-w3h3-4rj7-4ph4",
+      "package": "gunicorn",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 22.0.0",
+      "fix_commit": "ac29c9b0a758d21f1e0fb3b3457239e523fa9f1d",
+      "where_file": "message.py",
+      "where_lines": [
+        162,
+        168,
+        193,
+        200
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-444"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2021-42771",
+      "ghsa": "GHSA-h4m5-qpfp-3mpv",
+      "package": "babel",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 2.9.1",
+      "fix_commit": "412015ef642bfcc0d8ba8f4d05cdbb6aac98d9b3",
+      "where_file": "localedata.py",
+      "where_lines": [
+        54
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-8309",
+      "ghsa": "GHSA-45pg-36p6-83v9",
+      "package": "langchain-community",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 0.2.0",
+      "resolved_in": "versão 0.2.19",
+      "fix_commit": "64c317eba05fbac0c6a6fc5aa192bc0d7130972e",
+      "where_file": "cypher.py",
+      "where_lines": [
+        201,
+        202
+      ],
+      "how_constructs": [
+        "security-conditional-guard",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-74",
+        "CWE-89"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }

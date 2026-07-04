@@ -5,6 +5,24 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.79.0] — 2026-07-04 — Sprint DD: lote inline +4 (starlette, gunicorn, babel, langchain) — corpus 25→29
+
+Maior lote da sessão — 4/4 completos numa rodada:
+- **starlette CVE-2024-47874 (DoS multipart) → 4/4:** `max_part_size` + `raise
+  MultiPartException` → resource-limit + input-validation-raise. formparsers.py, CWE-770.
+- **gunicorn CVE-2024-1135 (request smuggling) → 4/4:** `raise InvalidHeader` em
+  Transfer-Encoding conflitante → input-validation-raise. message.py, CWE-444.
+- **babel CVE-2021-42771 (path traversal via locale) → 4/4:** `os.path.basename`
+  + `raise ValueError` → input-validation-raise. localedata.py, CWE-22 (merge commit
+  processado com sucesso via 1º pai).
+- **langchain-community CVE-2024-8309 (Cypher injection) → 4/4:** opt-in
+  `allow_dangerous_requests` + `raise ValueError` → security-conditional-guard +
+  input-validation-raise. cypher.py, CWE-74/89.
+- **M10: input-validation-raise reconhece `raise Invalid...`** (antes só
+  Error/Exception/TooLarge/Denied/Forbidden) — destravou o gunicorn. +1 teste.
+
+Corpus 25→29 completos 4/4 (29% do objetivo). Regressão 2549 verdes.
+
 ## [3.78.0] — 2026-07-04 — Sprint DC: jupyter-server 4/4 (corpus 24→25, marco de 25%)
 
 - **jupyter-server CVE-2023-39968 (open redirect no login) → 4/4:** o fix valida

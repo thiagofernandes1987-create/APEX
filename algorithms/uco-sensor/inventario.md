@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.78.0 · **2548 testes verdes** · corpus **25/30 CVEs completos
+**Estado atual:** v3.79.0 · **2549 testes verdes** · corpus **29/34 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -112,6 +112,14 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
   coleta sem depender dos agentes (que estavam no limite de sessão).
 - wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
   pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
+
+### Sprint DD (v3.79.0) — lote inline +4 (starlette, gunicorn, babel, langchain)
+- starlette CVE-2024-47874 (DoS multipart) → 4/4 (max_part_size, resource-limit).
+- gunicorn CVE-2024-1135 (smuggling) → 4/4 (raise InvalidHeader).
+- babel CVE-2021-42771 (path traversal) → 4/4 (basename + raise; merge commit ok).
+- langchain CVE-2024-8309 (Cypher injection) → 4/4 (allow_dangerous_requests + raise).
+- M10: input-validation-raise reconhece `raise Invalid...`. +1 teste.
+- **Corpus 25→29 = 29% do objetivo.** Maior lote da sessão.
 
 ### Sprint DC (v3.78.0) — jupyter-server 4/4 (marco de 25%)
 - **jupyter-server CVE-2023-39968 (open redirect) → 4/4**: valida `next`
@@ -204,7 +212,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.78.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.79.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

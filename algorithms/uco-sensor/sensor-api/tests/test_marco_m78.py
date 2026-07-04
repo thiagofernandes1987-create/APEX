@@ -377,3 +377,16 @@ def test_T78_loop_termination_guard():
     fixed = 'def f(s):\n    while peek not in (b"\\r", b"\\n", b""):\n        peek = s.read(1)\n'
     r = FixDiffLocalizer().localize(vuln, fixed, filename="_data_structures.py")
     assert any(g.kind == "loop-termination-guard" for g in r.added_guards)
+
+
+# ── DD (v3.79.0): input-validation-raise reconhece `raise Invalid...` ─────────
+def test_T78_input_validation_raise_invalid_exception():
+    """`raise InvalidHeader(...)` (gunicorn CVE-2024-1135) — exceção que NÃO
+    termina em Error/Exception mas começa com Invalid → é validação."""
+    vuln = "def set_body(self):\n    self.chunked = True\n"
+    fixed = ("def set_body(self):\n"
+             "    if chunked:\n"
+             "        raise InvalidHeader('TRANSFER-ENCODING', req=self)\n"
+             "    self.chunked = True\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="message.py")
+    assert any(g.kind == "input-validation-raise" for g in r.added_guards)

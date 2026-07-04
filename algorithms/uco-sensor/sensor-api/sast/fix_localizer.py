@@ -93,7 +93,9 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
                 r"\bXMLParser\([^)]*resolve_entities"),
      "xxe-hardening", "CWE-611"),
     # validação de entrada que aborta (raise/return) em valor perigoso.
-    (re.compile(r"\braise\s+\w*(Error|Exception|TooLarge|Denied|Forbidden)\b"), "input-validation-raise", "CWE-20"),
+    # (DD) +Invalid\w* (ex.: `raise InvalidHeader` do gunicorn CVE-2024-1135) —
+    # `raise Invalid...` é sempre validação de entrada (baixo-FP).
+    (re.compile(r"\braise\s+\w*(Error|Exception|TooLarge|Denied|Forbidden|Invalid\w*)\b"), "input-validation-raise", "CWE-20"),
     (re.compile(r"\breturn\b.*\b(EINVAL|ERANGE|-1|error|Err)\b", re.I), "early-return-guard", "CWE-20"),
     # (DB) terminação de laço contra loop infinito (CWE-835): o fix adiciona um
     # terminador vazio/EOF (`b""`/`""`) a uma condição `while ... not in (...)`.
