@@ -953,6 +953,62 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-44271",
+      "ghsa": "GHSA-8ghj-p4vj-mr35",
+      "package": "pillow",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 10.0.0",
+      "fix_commit": "1fe1bb49c452b0318cad12ea9d97c3bef188e9a7",
+      "where_file": "ImageFont.py",
+      "where_lines": [
+        56,
+        58
+      ],
+      "how_constructs": [
+        "resource-limit",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-400",
+        "CWE-770"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-4941",
+      "ghsa": "GHSA-6v6g-j5fq-hpvw",
+      "package": "gradio",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 4.31.3",
+      "fix_commit": "ee1e2942e0a1ae84a08a05464e41c8108a03fa9c",
+      "where_file": "processing_utils.py",
+      "where_lines": [
+        352
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-20",
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }

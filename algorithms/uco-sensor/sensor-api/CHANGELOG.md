@@ -5,6 +5,21 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.81.0] — 2026-07-04 — Sprint DF: Pillow + gradio 4/4 (corpus 31→33, 33%)
+
+- **Pillow CVE-2023-44271 (DoS ImageFont) → 4/4:** `MAX_STRING_LENGTH` +
+  `raise ValueError` → resource-limit + input-validation-raise. ImageFont.py, CWE-400/770.
+- **gradio CVE-2024-4941 (LFI via path key) → 4/4:** `raise Error(...file not in
+  cache...)` + `is_in_or_equal(path, upload_folder)` → input-validation-raise.
+  processing_utils.py:L352, CWE-22.
+- **M10: input-validation-raise reconhece `raise Bad...`** (BadRequest/
+  BadHttpMessage — comuns em parsers). +1 teste TX78.
+- Pulados: aiohttp CVE-2024-52304 (raise INDIRETO: `exc=BadHttpMessage(); raise
+  exc` — não é `raise Bad...` direto); waitress CVE-2024-49768 (merge commit +
+  fix de RACE com lock — CWE-367, fora do vocabulário de guard).
+
+Corpus 31→33 completos 4/4 (33%). Regressão 2551 verdes.
+
 ## [3.80.0] — 2026-07-04 — Sprint DE: werkzeug + streamlit 4/4 (corpus 29→31, 31%)
 
 - **werkzeug CVE-2024-49767 (DoS por memória em multipart) → 4/4:** enforce de

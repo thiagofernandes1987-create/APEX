@@ -405,3 +405,16 @@ def test_T78_path_containment_commonprefix():
              "    self.serve(filename)\n")
     r = FixDiffLocalizer().localize(vuln, fixed, filename="components.py")
     assert any(g.kind == "path-containment-guard" for g in r.added_guards)
+
+
+# ── DF (v3.81.0): input-validation-raise reconhece `raise Bad...` ─────────────
+def test_T78_input_validation_raise_bad_exception():
+    """`raise BadRequest(...)`/`raise BadHttpMessage(...)` — exceções de validação
+    que começam com Bad (comuns em parsers HTTP)."""
+    vuln = "def h(r):\n    return process(r)\n"
+    fixed = ("def h(r):\n"
+             "    if b'\\n' in r.ext:\n"
+             "        raise BadRequest('bad chunk')\n"
+             "    return process(r)\n")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="parser.py")
+    assert any(g.kind == "input-validation-raise" for g in r.added_guards)

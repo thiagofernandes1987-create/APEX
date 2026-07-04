@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.80.0 · **2550 testes verdes** · corpus **31/36 CVEs completos
+**Estado atual:** v3.81.0 · **2551 testes verdes** · corpus **33/38 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -112,6 +112,12 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
   coleta sem depender dos agentes (que estavam no limite de sessão).
 - wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
   pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
+
+### Sprint DF (v3.81.0) — Pillow + gradio 4/4 (corpus 31→33, 33%)
+- Pillow CVE-2023-44271 (DoS ImageFont) → 4/4 (MAX_STRING_LENGTH + raise).
+- gradio CVE-2024-4941 (LFI) → 4/4 (raise Error + is_in_or_equal).
+- M10: input-validation-raise reconhece `raise Bad...`. +1 teste.
+- Pulados: aiohttp (raise indireto); waitress (merge + race/lock, CWE-367).
 
 ### Sprint DE (v3.80.0) — werkzeug + streamlit 4/4 (corpus 29→31, 31%)
 - werkzeug CVE-2024-49767 (DoS multipart) → 4/4 (max_form_memory_size + raise).
@@ -217,7 +223,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.80.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.81.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·
