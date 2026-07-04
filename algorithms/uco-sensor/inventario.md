@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.76.0 · **2547 testes verdes** · corpus **23/28 CVEs completos
+**Estado atual:** v3.77.0 · **2548 testes verdes** · corpus **24/29 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -112,6 +112,13 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
   coleta sem depender dos agentes (que estavam no limite de sessão).
 - wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
   pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
+
+### Sprint DB (v3.77.0) — pypdf 4/4 + assinatura loop-termination (CWE-835)
+- **pypdf CVE-2023-36464 (loop infinito) → 4/4**: fix adiciona `b""` ao
+  `while ... not in (...)` (para no EOF) → NOVA assinatura loop-termination-guard.
+  _data_structures.py:L1019. 13ª assinatura M10. +1 teste.
+- Pulados: pip CVE-2023-5752 (`[f"-r={rev}"]` sutil, sem guard); sanic
+  CVE-2022-35920 (advisory sem commit).
 
 ### Sprint DA (v3.76.0) — lote inline +2 (aiohttp, oauthlib) — corpus 21→23
 - **aiohttp CVE-2023-49082 (CRLF via method) → 4/4**: `raise ValueError` em char
@@ -191,7 +198,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.76.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.77.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

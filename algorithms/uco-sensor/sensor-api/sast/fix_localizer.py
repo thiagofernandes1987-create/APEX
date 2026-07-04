@@ -95,6 +95,11 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     # validação de entrada que aborta (raise/return) em valor perigoso.
     (re.compile(r"\braise\s+\w*(Error|Exception|TooLarge|Denied|Forbidden)\b"), "input-validation-raise", "CWE-20"),
     (re.compile(r"\breturn\b.*\b(EINVAL|ERANGE|-1|error|Err)\b", re.I), "early-return-guard", "CWE-20"),
+    # (DB) terminação de laço contra loop infinito (CWE-835): o fix adiciona um
+    # terminador vazio/EOF (`b""`/`""`) a uma condição `while ... not in (...)`.
+    # Ex.: pypdf CVE-2023-36464 — `while peek not in (b"\r", b"\n")` vira
+    # `... (b"\r", b"\n", b"")` (para no EOF).  Baixo-FP: while+not-in+literal-vazio.
+    (re.compile(r"\bwhile\b.*\bnot\s+in\b.*b?['\"]['\"]"), "loop-termination-guard", "CWE-835"),
     # guard condicional de SEGURANÇA (Python/JS/PHP usam `and`/`or`, não `&&`):
     # um `if`/condição numa linha ADICIONADA que referencia um termo sensível
     # (scheme/https/auth/senha/token/permissão/origem…).  Baixo-FP porque exige

@@ -367,3 +367,13 @@ def test_T78_redos_bounded_char_class_regex():
     fixed = 'IPv6 = r"([A-Fa-f0-9:]+[:$])[A-Fa-f0-9]{1,4}"\n'
     r = FixDiffLocalizer().localize(vuln, fixed, filename="uri_validate.py")
     assert any(g.kind == "redos-mitigation" for g in r.added_guards)
+
+
+# ── DB (v3.77.0): terminação de laço contra loop infinito (CWE-835) ───────────
+def test_T78_loop_termination_guard():
+    """Fix de loop infinito que adiciona terminador vazio/EOF a `while ... not in`
+    (pypdf CVE-2023-36464): `(b"\\r", b"\\n")` → `(b"\\r", b"\\n", b"")`."""
+    vuln = 'def f(s):\n    while peek not in (b"\\r", b"\\n"):\n        peek = s.read(1)\n'
+    fixed = 'def f(s):\n    while peek not in (b"\\r", b"\\n", b""):\n        peek = s.read(1)\n'
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="_data_structures.py")
+    assert any(g.kind == "loop-termination-guard" for g in r.added_guards)

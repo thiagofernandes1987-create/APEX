@@ -5,6 +5,18 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.77.0] — 2026-07-04 — Sprint DB: pypdf 4/4 + assinatura loop-termination (CWE-835) — corpus 23→24
+
+- **pypdf CVE-2023-36464 (loop infinito no parser de PDF) → 4/4:** o fix adiciona
+  o terminador `b""` a `while peek not in (b"\r", b"\n")` (para no EOF) → NOVA
+  assinatura **loop-termination-guard** (CWE-835). _data_structures.py:L1019,
+  fixed 3.9.0 (commit b0e5c689, pai dc6a92e5). 13ª assinatura do M10.
+- Pulado com honestidade: pip CVE-2023-5752 (hg arg-injection) — o fix é
+  `["-r", rev]` → `[f"-r={rev}"]` (binding por `=`), sutil demais, sem guard
+  reconhecível; sanic CVE-2022-35920 (advisory sem commit-ref no OSV).
+
+Corpus 23→24 completos 4/4. +1 teste TX78. Regressão 2548 verdes.
+
 ## [3.76.0] — 2026-07-04 — Sprint DA: lote inline +2 (aiohttp, oauthlib) — corpus 21→23
 
 - **aiohttp CVE-2023-49082 (CRLF injection via method) → 4/4:** o fix valida o

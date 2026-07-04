@@ -728,6 +728,32 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-36464",
+      "ghsa": "GHSA-4vvm-4w3v-6mr8",
+      "package": "pypdf",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 3.1.0",
+      "resolved_in": "versão 3.9.0",
+      "fix_commit": "b0e5c689df689ab173df84dacd77b6fc3c161932",
+      "where_file": "_data_structures.py",
+      "where_lines": [
+        1019
+      ],
+      "how_constructs": [
+        "loop-termination-guard"
+      ],
+      "cwe_ids": [
+        "CWE-835"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }
