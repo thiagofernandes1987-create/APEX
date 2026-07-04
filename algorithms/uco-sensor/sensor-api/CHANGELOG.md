@@ -5,6 +5,22 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.92.0] — 2026-07-04 — Sprint DQ: AMPLIAÇÃO DE LINGUAGEM (Java/JS) — 1º CVE não-Python — corpus 47→48
+
+Atende "aumentar a compatibilidade com novas linguagens". O M10 é regex-agnóstico;
+faltava o idioma de exceção não-Python:
+- **input-validation-raise agora reconhece `throw new <X>Exception`/`Error`** (Java/
+  JS/C#/Kotlin), além de `raise` (Python). `IllegalArgumentException`/`SecurityException`
+  incluídos. `throw` adicionado ao gate `_SECURITY_TOKENS`.
+- **netty CVE-2021-43797 (Java, ecossistema Maven) → 4/4:** fix multi-arquivo que
+  valida Content-Length e `throw new IllegalArgumentException(...)`. HttpUtil.java,
+  CWE-444, fixed 4.1.60.Final (commit 89c241e3, pai bf9b90c3). **1º CVE não-Python
+  do corpus** — a esteira GHSA já cobre Maven/Go/npm; agora o M10 localiza os guards.
+
+Corpus agora com 2 ecossistemas (PyPI + Maven). +2 testes TX78 (Java + JS throw).
+Corpus 47→48 completos 4/4 (48%). Regressão 2565 verdes. M10 com 19 assinaturas
+(agora multi-linguagem).
+
 ## [3.91.0] — 2026-07-04 — Sprint DP: abspath-reject (M31c) + confirmação de teto de dado C via M26 — corpus 46→47
 
 - **Nova assinatura `abspath-reject` (CWE-22):** rejeição de path absoluto

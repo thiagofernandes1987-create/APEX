@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.91.0 · **2563 testes verdes** · corpus **47/52 CVEs completos
+**Estado atual:** v3.92.0 · **2565 testes verdes** · corpus **48/53 CVEs completos
 4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
 (CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
 
@@ -124,7 +124,10 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
       de validação de path (CWE-29); (c) RAISE-INDIRETO (`exc=BadX(); raise exc`
       aiohttp) — construção de exceção de erro + raise da var. Cada um é baixo-FP
       SE ancorado ao contexto (kwarg de segurança / path / except).
-- [ ] **M26+ NVD em lote (C/Go/Java)**: ampliar linguagens além de Python via
+- [x] **Ampliação de LINGUAGEM (Java/JS via GHSA/Maven)** — DQ ✅: idioma `throw new
+      <X>Exception` no input-validation-raise + `throw` no gate. netty CVE-2021-43797
+      (Java, Maven) → 4/4 — 1º CVE não-Python do corpus. Go/npm herdam o mesmo idioma.
+- [ ] **M26+ NVD em lote (C)** para os que têm introduced (o resto é teto de dado). Via
       cvelistV5 (M26 já existe, parcial) — a esteira GHSA cobre só empacotados PyPI/npm.
 - [ ] Loop-fix por FLAG-de-EOF (`self._at_eof=True` aiohttp CVE-2024-30251) — variante
       do M28 loop-termination para quando o terminador é um flag, não `not in (...)`.
@@ -258,7 +261,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.91.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.92.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

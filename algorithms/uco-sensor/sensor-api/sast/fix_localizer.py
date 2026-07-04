@@ -95,7 +95,13 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     # validação de entrada que aborta (raise/return) em valor perigoso.
     # (DD) +Invalid\w* (ex.: `raise InvalidHeader` do gunicorn CVE-2024-1135) —
     # `raise Invalid...` é sempre validação de entrada (baixo-FP).
-    (re.compile(r"\braise\s+(?:\w*(?:Error|Exception|TooLarge|Denied|Forbidden)|(?:Invalid|Bad)\w*)\b"), "input-validation-raise", "CWE-20"),
+    # (DQ) +Java/JS: `throw new <X>Exception`/`throw new <X>Error` — amplia o
+    # input-validation-raise para linguagens que usam `throw` (Java/JS/C#/Kotlin),
+    # não só `raise` (Python).  Habilita CVEs do ecossistema Maven/Go/npm no M10.
+    (re.compile(r"\braise\s+(?:\w*(?:Error|Exception|TooLarge|Denied|Forbidden)|(?:Invalid|Bad)\w*)\b|"
+                r"\bthrow\s+(?:new\s+)?\w*(?:Error|Exception|Denied|Forbidden|"
+                r"Invalid\w*|Bad\w*|Illegal\w*|Security\w*)\b"),
+     "input-validation-raise", "CWE-20"),
     (re.compile(r"\breturn\b.*\b(EINVAL|ERANGE|-1|error|Err)\b", re.I), "early-return-guard", "CWE-20"),
     # (DB) terminação de laço contra loop infinito (CWE-835): o fix adiciona um
     # terminador vazio/EOF (`b""`/`""`) a uma condição `while ... not in (...)`.
@@ -152,7 +158,7 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
 # habilitar o grupo de injeção/escaping.)
 _SECURITY_TOKENS = re.compile(
     r"[<>]=?|[!=]=|&&|\|\||\bNULL\b|\bif\b|\belif\b|\bwhile\b|\bassert\b|"
-    r"\breturn\b|\band\b|\bor\b|\buint\d+_t\b|\bsize_t\b|\bunsafe\b|"
+    r"\breturn\b|\bthrow\b|\band\b|\bor\b|\buint\d+_t\b|\bsize_t\b|\bunsafe\b|"
     r"\bescape\w*\(|\braise\b|\bquote\w*\(|htmlspecialchars|encodeURI|max_\w+|"
     # (CX) idiomas de hardening XXE — passam o gate mesmo sem `==`/`<>`.
     r"resolve_entities|no_network|defusedxml|XMLParser|forbid_(?:dtd|entities)|"

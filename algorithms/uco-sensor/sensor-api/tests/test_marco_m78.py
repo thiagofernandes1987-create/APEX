@@ -530,3 +530,23 @@ def test_T78_abspath_reject_no_fp_without_path_ctx():
     fixed = "def f(s):\n    if s.startswith('/'):\n        s = s[1:]\n    return s\n"
     r = FixDiffLocalizer().localize(vuln, fixed, filename="m.py")
     assert not any(g.kind == "abspath-reject" for g in r.added_guards)
+
+
+# ── DQ (v3.92.0): ampliação de LINGUAGEM — Java/JS `throw` no input-validation-raise ─
+def test_T78_java_throw_new_exception():
+    """netty CVE-2021-43797 (Java): `throw new IllegalArgumentException(...)` →
+    input-validation-raise (ampliação p/ Maven/Go/npm, não só Python `raise`)."""
+    vuln = "int parse(String f){ return Integer.parseInt(f); }"
+    fixed = ("int parse(String f){\n"
+             "    if (!Character.isDigit(f.charAt(0))) {\n"
+             "        throw new IllegalArgumentException(\"Content-Length not a number\");\n"
+             "    }\n    return Integer.parseInt(f); }")
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="HttpUtil.java")
+    assert any(g.kind == "input-validation-raise" for g in r.added_guards)
+
+def test_T78_js_throw_security_error():
+    """JS: `throw new SecurityError(...)` também localiza."""
+    vuln = "function f(x){ return run(x); }"
+    fixed = "function f(x){ if (bad) throw new SecurityError('nope'); return run(x); }"
+    r = FixDiffLocalizer().localize(vuln, fixed, filename="a.js")
+    assert any(g.kind == "input-validation-raise" for g in r.added_guards)

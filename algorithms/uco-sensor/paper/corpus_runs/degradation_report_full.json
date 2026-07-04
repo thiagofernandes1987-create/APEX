@@ -1386,6 +1386,44 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2021-21295",
+      "ghsa": "GHSA-wm47-8v5p-wjpj",
+      "package": "io.netty:netty-codec-http2",
+      "ecosystem": "Maven",
+      "when_broke": "versão 4.0.0",
+      "resolved_in": "versão 4.1.60.Final",
+      "fix_commit": "89c241e3b1795ff257af4ad6eadc616cb2fb3dc4",
+      "where_file": "HttpUtil.java",
+      "where_lines": [
+        541,
+        544,
+        545,
+        547,
+        574,
+        575,
+        585,
+        594,
+        602,
+        609,
+        615
+      ],
+      "how_constructs": [
+        "security-conditional-guard",
+        "null-guard",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-444"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }
