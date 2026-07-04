@@ -5,6 +5,21 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.89.0] — 2026-07-04 — Sprint DN: RE-SWEEP com os motores novos — corpus 43→45
+
+Aplicada a diretriz "verifique para os que falharam se tinham info nos canais que
+captamos": re-processei CVEs pulados em rodadas anteriores, agora que os motores
+M31/M29/M31b existem. Dois completaram, ambos validando motores em DADO REAL:
+- **flask-cors CVE-2024-6221 → 4/4:** `allow_private_network=True→False`
+  (security-default-flip do M31). core.py:L60, CWE-284.
+- **ipython CVE-2023-24816 → 4/4:** o fix REMOVE `os.system("title "+title)`
+  (dangerous-sink-removed / CWE-78) — 1º CVE REAL a exercitar essa assinatura
+  (antes só tinha teste sintético). terminal.py:L94. Merge-commit resolvido via
+  1º pai (e548ee23).
+
+Corpus 43→45 completos 4/4 (45%). Regressão 2560 verdes. Sem novo código —
+puro re-processamento de "canais captados e não processados".
+
 ## [3.88.0] — 2026-07-04 — Sprint DM: M31 completo (decode-before-validate) — corpus 42→43
 
 Fecha o 3º sub-sinal do M31: **decode-before-validate (CWE-29)** — o fix adiciona

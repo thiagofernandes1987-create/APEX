@@ -1280,6 +1280,59 @@
       "findings_fixed": 0,
       "status": "complete",
       "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2024-6221",
+      "ghsa": "GHSA-hxwh-jpp2-84pm",
+      "package": "Flask-Cors",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 4.0.2",
+      "fix_commit": "03aa3f8e2256437f7bad96422a747b98ab5e31bf",
+      "where_file": "core.py",
+      "where_lines": [
+        60
+      ],
+      "how_constructs": [
+        "security-default-flip"
+      ],
+      "cwe_ids": [
+        "CWE-284"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-24816",
+      "ghsa": "GHSA-29gw-9793-fvw7",
+      "package": "ipython",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 8.10.0",
+      "fix_commit": "385d69325319a5972ee9b5983638e3617f21cb1f",
+      "where_file": "terminal.py",
+      "where_lines": [
+        94
+      ],
+      "how_constructs": [
+        "dangerous-sink-removed"
+      ],
+      "cwe_ids": [
+        "CWE-20",
+        "CWE-78"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true
     }
   ]
 }
