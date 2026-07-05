@@ -58,7 +58,7 @@ from typing import Dict, List, Optional, Set, Tuple
 
 # Vocabulário calibrado de source/sink/sanitizer — REUSADO do M7.2 (não
 # duplicar; qualquer regra nova de taint entra lá e este módulo herda).
-from sast.taint_engine import TaintAnalyzer
+from sast.taint_engine import TaintAnalyzer, _SQL_QUERY_KWARGS
 
 # Unpack (rule_id, severity, vuln_type, cwe_id) → (desc, rule, cwe, sev),
 # a mesma ordem usada pelo M17 (reuso p/ consistência dos relatórios).
@@ -242,9 +242,15 @@ class CFGTaintAnalyzer:
 
             # Gating SQL (igual M17/CD v3.53.0): em query parametrizada só o 1º
             # argumento (a query) carrega risco — a tupla de params é segura.
+            # (DP v3.93.0) inclui o kwarg da query (sql=/query=/...) para não
+            # perder `execute(sql=user_input)` — achado D4.
             is_sql = (rule == "SAST040") or (cwe == "CWE-89")
-            check_args = call.args[:1] if is_sql else list(call.args) + [
-                kw.value for kw in call.keywords]
+            if is_sql:
+                check_args = call.args[:1] + [
+                    kw.value for kw in call.keywords
+                    if (kw.arg or "").lower() in _SQL_QUERY_KWARGS]
+            else:
+                check_args = list(call.args) + [kw.value for kw in call.keywords]
 
             # nomes usados nos argumentos relevantes do sink
             arg_names: Set[str] = set()

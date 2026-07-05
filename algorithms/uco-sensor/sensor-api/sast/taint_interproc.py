@@ -53,7 +53,7 @@ import ast
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 
-from .taint_engine import TaintAnalyzer
+from .taint_engine import TaintAnalyzer, _SQL_QUERY_KWARGS
 
 
 @dataclass
@@ -186,7 +186,15 @@ class InterprocTaintAnalyzer:
                     # `execute('... %s', (x,))` (uso correto) como injeção.
                     is_sql = (rule == "SAST040") or (cwe == "CWE-89")
                     if is_sql:
-                        args_to_check = node.args[:1]
+                        # Só a query carrega risco (arg posicional 0 OU o kwarg
+                        # nomeado query/sql/operation/statement); bind params
+                        # posicionais args[1:] são seguros.  (DP v3.93.0) Antes
+                        # excluía TODOS os kwargs → `execute(sql=user)` passava
+                        # sem checagem (FN — achado D4).
+                        args_to_check = node.args[:1] + [
+                            kw.value for kw in node.keywords
+                            if (kw.arg or "").lower() in _SQL_QUERY_KWARGS
+                        ]
                     else:
                         args_to_check = list(node.args) + [kw.value for kw in node.keywords]
                     for arg in args_to_check:
