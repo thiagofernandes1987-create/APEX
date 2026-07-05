@@ -163,9 +163,14 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
       só mais rigor. Bônus: M27 agora tenta tag `<nome>@<versão>` (gradio). +4 testes.
 - [ ] **Ampliar corpus com mais CVEs reais** (volume mecânico via pipeline
       automático; D5 agora destrava CVEs com relocação de layout).
-- [ ] **Backlog de receita SaaS (relatorio #3):** wiring de billing em 16 handlers
-      (só 3 faturam); query N+1 em `list_usage_periods`; VACUUM no `prune_old_events`.
-      Subsistema SEPARADO do sensor — maior blast radius; validar em branch isolada.
+- [x] ~~**Backlog de receita SaaS (relatorio #3):** wiring de billing em 16 handlers
+      (só 3 faturam); query N+1 em `list_usage_periods`; VACUUM no `prune_old_events`.~~
+      **JÁ FEITO (verificado na DR)** — o relatorio analisava um snapshot ANTIGO do
+      inventário. No `main` atual: (1) billing wiring = **24 sites** `_billed_dispatch`
+      (Sprint AB v3.10.0, charge-after-success + TOCTOU-safe); (2) N+1 resolvido
+      (Sprint Z fix-2, `sum_units_by_period_and_kind` = 1 query); (3) VACUUM cabeado
+      (Sprint Z fix-4, `prune_old_events(vacuum=True)` → `store.vacuum()`). 47 testes
+      billing/tenant verdes. Não reimplementar (seria fabricar trabalho).
 
 **🟡 MÉDIO ROI (nova lógica + baterias anti-FP):**
 - [ ] **SAST046-049 (relatorio #5):** pickle/yaml.load já cobertos (D7); falta
