@@ -135,8 +135,8 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 - [x] **M10 aprende ReDoS por quantificador limitado** (`\s*`→`\s{0,10}`) — CT ✅
       (2º padrão canônico; antes só reconhecia remove-regex+string-parse). Destravou
       setuptools CVE-2022-40897. +2 testes anti-FP.
-- [ ] **Ligar M24→M12** (fetch por tag no lote roda o before/after do M12
-      automaticamente) — pendente desde CI/CJ. Simples, alto ROI. ← PRÓXIMO da dívida
+- [x] **Ligar M24→M12** (before/after por chave semântica, não contagem) —
+      **DR ✅** (casamento D2A sobre painel amplo; zero drift no corpus; +M27 `@` tag).
 - [x] **M23 capturar sinais não-usados do advisory**: `published`/`modified`
       (datas — reforçam "quando" e ranqueamento VFC), `severity`. — **DR ✅**
       (persistidos no DegradationRecord; backfill dos 53 registros).
@@ -155,8 +155,12 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 - [x] Capturar OSV `published`/`modified`/`severity` (relatorio #2) — **DR ✅**
 - [x] M22 recall AugAssign (relatorio #4) — **DR ✅**
 - [x] Corrigir FP `.execute()` genérico + FN kwarg SQL + SAST046 (auditorias) — **DR ✅**
-- [ ] **Ligar M24→M12** no lote (dívida CI/CJ) — casar findings before/after do
-      M12 automaticamente na esteira. Baixa complexidade. **← PRÓXIMO**
+- [x] **Ligar M24→M12** (dívida CI/CJ) — **DR ✅**. `_sensor_finding_keys` casa
+      before/after por chave `(rule_id, alvo)` (D2A) sobre o painel amplo
+      M22/M28/M20/M11, em vez de contagem crua. Corpus reprocessado: os 3
+      registros validados dão o MESMO valor (gradio re-derivado ao vivo:
+      `(SAST060,JSON_PATH)` persiste → perpetuated=True) — zero drift na vitrine,
+      só mais rigor. Bônus: M27 agora tenta tag `<nome>@<versão>` (gradio). +4 testes.
 - [ ] **Ampliar corpus com mais CVEs reais** (volume mecânico via pipeline
       automático; D5 agora destrava CVEs com relocação de layout).
 - [ ] **Backlog de receita SaaS (relatorio #3):** wiring de billing em 16 handlers
