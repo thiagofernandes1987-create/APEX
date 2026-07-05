@@ -5,6 +5,39 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.93.0] — 2026-07-04 — Sprint DR: CORREÇÕES DA AUDITORIA ADVERSARIAL (D1–D9)
+
+Aplica as correções confirmadas por reprodução ao vivo na auditoria independente
+consolidada (6 relatórios + verificação própria no repo real). Ordem por severidade:
+
+- **D1 (bloqueador):** `DegradationRecord` tinha campos com default (`published`/
+  `modified`/`severity`) ANTES de campos obrigatórios → `TypeError` no import,
+  quebrando o pacote `scan` inteiro. Reordenados para o fim da dataclass.
+- **D2 (alto):** `tests/test_marco_m68.py` (23 testes, cobertura única de axios/
+  Spring4Shell/tokio/PHP/C#) havia sido deletado por um `OSError` intermitente de
+  ambiente Windows — **restaurado**.
+- **D6:** `answers_all_four` volta à semântica de 4 metadados; nova property
+  **`validated`** (separada) reflete `stopped_firing is not None`. `generate_corpus.py`
+  recalcula contadores dinamicamente (era 14/9 no cabeçalho com 53 registros em disco)
+  e reporta as duas dimensões. `--backfill` preenche published/modified/severity dos
+  53 registros via advisory real.
+- **D3 (FP alto):** `.execute()/.raw()` genérico só é sink SQL se o objeto parecer
+  handle de banco (`_looks_like_sql_object`) — elimina FP CRITICAL em
+  `pipeline/task/strategy.execute()`.
+- **D4 (FN alto):** gating SQL agora inclui o kwarg da query (`sql=`/`query=`/…),
+  não perde `execute(sql=user_input)`. Bind params posicionais seguem excluídos.
+- **D7:** metadata dedicada de `SAST046` (unsafe deserialization) — antes caía no
+  fallback genérico SAST045.
+- **D5:** `build_pair` (M27) tenta variantes de caminho (`src/` toggle) na versão
+  anterior — destrava CVEs com relocação de layout (reproduzido: requests
+  CVE-2024-35195, agora 4/4 automático end-to-end). **`prior_version("1.0.0")`→`0.0.0`** (D9).
+- **D8:** portabilidade Windows dos testes — `_safe_unlink` (gc+retry) em 103 sites
+  SQLite de m28/m29/m31/m32/m33; `encoding="utf-8"` em m54; skipif PyWavelets em m38.
+  105→2 falhas locais (as 2 restantes: race pré-existente do watcher m23, fora do escopo).
+
++10 testes de regressão (`test_marco_m101.py`). Corpus regenerado: 53 total, 48 4/4
+(metadado), 3 validados (todos com perpetuação — confirma achado 1.2 da auditoria).
+
 ## [3.92.0] — 2026-07-04 — Sprint DQ: AMPLIAÇÃO DE LINGUAGEM (Java/JS) — 1º CVE não-Python — corpus 47→48
 
 Atende "aumentar a compatibilidade com novas linguagens". O M10 é regex-agnóstico;

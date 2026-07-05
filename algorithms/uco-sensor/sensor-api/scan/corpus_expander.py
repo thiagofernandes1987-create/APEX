@@ -114,6 +114,11 @@ class DegradationRecord:
     fix_commit: str
     # ONDE / COMO (M10 + M11)
     where_file: str
+    # metadados do advisory OSV (janela de exposição + gravidade) — campos com
+    # default DEPOIS dos obrigatórios (dataclass exige essa ordem)
+    published: str = ""
+    modified: str = ""
+    severity: str = ""
     where_lines: List[int] = field(default_factory=list)
     how_constructs: List[str] = field(default_factory=list)   # kinds dos guards
     cwe_ids: List[str] = field(default_factory=list)
@@ -143,6 +148,17 @@ class DegradationRecord:
             and bool(self.how_constructs)
         )
 
+    @property
+    def validated(self) -> bool:
+        """
+        Dimensão SEPARADA de `answers_all_four`: True quando o painel de
+        detectores (M11+M22+M28+M20) produziu medida real before/after
+        (`stopped_firing` conhecido).  Manter as duas flags distintas evita
+        conflar "localizado (4/4 metadados)" com "validado dinamicamente" —
+        achado 1.2/D6 da auditoria adversarial.
+        """
+        return self.stopped_firing is not None
+
     def narrative(self) -> str:
         """As 4 respostas em texto auditável (pt-BR)."""
         where = (f"{self.where_file}:L{','.join(map(str, self.where_lines))}"
@@ -168,7 +184,9 @@ class DegradationRecord:
     def to_dict(self) -> Dict[str, Any]:
         return {
             "cve": self.cve, "ghsa": self.ghsa, "package": self.package,
-            "ecosystem": self.ecosystem, "when_broke": self.when_broke,
+            "ecosystem": self.ecosystem, "published": self.published,
+            "modified": self.modified, "severity": self.severity,
+            "when_broke": self.when_broke,
             "resolved_in": self.resolved_in, "fix_commit": self.fix_commit,
             "where_file": self.where_file, "where_lines": list(self.where_lines),
             "how_constructs": list(self.how_constructs), "cwe_ids": list(self.cwe_ids),
@@ -178,6 +196,7 @@ class DegradationRecord:
             "findings_fixed": self.findings_fixed,
             "status": self.status,
             "answers_all_four": self.answers_all_four,
+            "validated": self.validated,
         }
 
 
@@ -238,7 +257,9 @@ def build_degradation(
     # status: completo se as 4 respostas existem
     rec = DegradationRecord(
         cve=advisory.cve, ghsa=advisory.ghsa_id, package=advisory.package,
-        ecosystem=advisory.ecosystem, when_broke=advisory.when_broke,
+        ecosystem=advisory.ecosystem, published=getattr(advisory, "published", ""),
+        modified=getattr(advisory, "modified", ""), severity=getattr(advisory, "severity", ""),
+        when_broke=advisory.when_broke,
         resolved_in=advisory.resolved_in, fix_commit=advisory.fix_commit,
         where_file=filename, where_lines=where_lines,
         how_constructs=how_constructs, cwe_ids=cwe_ids, localized=localized,
@@ -257,7 +278,9 @@ def _with_status(rec: DegradationRecord, status: str) -> DegradationRecord:
     d = rec.to_dict()
     return DegradationRecord(
         cve=d["cve"], ghsa=d["ghsa"], package=d["package"],
-        ecosystem=d["ecosystem"], when_broke=d["when_broke"],
+        ecosystem=d["ecosystem"], published=d.get("published", ""),
+        modified=d.get("modified", ""), severity=d.get("severity", ""),
+        when_broke=d["when_broke"],
         resolved_in=d["resolved_in"], fix_commit=d["fix_commit"],
         where_file=d["where_file"], where_lines=d["where_lines"],
         how_constructs=d["how_constructs"], cwe_ids=d["cwe_ids"],
