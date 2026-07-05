@@ -342,9 +342,10 @@ class _UCOVisitor(ast.NodeVisitor):
         """Detecta statements após return no mesmo bloco (dead code)."""
         self.generic_visit(node)
 
-    def visit_FunctionDef_deadcode(self, node: ast.FunctionDef) -> None:
-        """Analisa dead code em corpo de função."""
-        self._scan_dead_code(node.body)
+    # (DS/Achado #5) removido `visit_FunctionDef_deadcode`: nunca era despachado
+    # (ast.NodeVisitor despacha por `visit_<Tipo>`), portanto era código morto.
+    # A varredura de dead-code parte de `visit_Module` → `_scan_dead_code`, que
+    # agora recursa em funções E classes.
 
     def _scan_dead_code(self, stmts: List[ast.stmt]) -> None:
         """
@@ -405,6 +406,11 @@ class _UCOVisitor(ast.NodeVisitor):
             elif isinstance(stmt, ast.With):
                 self._scan_dead_code(stmt.body)
             elif isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                self._scan_dead_code(stmt.body)
+            elif isinstance(stmt, ast.ClassDef):
+                # (DS/Achado #5) sem este ramo, dead-code dentro de MÉTODOS de
+                # classe nunca era varrido (o caso mais comum em OO). A cadeia
+                # recursava em função mas parava na classe.
                 self._scan_dead_code(stmt.body)
 
     def _count_dead_block(self, stmts: List[ast.stmt]) -> None:

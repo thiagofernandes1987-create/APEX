@@ -1048,6 +1048,13 @@ class TaintAnalyzer:
         if is_sql:
             if call.args:
                 _check(call.args[0])
+            # (DS) também checar o kwarg da QUERY (sql=/query=/operation=/...),
+            # igual M17/M22 — sem isto `cursor.execute(sql=user)` (query por
+            # keyword, sem posicional) passava despercebido no motor PRINCIPAL
+            # (M7.2 é o que o UCOBridge/scan usa). Achado #1 da auditoria v3.93.0.
+            for kw in call.keywords:
+                if kw.value and (kw.arg or "").lower() in _SQL_QUERY_KWARGS:
+                    _check(kw.value)
             return
         for arg in call.args:
             _check(arg)

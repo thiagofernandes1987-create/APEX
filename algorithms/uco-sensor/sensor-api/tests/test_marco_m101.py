@@ -231,3 +231,64 @@ def test_TBA15_key_based_perpetuation_same_signal():
 def test_TBA16_count_compat_shim_matches_key_count():
     from scan.corpus_expander import _count_sensor_findings, _sensor_finding_keys
     assert _count_sensor_findings(_KV, ".py") == len(_sensor_finding_keys(_KV, ".py"))
+
+
+# ── Sprint DS: correções da 2ª rodada de auditoria (v3.93.0) ─────────────────
+
+def test_TBA17_base_engine_sql_kwarg_flagged():
+    # Achado #1: o MOTOR PRINCIPAL (M7.2/_base_rules) perdia execute(sql=user).
+    # Este é o teste _base_rules que faltava (M17/M22 tinham, M7.2 não).
+    code = (
+        "from flask import request\n"
+        "def q(cursor):\n"
+        "    u = request.args.get('id')\n"
+        "    cursor.execute(sql=u)\n"
+    )
+    assert "SAST040" in _base_rules(code)
+
+
+def test_TBA18_base_engine_bind_param_kwarg_not_flagged():
+    # anti-FP: `params=` não é a query → não deve reintroduzir FP.
+    code = (
+        "from flask import request\n"
+        "def q(cursor):\n"
+        "    u = request.args.get('id')\n"
+        "    cursor.execute('SELECT 1 WHERE x=%s', params=(u,))\n"
+    )
+    assert "SAST040" not in _base_rules(code)
+
+
+def test_TBA19_nvd_introduced_from_affected_lessthan():
+    # Achado #2: version de status=affected é o INTRODUCED, não fixed.
+    from scan.nvd_harvester import parse_cve_record
+    rec = parse_cve_record({
+        "cveMetadata": {"cveId": "CVE-2099-0001"},
+        "containers": {"cna": {"affected": [{"product": "libfoo", "versions": [
+            {"version": "2.4.0", "status": "affected", "lessThan": "2.4.3"}]}]}}})
+    assert rec.introduced == "2.4.0"
+    assert rec.fixed_versions == ["2.4.3"]
+
+
+def test_TBA20_nvd_affected_only_does_not_leak_to_fixed():
+    from scan.nvd_harvester import parse_cve_record
+    rec = parse_cve_record({
+        "cveMetadata": {"cveId": "CVE-2099-0002"},
+        "containers": {"cna": {"affected": [{"product": "bar", "versions": [
+            {"version": "2.4.1", "status": "affected"}]}]}}})
+    assert rec.introduced == "2.4.1"
+    assert rec.fixed_versions == []          # a versão vulnerável NÃO vira "fixed"
+
+
+def test_TBA21_deadcode_detected_in_class_method():
+    # Achado #5: dead-code após return dentro de método de classe.
+    from sensor_core.uco_bridge import UCOBridge
+    r = UCOBridge().analyze(
+        "class C:\n    def m(self):\n        return 1\n        x = 2\n", "m", "h")
+    assert getattr(r, "syntactic_dead_code", 0) > 0
+
+
+def test_TBA22_deadcode_clean_class_is_zero():
+    from sensor_core.uco_bridge import UCOBridge
+    r = UCOBridge().analyze(
+        "class C:\n    def m(self):\n        return 1\n", "m", "h")
+    assert getattr(r, "syntactic_dead_code", 0) == 0

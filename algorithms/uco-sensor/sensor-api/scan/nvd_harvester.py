@@ -126,13 +126,23 @@ def parse_cve_record(cvelist_json: Any) -> Optional[NvdRecord]:
             lt = v.get("lessThan") or v.get("lessThanOrEqual")
             if lt and str(lt) not in _NA:
                 fixed_versions.extend(_VER_RE.findall(str(lt)))
-            # introduced explícito
+            # (DS/Achado #2 — com ressalva validada em dado REAL) O campo
+            # `version` de `status=affected` é AMBÍGUO no dado público:
+            #   * postgres (CVE-2021-32027) ABUSA do schema e põe uma LISTA de
+            #     versões CORRIGIDAS ("13.3, 12.7, ...") aqui → são fixed.
+            #   * schema limpo (1 versão, com `lessThan`) → `version` é o INÍCIO
+            #     do range afetado = introduced.
+            # Discriminador que respeita os dois: nº de versões no texto.
+            #   - várias  → convenção postgres (fixed list)
+            #   - uma só  → fronteira introduced (nunca marcar a versão vulnerável
+            #               como "corrigida", que era o bug original).
             iv = v.get("version")
             if iv and str(iv) not in _NA and v.get("status") == "affected":
-                # texto livre tipo "postgresql 13.3, 12.7, ..." → todas as versões
                 found = _VER_RE.findall(str(iv))
-                if found:
-                    fixed_versions.extend(found)
+                if len(found) > 1:
+                    fixed_versions.extend(found)      # lista de fixed (postgres)
+                elif len(found) == 1 and not introduced:
+                    introduced = found[0]             # fronteira do range afetado
     # dedup preservando ordem
     seen: set = set()
     fixed_versions = [x for x in fixed_versions if not (x in seen or seen.add(x))]
