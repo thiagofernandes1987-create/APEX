@@ -38,7 +38,7 @@ def _record_from_dict(r: dict) -> DegradationRecord:
         when_broke=r["when_broke"], resolved_in=r["resolved_in"],
         fix_commit=r["fix_commit"], where_file=r["where_file"],
         published=r.get("published", ""), modified=r.get("modified", ""),
-        severity=r.get("severity", ""),
+        severity=r.get("severity", ""), cvss_vector=r.get("cvss_vector", ""),
         where_lines=r.get("where_lines", []),
         how_constructs=r.get("how_constructs", []),
         cwe_ids=r.get("cwe_ids", []),
@@ -57,7 +57,8 @@ def _backfill_advisory_fields(raw: dict) -> dict:
     Só toca campos vazios; nunca sobrescreve dado existente.  Falha de rede em
     um registro não derruba o lote (fica vazio, honestamente).
     """
-    if raw.get("published") and raw.get("modified") and raw.get("severity"):
+    if (raw.get("published") and raw.get("modified") and raw.get("severity")
+            and raw.get("cvss_vector")):
         return raw
     ghsa = raw.get("ghsa", "")
     if not ghsa.startswith("GHSA-"):
@@ -68,13 +69,11 @@ def _backfill_advisory_fields(raw: dict) -> dict:
         print(f"  [backfill] {raw.get('cve')}: advisory nao resolvido (fica vazio)")
         return raw
     raw = dict(raw)
-    raw.setdefault("published", "")
-    raw.setdefault("modified", "")
-    raw.setdefault("severity", "")
-    raw["published"] = raw["published"] or getattr(adv, "published", "")
-    raw["modified"] = raw["modified"] or getattr(adv, "modified", "")
-    raw["severity"] = raw["severity"] or getattr(adv, "severity", "")
-    print(f"  [backfill] {raw.get('cve')}: published={raw['published'][:10]} severity={raw['severity']}")
+    for k in ("published", "modified", "severity", "cvss_vector"):
+        raw.setdefault(k, "")
+        raw[k] = raw[k] or getattr(adv, k, "")
+    print(f"  [backfill] {raw.get('cve')}: published={raw['published'][:10]} "
+          f"severity={raw['severity']} cvss={raw['cvss_vector'][:24]}")
     return raw
 
 

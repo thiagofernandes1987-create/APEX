@@ -16,7 +16,7 @@ campos que o parser consome — nenhum dado inventado.
 from __future__ import annotations
 
 from scan.advisory_harvester import (
-    parse_advisory, AdvisoryRecord, advisory_raw_url,
+    parse_advisory, AdvisoryRecord, advisory_raw_url, parse_cvss_vector,
 )
 
 # ── recorte real do advisory do jinja (CVE-2024-22195) ───────────────────────
@@ -29,6 +29,7 @@ _JINJA = """
     "package": {"ecosystem": "PyPI", "name": "jinja2"},
     "ranges": [{"type": "ECOSYSTEM", "events": [{"introduced": "0"}, {"fixed": "3.1.3"}]}]
   }],
+  "severity": [{"type": "CVSS_V3", "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N"}],
   "references": [
     {"type": "WEB", "url": "https://github.com/pallets/jinja/security/advisories/GHSA-h5c8-rqwp-cp95"},
     {"type": "WEB", "url": "https://github.com/pallets/jinja/commit/716795349a41d4983a9a4771f7d883c96ea17be7"},
@@ -125,3 +126,42 @@ def test_T95_no_fixed_version_handled():
     assert rec.fixed == ""
     assert not rec.has_version_pair
     assert "desconhecida" in rec.resolved_in
+
+
+# ── Sprint DS: vetor CVSS completo (Diretriz #8 / relatorio #2) ───────────────
+
+def test_TDS_jinja_captures_cvss_vector_and_label():
+    # o rótulo (MODERATE) NÃO deve mais engolir o vetor CVSS — ambos capturados.
+    rec = parse_advisory(_JINJA)
+    assert rec.severity == "MODERATE"
+    assert rec.cvss_vector == "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N"
+
+
+def test_TDS_parse_cvss_vector_axes():
+    axes = parse_cvss_vector("CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N")
+    assert axes["attack_vector"] == "NETWORK"
+    assert axes["attack_complexity"] == "LOW"
+    assert axes["privileges_required"] == "NONE"
+    assert axes["user_interaction"] == "REQUIRED"
+    assert axes["scope"] == "UNCHANGED"
+    assert axes["confidentiality"] == "LOW"
+    assert axes["integrity"] == "LOW"
+    assert axes["availability"] == "NONE"
+
+
+def test_TDS_parse_cvss_vector_malformed_is_empty():
+    assert parse_cvss_vector("") == {}
+    assert parse_cvss_vector("MODERATE") == {}          # rótulo, não vetor
+    assert parse_cvss_vector("garbage/without/prefix") == {}
+
+
+def test_TDS_cvss_vector_absent_when_only_label():
+    # advisory sem o array `severity[].score` → cvss_vector fica vazio (honesto).
+    rec = parse_advisory(_REQUESTS)
+    assert rec.severity == "MODERATE"
+    assert rec.cvss_vector == ""
+
+
+def test_TDS_cvss_vector_flows_into_to_dict():
+    rec = parse_advisory(_JINJA)
+    assert rec.to_dict()["cvss_vector"].startswith("CVSS:3.1/")

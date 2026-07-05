@@ -137,6 +137,7 @@ class DegradationRecord:
     published: str = ""
     modified: str = ""
     severity: str = ""
+    cvss_vector: str = ""     # vetor CVSS completo (janela de exposição + impacto)
     where_lines: List[int] = field(default_factory=list)
     how_constructs: List[str] = field(default_factory=list)   # kinds dos guards
     cwe_ids: List[str] = field(default_factory=list)
@@ -204,7 +205,7 @@ class DegradationRecord:
             "cve": self.cve, "ghsa": self.ghsa, "package": self.package,
             "ecosystem": self.ecosystem, "published": self.published,
             "modified": self.modified, "severity": self.severity,
-            "when_broke": self.when_broke,
+            "cvss_vector": self.cvss_vector, "when_broke": self.when_broke,
             "resolved_in": self.resolved_in, "fix_commit": self.fix_commit,
             "where_file": self.where_file, "where_lines": list(self.where_lines),
             "how_constructs": list(self.how_constructs), "cwe_ids": list(self.cwe_ids),
@@ -280,6 +281,7 @@ def build_degradation(
         cve=advisory.cve, ghsa=advisory.ghsa_id, package=advisory.package,
         ecosystem=advisory.ecosystem, published=getattr(advisory, "published", ""),
         modified=getattr(advisory, "modified", ""), severity=getattr(advisory, "severity", ""),
+        cvss_vector=getattr(advisory, "cvss_vector", ""),
         when_broke=advisory.when_broke,
         resolved_in=advisory.resolved_in, fix_commit=advisory.fix_commit,
         where_file=filename, where_lines=where_lines,
@@ -301,6 +303,7 @@ def _with_status(rec: DegradationRecord, status: str) -> DegradationRecord:
         cve=d["cve"], ghsa=d["ghsa"], package=d["package"],
         ecosystem=d["ecosystem"], published=d.get("published", ""),
         modified=d.get("modified", ""), severity=d.get("severity", ""),
+        cvss_vector=d.get("cvss_vector", ""),
         when_broke=d["when_broke"],
         resolved_in=d["resolved_in"], fix_commit=d["fix_commit"],
         where_file=d["where_file"], where_lines=d["where_lines"],

@@ -40,7 +40,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 # SHA de commit em URL de reference (`.../commit/<sha>`), 7..40 hex.
 _COMMIT_RE = re.compile(r"/commit/([0-9a-f]{7,40})\b", re.I)
@@ -62,7 +62,8 @@ class AdvisoryRecord:
     fix_commit: str               # SHA do commit do fix ("" se ausente)
     fix_tag: str                  # tag de release do fix ("" se ausente)
     cwe_ids: List[str] = field(default_factory=list)
-    severity: str = ""
+    severity: str = ""            # rótulo qualitativo (LOW/MODERATE/HIGH/CRITICAL)
+    cvss_vector: str = ""         # vetor CVSS completo (CVSS:3.1/AV:N/AC:L/...)
     summary: str = ""
     published: str = ""
     modified: str = ""
@@ -95,6 +96,7 @@ class AdvisoryRecord:
             "introduced": self.introduced, "fixed": self.fixed,
             "fix_commit": self.fix_commit, "fix_tag": self.fix_tag,
             "cwe_ids": list(self.cwe_ids), "severity": self.severity,
+            "cvss_vector": self.cvss_vector,
             "summary": self.summary, "advisory_url": self.advisory_url,
             "git_introduced": self.git_introduced, "git_fixed": self.git_fixed,
             "when_broke": self.when_broke, "resolved_in": self.resolved_in,
@@ -181,11 +183,18 @@ def parse_advisory(osv_json: Any) -> Optional[AdvisoryRecord]:
     # ── CWE + severidade ────────────────────────────────────────────────────
     dbspec = d.get("database_specific") or {}
     cwe_ids = [str(c) for c in (dbspec.get("cwe_ids") or []) if c]
-    severity = str(dbspec.get("severity", "") or "")
-    if not severity:
-        sev = d.get("severity") or []
-        if sev and isinstance(sev, list) and isinstance(sev[0], dict):
-            severity = str(sev[0].get("score", "") or "")
+    severity = str(dbspec.get("severity", "") or "")   # rótulo (HIGH/CRITICAL/...)
+    # vetor CVSS: SEMPRE do array `severity[].score` (a fonte do vetor), mesmo
+    # quando o rótulo já veio do database_specific — antes o vetor era descartado
+    # sempre que o rótulo existia (achado do relatorio #2 / Diretriz #8).
+    cvss_vector = ""
+    sev = d.get("severity") or []
+    if sev and isinstance(sev, list) and isinstance(sev[0], dict):
+        score = str(sev[0].get("score", "") or "")
+        if score.upper().startswith("CVSS:"):
+            cvss_vector = score
+        if not severity:                                # sem rótulo → usa o score bruto
+            severity = score
 
     summary = str(d.get("summary", "") or "")
     published = str(d.get("published", "") or "")
@@ -201,10 +210,47 @@ def parse_advisory(osv_json: Any) -> Optional[AdvisoryRecord]:
     return AdvisoryRecord(
         ghsa_id=ghsa_id, cve=cve, package=package, ecosystem=ecosystem,
         introduced=introduced, fixed=fixed, fix_commit=fix_commit,
-        fix_tag=fix_tag, cwe_ids=cwe_ids, severity=severity, summary=summary,
+        fix_tag=fix_tag, cwe_ids=cwe_ids, severity=severity,
+        cvss_vector=cvss_vector, summary=summary,
         advisory_url=advisory_url, git_introduced=git_introduced,
         git_fixed=git_fixed, published=published, modified=modified
     )
+
+
+# ── CVSS vector parser (Diretriz #8) ─────────────────────────────────────────
+# Mapa dos códigos do vetor CVSS v3.x para rótulos legíveis, por eixo.
+_CVSS_AXES: Dict[str, Tuple[str, Dict[str, str]]] = {
+    "AV": ("attack_vector",       {"N": "NETWORK", "A": "ADJACENT", "L": "LOCAL", "P": "PHYSICAL"}),
+    "AC": ("attack_complexity",   {"L": "LOW", "H": "HIGH"}),
+    "PR": ("privileges_required", {"N": "NONE", "L": "LOW", "H": "HIGH"}),
+    "UI": ("user_interaction",    {"N": "NONE", "R": "REQUIRED"}),
+    "S":  ("scope",               {"U": "UNCHANGED", "C": "CHANGED"}),
+    "C":  ("confidentiality",     {"N": "NONE", "L": "LOW", "H": "HIGH"}),
+    "I":  ("integrity",           {"N": "NONE", "L": "LOW", "H": "HIGH"}),
+    "A":  ("availability",        {"N": "NONE", "L": "LOW", "H": "HIGH"}),
+}
+
+
+def parse_cvss_vector(vector: str) -> Dict[str, str]:
+    """Quebra um vetor `CVSS:3.1/AV:N/AC:L/...` nos eixos nomeados (dado real).
+
+    Retorna dict com chaves legíveis (attack_vector, attack_complexity, ...).
+    Ignora silenciosamente eixos desconhecidos / vetor malformado — nunca levanta.
+    Habilita a análise pedida na Diretriz #8: "a ferramenta acerta mais em CVE de
+    rede vs local? de alto vs baixo impacto?".
+    """
+    out: Dict[str, str] = {}
+    if not vector or not vector.upper().startswith("CVSS:"):
+        return out
+    for part in vector.split("/")[1:]:            # pula o prefixo CVSS:3.1
+        if ":" not in part:
+            continue
+        code, _, val = part.partition(":")
+        axis = _CVSS_AXES.get(code.upper())
+        if axis:
+            name, mapping = axis
+            out[name] = mapping.get(val.upper(), val.upper())
+    return out
 
 
 def advisory_raw_url(ghsa_id: str, year: str, month: str,
