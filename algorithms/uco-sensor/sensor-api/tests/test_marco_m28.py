@@ -46,6 +46,23 @@ def _mv(module_id="demo.mod", commit="c1", ts=1000.0, **attrs):
     return mv
 
 
+# (DP v3.93.0/D8) Windows: SQLite mantem o arquivo aberto ate o GC fechar a
+# conexao; unlink direto levanta PermissionError.  Fecha via gc + retry e, em
+# ultimo caso, ignora (arquivo temp e' descartavel).  No-op em POSIX.
+import gc as _gc
+
+
+def _safe_unlink(path):
+    for _ in range(4):
+        try:
+            os.unlink(path)
+            return
+        except FileNotFoundError:
+            return
+        except PermissionError:
+            _gc.collect()
+
+
 def _fresh_store():
     f = tempfile.NamedTemporaryFile(suffix=".db", delete=False)
     f.close()
@@ -68,7 +85,7 @@ class TestSingleVectorRoundTrip(unittest.TestCase):
             self.assertEqual(type(v2).__name__, type(vector).__name__)
             self.assertEqual(v2.to_dict(), vector.to_dict())
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP01_security_roundtrip(self):
         self._roundtrip("security",
@@ -137,7 +154,7 @@ class TestSchemaAndMigration(unittest.TestCase):
             self.assertIn("advanced_vector_json",     cols)
             self.assertIn("diagnostic_vector_json",   cols)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP11_migration_idempotent_on_existing_db(self):
         store, dbf = _fresh_store()
@@ -147,7 +164,7 @@ class TestSchemaAndMigration(unittest.TestCase):
             store2.insert(_mv())
             self.assertEqual(len(store2.get_history("demo.mod")), 1)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP12_mv_with_no_extended_v2_attrs_persists_null(self):
         store, dbf = _fresh_store()
@@ -159,7 +176,7 @@ class TestSchemaAndMigration(unittest.TestCase):
                 ).fetchone()
             self.assertIsNone(row[0])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP13_v2_column_is_json_object_when_present(self):
         store, dbf = _fresh_store()
@@ -173,7 +190,7 @@ class TestSchemaAndMigration(unittest.TestCase):
             self.assertIn("flow", payload)
             self.assertEqual(payload["flow"]["taint_path_count"], 1)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP14_attrs_tuple_is_complete_and_ordered(self):
         # LEAP 1 contract: exactly these nine attrs, in canonical order.
@@ -197,7 +214,7 @@ class TestSchemaAndMigration(unittest.TestCase):
             self.assertEqual(mv2.halstead.volume, 100.0)
             self.assertEqual(mv2.advanced.sqale_debt_minutes, 120)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -220,7 +237,7 @@ class TestBackwardCompat(unittest.TestCase):
             self.assertIsNone(getattr(mv2, "security", None))
             self.assertIsNone(getattr(mv2, "test_quality", None))
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP17_legacy_row_null_column_loads_cleanly(self):
         """A row written by old code (NULL column) must deserialize without error."""
@@ -234,7 +251,7 @@ class TestBackwardCompat(unittest.TestCase):
             self.assertIsNone(getattr(mv2, "flow", None))
             self.assertEqual(mv2.hamiltonian, 5.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP18_get_history_preserves_chronological_order(self):
         store, dbf = _fresh_store()
@@ -249,7 +266,7 @@ class TestBackwardCompat(unittest.TestCase):
             self.assertEqual([m.timestamp for m in hist], [100.0, 150.0, 200.0])
             self.assertEqual([m.flow.taint_path_count for m in hist], [1, 3, 2])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP19_cross_module_isolation(self):
         store, dbf = _fresh_store()
@@ -259,7 +276,7 @@ class TestBackwardCompat(unittest.TestCase):
             self.assertEqual(store.get_history("mod.a")[0].flow.taint_path_count, 1)
             self.assertEqual(store.get_history("mod.b")[0].flow.taint_path_count, 99)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP20_corrupt_one_vector_does_not_lose_the_rest(self):
         """If one vector's serialized form is bad, the others must still load."""
@@ -279,7 +296,7 @@ class TestBackwardCompat(unittest.TestCase):
             self.assertIsNotNone(getattr(mv2, "reliability", None))
             self.assertEqual(mv2.reliability.bare_except_count, 2)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -311,7 +328,7 @@ class TestAPSHistoryNowPossible(unittest.TestCase):
             self.assertEqual(aps1["aps"], aps2["aps"])
             self.assertEqual(aps1["rating"], aps2["rating"])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP22_aps_history_trend_now_computable(self):
         """Three snapshots → three persisted APS scores in chronological order."""
@@ -326,7 +343,7 @@ class TestAPSHistoryNowPossible(unittest.TestCase):
             self.assertGreater(scores[0], scores[1])
             self.assertGreater(scores[1], scores[2])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP23_clean_snapshot_yields_100(self):
         store, dbf = _fresh_store()
@@ -335,7 +352,7 @@ class TestAPSHistoryNowPossible(unittest.TestCase):
             mv2 = store.get_history("demo.mod")[0]
             self.assertAlmostEqual(aps_from_metric_vector(mv2)["aps"], 100.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP24_aps_components_match_after_persistence(self):
         store, dbf = _fresh_store()
@@ -347,7 +364,7 @@ class TestAPSHistoryNowPossible(unittest.TestCase):
             comp2 = aps_from_metric_vector(mv2)["components"]
             self.assertEqual(comp1, comp2)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TP25_thread_safety_signal_survives(self):
         """Persistence specifically unlocks ThreadSafety contribution to APS."""
@@ -360,7 +377,7 @@ class TestAPSHistoryNowPossible(unittest.TestCase):
             # lock_missing has weight 10 in APS → noticeable score impact
             self.assertLess(aps_from_metric_vector(mv2)["aps"], 95.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -404,7 +421,7 @@ class TestSerializerEdges(unittest.TestCase):
             mv2 = store.get_history("demo.mod")[0]
             self.assertEqual(mv2.flow.taint_path_count, 1)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 if __name__ == "__main__":

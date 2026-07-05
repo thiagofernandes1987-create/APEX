@@ -43,6 +43,23 @@ def _mv(module="m.mod", commit="c1", ts=1.0, h=2.0, cc=8,
     return mv
 
 
+# (DP v3.93.0/D8) Windows: SQLite mantem o arquivo aberto ate o GC fechar a
+# conexao; unlink direto levanta PermissionError.  Fecha via gc + retry e, em
+# ultimo caso, ignora (arquivo temp e' descartavel).  No-op em POSIX.
+import gc as _gc
+
+
+def _safe_unlink(path):
+    for _ in range(4):
+        try:
+            os.unlink(path)
+            return
+        except FileNotFoundError:
+            return
+        except PermissionError:
+            _gc.collect()
+
+
 def _fresh_store():
     f = tempfile.NamedTemporaryFile(suffix=".db", delete=False); f.close()
     return SnapshotStore(f.name), f.name
@@ -120,7 +137,7 @@ class TestComputeCompoundAlert(unittest.TestCase):
             self.assertEqual(alert.tier, "GREEN")
             self.assertEqual(alert.priority_score, 5.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC08_clean_module_stays_green(self):
         store, dbf = _fresh_store()
@@ -130,7 +147,7 @@ class TestComputeCompoundAlert(unittest.TestCase):
             self.assertEqual(alert.tier, "GREEN")
             self.assertEqual(alert.reasons, [])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC09_degrading_module_escalates_to_red_or_amber(self):
         store, dbf = _fresh_store()
@@ -141,7 +158,7 @@ class TestComputeCompoundAlert(unittest.TestCase):
             self.assertGreater(alert.priority_score, 30.0)
             self.assertGreater(len(alert.reasons), 0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC10_alert_carries_aps_subdict(self):
         store, dbf = _fresh_store()
@@ -151,7 +168,7 @@ class TestComputeCompoundAlert(unittest.TestCase):
             for key in ("verdict", "latest", "latest_rating", "slope", "hurst"):
                 self.assertIn(key, alert.aps)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC11_alert_carries_predictor_subdict(self):
         store, dbf = _fresh_store()
@@ -162,7 +179,7 @@ class TestComputeCompoundAlert(unittest.TestCase):
                         "mae_relative", "n_evaluated"):
                 self.assertIn(key, alert.predictor)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC12_unknown_module_yields_green(self):
         store, dbf = _fresh_store()
@@ -170,7 +187,7 @@ class TestComputeCompoundAlert(unittest.TestCase):
             alert = compute_compound_alert(store, "does-not-exist")
             self.assertEqual(alert.tier, "GREEN")
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC13_to_dict_round_trip(self):
         store, dbf = _fresh_store()
@@ -181,7 +198,7 @@ class TestComputeCompoundAlert(unittest.TestCase):
                         "tier", "priority_score", "reasons"):
                 self.assertIn(key, d)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC14_n_samples_matches_aps_history(self):
         store, dbf = _fresh_store()
@@ -190,7 +207,7 @@ class TestComputeCompoundAlert(unittest.TestCase):
             alert = compute_compound_alert(store, "d.mod")
             self.assertEqual(alert.n_samples, 10)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -213,7 +230,7 @@ class TestRepoRanking(unittest.TestCase):
             scores = [a.priority_score for a in alerts]
             self.assertEqual(scores, sorted(scores, reverse=True))
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC16_filters_green_by_default(self):
         store, dbf = self._multi_repo()
@@ -221,7 +238,7 @@ class TestRepoRanking(unittest.TestCase):
             alerts = repo_compound_alerts(store)
             self.assertTrue(all(a.tier != "GREEN" for a in alerts))
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC17_include_green_keeps_them(self):
         store, dbf = self._multi_repo()
@@ -229,7 +246,7 @@ class TestRepoRanking(unittest.TestCase):
             alerts = repo_compound_alerts(store, include_green=True)
             self.assertGreater(sum(1 for a in alerts if a.tier == "GREEN"), 0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC18_top_k_cap(self):
         store, dbf = self._multi_repo()
@@ -237,7 +254,7 @@ class TestRepoRanking(unittest.TestCase):
             alerts = repo_compound_alerts(store, include_green=True, top_k=2)
             self.assertLessEqual(len(alerts), 2)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC19_histogram_keys_canonical(self):
         store, dbf = self._multi_repo()
@@ -247,14 +264,14 @@ class TestRepoRanking(unittest.TestCase):
             self.assertEqual(set(hist.keys()), {"RED", "AMBER", "YELLOW", "GREEN"})
             self.assertEqual(sum(hist.values()), len(alerts))
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TC20_empty_repo_yields_empty(self):
         store, dbf = _fresh_store()
         try:
             self.assertEqual(repo_compound_alerts(store), [])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -318,7 +335,7 @@ class TestEndpoints(unittest.TestCase):
 
     def tearDown(self):
         self.srv._store = self._orig
-        os.unlink(self.dbf)
+        _safe_unlink(self.dbf)
 
     def test_TC27_compound_endpoint_400_without_module(self):
         code, _ = self.srv.handle_compound_alert(None)

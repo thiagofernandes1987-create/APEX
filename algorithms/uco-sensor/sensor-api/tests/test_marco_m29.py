@@ -42,6 +42,23 @@ def _mv(module="demo.mod", commit="c1", ts=1000.0, taint=0, locks=0,
     return mv
 
 
+# (DP v3.93.0/D8) Windows: SQLite mantem o arquivo aberto ate o GC fechar a
+# conexao; unlink direto levanta PermissionError.  Fecha via gc + retry e, em
+# ultimo caso, ignora (arquivo temp e' descartavel).  No-op em POSIX.
+import gc as _gc
+
+
+def _safe_unlink(path):
+    for _ in range(4):
+        try:
+            os.unlink(path)
+            return
+        except FileNotFoundError:
+            return
+        except PermissionError:
+            _gc.collect()
+
+
 def _fresh_store():
     f = tempfile.NamedTemporaryFile(suffix=".db", delete=False); f.close()
     return SnapshotStore(f.name), f.name
@@ -60,7 +77,7 @@ class TestSchemaAndInsert(unittest.TestCase):
                 cols = [r[1] for r in c.execute("PRAGMA table_info(snapshots)")]
             self.assertIn("aps_score", cols)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ02_aps_computed_at_insert_time(self):
         store, dbf = _fresh_store()
@@ -72,7 +89,7 @@ class TestSchemaAndInsert(unittest.TestCase):
             self.assertGreater(aps, 0.0)
             self.assertLess(aps, 100.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ03_clean_snapshot_persists_aps_100(self):
         store, dbf = _fresh_store()
@@ -82,7 +99,7 @@ class TestSchemaAndInsert(unittest.TestCase):
                 aps, = c.execute("SELECT aps_score FROM snapshots").fetchone()
             self.assertAlmostEqual(aps, 100.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ04_legacy_mv_no_extended_vectors_writes_null_aps(self):
         """An mv with NO extended vectors → APS = None (UNKNOWN, NOT 100/A).
@@ -101,7 +118,7 @@ class TestSchemaAndInsert(unittest.TestCase):
             self.assertEqual(len(hist), 1)
             self.assertIsNone(hist[0][2])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ05_aps_proportional_to_taint(self):
         store, dbf = _fresh_store()
@@ -113,7 +130,7 @@ class TestSchemaAndInsert(unittest.TestCase):
             self.assertGreater(scores[0], scores[1])
             self.assertGreater(scores[1], scores[2])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ06_aps_column_is_REAL_type(self):
         store, dbf = _fresh_store()
@@ -123,7 +140,7 @@ class TestSchemaAndInsert(unittest.TestCase):
                         if r[1] == "aps_score"]
             self.assertEqual(info[0][2].upper(), "REAL")
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ07_simulated_old_row_with_null_aps_loads_cleanly(self):
         store, dbf = _fresh_store()
@@ -135,7 +152,7 @@ class TestSchemaAndInsert(unittest.TestCase):
             # mv.aps_score must be None (matching legacy semantics)
             self.assertIsNone(mv.aps_score)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ08_insert_does_not_fail_if_aps_engine_unavailable(self):
         """Guard: a missing/broken metrics module must not block insert."""
@@ -151,7 +168,7 @@ class TestSchemaAndInsert(unittest.TestCase):
             store.insert(mv)   # must not raise
             self.assertEqual(len(store.get_history("guard")), 1)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -169,7 +186,7 @@ class TestAPSHistoryHelper(unittest.TestCase):
             ts_seen = [ts for _, ts, _ in store.get_aps_history("demo.mod")]
             self.assertEqual(ts_seen, [100.0, 150.0, 200.0])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ10_aps_history_returns_commit_ts_aps_tuple(self):
         store, dbf = _fresh_store()
@@ -182,7 +199,7 @@ class TestAPSHistoryHelper(unittest.TestCase):
             self.assertEqual(ts, 10.0)
             self.assertIsInstance(aps, float)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ11_aps_history_window_limit(self):
         store, dbf = _fresh_store()
@@ -194,7 +211,7 @@ class TestAPSHistoryHelper(unittest.TestCase):
             # Most-recent 3, returned ASC
             self.assertEqual([ts for _, ts, _ in hist], [2.0, 3.0, 4.0])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ12_mv_aps_score_round_trips_via_get_history(self):
         store, dbf = _fresh_store()
@@ -205,7 +222,7 @@ class TestAPSHistoryHelper(unittest.TestCase):
             self.assertGreater(mv.aps_score, 0.0)
             self.assertLess(mv.aps_score, 100.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ13_null_aps_returned_as_none_in_helper(self):
         store, dbf = _fresh_store()
@@ -216,7 +233,7 @@ class TestAPSHistoryHelper(unittest.TestCase):
             hist = store.get_aps_history("demo.mod")
             self.assertIsNone(hist[0][2])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ14_cross_module_isolation(self):
         store, dbf = _fresh_store()
@@ -227,14 +244,14 @@ class TestAPSHistoryHelper(unittest.TestCase):
             b_aps = store.get_aps_history("b.mod")[0][2]
             self.assertGreater(a_aps, b_aps)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ15_empty_module_returns_empty_history(self):
         store, dbf = _fresh_store()
         try:
             self.assertEqual(store.get_aps_history("nobody"), [])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TZ16_leap1_regression_extended_vectors_still_load(self):
         """LEAP 2 must not regress LEAP 1: extended vectors v2 still round-trip."""
@@ -245,7 +262,7 @@ class TestAPSHistoryHelper(unittest.TestCase):
             self.assertIsNotNone(getattr(mv, "flow", None))
             self.assertEqual(mv.flow.taint_path_count, 2)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -265,7 +282,7 @@ class TestHistoryEndpoint(unittest.TestCase):
 
     def tearDown(self):
         self.srv._store = self._orig_store
-        os.unlink(self.dbf)
+        _safe_unlink(self.dbf)
 
     def _store(self):
         return self.srv._store
@@ -337,7 +354,7 @@ class TestTrendEndpoint(unittest.TestCase):
 
     def tearDown(self):
         self.srv._store = self._orig_store
-        os.unlink(self.dbf)
+        _safe_unlink(self.dbf)
 
     def _store(self):
         return self.srv._store
