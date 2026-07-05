@@ -40,7 +40,7 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.93.0 · **2567 testes verdes** (+2 flaky pré-existentes do
+**Estado atual:** v3.93.0 · **2571 testes verdes** (+2 flaky pré-existentes do
 watcher m23, fora do escopo — ver dívida) · corpus **48/53 CVEs completos 4/4**
 (`degradation_report_full.json`, contadores agora CALCULADOS por
 `scripts/generate_corpus.py`) · **3 validados dinamicamente** (stopped_firing
