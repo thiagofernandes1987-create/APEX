@@ -145,11 +145,15 @@ def build_pair(
     if not prior or not source_file:
         return None
 
-    # tags candidatas incluem o prefixo do NOME do repo (alguns projetos usam
-    # `<nome>-<versão>`, ex.: lxml → `lxml-4.6.5`), além de `X` e `vX`.
+    # tags candidatas incluem o prefixo do NOME do repo: alguns projetos usam
+    # `<nome>-<versão>` (lxml → `lxml-4.6.5`) e monorepos usam `<nome>@<versão>`
+    # (gradio → `gradio@4.11.0`), além de `X` e `vX`.  (DR v3.93.0: `@` adicionado
+    # ao re-derivar o registro do gradio no reprocessamento M24→M12.)
     repo_name = repo.rsplit("/", 1)[-1]
     def _cands(v: str) -> List[str]:
-        return tag_candidates(v) + ([f"{repo_name}-{v}"] if v else [])
+        if not v:
+            return tag_candidates(v)
+        return tag_candidates(v) + [f"{repo_name}-{v}", f"{repo_name}@{v}"]
 
     # o arquivo do fix está no caminho do commit (source_file); a versão
     # anterior pode ter o mesmo arquivo em caminho alternativo (src/ toggle).

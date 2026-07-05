@@ -34,7 +34,7 @@ Versão: introduzido em v3.58.0 (Sprint CI).
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
 # M23 — registro de advisory (quando/qual-versão/commit)
 from scan.advisory_harvester import AdvisoryRecord
@@ -58,47 +58,65 @@ except Exception:  # noqa: BLE001
 # existiam no Sensor mas NÃO eram usados aqui: M7.2 taint (Python), M20 taint-lite
 # (PHP/JS), M28 TOCTOU.  Este painel os inclui → a validação passa a ser
 # significativa para todas as classes, não só memory-safety.
-def _count_sensor_findings(src: str, ext: str) -> int:
+def _sensor_finding_keys(src: str, ext: str) -> Set[Tuple[str, str]]:
     """
-    Nº total de achados dos detectores de SEGURANÇA do Sensor aplicáveis a *src*.
-    Usado para o before/after: se a contagem cai do vuln para o fixed, o sinal
-    "parou de disparar".  Cada import é guardado — degrada sem levantar.  Onde
-    entra: chamado por `build_degradation` para vuln_src e fixed_src. (CS v3.68.0)
+    Conjunto de CHAVES SEMÂNTICAS `(rule_id, alvo)` dos detectores de segurança
+    do Sensor aplicáveis a *src*.  O "alvo" é o elemento estável do achado
+    (variável contaminada / var do guard) — NÃO a linha, para casar before/after
+    mesmo com deslocamento de linha após o patch (padrão D2A, arXiv:2102.07995,
+    igual ao M12 `CorpusValidator`).
+
+    (DR v3.93.0) Substitui a contagem crua do antigo `_count_sensor_findings`:
+    unifica a validação "parou de disparar" do M24 com o casamento por chave do
+    M12, porém sobre o PAINEL AMPLO (M11+M22+M28+M20), não só o M11 do M12 —
+    preserva a cobertura das classes PyPI (injeção/XSS) que dominam o corpus.
+    Cada import é guardado — degrada sem levantar.
     """
-    total = 0
-    # M11 — memory-safety (C/C++/qualquer ext)
+    keys: Set[Tuple[str, str]] = set()
+    # M11 — memory-safety (C/C++/qualquer ext); alvo = vars do guard
     if _M11_AVAILABLE:
         try:
-            total += len(GuardAwareScanner().scan(src, ext))
+            for f in GuardAwareScanner().scan(src, ext):
+                keys.add((f.rule_id, ",".join(f.needs_guard_on)))
         except Exception:  # noqa: BLE001
             pass
     is_py = ext.lower() in (".py", "py")
     if is_py:
         # M22 — taint fluxo-sensível sobre a CFG do UCO V4.  USAMOS O M22 (não o
-        # M7.2) DE PROPÓSITO: o M22 herda o gating SQL arg[0] e o sanitizador
-        # int()/cast do M17/CD, então NÃO marca query parametrizada como injeção
-        # (o M7.2 base ainda tem esse FP — ver dívida no inventário CS).  Assim a
-        # validação before/after fica correta: vuln concatenado dispara, fixed
-        # parametrizado não → stopped_firing=True.
+        # M7.2) DE PROPÓSITO: herda o gating SQL arg[0] e o sanitizador int()/cast
+        # do M17/CD, então NÃO marca query parametrizada como injeção.  Alvo = var
+        # contaminada que alcança o sink.
         try:
             from sast.taint_cfg import CFGTaintAnalyzer   # M22
-            total += len(CFGTaintAnalyzer().analyze(src))
+            for f in CFGTaintAnalyzer().analyze(src):
+                keys.add((f.rule_id, f.var))
         except Exception:  # noqa: BLE001
             pass
-        # M28 — TOCTOU / race (CWE-367)
+        # M28 — TOCTOU / race (CWE-367); alvo = var do check→use não-atômico
         try:
             from sast.toctou import TOCTOUDetector       # M28
-            total += len(TOCTOUDetector().scan(src))
+            for f in TOCTOUDetector().scan(src):
+                keys.add((f.rule_id, f.var))
         except Exception:  # noqa: BLE001
             pass
     else:
-        # M20 — taint-lite (PHP/JS), onde o AST-Python não se aplica
+        # M20 — taint-lite (PHP/JS); alvo = var do fluxo fonte→sink
         try:
             from sast.taint_lite import TaintLite         # M20
-            total += len(TaintLite().scan(src, ext))
+            for f in TaintLite().scan(src, ext):
+                keys.add((f.rule_id, f.var))
         except Exception:  # noqa: BLE001
             pass
-    return total
+    return keys
+
+
+def _count_sensor_findings(src: str, ext: str) -> int:
+    """Compat: nº de achados = tamanho do conjunto de chaves semânticas.
+
+    Mantido para chamadores externos que só querem a contagem; a validação
+    before/after canônica agora usa `_sensor_finding_keys` (casamento por chave).
+    """
+    return len(_sensor_finding_keys(src, ext))
 
 
 @dataclass(frozen=True)
@@ -229,12 +247,15 @@ def build_degradation(
         pass
 
     # ── COMO (validação): o Sensor parou de disparar no fix? Algo perpetuou? ──
-    # Painel de detectores (M11 + M7.2 + M20 + M28), não só memory-safety (CS).
-    # Semântica HONESTA e mensurável: stopped_firing = a contagem de achados dos
-    # detectores do Sensor CAIU do vuln para o fixed; perpetuated = ainda há
-    # achado no fixed.  Quando NENHUM detector dispara no vuln (nv==0), a questão
-    # é N/A para esta classe (localizada por diff via M10) → mantém-se null,
-    # honestamente, e as contagens reais ficam registradas para auditoria.
+    # Painel de detectores (M11 + M22 + M20 + M28), não só memory-safety (CS).
+    # (DR v3.93.0) CASAMENTO POR CHAVE (D2A), unifica o M24 com o M12: em vez de
+    # comparar CONTAGENS (que dava falso "perpetuou" quando surgia um achado NOVO
+    # não-relacionado no fix, ou falso "parou" por flutuação de contagem), casamos
+    # os CONJUNTOS de chaves `(rule_id, alvo)`:
+    #   * stopped_firing = existe chave no vuln que SUMIU no fix (o sinal exato parou)
+    #   * perpetuated    = existe chave do vuln que PERSISTIU no fix (mesmo sinal)
+    # Quando NENHUM detector dispara no vuln (conjunto vazio), a questão é N/A para
+    # esta classe (localizada por diff via M10) → mantém-se null, honestamente.
     stopped_firing: Optional[bool] = None
     perpetuated: Optional[bool] = None
     findings_vuln: Optional[int] = None
@@ -242,12 +263,12 @@ def build_degradation(
     ext = _ext_of(filename)
     if ext:
         try:
-            nv = _count_sensor_findings(vuln_src, ext)
-            nf = _count_sensor_findings(fixed_src, ext)
-            findings_vuln, findings_fixed = nv, nf
-            if nv > 0:                              # só é significativo se disparou no vuln
-                stopped_firing = nf < nv
-                perpetuated = nf > 0
+            kv = _sensor_finding_keys(vuln_src, ext)
+            kf = _sensor_finding_keys(fixed_src, ext)
+            findings_vuln, findings_fixed = len(kv), len(kf)
+            if kv:                                  # só é significativo se disparou no vuln
+                stopped_firing = bool(kv - kf)      # algum sinal do vuln sumiu no fix
+                perpetuated = bool(kv & kf)         # algum sinal do vuln persistiu no fix
         except Exception:  # noqa: BLE001
             pass
 

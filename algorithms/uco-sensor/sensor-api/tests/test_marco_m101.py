@@ -186,3 +186,48 @@ def test_TBA13_cfg_augassign_preserves_prior_taint():
         "    cursor.execute(q)\n"
     )
     assert "SAST040" in _cfg_rules(code)
+
+
+# ── M24->M12: casamento por chave (D2A) vence a contagem crua ─────────────────
+
+_KV = (
+    "from flask import request\n"
+    "def h(cursor):\n"
+    "    name = request.args.get('name')\n"
+    "    q = \"SELECT * FROM u WHERE n='\" + name + \"'\"\n"
+    "    cursor.execute(q)\n"
+)
+# fix real: remove a query concatenada MAS introduz outra injeção não-relacionada.
+# Contagem fica 1->1 (o antigo diria "não parou / perpetuou"); por chave, o sinal
+# específico (var q) SUMIU e um NOVO (var r) apareceu → parou de verdade.
+_KF_DIFFERENT = (
+    "from flask import request\n"
+    "def h(cursor):\n"
+    "    name = request.args.get('name')\n"
+    "    cursor.execute('SELECT * FROM u WHERE n=%s', (name,))\n"
+    "    town = request.args.get('town')\n"
+    "    r = \"SELECT * FROM t WHERE c='\" + town + \"'\"\n"
+    "    cursor.execute(r)\n"
+)
+
+
+def test_TBA14_key_based_beats_count_when_signal_changes():
+    from scan.corpus_expander import _sensor_finding_keys
+    kv = _sensor_finding_keys(_KV, ".py")
+    kf = _sensor_finding_keys(_KF_DIFFERENT, ".py")
+    assert len(kv) == 1 and len(kf) == 1          # contagem igual — enganaria o antigo
+    assert bool(kv - kf) is True                   # o sinal do vuln (var q) sumiu → parou
+    assert bool(kv & kf) is False                  # nenhum sinal do vuln persistiu → não perpetuou
+
+
+def test_TBA15_key_based_perpetuation_same_signal():
+    from scan.corpus_expander import _sensor_finding_keys
+    kv = _sensor_finding_keys(_KV, ".py")
+    kf = _sensor_finding_keys(_KV, ".py")          # fix idêntico (fix ruim) → sinal persiste
+    assert bool(kv & kf) is True                    # perpetuou (mesma chave)
+    assert bool(kv - kf) is False                   # não parou
+
+
+def test_TBA16_count_compat_shim_matches_key_count():
+    from scan.corpus_expander import _count_sensor_findings, _sensor_finding_keys
+    assert _count_sensor_findings(_KV, ".py") == len(_sensor_finding_keys(_KV, ".py"))

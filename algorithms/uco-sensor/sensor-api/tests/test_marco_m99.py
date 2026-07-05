@@ -87,6 +87,19 @@ def test_T99_path_candidates_toggles_src_prefix():
     assert path_candidates("") == []
 
 
+def test_T99_build_pair_monorepo_at_tag_format():
+    # gradio usa `gradio@4.11.0` (monorepo). build_pair deve tentar `<nome>@<v>`.
+    store = {
+        ("gradio-app/gradio", "gradio@4.11.0", "gradio/utils.py"): "fixed\n",
+        ("gradio-app/gradio", "gradio@4.10.0", "gradio/utils.py"): "vuln\n",
+    }
+    def raw_fetch(repo, ref, path):
+        return store.get((repo, ref, path))
+    pair = build_pair("gradio-app/gradio", "4.11.0", "sha", "gradio/utils.py",
+                      raw_fetch, prior_version_hint="4.10.0")
+    assert pair is not None and pair[0] == "vuln\n" and pair[1] == "fixed\n"
+
+
 def test_T99_build_pair_survives_src_layout_migration():
     # Reproduz o caso real requests CVE-2024-35195: fix em src/requests/...,
     # tag anterior tem o arquivo em requests/... (sem src/).
