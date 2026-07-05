@@ -85,7 +85,11 @@ def prior_version(fixed: str) -> str:
         # a tag real, ex.: requests 2.31.0 → 2.30.0).
         return f"{major}.{minor - 1}.0" if has_patch else f"{major}.{minor - 1}"
     if major > 0:
-        return f"{major - 1}.0"
+        # (DP v3.93.0) mantém 3 componentes quando a corrigida tinha patch, p/ o
+        # formato casar tags reais (`1.0.0`→`0.0.0`, não `0.0`).  Tag por
+        # decremento de major raramente existe; `build_pair` degrada p/ None se
+        # não achar — honesto (achado D9).
+        return f"{major - 1}.0.0" if has_patch else f"{major - 1}.0"
     return ""
 
 
@@ -95,6 +99,32 @@ def tag_candidates(version: str) -> List[str]:
     if not v:
         return []
     return [v, f"v{v}"]
+
+
+def path_candidates(path: str) -> List[str]:
+    """Variantes do caminho do arquivo entre versões (achado D5).
+
+    Projetos migram o layout entre releases — ex.: requests moveu
+    `requests/adapters.py` → `src/requests/adapters.py` na 2.32.0.  Ao buscar a
+    versão ANTERIOR, o caminho pode estar sem o prefixo `src/` (ou com).  Tenta
+    o caminho original primeiro, depois alterna o prefixo `src/`.
+    """
+    p = (path or "").strip().lstrip("/")
+    if not p:
+        return []
+    cands = [p]
+    if p.startswith("src/"):
+        cands.append(p[len("src/"):])
+    else:
+        cands.append("src/" + p)
+    # dedup preservando ordem
+    seen: set = set()
+    out: List[str] = []
+    for c in cands:
+        if c not in seen:
+            seen.add(c)
+            out.append(c)
+    return out
 
 
 def build_pair(
@@ -121,23 +151,29 @@ def build_pair(
     def _cands(v: str) -> List[str]:
         return tag_candidates(v) + ([f"{repo_name}-{v}"] if v else [])
 
-    fixed_src = _first_ok(raw_fetch_fn, repo, _cands(fixed_version), source_file)
+    # o arquivo do fix está no caminho do commit (source_file); a versão
+    # anterior pode ter o mesmo arquivo em caminho alternativo (src/ toggle).
+    fixed_src = _first_ok(raw_fetch_fn, repo, _cands(fixed_version),
+                          [source_file])
     if fixed_src is None:
         return None
-    vuln_src = _first_ok(raw_fetch_fn, repo, _cands(prior), source_file)
+    vuln_src = _first_ok(raw_fetch_fn, repo, _cands(prior),
+                         path_candidates(source_file))
     if vuln_src is None:
         return None
     filename = source_file.rsplit("/", 1)[-1]
     return (vuln_src, fixed_src, filename)
 
 
-def _first_ok(raw_fetch_fn, repo: str, refs: List[str], path: str) -> Optional[str]:
-    """Primeira ref que devolve conteúdo não-vazio."""
+def _first_ok(raw_fetch_fn, repo: str, refs: List[str],
+              paths: List[str]) -> Optional[str]:
+    """Primeira (ref, path) que devolve conteúdo não-vazio."""
     for ref in refs:
-        try:
-            data = raw_fetch_fn(repo, ref, path)
-        except Exception:  # noqa: BLE001 — fetch é best-effort
-            data = None
-        if data:
-            return data
+        for path in paths:
+            try:
+                data = raw_fetch_fn(repo, ref, path)
+            except Exception:  # noqa: BLE001 — fetch é best-effort
+                data = None
+            if data:
+                return data
     return None
