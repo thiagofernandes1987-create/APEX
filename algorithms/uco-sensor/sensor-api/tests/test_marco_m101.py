@@ -145,3 +145,44 @@ def test_TBA10_sast046_has_dedicated_metadata():
     meta = _TAINT_RULE_META["SAST046"]
     assert "deserial" in meta["title"].lower()
     assert meta is not _TAINT_RULE_META["SAST045"]
+
+
+# ── M22 recall: taint propaga por AugAssign (`q += tainted`) ──────────────────
+
+def test_TBA11_cfg_augassign_propagates_taint():
+    code = (
+        "from flask import request\n"
+        "def h(cursor):\n"
+        "    name = request.args.get('name')\n"
+        "    q = \"SELECT * FROM u WHERE n='\"\n"
+        "    q += name\n"
+        "    q += \"'\"\n"
+        "    cursor.execute(q)\n"
+    )
+    assert "SAST040" in _cfg_rules(code)
+
+
+def test_TBA12_cfg_augassign_sanitized_is_clean():
+    # `+= str(int(...))` só adiciona dígitos → sem metacaracteres → sem flow.
+    code = (
+        "from flask import request\n"
+        "def h(cursor):\n"
+        "    uid = int(request.args.get('id'))\n"
+        "    q = 'SELECT * FROM u WHERE id='\n"
+        "    q += str(uid)\n"
+        "    cursor.execute(q)\n"
+    )
+    assert "SAST040" not in _cfg_rules(code)
+
+
+def test_TBA13_cfg_augassign_preserves_prior_taint():
+    # q já contaminado; `q += const` deve MANTER o taint (aug nunca mata).
+    code = (
+        "from flask import request\n"
+        "def h(cursor):\n"
+        "    name = request.args.get('name')\n"
+        "    q = name\n"
+        "    q += ' LIMIT 1'\n"
+        "    cursor.execute(q)\n"
+    )
+    assert "SAST040" in _cfg_rules(code)

@@ -813,6 +813,26 @@ class PythonCFGBuilder:
             "defs": defs, "uses": uses}
         return [nid]
 
+    def _handle_augassign(self, stmt: ast.AugAssign, prevs: List[int],
+                          loop_stack: List[LoopContext], depth: int) -> List[int]:
+        """(DP v3.93.0 / M22 recall) `x += tainted` define E usa `x`.
+
+        Antes o AugAssign caía no fallback genérico, que registrava `defs=set()`
+        — então o motor de taint fluxo-sensível (M22) NUNCA propagava taint por
+        `q += user_input`, perdendo o sink (`cursor.execute(q)`).  Aqui `defs =
+        {alvo}` e `uses = uses(rhs) ∪ {alvo}` (aug lê e escreve o alvo), o que
+        faz o transfer (c) propagar corretamente sem jamais matar taint prévio.
+        """
+        defs = self._collect_defs(stmt.target)
+        uses = self._collect_uses(stmt.value) | defs
+        ls = getattr(stmt, "lineno", 0) or 0
+        le = getattr(stmt, "end_lineno", ls) or ls
+        nid = self.graph.add_node("assign", normalize_ws(self._node_text(stmt)), ls, le)
+        self._connect_all(prevs, nid)
+        self.graph.metadata.setdefault("python_defs_uses", {})[nid] = {
+            "defs": defs, "uses": uses}
+        return [nid]
+
     def _build_stmt(self, stmt: ast.stmt, prevs: List[int],
                     loop_stack: List[LoopContext], depth: int) -> List[int]:
         """
@@ -840,6 +860,7 @@ class PythonCFGBuilder:
             ((ast.Break,),                                           self._handle_break),
             ((ast.Continue,),                                        self._handle_continue),
             ((ast.Assign,),                                          self._handle_assign),
+            ((ast.AugAssign,),                                       self._handle_augassign),
         ]
         for node_types, handler in _DISPATCH:
             if isinstance(stmt, node_types):
