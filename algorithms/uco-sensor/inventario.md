@@ -40,9 +40,51 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.92.0 · **2565 testes verdes** · corpus **48/53 CVEs completos
-4/4** (`degradation_report_full.json`) — +setuptools (CT), +GitPython, +Pygments
-(CU) coletados inline via a esteira automática (WebSearch+M25+WebFetch+M24).
+**Estado atual:** v3.93.0 · **2567 testes verdes** (+2 flaky pré-existentes do
+watcher m23, fora do escopo — ver dívida) · corpus **48/53 CVEs completos 4/4**
+(`degradation_report_full.json`, contadores agora CALCULADOS por
+`scripts/generate_corpus.py`) · **3 validados dinamicamente** (stopped_firing
+conhecido — os 3 com perpetuação). Metadados OSV (published/modified/severity)
+preenchidos em 50/53 via `--backfill`.
+
+---
+
+### 🔬 Sprint DR (v3.93.0) — CORREÇÕES DA AUDITORIA ADVERSARIAL CONSOLIDADA ✅
+
+> Consolidação de 6 relatórios de auditoria independentes + verificação própria
+> ao vivo no repo real (não no zip). Cada defeito reproduzido em execução antes
+> de corrigir. Ordem por severidade (D1 era BLOQUEADOR — o pacote `scan` não
+> importava). Commits em `sprint-dr-audit-fixes` (4+1 commits lógicos).
+
+- [x] **D1 (BLOQUEADOR)** — `DegradationRecord` com campos default antes de
+      obrigatórios → `TypeError` no import quebrava `scan` inteiro. Reordenado. ✅
+- [x] **D2 (ALTO)** — `test_marco_m68.py` (23 testes; única cobertura axios/
+      Spring4Shell/tokio/PHP/C#) deletado por `OSError` intermitente Windows.
+      Restaurado do HEAD. ✅
+- [x] **D3 (FP ALTO)** — `.execute()/.raw()` genérico só é sink SQL se o objeto
+      parecer handle de banco (`_looks_like_sql_object`). Elimina FP CRITICAL em
+      `pipeline/task/strategy.execute()` — violação #1 do princípio anti-FP. ✅
+- [x] **D4 (FN ALTO)** — gating SQL inclui o kwarg da query (`sql=`/`query=`/…);
+      não perde `execute(sql=user_input)`. Bind params posicionais seguem fora. ✅
+- [x] **D5** — `build_pair` (M27) tenta variantes de caminho (`src/` toggle) na
+      versão anterior. Reproduzido: requests CVE-2024-35195 agora fecha **4/4
+      automático end-to-end** (M25→M27→M24). ✅
+- [x] **D6** — `answers_all_four` volta a 4 metadados; nova property `validated`
+      (separada) = `stopped_firing is not None`. `generate_corpus.py` recalcula
+      contadores (cabeçalho dizia 14/9 com 53 em disco) + `--backfill` OSV. ✅
+- [x] **D7** — metadata dedicada `SAST046` (unsafe deserialization); antes caía
+      no fallback genérico SAST045, perdendo especificidade CRITICAL. ✅
+- [x] **D8** — portabilidade Windows: `_safe_unlink` (gc+retry) em 103 sites
+      SQLite (m28/29/31/32/33); `encoding="utf-8"` (m54); skipif PyWavelets (m38).
+      105→2 falhas locais. ✅
+- [x] **D9** — `prior_version("1.0.0")` → `"0.0.0"` (mantém 3 componentes). ✅
+- [x] **M22 recall (relatorio #4)** — taint propaga por `AugAssign` (`q +=
+      tainted`). AugAssign não estava no dispatch do `PythonCFGBuilder` → def=∅ →
+      M22 nunca propagava. Novo `_handle_augassign`. +3 testes (recall + 2 anti-FP). ✅
+- **Sinais OSV não-usados (relatorio #2 / implementation_plan #1)** — `published`/
+      `modified`/`severity` capturados no M23 e persistidos no `DegradationRecord`. ✅
+- **Dívida gerada:** 2 testes flaky do watcher m23 (race thread background vs
+      `poll_once()` manual) — spawn_task criado, fora do escopo de segurança.
 
 **Pipeline automático (coração do sistema — provado, deployável):**
 `CVE →WebSearch→ GHSA →M25→ advisory →WebFetch(commit)→ arquivos →M27→ arquivo
@@ -95,14 +137,46 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
       setuptools CVE-2022-40897. +2 testes anti-FP.
 - [ ] **Ligar M24→M12** (fetch por tag no lote roda o before/after do M12
       automaticamente) — pendente desde CI/CJ. Simples, alto ROI. ← PRÓXIMO da dívida
-- [ ] **M23 capturar sinais não-usados do advisory**: `published`/`modified`
-      (datas — reforçam "quando" e ranqueamento VFC), `severity` (CVSS vector).
-      Estão no JSON, não processamos. (Diretriz #8.)
-- [ ] **M22 recall**: estender def-use da CFG a condições `if`/`while` e a
-      AugAssign (`x += tainted`)/multi-target. Simples, amplia detecção.
+- [x] **M23 capturar sinais não-usados do advisory**: `published`/`modified`
+      (datas — reforçam "quando" e ranqueamento VFC), `severity`. — **DR ✅**
+      (persistidos no DegradationRecord; backfill dos 53 registros).
+- [x] **M22 recall**: def-use da CFG para `AugAssign` (`x += tainted`). — **DR ✅**
+      (multi-target já era coberto por `_handle_assign`; condições `if`/`while`
+      já propagam via união de predecessores — só AugAssign era gap real, provado).
 - [ ] **M11 memory-safety**: cobrir redis(widening)/sqlite(clamp) com anti-FP.
 - [ ] **M26 NVD em lote** para os C (postgres/ffmpeg 4/4; sqlite/linux teto de dado).
 - [ ] **Camada APEX real (IA/MCP)** sobre o loop MVP local (M19).
+
+### 🎯 CHECKLIST ROI CONSOLIDADO (alto→baixo) — pós-auditoria DR
+> Funde `relatorio_melhorias.md` + `implementation_plan.md` + as 6 auditorias.
+> Marcados os concluídos na Sprint DR. Ordem = próxima execução recomendada.
+
+**🟢 ALTO ROI (quick-wins, infra já existe):**
+- [x] Capturar OSV `published`/`modified`/`severity` (relatorio #2) — **DR ✅**
+- [x] M22 recall AugAssign (relatorio #4) — **DR ✅**
+- [x] Corrigir FP `.execute()` genérico + FN kwarg SQL + SAST046 (auditorias) — **DR ✅**
+- [ ] **Ligar M24→M12** no lote (dívida CI/CJ) — casar findings before/after do
+      M12 automaticamente na esteira. Baixa complexidade. **← PRÓXIMO**
+- [ ] **Ampliar corpus com mais CVEs reais** (volume mecânico via pipeline
+      automático; D5 agora destrava CVEs com relocação de layout).
+- [ ] **Backlog de receita SaaS (relatorio #3):** wiring de billing em 16 handlers
+      (só 3 faturam); query N+1 em `list_usage_periods`; VACUUM no `prune_old_events`.
+      Subsistema SEPARADO do sensor — maior blast radius; validar em branch isolada.
+
+**🟡 MÉDIO ROI (nova lógica + baterias anti-FP):**
+- [ ] **SAST046-049 (relatorio #5):** pickle/yaml.load já cobertos (D7); falta
+      SSRF + XXE estruturais. Auditorias apontam: SSRF não tem sink no vocabulário.
+- [ ] **Novos sinais M10/M11 (relatorio #6):** flag-de-EOF (aiohttp), redis
+      widening, sqlite clamp. ALTO risco de FP em C/C++ — só com anti-FP rigoroso.
+- [ ] **M26 NVD em lote C/C++ (relatorio #7):** teto de dado público inconsistente.
+
+**🔴 BAIXO ROI IMEDIATO (bloqueadores arquiteturais / escopo futuro):**
+- [ ] **Camada APEX real IA/MCP (relatorio #8)** sobre o loop MVP (M19).
+- [ ] **UCO Deep Integration (relatorio #9):** DSM/Halstead/Hamiltonian órfãos.
+      Auditorias: HMC/SA já testado e DESCARTADO para before/after (m70, netty:
+      nenhum canal cruza 15%). Halstead tem ROI moderado como sinal complementar.
+- [ ] **Hot-row contention `tenants.units_used` (relatorio #10):** otimização
+      prematura; lock atual adequado à fase de tração.
 
 ### 🔧 NOVOS MOTORES p/ romper o teto dos 4/4 (mapeado empiricamente nos ~15 pulados)
 > Estado: corpus 35/40 = 35% (v3.82.0). Os CVEs que NÃO completam 4/4 caem em
@@ -261,7 +335,7 @@ M28 toctou-detector (race/CWE-367, no WeakPointScorer).
 
 ## Versão atual
 
-> **CORRENTE: v3.92.0** (pyproject.toml + api/server.py). O histórico abaixo
+> **CORRENTE: v3.93.0** (pyproject.toml + api/server.py). O histórico abaixo
 > lista até v3.11.9; as sprints AF→CD estão detalhadas no `CHANGELOG.md`
 > (fonte-da-verdade de versão). Snapshot dos módulos ativos do Sensor:
 > M9.2 AST-diff · M9.3 GHSA · M9.4 SCA · M10 FixDiffLocalizer · M11 GuardAware ·

@@ -35,6 +35,23 @@ def _mv(module="m.mod", commit="c1", ts=1.0, h=2.0, cc=8):
     return MetricVector(module, commit, ts, hamiltonian=h, cyclomatic_complexity=cc)
 
 
+# (DP v3.93.0/D8) Windows: SQLite mantem o arquivo aberto ate o GC fechar a
+# conexao; unlink direto levanta PermissionError.  Fecha via gc + retry e, em
+# ultimo caso, ignora (arquivo temp e' descartavel).  No-op em POSIX.
+import gc as _gc
+
+
+def _safe_unlink(path):
+    for _ in range(4):
+        try:
+            os.unlink(path)
+            return
+        except FileNotFoundError:
+            return
+        except PermissionError:
+            _gc.collect()
+
+
 def _fresh_store():
     f = tempfile.NamedTemporaryFile(suffix=".db", delete=False); f.close()
     return SnapshotStore(f.name), f.name
@@ -64,7 +81,7 @@ class TestSchema(unittest.TestCase):
                         "predictor_forecast_next", "predictor_confidence"):
                 self.assertIn(col, cols)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF02_predictor_columns_are_REAL(self):
         store, dbf = _fresh_store()
@@ -75,7 +92,7 @@ class TestSchema(unittest.TestCase):
             for col, typ in info.items():
                 self.assertEqual(typ.upper(), "REAL", f"{col} type {typ}")
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF03_default_null_keeps_legacy_rows_valid(self):
         store, dbf = _fresh_store()
@@ -89,7 +106,7 @@ class TestSchema(unittest.TestCase):
             # Single snapshot → predictor cannot fire → all NULL
             self.assertEqual(row, (None, None, None, None))
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF04_migration_idempotent_on_reopen(self):
         store, dbf = _fresh_store()
@@ -100,7 +117,7 @@ class TestSchema(unittest.TestCase):
             store2.insert(_mv(commit="c2", ts=2.0))
             self.assertEqual(len(store2.get_history("m.mod")), 2)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF05_leap1_extended_vectors_still_round_trip(self):
         store, dbf = _fresh_store()
@@ -112,7 +129,7 @@ class TestSchema(unittest.TestCase):
             self.assertIsNotNone(getattr(mv2, "flow", None))
             self.assertEqual(mv2.flow.taint_path_count, 3)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF06_leap2_aps_score_still_persists(self):
         store, dbf = _fresh_store()
@@ -123,7 +140,7 @@ class TestSchema(unittest.TestCase):
             mv2 = store.get_history("m.mod")[0]
             self.assertIsNotNone(mv2.aps_score)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -142,7 +159,7 @@ class TestInsertForecast(unittest.TestCase):
                 self.assertIsNone(mv.predictor_hurst)
                 self.assertIsNone(mv.predictor_forecast_next)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF08_fifth_row_onwards_has_forecast(self):
         store, dbf = _fresh_store()
@@ -155,7 +172,7 @@ class TestInsertForecast(unittest.TestCase):
             self.assertIsNotNone(mvs[4].predictor_hurst)
             self.assertIsNotNone(mvs[4].predictor_forecast_next)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF09_forecast_in_reasonable_bounds(self):
         store, dbf = _fresh_store()
@@ -168,7 +185,7 @@ class TestInsertForecast(unittest.TestCase):
             for f in forecasts:
                 self.assertGreater(f, 0.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF10_hurst_in_unit_interval(self):
         store, dbf = _fresh_store()
@@ -179,7 +196,7 @@ class TestInsertForecast(unittest.TestCase):
                     self.assertGreaterEqual(mv.predictor_hurst, 0.0)
                     self.assertLessEqual(mv.predictor_hurst, 1.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF11_confidence_in_unit_interval(self):
         store, dbf = _fresh_store()
@@ -190,7 +207,7 @@ class TestInsertForecast(unittest.TestCase):
                     self.assertGreaterEqual(mv.predictor_confidence, 0.0)
                     self.assertLessEqual(mv.predictor_confidence, 1.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF12_insert_with_no_module_id_still_works(self):
         """Defensive guard: missing module_id must not crash insert."""
@@ -202,7 +219,7 @@ class TestInsertForecast(unittest.TestCase):
                 n = c.execute("SELECT COUNT(*) FROM snapshots").fetchone()[0]
             self.assertEqual(n, 1)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF13_slope_pct_persists(self):
         store, dbf = _fresh_store()
@@ -216,7 +233,7 @@ class TestInsertForecast(unittest.TestCase):
             for s in slope_pcts:
                 self.assertGreater(s, 0.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF14_cross_module_predictor_isolation(self):
         store, dbf = _fresh_store()
@@ -235,7 +252,7 @@ class TestInsertForecast(unittest.TestCase):
             self.assertTrue(a_hurst_some)
             self.assertTrue(b_hurst_none)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -249,7 +266,7 @@ class TestPredictorHistory(unittest.TestCase):
         try:
             self.assertEqual(store.get_predictor_history("nobody"), [])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF16_records_ordered_ascending(self):
         store, dbf = _fresh_store()
@@ -258,7 +275,7 @@ class TestPredictorHistory(unittest.TestCase):
             ts = [r["timestamp"] for r in store.get_predictor_history("m.mod")]
             self.assertEqual(ts, sorted(ts))
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF17_forecast_error_backfilled_correctly(self):
         store, dbf = _fresh_store()
@@ -271,7 +288,7 @@ class TestPredictorHistory(unittest.TestCase):
                     expected = round(rows[i + 1]["hamiltonian"] - fcst, 6)
                     self.assertEqual(rows[i]["forecast_error"], expected)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF18_last_row_has_no_forecast_error(self):
         store, dbf = _fresh_store()
@@ -280,7 +297,7 @@ class TestPredictorHistory(unittest.TestCase):
             last = store.get_predictor_history("m.mod")[-1]
             self.assertIsNone(last["forecast_error"])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF19_record_shape_keys(self):
         store, dbf = _fresh_store()
@@ -292,7 +309,7 @@ class TestPredictorHistory(unittest.TestCase):
                         "forecast_error"):
                 self.assertIn(key, rec)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF20_legacy_null_predictor_propagates(self):
         store, dbf = _fresh_store()
@@ -305,7 +322,7 @@ class TestPredictorHistory(unittest.TestCase):
             self.assertIsNone(rec["hurst"])
             self.assertIsNone(rec["forecast_next"])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF21_forecast_error_uses_next_actual(self):
         """Direct semantics check: error = actual_next - forecast_at_row."""
@@ -323,7 +340,7 @@ class TestPredictorHistory(unittest.TestCase):
                 actual_next - forecast, places=4,
             )
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TF22_window_parameter_limits_rows(self):
         store, dbf = _fresh_store()
@@ -332,7 +349,7 @@ class TestPredictorHistory(unittest.TestCase):
             rows = store.get_predictor_history("m.mod", window=4)
             self.assertEqual(len(rows), 4)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -351,7 +368,7 @@ class TestHistoryEndpoint(unittest.TestCase):
 
     def tearDown(self):
         self.srv._store = self._orig_store
-        os.unlink(self.dbf)
+        _safe_unlink(self.dbf)
 
     def test_TF23_missing_module_400(self):
         code, _ = self.srv.handle_predictor_history(None)
@@ -394,7 +411,7 @@ class TestAccuracyEndpoint(unittest.TestCase):
 
     def tearDown(self):
         self.srv._store = self._orig_store
-        os.unlink(self.dbf)
+        _safe_unlink(self.dbf)
 
     def test_TF27_insufficient_when_too_few_evaluable_pairs(self):
         # Only 2 snapshots — no forecast pairs at all

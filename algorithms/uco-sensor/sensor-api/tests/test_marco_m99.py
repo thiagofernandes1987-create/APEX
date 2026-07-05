@@ -38,7 +38,9 @@ def test_T99_prior_version_decrements_patch():
 def test_T99_prior_version_edge_cases():
     assert prior_version("") == ""
     assert prior_version("garbage") == ""
-    assert prior_version("1.0.0") == "0.0"  # decrementa major quando minor/patch=0
+    # (DP v3.93.0/D9) mantém 3 componentes quando a corrigida tinha patch.
+    assert prior_version("1.0.0") == "0.0.0"
+    assert prior_version("2.0") == "1.0"
 
 
 def test_T99_tag_candidates_both_prefixes():
@@ -72,3 +74,30 @@ def test_T99_build_pair_tries_v_prefix():
         return store.get((repo, ref, path))
     pair = build_pair("r", "2.31.0", "sha", "s.py", raw_fetch)
     assert pair is not None and pair[0] == "vuln" and pair[1] == "fixed"
+
+
+# ── D5: path relocation entre versões (src/ toggle) ──────────────────────────
+
+def test_T99_path_candidates_toggles_src_prefix():
+    from scan.fix_file_locator import path_candidates
+    assert path_candidates("src/requests/adapters.py") == [
+        "src/requests/adapters.py", "requests/adapters.py"]
+    assert path_candidates("requests/adapters.py") == [
+        "requests/adapters.py", "src/requests/adapters.py"]
+    assert path_candidates("") == []
+
+
+def test_T99_build_pair_survives_src_layout_migration():
+    # Reproduz o caso real requests CVE-2024-35195: fix em src/requests/...,
+    # tag anterior tem o arquivo em requests/... (sem src/).
+    store = {
+        ("psf/requests", "v2.32.0", "src/requests/adapters.py"): "fixed body\n",
+        ("psf/requests", "v2.31.0", "requests/adapters.py"): "vuln body\n",
+    }
+    def raw_fetch(repo, ref, path):
+        return store.get((repo, ref, path))
+    pair = build_pair("psf/requests", "2.32.0", "sha",
+                      "src/requests/adapters.py", raw_fetch)
+    assert pair is not None
+    vuln, fixed, fn = pair
+    assert vuln == "vuln body\n" and fixed == "fixed body\n" and fn == "adapters.py"

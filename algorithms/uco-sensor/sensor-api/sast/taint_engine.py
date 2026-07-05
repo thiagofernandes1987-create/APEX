@@ -177,10 +177,40 @@ _SINK_FUNCTIONS: Dict[str, Tuple[str, str, str, str]] = {
     "__import__":("SAST043", "HIGH",     "CODE_INJECTION",  "CWE-95"),
 }
 
-# Generic: any .execute() call (handles ORM patterns like raw())
+# Generic: `.execute()/.executemany()/.raw()` on an object whose NAME looks like
+# a DB handle (cursor/conn/db/session/engine/...).  (DP v3.93.0) Antes o fallback
+# disparava para QUALQUER objeto → `pipeline.execute(x)`, `task.execute(x)`,
+# `strategy.execute(x)` viravam SQL Injection CRITICAL (FP massivo — achado
+# DEF-01/D3).  Agora exige que um segmento do nome do objeto contenha um hint de
+# SQL, restringindo a ORMs/drivers de verdade sem perder aliases (`self.cursor`,
+# `my_db`, `_conn`, `read_session`).
 _SINK_GENERIC_METHODS: FrozenSet[str] = frozenset({
     "execute", "executemany", "raw",
 })
+# Substrings que marcam um objeto como handle de banco (case-insensitive).
+_SQL_OBJ_HINTS: Tuple[str, ...] = (
+    "cursor", "conn", "connection", "session", "engine", "database",
+    "sqlalchemy", "psycopg", "sqlite", "cur", "txn", "transaction",
+)
+# Nomes de keyword que carregam a QUERY num sink SQL (o resto são bind params).
+# Usado pelo gating SQL do M17/M22 para não perder `execute(sql=user_input)`.
+_SQL_QUERY_KWARGS: FrozenSet[str] = frozenset({
+    "sql", "query", "operation", "statement", "stmt", "command", "cmd",
+})
+
+
+def _looks_like_sql_object(obj_dotted: str) -> bool:
+    """True se algum segmento do nome pontuado do objeto sugere um handle SQL.
+
+    Casos cobertos: `db`, `cursor`, `self.cursor`, `my_db`, `_conn`,
+    `read_session`, `app.db`.  `db` isolado é aceito (exact-match já cobre, mas o
+    hint garante aliases como `self.db`).
+    """
+    low = obj_dotted.lower()
+    for seg in low.replace(".", "_").split("_"):
+        if seg in ("db",) or any(h in seg for h in _SQL_OBJ_HINTS):
+            return True
+    return False
 
 
 # ─── Sanitizer registry ──────────────────────────────────────────────────────
@@ -284,6 +314,19 @@ _TAINT_RULE_META: Dict[str, Dict] = {
         "suggested_fix": "# Validate/sanitize user-controlled data before passing to this call",
         "explanation":   "User-controlled data reaching this call site without validation may be exploitable depending on the call's semantics (CWE-20).",
         "confidence":    0.75,
+    },
+    # (DP v3.93.0) SAST046 estava registrado como sink (pickle/yaml/torch/...)
+    # mas sem metadata — o finding caía no fallback genérico SAST045, perdendo a
+    # especificidade de uma classe CRITICAL (achado DEF-04/D7).
+    "SAST046": {
+        "title":         "Unsafe Deserialization via Taint Flow",
+        "owasp":         "A08:2021",
+        "description":   "User-controlled input is deserialized by pickle/marshal/yaml.load/torch.load without a safe loader.",
+        "remediation":   "Never deserialize untrusted data with pickle/marshal/dill. Use json for data, or yaml.safe_load; for torch use weights_only=True.",
+        "debt_minutes":  180,
+        "suggested_fix": "data = json.loads(payload)  # or yaml.safe_load(payload); never pickle.loads on untrusted input",
+        "explanation":   "pickle/marshal/dill reconstruct arbitrary Python objects and can execute code during load; yaml.load without SafeLoader and torch.load without weights_only are equally exploitable, giving RCE from attacker-controlled bytes (CWE-502).",
+        "confidence":    0.9,
     },
 }
 
@@ -934,14 +977,16 @@ class TaintAnalyzer:
     ) -> Optional[Tuple[str, str, str, str]]:
         """Return (rule_id, severity, vuln_type, cwe_id) if call is a sink, else None."""
         if isinstance(call.func, ast.Attribute):
-            obj_name  = _node_name(call.func.value).split(".")[0]  # first segment
+            obj_dotted = _node_name(call.func.value)
+            obj_name  = obj_dotted.split(".")[0]  # first segment
             meth_name = call.func.attr
             # Exact match
             key = (obj_name, meth_name)
             if key in _SINK_METHODS:
                 return _SINK_METHODS[key]
-            # Generic: any .execute() on any object → SQL injection
-            if meth_name in _SINK_GENERIC_METHODS:
+            # Generic: `.execute()/.raw()` só é SQL sink se o objeto PARECE um
+            # handle de banco — evita FP em pipeline/task/strategy.execute (D3).
+            if meth_name in _SINK_GENERIC_METHODS and _looks_like_sql_object(obj_dotted):
                 return ("SAST040", "CRITICAL", "SQL_INJECTION", "CWE-89")
 
         elif isinstance(call.func, ast.Name):

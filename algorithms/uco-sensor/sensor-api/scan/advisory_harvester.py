@@ -64,6 +64,8 @@ class AdvisoryRecord:
     cwe_ids: List[str] = field(default_factory=list)
     severity: str = ""
     summary: str = ""
+    published: str = ""
+    modified: str = ""
     advisory_url: str = ""
     # ranges GIT (quando presentes) trazem SHAs de introduced/fixed direto do repo
     git_introduced: str = ""
@@ -96,6 +98,7 @@ class AdvisoryRecord:
             "summary": self.summary, "advisory_url": self.advisory_url,
             "git_introduced": self.git_introduced, "git_fixed": self.git_fixed,
             "when_broke": self.when_broke, "resolved_in": self.resolved_in,
+            "published": self.published, "modified": self.modified,
         }
 
 
@@ -185,6 +188,9 @@ def parse_advisory(osv_json: Any) -> Optional[AdvisoryRecord]:
             severity = str(sev[0].get("score", "") or "")
 
     summary = str(d.get("summary", "") or "")
+    published = str(d.get("published", "") or "")
+    modified = str(d.get("modified", "") or "")
+    
     if not advisory_url and ghsa_id:
         advisory_url = f"https://github.com/advisories/{ghsa_id}"
 
@@ -197,7 +203,7 @@ def parse_advisory(osv_json: Any) -> Optional[AdvisoryRecord]:
         introduced=introduced, fixed=fixed, fix_commit=fix_commit,
         fix_tag=fix_tag, cwe_ids=cwe_ids, severity=severity, summary=summary,
         advisory_url=advisory_url, git_introduced=git_introduced,
-        git_fixed=git_fixed,
+        git_fixed=git_fixed, published=published, modified=modified
     )
 
 

@@ -40,6 +40,14 @@ from metrics.spectral_aps import (
     _band_powers, _spectral_entropy, _wavelet_energy,
 )
 
+try:
+    import pywt  # noqa: F401
+    _HAS_PYWT = True
+except Exception:  # noqa: BLE001
+    _HAS_PYWT = False
+_needs_pywt = pytest.mark.skipif(
+    not _HAS_PYWT, reason="PyWavelets nao instalado — _wavelet_energy retorna UNAVAILABLE")
+
 
 # ─── Fixtures ─────────────────────────────────────────────────────────────────
 
@@ -155,6 +163,7 @@ def test_TX10_payload_is_json_safe():
 
 # ─── Wavelet decomposition (TX11-TX20) ────────────────────────────────────────
 
+@_needs_pywt
 def test_TX11_wavelet_status_ok_on_long_series():
     series = [10.0 * math.sin(i / 3.0) for i in range(32)]
     w = _wavelet_energy(series)
@@ -164,7 +173,9 @@ def test_TX11_wavelet_status_ok_on_long_series():
 
 def test_TX12_wavelet_insufficient_on_short_series():
     w = _wavelet_energy([1.0, 2.0])
-    assert w["status"] == "INSUFFICIENT"
+    # sem pywt, [1,2] retorna UNAVAILABLE antes do gate de tamanho; com pywt,
+    # a série curta (<4) é INSUFFICIENT.  Ambos são status honestos.
+    assert w["status"] == ("INSUFFICIENT" if _HAS_PYWT else "UNAVAILABLE")
     assert w["levels"] == []
 
 
