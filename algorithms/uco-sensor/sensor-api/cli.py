@@ -814,7 +814,11 @@ def cmd_analyze(args):
 
 def cmd_serve(args):
     """Inicia o servidor HTTP."""
-    from http.server import HTTPServer
+    # (DS) ThreadingHTTPServer, não HTTPServer: o servidor single-thread bloqueia
+    # quando um cliente mantém a conexão aberta (ex.: um proxy/preview que faz
+    # keep-alive) — novas requisições nunca são atendidas. A versão threaded serve
+    # requisições concorrentes, comportamento esperado de um dev server.
+    from http.server import ThreadingHTTPServer
     import api.server as srv
 
     srv._config.db_path      = args.db or ":memory:"
@@ -840,7 +844,7 @@ def cmd_serve(args):
     host = args.host or "0.0.0.0"
     port = args.port or 8080
 
-    server = HTTPServer((host, port), srv.UCOSensorHandler)
+    server = ThreadingHTTPServer((host, port), srv.UCOSensorHandler)
     print(f"\033[96m[UCO-Sensor v0.3.0]\033[0m Rodando em http://{host}:{port}")
     print(f"  DB       : {args.db or ':memory:'}")
     print(f"  Auth     : {args.auth}")
