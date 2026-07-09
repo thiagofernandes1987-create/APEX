@@ -1,6 +1,6 @@
 [build-system]
 requires      = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name        = "uco-sensor"
@@ -70,6 +70,13 @@ Issues        = "https://github.com/thiagofernandes1987-create/APEX/issues"
 
 [project.scripts]
 uco-sensor = "cli:main"
+
+# `cli.py` é um módulo solto na raiz (o console-script `uco-sensor = cli:main`
+# depende dele). `packages.find` só acha pacotes (dirs com __init__), então o
+# módulo precisa ser declarado explicitamente, senão `uco-sensor` instala mas
+# quebra com ModuleNotFoundError: cli.
+[tool.setuptools]
+py-modules = ["cli"]
 
 [tool.setuptools.packages.find]
 where   = ["."]
