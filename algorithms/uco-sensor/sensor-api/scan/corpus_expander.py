@@ -261,6 +261,7 @@ def build_degradation(
     perpetuated: Optional[bool] = None
     findings_vuln: Optional[int] = None
     findings_fixed: Optional[int] = None
+    rename_suspected = False
     ext = _ext_of(filename)
     if ext:
         try:
@@ -270,6 +271,24 @@ def build_degradation(
             if kv:                                  # só é significativo se disparou no vuln
                 stopped_firing = bool(kv - kf)      # algum sinal do vuln sumiu no fix
                 perpetuated = bool(kv & kf)         # algum sinal do vuln persistiu no fix
+                # (DS v3.94.0) RENAME GUARD — achado #3 da 2ª auditoria: a chave é
+                # `(rule_id, nome_da_var)`, então renomear a var tainted (refactor
+                # que NÃO conserta nada) faz a chave "sumir" e dispara um falso
+                # `stopped_firing=True` — a alegação mais perigosa (afirmar correção
+                # inexistente).  Se um rule_id "parou" mas o MESMO rule_id reaparece
+                # no fix com outra var (i.e. o número de findings daquela regra não
+                # caiu), não dá para distinguir "corrigiu + introduziu outro" de
+                # "só renomeou": marca ambíguo e rebaixa stopped_firing p/ None
+                # (honesto), em vez de afirmar correção.
+                stopped_rules = {r for (r, _v) in (kv - kf)}
+                for r in stopped_rules:
+                    n_vuln = sum(1 for (rr, _v) in kv if rr == r)
+                    n_fixed = sum(1 for (rr, _v) in kf if rr == r)
+                    if n_fixed >= n_vuln:            # a classe não encolheu → rename provável
+                        rename_suspected = True
+                        break
+                if rename_suspected:
+                    stopped_firing = None            # não afirmar correção sob ambiguidade
         except Exception:  # noqa: BLE001
             pass
 

@@ -5,6 +5,51 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.94.0] — 2026-07-05 — Sprint DS: 2ª rodada de auditoria + PIPELINE SAST unificado
+
+Segunda rodada de auditorias independentes (4 relatórios sobre v3.93.0). Cada
+achado foi **reproduzido ao vivo antes de corrigir**; um foi corrigido com
+ressalva por a alegação estar parcialmente equivocada.
+
+**Correções validadas como reais:**
+- **#1 CRÍTICO** — `taint_engine._check_args_for_sink` (M7.2, o motor do
+  `UCOBridge`/monitor) checava só `args[0]` em sink SQL e retornava, ignorando
+  `call.keywords` — `execute(sql=user)` era falso-negativo no caminho de scan
+  PRINCIPAL, mesmo o D4 tendo "corrigido" isso em M17/M22. Passa a reusar
+  `_SQL_QUERY_KWARGS`. +teste `_base_rules` que faltava.
+- **#2 ALTO (com ressalva)** — `nvd_harvester.parse_cve_record`: `introduced`
+  nunca era preenchido e uma versão `affected` vazava para `fixed_versions`. A
+  correção proposta pela auditoria **corromperia dado real** (postgres
+  CVE-2021-32027 abusa do schema e lista versões FIXED nesse campo). Discrimina
+  por contagem: múltiplas versões → fixed (postgres); única → fronteira
+  `introduced`. Preserva os testes de dado real do postgres E corrige o schema limpo.
+- **#3 ALTO** — rename da var tainted quebrava o casamento por chave do M24,
+  reportando falso `stopped_firing=True` (afirmar correção inexistente). Novo
+  RENAME-GUARD: sob ambiguidade (mesmo `rule_id` reaparece com outra var, classe
+  não encolheu) rebaixa para `None` honesto. Zero drift no corpus (os 3 validados
+  têm `stopped_firing=False`).
+- **#5 MÉDIO-ALTO** — scan de dead-code do `uco_bridge` pulava métodos de classe
+  (`_scan_dead_code` recursava em funções mas não em `ast.ClassDef`). Adicionada a
+  recursão; removido o método morto `visit_FunctionDef_deadcode` (nunca despachado).
+- **CVSS vector (Diretriz #8)** — `AdvisoryRecord`/`DegradationRecord` capturam o
+  vetor CVSS completo (`CVSS:3.1/AV:.../`) além do rótulo, com `parse_cvss_vector`
+  (AV/AC/PR/UI/S/C/I/A). Antes o rótulo engolia o vetor.
+
+**Nova capacidade — PIPELINE SAST UNIFICADO (`uco-sensor sast <path>`):**
+`scan/sast_pipeline.py` roda TODOS os motores de segurança aplicáveis (taint M7.2
++ multilang JS/Java/Go/PHP/Rust/C# + guard M11 memory-safety + TOCTOU M28) sobre
+um arquivo OU diretório e agrega os findings num relatório (text/json), **sem
+subir a API nem chamar motor por motor**. Varre recursivamente pulando
+`.git`/`__pycache__`/`node_modules`/etc., deduplica findings idênticos, e suporta
+`--fail-on-findings` para CI. Confirmado analisando o próprio código do sensor e
+projetos externos. `main()` reconfigura stdout p/ UTF-8 (Windows cp1252).
+
+**Achado #4 (GA02 memory-safety flow-insensitive)** validado como real mas
+NÃO corrigido nesta sprint: exige análise de dominância/fluxo no scanner C, com
+risco de introduzir FP — rastreado à parte.
+
+Suíte: 2591 verdes. +14 testes de regressão (m95/m101/m102). Bump 3.93.0 → 3.94.0.
+
 ## [3.93.0] — 2026-07-04 — Sprint DR: CORREÇÕES DA AUDITORIA ADVERSARIAL (D1–D9)
 
 Aplica as correções confirmadas por reprodução ao vivo na auditoria independente
