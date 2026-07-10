@@ -4801,6 +4801,26 @@ def handle_usage(key_info: Dict) -> Tuple[int, Dict]:
 
 # ─── HTTP Handler ─────────────────────────────────────────────────────────────
 
+# (item 1 / dogfooding) rotas GET uniformes `handler(module_id, window=default)`
+# — colapsadas numa tabela para reduzir a CC de do_GET (era 112). Ordem/defaults
+# preservados exatamente; qualquer rota com assinatura diferente segue no if/elif.
+_GET_MODULE_WINDOW_ROUTES = {
+    "/metrics/advanced":            (handle_metrics_advanced, 50),
+    "/metrics/reliability":         (handle_metrics_reliability, 50),
+    "/metrics/maintainability":     (handle_metrics_maintainability, 50),
+    "/metrics/flow":                (handle_metrics_flow, 50),
+    "/metrics/performance":         (handle_metrics_performance, 50),
+    "/metrics/architecture":        (handle_metrics_architecture, 50),
+    "/metrics/test-quality":        (handle_metrics_test_quality, 50),
+    "/metrics/thread-safety":       (handle_metrics_thread_safety, 50),
+    "/anti-pattern-score":          (handle_anti_pattern_score, 50),
+    "/anti-pattern-score/history":  (handle_anti_pattern_score_history, 100),
+    "/anti-pattern-score/trend":    (handle_anti_pattern_score_trend, 100),
+    "/predictor/history":           (handle_predictor_history, 100),
+    "/predictor/accuracy":          (handle_predictor_accuracy, 100),
+}
+
+
 class UCOSensorHandler(BaseHTTPRequestHandler):
     """Handler HTTP para o UCO-Sensor REST API."""
 
@@ -4897,58 +4917,12 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 horizon_n = _qp_int(params, "horizon", 5)
                 top_n_val = _qp_int(params, "top_n", 10)
                 code, data = handle_predict_all(window=window_n, horizon=horizon_n, top_n=top_n_val)
-            elif path == "/metrics/advanced":
+            elif path in _GET_MODULE_WINDOW_ROUTES:
+                # (item 1) 13 rotas uniformes colapsadas numa tabela.
+                _h, _dw = _GET_MODULE_WINDOW_ROUTES[path]
                 module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_advanced(module_id, window=window_n)
-            elif path == "/metrics/reliability":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_reliability(module_id, window=window_n)
-            elif path == "/metrics/maintainability":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_maintainability(module_id, window=window_n)
-            elif path == "/metrics/flow":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_flow(module_id, window=window_n)
-            elif path == "/metrics/performance":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_performance(module_id, window=window_n)
-            elif path == "/metrics/architecture":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_architecture(module_id, window=window_n)
-            elif path == "/metrics/test-quality":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_test_quality(module_id, window=window_n)
-            elif path == "/metrics/thread-safety":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_thread_safety(module_id, window=window_n)
-            elif path == "/anti-pattern-score":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_anti_pattern_score(module_id, window=window_n)
-            elif path == "/anti-pattern-score/history":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 100)
-                code, data = handle_anti_pattern_score_history(module_id, window=window_n)
-            elif path == "/anti-pattern-score/trend":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 100)
-                code, data = handle_anti_pattern_score_trend(module_id, window=window_n)
-            elif path == "/predictor/history":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 100)
-                code, data = handle_predictor_history(module_id, window=window_n)
-            elif path == "/predictor/accuracy":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 100)
-                code, data = handle_predictor_accuracy(module_id, window=window_n)
+                window_n  = _qp_int(params, "window", _dw)
+                code, data = _h(module_id, window=window_n)
             elif path == "/apex/remediation/history":
                 module_id = params.get("module", [""])[0] or ""
                 limit_n   = _qp_int(params, "limit", 100)
