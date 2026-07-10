@@ -262,6 +262,29 @@ class TestILR(unittest.TestCase):
         mv = UCOBridge().analyze(CODE_SIMPLE, "t", "h")
         self.assertEqual(mv.infinite_loop_risk, 0.0)
 
+    def test_ilr_conditional_break_is_partial_not_maximal(self):
+        """(item 2) while True com break CONDICIONAL (paginação) = risco PARCIAL,
+        não máximo — antes um loop bem-formado dava ILR=1.0 (FP de magnitude)."""
+        code = ("def paginate():\n    page = 1\n    while True:\n"
+                "        data = fetch(page)\n        if not data:\n            break\n"
+                "        page += 1\n")
+        mv = UCOBridge().analyze(code, "t", "h")
+        self.assertGreater(mv.infinite_loop_risk, 0.0)   # ainda é algum risco
+        self.assertLess(mv.infinite_loop_risk, 0.5)      # mas NÃO máximo
+
+    def test_ilr_no_escape_is_maximal(self):
+        """while True sem NENHUMA saída = risco total (distinto do condicional)."""
+        code = "def spin():\n    while True:\n        do_work()\n"
+        mv = UCOBridge().analyze(code, "t", "h")
+        self.assertEqual(mv.infinite_loop_risk, 1.0)
+
+    def test_ilr_unconditional_break_is_zero(self):
+        """while True com break/return INCONDICIONAL no corpo direto = término
+        garantido → ILR 0."""
+        code = "def once():\n    while True:\n        return compute()\n"
+        mv = UCOBridge().analyze(code, "t", "h")
+        self.assertEqual(mv.infinite_loop_risk, 0.0)
+
 
 class TestDeadCode(unittest.TestCase):
     """BUG-13: Dead code detection"""

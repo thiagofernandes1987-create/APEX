@@ -178,6 +178,11 @@ class _UCOVisitor(ast.NodeVisitor):
 
         # Loop risk
         self.loop_risk_count: int = 0
+        # (item 2 / dogfooding) risco PONDERADO: um `while True` com saída só
+        # CONDICIONAL (ex.: paginação `if not data: break`) é risco PARCIAL, não
+        # o mesmo risco MÁXIMO de um `while True` SEM nenhuma saída.  `count`
+        # segue como antes (compat de testes); `weight` alimenta o ILR final.
+        self.loop_risk_weight: float = 0.0
 
         # Halstead operadores
         self._ops: Dict[str, int] = {}
@@ -444,14 +449,23 @@ class _UCOVisitor(ast.NodeVisitor):
         if not is_always_true:
             return
 
-        # SOMENTE escapes INCONDICIONAIS no nível direto do while contam
+        # SOMENTE escapes INCONDICIONAIS no nível direto do while garantem término.
         has_unconditional_escape = any(
             isinstance(stmt, (ast.Break, ast.Return))
             for stmt in node.body
         )
+        if has_unconditional_escape:
+            return  # término garantido → risco 0
 
-        if not has_unconditional_escape:
-            self.loop_risk_count += 1
+        self.loop_risk_count += 1
+        # (item 2) tier: saída CONDICIONAL em qualquer ponto do corpo
+        # (`if cond: break/return/raise`, mesmo aninhada) = risco PARCIAL; corpo
+        # SEM nenhuma saída = risco TOTAL (quase certamente laço infinito).
+        has_any_escape = any(
+            isinstance(n, (ast.Break, ast.Return, ast.Raise))
+            for n in ast.walk(node)
+        )
+        self.loop_risk_weight += 0.35 if has_any_escape else 1.0
 
     def _check_recursion_risk(self, node: ast.FunctionDef, fn_name: str) -> None:
         """
@@ -500,6 +514,7 @@ class _UCOVisitor(ast.NodeVisitor):
 
         if not top_level_guard:
             self.loop_risk_count += 1
+            self.loop_risk_weight += 1.0   # recursão sem base case = risco total
 
     # ── AST-IMP helper methods ────────────────────────────────────────────────
 
@@ -827,12 +842,17 @@ class UCOBridge:
         hamiltonian = effort / max(1, loc) * 0.01
 
         # ── 3. ILR ────────────────────────────────────────────────────────
+        # (item 2) numerador PONDERADO (`loop_risk_weight`): while-true com saída
+        # condicional pesa 0.35, sem saída pesa 1.0 — antes qualquer while-true
+        # sem escape incondicional pesava 1.0 (ILR=1.0 num loop de paginação).
         n_loops_while = sum(
             1 for node in ast.walk(tree)
             if isinstance(node, ast.While)
         )
-        ilr = float(visitor.loop_risk_count) / max(1, n_loops_while) \
-              if n_loops_while > 0 else 0.0
+        # denominador inclui os while-loops; se só há risco de recursão (sem
+        # while), usa a própria contagem de risco como base para não zerar.
+        denom = max(1, n_loops_while) if (n_loops_while or visitor.loop_risk_count) else 0
+        ilr = (visitor.loop_risk_weight / denom) if denom > 0 else 0.0
         ilr = min(1.0, ilr)
 
         # ── 4. DSM (Dependency Structure Matrix) ─────────────────────────

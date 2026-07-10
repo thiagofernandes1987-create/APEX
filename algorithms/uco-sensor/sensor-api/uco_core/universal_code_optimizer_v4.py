@@ -2381,17 +2381,59 @@ class FeatureExtractor:
         # dentro de string literals ou comentários do código analisado.
         code_clean = strip_code_strings(code)
         lower = code_clean.lower()
-        if re.search(r"\bwhile\s*\(\s*true\s*\)", lower) or re.search(r"\bwhile\s+true\b", lower):
-            risk += 0.45; notes.append("while(true) detectado")
-        if re.search(r"\bfor\s*\(\s*;\s*;\s*\)", lower):
-            risk += 0.45; notes.append("for(;;) detectado")
-        if re.search(r"\bwhile\s*\(\s*1\s*\)", lower):
-            risk += 0.35; notes.append("while(1) detectado")
-        if "+ 0" in code_clean or "+= 0" in code_clean or "- 0" in code_clean or "* 1" in code_clean:
-            risk += 0.20; notes.append("padrões no-op detectados")
+
+        # (item 2 / auditoria de dogfooding) ANÁLISE PRECISA POR AST em Python:
+        # um `while True`/`while 1` só é risco ALTO se o corpo NÃO tem saída
+        # (break/return/raise/exit).  Com saída (mesmo condicional) o risco é
+        # BAIXO — antes qualquer `while True` levava +0.45 fixo, dando 1.0 num
+        # loop de paginação legítimo (`cli.py::_github_list_repos`, que tem dois
+        # `break`).  Para não-Python (parse falha) cai no regex antigo.
+        ast_handled = False
+        try:
+            import ast as _ast
+            _tree = _ast.parse(code)
+            ast_handled = True
+            inf_no_exit = inf_cond_exit = 0
+            for _n in _ast.walk(_tree):
+                if not isinstance(_n, _ast.While):
+                    continue
+                _t = _n.test
+                if not (isinstance(_t, _ast.Constant) and _t.value in (True, 1)):
+                    continue
+                _exits = any(isinstance(x, (_ast.Break, _ast.Return, _ast.Raise))
+                             for x in _ast.walk(_n))
+                if not _exits:  # também aceita sys.exit()/os._exit() como saída
+                    _exits = any(isinstance(x, _ast.Call)
+                                 and "exit" in _ast.dump(x.func).lower()
+                                 for x in _ast.walk(_n))
+                if _exits:
+                    inf_cond_exit += 1
+                else:
+                    inf_no_exit += 1
+            if inf_no_exit:
+                risk += 0.45; notes.append(f"while-true sem saída ({inf_no_exit})")
+            elif inf_cond_exit:
+                risk += 0.15; notes.append(f"while-true com saída condicional ({inf_cond_exit})")
+        except SyntaxError:
+            pass
+
+        if not ast_handled:  # fallback regex — não-Python / código não-parseável
+            if re.search(r"\bwhile\s*\(\s*true\s*\)", lower) or re.search(r"\bwhile\s+true\b", lower):
+                risk += 0.45; notes.append("while(true) detectado")
+            if re.search(r"\bfor\s*\(\s*;\s*;\s*\)", lower):
+                risk += 0.45; notes.append("for(;;) detectado")
+            if re.search(r"\bwhile\s*\(\s*1\s*\)", lower):
+                risk += 0.35; notes.append("while(1) detectado")
+
+        # (item 2) no-op de PROGRESSÃO do contador — só compound-assign real
+        # (`i += 0`, `i -= 0`, `i *= 1`), não substring solta como "* 1", que
+        # casava qualquer aritmética (`range(n * 1)`) e inflava o risco.
+        if re.search(r"\b\w+\s*(?:\+=\s*0|-=\s*0|\*=\s*1)\b", code_clean):
+            risk += 0.20; notes.append("contador com atualização no-op")
+
         loops = [n for n in cfg.nodes.values() if n.kind in {"loop_header", "for", "while"}]
-        if loops and not re.search(r"\bbreak\b|\breturn\b", lower):
-            risk += 0.20; notes.append("loop sem break/return explícito")
+        if loops and not re.search(r"\bbreak\b|\breturn\b|\braise\b", lower):
+            risk += 0.20; notes.append("loop sem break/return/raise explícito")
         if dsm.cyclic_dependency_ratio > 0.20:
             risk += 0.15; notes.append("ciclo de dependência aumenta risco de estagnação")
         return min(1.0, risk), notes
