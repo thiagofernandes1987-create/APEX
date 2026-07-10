@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name        = "uco-sensor"
-version     = "3.94.0"
+version     = "3.95.0"
 description = "Spectral code-quality API powered by UCO v4 + FrequencyEngine"
 readme      = "README.md"
 license     = { text = "MIT" }

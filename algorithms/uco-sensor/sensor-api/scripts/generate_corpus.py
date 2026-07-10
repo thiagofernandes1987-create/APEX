@@ -97,14 +97,25 @@ def main() -> None:
         except Exception as e:  # noqa: BLE001 — registro ruim não derruba o lote
             print(f"Erro processando {r.get('cve')}: {e}")
 
-    total = len(records)
-    complete = sum(1 for rec, _ in records if rec.answers_all_four)
-    validated = sum(1 for rec, _ in records if rec.validated)
-    stopped = sum(1 for rec, _ in records if rec.stopped_firing)
-    perpetuated = sum(1 for rec, _ in records if rec.perpetuated)
+    # (DT/Achado #12) Um DegradationRecord responde as 4 perguntas SOBRE UM CVE.
+    # Registros sem `cve` (ex.: GHSA-3f95-mxq2-2f63, que o GitHub marca como
+    # "Duplicate Advisory" com aliases=[]) NÃO são entradas independentes do
+    # corpus — não podem contar nos totais. Ficam no array por transparência,
+    # marcados `excluded_no_cve`, mas fora de total/complete/validated.
+    def _countable(rec) -> bool:
+        return bool((rec.cve or "").strip())
+
+    counted = [(rec, st) for rec, st in records if _countable(rec)]
+    excluded = [(rec, st) for rec, st in records if not _countable(rec)]
+
+    total = len(counted)
+    complete = sum(1 for rec, _ in counted if rec.answers_all_four)
+    validated = sum(1 for rec, _ in counted if rec.validated)
+    stopped = sum(1 for rec, _ in counted if rec.stopped_firing)
+    perpetuated = sum(1 for rec, _ in counted if rec.perpetuated)
 
     out_records = []
-    for rec, orig_status in records:
+    for rec, orig_status in counted:
         d = rec.to_dict()
         # `metadata_only` é decisão do produtor do registro; preserva.
         # complete/partial derivam de answers_all_four (fonte única).
@@ -112,6 +123,10 @@ def main() -> None:
             d["status"] = "metadata_only"
         else:
             d["status"] = "complete" if rec.answers_all_four else "partial"
+        out_records.append(d)
+    for rec, _ in excluded:
+        d = rec.to_dict()
+        d["status"] = "excluded_no_cve"
         out_records.append(d)
 
     out_data = {
@@ -122,13 +137,14 @@ def main() -> None:
         "validated_stopped_firing": stopped,
         "validated_perpetuated": perpetuated,
         "partial": total - complete,
+        "excluded_no_cve": len(excluded),
         "records": out_records,
     }
 
     in_file.write_text(json.dumps(out_data, indent=2, ensure_ascii=False) + "\n",
                        encoding="utf-8")
     print(f"Corpus atualizado: {total} total | {complete} completos 4/4 (metadado) | "
-          f"{validated} validados dinamicamente (stopped_firing conhecido)")
+          f"{validated} validados | {len(excluded)} excluidos (sem cve / duplicate advisory)")
 
 
 if __name__ == "__main__":

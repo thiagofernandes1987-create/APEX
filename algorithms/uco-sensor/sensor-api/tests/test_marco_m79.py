@@ -81,3 +81,41 @@ def test_T79_ga02_bounded_memcpy_is_silent():
 def test_T79_returns_guardfinding_dataclass():
     findings = GuardAwareScanner().scan(_VULN, ".c")
     assert all(isinstance(f, GuardFinding) for f in findings)
+
+
+# ── DT/Achado #4: dominância — bound de branch irmão NÃO conta ────────────────
+
+def test_T79_ga02_unrelated_bound_in_sibling_branch_still_fires():
+    # `len < 999999` num branch de debug que FECHA antes do memcpy não protege.
+    src = (
+        "void f(char *dst, char *src, int len, int debug_mode) {\n"
+        '  if (debug_mode) { if (len < 999999) { log_debug("x"); } }\n'
+        "  memcpy(dst, src, len);\n"
+        "}\n"
+    )
+    findings = GuardAwareScanner().scan(src, ".c")
+    assert any(g.rule_id == "GA02" and g.needs_guard_on == ("len",) for g in findings)
+
+
+def test_T79_ga02_dominating_early_return_guard_is_silent():
+    # guard que DOMINA o sink (early-return no mesmo nível) suprime corretamente.
+    for body in ("if (len > size) return;", "if (len > size) { return; }"):
+        src = (
+            "void g(char *dst, char *src, int len, int size) {\n"
+            f"  {body}\n"
+            "  memcpy(dst, src, len);\n"
+            "}\n"
+        )
+        assert not any(g.rule_id == "GA02" for g in GuardAwareScanner().scan(src, ".c")), body
+
+
+def test_T79_ga01_unrelated_guard_in_sibling_branch_still_fires():
+    src = (
+        "void f(char *base, int pilen, int slen, int dbg) {\n"
+        "  if (dbg) { if (pilen > slen) { note(); } }\n"
+        "  char *p = base + pilen - slen;\n"
+        "}\n"
+    )
+    hits = [f for f in GuardAwareScanner().scan(src, ".c")
+            if f.rule_id == "GA01" and f.needs_guard_on == ("pilen", "slen")]
+    assert len(hits) == 1

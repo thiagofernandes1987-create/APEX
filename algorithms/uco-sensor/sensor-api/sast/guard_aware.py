@@ -102,10 +102,38 @@ def _split_functions(source: str, ext: str) -> List[Tuple[int, int]]:
     return spans
 
 
-def _guard_present(block: str, a: str, b: str) -> bool:
+def _dominates(block: str, guard_pos: int, sink_pos: int) -> bool:
+    """
+    True se o guard na posição `guard_pos` DOMINA o sink em `sink_pos` — i.e., o
+    bloco `{...}` que contém o guard ainda está ABERTO na linha do sink.
+
+    (DT/Achado #4) Antes a checagem era textual sobre o escopo inteiro: um
+    `if (len < X)` num branch de debug NÃO-relacionado (que fecha antes do
+    `memcpy`) contava como bound → FN de overflow. Aqui, um guard só protege o
+    sink se: (a) precede o sink, e (b) entre os dois a profundidade de chaves
+    nunca cai abaixo da profundidade do guard (o bloco do guard não fechou).
+    Aproximação de dominância válida para código C/C++ estruturado por chaves.
+    """
+    if guard_pos >= sink_pos:
+        return False  # guard depois do sink não protege
+    depth_at_guard = block.count("{", 0, guard_pos) - block.count("}", 0, guard_pos)
+    depth = depth_at_guard
+    min_depth = depth
+    for ch in block[guard_pos:sink_pos]:
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth < min_depth:
+                min_depth = depth
+    return min_depth >= depth_at_guard
+
+
+def _guard_present(block: str, a: str, b: str, sink_pos: int) -> bool:
     """
     True if the function block contains a comparison guard between *a* and *b*
-    (either order / any relational operator), or a range check on either.
+    (either order / any relational operator) that DOMINATES the sink at
+    `sink_pos` (see `_dominates`).  A range check on either operand counts too.
     """
     if a == b:
         return True  # x + y - y style, degenerate
@@ -115,7 +143,11 @@ def _guard_present(block: str, a: str, b: str) -> bool:
         rf"\b{esc_b}\s*[<>]=?\s*{esc_a}\b",
         rf"\b{esc_a}\s*[<>]=?\s*{esc_b}\s*[?:]",
     ]
-    return any(re.search(p, block) for p in patterns)
+    for p in patterns:
+        for m in re.finditer(p, block):
+            if _dominates(block, m.start(), sink_pos):
+                return True
+    return False
 
 
 # Funções de alocação cujo argumento de TAMANHO, se contém a variável de
@@ -129,22 +161,24 @@ _ALLOC_FN = re.compile(
 )
 
 
-def _bound_present(block: str, var: str) -> bool:
+def _bound_present(block: str, var: str, sink_pos: int) -> bool:
     """
-    True se *var* está limitada no escopo — por uma comparação (`var < X`,
-    `X >= var`, ...) OU pelo idioma "allocated-to-fit": uma chamada de
-    alocação cujo argumento de tamanho menciona *var* (o buffer foi
-    dimensionado para conter a cópia). Ambos são bounds legítimos; reconhecê-los
-    evita falso-positivo do GA02 em código correto.
+    True se *var* está limitada por um guard que DOMINA o sink em `sink_pos` —
+    por uma comparação (`var < X`, `X >= var`, ...) OU pelo idioma
+    "allocated-to-fit": uma chamada de alocação cujo argumento de tamanho
+    menciona *var*. Ambos são bounds legítimos; reconhecê-los evita FP do GA02.
+
+    (DT/Achado #4) A dominância (`_dominates`) é exigida para não aceitar um
+    bound de um branch irmão não-relacionado que fecha antes do sink.
     """
     esc = re.escape(var)
-    if re.search(rf"\b{esc}\s*[<>]=?", block) or re.search(rf"[<>]=?\s*{esc}\b", block):
-        return True
-    # allocated-to-fit: alloc(...  var ...) no escopo (tamanho inclui a var)
+    for m in re.finditer(rf"\b{esc}\s*[<>]=?|[<>]=?\s*{esc}\b", block):
+        if _dominates(block, m.start(), sink_pos):
+            return True
+    # allocated-to-fit: alloc(...  var ...) que domina o sink (tamanho inclui a var)
     for m in _ALLOC_FN.finditer(block):
-        # examina os argumentos da chamada de alloc (até o ; ou fim de linha)
         tail = block[m.end(): m.end() + 200]
-        if re.search(rf"\b{esc}\b", tail):
+        if re.search(rf"\b{esc}\b", tail) and _dominates(block, m.start(), sink_pos):
             return True
     return False
 
@@ -165,16 +199,27 @@ class GuardAwareScanner:
         except Exception:  # pragma: no cover
             self._scoper = None
 
-    def _scope(self, spans, lines: List[str], lineno: int) -> str:
+    @staticmethod
+    def _sink_offset(block_lines: List[str], sink_idx: int) -> int:
+        """Offset de caractere do INÍCIO da linha do sink dentro do bloco
+        `"\n".join(block_lines)` — usado para a checagem de dominância (#4)."""
+        if not (0 <= sink_idx < len(block_lines)):
+            return 0
+        return sum(len(block_lines[i]) + 1 for i in range(sink_idx))  # +1 = '\n'
+
+    def _scope(self, spans, lines: List[str], lineno: int) -> Tuple[str, int]:
+        """Retorna (bloco_do_escopo, offset_da_linha_do_sink_no_bloco)."""
         if spans is not None:
             from sast.scope import FunctionScoper as _FS
             span = _FS.smallest_enclosing(spans, lineno)
             if span is not None:
                 s, e = span
-                return "\n".join(lines[s - 1:e])
+                block_lines = lines[s - 1:e]
+                return "\n".join(block_lines), self._sink_offset(block_lines, lineno - s)
         lo = max(0, lineno - 1 - self.WINDOW)
         hi = min(len(lines), lineno - 1 + self.WINDOW + 1)
-        return "\n".join(lines[lo:hi])
+        block_lines = lines[lo:hi]
+        return "\n".join(block_lines), self._sink_offset(block_lines, (lineno - 1) - lo)
 
     def scan(self, source: str, ext: str = ".c") -> List[GuardFinding]:
         # META B — language-aware: as classes GA01 (underflow em subtração) e
@@ -224,7 +269,8 @@ class GuardAwareScanner:
                     continue
                 if scope is None:
                     scope = self._scope(spans, lines, lineno)
-                if _guard_present(scope, a, b):
+                # posição ABSOLUTA da subtração no bloco (offset da linha + coluna)
+                if _guard_present(scope[0], a, b, scope[1] + m.start()):
                     continue
                 key = ("GA01", lineno, a, b)
                 if key in seen:
@@ -245,7 +291,8 @@ class GuardAwareScanner:
                 fn, nvar = m.group(1), m.group(2)
                 if scope is None:
                     scope = self._scope(spans, lines, lineno)
-                if _bound_present(scope, nvar):
+                # posição ABSOLUTA da chamada de cópia no bloco (offset linha + coluna)
+                if _bound_present(scope[0], nvar, scope[1] + m.start()):
                     continue
                 key = ("GA02", lineno, nvar)
                 if key in seen:

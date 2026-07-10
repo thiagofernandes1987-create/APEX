@@ -40,12 +40,49 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.93.0 · **2571 testes verdes** (+2 flaky pré-existentes do
-watcher m23, fora do escopo — ver dívida) · corpus **48/53 CVEs completos 4/4**
-(`degradation_report_full.json`, contadores agora CALCULADOS por
-`scripts/generate_corpus.py`) · **3 validados dinamicamente** (stopped_firing
-conhecido — os 3 com perpetuação). Metadados OSV (published/modified/severity)
-preenchidos em 50/53 via `--backfill`.
+**Estado atual:** v3.95.0 · corpus **48/53 CVEs completos 4/4**
+(`degradation_report_full.json`, contadores CALCULADOS por
+`scripts/generate_corpus.py`) · **3 validados dinamicamente**. Metadados OSV
+(published/modified/severity + **vetor CVSS** desde DS) preenchidos via `--backfill`.
+
+---
+
+### 🔬 Sprint DT (v3.95.0) — 3ª RODADA DE AUDITORIA: SANAR TODOS OS ACHADOS ABERTOS
+> Auditoria consolidada de 4 relatórios independentes sobre v3.93.0/3.94.0, **cada
+> achado reproduzido por PoC** contra o código real antes de entrar aqui. Ordem
+> ESTRITA de prioridade (P0→P2). Status atualizado a cada correção.
+> **Já corrigidos e verificados em DS (v3.94.0):** #1 (SQL kwarg no M7.2),
+> #2 (introduced no M26), #3 (rename-guard no M24), #5 (dead-code em métodos).
+
+**P0 — segurança / integridade de dado:**
+- [ ] **#4 — `guard_aware._bound_present` insensível a fluxo** (`sast/guard_aware.py:132-149`).
+      `memcpy(dst,src,len)` sem bound é IGNORADO se existir `len<X` em branch de
+      debug não-relacionado → FN de overflow (CWE-120). Fix: só aceitar comparação
+      que precede o sink no caminho, não em qualquer lugar do escopo.
+- [ ] **#12 — Duplicate Advisory conta nos totais** (corpus + `generate_corpus.py`).
+      GHSA-3f95-mxq2-2f63 (gradio) tem `cve=""` e conta como `complete`. Fix:
+      excluir dos totais registros que a fonte marca "Duplicate"/sem cve+aliases.
+
+**P1 — precisão de detecção:**
+- [ ] **strings/comentários não removidos** antes das regexes do `fix_localizer`
+      → `logger.debug("check_bounds(%d)")` vira guard (FP). Fix: strip antes.
+- [ ] **#7 `bounds-check-call` + `security-conditional-guard` amplos demais**
+      (`fix_localizer.py:75-79,124-129`). `check_range(order.date,...)`,
+      `if host=="localhost":` → guard. Fix: exigir contexto de memória/sink.
+- [ ] **colisão de multiplicidade** em `_sensor_finding_keys` (`corpus_expander.py:61`):
+      set colapsa 2 ocorrências → correção parcial some. Fix: multiconjunto.
+- [ ] **#8 idioma Python de bounds-check** não reconhecido (`if idx>=0 and idx<len(buf)`).
+
+**P2 — higiene / portabilidade / arquitetura:**
+- [ ] **#9** `test_marco_m70.py:47` aborta a coleta inteira fora do monorepo → `skipif`.
+- [ ] **#10** docstring `advisory_resolver` (GET não HEAD, até 48 não 24) + cache.
+- [ ] **#13** dedup `fetch_advisory`↔`_try_fetch`; capturar `github_reviewed`;
+      **teste de paridade dos 3 motores taint** (dívida estrutural: D4 chegou em 2/3);
+      `constraints.txt` pinado (deps são floors sem teto, sem lockfile).
+
+**Falsas (verificadas, NÃO corrigir):** "casamento por linha crua" (o real é por
+chave semântica, imune a deslocamento); `int()/float()` sanitizador fraco (SSRF/IDOR
+fora do modelo). 
 
 ---
 

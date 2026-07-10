@@ -1,11 +1,12 @@
 {
   "generated_by": "scripts/generate_corpus.py (contadores calculados, nunca manuais)",
-  "total": 53,
-  "complete_4of4": 48,
+  "total": 52,
+  "complete_4of4": 47,
   "validated": 3,
   "validated_stopped_firing": 0,
   "validated_perpetuated": 3,
   "partial": 5,
+  "excluded_no_cve": 1,
   "records": [
     {
       "cve": "CVE-2024-22195",
@@ -1232,37 +1233,6 @@
       "validated": false
     },
     {
-      "cve": "",
-      "ghsa": "GHSA-3f95-mxq2-2f63",
-      "package": "gradio",
-      "ecosystem": "PyPI",
-      "published": "",
-      "modified": "",
-      "severity": "",
-      "cvss_vector": "",
-      "when_broke": "desde a introdução do componente (introduced=0)",
-      "resolved_in": "versão 4.19.2",
-      "fix_commit": "16fbe9cd0cffa9f2a824a0165beb43446114eec7",
-      "where_file": "processing_utils.py",
-      "where_lines": [
-        275
-      ],
-      "how_constructs": [
-        "input-validation-raise"
-      ],
-      "cwe_ids": [
-        "CWE-22"
-      ],
-      "localized": true,
-      "stopped_firing": null,
-      "perpetuated": null,
-      "findings_vuln": 0,
-      "findings_fixed": 0,
-      "status": "complete",
-      "answers_all_four": true,
-      "validated": false
-    },
-    {
       "cve": "CVE-2023-31047",
       "ghsa": "GHSA-r3xc-prgr-mg9p",
       "package": "Django",
@@ -1718,6 +1688,37 @@
       "findings_vuln": 0,
       "findings_fixed": 0,
       "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "",
+      "ghsa": "GHSA-3f95-mxq2-2f63",
+      "package": "gradio",
+      "ecosystem": "PyPI",
+      "published": "",
+      "modified": "",
+      "severity": "",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 4.19.2",
+      "fix_commit": "16fbe9cd0cffa9f2a824a0165beb43446114eec7",
+      "where_file": "processing_utils.py",
+      "where_lines": [
+        275
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "excluded_no_cve",
       "answers_all_four": true,
       "validated": false
     }
