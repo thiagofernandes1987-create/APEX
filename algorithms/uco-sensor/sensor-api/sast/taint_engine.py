@@ -554,15 +554,6 @@ def _node_name(node) -> str:
     return ""
 
 
-def _call_func_name(call: ast.Call) -> str:
-    """Return bare function name of a Call (without object prefix)."""
-    if isinstance(call.func, ast.Name):
-        return call.func.id
-    if isinstance(call.func, ast.Attribute):
-        return call.func.attr
-    return ""
-
-
 # ─── TaintAnalyzer ───────────────────────────────────────────────────────────
 
 class TaintAnalyzer:

@@ -29,17 +29,6 @@ def badge_color(score: float) -> tuple[str, str]:
     return "#e05d44", "#fff"       # vermelho
 
 
-def _shield_path(width: int) -> str:
-    """Caminho SVG do contorno arredondado (estilo shields.io)."""
-    h, r = 20, 3
-    return (
-        f"M{r},0 h{width - 2*r} a{r},{r} 0 0 1 {r},{r} "
-        f"v{h - 2*r} a{r},{r} 0 0 1 -{r},{r} "
-        f"H{r} a{r},{r} 0 0 1 -{r},-{r} "
-        f"V{r} a{r},{r} 0 0 1 {r},-{r} z"
-    )
-
-
 def generate_badge_svg(
     score:   float,
     status:  str   = "STABLE",

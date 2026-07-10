@@ -122,6 +122,67 @@ _PYTHON_BUILTINS: frozenset = frozenset(vars(_builtins_module).keys()) - frozens
 })
 
 
+# ─── Dead-code por SÍMBOLO não-referenciado (item 3 / dogfooding) ─────────────
+# Complementa `syntactic_dead_code` (que só pega statements APÓS return/break):
+# detecta funções/classes PRIVADAS de nível de módulo que nunca são referenciadas
+# no próprio módulo.  CONSERVADOR por princípio (FP pior que FN): só sinaliza
+# símbolos privados (prefixo `_`, não dunder), SEM decorador (registro dinâmico),
+# fora de `__all__`, e não citados por string (getattr).  Símbolos PÚBLICOS não
+# são sinalizados — podem ter chamador externo à API.
+
+def find_unreferenced_defs(source: str) -> List[str]:
+    """Nomes de defs/classes privadas de nível de módulo nunca referenciadas.
+
+    Retorna [] em código não-parseável.  Anti-FP alto (ver acima).  Complementa
+    a métrica `syntactic_dead_code` sem tocar no MetricVector de 9 canais.
+    """
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return []
+
+    defined: Dict[str, ast.AST] = {}
+    exported: set = set()
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            name = node.name
+            if (name.startswith("_") and not name.startswith("__")
+                    and not node.decorator_list):
+                defined[name] = node
+        elif isinstance(node, ast.Assign):
+            for t in node.targets:
+                if isinstance(t, ast.Name) and t.id == "__all__" and isinstance(
+                        node.value, (ast.List, ast.Tuple)):
+                    for e in node.value.elts:
+                        if isinstance(e, ast.Constant) and isinstance(e.value, str):
+                            exported.add(e.value)
+    if not defined:
+        return []
+
+    referenced: set = set()
+    string_mentions: set = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load):
+            referenced.add(node.id)
+        elif isinstance(node, ast.Attribute):
+            referenced.add(node.attr)                 # obj._foo → conta como uso
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str):
+            string_mentions.add(node.value)           # getattr(x, "_foo") → não sinaliza
+
+    # convenção de HOOK de teste: `_reset_for_tests`, `_seed_for_test` — são
+    # usados por arquivos de teste (cross-module), não são dead code de produção.
+    def _is_test_hook(n: str) -> bool:
+        return n.endswith(("_for_tests", "_for_test", "_test_hook"))
+
+    return sorted(
+        name for name in defined
+        if name not in referenced
+        and name not in exported
+        and name not in string_mentions
+        and not _is_test_hook(name)
+    )
+
+
 # ─── Constantes Halstead ─────────────────────────────────────────────────────
 
 # Operadores Python (lexemas que contam como operadores em Halstead)
