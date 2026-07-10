@@ -1213,10 +1213,19 @@ class _ASTScanner(ast.NodeVisitor):
 
     # ── SAST001-SAST013 + M7.1 call checks ───────────────────────────────────
 
-    def visit_Call(self, node: ast.Call) -> None:  # noqa: C901  (complex — intentional)
+    def visit_Call(self, node: ast.Call) -> None:
+        # (item 1) dispatcher fino: as ~25 regras SAST foram agrupadas em
+        # helpers coesos, na MESMA ordem — CC de visit_Call caiu de 117 p/ ~1.
         name   = self._call_name(node)
         module = self._call_module(node)
+        self._check_call_injection(node, name, module)
+        self._check_call_web(node, name, module)
+        self._check_call_crypto(node, name, module)
+        self._check_call_misc(node, name, module)
+        self.generic_visit(node)
 
+    def _check_call_injection(self, node: ast.Call, name: str, module: str) -> None:
+        """SAST001–013: SQLi, cmd, eval, pickle/yaml, hash, random, debug, open, subprocess."""
         # SAST001: SQL injection
         if name in _SQL_CALL_NAMES and node.args:
             arg0 = node.args[0]
@@ -1280,6 +1289,8 @@ class _ASTScanner(ast.NodeVisitor):
             if self._kw_is_true(node, "shell") and node.args and not self._is_literal(node.args[0]):
                 self._add("SAST013", node)
 
+    def _check_call_web(self, node: ast.Call, name: str, module: str) -> None:
+        """SAST014–019: SSRF, XXE, SSTI, ReDoS."""
         # ── M7.1 new call checks ──────────────────────────────────────────────
 
         # SAST014: SSRF — requests.get/post/... with non-literal URL
@@ -1314,6 +1325,8 @@ class _ASTScanner(ast.NodeVisitor):
                 if isinstance(pattern_str, str) and _redos_is_vulnerable(pattern_str):
                     self._add("SAST019", node)
 
+    def _check_call_crypto(self, node: ast.Call, name: str, module: str) -> None:
+        """SAST021–024: tamanho de chave, IV fraco, ECB, JWT none-alg."""
         # SAST021: weak asymmetric key size (< 2048 bits)
         # RSA.generate(1024), DSA.generate(1024), generate_private_key(key_size=1024)
         if name in ("generate", "generate_key") and node.args:
@@ -1370,6 +1383,8 @@ class _ASTScanner(ast.NodeVisitor):
                     if isinstance(elt, ast.Constant) and str(elt.value).lower() == "none":
                         self._add("SAST024", node)
 
+    def _check_call_misc(self, node: ast.Call, name: str, module: str) -> None:
+        """SAST027 (SSL verify=False) + SAST046 (host via .netloc.split)."""
         # SAST027: SSL verify=False
         if module in _REQUESTS_MODULES and name in _HTTP_REQUEST_METHODS:
             if self._kw_is_false(node, "verify"):
@@ -1383,8 +1398,6 @@ class _ASTScanner(ast.NodeVisitor):
                 and isinstance(node.func.value, ast.Attribute)
                 and node.func.value.attr == "netloc"):
             self._add("SAST046", node)
-
-        self.generic_visit(node)
 
     # ── SAST008 + SAST037: assignments ───────────────────────────────────────
 
@@ -1593,6 +1606,13 @@ class _ASTScanner(ast.NodeVisitor):
                 if not unused:
                     break
 
+        # (item 1) formatos de CVE (SAST047–051) extraídos p/ reduzir a CC de
+        # _check_function (era 111) — mesma ordem, mesmo comportamento.
+        self._check_function_cve_shapes(node)
+
+    def _check_function_cve_shapes(self, node: Any) -> None:
+        """SAST047–051 — formatos de CVE reais: reattach de header, reflection,
+        request.json() sem content-type, replace(url=), Vary:Cookie tardio."""
         # ── Sprint AC-3 — SAST047: sensitive header removed then re-set
         # (reattached) in the same function, without the origin
         # (scheme/host) it was bound to ever being *checked* — see
