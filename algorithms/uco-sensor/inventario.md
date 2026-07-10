@@ -40,13 +40,33 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.95.0 · **2608 testes verdes** (+2 flaky watcher pré-existentes,
+**Estado atual:** v3.95.0 · **2624 testes verdes** (+2 flaky watcher pré-existentes,
 fora de escopo) · corpus **47/52 CVEs completos 4/4** (`degradation_report_full.json`,
 contadores CALCULADOS por `scripts/generate_corpus.py`; 1 duplicate advisory
 excluído) · **3 validados dinamicamente**. Metadados OSV (published/modified/
 severity + **vetor CVSS** + **github_reviewed**) preenchidos via `--backfill`.
-Sprint DT: **15/15 achados das 4 auditorias + Texto colado SANADOS** (validação
-por PoC → teste de regressão; ver seção Sprint DT abaixo).
+Sprint DT: **15/15 achados das 4 auditorias + Texto colado SANADOS**.
+
+### 🔬 Sprint DU (v3.95.0) — AUTO-AUDITORIA (DOGFOODING): o Sensor rodou sobre si ✅
+> Rodamos o próprio UCO Sensor sobre `sensor-api` (153 arquivos, 47.925 LOC, 5,5s,
+> 0 crashes; SAST/taint = 0 flows). Avaliação adversarial do resultado gerou 4
+> correções, cada uma validada por PoC → teste de regressão.
+- [x] **Item 2 — FP do `infinite_loop_risk`** (`uco_bridge._check_loop_risk`): um
+      `while True` de paginação (`cli.py`, com 2 `break`) marcava **1.0** (máximo).
+      Agora PONDERADO: saída incondicional→0, condicional→0.35, sem saída→1.0. ✅
+- [x] **Item 3 — dead-code por símbolo não-referenciado** (`find_unreferenced_defs`):
+      `syntactic_dead_code` só via pós-return; novo detector acha funções/classes
+      privadas nunca usadas (anti-FP alto). **Achou 3 funções mortas reais no
+      próprio Sensor — removidas** (`_shield_path`, `_call_func_name`,
+      `_is_method_first_arg`). +13 testes. ✅
+- [x] **Item 1 — reduzir CC das piores funções**: `scanner.py::visit_Call` **117→1**
+      (extract-method: injection/web/crypto/misc); `_check_function` **111→31**;
+      `server.py::do_GET` **112→100** (13 rotas uniformes → tabela). ✅
+- [x] **Item 4 — modularizar o V4**: extraído o bloco quase-leaf (10 `CodeTransform`
+      + `normalize_ws`) para `uco_core/_v4_transforms.py`, import ONE-WAY (sem
+      ciclo). V4 **4319→3910 linhas** (Hamiltoniano 35.2→29.8, CC 577→492). O split
+      dos otimizadores HMC/SA foi REJEITADO (18 back-refs → dependência circular;
+      risco alto que a própria auditoria do projeto já sinalizava). ✅
 
 ---
 
