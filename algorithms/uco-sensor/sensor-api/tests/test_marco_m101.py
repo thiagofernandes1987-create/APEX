@@ -323,3 +323,43 @@ def test_TBA22_deadcode_clean_class_is_zero():
     r = UCOBridge().analyze(
         "class C:\n    def m(self):\n        return 1\n", "m", "h")
     assert getattr(r, "syntactic_dead_code", 0) == 0
+
+
+# ── DT: paridade dos 3 motores de taint (dívida estrutural) ──────────────────
+# Guard contra o padrão do Achado #1: uma correção do vocabulário SQL chegar em
+# só 2 dos 3 motores.  Os três compartilham `_SQL_QUERY_KWARGS`; este teste
+# behavioral garante que o gating por kwarg vale nos três.
+
+_SQL_KWARG_INTRA = (
+    "from flask import request\n"
+    "def q(cursor):\n"
+    "    u = request.args.get('id')\n"
+    "    cursor.execute(sql='SELECT ' + u)\n"
+)
+_SQL_KWARG_CROSSFN = (
+    "from flask import request\n"
+    "def handler(cursor):\n"
+    "    u = request.args.get('id')\n"
+    "    run(cursor, 'SELECT ' + u)\n"
+    "def run(cursor, q):\n"
+    "    cursor.execute(sql=q)\n"
+)
+
+
+def test_TBA_parity_sql_kwarg_intra_engines():
+    # motores intra-procedurais (M7.2 base e M22 cfg) devem CONCORDAR.
+    assert "SAST040" in _base_rules(_SQL_KWARG_INTRA), "M7.2 base perdeu execute(sql=)"
+    assert "SAST040" in _cfg_rules(_SQL_KWARG_INTRA), "M22 cfg perdeu execute(sql=)"
+
+
+def test_TBA_parity_sql_kwarg_interproc_engine():
+    # M17 é cross-procedural por design → fixture cross-fn.
+    assert "SAST040" in _inter_rules(_SQL_KWARG_CROSSFN), "M17 interproc perdeu execute(sql=)"
+
+
+def test_TBA_parity_shared_kwarg_vocabulary():
+    # trava estrutural: os três importam a MESMA constante (não 3 cópias).
+    from sast.taint_engine import _SQL_QUERY_KWARGS as A
+    from sast.taint_cfg import _SQL_QUERY_KWARGS as B
+    from sast.taint_interproc import _SQL_QUERY_KWARGS as C
+    assert A is B is C and "sql" in A

@@ -55,34 +55,32 @@ ordem, em toda sessão futura:
 > #2 (introduced no M26), #3 (rename-guard no M24), #5 (dead-code em métodos).
 
 **P0 — segurança / integridade de dado:**
-- [ ] **#4 — `guard_aware._bound_present` insensível a fluxo** (`sast/guard_aware.py:132-149`).
-      `memcpy(dst,src,len)` sem bound é IGNORADO se existir `len<X` em branch de
-      debug não-relacionado → FN de overflow (CWE-120). Fix: só aceitar comparação
-      que precede o sink no caminho, não em qualquer lugar do escopo.
-- [ ] **#12 — Duplicate Advisory conta nos totais** (corpus + `generate_corpus.py`).
-      GHSA-3f95-mxq2-2f63 (gradio) tem `cve=""` e conta como `complete`. Fix:
-      excluir dos totais registros que a fonte marca "Duplicate"/sem cve+aliases.
+- [x] **#4 — `guard_aware` insensível a fluxo** — **DT ✅**. `_dominates()`: guard
+      só conta se seu bloco `{}` ainda está aberto no sink. `memcpy` sem bound com
+      `len<X` em branch irmão agora É reportado. +3 testes T79.
+- [x] **#12 — Duplicate Advisory nos totais** — **DT ✅**. `generate_corpus.py`
+      exclui `cve==""` (marca `excluded_no_cve`). Corpus 53→52, 48→47.
 
 **P1 — precisão de detecção:**
-- [ ] **strings/comentários não removidos** antes das regexes do `fix_localizer`
-      → `logger.debug("check_bounds(%d)")` vira guard (FP). Fix: strip antes.
-- [ ] **#7 `bounds-check-call` + `security-conditional-guard` amplos demais**
-      (`fix_localizer.py:75-79,124-129`). `check_range(order.date,...)`,
-      `if host=="localhost":` → guard. Fix: exigir contexto de memória/sink.
-- [ ] **colisão de multiplicidade** em `_sensor_finding_keys` (`corpus_expander.py:61`):
-      set colapsa 2 ocorrências → correção parcial some. Fix: multiconjunto.
-- [ ] **#8 idioma Python de bounds-check** não reconhecido (`if idx>=0 and idx<len(buf)`).
+- [x] **strings/comentários** removidos antes das regexes (`_strip_literals`,
+      preserva `{...}` de f-string) — **DT ✅**.
+- [x] **#7 `bounds-check-call`** exige contexto de memória; **`security-conditional-guard`**
+      sem `and|or` soltos — **DT ✅**. postgres `ArrayCheckBounds` preservado.
+- [x] **colisão de multiplicidade** — **DT ✅**. `_sensor_finding_keys` é `Counter`.
+- [x] **#8 idioma Python de bounds-check** (`bounds-check-py`) — **DT ✅**.
 
 **P2 — higiene / portabilidade / arquitetura:**
-- [ ] **#9** `test_marco_m70.py:47` aborta a coleta inteira fora do monorepo → `skipif`.
-- [ ] **#10** docstring `advisory_resolver` (GET não HEAD, até 48 não 24) + cache.
-- [ ] **#13** dedup `fetch_advisory`↔`_try_fetch`; capturar `github_reviewed`;
-      **teste de paridade dos 3 motores taint** (dívida estrutural: D4 chegou em 2/3);
-      `constraints.txt` pinado (deps são floors sem teto, sem lockfile).
+- [x] **#9** `test_marco_m70.py` usa `pytest.importorskip` — **DT ✅**.
+- [x] **#10** docstring `advisory_resolver` (GET, até 48) + cache memoizado — **DT ✅**.
+- [x] **#13** `http_get` único (dedup M23/M25); `github_reviewed` capturado;
+      **teste de paridade dos 3 motores**; `constraints.txt` pinado — **DT ✅**.
 
 **Falsas (verificadas, NÃO corrigir):** "casamento por linha crua" (o real é por
 chave semântica, imune a deslocamento); `int()/float()` sanitizador fraco (SSRF/IDOR
-fora do modelo). 
+fora do modelo).
+
+**RESULTADO DT:** todos os achados abertos das 4 auditorias SANADOS. Suíte **2604
+verde** (+2 flaky watcher pré-existentes, fora de escopo). Corpus honestamente 52/47.
 
 ---
 

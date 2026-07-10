@@ -64,6 +64,7 @@ class AdvisoryRecord:
     cwe_ids: List[str] = field(default_factory=list)
     severity: str = ""            # rótulo qualitativo (LOW/MODERATE/HIGH/CRITICAL)
     cvss_vector: str = ""         # vetor CVSS completo (CVSS:3.1/AV:N/AC:L/...)
+    github_reviewed: bool = False # database_specific.github_reviewed (curadoria GitHub)
     summary: str = ""
     published: str = ""
     modified: str = ""
@@ -96,7 +97,7 @@ class AdvisoryRecord:
             "introduced": self.introduced, "fixed": self.fixed,
             "fix_commit": self.fix_commit, "fix_tag": self.fix_tag,
             "cwe_ids": list(self.cwe_ids), "severity": self.severity,
-            "cvss_vector": self.cvss_vector,
+            "cvss_vector": self.cvss_vector, "github_reviewed": self.github_reviewed,
             "summary": self.summary, "advisory_url": self.advisory_url,
             "git_introduced": self.git_introduced, "git_fixed": self.git_fixed,
             "when_broke": self.when_broke, "resolved_in": self.resolved_in,
@@ -199,6 +200,10 @@ def parse_advisory(osv_json: Any) -> Optional[AdvisoryRecord]:
     summary = str(d.get("summary", "") or "")
     published = str(d.get("published", "") or "")
     modified = str(d.get("modified", "") or "")
+    # (DT/Achado sinal-não-processado) curadoria manual do GitHub — último campo
+    # do grupo database_specific ainda não capturado.  Útil para filtrar
+    # advisories não-revisados (menor confiança) do corpus.
+    github_reviewed = bool(dbspec.get("github_reviewed", False))
     
     if not advisory_url and ghsa_id:
         advisory_url = f"https://github.com/advisories/{ghsa_id}"
@@ -211,7 +216,7 @@ def parse_advisory(osv_json: Any) -> Optional[AdvisoryRecord]:
         ghsa_id=ghsa_id, cve=cve, package=package, ecosystem=ecosystem,
         introduced=introduced, fixed=fixed, fix_commit=fix_commit,
         fix_tag=fix_tag, cwe_ids=cwe_ids, severity=severity,
-        cvss_vector=cvss_vector, summary=summary,
+        cvss_vector=cvss_vector, github_reviewed=github_reviewed, summary=summary,
         advisory_url=advisory_url, git_introduced=git_introduced,
         git_fixed=git_fixed, published=published, modified=modified
     )
@@ -265,21 +270,28 @@ def advisory_raw_url(ghsa_id: str, year: str, month: str,
             f"advisories/{bucket}/{year}/{month}/{ghsa_id}/{ghsa_id}.json")
 
 
-def fetch_advisory(ghsa_id: str, year: str, month: str,
-                   reviewed: bool = True, timeout: int = 25) -> Optional[AdvisoryRecord]:
-    """
-    Busca + parseia um advisory via rede (canal provado: raw.githubusercontent).
-    Guardada: qualquer falha de rede/parse → None (nunca levanta).  Import de
-    urllib tardio para não pesar quem só usa `parse_advisory` (offline).
+def http_get(url: str, timeout: int = 25) -> Optional[str]:
+    """GET simples de `url` → corpo (str) em HTTP 200, senão None.  Nunca levanta.
+
+    (DT/Achado #13) Ponto ÚNICO de fetch HTTP do canal advisory — antes o mesmo
+    urlopen+read estava triplicado (aqui, em `fetch_advisory` e em
+    `advisory_resolver._try_fetch`).  Import de urllib tardio (offline não paga).
     """
     import urllib.request  # tardio — só quando há busca de rede real
-
-    url = advisory_raw_url(ghsa_id, year, month, reviewed)
     try:
         with urllib.request.urlopen(url, timeout=timeout) as resp:  # noqa: S310
             if getattr(resp, "status", 200) != 200:
                 return None
-            data = resp.read().decode("utf-8", "replace")
-    except Exception:  # noqa: BLE001 — rede é best-effort
+            return resp.read().decode("utf-8", "replace")
+    except Exception:  # noqa: BLE001 — rede é best-effort (404/timeout esperados)
         return None
-    return parse_advisory(data)
+
+
+def fetch_advisory(ghsa_id: str, year: str, month: str,
+                   reviewed: bool = True, timeout: int = 25) -> Optional[AdvisoryRecord]:
+    """
+    Busca + parseia um advisory via rede (canal provado: raw.githubusercontent).
+    Guardada: qualquer falha de rede/parse → None (nunca levanta).
+    """
+    data = http_get(advisory_raw_url(ghsa_id, year, month, reviewed), timeout)
+    return parse_advisory(data) if data is not None else None

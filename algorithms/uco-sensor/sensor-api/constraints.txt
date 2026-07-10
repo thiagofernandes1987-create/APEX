@@ -1,0 +1,24 @@
+# UCO-Sensor — pinned constraints (reprodutibilidade)
+# =====================================================
+# (DT/Achado dependências) requirements.txt/pyproject declaram apenas PISOS
+# (>=) sem teto e sem lockfile — um `pip install` novo podia trazer uma major
+# incompatível e quebrar silenciosamente. Este arquivo fixa as versões
+# TESTADAS (a suíte roda verde contra estas). Uso:
+#
+#     pip install -r requirements.txt -c constraints.txt
+#
+# Atualizar deliberadamente (com re-run da suíte), nunca por deriva acidental.
+# Regenerar o snapshot completo do ambiente:  pip freeze > constraints.lock
+#
+# ── core (obrigatórias) ──────────────────────────────────────────────────────
+numpy==2.4.2
+scipy==1.17.1
+PyWavelets==1.8.0
+#
+# ── parsers (opcionais; instalar as gramáticas usadas) ───────────────────────
+# Fixe o par API/gramática juntos — tree-sitter 0.21→0.22 mudou a API de
+# Language(); manter a API e as gramáticas na mesma faixa evita o mismatch.
+tree-sitter>=0.21.0,<0.25.0
+#
+# Pisos mínimos suportados (testados no CI): Python 3.9; numpy 1.24; scipy 1.10;
+# PyWavelets 1.4. Entre o piso e o pin acima a suíte deve permanecer verde.

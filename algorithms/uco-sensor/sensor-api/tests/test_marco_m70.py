@@ -44,11 +44,22 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
+import pytest
+
 _UCO_PATH = Path(__file__).resolve().parents[3] / "uco"
 if str(_UCO_PATH) not in sys.path:
     sys.path.insert(0, str(_UCO_PATH))
 
-from universal_code_optimizer_v4 import PythonCFGBuilder  # noqa: E402
+# (DT/Achado #9) Este teste valida o UCO V4 ORIGINAL do monorepo
+# (`algorithms/uco/universal_code_optimizer_v4.py`), que NÃO existe num checkout
+# isolado só do `uco-sensor`.  Antes o `import` de topo abortava a COLETA INTEIRA
+# do pytest (ModuleNotFoundError → "1 error during collection", 0 testes rodam)
+# fora do monorepo.  `importorskip` pula só este módulo, graciosamente.
+_uco_v4 = pytest.importorskip(
+    "universal_code_optimizer_v4",
+    reason="requer o monorepo completo (algorithms/uco/); ausente em checkout isolado",
+)
+PythonCFGBuilder = _uco_v4.PythonCFGBuilder
 
 from sast.taint_engine import TaintAnalyzer  # noqa: E402
 

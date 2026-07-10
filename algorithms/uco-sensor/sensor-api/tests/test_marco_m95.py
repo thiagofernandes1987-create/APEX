@@ -165,3 +165,15 @@ def test_TDS_cvss_vector_absent_when_only_label():
 def test_TDS_cvss_vector_flows_into_to_dict():
     rec = parse_advisory(_JINJA)
     assert rec.to_dict()["cvss_vector"].startswith("CVSS:3.1/")
+
+
+def test_TDT_github_reviewed_captured():
+    # (DT) database_specific.github_reviewed é capturado.
+    rec = parse_advisory(_JINJA)   # _JINJA tem github-reviewed? não no fixture → False
+    assert rec.github_reviewed is False
+    import json as _j
+    d = _j.loads(_JINJA)
+    d["database_specific"]["github_reviewed"] = True
+    rec2 = parse_advisory(d)
+    assert rec2.github_reviewed is True
+    assert rec2.to_dict()["github_reviewed"] is True

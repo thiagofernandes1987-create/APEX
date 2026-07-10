@@ -9,10 +9,15 @@ O problema (galinha-e-ovo)
 --------------------------
 O advisory-database indexa por `advisories/github-reviewed/YYYY/MM/GHSA/GHSA.json`.
 Para BUSCAR o JSON precisamos do ano/mês; mas o ano/mês só está DENTRO do JSON.
-Solução determinística e barata: varrer os meses candidatos de um ou mais anos
-com requisições HEAD (só o cabeçalho, sem baixar o corpo) até obter HTTP 200.
-O ano-base sai do próprio CVE/GHSA (advisories publicam no ano do CVE ou no
-seguinte), então na prática são ≤ 24 HEADs — cacheável e idempotente.
+Solução determinística: varrer os meses candidatos de um ou mais anos com
+requisições **GET** até obter HTTP 200 — GET (não HEAD) porque precisamos do
+CORPO do JSON para parsear (`parse_advisory`); uma HEAD teria de ser seguida de
+um GET no acerto, sem economia real. O ano-base sai do próprio CVE/GHSA
+(advisories publicam no ano do CVE ou no seguinte). Custo do PIOR caso:
+2 buckets (github-reviewed → unreviewed) × 2 anos × 12 meses = **até 48 GETs**;
+o acerto normal encerra bem antes. (DT/Achado #10: a doc antiga dizia "HEAD,
+≤24", o que não batia com a implementação.) O resultado é **memoizado por GHSA**
+(`_RESOLVE_CACHE`) — idempotente e sem refetch dentro do processo.
 
 Fecha o item de checklist "M25 — resolver CVE→GHSA→(ano/mês) automático".
 Combinado com M23 (parse) + M24 (compositor das 4 perguntas) + M12 (before/after
@@ -30,7 +35,7 @@ Versão: introduzido em v3.59.0 (Sprint CJ).
 from __future__ import annotations
 
 import re
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from scan.advisory_harvester import (
     AdvisoryRecord, parse_advisory, advisory_raw_url,
@@ -38,6 +43,15 @@ from scan.advisory_harvester import (
 
 _MONTHS = ("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12")
 _CVE_YEAR_RE = re.compile(r"CVE-(\d{4})-")
+
+# (DT/Achado #10) memoização por (ghsa, anos, buckets) — evita refetch da mesma
+# esteira (`generate_corpus --backfill` resolve os mesmos GHSAs repetidamente).
+_RESOLVE_CACHE: Dict[Tuple[str, Tuple[int, ...], bool], Optional[AdvisoryRecord]] = {}
+
+
+def clear_resolve_cache() -> None:
+    """Zera o cache de resolução (útil em testes)."""
+    _RESOLVE_CACHE.clear()
 
 
 def year_hint_from_cve(cve: str) -> Optional[int]:
@@ -73,6 +87,11 @@ def resolve_advisory(
     if not years:
         return None
 
+    cache_key = (ghsa_id, tuple(years), reviewed_buckets)
+    if cache_key in _RESOLVE_CACHE:
+        return _RESOLVE_CACHE[cache_key]
+
+    result: Optional[AdvisoryRecord] = None
     buckets = [True, False] if reviewed_buckets else [True]
     for reviewed in buckets:
         for year in years:
@@ -82,16 +101,26 @@ def resolve_advisory(
                 if data is not None:
                     rec = parse_advisory(data)
                     if rec is not None:
-                        return rec
-    return None
+                        result = rec
+                        break
+            if result is not None:
+                break
+        if result is not None:
+            break
+    # cacheia SÓ acertos: um None pode ser falha transiente de rede — não deve
+    # ficar preso no cache impedindo retry (Achado #10, refinamento).
+    if result is not None:
+        _RESOLVE_CACHE[cache_key] = result
+    return result
 
 
 def _try_fetch(urllib_request, url: str, timeout: int) -> Optional[str]:
-    """GET simples; retorna o corpo (str) em 200, senão None.  Nunca levanta."""
-    try:
-        with urllib_request.urlopen(url, timeout=timeout) as resp:  # noqa: S310
-            if getattr(resp, "status", 200) != 200:
-                return None
-            return resp.read().decode("utf-8", "replace")
-    except Exception:  # noqa: BLE001 — 404/rede são esperados na varredura
-        return None
+    """GET simples; retorna o corpo (str) em 200, senão None.  Nunca levanta.
+
+    (DT/Achado #13) Delega ao ponto único `advisory_harvester.http_get` — antes
+    reimplementava o mesmo urlopen+read do M23.  O param `urllib_request` é
+    mantido por compatibilidade de assinatura (os testes monkeypatcham este
+    símbolo), mas não é mais usado.
+    """
+    from scan.advisory_harvester import http_get
+    return http_get(url, timeout)
