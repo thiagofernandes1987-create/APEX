@@ -40,10 +40,13 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
-**Estado atual:** v3.95.0 · corpus **48/53 CVEs completos 4/4**
-(`degradation_report_full.json`, contadores CALCULADOS por
-`scripts/generate_corpus.py`) · **3 validados dinamicamente**. Metadados OSV
-(published/modified/severity + **vetor CVSS** desde DS) preenchidos via `--backfill`.
+**Estado atual:** v3.95.0 · **2608 testes verdes** (+2 flaky watcher pré-existentes,
+fora de escopo) · corpus **47/52 CVEs completos 4/4** (`degradation_report_full.json`,
+contadores CALCULADOS por `scripts/generate_corpus.py`; 1 duplicate advisory
+excluído) · **3 validados dinamicamente**. Metadados OSV (published/modified/
+severity + **vetor CVSS** + **github_reviewed**) preenchidos via `--backfill`.
+Sprint DT: **15/15 achados das 4 auditorias + Texto colado SANADOS** (validação
+por PoC → teste de regressão; ver seção Sprint DT abaixo).
 
 ---
 
