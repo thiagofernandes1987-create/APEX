@@ -46,7 +46,7 @@ import difflib
 import re
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
 
 # Security-relevant construct signatures.  Each mapeia um regex (casado numa
 # linha ADICIONADA pelo fix) a (kind, cwe_class).  Ordem: mais-específico
@@ -253,6 +253,21 @@ class FixDiffLocalizer:
         vuln_counts = Counter(ln.strip() for ln in vuln_lines if ln.strip())
         fixed_counts = Counter(ln.strip() for ln in fixed_lines if ln.strip())
 
+        # (DT/Achado #6) mapa linha-removida(strip) → MAIOR indentação em que foi
+        # removida.  Detecta PROMOÇÃO de guard: uma proteção movida de um escopo
+        # condicional PROFUNDO (`if debug:` → 8 espaços) para execução
+        # INCONDICIONAL RASA (4 espaços) mantém a contagem 1→1 (o anti-relocação
+        # descartaria), mas a segurança MUDOU (passou a valer sempre).  Distingue
+        # isso de relocação lateral (mesma indentação) exigindo queda de indent.
+        _removed_indent: Dict[str, int] = {}
+        for _tag, _i1, _i2, _j1, _j2 in sm.get_opcodes():
+            if _tag in ("replace", "delete"):
+                for _t in vuln_lines[_i1:_i2]:
+                    _st = _t.strip()
+                    if _st:
+                        _removed_indent[_st] = max(
+                            _removed_indent.get(_st, -1), len(_t) - len(_t.lstrip()))
+
         res = LocalizeResult(filename=filename)
         # Acumuladores p/ análise DIFF-level (não só linha-a-linha): o fix de
         # ReDoS caracteriza-se por REMOVER uma regex vulnerável e ADICIONAR
@@ -274,7 +289,14 @@ class FixDiffLocalizer:
                     # contagem daquela linha; contagem preservada = relocação.
                     s = text.strip()
                     if fixed_counts[s] <= vuln_counts[s]:
-                        continue
+                        # (#6) exceção PROMOÇÃO: a mesma linha foi REMOVIDA de uma
+                        # indentação MAIOR (escopo condicional) e reaparece aqui
+                        # menos indentada → a proteção deixou de ser condicional.
+                        # Relocação lateral (indent igual/menor no removido) segue
+                        # descartada, preservando o anti-FP (sqlite clamp).
+                        added_indent = len(text) - len(text.lstrip())
+                        if _removed_indent.get(s, -1) <= added_indent:
+                            continue
                     kind, cwe = _classify(text)
                     if kind is None:
                         continue

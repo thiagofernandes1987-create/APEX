@@ -1,6 +1,8 @@
 {
   "generated_by": "M25 resolver + M24 composer (dado real, sem fabricacao)",
   "channel": "github/advisory-database via raw + file pairs by tag via raw",
+  "note": "ARTEFATO INICIAL (prova-de-conceito PyPI, jinja+requests). NAO e o corpus atual.",
+  "superseded_by": "degradation_report_full.json (fonte unica de verdade; gerado por scripts/generate_corpus.py)",
   "total": 2,
   "complete": 2,
   "records": [

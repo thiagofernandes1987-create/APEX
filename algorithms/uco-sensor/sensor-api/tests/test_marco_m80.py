@@ -77,3 +77,25 @@ def test_T80_record_is_json_serializable():
     v = CorpusValidator(fetcher=_fetch)
     rec = v.validate_pair("php/php-src", "PAR", "FIX", "sapi/x.c", "CVE-2019-11043")
     json.dumps(rec)  # não deve levantar
+
+
+# ── DT: M12 novos campos (introduced, removed_security_lines) ────────────────
+
+def test_T80_exposes_introduced_and_removed_fields():
+    v = CorpusValidator(fetcher=_fetch)
+    rec = v.validate_pair("php/php-src", "PAR", "FIX", "sapi/x.c", "CVE-2019-11043")
+    # os campos existem no registro (antes eram calculados e descartados / ausentes)
+    assert "m11_introduced_count" in rec
+    assert "m11_introduced" in rec
+    assert "removed_security_lines" in rec
+
+
+def test_T80_introduced_flags_regression():
+    # fix que INTRODUZ um novo finding (GA01 com var nova, ausente no vuln).
+    vuln = "void f(char *b, int a, int c){\n  char *p = b + a - c;\n}\n"
+    fixed = ("void f(char *b, int a, int c){\n  if (a > c) { char *p = b + a - c; }\n}\n"
+             "void g(char *b, int x, int y){\n  char *q = b + x - y;\n}\n")
+    store = {("r", "P", "f.c"): vuln, ("r", "F", "f.c"): fixed}
+    v = CorpusValidator(fetcher=lambda repo, sha, path: store[(repo, sha, path)])
+    rec = v.validate_pair("r", "P", "F", "f.c", "CVE-Y")
+    assert rec["m11_introduced_count"] >= 1   # (GA01, (x,y)) é novo no fix

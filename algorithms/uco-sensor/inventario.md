@@ -79,8 +79,30 @@ ordem, em toda sessão futura:
 chave semântica, imune a deslocamento); `int()/float()` sanitizador fraco (SSRF/IDOR
 fora do modelo).
 
-**RESULTADO DT:** todos os achados abertos das 4 auditorias SANADOS. Suíte **2604
-verde** (+2 flaky watcher pré-existentes, fora de escopo). Corpus honestamente 52/47.
+**P3 — profundidade (achados do `Texto colado` M10/M11/M12):**
+- [x] **M12 classificação `introduced`** (regressão: finding novo no fix) +
+      **`removed_security_lines` exposto** (era calculado e descartado) + chaves
+      por **Counter** (colisão de multiplicidade igual ao M24) — **DT ✅**.
+- [x] **#6 promoção de guard 1→1** (movido de `if debug:` para incondicional):
+      detectada por queda de indentação, aditiva, preservando o anti-FP de
+      relocação lateral (mesma indentação) — **DT ✅**. +2 testes (promoção + anti-FP).
+- [x] **`corpus_pypi.json` stale**: header aponta `superseded_by` o `_full.json` — **DT ✅**.
+
+**Aceitos (não-bugs / fora de alcance seguro, documentados):**
+- #11 "TX78/92/94/95" no prompt é typo (testes reais são T78/…) — não é código.
+- #14/#15 fixtures T95 vs advisory ao vivo: deriva TEMPORAL (advisory editado
+  após a captura), não fabricação; sem impacto funcional.
+- Nomes `test_marco_m10/m11/m12/m23` não testam seus módulos conceituais (a
+  cobertura real está em m78/m79/m80/m95-97); renomear quebraria CI — mantido,
+  mapeamento documentado aqui.
+- `security-conditional-guard` `if host==...`: FP inerente ao casamento lexical;
+  estreitar removeria os 7 registros reais do corpus (werkzeug/requests/scrapy).
+  Mitigado por string-stripping + diff-anchoring; narrowing pleno exige análise
+  de proximidade-de-sink (trabalho futuro, sem quebrar dado real).
+
+**RESULTADO DT (final):** todos os achados das 4 auditorias + `Texto colado`
+SANADOS ou documentados como aceitos. Suíte **2608 verde** (+2 flaky watcher
+pré-existentes, fora de escopo). Corpus honestamente 52/47.
 
 ---
 

@@ -23,6 +23,7 @@ API
 """
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import asdict
 from typing import Callable, Dict, List, Optional
 
@@ -86,20 +87,36 @@ class CorpusValidator:
         rec["vuln_classes"] = sorted(loc.vuln_classes)
 
         # M11 — detecção sem âncora: disparou no vuln? parou no fix?
+        # (DT) casamento por CHAVE `(rule_id, needs_guard_on)`, imune a
+        # deslocamento de linha (D2A), com MULTICONJUNTO (Counter) para não
+        # colapsar ocorrências repetidas da mesma chave — se a vuln tem 2 e o fix
+        # 1, uma parou e uma persistiu (o `set` antigo escondia isso).
         v_find = self._m11.scan(vuln, ext)
         f_find = self._m11.scan(fixed, ext)
-        v_keys = {(g.rule_id, g.needs_guard_on) for g in v_find}
-        f_keys = {(g.rule_id, g.needs_guard_on) for g in f_find}
-        stopped = [g for g in v_find if (g.rule_id, g.needs_guard_on) not in f_keys]
-        persisted = [g for g in f_find if (g.rule_id, g.needs_guard_on) in v_keys]
+        v_keys = Counter((g.rule_id, g.needs_guard_on) for g in v_find)
+        f_keys = Counter((g.rule_id, g.needs_guard_on) for g in f_find)
+        stopped_keys = v_keys - f_keys          # ocorrências que sumiram no fix
+        persisted_keys = v_keys & f_keys        # ocorrências que persistiram
+        introduced_keys = f_keys - v_keys       # NOVAS no fix (regressão potencial)
+        stopped = [g for g in v_find
+                   if stopped_keys.get((g.rule_id, g.needs_guard_on), 0) > 0]
 
         rec["m11_vuln_findings"] = len(v_find)
         rec["m11_fix_findings"] = len(f_find)
-        rec["m11_stopped_firing"] = len(stopped) > 0
+        rec["m11_stopped_firing"] = sum(stopped_keys.values()) > 0
         rec["m11_stopped"] = [{"line": g.line, "rule": g.rule_id,
                                 "guard_on": list(g.needs_guard_on),
                                 "snippet": g.snippet[:120]} for g in stopped[:5]]
-        rec["m11_persisted_count"] = len(persisted)
+        rec["m11_persisted_count"] = sum(persisted_keys.values())
+        # (DT/Texto-colado) classificação que faltava: findings NOVOS no fix
+        # (chave ausente no vuln) = regressão introduzida pelo patch.
+        rec["m11_introduced_count"] = sum(introduced_keys.values())
+        rec["m11_introduced"] = [{"rule": r, "guard_on": list(gk)}
+                                 for (r, gk), c in introduced_keys.items() for _ in range(c)][:5]
+        # (DT/Texto-colado) evidência calculada e antes DESCARTADA: linhas de
+        # segurança REMOVIDAS pelo fix (fixes por remoção/substituição que não
+        # viram added_guards).  Agora exposta no registro do M12.
+        rec["removed_security_lines"] = list(loc.removed_security_lines[:10])
 
         # Sinais de CFG do UCO V4 (M15) antes×depois — reachability, risco de
         # loop-infinito, dead-code e delta de complexidade. Enriquece o registro
@@ -132,6 +149,8 @@ def summarize(records: List[Dict]) -> Dict:
         "tracked": len(tracked),
         "m10_localized": len(localized),
         "m11_stopped_firing": len(stopped),
+        # (DT) regressões introduzidas pelo patch, agregadas
+        "m11_introduced": len([r for r in records if r.get("m11_introduced_count")]),
         "not_tracked": len([r for r in records if r.get("status") == "not_tracked"]),
         "fetch_error": len([r for r in records if r.get("status") == "fetch_error"]),
     }

@@ -586,3 +586,21 @@ def test_T78_conditional_guard_bare_and_not_flagged():
     v = "def f():\n    pass\n"
     f = "def f():\n    x = a and token_valid\n    return x\n"
     assert "security-conditional-guard" not in _kinds78(v, f)
+
+
+def test_T78_guard_promotion_1to1_is_detected():
+    # #6: guard movido de `if debug:` (profundo) para incondicional (raso) —
+    # contagem 1→1, mas a proteção passou a valer sempre.  Deve ser localizado.
+    v = ("def h(req, debug=False):\n    if debug:\n"
+         "        check_range(req.size, 0, MAX)\n    return alloc(req.size)\n")
+    f = ("def h(req, debug=False):\n    check_range(req.size, 0, MAX)\n"
+         "    return alloc(req.size)\n")
+    assert "bounds-check-call" in _kinds78(v, f)
+
+
+def test_T78_lateral_relocation_same_indent_still_filtered():
+    # anti-FP: relocação LATERAL (mesma indentação) NÃO é promoção → descartada.
+    v = ("void f(){\n    if (a) {\n        clamp(n, 64);\n    }\n    work();\n}\n")
+    f = ("void f(){\n    work();\n    if (a) {\n        clamp(n, 64);\n    }\n}\n")
+    # `clamp(n, 64)` mesma indentação (8) nos dois → não vira guard novo
+    assert "bounds-check-call" not in _kinds78(v, f, fn="x.c")
