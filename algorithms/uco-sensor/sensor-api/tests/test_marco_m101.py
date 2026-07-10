@@ -230,7 +230,38 @@ def test_TBA15_key_based_perpetuation_same_signal():
 
 def test_TBA16_count_compat_shim_matches_key_count():
     from scan.corpus_expander import _count_sensor_findings, _sensor_finding_keys
-    assert _count_sensor_findings(_KV, ".py") == len(_sensor_finding_keys(_KV, ".py"))
+    assert _count_sensor_findings(_KV, ".py") == sum(_sensor_finding_keys(_KV, ".py").values())
+
+
+# ── DT: colisão de multiplicidade — correção parcial (2→1) não some ───────────
+
+_KV2 = (
+    "from flask import request\n"
+    "def a(cursor):\n"
+    "    x = request.args.get('x')\n"
+    "    cursor.execute('SELECT ' + x)\n"
+    "def b(cursor):\n"
+    "    x = request.args.get('x')\n"
+    "    cursor.execute('SELECT ' + x)\n"
+)
+_KF2_ONE_FIXED = (
+    "from flask import request\n"
+    "def a(cursor):\n"
+    "    x = request.args.get('x')\n"
+    "    cursor.execute('SELECT %s', (x,))\n"
+    "def b(cursor):\n"
+    "    x = request.args.get('x')\n"
+    "    cursor.execute('SELECT ' + x)\n"
+)
+
+
+def test_TBA17_multiset_partial_fix_is_visible():
+    from scan.corpus_expander import _sensor_finding_keys
+    kv = _sensor_finding_keys(_KV2, ".py")
+    kf = _sensor_finding_keys(_KF2_ONE_FIXED, ".py")
+    assert kv[("SAST040", "x")] == 2 and kf[("SAST040", "x")] == 1  # multiplicidade preservada
+    assert bool(kv - kf) is True   # uma ocorrência parou
+    assert bool(kv & kf) is True   # uma ocorrência perpetuou
 
 
 # ── Sprint DS: correções da 2ª rodada de auditoria (v3.93.0) ─────────────────

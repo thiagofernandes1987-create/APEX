@@ -550,3 +550,39 @@ def test_T78_js_throw_security_error():
     fixed = "function f(x){ if (bad) throw new SecurityError('nope'); return run(x); }"
     r = FixDiffLocalizer().localize(vuln, fixed, filename="a.js")
     assert any(g.kind == "input-validation-raise" for g in r.added_guards)
+
+
+# ── DT: anti-FP do fix_localizer (strings, bounds-check-call, conditional) ────
+
+def _kinds78(v, f, fn="x.py"):
+    return [g.kind for g in FixDiffLocalizer().localize(v, f, filename=fn).added_guards]
+
+
+def test_T78_string_literal_is_not_a_guard():
+    v = "def p(n):\n    return n\n"
+    f = 'def p(n):\n    logger.debug("check_bounds(%d)", n)\n    return n\n'
+    assert "bounds-check-call" not in _kinds78(v, f)
+
+
+def test_T78_fstring_interpolation_is_preserved():
+    v = "def render(k, v):\n    items.append(f'{k}=\"{escape(v)}\"')\n"
+    f = "def render(k, v):\n    items.append(f'{escape(k)}=\"{escape(v)}\"')\n"
+    assert "output-encoding" in _kinds78(v, f)
+
+
+def test_T78_bounds_check_call_business_logic_not_flagged():
+    v = "def h(o):\n    process(o)\n"
+    f = "def h(o):\n    if not check_range(o.date, START, END):\n        raise ValueError('x')\n    process(o)\n"
+    assert "bounds-check-call" not in _kinds78(v, f)
+
+
+def test_T78_bounds_check_call_memory_context_kept():
+    v = "void f(){\n  use(idx);\n}\n"
+    f = "void f(){\n  check_range(idx, 0, size);\n  use(idx);\n}\n"
+    assert "bounds-check-call" in _kinds78(v, f, fn="x.c")
+
+
+def test_T78_conditional_guard_bare_and_not_flagged():
+    v = "def f():\n    pass\n"
+    f = "def f():\n    x = a and token_valid\n    return x\n"
+    assert "security-conditional-guard" not in _kinds78(v, f)

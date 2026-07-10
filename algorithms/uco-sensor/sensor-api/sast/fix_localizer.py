@@ -60,6 +60,13 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     # ── memory-safety ────────────────────────────────────────────────────────
     (re.compile(r"\b(\w+)\s*[><]=?\s*(\w+).*\?"), "bounds-check-ternary", "CWE-190/125"),
     (re.compile(r"\bif\s*\([^)]*\b(len|size|count|n|idx|index|off|offset|pos)\b[^)]*[<>]"), "bounds-check-if", "CWE-125/787"),
+    # (DT/Achado #8) idioma PYTHON de bounds-check — sem parênteses de `if(` estilo
+    # C: `if idx >= 0 and idx < len(buf):` / `if 0 <= i < len(x):`.  Baixo-FP:
+    # exige um índice comparado contra `len(...)` (ou 0) na mesma condição.
+    (re.compile(r"\bif\b[^\n:]*\b(?:idx|index|i|j|k|n|pos|off|offset)\b"
+                r"[^\n:]*[<>]=?[^\n:]*\blen\s*\(|"
+                r"\bif\b[^\n:]*\b0\s*<=?\s*\w+\s*<=?\s*(?:len\s*\(|\w+)"),
+     "bounds-check-py", "CWE-125/787"),
     (re.compile(r"[!=]=\s*NULL|NULL\s*[!=]=|\b(\w+)\s*&&"), "null-guard", "CWE-476"),
     (re.compile(r"\b(uint32_t|uint64_t|size_t|int64_t|long long)\b"), "type-widening", "CWE-190"),
     (re.compile(r"\bunsafe\b"), "unsafe-contract", "RUST-soundness"),
@@ -121,7 +128,12 @@ _GUARD_SIGNATURES: List[Tuple["re.Pattern[str]", str, str]] = [
     # (CX) `\w*trust\w*` casa `check_host_trust`/`trusted_hosts`/`host_is_trusted`
     # (host/trust embutidos em snake_case, que `\bhost\b` perdia): destrava
     # werkzeug CVE-2024-34069 (debugger valida Host contra trusted_hosts).
-    (re.compile(r"\b(if|elif|while|assert|and|or|unless)\b.*\b(https?|scheme|"
+    # (DT/Achado security-conditional-guard) o starter exige um CONDICIONAL real
+    # (`if`/`elif`/`while`/`assert`/`unless`) — removidos os conectores soltos
+    # `and`/`or`, que faziam qualquer atribuição `x = a and token` casar como
+    # "guard" (FP).  Os 7 registros reais do corpus que usam esta assinatura são
+    # todos `if`-guards genuínos, então a recall não cai.
+    (re.compile(r"\b(if|elif|while|assert|unless)\b.*\b(https?|scheme|"
                 r"auth\w*|authoriz\w*|password|passwd|token|secret|credential|"
                 r"cred|permission|allow\w*|is_safe|verif\w*|valid\w*|sanitiz\w*|"
                 r"escap\w*|origin|csrf|referer|hostname|host|redirect\w*|"
@@ -254,7 +266,9 @@ class FixDiffLocalizer:
                     lineno = j1 + off + 1
                     res.added_lines += 1
                     added_all.append((lineno, text))
-                    if not _SECURITY_TOKENS.search(text):
+                    # (DT) casa o gate contra a linha SEM strings/comentários,
+                    # senão um token dentro de uma string literal abre o caminho.
+                    if not _SECURITY_TOKENS.search(_strip_literals(text)):
                         continue
                     # anti-FP de relocação: só é adição REAL se o fix aumentou a
                     # contagem daquela linha; contagem preservada = relocação.
@@ -349,9 +363,53 @@ class FixDiffLocalizer:
         return res
 
 
+# (DT) remove o CONTEÚDO de literais de string e comentários de uma linha antes
+# de aplicar as assinaturas — senão `logger.debug("check_bounds(%d)", n)` casa
+# `bounds-check-call` dentro da string (FP; não há chamada de guard nenhuma).
+_STRLIT_RE = re.compile(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'')
+_LINE_COMMENT_RE = re.compile(r"(//|#).*$")
+_FSTRING_INTERP_RE = re.compile(r"\{([^{}]+)\}")
+
+
+def _strip_literals(line: str) -> str:
+    """Zera o conteúdo de strings e remove comentários de linha (heurística).
+
+    PRESERVA o interior de interpolações de f-string `{...}` — ali há CÓDIGO
+    real (ex.: jinja `f'{escape(k)}=...'` do CVE-2024-22195), não texto literal.
+    Assim `logger.debug("check_bounds(%d)")` (sem `{}`) é zerado (corrige o FP),
+    mas `f'{escape(k)}'` mantém `escape(k)` visível às assinaturas.
+    """
+    def _repl(m: "re.Match[str]") -> str:
+        kept = " ".join(_FSTRING_INTERP_RE.findall(m.group(0)))
+        return f" {kept} " if kept else '""'
+    line = _STRLIT_RE.sub(_repl, line)
+    return _LINE_COMMENT_RE.sub("", line)
+
+
+# (DT/Achado #7) `bounds-check-call` via os termos `range`/`limit` (comuns em
+# lógica de NEGÓCIO: `check_range(order.date, ...)`, `validate_limit(cart.total,
+# ...)`) só é memory-safety se houver contexto de memória na linha.  Os termos
+# `bound`/`overflow` já são memory-específicos (ex.: `ArrayCheckBounds` do
+# postgres contém "Bounds") e não exigem contexto extra.
+_MEM_STRONG_RE = re.compile(r"(?i)bound|overflow")
+_MEM_CTX_RE = re.compile(
+    r"(?i)\b(idx|index|len|size|count|off|offset|pos|buf|buffer|ptr|arr|array|"
+    r"elem|dim|ndim|cap|capacity|nbytes|nmemb|stride|width|height|lower|upper|"
+    r"lbound|ubound)\b|\[")
+
+
+def _bounds_call_has_memory_context(line: str) -> bool:
+    return bool(_MEM_STRONG_RE.search(line) or _MEM_CTX_RE.search(line))
+
+
 def _classify(line: str) -> Tuple[Optional[str], Optional[str]]:
+    probe = _strip_literals(line)
     for rx, kind, cwe in _GUARD_SIGNATURES:
-        if rx.search(line):
+        if rx.search(probe):
+            # (#7) refina bounds-check-call: descarta se só bateu por range/limit
+            # de negócio, sem nenhum contexto de memória na linha.
+            if kind == "bounds-check-call" and not _bounds_call_has_memory_context(probe):
+                continue
             return kind, cwe
     return None, None
 

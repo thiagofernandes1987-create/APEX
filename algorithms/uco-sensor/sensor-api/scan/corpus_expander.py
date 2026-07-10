@@ -33,6 +33,7 @@ Versão: introduzido em v3.58.0 (Sprint CI).
 """
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
@@ -58,26 +59,27 @@ except Exception:  # noqa: BLE001
 # existiam no Sensor mas NÃO eram usados aqui: M7.2 taint (Python), M20 taint-lite
 # (PHP/JS), M28 TOCTOU.  Este painel os inclui → a validação passa a ser
 # significativa para todas as classes, não só memory-safety.
-def _sensor_finding_keys(src: str, ext: str) -> Set[Tuple[str, str]]:
+def _sensor_finding_keys(src: str, ext: str) -> "Counter[Tuple[str, str]]":
     """
-    Conjunto de CHAVES SEMÂNTICAS `(rule_id, alvo)` dos detectores de segurança
-    do Sensor aplicáveis a *src*.  O "alvo" é o elemento estável do achado
-    (variável contaminada / var do guard) — NÃO a linha, para casar before/after
-    mesmo com deslocamento de linha após o patch (padrão D2A, arXiv:2102.07995,
-    igual ao M12 `CorpusValidator`).
+    MULTICONJUNTO de CHAVES SEMÂNTICAS `(rule_id, alvo)` → nº de ocorrências, dos
+    detectores de segurança do Sensor aplicáveis a *src*.  O "alvo" é o elemento
+    estável do achado (variável contaminada / var do guard) — NÃO a linha, para
+    casar before/after mesmo com deslocamento de linha (D2A, arXiv:2102.07995).
 
-    (DR v3.93.0) Substitui a contagem crua do antigo `_count_sensor_findings`:
-    unifica a validação "parou de disparar" do M24 com o casamento por chave do
-    M12, porém sobre o PAINEL AMPLO (M11+M22+M28+M20), não só o M11 do M12 —
-    preserva a cobertura das classes PyPI (injeção/XSS) que dominam o corpus.
-    Cada import é guardado — degrada sem levantar.
+    (DR v3.93.0) Unifica a validação "parou de disparar" do M24 com o casamento
+    por chave do M12, sobre o PAINEL AMPLO (M11+M22+M28+M20).
+    (DT/Achado colisão-de-multiplicidade) É um `Counter`, não `set`: se a vuln
+    tem 2 SQLi com a MESMA `(rule,var)` e o fix corrige UMA, o set colapsava as
+    duas (correção parcial sumia); o multiconjunto preserva a contagem, então
+    `kv - kf` detecta a que parou e `kv & kf` a que perpetuou.  Cada import é
+    guardado — degrada sem levantar.
     """
-    keys: Set[Tuple[str, str]] = set()
+    keys: "Counter[Tuple[str, str]]" = Counter()
     # M11 — memory-safety (C/C++/qualquer ext); alvo = vars do guard
     if _M11_AVAILABLE:
         try:
             for f in GuardAwareScanner().scan(src, ext):
-                keys.add((f.rule_id, ",".join(f.needs_guard_on)))
+                keys[(f.rule_id, ",".join(f.needs_guard_on))] += 1
         except Exception:  # noqa: BLE001
             pass
     is_py = ext.lower() in (".py", "py")
@@ -89,14 +91,14 @@ def _sensor_finding_keys(src: str, ext: str) -> Set[Tuple[str, str]]:
         try:
             from sast.taint_cfg import CFGTaintAnalyzer   # M22
             for f in CFGTaintAnalyzer().analyze(src):
-                keys.add((f.rule_id, f.var))
+                keys[(f.rule_id, f.var)] += 1
         except Exception:  # noqa: BLE001
             pass
         # M28 — TOCTOU / race (CWE-367); alvo = var do check→use não-atômico
         try:
             from sast.toctou import TOCTOUDetector       # M28
             for f in TOCTOUDetector().scan(src):
-                keys.add((f.rule_id, f.var))
+                keys[(f.rule_id, f.var)] += 1
         except Exception:  # noqa: BLE001
             pass
     else:
@@ -104,19 +106,15 @@ def _sensor_finding_keys(src: str, ext: str) -> Set[Tuple[str, str]]:
         try:
             from sast.taint_lite import TaintLite         # M20
             for f in TaintLite().scan(src, ext):
-                keys.add((f.rule_id, f.var))
+                keys[(f.rule_id, f.var)] += 1
         except Exception:  # noqa: BLE001
             pass
     return keys
 
 
 def _count_sensor_findings(src: str, ext: str) -> int:
-    """Compat: nº de achados = tamanho do conjunto de chaves semânticas.
-
-    Mantido para chamadores externos que só querem a contagem; a validação
-    before/after canônica agora usa `_sensor_finding_keys` (casamento por chave).
-    """
-    return len(_sensor_finding_keys(src, ext))
+    """Compat: nº TOTAL de achados (soma das multiplicidades)."""
+    return sum(_sensor_finding_keys(src, ext).values())
 
 
 @dataclass(frozen=True)
@@ -267,10 +265,12 @@ def build_degradation(
         try:
             kv = _sensor_finding_keys(vuln_src, ext)
             kf = _sensor_finding_keys(fixed_src, ext)
-            findings_vuln, findings_fixed = len(kv), len(kf)
+            findings_vuln, findings_fixed = sum(kv.values()), sum(kf.values())
             if kv:                                  # só é significativo se disparou no vuln
-                stopped_firing = bool(kv - kf)      # algum sinal do vuln sumiu no fix
-                perpetuated = bool(kv & kf)         # algum sinal do vuln persistiu no fix
+                # multiconjunto: `kv - kf` mantém só as ocorrências que CAÍRAM
+                # (vuln>fix); `kv & kf` as que persistiram (min das contagens).
+                stopped_firing = bool(kv - kf)      # alguma ocorrência do vuln sumiu
+                perpetuated = bool(kv & kf)         # alguma ocorrência do vuln persistiu
                 # (DS v3.94.0) RENAME GUARD — achado #3 da 2ª auditoria: a chave é
                 # `(rule_id, nome_da_var)`, então renomear a var tainted (refactor
                 # que NÃO conserta nada) faz a chave "sumir" e dispara um falso
@@ -282,8 +282,8 @@ def build_degradation(
                 # (honesto), em vez de afirmar correção.
                 stopped_rules = {r for (r, _v) in (kv - kf)}
                 for r in stopped_rules:
-                    n_vuln = sum(1 for (rr, _v) in kv if rr == r)
-                    n_fixed = sum(1 for (rr, _v) in kf if rr == r)
+                    n_vuln = sum(c for (rr, _v), c in kv.items() if rr == r)
+                    n_fixed = sum(c for (rr, _v), c in kf.items() if rr == r)
                     if n_fixed >= n_vuln:            # a classe não encolheu → rename provável
                         rename_suspected = True
                         break
