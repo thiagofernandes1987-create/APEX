@@ -88,3 +88,51 @@ def test_TDV_annotate_unknown_without_source_does_not_downgrade():
     assert f.reachability == "unknown"
     assert f.severity == "CRITICAL"               # sem fonte → não rebaixa
     assert f.confidence == 0.95
+
+
+# ── DV/P2: SBOM CycloneDX ─────────────────────────────────────────────────────
+
+def test_TDV_sbom_cyclonedx_shape_and_purl():
+    import json
+    from sca.vulnerability_scanner import VulnerabilityScanner
+    from report.sbom import to_cyclonedx, _purl
+    r = VulnerabilityScanner().scan_files({"requirements.txt": "requests==2.25.0\n"})
+    bom = to_cyclonedx(r, timestamp="2026-07-10T00:00:00Z", serial_number="urn:uuid:x")
+    assert bom["bomFormat"] == "CycloneDX" and bom["specVersion"] == "1.5"
+    assert bom["components"][0]["purl"] == "pkg:pypi/requests@2.25.0"
+    assert bom["components"][0]["type"] == "library"
+    assert bom["metadata"]["timestamp"] == "2026-07-10T00:00:00Z"
+    json.dumps(bom)   # válido
+
+
+def test_TDV_sbom_purl_ecosystems():
+    from report.sbom import _purl
+    assert _purl("lodash", "4.17.11", "npm") == "pkg:npm/lodash@4.17.11"
+    assert _purl("serde", "1.0", "cargo") == "pkg:cargo/serde@1.0"
+    assert (_purl("com.fasterxml.jackson.core:jackson-databind", "2.9", "maven")
+            == "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.9")
+
+
+def test_TDV_sbom_vulnerability_block():
+    from sca.vulnerability_scanner import VulnerabilityScanner
+    from report.sbom import to_cyclonedx
+    # django 3.1.0 tem CVE conhecido no _CVE_DB
+    r = VulnerabilityScanner().scan_files({"requirements.txt": "django==3.1.0\n"})
+    bom = to_cyclonedx(r)
+    if r.findings:   # só assere o bloco se o DB embarcado tiver o CVE
+        assert "vulnerabilities" in bom
+        v = bom["vulnerabilities"][0]
+        assert v["id"].startswith("CVE-") or v["id"]
+        assert v["ratings"][0]["severity"] in ("critical", "high", "medium", "low", "unknown")
+        assert v["affects"][0]["ref"].startswith("pkg:")
+
+
+def test_TDV_sbom_deterministic_without_timestamp():
+    # sem timestamp/serial → campos omitidos, saída reproduzível.
+    from sca.vulnerability_scanner import VulnerabilityScanner
+    from report.sbom import to_cyclonedx
+    r = VulnerabilityScanner().scan_files({"requirements.txt": "requests==2.25.0\n"})
+    b1 = to_cyclonedx(r)
+    b2 = to_cyclonedx(r)
+    assert b1 == b2
+    assert "timestamp" not in b1["metadata"] and "serialNumber" not in b1

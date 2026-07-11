@@ -3262,12 +3262,24 @@ def handle_scan_sca(data: Dict) -> Tuple[int, Dict]:
         if not isinstance(files_raw, dict) or not files_raw:
             return 400, {"error": "'files' dict is required for mode='files'"}
         result = scanner.scan_files(files_raw)
-        return 200, result.to_dict()
+        return 200, _sca_out(result, data)
 
     # mode == "path"
     root = data.get("root", ".")
     result = scanner.scan_path(root)
-    return 200, result.to_dict()
+    return 200, _sca_out(result, data)
+
+
+def _sca_out(result, data: Dict) -> Dict:
+    """(DV/P2) resposta do SCA, com SBOM CycloneDX opcional (`sbom=true`)."""
+    out = result.to_dict()
+    if data.get("sbom"):
+        try:
+            from report.sbom import to_cyclonedx
+            out["sbom"] = to_cyclonedx(result)
+        except Exception:  # noqa: BLE001 — SBOM nunca quebra o scan
+            out["sbom"] = None
+    return out
 
 
 def handle_scan_iac(data: Dict) -> Tuple[int, Dict]:

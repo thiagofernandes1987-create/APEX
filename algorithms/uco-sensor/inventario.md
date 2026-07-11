@@ -67,9 +67,14 @@ ordem, em toda sessão futura:
       Nível 2 (alcançar a FUNÇÃO via call-graph M17) fica p/ próxima fase.
 
 **P2 — compliance / desempenho:**
-- [ ] **P2-1 SBOM CycloneDX**: hoje só há SARIF; SBOM é requisito (EO 14028/CRA).
+- [x] **P2-1 SBOM CycloneDX** — **DV ✅**. Novo `report/sbom.py` (M9.6):
+      `to_cyclonedx()` gera CycloneDX 1.5 (components purl-correto por ecossistema
+      + vulnerabilities). Ligado em `/scan-sca` via `sbom=true`. Determinístico
+      (timestamp injetável). +4 testes.
 - [ ] **Unificar os 2 SCA**: `/scan-sca` (M9.4, `_CVE_DB` 205 entradas hardcoded)
-      deveria consultar OSV via a malha correta do M23. (fase: após P0-2.)
+      deveria consultar OSV via a malha correta do M23. **Documentado como fase
+      arquitetural** (ver abaixo) — grande, exige decisão de produto (aposentar o
+      DB embarcado muda o contrato offline).
 
 **P3 / arquitetural (documentar decisão, não forçar):**
 - [ ] Daemon OSV persistente (scalibr/sidecar) — 1 DB, sem fork-por-request.
