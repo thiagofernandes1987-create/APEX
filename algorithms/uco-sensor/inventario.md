@@ -64,7 +64,16 @@ ordem, em toda sessão futura:
       `unknown` e REBAIXA (conf×0.4, CRITICAL/HIGH→MEDIUM + VEX
       `vulnerable_code_not_reachable`) só quando o pacote comprovadamente não é
       importado. Ligado em `/sca` via `source_files` opcional. +9 testes (m104).
-      Nível 2 (alcançar a FUNÇÃO via call-graph M17) fica p/ próxima fase.
+- [x] **P1-2 NÍVEL 2 — alcançar a FUNÇÃO vulnerável via call-graph** — **DV ✅**.
+      `analyze_symbol_reachability` + `annotate_findings_v2`: resolve bindings de
+      import (`import`/`as`/`from..import..as`), detecta CHAMADA REAL de símbolo do
+      pacote (não só import), constrói o call-graph do usuário e computa
+      alcançabilidade a partir do nível de módulo (fecho transitivo, **cross-file**).
+      Vereditos: `reachable_vulnerable_symbol` (símbolo NOMEADO no advisory chamado
+      → boost) › `reachable` › `called_unreachable` (símbolo em função morta →
+      rebaixe brando) › `imported_unused` (import morto → rebaixe forte) ›
+      `not_imported`. Ligado em `/sca` (subsome nível 1) c/ `vuln_symbols` opcional.
+      +9 testes. Distingue `import requests` morto de `requests.get()` invocado.
 
 **P2 — compliance / desempenho:**
 - [x] **P2-1 SBOM CycloneDX** — **DV ✅**. Novo `report/sbom.py` (M9.6):

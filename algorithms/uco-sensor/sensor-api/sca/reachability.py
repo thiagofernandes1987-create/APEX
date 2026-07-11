@@ -176,3 +176,239 @@ def _pkg_name_of(finding) -> str:
     snip = snip.split(": ", 1)[-1]
     m = re.match(r"([A-Za-z0-9_.\-:@/]+)\s*[=<>@]", snip)
     return m.group(1) if m else ""
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# NÍVEL 2 — alcançar a FUNÇÃO vulnerável via o call-graph (Python)
+# ═══════════════════════════════════════════════════════════════════════════
+# Nível 1 responde "o pacote é importado?". Nível 2 responde a pergunta que o
+# OSV-Scanner V2 gasta esforço enorme para responder: "um SÍMBOLO do pacote é de
+# fato CHAMADO, e o site da chamada é ALCANÇÁVEL a partir de um ponto de entrada
+# pelo grafo de chamadas?". Usa os mesmos primitivos do M17 (defs de função +
+# arestas de chamada). Vereditos (do mais forte ao mais fraco):
+#   reachable_vulnerable_symbol — o símbolo NOMEADO no advisory é chamado (alcançável)
+#   reachable                   — algum símbolo do pacote é chamado num site alcançável
+#   called_unreachable          — símbolo chamado só em função nunca invocada (dead)
+#   imported_unused             — importado, mas nenhum símbolo é chamado/usado
+#   not_imported                — nível 1
+#   unknown                     — sem fonte Python analisável
+
+
+class _ImportBinding:
+    """Um nome local ligado a (pacote_raiz, símbolo|None). símbolo None = handle
+    de módulo (uso via `nome.attr`)."""
+    __slots__ = ("pkg", "symbol")
+
+    def __init__(self, pkg: str, symbol: Optional[str]):
+        self.pkg = pkg
+        self.symbol = symbol
+
+
+def _resolve_imports(tree: ast.AST) -> Dict[str, _ImportBinding]:
+    """local_name → binding, para `import`/`import as`/`from ... import`."""
+    binds: Dict[str, _ImportBinding] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for a in node.names:
+                root = a.name.split(".")[0]
+                local = (a.asname or a.name).split(".")[0]
+                binds[local] = _ImportBinding(_canon_import(root), None)
+        elif isinstance(node, ast.ImportFrom):
+            if node.module is None or node.level != 0:
+                continue                       # ignora relativos
+            root = node.module.split(".")[0]
+            for a in node.names:
+                if a.name == "*":
+                    continue
+                local = a.asname or a.name
+                binds[local] = _ImportBinding(_canon_import(root), a.name)
+    return binds
+
+
+def _call_symbol_for_package(call: ast.Call, binds: Dict[str, _ImportBinding],
+                             pkg_names: Set[str]):
+    """Se `call` invoca um símbolo de um pacote-alvo, devolve (pkg, symbol); senão None."""
+    fn = call.func
+    # `local.attr(...)` — local é handle de módulo do pacote → símbolo = attr
+    if isinstance(fn, ast.Attribute):
+        root = fn.value
+        while isinstance(root, ast.Attribute):
+            root = root.value
+        if isinstance(root, ast.Name):
+            b = binds.get(root.id)
+            if b and b.symbol is None and b.pkg in pkg_names:
+                return (b.pkg, fn.attr)
+    # `local(...)` — local ligado via `from pkg import symbol`
+    elif isinstance(fn, ast.Name):
+        b = binds.get(fn.id)
+        if b and b.symbol is not None and b.pkg in pkg_names:
+            return (b.pkg, b.symbol)
+    return None
+
+
+def _enclosing_funcs(tree: ast.AST) -> Dict[int, Optional[str]]:
+    """Mapa id(node)→nome-da-função-que-o-contém (None = nível de módulo)."""
+    owner: Dict[int, Optional[str]] = {}
+
+    def walk(node, current):
+        for child in ast.iter_child_nodes(node):
+            if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                owner[id(child)] = current
+                walk(child, child.name)
+            else:
+                owner[id(child)] = current
+                walk(child, current)
+    walk(tree, None)
+    return owner
+
+
+def analyze_symbol_reachability(source_files: Dict[str, str],
+                                pkg_import_names: Set[str],
+                                vuln_symbols: Optional[Set[str]] = None) -> str:
+    """Veredito de nível 2 para um pacote (ver docstring de seção).
+
+    `pkg_import_names` — nomes de import canônicos do pacote (de
+    `import_names_for_package`). `vuln_symbols` — símbolos nomeados pelo advisory
+    (ex.: {"get","request"}), opcional.
+    """
+    py = {p: s for p, s in (source_files or {}).items() if p.lower().endswith(".py")}
+    if not py:
+        return "unknown"
+
+    imported_anywhere = False
+    # arestas de chamada agregadas entre funções de usuário (nome→nomes chamados)
+    call_edges: Dict[str, Set[str]] = {}
+    module_called: Set[str] = set()          # funções chamadas em nível de módulo
+    all_func_names: Set[str] = set()
+    # sites de chamada de símbolo do pacote: lista de (owner_func|None, symbol)
+    symbol_sites: List = []
+
+    # Pass 1 — parse cada arquivo, resolve imports/owners e ACUMULA o conjunto
+    # GLOBAL de nomes de função (cross-file: `f` def em a.py, chamada em b.py).
+    parsed: List = []
+    for _path, src in py.items():
+        try:
+            tree = ast.parse(src)
+        except SyntaxError:
+            continue
+        binds = _resolve_imports(tree)
+        if any(b.pkg in pkg_import_names for b in binds.values()):
+            imported_anywhere = True
+        owner = _enclosing_funcs(tree)
+        all_func_names |= {n.name for n in ast.walk(tree)
+                           if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))}
+        parsed.append((tree, binds, owner))
+
+    # Pass 2 — arestas de chamada e sites de símbolo, usando o conjunto GLOBAL.
+    for tree, binds, owner in parsed:
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            own = owner.get(id(node))
+            callee = _call_user_fn_name_local(node)
+            if callee and callee in all_func_names:
+                call_edges.setdefault(own or "<module>", set()).add(callee)
+                if own is None:
+                    module_called.add(callee)
+            hit = _call_symbol_for_package(node, binds, pkg_import_names)
+            if hit:
+                symbol_sites.append((own, hit[1]))
+
+    if not imported_anywhere:
+        return "not_imported"
+    if not symbol_sites:
+        return "imported_unused"
+
+    # reachability: fecho a partir do nível de módulo
+    reachable = set(module_called)
+    frontier = list(module_called)
+    while frontier:
+        cur = frontier.pop()
+        for nxt in call_edges.get(cur, ()):  # noqa: B007
+            if nxt not in reachable:
+                reachable.add(nxt)
+                frontier.append(nxt)
+
+    def _site_reachable(owner_fn) -> bool:
+        return owner_fn is None or owner_fn in reachable
+
+    vs = {s.lower() for s in (vuln_symbols or set())}
+    any_reachable = False
+    for owner_fn, sym in symbol_sites:
+        if _site_reachable(owner_fn):
+            any_reachable = True
+            if vs and sym.lower() in vs:
+                return "reachable_vulnerable_symbol"
+    if any_reachable:
+        return "reachable"
+    return "called_unreachable"
+
+
+def _call_user_fn_name_local(call: ast.Call) -> Optional[str]:
+    """Cópia local do resolvedor de nome-de-chamada do M17 (evita dep de import)."""
+    if isinstance(call.func, ast.Name):
+        return call.func.id
+    if isinstance(call.func, ast.Attribute):
+        return call.func.attr
+    return None
+
+
+# tiers de rebaixamento por veredito (fator de confiança, rebaixa severidade?)
+_V2_DOWNGRADE = {
+    "not_imported":      (0.4, True),
+    "imported_unused":   (0.4, True),
+    "called_unreachable": (0.7, False),   # incerto (fileset pode ser parcial) → brando
+}
+_V2_NOTE = {
+    "not_imported":       "pacote não importado",
+    "imported_unused":    "importado mas nenhum símbolo é chamado (import morto)",
+    "called_unreachable": "símbolo chamado só em função aparentemente não-invocada",
+    "reachable":          "símbolo do pacote é chamado em site alcançável",
+    "reachable_vulnerable_symbol": "SÍMBOLO VULNERÁVEL do advisory é chamado (alcançável)",
+}
+
+
+def annotate_findings_v2(findings: Iterable, source_files: Optional[Dict[str, str]],
+                         vuln_symbols_map: Optional[Dict[str, Set[str]]] = None):
+    """Nível 2: anota/rebaixa por alcançabilidade de SÍMBOLO via call-graph.
+
+    `vuln_symbols_map` — {cve_id: {símbolos vulneráveis}} do advisory (opcional).
+    Rebaixa `not_imported`/`imported_unused` (forte) e `called_unreachable`
+    (brando); mantém `reachable`; dá BOOST de confiança a
+    `reachable_vulnerable_symbol`. Sem fonte → `unknown`, nunca rebaixa.
+    """
+    out = list(findings)
+    for f in out:
+        pkg = _pkg_name_of(f)
+        eco = getattr(f, "ecosystem", "") or ""
+        cve = _cve_of_finding(f)
+        vuln_syms = (vuln_symbols_map or {}).get(cve) if vuln_symbols_map else None
+        if source_files:
+            verdict = analyze_symbol_reachability(
+                source_files, import_names_for_package(pkg, eco), vuln_syms)
+        else:
+            verdict = "unknown"
+        note = f" [reachability2={verdict}: {_V2_NOTE.get(verdict, verdict)}]"
+        if verdict in _V2_DOWNGRADE:
+            factor, drop_sev = _V2_DOWNGRADE[verdict]
+            note = " VEX: vulnerable_code_not_reachable —" + note
+            if hasattr(f, "confidence") and isinstance(f.confidence, (int, float)):
+                f.confidence = round(float(f.confidence) * factor, 3)
+            if drop_sev and getattr(f, "severity", "") in ("CRITICAL", "HIGH"):
+                f.severity = "MEDIUM"
+        elif verdict == "reachable_vulnerable_symbol":
+            if hasattr(f, "confidence") and isinstance(f.confidence, (int, float)):
+                f.confidence = round(min(0.99, float(f.confidence) * 1.05), 3)
+        if hasattr(f, "explanation"):
+            f.explanation = (getattr(f, "explanation", "") or "") + note
+        setattr(f, "reachability2", verdict)
+    return out
+
+
+def _cve_of_finding(finding) -> str:
+    for attr in ("cve_id", "cve", "rule_id", "title", "explanation"):
+        v = getattr(finding, attr, "") or ""
+        m = re.search(r"CVE-\d{4}-\d{4,}", str(v), re.IGNORECASE)
+        if m:
+            return m.group(0).upper()
+    return ""

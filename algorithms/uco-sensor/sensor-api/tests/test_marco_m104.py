@@ -185,3 +185,74 @@ def test_TDV_priority_no_data_uses_severity():
     f = _PF("SCA-CVE-2099-0001", "CRITICAL")
     # sem epss/kev → escore só por severidade (atenuado), nunca crasha
     assert 0.0 < priority_score(f) < 1.0
+
+
+# ── DV nível 2: alcançar a FUNÇÃO vulnerável via call-graph ───────────────────
+
+def _reach2(files, syms=None):
+    from sca.reachability import analyze_symbol_reachability, import_names_for_package
+    return analyze_symbol_reachability(files, import_names_for_package("requests"), syms)
+
+
+def test_TDV2_module_level_call_reachable():
+    assert _reach2({"a.py": "import requests\nrequests.get('x')\n"}) == "reachable"
+
+
+def test_TDV2_imported_but_never_called():
+    assert _reach2({"a.py": "import requests\nx = 1\n"}) == "imported_unused"
+
+
+def test_TDV2_symbol_in_dead_function():
+    assert _reach2({"a.py": "from requests import get\ndef f():\n    return get('x')\n"}) == "called_unreachable"
+
+
+def test_TDV2_reachable_via_call_and_transitive():
+    assert _reach2({"a.py": "import requests\ndef f():\n    return requests.get('x')\nf()\n"}) == "reachable"
+    assert _reach2({"a.py": "import requests\ndef g():\n    return requests.get('x')\ndef f():\n    return g()\nf()\n"}) == "reachable"
+
+
+def test_TDV2_cross_file_reachability():
+    files = {"a.py": "import requests\ndef f():\n    return requests.get('x')\n",
+             "b.py": "from a import f\nf()\n"}
+    assert _reach2(files) == "reachable"
+
+
+def test_TDV2_named_vulnerable_symbol_matched():
+    assert _reach2({"a.py": "import requests\nrequests.get('x')\n"}, {"get"}) == "reachable_vulnerable_symbol"
+    # símbolo vulnerável nomeado NÃO é o chamado → só reachable
+    assert _reach2({"a.py": "import requests\nrequests.get('x')\n"}, {"post"}) == "reachable"
+
+
+def test_TDV2_not_imported_and_unknown():
+    assert _reach2({"a.py": "import os\nos.getcwd()\n"}) == "not_imported"
+    assert _reach2({"go.mod": "module x\n"}) == "unknown"
+
+
+def test_TDV2_annotate_downgrade_and_boost():
+    from sca.reachability import annotate_findings_v2
+
+    class F:
+        def __init__(self, snip, sev="CRITICAL", conf=0.95):
+            self.code_snippet = snip
+            self.severity = sev
+            self.confidence = conf
+            self.explanation = ""
+            self.rule_id = "SCA-CVE-2023-32681"
+
+    # imported_unused → rebaixa forte
+    f = F("r.txt: requests==2.0")
+    annotate_findings_v2([f], {"a.py": "import requests\nx=1\n"})
+    assert f.reachability2 == "imported_unused" and f.severity == "MEDIUM" and f.confidence < 0.5
+    # reachable → mantém
+    f = F("r.txt: requests==2.0")
+    annotate_findings_v2([f], {"a.py": "import requests\nrequests.get('x')\n"})
+    assert f.reachability2 == "reachable" and f.severity == "CRITICAL" and f.confidence == 0.95
+    # símbolo vulnerável nomeado alcançável → boost, mantém CRITICAL
+    f = F("r.txt: requests==2.0")
+    annotate_findings_v2([f], {"a.py": "import requests\nrequests.get('x')\n"},
+                         {"CVE-2023-32681": {"get"}})
+    assert f.reachability2 == "reachable_vulnerable_symbol" and f.confidence >= 0.95
+    # sem fonte → unknown, não rebaixa
+    f = F("r.txt: requests==2.0")
+    annotate_findings_v2([f], None)
+    assert f.reachability2 == "unknown" and f.severity == "CRITICAL"

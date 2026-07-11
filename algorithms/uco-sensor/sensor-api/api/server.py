@@ -3094,8 +3094,13 @@ def handle_sca(data: Dict) -> Tuple[int, Dict]:
     reach_applied = bool(isinstance(source_files, dict) and source_files)
     if reach_applied and result.findings:
         try:
-            from sca.reachability import annotate_findings
-            annotate_findings(result.findings, source_files)
+            # (DV nível 2) alcança a FUNÇÃO vulnerável via call-graph, não só
+            # presença de import. `vuln_symbols` opcional: {cve: [símbolos]} do
+            # advisory. Subsome o nível 1 (not_imported ainda é detectado).
+            from sca.reachability import annotate_findings_v2
+            vsym = data.get("vuln_symbols")
+            vmap = {k: set(v) for k, v in vsym.items()} if isinstance(vsym, dict) else None
+            annotate_findings_v2(result.findings, source_files, vmap)
         except Exception:  # noqa: BLE001 — enriquecimento nunca quebra o scan
             pass
     out = result.to_dict()
