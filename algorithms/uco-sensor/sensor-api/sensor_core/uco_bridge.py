@@ -573,9 +573,46 @@ class _UCOVisitor(ast.NodeVisitor):
 
         top_level_guard = has_if_guard or has_plain_return
 
+        # (dogfooding v3.96.0) recursão DENTRO de um for/while é TRAVERSAL LIMITADO:
+        # o base case é o iterável esgotar (ex.: `for child in node: walk(child)`),
+        # não uma recursão infinita. Antes toda recursão sem if/return de topo era
+        # marcada risco total — FP clássico em walkers de árvore/AST (achado ao
+        # rodar o próprio Sensor sobre `sca/reachability.py::_enclosing_funcs`).
+        if not top_level_guard and self._recursion_is_loop_bounded(node, fn_name):
+            return
+
         if not top_level_guard:
             self.loop_risk_count += 1
             self.loop_risk_weight += 1.0   # recursão sem base case = risco total
+
+    @staticmethod
+    def _recursion_is_loop_bounded(node: ast.AST, fn_name: str) -> bool:
+        """True se TODA chamada recursiva a `fn_name` ocorre dentro de um laço
+        (for/while/compreensão) — traversal limitado pela iteração, não infinito."""
+        total = 0
+        in_loop = 0
+        _LOOP = (ast.For, ast.AsyncFor, ast.While,
+                 ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp)
+
+        def visit(n: ast.AST, inside: bool) -> None:
+            nonlocal total, in_loop
+            n_is_loop = isinstance(n, _LOOP)
+            child_inside = inside or n_is_loop   # filhos de um laço estão DENTRO dele
+            for child in ast.iter_child_nodes(n):
+                # não desce em funções aninhadas (recursão delas é delas)
+                if child is not node and isinstance(
+                        child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    continue
+                if (isinstance(child, ast.Call)
+                        and isinstance(child.func, ast.Name)
+                        and child.func.id == fn_name):
+                    total += 1
+                    if child_inside:
+                        in_loop += 1
+                visit(child, child_inside)
+
+        visit(node, False)
+        return total > 0 and in_loop == total
 
     # ── AST-IMP helper methods ────────────────────────────────────────────────
 

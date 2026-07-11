@@ -93,6 +93,17 @@ ordem, em toda sessão futura:
       arquitetural** (ver abaixo) — grande, exige decisão de produto (aposentar o
       DB embarcado muda o contrato offline).
 
+**Achado extra (2ª auto-auditoria de dogfooding):**
+- [x] **FP de `infinite_loop_risk` em recursão limitada por laço** — **DV ✅**.
+      Rodando o Sensor sobre o próprio código novo, `sca/reachability.py` deu ILR
+      0.5 por causa do walker `_enclosing_funcs` (recursão dentro de `for`). O
+      heurístico de recursão marcava QUALQUER recursão sem `if`/`return` de topo
+      como risco total — FP clássico em walkers de árvore/AST. Fix: recursão cujas
+      chamadas estão TODAS dentro de laço (for/while/compreensão) é traversal
+      LIMITADO (base case = iterável esgotar) → ILR 0. Eliminou FPs em
+      `reachability.py`, `add_loop_guard.py`, `performance_analyzer.py` (1.0→0).
+      Recursão genuinamente ilimitada segue 1.0. +3 testes (test_calibration).
+
 **P3 / arquitetural:**
 - [x] **EPSS + CISA KEV para priorização** — **DV ✅**. Novo `sca/priority.py`
       (M9.7): parsers oficiais (EPSS CSV, KEV JSON) + `enrich_with_epss`/
