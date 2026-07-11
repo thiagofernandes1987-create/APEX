@@ -136,3 +136,52 @@ def test_TDV_sbom_deterministic_without_timestamp():
     b2 = to_cyclonedx(r)
     assert b1 == b2
     assert "timestamp" not in b1["metadata"] and "serialNumber" not in b1
+
+
+# ── DV/P3: priorização por explorabilidade (EPSS + CISA KEV) ──────────────────
+
+class _PF:
+    def __init__(self, rule_id, severity):
+        self.rule_id = rule_id
+        self.severity = severity
+        self.explanation = ""
+
+
+def test_TDV_epss_parser_and_enrich():
+    from sca.priority import parse_epss_csv, enrich_with_epss
+    epss = parse_epss_csv("#v\ncve,epss,percentile\nCVE-2021-44228,0.97565,0.99\n")
+    assert epss["CVE-2021-44228"] == 0.97565
+    f = _PF("SCA-CVE-2021-44228", "HIGH")
+    enrich_with_epss([f], epss)
+    assert f.epss == 0.97565 and "EPSS=" in f.explanation
+
+
+def test_TDV_kev_parser_and_bump():
+    from sca.priority import parse_kev_json, enrich_with_kev
+    kev = parse_kev_json('{"vulnerabilities":[{"cveID":"CVE-2021-44228"}]}')
+    assert "CVE-2021-44228" in kev
+    f = _PF("SCA-CVE-2021-44228", "MEDIUM")
+    enrich_with_kev([f], kev)
+    assert f.kev is True and f.severity == "CRITICAL" and "KEV" in f.explanation
+
+
+def test_TDV_priority_kev_dominates_and_orders():
+    from sca.priority import enrich_with_epss, enrich_with_kev, priority_score
+    exploited = _PF("SCA-CVE-2021-44228", "HIGH")   # KEV + EPSS alto
+    quiet_crit = _PF("SCA-CVE-2020-0001", "CRITICAL")  # EPSS baixíssimo
+    unknown = _PF("SCA-CVE-2099-9999", "MEDIUM")
+    fs = [exploited, quiet_crit, unknown]
+    enrich_with_epss(fs, {"CVE-2021-44228": 0.97, "CVE-2020-0001": 0.0004})
+    enrich_with_kev(fs, {"CVE-2021-44228"})
+    assert priority_score(exploited) == 1.0
+    # o CRITICAL "quieto" fica ABAIXO do exploratado → priorização por urgência real
+    assert priority_score(exploited) > priority_score(quiet_crit)
+    order = [f.rule_id for f in sorted(fs, key=priority_score, reverse=True)]
+    assert order[0] == "SCA-CVE-2021-44228"
+
+
+def test_TDV_priority_no_data_uses_severity():
+    from sca.priority import priority_score
+    f = _PF("SCA-CVE-2099-0001", "CRITICAL")
+    # sem epss/kev → escore só por severidade (atenuado), nunca crasha
+    assert 0.0 < priority_score(f) < 1.0

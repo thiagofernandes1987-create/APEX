@@ -76,13 +76,36 @@ ordem, em toda sessão futura:
       arquitetural** (ver abaixo) — grande, exige decisão de produto (aposentar o
       DB embarcado muda o contrato offline).
 
-**P3 / arquitetural (documentar decisão, não forçar):**
-- [ ] Daemon OSV persistente (scalibr/sidecar) — 1 DB, sem fork-por-request.
-- [ ] EPSS + CISA KEV para priorização.
-- [ ] Oráculo diferencial para as transforms do V4 (equivalência semântica).
+**P3 / arquitetural:**
+- [x] **EPSS + CISA KEV para priorização** — **DV ✅**. Novo `sca/priority.py`
+      (M9.7): parsers oficiais (EPSS CSV, KEV JSON) + `enrich_with_epss`/
+      `enrich_with_kev` + `priority_score` (KEV domina; senão mistura EPSS×CVSS).
+      Puro, rede injetada. +4 testes. Prova: Log4Shell (KEV) → prio 1.0; CRITICAL
+      com EPSS 0.04% cai abaixo.
+- [ ] **Daemon OSV persistente** (scalibr/sidecar) — **DEFERIDO com justificativa**:
+      exige decisão de deploy (processo sidecar/gRPC, gestão de ciclo de vida do
+      DB), fora do escopo de uma correção de código. É otimização de infra, não
+      defeito. Roadmap, não backlog imediato.
+- [ ] **Oráculo diferencial p/ transforms do V4** — **DEFERIDO com justificativa**:
+      property/metamorphic testing das transforms é um subprojeto (geração de
+      entradas, harness de execução antes/depois). Alto valor de confiabilidade,
+      mas grande; o optimizer já é conservador (não remove efeito colateral,
+      verificado). Roadmap.
+- [ ] **Unificar os 2 SCA (aposentar `_CVE_DB`)** — **DEFERIDO com justificativa**:
+      decisão de produto — o `_CVE_DB` embarcado é o caminho OFFLINE (sem binário
+      osv-scanner nem rede); aposentá-lo por OSV-live muda o contrato de deploy.
+      A aritmética de versão dele já foi CORRIGIDA (P0-2), então não é mais um
+      risco de correção — só dívida de cobertura (205 entradas), mitigável por
+      atualização periódica do dict via script.
 
 **Falso/OK (verificado):** subprocess do osv-scanner usa lista+`shell=False` (sem
-injeção); optimizer preserva efeitos colaterais de var não-usada (conservador).
+injeção); optimizer preserva efeitos colaterais de var não-usada (conservador);
+`vendored_scanner._cmp` já faz zero-pad correto.
+
+**RESULTADO DV:** P0/P1/P2 + EPSS-KEV SANADOS e testados; 3 itens arquiteturais
+deferidos COM justificativa técnica (infra/produto, não defeito). Suíte 2643
+verde. Novos módulos: `sca/reachability.py` (M9.5), `report/sbom.py` (M9.6),
+`sca/priority.py` (M9.7).
 
 **Estado atual:** v3.95.0 · **2624 testes verdes** (+2 flaky watcher pré-existentes,
 fora de escopo) · corpus **47/52 CVEs completos 4/4** (`degradation_report_full.json`,
