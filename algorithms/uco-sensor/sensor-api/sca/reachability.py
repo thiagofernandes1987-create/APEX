@@ -383,6 +383,12 @@ def annotate_findings_v2(findings: Iterable, source_files: Optional[Dict[str, st
         eco = getattr(f, "ecosystem", "") or ""
         cve = _cve_of_finding(f)
         vuln_syms = (vuln_symbols_map or {}).get(cve) if vuln_symbols_map else None
+        if vuln_syms is None:
+            # (nível 3) HERDA os símbolos do advisory anexados ao próprio finding
+            # (o OSV bridge preenche `f.vuln_symbols` de ecosystem_specific.imports).
+            own = getattr(f, "vuln_symbols", None)
+            if own:
+                vuln_syms = set(own)
         if source_files:
             verdict = analyze_symbol_reachability(
                 source_files, import_names_for_package(pkg, eco), vuln_syms)

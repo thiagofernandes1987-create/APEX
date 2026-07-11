@@ -256,3 +256,33 @@ def test_TDV2_annotate_downgrade_and_boost():
     f = F("r.txt: requests==2.0")
     annotate_findings_v2([f], None)
     assert f.reachability2 == "unknown" and f.severity == "CRITICAL"
+
+
+def test_TDV3_symbols_auto_inherited_from_finding_no_map():
+    # (nível 3) o finding CARREGA `vuln_symbols` (herdado do advisory pelo OSV
+    # bridge). annotate_findings_v2 os usa AUTOMATICAMENTE, sem map manual.
+    from sca.reachability import annotate_findings_v2
+
+    class F:
+        def __init__(self):
+            self.code_snippet = "r.txt: requests==2.0"
+            self.severity = "CRITICAL"
+            self.confidence = 0.95
+            self.explanation = ""
+            self.rule_id = "SCA-CVE-2023-32681"
+            self.vuln_symbols = ["get"]        # herdado do advisory
+
+    f = F()
+    annotate_findings_v2([f], {"a.py": "import requests\nrequests.get('x')\n"})  # SEM map
+    assert f.reachability2 == "reachable_vulnerable_symbol"
+
+
+def test_TDV3_end_to_end_osv_bridge_attaches_symbols():
+    from sast.sca_bridge import _to_sast_result
+    payload = {"results": [{"source": {"path": "r.txt"}, "packages": [{
+        "package": {"name": "requests", "version": "2.0", "ecosystem": "PyPI"},
+        "groups": [{"ids": ["G"], "aliases": ["CVE-2023-32681"], "max_severity": "6.1"}],
+        "vulnerabilities": [{"id": "G", "affected": [
+            {"ecosystem_specific": {"imports": [{"symbols": ["get"]}]}}]}]}]}]}
+    f = _to_sast_result(payload).findings[0]
+    assert getattr(f, "vuln_symbols", None) == ["get"]

@@ -74,6 +74,14 @@ ordem, em toda sessão futura:
       rebaixe brando) › `imported_unused` (import morto → rebaixe forte) ›
       `not_imported`. Ligado em `/sca` (subsome nível 1) c/ `vuln_symbols` opcional.
       +9 testes. Distingue `import requests` morto de `requests.get()` invocado.
+- [x] **P1-2 NÍVEL 3 — herdar símbolos vulneráveis do advisory** — **DV ✅**.
+      `vuln_symbols_from_osv` (M23) extrai `affected[].ecosystem_specific.imports[].symbols`
+      (formato Go/govulncheck, `["Reader.Read","NewReader"]`, com expansão do último
+      segmento) + `affected_functions`. `AdvisoryRecord.vuln_symbols` populado no
+      `parse_advisory` + `to_dict`. O OSV bridge ANEXA `finding.vuln_symbols` de
+      cada vuln, e `annotate_findings_v2` os HERDA automaticamente (sem map manual)
+      → `reachable_vulnerable_symbol` sai sozinho quando o símbolo real é chamado.
+      +7 testes. Fecha o ciclo: advisory → símbolo → call-graph, 100% automático.
 
 **P2 — compliance / desempenho:**
 - [x] **P2-1 SBOM CycloneDX** — **DV ✅**. Novo `report/sbom.py` (M9.6):

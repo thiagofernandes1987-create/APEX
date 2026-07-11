@@ -41,6 +41,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from sast.scanner import SASTFinding, SASTResult
+from scan.advisory_harvester import vuln_symbols_from_osv
 
 _DEFAULT_BIN = "osv-scanner"
 
@@ -254,7 +255,7 @@ def _to_sast_result(payload: Dict[str, Any]) -> SASTResult:
                 if source_path:
                     expl += f" Manifesto: {source_path}."
 
-                findings.append(SASTFinding(
+                finding = SASTFinding(
                     rule_id=f"SCA-{primary_id}",
                     severity=severity,
                     cwe_id="CWE-1395",
@@ -269,7 +270,14 @@ def _to_sast_result(payload: Dict[str, Any]) -> SASTResult:
                     suggested_fix=suggested_fix,
                     confidence=0.95,
                     explanation=expl,
-                ))
+                )
+                # (nível 3) HERDA os símbolos vulneráveis do advisory OSV
+                # (`ecosystem_specific.imports[].symbols`, Go/govulncheck) e anexa
+                # ao finding — o reachability nível 2 os usa automaticamente.
+                vsyms = vuln_symbols_from_osv(vuln)
+                if vsyms:
+                    setattr(finding, "vuln_symbols", vsyms)
+                findings.append(finding)
 
     total_debt = sum(f.debt_minutes for f in findings)
     crit = sum(1 for f in findings if f.severity == "CRITICAL")

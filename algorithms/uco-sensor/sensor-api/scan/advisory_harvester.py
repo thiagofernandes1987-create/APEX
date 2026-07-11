@@ -50,6 +50,51 @@ _TAG_RE = re.compile(r"/releases/tag/([^/\s]+)")
 _CVE_RE = re.compile(r"^CVE-\d{4}-\d+$", re.I)
 
 
+def vuln_symbols_from_osv(osv_json: Any) -> List[str]:
+    """(nível 3) Extrai os SÍMBOLOS/funções vulneráveis de um advisory OSV.
+
+    Fonte canônica: `affected[].ecosystem_specific.imports[].symbols` — o formato
+    que o **Go/govulncheck** publica (`["Reader.Read", "NewReader"]`). Também lê
+    `ecosystem_specific.affected_functions` e `database_specific.affected_functions`
+    (RustSec/outros). Para cada símbolo `A.B.C`, inclui TAMBÉM o último segmento
+    (`C`) — o `annotate_findings_v2` casa por nome de atributo chamado (ex.: um
+    `r.Read()` casa o símbolo `Reader.Read`). Puro; nunca levanta.
+    """
+    if isinstance(osv_json, (str, bytes)):
+        try:
+            osv_json = json.loads(osv_json)
+        except (json.JSONDecodeError, ValueError):
+            return []
+    if not isinstance(osv_json, dict):
+        return []
+    out: set = set()
+
+    def _add(sym: Any) -> None:
+        s = str(sym or "").strip()
+        if not s:
+            return
+        out.add(s)
+        if "." in s:
+            out.add(s.rsplit(".", 1)[-1])   # último segmento (nome do método/func)
+
+    for aff in (osv_json.get("affected") or []):
+        if not isinstance(aff, dict):
+            continue
+        eco = aff.get("ecosystem_specific") or {}
+        if isinstance(eco, dict):
+            for imp in (eco.get("imports") or []):
+                if isinstance(imp, dict):
+                    for s in (imp.get("symbols") or []):
+                        _add(s)
+            for s in (eco.get("affected_functions") or []):
+                _add(s)
+        dbs = aff.get("database_specific") or {}
+        if isinstance(dbs, dict):
+            for s in (dbs.get("affected_functions") or []):
+                _add(s)
+    return sorted(out)
+
+
 @dataclass(frozen=True)
 class AdvisoryRecord:
     """Registro de degradação derivado de um advisory OSV (dado real)."""
@@ -65,6 +110,7 @@ class AdvisoryRecord:
     severity: str = ""            # rótulo qualitativo (LOW/MODERATE/HIGH/CRITICAL)
     cvss_vector: str = ""         # vetor CVSS completo (CVSS:3.1/AV:N/AC:L/...)
     github_reviewed: bool = False # database_specific.github_reviewed (curadoria GitHub)
+    vuln_symbols: List[str] = field(default_factory=list)  # (nível 3) funções/símbolos vulneráveis
     summary: str = ""
     published: str = ""
     modified: str = ""
@@ -98,6 +144,7 @@ class AdvisoryRecord:
             "fix_commit": self.fix_commit, "fix_tag": self.fix_tag,
             "cwe_ids": list(self.cwe_ids), "severity": self.severity,
             "cvss_vector": self.cvss_vector, "github_reviewed": self.github_reviewed,
+            "vuln_symbols": list(self.vuln_symbols),
             "summary": self.summary, "advisory_url": self.advisory_url,
             "git_introduced": self.git_introduced, "git_fixed": self.git_fixed,
             "when_broke": self.when_broke, "resolved_in": self.resolved_in,
@@ -204,7 +251,8 @@ def parse_advisory(osv_json: Any) -> Optional[AdvisoryRecord]:
     # do grupo database_specific ainda não capturado.  Útil para filtrar
     # advisories não-revisados (menor confiança) do corpus.
     github_reviewed = bool(dbspec.get("github_reviewed", False))
-    
+    vuln_symbols = vuln_symbols_from_osv(d)   # (nível 3) funções vulneráveis
+
     if not advisory_url and ghsa_id:
         advisory_url = f"https://github.com/advisories/{ghsa_id}"
 
@@ -216,7 +264,8 @@ def parse_advisory(osv_json: Any) -> Optional[AdvisoryRecord]:
         ghsa_id=ghsa_id, cve=cve, package=package, ecosystem=ecosystem,
         introduced=introduced, fixed=fixed, fix_commit=fix_commit,
         fix_tag=fix_tag, cwe_ids=cwe_ids, severity=severity,
-        cvss_vector=cvss_vector, github_reviewed=github_reviewed, summary=summary,
+        cvss_vector=cvss_vector, github_reviewed=github_reviewed,
+        vuln_symbols=vuln_symbols, summary=summary,
         advisory_url=advisory_url, git_introduced=git_introduced,
         git_fixed=git_fixed, published=published, modified=modified
     )

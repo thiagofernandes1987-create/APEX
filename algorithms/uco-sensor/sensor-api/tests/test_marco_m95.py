@@ -177,3 +177,40 @@ def test_TDT_github_reviewed_captured():
     rec2 = parse_advisory(d)
     assert rec2.github_reviewed is True
     assert rec2.to_dict()["github_reviewed"] is True
+
+
+# ── DV nível 3: símbolos vulneráveis do advisory OSV/GHSA ─────────────────────
+
+def test_TDV3_vuln_symbols_from_go_ecosystem_specific():
+    from scan.advisory_harvester import vuln_symbols_from_osv
+    go = {"id": "GO-2022-0001", "affected": [{
+        "package": {"ecosystem": "Go", "name": "github.com/x/y"},
+        "ecosystem_specific": {"imports": [
+            {"path": "github.com/x/y", "symbols": ["Reader.Read", "NewReader"]}]}}]}
+    syms = vuln_symbols_from_osv(go)
+    assert "Reader.Read" in syms and "Read" in syms and "NewReader" in syms
+
+
+def test_TDV3_vuln_symbols_affected_functions_and_dbspecific():
+    from scan.advisory_harvester import vuln_symbols_from_osv
+    a = {"affected": [{"ecosystem_specific": {"affected_functions": ["mod.foo"]},
+                       "database_specific": {"affected_functions": ["bar"]}}]}
+    syms = vuln_symbols_from_osv(a)
+    assert "foo" in syms and "mod.foo" in syms and "bar" in syms
+
+
+def test_TDV3_vuln_symbols_empty_and_malformed():
+    from scan.advisory_harvester import vuln_symbols_from_osv
+    assert vuln_symbols_from_osv({}) == []
+    assert vuln_symbols_from_osv("{not json") == []
+    assert vuln_symbols_from_osv({"affected": [{"package": {"name": "x"}}]}) == []
+
+
+def test_TDV3_parse_advisory_populates_vuln_symbols():
+    go = {"id": "GO-2022-0001", "aliases": ["CVE-2022-1111"], "affected": [{
+        "package": {"ecosystem": "Go", "name": "github.com/x/y"},
+        "ecosystem_specific": {"imports": [{"symbols": ["NewReader"]}]},
+        "ranges": [{"type": "SEMVER", "events": [{"introduced": "0"}, {"fixed": "1.2.0"}]}]}]}
+    rec = parse_advisory(go)
+    assert "NewReader" in rec.vuln_symbols
+    assert "NewReader" in rec.to_dict()["vuln_symbols"]
