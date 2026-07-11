@@ -145,6 +145,32 @@ def test_TAP09_safe_manifest_name_neutralizes_traversal():
     assert _safe_manifest_name("weird.name") == "requirements.txt"    # desconhecido → default
 
 
+def test_TAP11_v2_signals_captured():
+    # (DV/P1-1) severity[] (vetor CVSS), affected[].fixed, source.path.
+    payload = {"results": [{"source": {"path": "/repo/requirements.txt"},
+      "packages": [{"package": {"name": "requests", "version": "2.27.0", "ecosystem": "PyPI"},
+        "groups": [{"ids": ["GHSA-x"], "aliases": ["CVE-2023-32681"], "max_severity": "6.1"}],
+        "vulnerabilities": [{"id": "GHSA-x", "aliases": ["CVE-2023-32681"], "details": "d",
+          "severity": [{"type": "CVSS_V3", "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N"}],
+          "affected": [{"package": {"name": "requests"}, "ranges": [{"type": "ECOSYSTEM",
+            "events": [{"introduced": "2.3.0"}, {"fixed": "2.31.0"}]}]}],
+          "references": [{"type": "ADVISORY", "url": "https://x"}]}]}]}]}
+    f = _to_sast_result(payload).findings[0]
+    assert f.suggested_fix == "requests>=2.31.0"
+    assert "2.31.0" in f.remediation
+    assert "CVSS:3.1/" in f.explanation
+    assert "requirements.txt" in f.explanation and "requirements.txt" in f.code_snippet
+
+
+def test_TAP12_v1_payload_degrades_gracefully():
+    # payload sem os campos V2 → sem crash, campos extras vazios.
+    result = _to_sast_result(_REAL_OSV_PAYLOAD)
+    assert len(result.findings) == 2
+    for f in result.findings:
+        assert f.suggested_fix == ""           # sem affected[] → sem fixed
+        assert "CVSS:" not in f.explanation     # sem severity[] → sem vetor
+
+
 def test_TAP10_safe_name_never_contains_separators():
     # invariante central de segurança: o nome resultante NUNCA tem separador de
     # caminho, logo `Path(tmpdir) / nome` não pode escapar do tempdir.

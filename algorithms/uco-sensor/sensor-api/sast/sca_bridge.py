@@ -175,10 +175,37 @@ class OSVScannerBridge:
         return _to_sast_result(payload)
 
 
+def _cvss_vector_from_vuln(vuln: Dict[str, Any]) -> str:
+    """(DV/P1-1) vetor CVSS completo do array `severity[]` (V2), antes descartado."""
+    for sev in vuln.get("severity", []):
+        score = str(sev.get("score", "") or "")
+        if score.upper().startswith("CVSS:"):
+            return score
+    return ""
+
+
+def _fixed_version_from_vuln(vuln: Dict[str, Any], ecosystem: str, pkg_name: str) -> str:
+    """(DV/P1-1) 1ª versão CORRIGIDA de `affected[].ranges[].events[].fixed` (V2),
+    antes descartada — dá remediação precisa em vez de "atualize genericamente"."""
+    for aff in vuln.get("affected", []):
+        apkg = aff.get("package", {})
+        if apkg and apkg.get("name") and apkg.get("name") != pkg_name:
+            continue
+        for rng in aff.get("ranges", []):
+            for ev in rng.get("events", []):
+                fx = ev.get("fixed")
+                if fx:
+                    return str(fx)
+    return ""
+
+
 def _to_sast_result(payload: Dict[str, Any]) -> SASTResult:
     findings: List[SASTFinding] = []
 
     for result in payload.get("results", []):
+        # (P1-1) caminho do manifesto de origem — antes todos os findings saíam
+        # sem ancoragem; agora o SCA aponta EM QUAL manifesto a dep foi achada.
+        source_path = (result.get("source", {}) or {}).get("path", "")
         for pkg_entry in result.get("packages", []):
             pkg = pkg_entry.get("package", {})
             pkg_name = pkg.get("name", "unknown")
@@ -208,6 +235,25 @@ def _to_sast_result(payload: Dict[str, Any]) -> SASTResult:
                 refs = vuln.get("references", [])
                 ref_url = refs[0].get("url") if refs else None
 
+                # (P1-1) sinais V2 antes descartados
+                cvss_vector = _cvss_vector_from_vuln(vuln)
+                fixed_version = _fixed_version_from_vuln(vuln, pkg_ecosystem, pkg_name)
+
+                if fixed_version:
+                    remediation = f"Atualizar {pkg_name} para >= {fixed_version} (corrigido em {fixed_version})."
+                    suggested_fix = f"{pkg_name}>={fixed_version}"
+                else:
+                    remediation = ("Atualizar {p} para uma versão corrigida. ".format(p=pkg_name)
+                                   + (f"Referência: {ref_url}" if ref_url else "Ver advisory na referência do alias."))
+                    suggested_fix = ""
+
+                expl = (f"Identificado via OSV-Scanner (banco offline OSV.dev), "
+                        f"alias(es): {', '.join(aliases) or primary_id}.")
+                if cvss_vector:
+                    expl += f" CVSS: {cvss_vector}."
+                if source_path:
+                    expl += f" Manifesto: {source_path}."
+
                 findings.append(SASTFinding(
                     rule_id=f"SCA-{primary_id}",
                     severity=severity,
@@ -217,14 +263,12 @@ def _to_sast_result(payload: Dict[str, Any]) -> SASTResult:
                     description=description,
                     line=0,
                     col=0,
-                    code_snippet=f"{pkg_name}=={pkg_version}",
-                    remediation=(
-                        f"Atualizar {pkg_name} para uma versão corrigida. "
-                        + (f"Referência: {ref_url}" if ref_url else "Ver advisory na referência do alias.")
-                    ),
+                    code_snippet=(f"{source_path}: " if source_path else "") + f"{pkg_name}=={pkg_version}",
+                    remediation=remediation,
                     debt_minutes=_SEVERITY_DEBT.get(severity, 60),
+                    suggested_fix=suggested_fix,
                     confidence=0.95,
-                    explanation=f"Identificado via OSV-Scanner (banco offline OSV.dev), alias(es): {', '.join(aliases) or primary_id}.",
+                    explanation=expl,
                 ))
 
     total_debt = sum(f.debt_minutes for f in findings)

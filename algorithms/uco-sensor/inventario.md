@@ -54,12 +54,17 @@ ordem, em toda sessão futura:
       Nota: `vendored_scanner._cmp` já fazia zero-pad correto (verificado).
 
 **P1 — sinal desperdiçado / salto competitivo:**
-- [ ] **P1-1 OSV bridge descarta sinal V2** (`sca_bridge._to_sast_result`): perde
-      `severity[]` (vetor CVSS), `source` (todos os findings saem `line=0`), ranges
-      `affected`. Capturar.
-- [ ] **P1-2 SCA reachability-aware** (o SALTO): cruzar findings SCA com o
-      call-graph/imports (M17 já existe, o SCA usa ZERO). Nível 1: rebaixar/anotar
-      findings de pacote não-importado → veredito VEX próprio.
+- [x] **P1-1 OSV bridge capturar sinal V2** — **DV ✅**. `_to_sast_result` agora
+      captura vetor CVSS (`severity[]`→explanation), versão corrigida
+      (`affected[].fixed`→remediation+suggested_fix) e o manifesto de origem
+      (`source.path`→code_snippet). Degrada gracioso em payload V1. +2 testes.
+- [x] **P1-2 SCA reachability-aware (o SALTO)** — **DV ✅**. Novo módulo
+      `sca/reachability.py` (M9.5): extrai imports reais (Py+JS, dist→import,
+      scoped npm, maven artifact), emite veredito `imported`/`not_imported`/
+      `unknown` e REBAIXA (conf×0.4, CRITICAL/HIGH→MEDIUM + VEX
+      `vulnerable_code_not_reachable`) só quando o pacote comprovadamente não é
+      importado. Ligado em `/sca` via `source_files` opcional. +9 testes (m104).
+      Nível 2 (alcançar a FUNÇÃO via call-graph M17) fica p/ próxima fase.
 
 **P2 — compliance / desempenho:**
 - [ ] **P2-1 SBOM CycloneDX**: hoje só há SARIF; SBOM é requisito (EO 14028/CRA).

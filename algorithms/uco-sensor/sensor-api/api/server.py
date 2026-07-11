@@ -3087,9 +3087,21 @@ def handle_sca(data: Dict) -> Tuple[int, Dict]:
         }
 
     result = _osv_bridge.scan_manifest(manifest, filename)
+    # (DV/P1-2) reachability opcional: se o corpo trouxer `source_files`
+    # ({path: conteúdo}), rebaixa/anota findings de pacotes NÃO importados no
+    # código (VEX vulnerable_code_not_reachable) — corta ruído de SCA puro-versão.
+    source_files = data.get("source_files")
+    reach_applied = bool(isinstance(source_files, dict) and source_files)
+    if reach_applied and result.findings:
+        try:
+            from sca.reachability import annotate_findings
+            annotate_findings(result.findings, source_files)
+        except Exception:  # noqa: BLE001 — enriquecimento nunca quebra o scan
+            pass
     out = result.to_dict()
     out["available"] = True
     out["engine"] = "osv-scanner"
+    out["reachability_applied"] = reach_applied
     return 200, out
 
 
