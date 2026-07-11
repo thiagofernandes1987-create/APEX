@@ -40,6 +40,40 @@ ordem, em toda sessão futura:
 > auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
 > abaixo como histórico detalhado).
 
+### 🩺 Sprint DV (v3.96.0) — AUTÓPSIA SCA/OSV: checklist priorizado
+> Auditoria técnica da camada SCA/OSV, escalabilidade, compilador/otimizador e
+> segurança de dados. Cada achado reproduzido por PoC. Ordem P0→P3. Status
+> atualizado a cada rodada.
+
+**P0 — segurança / correção que mata a confiança do scanner:**
+- [x] **P0-1 path-traversal WRITE em `/sca`** — **DV ✅**. `_safe_manifest_name`
+      (basename + allowlist) + guard de tempdir. PoC neutralizado; +2 testes (TAP09/10).
+- [x] **P0-2 aritmética de versão quebrada** — **DV ✅**. Novo `_ver_key` (tupla de
+      largura fixa + fase pré<final<pós); `!=` tratado. 3 bugs corrigidos sem
+      dependência externa (`_parse_version` mantido p/ compat). +1 teste (TS05b).
+      Nota: `vendored_scanner._cmp` já fazia zero-pad correto (verificado).
+
+**P1 — sinal desperdiçado / salto competitivo:**
+- [ ] **P1-1 OSV bridge descarta sinal V2** (`sca_bridge._to_sast_result`): perde
+      `severity[]` (vetor CVSS), `source` (todos os findings saem `line=0`), ranges
+      `affected`. Capturar.
+- [ ] **P1-2 SCA reachability-aware** (o SALTO): cruzar findings SCA com o
+      call-graph/imports (M17 já existe, o SCA usa ZERO). Nível 1: rebaixar/anotar
+      findings de pacote não-importado → veredito VEX próprio.
+
+**P2 — compliance / desempenho:**
+- [ ] **P2-1 SBOM CycloneDX**: hoje só há SARIF; SBOM é requisito (EO 14028/CRA).
+- [ ] **Unificar os 2 SCA**: `/scan-sca` (M9.4, `_CVE_DB` 205 entradas hardcoded)
+      deveria consultar OSV via a malha correta do M23. (fase: após P0-2.)
+
+**P3 / arquitetural (documentar decisão, não forçar):**
+- [ ] Daemon OSV persistente (scalibr/sidecar) — 1 DB, sem fork-por-request.
+- [ ] EPSS + CISA KEV para priorização.
+- [ ] Oráculo diferencial para as transforms do V4 (equivalência semântica).
+
+**Falso/OK (verificado):** subprocess do osv-scanner usa lista+`shell=False` (sem
+injeção); optimizer preserva efeitos colaterais de var não-usada (conservador).
+
 **Estado atual:** v3.95.0 · **2624 testes verdes** (+2 flaky watcher pré-existentes,
 fora de escopo) · corpus **47/52 CVEs completos 4/4** (`degradation_report_full.json`,
 contadores CALCULADOS por `scripts/generate_corpus.py`; 1 duplicate advisory

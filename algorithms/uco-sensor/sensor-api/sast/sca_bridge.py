@@ -44,6 +44,30 @@ from sast.scanner import SASTFinding, SASTResult
 
 _DEFAULT_BIN = "osv-scanner"
 
+# (DV/P0-1) nomes de manifesto que o OSV-Scanner reconhece — allowlist para
+# neutralizar path-traversal via `filename` do corpo da request (CWE-22).
+_ALLOWED_MANIFESTS = frozenset({
+    "requirements.txt", "poetry.lock", "pipfile.lock", "pdm.lock",
+    "package-lock.json", "yarn.lock", "pnpm-lock.yaml", "package.json",
+    "go.mod", "go.sum", "cargo.lock", "composer.lock", "gemfile.lock",
+    "packages.lock.json", "pom.xml", "gradle.lockfile", "buildscript-gradle.lockfile",
+    "conan.lock", "pubspec.lock", "mix.lock", "package.resolved", "podfile.lock",
+    "renv.lock", "maven.lockfile",
+})
+
+
+def _safe_manifest_name(filename: str) -> str:
+    """Reduz `filename` ao basename e valida contra a allowlist (P0-1).
+
+    Um `filename` como ``../../../etc/x`` seria gravado FORA do tempdir por
+    `Path(tmpdir) / filename`; aqui só o basename é usado, e nomes desconhecidos
+    caem para ``requirements.txt`` (default seguro) — nunca escapa o tempdir.
+    """
+    base = os.path.basename((filename or "").strip().replace("\\", "/"))
+    if base.lower() in _ALLOWED_MANIFESTS:
+        return base
+    return "requirements.txt"
+
 # CVSS score -> severidade UCO, mesmos cortes usados no resto do sensor.
 _SCORE_BUCKETS = (
     (9.0, "CRITICAL"),
@@ -116,7 +140,14 @@ class OSVScannerBridge:
             return SASTResult(parse_error=True)
 
         with tempfile.TemporaryDirectory(prefix="uco-sca-") as tmpdir:
-            manifest_path = Path(tmpdir) / filename
+            # (P0-1) só o basename validado — nunca escapa o tempdir.
+            safe_name = _safe_manifest_name(filename)
+            manifest_path = Path(tmpdir) / safe_name
+            # defesa-em-profundidade: confirma que o alvo resolvido está DENTRO
+            # do tempdir antes de gravar (nunca deveria falhar após o basename).
+            tmp_resolved = Path(tmpdir).resolve()
+            if tmp_resolved not in manifest_path.resolve().parents:
+                return SASTResult(parse_error=True)
             manifest_path.write_text(content, encoding="utf-8")
 
             cmd = [self._resolved, "--format", "json", "--recursive"]

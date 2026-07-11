@@ -131,3 +131,25 @@ def test_TAP08_to_dict_roundtrip_matches_sast_shape():
     for key in ("rule_id", "severity", "cwe_id", "owasp", "title", "description",
                 "line", "col", "code_snippet", "remediation", "debt_minutes"):
         assert key in f0
+
+
+# ── DV/P0-1: path-traversal via filename (CWE-22) ─────────────────────────────
+
+def test_TAP09_safe_manifest_name_neutralizes_traversal():
+    from sast.sca_bridge import _safe_manifest_name
+    assert _safe_manifest_name("../../../../tmp/evil.txt") == "requirements.txt"
+    assert _safe_manifest_name("/etc/passwd") == "requirements.txt"
+    assert _safe_manifest_name(r"..\..\windows\x.txt") == "requirements.txt"
+    assert _safe_manifest_name("subdir/go.mod") == "go.mod"          # basename mantido
+    assert _safe_manifest_name("package-lock.json") == "package-lock.json"
+    assert _safe_manifest_name("weird.name") == "requirements.txt"    # desconhecido → default
+
+
+def test_TAP10_safe_name_never_contains_separators():
+    # invariante central de segurança: o nome resultante NUNCA tem separador de
+    # caminho, logo `Path(tmpdir) / nome` não pode escapar do tempdir.
+    from sast.sca_bridge import _safe_manifest_name
+    for evil in ("../../x/requirements.txt", r"..\..\requirements.txt",
+                 "/abs/go.mod", "a/b/c/package-lock.json", "....//....//x"):
+        out = _safe_manifest_name(evil)
+        assert "/" not in out and "\\" not in out and ".." != out

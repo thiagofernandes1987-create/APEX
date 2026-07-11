@@ -91,6 +91,21 @@ class TestCVEDatabase:
         )
         assert results == []
 
+    def test_TS05b_version_arithmetic_bugs_fixed(self):
+        """DV/P0-2: os 3 bugs de comparação de versão (falsos-neg/pos)."""
+        # bug 1 — tamanho desigual: 1.2 == 1.2.0
+        assert _version_satisfies("1.2", ">=1.2.0") is True
+        assert _version_satisfies("1.2", "<=1.2.0") is True
+        # bug 2 — pré-release ordena antes do release
+        assert _version_satisfies("1.2.3-rc1", "<1.2.3") is True
+        assert _version_satisfies("1.2.3-rc1", ">=1.0.0,<1.2.3") is True
+        # pós-release ordena depois do release
+        assert _version_satisfies("1.2.3.post1", ">=1.2.3") is True
+        assert _version_satisfies("1.2.3.post1", "<1.2.3") is False
+        # bug 3 — != exclui a versão exata
+        assert _version_satisfies("1.2.3", "!=1.2.3") is False
+        assert _version_satisfies("1.2.4", "!=1.2.3") is True
+
     def test_TS06_database_size(self):
         """TS06: embedded DB has ≥ 50 CVE entries."""
         assert database_size() >= 50, f"Expected ≥50 CVEs, got {database_size()}"
