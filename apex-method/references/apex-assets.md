@@ -7,7 +7,7 @@ copying or relabeling authorship.
 
 ## A) NATIVIZED (APEX-authored → now part of this skill)
 
-- **Agent roster (183 agents)** → `catalog/apex_agents_roster.json`, routable via
+- **Agent roster (213 agents)** → `catalog/apex_agents_roster.json`, routable via
   `agent_registry.match_task_to_ext_agents()`. 140 community subagents (10 categories) +
   native (architect, critic, theorist, bayesian_curator, meta_reasoning) + cs_* roster.
 - **Skill-creation method** → `scripts/skill_forge.py`, ported from APEX `tools/skill_forge.py`
@@ -38,7 +38,7 @@ APEX route to, scout, and (on approval) install them — the manage-and-use path
 
 ## C) MCP servers → `catalog/mcp_registry.json`
 
-**18 MCP servers/plugins** indexed by domain from `integrations/`: engineering, financial-services,
+**23 MCP servers/plugins** indexed by domain from `integrations/`: engineering, financial-services,
 healthcare, legal, life-sciences, marketing, science-physics, plus github-mcp-server,
 playwright-mcp, mcp-servers, mcp-reference-servers, connectors, and the official-plugins (28)
 and knowledge-work (18) trees.
@@ -52,7 +52,7 @@ claude-code-security-review. Third-party items always route through scout + appr
 ## Honest verdict
 
 Everything in the repo is now either **nativized** (agents, skill_forge, UCO, UCO-Sensor
-interface) or **managed** (39 third-party assets + 18 MCPs, indexed with provenance). Nothing
+interface) or **managed** (39 third-party assets + 23 MCPs, indexed with provenance). Nothing
 third-party was copied-and-relabeled; nothing is auto-run. That keeps authorship, licensing,
 and safety intact while giving APEX full reach over the repo's capabilities.
 

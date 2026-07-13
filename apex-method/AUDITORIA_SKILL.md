@@ -106,3 +106,28 @@ python3 tests/benchmark.py    # 27/27 PASS (~1.4s)
 - Em ambiente simulado SEM sklearn/sympy: orchestrator, router, gravity, agent_registry e
   verify continuam funcionando (degradação declarada, não crash).
 - SKILL.md: 245 linhas (≤300), frontmatter neoformat válido, SR_40 auto-conformidade mantida.
+
+---
+
+## Adendo — rodadas de correção do backlog (v1.17.1 → v1.18.0)
+
+Após a autópsia inicial, o backlog priorizado do `inventario.md` foi executado em rodadas,
+cada uma validada contra regressão (benchmark de 27 → **31/31 PASS**; núcleo revalidado em
+ambiente sem sklearn/sympy/numpy):
+
+- **P1 (qualidade de roteamento):** diffs bilíngues (`text_en`) passam a ser atraídos por
+  tarefas EN; índice nativo enriquecido (desc≤400 + trigger words — busca "bayesian" agora
+  retorna); fallback de raio no `gravity.plan`.
+- **P2 (segurança/fonte):** **V-02** `_RestrictedUnpickler` bloqueia RCE por pickle;
+  **V-03** sonda migra para host da allowlist; **V-01** orgs reivindicáveis
+  (`apex-marketplace`/`apex-framework`) removidas de trusted_domains + fallback/test_url/catálogo
+  apontando ao repo real; **B-04** ontology 404 corrigida; `generate_agent_roster.py` corrigido
+  na fonte (varre `community-awesome`, 163 → 196); `tools/lint_executor.py` preenche `executor:`
+  nas 50 páginas faltantes com **page_manifest sha8 regenerado (111/111 conferem)**.
+- **P3 (completude):** `scripts/monte_carlo.py` real (P10/P50/P90 + CV) ligado ao PMI;
+  as 44 SRs documentadas em `rules.md`; 5 dirs de `integrations/` indexados (18 → 23 MCPs);
+  `snapshot` ligado ao `orchestrator.run()`; `code_genetics` com persistência SQLite opcional.
+
+**Remanescente (pesquisa/externo, não-defeito):** embeddings reais no lugar do TF-IDF lexical;
+avaliação externa independente do EVALUATION_REPORT. Tudo que era defeito/lacuna acionável está
+corrigido, testado e otimizado.

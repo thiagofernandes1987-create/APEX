@@ -233,13 +233,13 @@ skill router, audit, autopsy, structured reasoning.
 - `references/guards.md` — enforceable guards SR_36–SR_40 (the skill passes its own SR_40).
 - `references/scheduling.md` — geodesic_scheduler (ΔH/token ordering) + verification_gate (P≠NP).
 - `references/fractal-and-geometry.md` — fractal_compression, geometry_estimator, apex_st_metric.
-- `tests/benchmark.py` — one asserted test per module (24/24 PASS); reusable audit benchmark.
+- `tests/benchmark.py` — one asserted test per module + audit regressions (31/31 PASS); reusable benchmark.
 - `inventario.md` — deployment checklist, milestones, and the full end-to-end flow.
 - `catalog/module_registry.json` — all 111 APEX modules with purpose + executor.
 - `references/gravity.md` — gravitational synergy engine: mass, attraction, constellation, and
   plan() gap-detection → skills.sh install request → MCP/skill_forge fallback.
 - `catalog/uco_sensor_engines.json` — the 9 UCO-Sensor engines (OSV/SCA, taint, SAST, IaC, HMC…).
-- `references/apex-assets.md` — full APEX repo mined: 183 agents + skill_forge + UCO + UCO-Sensor
+- `references/apex-assets.md` — full APEX repo mined: 213 agents + skill_forge + UCO + UCO-Sensor
   (nativized) and 39 third-party assets + 23 MCP servers (indexed/managed). Catalogs:
   `managed_assets.json`, `mcp_registry.json`, `apex_agents_roster.json`.
 - `references/scenarios.md` — worked end-to-end examples.
