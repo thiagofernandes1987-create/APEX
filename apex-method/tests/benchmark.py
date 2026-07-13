@@ -305,7 +305,17 @@ def t_regressions():
     w,_ = _tfidf.semantic_rank("otimização de portfólio", ["portfolio optimization", "web design"], backend="word")
     c,_ = _tfidf.semantic_rank("otimização de portfólio", ["portfolio optimization", "web design"], backend="char")
     assert max(w) == 0 and c.index(max(c)) == 0, (w, c)
-    return "loads FP, getattr, installs sort, n_rel floor, express, chaos/r_acum, skills.sh bar, char-ngram: all fixed"
+    # dissect must classify Portuguese tasks, not dump them into engineering by default
+    assert "finance" in orchestrator.dissect("dimensionar a reserva de caixa e o runway com burn"), \
+        orchestrator.dissect("dimensionar a reserva de caixa e o runway com burn")
+    assert "science" in orchestrator.dissect("simular a dinâmica de depleção física")
+    # grant reaches the 213-agent extended roster, not just the 11 core (agent-need upgrade)
+    import agent_registry as ar
+    ags = ar.load(ar.AGENTS)
+    g = ar.grant_skill({"id":"x/react-vt","domain":"frontend","name":"react-vt","description":"react frontend"},
+                       ags, approved=True, ext_grants={})
+    assert g["ext_agents"] and any("react" in a for a,_ in g["ext_agents"]), g["ext_agents"]
+    return "loads FP, getattr, installs, n_rel, express, chaos, skills.sh, char-ngram, dissect-PT, ext-grant: all fixed"
 
 
 # ── audit P1/P2/P3 rounds: new modules + wiring ──────────────────────────────

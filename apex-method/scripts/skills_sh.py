@@ -68,8 +68,11 @@ def _installs(item: dict) -> int:
 
 
 def _norm(item: dict) -> dict:
-    owner = item.get("owner") or (item.get("repo", "/").split("/")[0])
-    name = item.get("name") or item.get("slug") or item.get("id", "?")
+    repo_parts = (item.get("repo") or "").split("/")
+    owner = item.get("owner") or (repo_parts[0] if repo_parts and repo_parts[0] else "")
+    # derive name from the repo's last segment when no explicit name/slug/id is given
+    name = (item.get("name") or item.get("slug") or item.get("id")
+            or (repo_parts[-1] if len(repo_parts) >= 2 and repo_parts[-1] else "?"))
     repo = item.get("repo") or (f"{owner}/{name}" if owner else name)
     return {"id": f"{owner}/{name}" if owner else name,
             "name": name, "owner": owner, "repo": repo,

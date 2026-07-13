@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.19.0
+version: 1.20.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -256,4 +256,5 @@ skill router, audit, autopsy, structured reasoning.
 - `references/vercel-skills-analysis.md` — analysis of vercel-labs/skills + skills.sh and what
   APEX reuses (install-count bar, official trust tier, discovery cascade).
 - `tests/evaluate.py` — reproducible rubric-based evaluation (objective, re-runnable; 13/13).
+- `AUDITORIA_CIENTIFICA.md` — SCIENTIFIC-mode 4-layer autopsy (DSM/Ishikawa/Pareto/FMEA) with full corrected code.
 - `EVALUATION_REPORT.md` — self-scored quality report (self-graded, not external review).

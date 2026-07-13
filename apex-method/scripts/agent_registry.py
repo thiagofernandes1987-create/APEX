@@ -82,10 +82,15 @@ def match_skill_to_agents(skill, agents_doc, threshold=0.05):
     return matched or ["pmi_pm"]  # generalist fallback
 
 
-def grant_skill(skill, agents_doc, approved: bool, scripts=None):
+def grant_skill(skill, agents_doc, approved: bool, scripts=None, ext_grants=None):
     """
     Grant an APPROVED skill to the compatible agents, updating competence + experience.
     Returns the list of (agent_id, new_experience). Refuses if not approved (APEX H5).
+
+    audit (SCIENTIFIC): grants also reach the 213-agent EXTENDED roster, not only the 11
+    core personas. `ext_grants` is an in-memory competence store {agent_id: {skill: uses}}
+    the caller keeps across a session; if omitted, extended matches are still reported so
+    "installing a skill upgrades the matching agent" holds for the whole roster.
     """
     if not approved:
         return {"status": "BLOCKED", "reason": "skill not approved by user (APEX H5)"}
@@ -105,7 +110,20 @@ def grant_skill(skill, agents_doc, approved: bool, scripts=None):
         de = agents_doc["agents"][aid]["domain_experience"]
         de[dom] = de.get(dom, 0) + 1
         updated.append((aid, entry["experience"]))
-    return {"status": "GRANTED", "skill": skill["id"], "agents": updated}
+
+    # extended roster (213): route the skill to the best-matching real APEX agents and
+    # record the grant so the whole roster — not just the 11 core — gains competence.
+    ext_updated = []
+    skill_text = f"{skill.get('name','')} {skill.get('description','')} {skill.get('domain','')}"
+    for aid, cat, score in match_task_to_ext_agents(skill_text, k=2):
+        if ext_grants is not None:
+            store = ext_grants.setdefault(aid, {})
+            store[skill["id"]] = store.get(skill["id"], 0) + 1
+            ext_updated.append((aid, store[skill["id"]]))
+        else:
+            ext_updated.append((aid, 1))
+    return {"status": "GRANTED", "skill": skill["id"],
+            "agents": updated, "ext_agents": ext_updated}
 
 
 def tier(exp):

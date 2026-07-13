@@ -1,6 +1,6 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.19.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.20.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
@@ -17,6 +17,7 @@ checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescen
 - [x] Versão unificada (era 1.15 no inventário × 1.16 no SKILL.md — drift corrigido)
 
 ### Marco 2 — Motores executáveis (28 scripts, 31/31 no benchmark + rubrica 13/13)
+- [x] Autópsia SCIENTIFIC (4 camadas): dissect bilíngue+semântico, grant p/ roster 213, _norm — ver `AUDITORIA_CIENTIFICA.md`
 - [x] Raciocínio: `orchestrator`, `mental_interpreter`, `pot`, `hypothesis_dag`, `fractal_compression`
 - [x] Numérico/formal: `numeric` (RK4/Euler), `verify` (sympy, degrada sem ele), `geometry_estimator`
 - [x] Bayesiano: `bayes` (beta-binomial, Ω, R_acum), `apex_st_metric`

@@ -41,7 +41,12 @@ def _fallback_scan(code):
     return {"status": "PASS" if not reasons else "REJECTED", "reasons": reasons, "engine": "fallback"}
 
 def gate(code, uco_path=None):
-    """Try UCO; fall back to AST scan. Returns {status, reasons, metrics?, engine}."""
+    """Try UCO; fall back to AST scan. Returns {status, reasons, metrics?, engine}.
+
+    SCOPE (audit note): the hamiltonian>5.5 threshold is calibrated for SMALL generated
+    PoT snippets — the thing SR_33 actually gates before subprocess exec. Whole modules
+    legitimately exceed it, so do NOT use gate() as a module-quality signal; run the UCO
+    engine directly (universal_code_optimizer_v4) with size-aware expectations for that."""
     try:
         if uco_path:
             sys.path.insert(0, uco_path)

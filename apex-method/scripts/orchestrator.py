@@ -63,27 +63,69 @@ def express_check(task):
 
 
 # ── 2. DISSECT BY DISCIPLINE ──────────────────────────────────────────────────
+# Bilingual (EN + PT) keywords: the old EN-only map silently mislabelled Portuguese
+# tasks (e.g. "reserva de caixa / burn / runway" classified only as engineering).
 DISCIPLINE_KEYWORDS = {
-    "engineering": ["code", "api", "build", "refactor", "architecture", "backend", "system"],
-    "frontend": ["ui", "ux", "frontend", "react", "component", "design"],
-    "security": ["security", "vulnerability", "audit", "threat", "taint", "cve", "exploit"],
-    "data-ai": ["model", "ml", "data", "train", "embedding", "recommender", "pipeline"],
-    "finance": ["valuation", "portfolio", "trading", "risk", "cash flow", "option", "backtest"],
-    "math": ["prove", "proof", "integral", "derivative", "equation", "algebra"],
-    "science": ["physics", "simulation", "ode", "monte carlo", "annealing", "hmc", "statistical"],
-    "legal": ["contract", "compliance", "regulation", "clause", "liability"],
-    "healthcare": ["clinical", "patient", "diagnosis", "medical", "treatment"],
+    "engineering": ["code", "api", "build", "refactor", "architecture", "backend", "system",
+                    "código", "codigo", "arquitetura", "sistema", "programação", "programacao"],
+    "frontend": ["ui", "ux", "frontend", "react", "component", "design",
+                 "interface", "componente", "front-end", "usuário", "usuario"],
+    "security": ["security", "vulnerability", "audit", "threat", "taint", "cve", "exploit",
+                 "segurança", "seguranca", "vulnerabilidade", "auditoria", "ameaça", "ameaca"],
+    "data-ai": ["model", "ml", "data", "train", "embedding", "recommender", "pipeline",
+                "modelo", "dados", "treinar", "aprendizado", "recomendação", "recomendacao"],
+    "finance": ["valuation", "portfolio", "trading", "risk", "cash flow", "option", "backtest",
+                "portfólio", "portfolio", "risco", "caixa", "runway", "burn", "investimento",
+                "financeiro", "fluxo de caixa", "reserva", "orçamento", "orcamento"],
+    "math": ["prove", "proof", "integral", "derivative", "equation", "algebra",
+             "prova", "provar", "derivada", "equação", "equacao", "álgebra", "algebra"],
+    "science": ["physics", "simulation", "ode", "monte carlo", "annealing", "hmc", "statistical",
+                "física", "fisica", "simulação", "simulacao", "estatística", "estatistica",
+                "dinâmica", "dinamica", "depleção", "deplecao"],
+    "legal": ["contract", "compliance", "regulation", "clause", "liability",
+              "contrato", "conformidade", "regulação", "regulacao", "cláusula", "clausula"],
+    "healthcare": ["clinical", "patient", "diagnosis", "medical", "treatment",
+                   "clínico", "clinico", "paciente", "diagnóstico", "diagnostico", "médico", "medico"],
+}
+# canonical one-line description per discipline — used by the semantic fallback so a task
+# with no keyword hit is still routed by meaning (char-n-gram, language-robust), not dumped
+# into "engineering" by default.
+_DISCIPLINE_GLOSS = {
+    "engineering": "software engineering code api backend architecture system programação",
+    "frontend": "frontend ui ux interface design react component usuário",
+    "security": "security vulnerability audit threat exploit segurança auditoria",
+    "data-ai": "machine learning data model training ai dados modelo",
+    "finance": "finance valuation portfolio risk cash flow runway burn financeiro caixa risco",
+    "math": "mathematics proof integral derivative equation algebra prova equação",
+    "science": "physics simulation dynamics statistical monte carlo física simulação dinâmica",
+    "legal": "legal contract compliance regulation clause contrato conformidade",
+    "healthcare": "healthcare clinical patient diagnosis medical clínico paciente médico",
 }
 
 
-def dissect(task):
-    """Split a task into the disciplines it touches (multi-discipline = hard problem)."""
+def dissect(task, semantic_floor=0.06):
+    """Split a task into the disciplines it touches (multi-discipline = hard problem).
+    Keyword pass first (bilingual); if it finds nothing, a char-n-gram semantic pass
+    (language-robust) picks the closest discipline instead of defaulting to engineering."""
     tl = task.lower()
     def has(kw):
         # word-boundary match so short keywords (ui, ml, ux) don't match inside words (b-ui-ld)
         return re.search(r"\b" + re.escape(kw) + r"\b", tl) is not None
     hits = [d for d, kws in DISCIPLINE_KEYWORDS.items() if any(has(k) for k in kws)]
-    return hits or ["engineering"]  # default discipline
+    if hits:
+        return hits
+    # semantic fallback (no keyword hit): rank disciplines by char-n-gram similarity
+    try:
+        from _tfidf import semantic_rank
+        labels = list(_DISCIPLINE_GLOSS)
+        sims, _used = semantic_rank(task, [_DISCIPLINE_GLOSS[d] for d in labels], backend="char")
+        ranked = [(labels[i], sims[i]) for i in range(len(labels))]
+        best = [d for d, s in sorted(ranked, key=lambda x: -x[1]) if s >= semantic_floor]
+        if best:
+            return best[:2]  # top disciplines above the floor
+    except Exception:
+        pass
+    return ["engineering"]  # last-resort default
 
 
 def assign_specialists(task, disciplines):
