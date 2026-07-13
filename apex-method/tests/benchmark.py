@@ -286,7 +286,14 @@ def t_regressions():
         orchestrator._safe_arith("9**9**9"); assert False, "pow not capped"
     except ValueError:
         pass
-    return "loads FP, getattr, installs sort, n_rel floor, express case+pow: all fixed"
+    # chaos stance must not poison the R_acum gate (SR_11: deliberate divergence != unreliability)
+    pmi = orchestrator.pmi_converge([
+        {"discipline": "finance", "answer": "A", "confidence": 0.82},
+        {"discipline": "engineering", "answer": "A", "confidence": 0.74},
+        {"discipline": "chaos", "answer": "B", "confidence": 0.35}])
+    assert pmi["r_acum"]["status"] != "CRITICAL_EARLY_EXIT", pmi["r_acum"]
+    assert "B" in pmi["posteriors"], pmi  # chaos still debates in the posterior
+    return "loads FP, getattr, installs sort, n_rel floor, express case+pow, chaos/r_acum: all fixed"
 
 
 TESTS = [

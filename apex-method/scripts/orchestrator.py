@@ -111,8 +111,14 @@ def pmi_converge(candidates):
     import bayes
     if not candidates:
         return {"answer": None, "reliability": 0.0, "method": "none"}
-    # R_acum reliability gate over the candidates' confidences
-    gate = bayes.r_acum([c["confidence"] for c in candidates])
+    # R_acum reliability gate over the candidates' confidences.
+    # audit fix v1.17.1: the chaos stance is EXCLUDED from the gate — its low confidence
+    # is deliberate anti-convergence (SR_11), not chain unreliability; including it forced
+    # CRITICAL_EARLY_EXIT exactly when the method was working as designed. It still
+    # participates in the debate/posterior below.
+    gate_confs = [c["confidence"] for c in candidates
+                  if "chaos" not in (str(c.get("stance", "")) + str(c.get("discipline", ""))).lower()]
+    gate = bayes.r_acum(gate_confs or [c["confidence"] for c in candidates])
 
     # G5 (bayes.filter_priors): drop candidates whose explicit prior is below 0.4
     if any("prior" in c for c in candidates):
