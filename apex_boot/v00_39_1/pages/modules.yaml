@@ -857,7 +857,7 @@ executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
     config:
       enabled: true
       repositories:
-      - url: https://raw.githubusercontent.com/apex-marketplace/catalog/main/index.yaml
+      - url: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/INDEX.md
         type: catalog
         cache_ttl: 86400
       resolution:

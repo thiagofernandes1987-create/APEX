@@ -262,13 +262,13 @@ kernel:
       cache_ttl: 86400
       cache_max_entries: 100
     fallback:
-      ontology_url: https://raw.githubusercontent.com/apex-framework/ontology/main/professions.yaml
+      # V-01/B-04 fix: apex-framework is an unclaimed org (404) — namespace-takeover vector.
+      ontology_url: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/references/professions.yaml
       use_semantic_fallback: true
     trusted_domains:
-    - https://raw.githubusercontent.com/apex-marketplace/
-    - https://raw.githubusercontent.com/apex-framework/
+    # V-01 fix: removed the claimable apex-marketplace / apex-framework orgs.
     - https://raw.githubusercontent.com/thiagofernandes1987-create/
-    test_url: https://raw.githubusercontent.com/apex-marketplace/test.txt
+    test_url: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/README.md
     apex_superrepo:
       url: https://github.com/thiagofernandes1987-create/APEX
       raw_base: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/

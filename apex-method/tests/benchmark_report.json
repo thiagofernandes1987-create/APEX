@@ -1,33 +1,33 @@
 {
  "passed": 31,
  "total": 31,
- "total_ms": 1988.1,
+ "total_ms": 3612.5,
  "results": [
   {
    "module": "pot",
    "ok": true,
-   "ms": 35.0,
+   "ms": 44.3,
    "metric": "sum 1..100 = 5050",
    "error": ""
   },
   {
    "module": "numeric",
    "ok": true,
-   "ms": 6.6,
+   "ms": 6.7,
    "metric": "RK4 energy err 8.72e-12",
    "error": ""
   },
   {
    "module": "verify",
    "ok": true,
-   "ms": 468.7,
+   "ms": 984.0,
    "metric": "identity VERIFIED / REFUTED",
    "error": ""
   },
   {
    "module": "uco_gate",
    "ok": true,
-   "ms": 132.4,
+   "ms": 286.4,
    "metric": "loop REJECTED (UCO)",
    "error": ""
   },
@@ -41,91 +41,91 @@
   {
    "module": "router",
    "ok": true,
-   "ms": 1023.9,
+   "ms": 1816.9,
    "metric": "routes to frontend",
    "error": ""
   },
   {
    "module": "skill_scout",
    "ok": true,
-   "ms": 89.0,
+   "ms": 82.3,
    "metric": "3 attacks blocked, clean passes",
    "error": ""
   },
   {
    "module": "skill_forge",
    "ok": true,
-   "ms": 1.9,
+   "ms": 4.9,
    "metric": "generates valid SKILL.md",
    "error": ""
   },
   {
    "module": "snapshot",
    "ok": true,
-   "ms": 1.6,
+   "ms": 4.3,
    "metric": "snapshot new/add/compress/decompress",
    "error": ""
   },
   {
    "module": "agent_registry",
    "ok": true,
-   "ms": 17.1,
+   "ms": 36.2,
    "metric": "core->engineer, ext->data-engineer",
    "error": ""
   },
   {
    "module": "curated",
    "ok": true,
-   "ms": 1.1,
+   "ms": 1.4,
    "metric": "4 finance skills",
    "error": ""
   },
   {
    "module": "asset_manager",
    "ok": true,
-   "ms": 1.3,
+   "ms": 1.6,
    "metric": "41 assets, 23 mcps",
    "error": ""
   },
   {
    "module": "gravity",
    "ok": true,
-   "ms": 24.0,
+   "ms": 46.8,
    "metric": "security constellation: 2 agents",
    "error": ""
   },
   {
    "module": "bayes",
    "ok": true,
-   "ms": 1.3,
+   "ms": 1.7,
    "metric": "beta-binomial 0.75, posterior A=0.7407",
    "error": ""
   },
   {
    "module": "orchestrator",
    "ok": true,
-   "ms": 28.6,
+   "ms": 32.7,
    "metric": "2+2=4 express; hard->SCIENTIFIC; pmi rel=0.875",
    "error": ""
   },
   {
    "module": "hypothesis_dag",
    "ok": true,
-   "ms": 1.1,
+   "ms": 1.3,
    "metric": "cycle rejected, cascade 3",
    "error": ""
   },
   {
    "module": "code_genetics",
    "ok": true,
-   "ms": 1.2,
+   "ms": 1.6,
    "metric": "stable sig, promote gate 0.85",
    "error": ""
   },
   {
    "module": "guards",
    "ok": true,
-   "ms": 1.9,
+   "ms": 2.8,
    "metric": "SR_36/37/38 enforced",
    "error": ""
   },
@@ -139,14 +139,14 @@
   {
    "module": "geodesic_scheduler",
    "ok": true,
-   "ms": 1.0,
+   "ms": 1.3,
    "metric": "plan ['c', 'a', 'b'], ethical excluded",
    "error": ""
   },
   {
    "module": "verification_gate",
    "ok": true,
-   "ms": 0.9,
+   "ms": 1.0,
    "metric": "DEEP routes H1, prune@test2",
    "error": ""
   },
@@ -160,28 +160,28 @@
   {
    "module": "geometry_estimator",
    "ok": true,
-   "ms": 0.9,
+   "ms": 2.4,
    "metric": "euler block size 5",
    "error": ""
   },
   {
    "module": "apex_st_metric",
    "ok": true,
-   "ms": 0.6,
+   "ms": 0.9,
    "metric": "progress MEDIUM, stagnation triggers",
    "error": ""
   },
   {
    "module": "repo_bridge",
    "ok": true,
-   "ms": 59.2,
+   "ms": 157.1,
    "metric": "native index 3784, traversal refused",
    "error": ""
   },
   {
    "module": "_tfidf",
    "ok": true,
-   "ms": 1.9,
+   "ms": 1.8,
    "metric": "pure-python tf-idf ranks + pairwise ok",
    "error": ""
   },
@@ -195,28 +195,28 @@
   {
    "module": "monte_carlo",
    "ok": true,
-   "ms": 13.9,
+   "ms": 14.7,
    "metric": "MC P50=60.0, cv=0.083",
    "error": ""
   },
   {
    "module": "pmi_monte_carlo",
    "ok": true,
-   "ms": 36.7,
+   "ms": 40.1,
    "metric": "PMI picks lowest-CV plan by real simulation",
    "error": ""
   },
   {
    "module": "code_genetics_sqlite",
    "ok": true,
-   "ms": 23.7,
+   "ms": 25.0,
    "metric": "vaccine persists + promotes across SQLite reopen",
    "error": ""
   },
   {
    "module": "snapshot_wire",
    "ok": true,
-   "ms": 9.6,
+   "ms": 9.3,
    "metric": "run() recorded 1 findings into snapshot",
    "error": ""
   }

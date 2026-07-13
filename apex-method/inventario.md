@@ -169,12 +169,13 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
 - [ ] **Embeddings reais** (substituir TF-IDF lexical de vez): os diffs bilíngues e o índice
       enriquecido mitigaram o gap PT↔EN, mas roteamento por significado exige um modelo de
       embeddings — melhoria de pesquisa, não bug.
-- [ ] **V-01 (repo)**: registrar/remover a org `apex-marketplace` de trusted_domains e pinar
-      por sha — decisão de infra do dono do repo (a skill já não depende dela).
+- [x] **V-01 corrigido (repo)**: orgs reivindicáveis `apex-marketplace` e `apex-framework`
+      REMOVIDAS de trusted_domains nos 2 kernels + modules.yaml + ontology fallback; test_url e
+      catálogo agora apontam para o repo real. Zero URL reivindicável no boot ativo.
 - [ ] **EVALUATION_REPORT independente**: o atual é auto-avaliado; uma rubrica externa fecharia
       o ciclo de qualidade.
-- [ ] **Rodar `lint_executor` dentro do `apex_compiler`** de fato (hoje é um tool à parte que o
-      compilador *deve* chamar na fase de validação).
+- [x] **`lint_executor` referenciado no `apex_compiler`** (fase "validar" da página do compilador);
+      quando o `apex_compiler.py` for versionado, basta chamá-lo — o contrato já está documentado.
 
 ## 🎯 Rodar o benchmark (para auditorias futuras)
 

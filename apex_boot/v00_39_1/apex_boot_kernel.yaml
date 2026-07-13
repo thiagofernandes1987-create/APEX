@@ -262,13 +262,16 @@ kernel:
       cache_ttl: 86400
       cache_max_entries: 100
     fallback:
-      ontology_url: https://raw.githubusercontent.com/apex-framework/ontology/main/professions.yaml
+      # V-01/B-04 fix: apex-framework is an UNCLAIMED org (404) — a namespace-takeover /
+      # dependency-confusion vector. Point the ontology fallback at the real repo instead.
+      ontology_url: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/references/professions.yaml
       use_semantic_fallback: true
     trusted_domains:
-    - https://raw.githubusercontent.com/apex-marketplace/
-    - https://raw.githubusercontent.com/apex-framework/
+    # V-01 fix: apex-marketplace and apex-framework are unclaimed/claimable orgs; keeping them
+    # in trusted_domains let an attacker register the org and serve trusted content. Removed —
+    # only the real, owned repo namespace remains trusted.
     - https://raw.githubusercontent.com/thiagofernandes1987-create/
-    test_url: https://raw.githubusercontent.com/apex-marketplace/test.txt
+    test_url: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/README.md
     apex_superrepo:
       url: https://github.com/thiagofernandes1987-create/APEX
       raw_base: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/
@@ -881,7 +884,7 @@ page_manifest:
   dsl_module_template: 49e18e05
   dsl_writing_guide: 8fe8df5a
   apex_self_evolution_protocol: 1bcce305
-  modules: ae8685e3
+  modules: 0061b68c
   orchestrator: d9bba60b
   versioning: d62d39de
   tests: d8f29ce2
@@ -979,7 +982,7 @@ page_manifest:
   uco_runtime_digest: b03f81de
   apex_state_persistent: 4b81f029
   toolchain_validation_gate: ebc671a3
-  apex_compiler: 6838ee61
+  apex_compiler: 3bb9ab5a
   page_loader: 2b231fd0
   pot_max: 5acb030a
   online_skill_library: 3e437443
