@@ -1,0 +1,75 @@
+{
+  "_meta": {
+    "note": "Reusable SCRIPTS, ALGORITHMS and AGENTS mined by sweeping the top skills.sh repos (by install count) and opening each. 'safety' is from APEX's two-tier AST scanner: reject=RCE vector, review=inspect-with-context. Adopt review-flagged code only after human inspection; never auto-run.",
+    "swept_at": "2026-07-12",
+    "method": "shallow-clone top repos, inventory scripts/LOC, AST-scan, confirm algorithms"
+  },
+  "high_value": [
+    {
+      "repo": "gauss314/skills", "installs_note": "UCEMA finance, 24.5K LOC py, 32 skills",
+      "kind": "algorithms", "gain": "very high", "agent": "finance_analyst / scientist",
+      "items": ["option_pricing.py: Black-Scholes, Binomial CRR, Trinomial, Monte Carlo (antithetic), Longstaff-Schwartz, Bjerksund-Stensland/BAW, Heston, Bates, greeks, implied vol (15 CLI modes, ~419k opt/sec)",
+                "portfolio: Markowitz, HRP, HERC, NCO, Black-Litterman; VaR, CVaR, CDaR, MAD, MSV, max drawdown",
+                "backtesting/ratios.py: 30+ risk/perf ratios; indicators.py: 10 indicator classes",
+                "covariance: Ledoit-Wolf, OAS, EWMA"],
+      "safety": "safe=True, review-only (vars()/third-party imports); flat numpy+scipy, zero finance libs = highly portable"
+    },
+    {
+      "repo": "agiprolabs/claude-trading-skills", "installs_note": "58.7K LOC py, 67 skills",
+      "kind": "algorithms", "gain": "high (crypto/DeFi)", "agent": "finance_analyst",
+      "items": ["compute_crypto_indicators.py", "mev-analysis: sandwich_detector.py, mev_risk_estimator.py",
+                "backtesting, position sizing, trade_ledger.py, journal_analyzer.py, crypto-tax-export",
+                "dex-pool-analysis/analyze_pools.py"],
+      "safety": "review (argparse/httpx imports); --demo mode; network scripts need key review"
+    },
+    {
+      "repo": "anthropics/skills", "installs_note": "official, 14.9K LOC py, 18 skills",
+      "kind": "scripts+tooling", "gain": "very high", "agent": "engineer",
+      "items": ["docx/pptx/xlsx/pdf: office generation + validators (base.py 847 LOC each)",
+                "skill-creator: package_skill.py, generate_review.py, run_loop.py (skill optimization loop)",
+                "mcp-builder (build MCP servers), webapp-testing, canvas-design, algorithmic-art"],
+      "safety": "review (.remove list ops); official + audited"
+    },
+    {
+      "repo": "obra/superpowers", "installs_note": "148K brainstorming; agent workflows, 37 sh",
+      "kind": "agents/workflows", "gain": "high", "agent": "meta_reasoning / pmi_pm / chaos / engineer",
+      "items": ["dispatching-parallel-agents, subagent-driven-development (orchestration)",
+                "brainstorming (chaos), writing-plans + executing-plans (pmi_pm)",
+                "systematic-debugging, test-driven-development, verification-before-completion",
+                "requesting/receiving-code-review, using-git-worktrees"],
+      "safety": "text workflows + shell helpers (review shell before running)"
+    },
+    {
+      "repo": "wshobson/agents", "installs_note": "162 skills as plugins, 57 py",
+      "kind": "agents+scripts", "gain": "high", "agent": "engineer / data_ml / enterprise_strategist",
+      "items": ["security-scanning: STRIDE, attack-tree, SAST config, threat-mitigation",
+                "machine-learning-ops: recsys-pipeline, ml-pipeline-workflow",
+                "data-engineering: dbt, spark-optimization, airflow-dag-patterns, data-quality",
+                "python-development patterns, database-design/postgresql",
+                "startup-business-analyst: market-sizing, financial-modeling, competitive-landscape"],
+      "safety": "mostly text patterns + some py (review)"
+    },
+    {
+      "repo": "firecrawl/cli", "installs_note": "22.3K LOC ts, 10 skills",
+      "kind": "scripts (web data)", "gain": "medium-high", "agent": "engineer / data_ml",
+      "items": ["scrape, crawl, map, search, parse, extract, monitor, interact — structured web extraction"],
+      "safety": "network tools; API key + rate-limit review; not for the sandbox allowlist"
+    },
+    {
+      "repo": "vercel-labs/skills", "installs_note": "find-skills 1.4M installs, 20.9K LOC js",
+      "kind": "tooling (the CLI itself)", "gain": "medium", "agent": "meta_reasoning",
+      "items": ["the `npx skills` discovery/install CLI + find-skills agent"],
+      "safety": "the ecosystem tooling; used to install, not embed"
+    },
+    {
+      "repo": "vercel-labs/agent-skills", "installs_note": "28.8K LOC ts",
+      "kind": "best-practices+scripts", "gain": "medium (frontend)", "agent": "engineer",
+      "items": ["vercel-react-best-practices, web-design-guidelines, composition-patterns, deploy-to-vercel, react-native"],
+      "safety": "mostly guidance + JS helpers"
+    }
+  ],
+  "low_executable_value": [
+    {"repo": "mattpocock/skills", "note": "39 skills, ~340 script LOC — mostly text workflows (tdd, diagnose, zoom-out, to-prd)"},
+    {"repo": "supabase/agent-skills", "note": "mostly text best-practices, minimal scripts"}
+  ]
+}

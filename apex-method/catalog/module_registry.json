@@ -1,0 +1,779 @@
+[
+ {
+  "module": "adaptive_ode_block",
+  "executor": "SANDBOX_CODE",
+  "tier": 4,
+  "status": "ADOPTED_PARTIAL",
+  "purpose": "Substituir RK4 de passo fixo por RK45 adaptativo para sistemas dinâmicos, reduzindo iterações e"
+ },
+ {
+  "module": "anchor_expansion_v2",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Expandir hyperbolic_anchor_map (OPP-107) com anchors e cross-domain bridges para os 12 novos do"
+ },
+ {
+  "module": "apex_bench",
+  "executor": "SANDBOX_CODE",
+  "tier": 1,
+  "status": "TESTING",
+  "purpose": "Harness de benchmark empírico: suite fixa de tarefas com gabarito verificável por código, execu"
+ },
+ {
+  "module": "apex_compiler",
+  "executor": "SANDBOX_CODE",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Compilar o master (~300K tokens) num MICROKERNEL bootável (~12-18K tokens) + páginas lazy-load "
+ },
+ {
+  "module": "apex_runtime_probe",
+  "executor": "SANDBOX_CODE",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Bloco Python executavel no STEP_0 que realiza sondagem REAL das capacidades do runtime (13 test"
+ },
+ {
+  "module": "apex_schema",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": "Strict JSON output schema for APEX."
+ },
+ {
+  "module": "apex_self_evolution_protocol",
+  "executor": "LLM_BEHAVIOR",
+  "tier": "",
+  "status": "",
+  "purpose": "Permitir que o APEX extraia o máximo de aprendizado de cada sessão e melhore progressivamente, "
+ },
+ {
+  "module": "apex_st_metric",
+  "executor": "HYBRID",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Medir a progressão do APEX entre sessões como distância no espaço de informação. Detecta estagn"
+ },
+ {
+  "module": "apex_state_persistent",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Criar e manter apex_state.yaml como registro canônico do estado do projeto. Substitui a dependê"
+ },
+ {
+  "module": "apex_superrepo_v2",
+  "executor": "DOCUMENTATION",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Atualizar kernel.defaults.apex_superrepo com estatísticas reais do repositório após ingestion d"
+ },
+ {
+  "module": "attention_anchors_module",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Explorar viés de recência dos LLMs (Liu et al. 2024 \"Lost in the Middle\"): LLMs prestam mais at"
+ },
+ {
+  "module": "boot_verification_gate",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Garantir que o boot kernel foi de fato carregado e processado, não apenas assumido como present"
+ },
+ {
+  "module": "changelog_v020",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "code_genetics_map",
+  "executor": "HYBRID",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Transformar o APEX de \"gênio amnésico\" em sistema que aprende com erros técnicos. Cada padrão d"
+ },
+ {
+  "module": "community_agent_roster",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Integrar 33 community agents (code-archaeologist, django-api-developer, fastapi-expert, ml-data"
+ },
+ {
+  "module": "community_subagent_roster_boot",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Registrar 140 community subagents (OPP-153) no kernel do boot com mapeamento completo de activa"
+ },
+ {
+  "module": "community_validation_protocol",
+  "executor": "HYBRID",
+  "tier": 1,
+  "status": "TESTING",
+  "purpose": "Ciclo de validação comunitária para artefatos do ecossistema (skills, agents, DIFFs): telemetri"
+ },
+ {
+  "module": "critic_formal_consistency",
+  "executor": "HYBRID",
+  "tier": 3,
+  "status": "ADOPTED_PARTIAL",
+  "purpose": "Detectar findings apresentados como complementares mas semanticamente ortogonais (não relaciona"
+ },
+ {
+  "module": "crystallization_jit",
+  "executor": "HYBRID",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Substituir descarte por regras temporais arbitrárias (manter últimas N entradas) por descarte b"
+ },
+ {
+  "module": "cs_persona_roster_boot",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Registrar 23 CS persona agents (OPP-154) no kernel do boot. Agentes convertidos de SKILL.md → A"
+ },
+ {
+  "module": "diff_ecosystem_v0202",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "diff_ecosystem_v022",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "diff_ecosystem_v026",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "diff_ecosystem_v027",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "diff_ecosystem_v028",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "diff_ecosystem_v029",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "diff_ecosystem_v030",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "diff_ecosystem_v031",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "diff_ecosystem_v031_legacy",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "diff_ecosystem_v031_preserved",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "diff_ecosystem_v032",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "domain_skills_v2",
+  "executor": "DOCUMENTATION",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Atualizar MODULE_domain_skills_ingestion (OPP-102) para refletir catálogo completo de 2.752 ski"
+ },
+ {
+  "module": "dsl_glossary",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "dsl_module_template",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "dsl_writing_guide",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "dynamic_skill_forge",
+  "executor": "SANDBOX_CODE",
+  "tier": 3,
+  "status": "ADOPTED",
+  "purpose": "Expandir a cobertura de domínios do APEX além dos anchors pré-definidos, carregando skills exte"
+ },
+ {
+  "module": "error_evolution_loop",
+  "executor": "HYBRID",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Transformar falhas de PoT programs de \"retry cego\" em ciclo de aprendizado. O traceback é captu"
+ },
+ {
+  "module": "ethical_barrier",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Formalizar regras éticas como penalidades de custo no geodesic_scheduler. Qualquer caminho de r"
+ },
+ {
+  "module": "event_bus_resilience",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Adiciona executor e what_if_fails ao event_bus (v00.19.0). O event_bus e referenciado por 15+ m"
+ },
+ {
+  "module": "external_critic_profile",
+  "executor": "HYBRID",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Mitigar o Gargalo G6 (autoavaliação circular): confrontar o meta_reasoning com evidência histór"
+ },
+ {
+  "module": "forgeskills_catalog_boot",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Estender o ForgeSkills Rapid Reader (OPP-106) para processar: CATALOG.md de integração (MCP ser"
+ },
+ {
+  "module": "forgeskills_true_autoboot",
+  "executor": "HYBRID",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Implementa o boot automatico real do ForgeSkills via INDEX.md parsing. apex_superrepo_boot (OPP"
+ },
+ {
+  "module": "fractal_hypothesis_compression",
+  "executor": "",
+  "tier": 1,
+  "status": "",
+  "purpose": "Poda o espaço de hipóteses em cada transição de nível fractal. Usa outputs de Specialized Skill"
+ },
+ {
+  "module": "fractal_knowledge_indexing",
+  "executor": "",
+  "tier": 1,
+  "status": "",
+  "purpose": "Indexa anchors e Knowledge Models por nível de resolução fractal. Evita carregar conhecimento n"
+ },
+ {
+  "module": "geodesic_scheduler",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 3,
+  "status": "ADOPTED_PARTIAL",
+  "purpose": "Otimizar a ordem de execução dos steps baseado em razão ΔH_cognitive/tokens_expected, permitind"
+ },
+ {
+  "module": "geometry_estimator",
+  "executor": "",
+  "tier": 2,
+  "status": "",
+  "purpose": "Estima DELTA_ERR adaptativo por bloco via estimador de resíduos (passo duplo). Subcomponente de"
+ },
+ {
+  "module": "hyperbolic_search_completeness",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Consolidar as implementações existentes de busca semântica por atração hiperbólica (attention_a"
+ },
+ {
+  "module": "hypothesis_dag",
+  "executor": "HYBRID",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Rastrear explicitamente dependências entre hipóteses, âncoras e evidências. Quando uma âncora é"
+ },
+ {
+  "module": "implementation_module",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": "Implementação Python completa de v00.21.0 — inclui todos os módulos de confiabilidade (Reliabil"
+ },
+ {
+  "module": "inviolable_rules_v022_additions",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "marketplace_skill_forge",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Integrar o sistema de Marketplace do Claude (marketplace.json + .claude-plugin/) ao SkillIndexe"
+ },
+ {
+  "module": "mental_interpreter",
+  "executor": "",
+  "tier": 1,
+  "status": "DEPRECATED",
+  "purpose": "[DEPRECATED v00.20.2] Interpreter LLM puro — substituído por mental_interpreter_v2. Mantido com"
+ },
+ {
+  "module": "mental_interpreter_v2",
+  "executor": "",
+  "tier": 1,
+  "status": "",
+  "purpose": "Orquestrador principal warmup→produção. Interpreta e executa PoT programs via subprocess extern"
+ },
+ {
+  "module": "merge_defensive",
+  "executor": "SANDBOX_CODE",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Garantir que a falha de um ou mais agentes especulativos nunca colapse a sessão. O merge isola "
+ },
+ {
+  "module": "modules",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "monte_carlo_simulator",
+  "executor": "SANDBOX_CODE",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Substituir estimativas heurísticas do LLM por distribuições de probabilidade reais. Em vez de \""
+ },
+ {
+  "module": "multi_sandbox_profiles",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Expandir o llm_runtime_adapter para reconhecer TODOS os runtimes sandbox: DeepSeek (@sandbox/@p"
+ },
+ {
+  "module": "multiagent_subprocess",
+  "executor": "HYBRID",
+  "tier": 3,
+  "status": "ADOPTED_PARTIAL",
+  "purpose": "Aumentar a diversidade de hipóteses antes da interferência, gerando N programas PoT com perspec"
+ },
+ {
+  "module": "online_skill_library",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Registro canônico e auditável de fontes ONLINE confiáveis de skills, integrado à skill_resoluti"
+ },
+ {
+  "module": "orchestrator",
+  "executor": "",
+  "tier": "0-3",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "page_loader",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Protocolo de carregamento de páginas do kernel compilado, com verificação de hash e honestidade"
+ },
+ {
+  "module": "parallel_pot_executor",
+  "executor": "SANDBOX_CODE",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Resolver o Gargalo G3: execução sequencial de PoT programs multiplica wall-clock time por N. Co"
+ },
+ {
+  "module": "patch_agents_base",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "patch_config_parameters",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "patch_event_bus",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "patch_inviolable_rules",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "patch_knowledge_anchor_schema",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "patch_mcfe_h_survival",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "patch_orchestrator",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "patch_snapshot_schema",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "patch_step_2",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "patch_step_3",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "patch_step_5",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "pipeline_v022_modifications",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "pipeline_v032_modifications",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "pmi_pm_mandatory_gate",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Tornar o scoping do pmi_pm um gate obrigatório e blocking. Antes desta correção, \"continuar\" di"
+ },
+ {
+  "module": "pot_engine",
+  "executor": "",
+  "tier": 1,
+  "status": "DEPRECATED",
+  "purpose": "[DEPRECATED v00.20.2] Motor PoT abstrato — substituído por pot_engine_v2. Mantido como fallback"
+ },
+ {
+  "module": "pot_engine_v2",
+  "executor": "",
+  "tier": 1,
+  "status": "",
+  "purpose": "Motor de Program of Thought com warmup preditivo (FIX-7). Implementação concreta em Python — su"
+ },
+ {
+  "module": "pot_max",
+  "executor": "HYBRID",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Quatro upgrades ortogonais ao pot_engine existente que aumentam confiabilidade e reduzem custo:"
+ },
+ {
+  "module": "pot_sandbox_unification",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Garantir que PoT Engine emita código Python com sintaxe de ativação correta para o runtime dete"
+ },
+ {
+  "module": "qa_compliance_v022",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "qa_compliance_v026",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "qa_compliance_v027",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "qa_compliance_v028",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "qa_compliance_v029",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "qa_compliance_v030",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "qa_compliance_v031",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "qa_compliance_v031_initial",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "repo_quality_baseline",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Estabelecer baseline de qualidade do repositório APEX pós-UCO-debug-2026-04-11. Documentar que "
+ },
+ {
+  "module": "rule_salience_scheduler",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Selecionar dinamicamente as top-K regras invioláveis RELEVANTES para a tarefa corrente e mantê-"
+ },
+ {
+  "module": "semantic_gravity_engine",
+  "executor": "HYBRID",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Computar a gravidade semântica de verdade (TF-IDF + cosine na sandbox, sklearn OPP-71) sobre 3 "
+ },
+ {
+  "module": "sequential_thinking_autoboot",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Ativar sequential_thinking MCP automaticamente nos modos DEEP, RESEARCH, SCIENTIFIC. OPP-103 de"
+ },
+ {
+  "module": "skill_hierarchy",
+  "executor": "",
+  "tier": 0,
+  "status": "",
+  "purpose": "Cadeia gravitacional formal: Agent → Generic Skills → Specialized Skills → Knowledge Models. Ca"
+ },
+ {
+  "module": "skill_resolution_priority",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Formalizar a regra de resolucao de skills com prioridade explicita: 1) Buscar no repositorio Gi"
+ },
+ {
+  "module": "skills_api_bridge",
+  "executor": "HYBRID",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Integrar a Anthropic Skills API (beta.skills.*) ao DynamicSkillForge como método alternativo de"
+ },
+ {
+  "module": "sklearn_self_difficulty",
+  "executor": "SANDBOX_CODE",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Dar ao APEX consciência dos seus próprios limites de competência. Se o problema é muito diferen"
+ },
+ {
+  "module": "snapshot_memory_hierarchy",
+  "executor": "HYBRID",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Reorganizar a persistência inter-sessão em 4 camadas com papéis distintos, recall SELETIVO por "
+ },
+ {
+  "module": "specialized_skill_engine",
+  "executor": "",
+  "tier": 1,
+  "status": "",
+  "purpose": "Orquestra o ciclo completo de execução de Specialized Skills: resolução da cadeia hierárquica, "
+ },
+ {
+  "module": "sqlite_snapshot_store",
+  "executor": "SANDBOX_CODE",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Resolver o Gargalo G4: context window consumido por histórico comprime a memória efetiva a 5-15"
+ },
+ {
+  "module": "sympy_formal_verifier",
+  "executor": "SANDBOX_CODE",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Substituir [CONJECTURA_FORMAL] por [FORMAL_VERIFIED] ou [FORMAL_REFUTED] para claims matemático"
+ },
+ {
+  "module": "test_scenarios_v020",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "test_scenarios_v021",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "tests",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "toolchain_validation_gate",
+  "executor": "SANDBOX_CODE",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Validação ferramental REAL (yaml.safe_load + ast.parse + schema mínimo) executada como gate blo"
+ },
+ {
+  "module": "uco_quality_gate",
+  "executor": "SANDBOX_CODE",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Inserir juiz objetivo independente do LLM entre geração e execução de PoT programs. UCO usa AST"
+ },
+ {
+  "module": "uco_runtime_digest",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Tornar o UCO score um sinal ativo de runtime para o meta_reasoning. Antes desta correção, o UCO"
+ },
+ {
+  "module": "uco_v4_analyzer",
+  "executor": "SANDBOX_CODE",
+  "tier": 1,
+  "status": "ADOPTED",
+  "purpose": "Define formalmente o uco_v4_analyzer — dependencia declarada em uco_quality_gate.depends_on mas"
+ },
+ {
+  "module": "undefined_modules_scaffold",
+  "executor": "LLM_BEHAVIOR",
+  "tier": 0,
+  "status": "ADOPTED",
+  "purpose": "Define formalmente os 7 modulos referenciados em depends_on mas inexistentes ate v00.34.0. Esta"
+ },
+ {
+  "module": "verification_gate",
+  "executor": "HYBRID",
+  "tier": 2,
+  "status": "ADOPTED",
+  "purpose": "Viabilizar inversão da proporção geração/verificação (P≠NP insight) sem explodir o budget de to"
+ },
+ {
+  "module": "versioning",
+  "executor": "",
+  "tier": 1,
+  "status": "",
+  "purpose": ""
+ },
+ {
+  "module": "versioning_v0321",
+  "executor": "",
+  "tier": "",
+  "status": "",
+  "purpose": ""
+ }
+]

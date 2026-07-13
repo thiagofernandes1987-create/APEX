@@ -1,0 +1,158 @@
+[
+ {
+  "id": "DIFF_GITHUB_SUPERREPO_BOOT_001",
+  "what": "GitHub Super-Repositório APEX como trusted_domain + boot automático",
+  "gargalo": "WHY — trusted_domains: G6 é uma regra de segurança. Adicionar o repositório do p",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_MULTI_LLM_ADAPTER_001",
+  "what": "Adaptador Multi-LLM com detecção de runtime e degradação graciosa",
+  "gargalo": "WHY — detecção em STEP_0: O LLM precisa saber suas capacidades ANTES de iniciar ",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_FORGESKILLS_RAPID_READER_001",
+  "what": "ForgeSkills Rapid Reader — pipeline 4-estágios para leitura rápida de repositórios",
+  "gargalo": "WHY — 4 estágios em vez de 1: Cada estágio tem fallback independente. WHY — INDE",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_HYPERBOLIC_ANCHOR_MAP_001",
+  "what": "Mapa hierárquico de anchors + bridges cross-domain para attraction_engine",
+  "gargalo": "WHY — bridges explícitos: Sem bridges, legal.art_406_cc e math.compound_interest",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_ZERO_AMBIGUITY_CODE_001",
+  "what": "Zero-Ambiguidade: padrão WHY/WHEN/HOW/WHAT_IF_FAILS obrigatório em todo código DSL",
+  "gargalo": "WHY — SR_40 como regra e não apenas guideline: Sem enforcement, o padrão deterio",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_LLM_AGNOSTIC_FORGESKILLS_001",
+  "what": "ForgeSkills LLM-agnóstico via urllib — fallback para GPT-4o e Gemini sem git clone",
+  "gargalo": "WHY — urllib.request e não requests ou httpx: urllib é stdlib Python universal. ",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "SR_42 — SHA-256 integrity gate para trusted_domains",
+  "what": "SR_42 — SHA-256 integrity gate para trusted_domains",
+  "gargalo": "Audit identificou que trusted_domains valida apenas URL mas não integridade do c",
+  "version": "apex_v00_36_0"
+ },
+ {
+  "id": "SR_43 — approval_required obrigatório para mudanças em conte",
+  "what": "SR_43 — approval_required obrigatório para mudanças em contexto crítico",
+  "gargalo": "Audit identificou OPPs com approval_required: false que modificavam trusted_doma",
+  "version": "apex_v00_36_0"
+ },
+ {
+  "id": "SR_44 — Mínimo de modos de falha por tipo de OPP",
+  "what": "SR_44 — Mínimo de modos de falha por tipo de OPP",
+  "gargalo": "Audit encontrou OPPs com what_if_fails contendo apenas 1 modo de falha trivial (",
+  "version": "apex_v00_36_0"
+ },
+ {
+  "id": "SR_45 — depends_on com módulo indefinido bloqueia aprovação ",
+  "what": "SR_45 — depends_on com módulo indefinido bloqueia aprovação de OPP",
+  "gargalo": "Audit encontrou 13 ghost dependencies no v00.34.0 (módulos referenciados em depe",
+  "version": "apex_v00_36_0"
+ },
+ {
+  "id": "Normalização de campos obrigatórios em 8 agentes community",
+  "what": "Normalização de campos obrigatórios em 8 agentes community",
+  "gargalo": "Audit encontrou que os 8 agentes community (community_security_code_reviewer, co",
+  "version": "apex_v00_36_0"
+ },
+ {
+  "id": "Remover duplicata apex_internals/plugins/skills/ — aponta pa",
+  "what": "Remover duplicata apex_internals/plugins/skills/ — aponta para create-cowork-plugin",
+  "gargalo": "Audit encontrou que skills/apex_internals/plugins/skills/SKILL.md é duplicata de",
+  "version": "apex_v00_36_0"
+ },
+ {
+  "id": "Registrar APEX_CREATION_GUIDE.md como módulo de referência n",
+  "what": "Registrar APEX_CREATION_GUIDE.md como módulo de referência no genome",
+  "gargalo": "APEX_CREATION_GUIDE.md foi gerado em 2026-04-10 como síntese canônica de análise",
+  "version": "apex_v00_36_0"
+ },
+ {
+  "id": "Logger estruturado com redação automática de PII para módulo",
+  "what": "Logger estruturado com redação automática de PII para módulos APEX",
+  "gargalo": "Audit identificou que módulos APEX não têm padrão unificado de logging. Sem reda",
+  "version": "apex_v00_36_0"
+ },
+ {
+  "id": "DIFF_ORJSON_SNAPSHOT_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_CONSTITUTIONAL_ANCHOR_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_SKILL_QUALITY_BAR_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_RISK_TAXONOMY_EXTENSION_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_MCP_BRIDGE_REAL_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_KNOWLEDGE_GRAPH_MEMORY_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_SESSION_FORK_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_TOKEN_BUDGET_TRACKER_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_DESIGN_FUSION_INJECTOR_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_UCO_EXTENDED_METRICS_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_DOMAIN_SKILLS_INGESTION_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ },
+ {
+  "id": "DIFF_SEQUENTIAL_THINKING_001",
+  "what": "",
+  "gargalo": "",
+  "version": "apex_v00_33_0"
+ }
+]
