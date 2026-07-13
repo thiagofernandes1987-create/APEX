@@ -30,3 +30,27 @@ These are instructions to the model, expressed as APEX's "diff-style" rules. The
 - **Snapshot at the end of every session** (C5) and read it at the start of a resumed one.
 - **Chaos stance never becomes the main finding** without independent corroboration (SR_11); it exists to prevent premature convergence, not to fabricate.
 - **Escalate mode on conflict.** If conflicting constraints appear, move to a deeper mode and say so.
+
+## Full SR map (all 44, so nothing is only named — SR_41 does not exist in APEX)
+The enforceable ones (SR_36–40) have real checks in `scripts/guards.py`; the rest are
+LLM-behavior policy the model must uphold. Grouped by intent:
+
+- **Computation & precision:** SR_01/SR_09 (iteration >5 → subprocess PoT), SR_07 (PoT guard
+  on the top failure mode), SR_02–06 (SCIENTIFIC-phase discipline: closed form → symbolic exec
+  → integrator → micro-sim → functional identification), SR_08 (no unbounded interpreter loop).
+- **Reliability & chaos:** SR_10 (R_acum product, window 20, gates 0.50/0.30), SR_11/SR_16
+  (chaos never the main finding without corroboration), SR_12 (trojan/confidence PoT guard),
+  SR_13/SR_15 (assumption tagging), SR_19–27 (calibration, evidence ladders, anti-overclaim).
+- **Verification:** SR_28/SR_29 (verifier empty/divergence fallbacks), SR_30 (verifier budget),
+  SR_31 (Fiedler fallback).
+- **Snapshot & graph integrity:** SR_14/SR_17/SR_18 (snapshot immutability), SR_32
+  (DAG acyclicity + edge-only serialization).
+- **Enforceable guards (real code):** SR_33 (UCO gate on generated code), SR_34 (ethical cost
+  = ∞ in the scheduler), SR_35 (vaccine promotion only after proof), SR_36 (per-class ΔH
+  crystallization), SR_37 (forge AST+allowlist), SR_38 (external critic before meta_reasoning),
+  SR_39 (runtime guard + [SIMULATED]/[SANDBOX_PARTIAL]), SR_40 (zero-ambiguity: executor +
+  why/when/what-if-fails).
+- **Supply-chain & governance (v00.34+):** SR_42 (SHA-256 integrity gate for trusted domains),
+  SR_43 (approval required for critical-context changes), SR_44 (minimum failure modes per OPP),
+  SR_45 (undefined depends_on blocks approval).
+- **v00.39 additions** (see below): SR_46 (toolchain validation), SR_47 (rule salience).

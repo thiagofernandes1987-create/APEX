@@ -1,4 +1,5 @@
 qa_compliance_v026:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   base: v00.25.0 (17/17 regressão base preservada)
   regression_suite_v026: 17/17 PASS + 16 novos testes adicionados
   total_diffs_applied: 21

@@ -21,5 +21,5 @@ The APEX inviolable guards, implemented as real PASS/REJECT checks (not LLM_BEHA
 
 ## Self-compliance
 The SR_40 linter was run against this skill's own scripts and SKILL.md. It initially FAILED on
-several files; those were fixed, and now **all 26 scripts + SKILL.md pass SR_40** — the skill
+several files; those were fixed, and now **all 27 scripts + SKILL.md pass SR_40** — the skill
 practices the guard it enforces. (Count updated in the v1.17.0 audit; the old text said 18.)

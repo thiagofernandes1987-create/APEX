@@ -296,6 +296,46 @@ def t_regressions():
     return "loads FP, getattr, installs sort, n_rel floor, express case+pow, chaos/r_acum: all fixed"
 
 
+# ── audit P1/P2/P3 rounds: new modules + wiring ──────────────────────────────
+def t_monte_carlo():
+    import monte_carlo as mc
+    def model(s): return s["a"] + s["b"]
+    d = {"a": {"dist": "normal", "mean": 50, "std": 5}, "b": {"dist": "fixed", "value": 10}}
+    r = mc.simulate(model, d, n_iterations=5000, seed=1)
+    assert r["status"] == "OK" and 58 < r["statistics"]["p50"] < 62, r
+    assert mc.simulate(lambda s: 1/0, d, 100)["status"] == "FAILED"
+    try:
+        mc.simulate(model, {"a": {"dist": "weibull"}}, 10); assert False
+    except ValueError:
+        pass
+    return f"MC P50={r['statistics']['p50']:.1f}, cv={r['statistics']['cv']:.3f}"
+
+def t_pmi_monte_carlo():
+    import orchestrator
+    lo = {"answer": "plano-A", "model_fn": lambda s: s["x"], "distributions": {"x": {"dist": "normal", "mean": 100, "std": 3}}}
+    hi = {"answer": "plano-B", "model_fn": lambda s: s["x"], "distributions": {"x": {"dist": "normal", "mean": 100, "std": 40}}}
+    r = orchestrator.pmi_converge([lo, hi])
+    assert "monte-carlo" in r["method"] and r["answer"] == "plano-A", r  # lowest CV wins
+    return "PMI picks lowest-CV plan by real simulation"
+
+def t_code_genetics_sqlite():
+    import code_genetics, tempfile, os
+    db = os.path.join(tempfile.mkdtemp(), "vax.db")
+    s = code_genetics.VaccineStore(db_path=db)
+    s.save_vaccine("NameError: name 'x' at line 5", "define x")
+    for ok in (True, True): s.record_outcome("NameError: name 'x' at line 5", ok)
+    s2 = code_genetics.VaccineStore(db_path=db)   # reopen -> persisted
+    assert s2.is_promotable("NameError: name 'x' at line 9"), s2.vaccines
+    return "vaccine persists + promotes across SQLite reopen"
+
+def t_snapshot_wire():
+    import orchestrator, snapshot
+    snap = snapshot.new_snapshot("audit run", "STANDARD")
+    r = orchestrator.run("optimize a data pipeline and validate the ml model", snapshot=snap)
+    assert r["snapshot"]["findings"] and r["snapshot"]["milestones"], r["snapshot"]
+    return f"run() recorded {len(r['snapshot']['findings'])} findings into snapshot"
+
+
 TESTS = [
     ("pot", t_pot), ("numeric", t_numeric), ("verify", t_verify), ("uco_gate", t_uco_gate),
     ("universal_code_optimizer_v4", t_uco_v4), ("router", t_router), ("skill_scout", t_skill_scout),
@@ -306,6 +346,8 @@ TESTS = [
     ("geodesic_scheduler", t_geodesic), ("verification_gate", t_verification_gate),
     ("fractal_compression", t_fractal), ("geometry_estimator", t_geometry), ("apex_st_metric", t_apex_st),
     ("repo_bridge", t_repo_bridge), ("_tfidf", t_tfidf_fallback), ("audit_regressions", t_regressions),
+    ("monte_carlo", t_monte_carlo), ("pmi_monte_carlo", t_pmi_monte_carlo),
+    ("code_genetics_sqlite", t_code_genetics_sqlite), ("snapshot_wire", t_snapshot_wire),
 ]
 
 

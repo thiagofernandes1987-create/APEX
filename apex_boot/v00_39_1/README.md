@@ -1,7 +1,7 @@
 # APEX v00.39.1 — Paged Microkernel Distribution
 
 > **Arquitetura:** MICROKERNEL + PAGED COGNITION
-> **Kernel:** v00.39.0 · sha8 `56c87491` · master sha8 `a3124099`
+> **Kernel:** v00.39.0 · sha8 `287d6c94` · master sha8 `a3124099`
 > **Compilado:** 2026-06-11 por `apex_compiler v2.1 LEAN` (OPP-163+171)
 > **Resolve:** GAP-06 (monólito boot 20K+ linhas vs context window — OPP-161)
 

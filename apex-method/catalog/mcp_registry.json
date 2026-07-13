@@ -106,5 +106,40 @@
   "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/life-sciences-plugins",
   "type": "mcp-domain-plugins",
   "domain": "life"
+ },
+ {
+  "id": "integrations/claude-commands",
+  "domain": "tooling",
+  "type": "command-pack",
+  "treatment": "indexed",
+  "note": "CATALOG.md — Claude slash-command packs"
+ },
+ {
+  "id": "integrations/external-plugins",
+  "domain": "general",
+  "type": "plugin-catalog",
+  "treatment": "indexed",
+  "note": "CATALOG.md — third-party plugin index"
+ },
+ {
+  "id": "integrations/knowledge-work",
+  "domain": "knowledge-work",
+  "type": "skill-collection",
+  "treatment": "indexed",
+  "note": "knowledge-work source skills"
+ },
+ {
+  "id": "integrations/official-plugins",
+  "domain": "general",
+  "type": "plugin-catalog",
+  "treatment": "indexed",
+  "note": "CATALOG.md — 28 official plugins"
+ },
+ {
+  "id": "integrations/plugins",
+  "domain": "general",
+  "type": "plugin-catalog",
+  "treatment": "indexed",
+  "note": "CATALOG.md — plugin index"
  }
 ]

@@ -483,7 +483,7 @@ hoisted_modules:
       \ as ex:\n        f = ex.submit(lambda: 42)\n    caps[\"ThreadPoolExecutor\"] = (f.result() == 42)\n\
       except Exception: pass\n\ntry:\n    import orjson; caps[\"orjson\"] = True\nexcept ImportError:\
       \ pass\n\ntry:\n    import ast; ast.parse(\"x=1\"); caps[\"ast_module\"] = True\nexcept Exception:\
-      \ pass\n\ntry:\n    import urllib.request\n    with urllib.request.urlopen(\"https://httpbin.org/get\"\
+      \ pass\n\ntry:\n    import urllib.request\n    with urllib.request.urlopen(\"https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/README.md\"\
       , timeout=5) as r:\n        caps[\"urllib_internet\"] = (r.status == 200)\nexcept Exception: pass\n\
       \ndef detect_profile(c):\n    if c[\"subprocess\"] and c[\"sqlite3\"] and c[\"git_available\"]:\n\
       \        return \"FULL_CLAUDE_CODE\"\n    elif c[\"numpy\"] and not c[\"subprocess\"]:\n       \

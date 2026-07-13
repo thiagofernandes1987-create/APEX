@@ -1,4 +1,5 @@
 semantic_gravity_engine:
+executor: HYBRID  # backfilled by lint_executor (SR_40)
   executor: HYBRID
   version: v00.39.0
   opp: OPP-169

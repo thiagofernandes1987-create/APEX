@@ -25,24 +25,61 @@ def signature(error_text: str) -> str:
 
 
 class VaccineStore:
-    def __init__(self):
+    def __init__(self, db_path=None):
+        """In-session dict by default. Pass db_path (audit P3) for real cross-session
+        SQLite persistence (as in the full APEX); load()/persist happen automatically."""
         self.vaccines = {}   # sig -> {fix, uses, successes}
+        self.db_path = db_path
+        if db_path:
+            self._init_db()
+            self._load()
+
+    def _init_db(self):
+        import sqlite3
+        con = sqlite3.connect(self.db_path)
+        con.execute("CREATE TABLE IF NOT EXISTS vaccines "
+                    "(sig TEXT PRIMARY KEY, fix TEXT, uses INTEGER, successes INTEGER)")
+        con.commit()
+        con.close()
+
+    def _load(self):
+        import sqlite3
+        con = sqlite3.connect(self.db_path)
+        for sig, fix, uses, succ in con.execute("SELECT sig, fix, uses, successes FROM vaccines"):
+            self.vaccines[sig] = {"fix": fix, "uses": uses, "successes": succ}
+        con.close()
+
+    def _persist(self, sig):
+        if not self.db_path:
+            return
+        import sqlite3
+        v = self.vaccines[sig]
+        con = sqlite3.connect(self.db_path)
+        con.execute("INSERT INTO vaccines(sig,fix,uses,successes) VALUES(?,?,?,?) "
+                    "ON CONFLICT(sig) DO UPDATE SET fix=excluded.fix, uses=excluded.uses, "
+                    "successes=excluded.successes",
+                    (sig, v["fix"], v["uses"], v["successes"]))
+        con.commit()
+        con.close()
 
     def save_vaccine(self, error_text, fix):
         sig = signature(error_text)
         v = self.vaccines.setdefault(sig, {"fix": fix, "uses": 0, "successes": 0})
         v["fix"] = fix
+        self._persist(sig)
         return sig
 
     def lookup(self, error_text):
         return self.vaccines.get(signature(error_text))
 
     def record_outcome(self, error_text, success: bool):
-        v = self.vaccines.get(signature(error_text))
+        sig = signature(error_text)
+        v = self.vaccines.get(sig)
         if not v:
             return None
         v["uses"] += 1
         v["successes"] += int(success)
+        self._persist(sig)
         return v
 
     def is_promotable(self, error_text):

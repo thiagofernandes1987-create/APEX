@@ -36,7 +36,7 @@
  },
  {
   "module": "apex_schema",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": "Strict JSON output schema for APEX."
@@ -85,7 +85,7 @@
  },
  {
   "module": "changelog_v020",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
@@ -141,77 +141,77 @@
  },
  {
   "module": "diff_ecosystem_v0202",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "diff_ecosystem_v022",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "diff_ecosystem_v026",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "diff_ecosystem_v027",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "diff_ecosystem_v028",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "diff_ecosystem_v029",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "diff_ecosystem_v030",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "diff_ecosystem_v031",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "diff_ecosystem_v031_legacy",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "diff_ecosystem_v031_preserved",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "diff_ecosystem_v032",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
@@ -225,21 +225,21 @@
  },
  {
   "module": "dsl_glossary",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "dsl_module_template",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "dsl_writing_guide",
-  "executor": "",
+  "executor": "SANDBOX_CODE",
   "tier": "",
   "status": "",
   "purpose": ""
@@ -295,14 +295,14 @@
  },
  {
   "module": "fractal_hypothesis_compression",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": 1,
   "status": "",
   "purpose": "Poda o espaço de hipóteses em cada transição de nível fractal. Usa outputs de Specialized Skill"
  },
  {
   "module": "fractal_knowledge_indexing",
-  "executor": "",
+  "executor": "SANDBOX_CODE",
   "tier": 1,
   "status": "",
   "purpose": "Indexa anchors e Knowledge Models por nível de resolução fractal. Evita carregar conhecimento n"
@@ -316,7 +316,7 @@
  },
  {
   "module": "geometry_estimator",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": 2,
   "status": "",
   "purpose": "Estima DELTA_ERR adaptativo por bloco via estimador de resíduos (passo duplo). Subcomponente de"
@@ -337,14 +337,14 @@
  },
  {
   "module": "implementation_module",
-  "executor": "",
+  "executor": "SANDBOX_CODE",
   "tier": "",
   "status": "",
   "purpose": "Implementação Python completa de v00.21.0 — inclui todos os módulos de confiabilidade (Reliabil"
  },
  {
   "module": "inviolable_rules_v022_additions",
-  "executor": "",
+  "executor": "DOCUMENTATION",
   "tier": "",
   "status": "",
   "purpose": ""
@@ -358,14 +358,14 @@
  },
  {
   "module": "mental_interpreter",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": 1,
   "status": "DEPRECATED",
   "purpose": "[DEPRECATED v00.20.2] Interpreter LLM puro — substituído por mental_interpreter_v2. Mantido com"
  },
  {
   "module": "mental_interpreter_v2",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": 1,
   "status": "",
   "purpose": "Orquestrador principal warmup→produção. Interpreta e executa PoT programs via subprocess extern"
@@ -379,7 +379,7 @@
  },
  {
   "module": "modules",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
@@ -414,7 +414,7 @@
  },
  {
   "module": "orchestrator",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "0-3",
   "status": "",
   "purpose": ""
@@ -435,91 +435,91 @@
  },
  {
   "module": "patch_agents_base",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "patch_config_parameters",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "patch_event_bus",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "patch_inviolable_rules",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "patch_knowledge_anchor_schema",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "patch_mcfe_h_survival",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "patch_orchestrator",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "patch_snapshot_schema",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "patch_step_2",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "patch_step_3",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "patch_step_5",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "pipeline_v022_modifications",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "pipeline_v032_modifications",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
@@ -533,14 +533,14 @@
  },
  {
   "module": "pot_engine",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": 1,
   "status": "DEPRECATED",
   "purpose": "[DEPRECATED v00.20.2] Motor PoT abstrato — substituído por pot_engine_v2. Mantido como fallback"
  },
  {
   "module": "pot_engine_v2",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": 1,
   "status": "",
   "purpose": "Motor de Program of Thought com warmup preditivo (FIX-7). Implementação concreta em Python — su"
@@ -561,56 +561,56 @@
  },
  {
   "module": "qa_compliance_v022",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "qa_compliance_v026",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "qa_compliance_v027",
-  "executor": "",
+  "executor": "SANDBOX_CODE",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "qa_compliance_v028",
-  "executor": "",
+  "executor": "SANDBOX_CODE",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "qa_compliance_v029",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "qa_compliance_v030",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "qa_compliance_v031",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "qa_compliance_v031_initial",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
@@ -645,7 +645,7 @@
  },
  {
   "module": "skill_hierarchy",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": 0,
   "status": "",
   "purpose": "Cadeia gravitacional formal: Agent → Generic Skills → Specialized Skills → Knowledge Models. Ca"
@@ -680,7 +680,7 @@
  },
  {
   "module": "specialized_skill_engine",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": 1,
   "status": "",
   "purpose": "Orquestra o ciclo completo de execução de Specialized Skills: resolução da cadeia hierárquica, "
@@ -701,21 +701,21 @@
  },
  {
   "module": "test_scenarios_v020",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "test_scenarios_v021",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
  },
  {
   "module": "tests",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": "",
   "status": "",
   "purpose": ""
@@ -764,14 +764,14 @@
  },
  {
   "module": "versioning",
-  "executor": "",
+  "executor": "LLM_BEHAVIOR",
   "tier": 1,
   "status": "",
   "purpose": ""
  },
  {
   "module": "versioning_v0321",
-  "executor": "",
+  "executor": "SANDBOX_CODE",
   "tier": "",
   "status": "",
   "purpose": ""

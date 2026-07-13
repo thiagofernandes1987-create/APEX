@@ -112,6 +112,14 @@
   "path": "scripts/mental_interpreter.py"
  },
  {
+  "id": "script:monte_carlo",
+  "type": "script",
+  "domain": "science",
+  "capabilities": "monte-carlo,simulation,percentiles,uncertainty,cv",
+  "mass": 128,
+  "path": "scripts/monte_carlo.py"
+ },
+ {
   "id": "script:numeric",
   "type": "script",
   "domain": "science",

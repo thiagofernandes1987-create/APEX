@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.17.1
+version: 1.18.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -112,8 +112,8 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   ordering (SR_38), runtime guard + [SIMULATED]/[SANDBOX_PARTIAL] marker (SR_39), and the
   zero-ambiguity linter (SR_40) — which this skill's own scripts now all pass.
 - **`scripts/skill_forge.py`** — native APEX skill generator (neoformat-valid `create`/`promote`).
-- **`scripts/asset_manager.py`** — manage/route all mined assets: 183 agents, 39 indexed
-  third-party assets, 18 MCP servers. `route(need)`, `summary()`, `mcps(domain)`.
+- **`scripts/asset_manager.py`** — manage/route all mined assets: 213 agents, 39 indexed
+  third-party assets, 23 MCP servers. `route(need)`, `summary()`, `mcps(domain)`.
 - **`scripts/bayes.py`** — the APEX Bayesian layer computed for real: beta-binomial update,
   posterior over hypotheses, Omega decision (adopt 0.72 / review 0.5), and the R_acum
   reliability gate (product over window 20; <0.50 replan, <0.30 early-exit). Wired into PMI.
@@ -130,6 +130,9 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   data until vetted (SR_37/H5 still apply before anything runs).
 - **`scripts/_tfidf.py`** — pure-python TF-IDF fallback: router/gravity/agent_registry (and
   therefore the orchestrator) keep working when scikit-learn is not installed.
+- **`scripts/monte_carlo.py`** — REAL Monte Carlo (OPP-73): `simulate(model_fn, distributions)`
+  returns P10/P50/P90 + CV. Wired into PMI so QUANTIFIABLE candidates are decided by simulation,
+  never by calling a weighted vote "Monte Carlo" (§10). numpy optional (stdlib fallback).
 
 **Dependencies:** stdlib only, except *optional* `scikit-learn` (better routing) and `sympy`
 (formal verify — without it `verify.py` returns `[CONJECTURA_FORMAL]` instead of crashing).
@@ -237,7 +240,7 @@ skill router, audit, autopsy, structured reasoning.
   plan() gap-detection → skills.sh install request → MCP/skill_forge fallback.
 - `catalog/uco_sensor_engines.json` — the 9 UCO-Sensor engines (OSV/SCA, taint, SAST, IaC, HMC…).
 - `references/apex-assets.md` — full APEX repo mined: 183 agents + skill_forge + UCO + UCO-Sensor
-  (nativized) and 39 third-party assets + 18 MCP servers (indexed/managed). Catalogs:
+  (nativized) and 39 third-party assets + 23 MCP servers (indexed/managed). Catalogs:
   `managed_assets.json`, `mcp_registry.json`, `apex_agents_roster.json`.
 - `references/scenarios.md` — worked end-to-end examples.
 - `catalog/apex_native_skills_index.json` — the FULL native library: all 3,784 repo skills

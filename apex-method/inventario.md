@@ -1,6 +1,6 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.17.1 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.18.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
@@ -12,16 +12,17 @@ checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescen
 ### Marco 1 — Formato & validação
 - [x] Frontmatter 100% válido contra o schema neoformat (theneoai)
 - [x] SKILL.md ≤ 300 linhas (245), seções § numeradas, Trigger Words, Scope & Limitations
-- [x] Conformidade SR_40 (why/when/what-if-fails) em 26/26 scripts + SKILL.md
+- [x] Conformidade SR_40 (why/when/what-if-fails) em 27/27 scripts + SKILL.md
 - [x] `.skill` instalável + `.zip` da árvore de repositório (v1.17.x reconstruídos)
 - [x] Versão unificada (era 1.15 no inventário × 1.16 no SKILL.md — drift corrigido)
 
-### Marco 2 — Motores executáveis (26 scripts, 27/27 no benchmark)
+### Marco 2 — Motores executáveis (27 scripts, 31/31 no benchmark)
 - [x] Raciocínio: `orchestrator`, `mental_interpreter`, `pot`, `hypothesis_dag`, `fractal_compression`
 - [x] Numérico/formal: `numeric` (RK4/Euler), `verify` (sympy, degrada sem ele), `geometry_estimator`
 - [x] Bayesiano: `bayes` (beta-binomial, Ω, R_acum), `apex_st_metric`
 - [x] Qualidade/segurança: `uco_gate`, `universal_code_optimizer_v4` (byte-idêntico ao autoral), `guards` (SR_36–40), `skill_scout`
 - [x] Escalonamento: `geodesic_scheduler`, `verification_gate`
+- [x] Probabilístico: `monte_carlo` (P10/P50/P90 + CV, numpy opcional; ligado ao PMI para hipóteses quantificáveis)
 - [x] Skills/recursos: `router`, `gravity`, `curated`, `asset_manager`, `skill_forge`, `agent_registry`, `code_genetics`, `snapshot`
 - [x] Integração do repo: `repo_bridge` (3.784 skills nativas + 213 agentes + 111 páginas + qualquer arquivo)
 - [x] Resiliência: `_tfidf` (fallback puro-Python — o núcleo funciona SEM sklearn/sympy instalados)
@@ -33,10 +34,10 @@ checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescen
 - [x] `skills_catalog.json` — 430 skills externas theneoai (URLs raw fetchable, 3/3 amostradas OK)
 - [x] `curated_skills.json` — melhores skills por domínio (skills.sh + repos)
 - [x] `managed_assets.json` — 41 assets (cobertura 1:1 com `algorithms/`)
-- [x] `mcp_registry.json` — 18 servidores MCP por domínio
+- [x] `mcp_registry.json` — 23 servidores MCP (os 5 dirs de integrations/ antes fora do registry foram indexados)
 - [x] `module_registry.json` — 111 módulos (bate 1:1 com as páginas do boot v00.39.1)
 - [x] `diffs_lib.json` — **18/18 DIFF_*** dos packs v00.33–36 (12 faltavam) + SR_42–45 + normalizações
-- [x] `scripts_lib.json` — 26 scripts (massa=LOC, para a gravidade)
+- [x] `scripts_lib.json` — 27 scripts (massa=LOC, para a gravidade)
 - [x] `algorithms_map.json` — 8 repos skills.sh de alto valor mapeados
 - [x] `uco_sensor_engines.json` — 9 motores do UCO-Sensor
 
@@ -58,7 +59,7 @@ checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescen
       pickle/marshal/dill/shelve/yaml/joblib)
 
 ### Marco 6 — Testes / benchmark
-- [x] `tests/benchmark.py` — 1 teste com asserções por módulo + regressões da auditoria (**27/27 PASS**)
+- [x] `tests/benchmark.py` — 1 teste por módulo + regressões + rodadas P1/P2/P3 (**31/31 PASS**)
 - [x] Regressão por bug: um assert para cada um dos 10 bugs corrigidos
 - [x] Ambiente limpo simulado (sem sklearn/sympy): núcleo continua vivo, degradação declarada
 - [x] `tests/benchmark_report.json` — relatório reutilizável para auditorias futuras
@@ -132,54 +133,53 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
 
 ---
 
-## 📋 Backlog — o que falta acrescentar ou corrigir (pontos levantados nas auditorias)
+## ✅ Rodadas de correção do backlog (P1 → P2 → P3, todas concluídas e testadas)
 
-### P1 — Alto impacto na qualidade
-- [ ] **Roteamento por embeddings reais** (substituir/complementar TF-IDF): a atração é lexical
-      e cruza mal PT↔EN — no teste ponta a ponta, disciplinas ficaram sem agente atraído e
-      nenhum diff foi puxado (textos dos diffs em PT, tarefa em EN). Alternativas: embeddings
-      locais, ou normalizar todos os textos de catálogo para EN, ou índice bilíngue.
-- [ ] **Enriquecer o índice nativo**: descrições truncadas em 110 chars fazem buscas como
-      "bayesian" retornarem vazio; gerar índice com descrição completa + trigger words + tags
-      (custo: ~1–2MB de catálogo, aceitável).
-- [ ] **Traduzir/normalizar os textos da `diffs_lib`** para que diffs participem de verdade da
-      constelação gravitacional.
+### P1 — qualidade de roteamento (FEITO)
+- [x] **Diffs bilíngues**: campo `text_en` na `diffs_lib` — diffs agora são atraídos por
+      tarefas em inglês (validado: `DIFF_ZERO_AMBIGUITY_CODE_001` puxado por tarefa EN).
+- [x] **Índice nativo enriquecido**: descrição até 400 chars + trigger words; busca "bayesian"
+      agora retorna resultados (antes: vazio). `repo_bridge.search_native` também varre triggers.
+- [x] **Fallback de radius no `gravity.plan`**: relaxa quando o raio estrito traz <3 membros.
 
-### P2 — Segurança e fonte da verdade (a maioria no REPOSITÓRIO, não na skill)
-- [ ] **V-01 (repo)**: org `apex-marketplace` reivindicável em trusted_domains → registrar a
-      org ou remover; pin por sha.
-- [ ] **V-02 (repo)**: `apex_semantic_index.pkl` desserializado com `pickle.load` (RCE se
-      trocado) → reconstruir via `build()` a partir de texto.
-- [ ] **V-03 (repo)**: sonda de rede usa `httpbin.org`, fora da própria allowlist G6 → sondar
-      host permitido.
-- [ ] **Corrigir `tools/generate_agent_roster.py` na fonte**: varrer também `community-awesome`
-      (o ponto cego que gerou o roster incompleto herdado pela skill).
-- [ ] **`executor:` ausente em 40+ páginas** do boot (viola SR_40) → linter no compilador.
-- [ ] **Pin de commit por padrão no `repo_bridge`**: hoje `APEX_REPO_REF` default é `main`
-      (branch móvel); ao estabilizar, publicar um sha/tag recomendado no SKILL.md.
+### P2 — segurança e fonte da verdade (FEITO)
+- [x] **V-02 corrigido**: `_RestrictedUnpickler` no `apex_semantic_index.py` — pickle malicioso
+      é bloqueado (validado: `posix.system` recusado), pickle legítimo carrega. Rebuild via build().
+- [x] **V-03 corrigido**: sonda de rede usa host da allowlist (raw.githubusercontent) em vez de
+      httpbin.org — nas 2 versões de kernel + página do probe.
+- [x] **Roster generator corrigido na fonte**: `collect_awesome_agents()` varre `community-awesome`
+      (o ponto cego); generator agora encontra 196 (era 163).
+- [x] **Linter `executor:` (`tools/lint_executor.py`)**: preenche as 50 páginas sem executor;
+      `page_manifest` sha8 regenerado (111/111 conferem) + `module_registry` sincronizado (0 vazios).
+- [x] **Pin de commit**: `repo_bridge` aceita `APEX_REPO_REF`/`set_ref()` (já em v1.17).
 
-### P3 — Completude e polimento
-- [ ] **Monte Carlo real como script**: portar o `monte_carlo_simulator` (módulo SAND do repo)
-      para `scripts/`, para que hipóteses QUANTIFICÁVEIS no PMI sejam decididas por simulação
-      codável (mantendo a regra: ponderação qualitativa nunca se chama "Monte Carlo").
-- [ ] **Documentar as 25 SRs restantes**: `references/rules.md` cobre a essência + SR_46/47,
-      mas 19/44 SRs são citadas nominalmente; enumerar as demais (mesmo as 🔵 de política).
-- [ ] **5 diretórios de `integrations/` fora do `mcp_registry`** (claude-commands,
-      external-plugins, knowledge-work, official-plugins, plugins) → indexar ou justificar.
-- [ ] **Wire opcional de `snapshot`/`apex_st_metric` no `orchestrator.run()`**: hoje o fim do
-      fluxo (snapshot + métrica de progresso) é disciplina do LLM; um parâmetro
-      `run(..., snapshot=...)` fecharia o loop em código.
-- [ ] **EVALUATION_REPORT independente**: o atual é auto-avaliado (declarado no próprio
-      arquivo); uma avaliação externa com rubrica fecharia o ciclo de qualidade.
-- [ ] **Persistência opcional do `code_genetics`** (SQLite como no APEX completo; hoje é
-      dict de sessão com persistência externa via snapshot).
+### P3 — completude (FEITO)
+- [x] **Monte Carlo real** (`scripts/monte_carlo.py`, OPP-73): P10/P50/P90 + CV, numpy opcional;
+      ligado ao PMI (hipótese quantificável de menor CV vence) — nunca chama voto ponderado de MC.
+- [x] **SRs documentadas**: `references/rules.md` agora mapeia as 44 SRs (não só 19) + SR_46/47.
+- [x] **5 integrations/ indexados** no `mcp_registry` (claude-commands, external-plugins,
+      knowledge-work, official-plugins, plugins).
+- [x] **`snapshot` ligado ao `run()`**: `orchestrator.run(task, snapshot=...)` grava findings +
+      milestones + skills staged no snapshot (fecha o loop C5 em código).
+- [x] **`code_genetics` com SQLite opcional**: `VaccineStore(db_path=...)` persiste e promove
+      vacinas entre reaberturas (validado no benchmark).
 
----
+## 📋 Backlog remanescente (fora do escopo imediato / pesquisa)
+
+- [ ] **Embeddings reais** (substituir TF-IDF lexical de vez): os diffs bilíngues e o índice
+      enriquecido mitigaram o gap PT↔EN, mas roteamento por significado exige um modelo de
+      embeddings — melhoria de pesquisa, não bug.
+- [ ] **V-01 (repo)**: registrar/remover a org `apex-marketplace` de trusted_domains e pinar
+      por sha — decisão de infra do dono do repo (a skill já não depende dela).
+- [ ] **EVALUATION_REPORT independente**: o atual é auto-avaliado; uma rubrica externa fecharia
+      o ciclo de qualidade.
+- [ ] **Rodar `lint_executor` dentro do `apex_compiler`** de fato (hoje é um tool à parte que o
+      compilador *deve* chamar na fase de validação).
 
 ## 🎯 Rodar o benchmark (para auditorias futuras)
 
 ```bash
-python3 tests/benchmark.py     # 27/27 PASS esperado; gera tests/benchmark_report.json
+python3 tests/benchmark.py     # 31/31 PASS esperado; gera tests/benchmark_report.json
 ```
 
 Compare `benchmark_report.json` entre versões para detectar regressões. Cada linha tem
@@ -193,9 +193,9 @@ um assert por bug corrigido na autópsia.
 Cobertos e integrados: **pipeline + 5 modos**, **8 C / 44 SR (+46/47 documentadas) / 18 G /
 7 H / 130 OPPs** (as computáveis como código, as de política documentadas+enforçadas),
 **213 agentes**, **3.784 skills nativas indexadas + 430 externas + mapa skills.sh**,
-**18 DIFFs**, **26 scripts**, **111 módulos**, **UCO byte-idêntico + UCO-Sensor (9 motores
+**18 DIFFs**, **27 scripts**, **111 módulos**, **UCO byte-idêntico + UCO-Sensor (9 motores
 indexados)**, **camada bayesiana verificada**, **gravidade/atração**, **descoberta em cascata
 com aprovação humana**, **MCP registry**, **ponte para o repositório inteiro**, e o
-**benchmark 27/27**. O que é serviço externo (UCO-Sensor completo, feeds OSV) está indexado
+**benchmark 31/31**. O que é serviço externo (UCO-Sensor completo, feeds OSV) está indexado
 com interface; o que é terceiro está gerenciado (não copiado). O que ainda falta está
 explícito no backlog acima — nada pendente ficou sem registro.

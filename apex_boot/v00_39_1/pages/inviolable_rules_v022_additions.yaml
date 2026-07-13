@@ -1,4 +1,5 @@
 inviolable_rules_v022_additions:
+executor: DOCUMENTATION  # backfilled by lint_executor (SR_40)
   critical:
   - 'SR_13: [ALGORITHM_KERNEL_GUARD] Todo PoT que invoca algoritmo do algorithm_kernel DEVE: (a) verificar
     tier A ou B (com código); (b) incluir fmea_guards no STEP_0; (c) respeitar sr09_applies. Invocar TIER_C

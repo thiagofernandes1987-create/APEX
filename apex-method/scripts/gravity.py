@@ -87,8 +87,11 @@ def load_resources():
                           "text": f"{dom} {s.get('use_when','')}", "mass": _parse_installs(s.get("installs", "1"))})
     # diffs (mass = small constant; they are rules/constraints)
     for d in _load("diffs_lib.json"):
+        # bilingual body text (P1 audit backlog): PT-only diff texts never attracted
+        # against EN tasks — text_en makes diffs first-class constellation members
         R.append({"id": f"diff:{d['id']}", "type": "diff",
-                  "text": f"{d.get('what','')} {d.get('gargalo','')}", "mass": 80.0})
+                  "text": f"{d.get('what','')} {d.get('gargalo','')} {d.get('text_en','')}",
+                  "mass": 80.0})
     return R
 
 

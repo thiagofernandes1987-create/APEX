@@ -1,4 +1,5 @@
 monte_carlo_simulator:
+executor: SANDBOX_CODE  # backfilled by lint_executor (SR_40)
   executor: SANDBOX_CODE
   version: v00.32.1
   opp: OPP-73

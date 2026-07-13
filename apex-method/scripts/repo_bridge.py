@@ -103,7 +103,7 @@ def search_native(query, k=5):
     stems = [w[:5] for w in words if len(w) >= 6]   # statistics ~ statistical, optimize ~ optimizer
     scored = []
     for s in idx:
-        text = f"{s['id']} {s['category']} {s['kind']} {s['desc']}".lower()
+        text = f"{s['id']} {s['category']} {s['kind']} {s['desc']} {s.get('triggers','')}".lower()
         score = sum(2 * text.count(w) for w in words) or sum(text.count(st) for st in stems)
         if score:
             scored.append((score, s))

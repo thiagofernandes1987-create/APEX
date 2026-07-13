@@ -117,13 +117,34 @@ def pmi_converge(candidates):
     # CRITICAL_EARLY_EXIT exactly when the method was working as designed. It still
     # participates in the debate/posterior below.
     gate_confs = [c["confidence"] for c in candidates
-                  if "chaos" not in (str(c.get("stance", "")) + str(c.get("discipline", ""))).lower()]
-    gate = bayes.r_acum(gate_confs or [c["confidence"] for c in candidates])
+                  if "confidence" in c
+                  and "chaos" not in (str(c.get("stance", "")) + str(c.get("discipline", ""))).lower()]
+    all_confs = [c["confidence"] for c in candidates if "confidence" in c]
+    gate = bayes.r_acum(gate_confs or all_confs or [1.0])
 
     # G5 (bayes.filter_priors): drop candidates whose explicit prior is below 0.4
     if any("prior" in c for c in candidates):
         keep = bayes.filter_priors({str(c["answer"]): c.get("prior", 1.0) for c in candidates})
         candidates = [c for c in candidates if str(c["answer"]) in keep] or candidates
+
+    # audit P3: quantifiable candidates (model_fn + distributions) -> REAL Monte Carlo,
+    # not a weighted vote. Honest use of the term (SKILL.md §10).
+    simulable = [c for c in candidates if callable(c.get("model_fn")) and c.get("distributions")]
+    if simulable:
+        import monte_carlo
+        sims = []
+        for c in simulable:
+            r = monte_carlo.simulate(c["model_fn"], c["distributions"],
+                                     n_iterations=c.get("n", 10000))
+            if r["status"] in ("OK", "PARTIAL"):
+                sims.append((c, r))
+        if sims:
+            best_c, best_r = min(sims, key=lambda cr: cr[1]["statistics"]["cv"])
+            return {"answer": best_c.get("answer", best_r["statistics"]["p50"]),
+                    "reliability": round(max(0.0, 1.0 - best_r["statistics"]["cv"]), 3),
+                    "monte_carlo": best_r["marker"], "statistics": best_r["statistics"],
+                    "method": "monte-carlo simulation (real; lowest CV wins)",
+                    "r_acum": gate}
 
     numeric = []
     for c in candidates:
@@ -157,7 +178,7 @@ def pmi_converge(candidates):
 
 
 # ── FULL FLOW ─────────────────────────────────────────────────────────────────
-def run(task, candidates=None):
+def run(task, candidates=None, snapshot=None):
     ex = express_check(task)
     if ex:
         return {"path": "EXPRESS", **ex}
@@ -172,6 +193,19 @@ def run(task, candidates=None):
               "specialists": specialists, "phase_plan": phase_plan}
     if candidates:
         result["pmi_decision"] = pmi_converge(candidates)
+    # audit P3: close the loop in code — record the run into the snapshot (C5) so the end
+    # of the flow (snapshot + provenance) is not left purely to the LLM's discipline.
+    if snapshot is not None:
+        import snapshot as snap_mod
+        snapshot["mode"] = mode
+        snapshot["milestones"].append(f"dissected into {len(disciplines)} disciplines; mode {mode}")
+        snap_mod.add_finding(snapshot, f"pipeline planned for: {task[:80]}",
+                             where="orchestrator.run", how=f"disciplines={disciplines}",
+                             confidence="[APPROX] medium")
+        for d, spec in specialists.items():
+            for gap in spec.get("install_requests", []):
+                snapshot["skills_staged"].append({"id": gap, "use_when": d, "status": "STAGED"})
+        result["snapshot"] = snapshot
     return result
 
 

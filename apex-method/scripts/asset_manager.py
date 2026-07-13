@@ -3,7 +3,7 @@
 asset_manager.py — APEX manages & routes all mined assets.
 
 WHY: the full APEX repo yields (a) APEX-native assets (UCO, UCO-Sensor) that are
-nativized, and (b) 39 third-party assets + 18 MCP servers that are INDEXED (not copied).
+nativized, and (b) 39 third-party assets + 23 MCP servers that are INDEXED (not copied).
 This lets APEX list, filter, and route to any of them by need — with third-party items
 always going through scout + approval before install/run.
 

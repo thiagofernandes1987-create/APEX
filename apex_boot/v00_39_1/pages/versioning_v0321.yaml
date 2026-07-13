@@ -1,4 +1,5 @@
 versioning_v0321:
+executor: SANDBOX_CODE  # backfilled by lint_executor (SR_40)
   version: v00.32.1
   base: v00.32.0
   session: APEX-LIVE-2026-04
