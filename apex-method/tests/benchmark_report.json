@@ -1,75 +1,75 @@
 {
  "passed": 31,
  "total": 31,
- "total_ms": 1831.0,
+ "total_ms": 1930.1,
  "results": [
   {
    "module": "pot",
    "ok": true,
-   "ms": 33.1,
+   "ms": 38.4,
    "metric": "sum 1..100 = 5050",
    "error": ""
   },
   {
    "module": "numeric",
    "ok": true,
-   "ms": 5.8,
+   "ms": 8.1,
    "metric": "RK4 energy err 8.72e-12",
    "error": ""
   },
   {
    "module": "verify",
    "ok": true,
-   "ms": 432.1,
+   "ms": 483.5,
    "metric": "identity VERIFIED / REFUTED",
    "error": ""
   },
   {
    "module": "uco_gate",
    "ok": true,
-   "ms": 138.6,
+   "ms": 117.7,
    "metric": "loop REJECTED (UCO)",
    "error": ""
   },
   {
    "module": "universal_code_optimizer_v4",
    "ok": true,
-   "ms": 0.9,
+   "ms": 0.7,
    "metric": "loop_risk 0.65",
    "error": ""
   },
   {
    "module": "router",
    "ok": true,
-   "ms": 933.3,
+   "ms": 958.8,
    "metric": "routes to frontend",
    "error": ""
   },
   {
    "module": "skill_scout",
    "ok": true,
-   "ms": 59.5,
+   "ms": 71.8,
    "metric": "3 attacks blocked, clean passes",
    "error": ""
   },
   {
    "module": "skill_forge",
    "ok": true,
-   "ms": 1.7,
+   "ms": 1.8,
    "metric": "generates valid SKILL.md",
    "error": ""
   },
   {
    "module": "snapshot",
    "ok": true,
-   "ms": 1.4,
+   "ms": 1.5,
    "metric": "snapshot new/add/compress/decompress",
    "error": ""
   },
   {
    "module": "agent_registry",
    "ok": true,
-   "ms": 16.4,
+   "ms": 16.3,
    "metric": "core->engineer, ext->data-engineer",
    "error": ""
   },
@@ -83,35 +83,35 @@
   {
    "module": "asset_manager",
    "ok": true,
-   "ms": 1.4,
+   "ms": 1.3,
    "metric": "41 assets, 23 mcps",
    "error": ""
   },
   {
    "module": "gravity",
    "ok": true,
-   "ms": 31.1,
+   "ms": 24.2,
    "metric": "security constellation: 2 agents",
    "error": ""
   },
   {
    "module": "bayes",
    "ok": true,
-   "ms": 1.2,
+   "ms": 1.5,
    "metric": "beta-binomial 0.75, posterior A=0.7407",
    "error": ""
   },
   {
    "module": "orchestrator",
    "ok": true,
-   "ms": 27.1,
+   "ms": 29.4,
    "metric": "2+2=4 express; hard->SCIENTIFIC; pmi rel=0.875",
    "error": ""
   },
   {
    "module": "hypothesis_dag",
    "ok": true,
-   "ms": 1.2,
+   "ms": 1.1,
    "metric": "cycle rejected, cascade 3",
    "error": ""
   },
@@ -146,21 +146,21 @@
   {
    "module": "verification_gate",
    "ok": true,
-   "ms": 0.8,
+   "ms": 0.9,
    "metric": "DEEP routes H1, prune@test2",
    "error": ""
   },
   {
    "module": "fractal_compression",
    "ok": true,
-   "ms": 1.3,
+   "ms": 1.2,
    "metric": "kept ['H1', 'H2']",
    "error": ""
   },
   {
    "module": "geometry_estimator",
    "ok": true,
-   "ms": 0.9,
+   "ms": 0.8,
    "metric": "euler block size 5",
    "error": ""
   },
@@ -174,49 +174,49 @@
   {
    "module": "repo_bridge",
    "ok": true,
-   "ms": 54.5,
+   "ms": 56.0,
    "metric": "native index 3784, traversal refused",
    "error": ""
   },
   {
    "module": "_tfidf",
    "ok": true,
-   "ms": 1.6,
+   "ms": 1.7,
    "metric": "pure-python tf-idf ranks + pairwise ok",
    "error": ""
   },
   {
    "module": "audit_regressions",
    "ok": true,
-   "ms": 0.4,
+   "ms": 0.5,
    "metric": "loads FP, getattr, installs sort, n_rel floor, express case+pow, chaos/r_acum: all fixed",
    "error": ""
   },
   {
    "module": "monte_carlo",
    "ok": true,
-   "ms": 12.2,
+   "ms": 12.6,
    "metric": "MC P50=60.0, cv=0.083",
    "error": ""
   },
   {
    "module": "pmi_monte_carlo",
    "ok": true,
-   "ms": 36.6,
+   "ms": 36.4,
    "metric": "PMI picks lowest-CV plan by real simulation",
    "error": ""
   },
   {
    "module": "code_genetics_sqlite",
    "ok": true,
-   "ms": 23.4,
+   "ms": 49.0,
    "metric": "vaccine persists + promotes across SQLite reopen",
    "error": ""
   },
   {
    "module": "snapshot_wire",
    "ok": true,
-   "ms": 9.1,
+   "ms": 9.5,
    "metric": "run() recorded 1 findings into snapshot",
    "error": ""
   }
