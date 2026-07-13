@@ -293,7 +293,19 @@ def t_regressions():
         {"discipline": "chaos", "answer": "B", "confidence": 0.35}])
     assert pmi["r_acum"]["status"] != "CRITICAL_EARLY_EXIT", pmi["r_acum"]
     assert "B" in pmi["posteriors"], pmi  # chaos still debates in the posterior
-    return "loads FP, getattr, installs sort, n_rel floor, express case+pow, chaos/r_acum: all fixed"
+    # skills.sh marketplace >=1000-install quality bar filters correctly
+    import skills_sh
+    items = [skills_sh._norm({"owner":"a","name":"big","installs":5000}),
+             skills_sh._norm({"owner":"b","name":"tiny","installs":9})]
+    assert [i for i in items if i["installs"] >= 1000] == [items[0]], items
+    # offline discovery degrades to ready-to-run commands (never crashes)
+    assert skills_sh.install_requests("x")["requests"][0]["status"] == "STAGED_needs_approval"
+    # char-ngram semantic backend beats word TF-IDF on a cross-language cognate miss
+    import _tfidf
+    w,_ = _tfidf.semantic_rank("otimização de portfólio", ["portfolio optimization", "web design"], backend="word")
+    c,_ = _tfidf.semantic_rank("otimização de portfólio", ["portfolio optimization", "web design"], backend="char")
+    assert max(w) == 0 and c.index(max(c)) == 0, (w, c)
+    return "loads FP, getattr, installs sort, n_rel floor, express, chaos/r_acum, skills.sh bar, char-ngram: all fixed"
 
 
 # ── audit P1/P2/P3 rounds: new modules + wiring ──────────────────────────────

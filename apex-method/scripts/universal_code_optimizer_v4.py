@@ -1,6 +1,13 @@
 """
 Universal Code Optimizer (UCO) v4.0
 =====================================
+WHY: objective, LLM-independent code quality — 9-channel spectral analysis (Hamiltonian,
+  cyclomatic, DSM, dead code, loop risk) so generated code is judged by math, not opinion.
+WHEN: the SR_33 gate (uco_gate.py) calls this on every generated program before it runs.
+WHAT IF IT FAILS: uco_gate.py falls back to a lightweight AST scan (see its own fallback).
+NOTE: nativized copy of the author's algorithms/uco engine — same logic; this header adds the
+  APEX SR_40 documentation convention that the skill lints its own scripts against.
+
 Análise cirúrgica + otimização multi-engine para código multi-linguagem.
 Combina física estatística (HMC, SA) com engenharia de software (CFG, DSM, Halstead).
 

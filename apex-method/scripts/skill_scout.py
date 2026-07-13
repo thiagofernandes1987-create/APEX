@@ -137,12 +137,29 @@ def evaluate(skill_md_url: str, code_urls: list = None) -> dict:
         result["status"] = "REJECTED_UNSAFE"
         result["reasons"] = scan_reasons
 
+    # trust tier (idea adopted from vercel-labs find-skills): prefer official owners.
+    result["checks"]["trust_tier"] = trust_tier(skill_md_url)
+
     result["snapshot_entry"] = {
         "id": meta["name"], "source": skill_md_url, "kind": meta["kind"],
         "use_when": meta["description"][:120], "status": result["status"],
+        "trust_tier": result["checks"]["trust_tier"],
         "gate": "requires explicit user approval before install/run",
     }
     return result
+
+
+# owners the find-skills convention treats as first-party / pre-trusted (still AST-scanned).
+OFFICIAL_OWNERS = ("anthropics", "anthropic-ai", "vercel-labs", "vercel", "openai",
+                   "modelcontextprotocol", "thiagofernandes1987-create")
+
+
+def trust_tier(url: str) -> str:
+    """OFFICIAL if the raw URL's owner is a known first-party org, else COMMUNITY.
+    Never a substitute for the AST scan + H5 approval — just a ranking signal."""
+    m = re.match(r"https://raw\.githubusercontent\.com/([^/]+)/", url or "")
+    owner = m.group(1).lower() if m else ""
+    return "OFFICIAL" if owner in OFFICIAL_OWNERS else "COMMUNITY"
 
 
 if __name__ == "__main__":

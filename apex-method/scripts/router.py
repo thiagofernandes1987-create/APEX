@@ -39,16 +39,23 @@ def load_catalog(path=CATALOG):
         return json.load(f)
 
 
-def route(task: str, catalog: list, k: int = 3, threshold: float = 0.02):
+def route(task: str, catalog: list, k: int = 3, threshold: float = 0.02, backend=None):
+    """Rank skills for a task. backend (or env APEX_ROUTER_BACKEND):
+      'word' (sklearn/word-TF-IDF, default), 'char' (language-robust char n-grams),
+      'st' (sentence-transformers if installed). 'char'/'st' handle cross-language
+      (PT task vs EN catalog) far better — the audit's known TF-IDF weakness."""
     ids = [c["id"] for c in catalog]
     texts = [f"{c.get('name','')} {c.get('description','')} {' '.join(c.get('tags',[]))}" for c in catalog]
-    if _SKLEARN:
+    backend = backend or os.environ.get("APEX_ROUTER_BACKEND", "word")
+    if backend in ("char", "st"):
+        from _tfidf import semantic_rank
+        sims, _used = semantic_rank(task, texts, backend=backend)
+    elif _SKLEARN:
         vec = TfidfVectorizer(ngram_range=(1, 2)).fit(texts)
-        sims = cosine_similarity(vec.transform([task]), vec.transform(texts))[0]
-        order = sims.argsort()[::-1][:k]
+        sims = list(cosine_similarity(vec.transform([task]), vec.transform(texts))[0])
     else:
         sims = _rank(task, texts)
-        order = sorted(range(len(sims)), key=lambda i: -sims[i])[:k]
+    order = sorted(range(len(sims)), key=lambda i: -sims[i])[:k]
     return [{"id": ids[i], "score": round(float(sims[i]), 3),
              "use_when": catalog[i].get("use_when", "")}
             for i in order if sims[i] > threshold]

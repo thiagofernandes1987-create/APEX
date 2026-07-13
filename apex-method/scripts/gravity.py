@@ -230,15 +230,26 @@ def plan(task, required_roles=None):
                                for h in repo_bridge.search_native(long, k=3)]
             except Exception:
                 pass
+            # skills.sh marketplace, filtered to the >=1000-install quality bar (find-skills bar).
+            # Live when skills.sh is reachable; offline it returns ready-to-run discovery commands.
+            marketplace = []
+            try:
+                import skills_sh
+                marketplace = skills_sh.install_requests(long, min_installs=1000, k=3).get("requests", [])
+            except Exception:
+                pass
             install_requests.append({
                 "gap": f"{m} method skill",
                 "native_candidates": native_hits,   # load with repo_bridge.native_skill(path)
+                "marketplace_candidates": marketplace,  # skills.sh, installs>=1000 (STAGED/H5)
                 "action": "ASK_USER_TO_APPROVE_INSTALL",
                 "discovery": {
                     "skills_sh_search": f"https://skills.sh/?q={long.replace(' ', '+')}",
+                    "skills_sh_leaderboard": "https://skills.sh/  # ranked by total installs",
                     "github_search": ("https://github.com/search?type=repositories&q=" +
                                       long.replace(' ', '+') + "+SKILL.md"),
                     "install_command": "npx skills add <owner/repo>  # after user approval",
+                    "quality_bar": "prefer installs >= 1000 + official owners (vercel-labs/anthropics)",
                 },
                 "status": "STAGED_needs_approval",
                 "fallbacks": ["MCP: science-physics-mcp (integrations)",

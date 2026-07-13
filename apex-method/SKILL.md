@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.18.0
+version: 1.19.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -129,10 +129,18 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   (allowlisted, redirect-checked, size-capped; pin a commit via `APEX_REPO_REF`). Content is
   data until vetted (SR_37/H5 still apply before anything runs).
 - **`scripts/_tfidf.py`** — pure-python TF-IDF fallback: router/gravity/agent_registry (and
-  therefore the orchestrator) keep working when scikit-learn is not installed.
+  therefore the orchestrator) keep working when scikit-learn is not installed. Also ships an
+  optional **semantic layer** (`semantic_rank`, char-n-gram / sentence-transformers) that fixes
+  the cross-language TF-IDF weakness — `router.route(..., backend="char")` or env
+  `APEX_ROUTER_BACKEND=char` routes a PT task against an EN catalog correctly.
 - **`scripts/monte_carlo.py`** — REAL Monte Carlo (OPP-73): `simulate(model_fn, distributions)`
   returns P10/P50/P90 + CV. Wired into PMI so QUANTIFIABLE candidates are decided by simulation,
   never by calling a weighted vote "Monte Carlo" (§10). numpy optional (stdlib fallback).
+- **`scripts/skills_sh.py`** — skills.sh marketplace discovery: `leaderboard()`/`search()`/
+  `official()` query the registry ranked by installs and keep only skills over a quality bar
+  (default **>=1000 installs**, the find-skills convention). Read-only JSON allowlist; emits
+  `npx skills add owner/repo` as STAGED (H5) — never auto-installs. Degrades to ready-to-run
+  discovery commands offline. Wired into `gravity.plan` (native -> skills.sh -> GitHub).
 
 **Dependencies:** stdlib only, except *optional* `scikit-learn` (better routing) and `sympy`
 (formal verify — without it `verify.py` returns `[CONJECTURA_FORMAL]` instead of crashing).
@@ -245,4 +253,7 @@ skill router, audit, autopsy, structured reasoning.
 - `references/scenarios.md` — worked end-to-end examples.
 - `catalog/apex_native_skills_index.json` — the FULL native library: all 3,784 repo skills
   (id, category, path, description) — the on-demand index behind `repo_bridge.search_native`.
+- `references/vercel-skills-analysis.md` — analysis of vercel-labs/skills + skills.sh and what
+  APEX reuses (install-count bar, official trust tier, discovery cascade).
+- `tests/evaluate.py` — reproducible rubric-based evaluation (objective, re-runnable; 13/13).
 - `EVALUATION_REPORT.md` — self-scored quality report (self-graded, not external review).

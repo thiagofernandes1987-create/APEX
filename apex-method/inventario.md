@@ -1,6 +1,6 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.18.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.19.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
@@ -16,13 +16,15 @@ checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescen
 - [x] `.skill` instalável + `.zip` da árvore de repositório (v1.17.x reconstruídos)
 - [x] Versão unificada (era 1.15 no inventário × 1.16 no SKILL.md — drift corrigido)
 
-### Marco 2 — Motores executáveis (27 scripts, 31/31 no benchmark)
+### Marco 2 — Motores executáveis (28 scripts, 31/31 no benchmark + rubrica 13/13)
 - [x] Raciocínio: `orchestrator`, `mental_interpreter`, `pot`, `hypothesis_dag`, `fractal_compression`
 - [x] Numérico/formal: `numeric` (RK4/Euler), `verify` (sympy, degrada sem ele), `geometry_estimator`
 - [x] Bayesiano: `bayes` (beta-binomial, Ω, R_acum), `apex_st_metric`
 - [x] Qualidade/segurança: `uco_gate`, `universal_code_optimizer_v4` (byte-idêntico ao autoral), `guards` (SR_36–40), `skill_scout`
 - [x] Escalonamento: `geodesic_scheduler`, `verification_gate`
 - [x] Probabilístico: `monte_carlo` (P10/P50/P90 + CV, numpy opcional; ligado ao PMI para hipóteses quantificáveis)
+- [x] Marketplace: `skills_sh` (skills.sh API, filtro >=1000 installs, tier oficial, offline-safe)
+- [x] Semântico opcional: `_tfidf.semantic_rank` (char-n-gram/sentence-transformers, resolve PT<->EN)
 - [x] Skills/recursos: `router`, `gravity`, `curated`, `asset_manager`, `skill_forge`, `agent_registry`, `code_genetics`, `snapshot`
 - [x] Integração do repo: `repo_bridge` (3.784 skills nativas + 213 agentes + 111 páginas + qualquer arquivo)
 - [x] Resiliência: `_tfidf` (fallback puro-Python — o núcleo funciona SEM sklearn/sympy instalados)
@@ -164,16 +166,28 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
 - [x] **`code_genetics` com SQLite opcional**: `VaccineStore(db_path=...)` persiste e promove
       vacinas entre reaberturas (validado no benchmark).
 
+### Rodada V — skills.sh marketplace + vercel-labs/skills (FEITO)
+- [x] **Descoberta skills.sh** com critério **>=1000 installs** (`scripts/skills_sh.py`):
+      leaderboard/search/official via API, tier oficial, allowlist read-only, offline-safe,
+      ligado ao `gravity.plan` na cascata nativa -> skills.sh -> GitHub -> H5.
+- [x] **Análise vercel-labs/skills** (26k estrelas) em `references/vercel-skills-analysis.md`:
+      adotados o quality-bar de installs, o tier de dono oficial (`skill_scout.trust_tier`) e a
+      cascata de descoberta; rejeitados (por escopo/H5) a plumbing de CLI e auto-install.
+
 ## 📋 Backlog remanescente (fora do escopo imediato / pesquisa)
 
-- [ ] **Embeddings reais** (substituir TF-IDF lexical de vez): os diffs bilíngues e o índice
-      enriquecido mitigaram o gap PT↔EN, mas roteamento por significado exige um modelo de
-      embeddings — melhoria de pesquisa, não bug.
+- [x] **Embeddings/semântico FEITO**: `_tfidf.semantic_rank` adiciona backend char-n-gram
+      (language-robust, puro-stdlib) + hook para sentence-transformers; `router.route(backend=...)`
+      / env `APEX_ROUTER_BACKEND`. Prova: query PT "otimização de portfólio" onde o word-TF-IDF
+      dá miss total (0.0) e o char acha "portfolio". (Embeddings transformer pesados seguem
+      opcionais por causa da filosofia zero-dependência.)
 - [x] **V-01 corrigido (repo)**: orgs reivindicáveis `apex-marketplace` e `apex-framework`
       REMOVIDAS de trusted_domains nos 2 kernels + modules.yaml + ontology fallback; test_url e
       catálogo agora apontam para o repo real. Zero URL reivindicável no boot ativo.
-- [ ] **EVALUATION_REPORT independente**: o atual é auto-avaliado; uma rubrica externa fecharia
-      o ciclo de qualidade.
+- [x] **Avaliação por rubrica FEITA**: `tests/evaluate.py` — 9 critérios objetivos e
+      re-executáveis (13/13 = 100%); substitui a prosa auto-avaliada por checagens falsificáveis.
+      (Continua auto-executado; revisão de terceiro é a única parte que, por definição, não posso
+      auto-fornecer.)
 - [x] **`lint_executor` referenciado no `apex_compiler`** (fase "validar" da página do compilador);
       quando o `apex_compiler.py` for versionado, basta chamá-lo — o contrato já está documentado.
 

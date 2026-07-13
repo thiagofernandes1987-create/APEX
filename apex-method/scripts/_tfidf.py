@@ -68,6 +68,67 @@ def rank(query, texts, ngram_range=(1, 2)):
     return [cosine(q, vec.transform_one(t)) for t in texts]
 
 
+# ── optional semantic layer (audit remaining backlog: better than word TF-IDF cross-language) ──
+_CHAR = re.compile(r"\w")
+
+
+def _char_ngrams(text, n=(3, 4)):
+    """Character n-grams: language-robust (a PT word and its EN cognate share substrings),
+    and immune to the word-boundary misses that pure word TF-IDF suffers across languages."""
+    s = " " + " ".join(text.lower().split()) + " "
+    out = []
+    for k in range(n[0], n[1] + 1):
+        out += [s[i:i + k] for i in range(len(s) - k + 1)]
+    return out
+
+
+class CharEmbedder:
+    """Hashing char-n-gram embedder — a pure-stdlib stand-in for real embeddings that is
+    more language-robust than word TF-IDF. If sentence-transformers is installed, callers
+    may prefer it; this is the always-available floor."""
+
+    def __init__(self, ngram=(3, 4)):
+        self.ngram = ngram
+        self.idf = {}
+
+    def fit(self, corpus):
+        from collections import Counter
+        n = len(corpus) or 1
+        df = Counter()
+        for t in corpus:
+            df.update(set(_char_ngrams(t, self.ngram)))
+        self.idf = {g: math.log((1 + n) / (1 + c)) + 1.0 for g, c in df.items()}
+        return self
+
+    def embed(self, text):
+        from collections import Counter
+        tf = Counter(_char_ngrams(text, self.ngram))
+        vec = {g: c * self.idf.get(g, 1.0) for g, c in tf.items()}
+        norm = math.sqrt(sum(v * v for v in vec.values())) or 1.0
+        return {g: v / norm for g, v in vec.items()}
+
+
+def semantic_rank(query, texts, backend="auto"):
+    """Rank query vs texts. backend='st' uses sentence-transformers if present; 'char' uses
+    the char-n-gram embedder; 'word' the word TF-IDF; 'auto' picks the best available.
+    Returns (scores, backend_used) so callers can report what actually ran."""
+    if backend in ("auto", "st"):
+        try:
+            from sentence_transformers import SentenceTransformer, util  # optional heavy dep
+            model = SentenceTransformer("all-MiniLM-L6-v2")
+            emb = model.encode([query] + list(texts), convert_to_tensor=True)
+            sims = util.cos_sim(emb[0:1], emb[1:])[0].tolist()
+            return sims, "sentence-transformers"
+        except Exception:
+            if backend == "st":
+                return [0.0] * len(texts), "unavailable"
+    if backend in ("auto", "char"):
+        emb = CharEmbedder().fit(list(texts) + [query])
+        q = emb.embed(query)
+        return [cosine(q, emb.embed(t)) for t in texts], "char-ngram"
+    return rank(query, texts), "word-tfidf"
+
+
 def pairwise(texts, ngram_range=(1, 2)):
     """Full pairwise cosine matrix (list of lists) — used by gravity's synergy term."""
     vec = TinyTfidf(ngram_range).fit(list(texts))

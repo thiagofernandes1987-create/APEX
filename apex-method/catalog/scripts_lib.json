@@ -176,6 +176,14 @@
   "path": "scripts/skill_scout.py"
  },
  {
+  "id": "script:skills_sh",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "skills.sh,marketplace,discovery,installs,leaderboard,quality-bar",
+  "mass": 152,
+  "path": "scripts/skills_sh.py"
+ },
+ {
   "id": "script:snapshot",
   "type": "script",
   "domain": "meta",
