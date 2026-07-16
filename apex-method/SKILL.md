@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.29.0
+version: 1.30.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -36,6 +36,29 @@ root-cause analysis, or when the user mentions APEX, PoT, pipeline, or scientifi
 ## What if it fails
 Every tool documents its own failure mode; trivial input takes the express path; missing
 resources become gaps with staged skills.sh install requests (never auto-installed).
+
+## 0 · Mental model — a cognitive runtime, not a prompt
+
+Read the pieces below as one system. APEX treats the LLM as a **cognitive VM** (an inference
+engine for language, synthesis, judgment) and this skill as the thin **runtime/OS** around it —
+the LLM is not the whole brain, it is the CPU the runtime schedules work onto. The framing is not
+marketing; it maps 1:1 to files you can run:
+
+| OS concept | What it is here |
+|---|---|
+| **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
+| **Syscalls** | the 37 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
+| **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
+| **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + the **Knowledge Graph** of typed edges) — survives session death |
+| **Integrity / audit log** | the SHA-256-chained governance ledger (`record_event`/`verify_ledger`) |
+| **Package manager** | `repo_bridge` + `skills_sh` (discover/stage skills & agents, never auto-install) |
+| **Hardware-abstraction layer** | `meta/llm_compat.json` — what the runtime needs from whatever model is underneath |
+
+The honest constraint: the container is **ephemeral**, so the "disk" (`~/.apex-method/*.db`) is a
+working cache — real durability is a git commit or a `.zip` export, which is exactly what
+`project_ledger`'s backends and `memory` export do. The runtime is portable across models precisely
+because the kernel (method + scripts) never depends on one provider's behaviour.
 
 ## 1.1 Decision Framework
 
@@ -261,6 +284,20 @@ Governance: `guard_completion()` tells the LLM to finish the open micros before 
 repo, or **zip** (`export_zip` bundles the ledger + competence.db/memory.db to re-upload on
 resume). At FOGGY, `request_persistence()` prompts the user to choose. Only DEEP+ create a
 ledger — lighter modes stay bureaucracy-free.
+
+## § 2.10 · LLM Adapter — portability layer (`scripts/llm_adapter.py`, `meta/llm_compat.json`)
+
+The runtime is model-agnostic: the kernel (method + scripts) never depends on one provider's
+behaviour. `meta/llm_compat.json` is the **contract** — what the kernel REQUIRES (tool_calling,
+subprocess_exec, structured JSON, multi-turn; subagents + long_context are optional), a per-mode
+context-window budget, a per-provider capability matrix (claude/gpt/gemini/local), and the
+degradation rules. `llm_adapter.py` reads it (stdlib json, no PyYAML) and answers before a run:
+`check(provider)` (are the REQUIRED caps met?), `fits(provider, mode)` (window big enough?), and
+**`degrade(provider, mode)`** → the concrete plan: `parallelism` **A vs B** (no native subagents →
+Level A, ignore `spawn_subagents`), a **capped mode** when the window is too small, and manual
+tool-loop / best-effort-JSON adjustments — announced, never silent. An unknown model falls back to
+a conservative baseline (optional caps off, smallest window). `report(provider, mode)` bundles all
+three. This is what makes the "same core across providers" claim real, not aspirational.
 
 ## § 3 · Finding and Using an External Skill (safe flow)
 

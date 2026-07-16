@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "_doc": "The LLM Adapter contract (B2). What the APEX runtime REQUIRES from whatever model runs underneath, a per-provider capability matrix, and the graceful-degradation rules. This is the hardware-abstraction layer: the kernel (SKILL.md + scripts) stays stable while the model under it changes. Read/edited by humans; loaded by scripts/llm_adapter.py (stdlib json, no PyYAML).",
+
+  "kernel_requirements": {
+    "capabilities": {
+      "tool_calling":            {"required": true,  "why": "the runtime invokes scripts/*.py as tools; without it, scripts are run manually and results pasted back"},
+      "subprocess_exec":         {"required": true,  "why": "PoT / RK4 / stances run in isolated subprocesses (harness-provided, not the model itself)"},
+      "structured_json_output":  {"required": true,  "why": "stances emit {answer,confidence}; directors emit SHA-256 laudos as JSON"},
+      "multi_turn":              {"required": true,  "why": "snapshot + memory recall let a session resume across turns/interruptions"},
+      "subagents":               {"required": false, "why": "Level-B parallel cognition (real concurrent instances); absence degrades to Level-A subprocess PoT"},
+      "long_context":            {"required": false, "why": "the heavy modes want more window; a small window caps the mode, it does not break the runtime"}
+    },
+    "context_window_tokens": {
+      "EXPRESS": 4000, "STANDARD": 8000, "FOGGY": 16000,
+      "DEEP": 32000, "SCIENTIFIC": 48000, "RESEARCH": 64000
+    }
+  },
+
+  "providers": {
+    "claude":  {"tool_calling": true,  "subprocess_exec": true,  "structured_json_output": true,  "multi_turn": true, "subagents": true,  "long_context": true,  "context_window_tokens": 200000,  "notes": "reference runtime; native Agent subagents give real Level-B parallelism"},
+    "gpt":     {"tool_calling": true,  "subprocess_exec": true,  "structured_json_output": true,  "multi_turn": true, "subagents": false, "long_context": true,  "context_window_tokens": 128000,  "notes": "function calling present; no native subagent fan-out -> Level-A parallelism"},
+    "gemini":  {"tool_calling": true,  "subprocess_exec": true,  "structured_json_output": true,  "multi_turn": true, "subagents": false, "long_context": true,  "context_window_tokens": 1000000, "notes": "very large window; Level-A parallelism"},
+    "local":   {"tool_calling": false, "subprocess_exec": true,  "structured_json_output": false, "multi_turn": true, "subagents": false, "long_context": false, "context_window_tokens": 8000,    "notes": "small OSS model; sequential PoT, best-effort JSON, mode is capped"}
+  },
+
+  "degradation_rules": [
+    {"when": "subagents == false",                   "action": "force parallelism Level A (concurrent_executor subprocess PoT); ignore spawn_subagents manifests"},
+    {"when": "tool_calling == false",                "action": "run scripts manually and paste their output back; PoT becomes copy-run-paste; no automatic tool loop"},
+    {"when": "structured_json_output == false",      "action": "parse the LAST JSON-looking line of the output; wrap stance/laudo prompts with an explicit 'print exactly one JSON object' and validate before merging"},
+    {"when": "context_window_tokens < required(mode)","action": "cap the mode to the largest one whose window fits; announce the downgrade instead of silently truncating"}
+  ]
+}

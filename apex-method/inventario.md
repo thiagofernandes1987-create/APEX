@@ -1,9 +1,17 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.21.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.29.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
+
+**Modelo mental (runtime cognitivo).** A skill trata o LLM como uma **VM cognitiva** (motor de
+inferência) e a si mesma como o **runtime/SO** em volta: kernel = `SKILL.md`; syscalls = os 37
+`scripts/*.py`; escalonador = `geodesic_scheduler` + `project_ledger.dsm()`; processos = stances/
+subagentes (Nível A/B); memória paginável e durável = `memory.py` (SQLite + Knowledge Graph);
+log de integridade = ledger SHA-256; gerenciador de pacotes = `repo_bridge`+`skills_sh`; HAL =
+`meta/llm_compat.json`. Restrição honesta: o container é **efêmero** — o `.db` local é cache de
+trabalho; durabilidade real = commit git ou export `.zip` (backends do `project_ledger`/`memory`).
 
 ---
 
@@ -11,7 +19,8 @@ checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescen
 
 ### Marco 1 — Formato & validação
 - [x] Frontmatter 100% válido contra o schema neoformat (theneoai)
-- [x] SKILL.md ≤ 300 linhas (245), seções § numeradas, Trigger Words, Scope & Limitations
+- [x] SKILL.md seções § numeradas, Trigger Words, Scope & Limitations (cresceu para ~416 linhas
+      com as features v1.22–1.30; o guia neoformat ≤300 é soft e foi ultrapassado conscientemente)
 - [x] Conformidade SR_40 (why/when/what-if-fails) em 27/27 scripts + SKILL.md
 - [x] `.skill` instalável + `.zip` da árvore de repositório (v1.17.x reconstruídos)
 - [x] Versão unificada (era 1.15 no inventário × 1.16 no SKILL.md — drift corrigido)
@@ -229,6 +238,19 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
   **PERSONA_SWAP / INJECT_SKILL / HARD_PROBLEM**; realimenta mental_interpreter e deep_research.
 
 ### Op-P3 aprendizado que persiste — parcial (ledger SQLite `competence.db` + vacinas)
+
+### Relatório "runtime cognitivo" (ChatGPT) — aproveitáveis implementados
+- **B1 — Knowledge Graph (v1.29):** arestas tipadas em `memory.py` + `recall_graph` (caminhada em
+  grafo, guarda acíclica via `hypothesis_dag`). Ver seção Op1 acima.
+- **B3 — Narrativa de runtime cognitivo (v1.29):** modelo mental kernel/syscalls/escalonador/
+  processos/memória/HAL no topo do SKILL.md e deste inventário (mapa 1:1 com arquivos reais).
+- **B2 — LLM Adapter (v1.30):** `meta/llm_compat.json` (contrato: exigências do kernel + janela por
+  modo + matriz de capacidades por provedor claude/gpt/gemini/local + regras de degradação) +
+  `scripts/llm_adapter.py` (`check`/`fits`/`degrade`/`report`). Sem subagentes → Level A; janela
+  pequena → modo rebaixado; sem tool-calling/JSON → loop manual/parse best-effort; provedor
+  desconhecido → baseline conservador. É o que torna "mesmo núcleo em qualquer LLM" real.
+- **Descartados (honestidade):** confiar no `.db` local para durabilidade (container efêmero — só
+  git/zip persiste) e sincronizar histórico interno do ChatGPT (sem API pública).
 
 ## 📋 Backlog remanescente (fora do escopo imediato / pesquisa)
 

@@ -286,5 +286,13 @@
   "capabilities": "sympy,formal-proof,identity,calculus",
   "mass": 31,
   "path": "scripts/verify.py"
+ },
+ {
+  "id": "script:llm_adapter",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "llm-adapter,capabilities,degradation,provider,portability,HAL",
+  "mass": 150,
+  "path": "scripts/llm_adapter.py"
  }
 ]

@@ -571,6 +571,29 @@ def t_memory():
             f"KG {m.stats()['relations']} edges + graph-walk + acyclic guard ({m.stats()['memories']} mem)")
 
 
+def t_llm_adapter():
+    import llm_adapter as la
+    # claude (reference): meets all required, RESEARCH fits, Level-B parallelism, no adjustments
+    r = la.report("claude", "RESEARCH")
+    assert r["check"]["ok"] and r["fits"]["fits"], r
+    assert r["plan"]["parallelism"] == "B" and r["plan"]["effective_mode"] == "RESEARCH", r["plan"]
+    # gpt: meets required but no subagents -> degrade to Level A, mode still fits
+    g = la.degrade("gpt", "RESEARCH")
+    assert g["parallelism"] == "A" and g["effective_mode"] == "RESEARCH", g
+    assert any("Level A" in a for a in g["adjustments"]), g["adjustments"]
+    # local: missing required caps + tiny window -> RESEARCH capped, manual tool loop + JSON parse
+    loc = la.check("local")
+    assert not loc["ok"] and set(loc["missing_required"]) >= {"tool_calling", "structured_json_output"}, loc
+    ld = la.degrade("local", "RESEARCH")
+    assert ld["effective_mode"] != "RESEARCH" and len(ld["adjustments"]) >= 3, ld
+    # unknown provider -> conservative baseline (optional caps off, smallest window)
+    caps = la.capabilities("mystery-xyz")
+    assert caps["subagents"] is False and caps["tool_calling"] is True, caps
+    assert la.degrade("mystery-xyz", "DEEP")["effective_mode"] == "EXPRESS", "tiny window caps hard"
+    return (f"claude=B/full; gpt->A; local caps->{ld['effective_mode']} +{len(ld['adjustments'])} adj; "
+            f"unknown->baseline")
+
+
 TESTS = [
     ("pot", t_pot), ("numeric", t_numeric), ("verify", t_verify), ("uco_gate", t_uco_gate),
     ("universal_code_optimizer_v4", t_uco_v4), ("router", t_router), ("skill_scout", t_skill_scout),
@@ -587,7 +610,7 @@ TESTS = [
     ("concurrent_executor", t_concurrent_executor),
     ("chaos_operators", t_chaos_operators), ("competence_matrix", t_competence_matrix),
     ("evaluate_hypotheses", t_evaluate_hypotheses), ("project_ledger", t_project_ledger),
-    ("memory", t_memory),
+    ("memory", t_memory), ("llm_adapter", t_llm_adapter),
 ]
 
 
