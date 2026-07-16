@@ -100,6 +100,26 @@ def set_option(key, value):
     return res
 
 
+# ── exploration policy per mode (author's spec) ──────────────────────────────
+# chaos agents start at FOGGY; parallelism switches from Level A (subprocess PoT) to
+# Level B (concurrent LLM subagents) from FOGGY up; RESEARCH forces a mandatory genius stance.
+EXPLORATION_POLICY = {
+    "EXPRESS":    {"chaos": False, "p_chaos": 0.0,  "parallelism": "none", "genius": False},
+    "STANDARD":   {"chaos": False, "p_chaos": 0.0,  "parallelism": "A",    "genius": False},
+    "FOGGY":      {"chaos": True,  "p_chaos": 0.10, "parallelism": "B",    "genius": False},
+    "DEEP":       {"chaos": True,  "p_chaos": 0.20, "parallelism": "B",    "genius": False},
+    "SCIENTIFIC": {"chaos": True,  "p_chaos": 0.25, "parallelism": "B",    "genius": False},
+    "RESEARCH":   {"chaos": True,  "p_chaos": 0.30, "parallelism": "B",    "genius": True},
+}
+
+
+def exploration_policy(mode: str) -> dict:
+    """Return the per-mode exploration policy: whether chaos agents run, the P_chaos ceiling,
+    the parallelism level (A=subprocess PoT / B=concurrent LLM subagents), and whether a
+    mandatory 'genius' (non-obvious) stance is required. FOGGY+ turns chaos on and moves to B."""
+    return EXPLORATION_POLICY.get((mode or "STANDARD").upper(), EXPLORATION_POLICY["STANDARD"])
+
+
 def resolve_mode(auto_mode: str) -> str:
     """Given the mode the pipeline computed, honour the user's preference:
     a forced default_mode wins; otherwise keep auto_mode but, if it is not among the

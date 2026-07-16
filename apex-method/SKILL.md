@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.23.0
+version: 1.24.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -188,6 +188,30 @@ The "multi-agent" work is parallel in two distinct ways — do not conflate them
   the merge/PMI; Claude supplies the fan-out. The 213 roster entries are personas, not instances —
   Level B is what turns a chosen persona into a genuinely concurrent instance. Cap N at
   `mental_interpreter.n_final` (or `config.max_parallel`).
+
+## § 2.7 · Exploration, Chaos & Competence (per-mode)
+
+- **Exploration policy (`config.exploration_policy(mode)`):** chaos agents start at **FOGGY**
+  and parallelism switches from Level A to **Level B** from FOGGY up; **RESEARCH** forces a
+  mandatory **genius stance**. P_chaos ceiling rises with the mode (0.10→0.30).
+- **`scripts/chaos_operators.py`** (offensive chaos): `levy_step` (heavy-tail α=1.5 jumps that
+  escape deep local minima), `structural_mutation` (rewrite the hypothesis's shape), `recombine`
+  (cross two into a third), and `genius_stance` (the mandatory non-obvious hypothesis in
+  RESEARCH). Chaos proposes; the PMI adjudicates — it never becomes the finding alone (SR_11).
+- **`scripts/competence_matrix.py`** (metacognition / Op3): the agent×domain heat-map and the
+  **persona-vs-skill-vs-rule diagnosis** — `diagnose(agent, domain, task, ...)` returns
+  **PERSONA_SWAP** (stuck: rejections_streak>20 OR var(conf)<0.03 → reassign with phase_offset+π),
+  **INJECT_SKILL** (low domain reward → forced_skill from native/marketplace), or **HARD_PROBLEM**
+  (high difficulty via BehavioralDifficultyEstimator → escalate mode/attach the governing rule).
+  `heatmap(agents, domain, task)` ranks the best agents; feeds mental_interpreter & deep_research.
+- **`concurrent_executor.evaluate_hypotheses(task, hypotheses, directors, mode)`** — the
+  analyst→directors flow: the LLM-analyst raises the 3 hypotheses (optimistic/neutral/pessimistic),
+  N specialist DIRECTORS (one per discipline, capped by the mode budget) score each by Bayesian
+  posterior + difficulty + risk (FMEA/RPN) + persona/skill diagnosis, each emits a **SHA-256
+  laudo** `{ranking, best, confidence, justificativa, diagnostico}`; a BARRIER waits for all,
+  then merge (entropy + PMI) → decision or RESTART. Gaps (missing skill/diff/rule, or wrong
+  specialist) are surfaced as `needs_correction` before adoption. The abort trigger in
+  `run_stances` is re-anchored on the stuck mechanism (not a flat confidence cut).
 
 ## § 3 · Finding and Using an External Skill (safe flow)
 

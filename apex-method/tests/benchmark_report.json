@@ -1,54 +1,54 @@
 {
- "passed": 35,
- "total": 35,
- "total_ms": 3130.9,
+ "passed": 38,
+ "total": 38,
+ "total_ms": 3380.4,
  "results": [
   {
    "module": "pot",
    "ok": true,
-   "ms": 27.2,
+   "ms": 26.9,
    "metric": "sum 1..100 = 5050",
    "error": ""
   },
   {
    "module": "numeric",
    "ok": true,
-   "ms": 4.1,
+   "ms": 4.8,
    "metric": "RK4 energy err 8.72e-12",
    "error": ""
   },
   {
    "module": "verify",
    "ok": true,
-   "ms": 380.6,
+   "ms": 381.9,
    "metric": "identity VERIFIED / REFUTED",
    "error": ""
   },
   {
    "module": "uco_gate",
    "ok": true,
-   "ms": 69.2,
+   "ms": 73.0,
    "metric": "loop REJECTED (UCO)",
    "error": ""
   },
   {
    "module": "universal_code_optimizer_v4",
    "ok": true,
-   "ms": 0.5,
+   "ms": 0.6,
    "metric": "loop_risk 0.65",
    "error": ""
   },
   {
    "module": "router",
    "ok": true,
-   "ms": 792.3,
+   "ms": 859.3,
    "metric": "routes to frontend",
    "error": ""
   },
   {
    "module": "skill_scout",
    "ok": true,
-   "ms": 5.4,
+   "ms": 5.6,
    "metric": "3 attacks blocked, clean passes",
    "error": ""
   },
@@ -62,14 +62,14 @@
   {
    "module": "snapshot",
    "ok": true,
-   "ms": 36.5,
+   "ms": 43.3,
    "metric": "snapshot new/add/compress/decompress",
    "error": ""
   },
   {
    "module": "agent_registry",
    "ok": true,
-   "ms": 11.2,
+   "ms": 11.7,
    "metric": "core->engineer, ext->data-engineer",
    "error": ""
   },
@@ -83,14 +83,14 @@
   {
    "module": "asset_manager",
    "ok": true,
-   "ms": 0.3,
+   "ms": 0.4,
    "metric": "41 assets, 23 mcps",
    "error": ""
   },
   {
    "module": "gravity",
    "ok": true,
-   "ms": 17.0,
+   "ms": 17.5,
    "metric": "security constellation: 2 agents",
    "error": ""
   },
@@ -104,7 +104,7 @@
   {
    "module": "orchestrator",
    "ok": true,
-   "ms": 20.0,
+   "ms": 25.5,
    "metric": "2+2=4 express; hard->SCIENTIFIC; pmi rel=0.875",
    "error": ""
   },
@@ -125,7 +125,7 @@
   {
    "module": "guards",
    "ok": true,
-   "ms": 0.3,
+   "ms": 0.4,
    "metric": "SR_36/37/38 enforced",
    "error": ""
   },
@@ -153,7 +153,7 @@
   {
    "module": "fractal_compression",
    "ok": true,
-   "ms": 0.2,
+   "ms": 0.1,
    "metric": "kept ['H1', 'H2']",
    "error": ""
   },
@@ -174,28 +174,28 @@
   {
    "module": "repo_bridge",
    "ok": true,
-   "ms": 40.6,
+   "ms": 51.8,
    "metric": "native index 3784, traversal refused",
    "error": ""
   },
   {
    "module": "_tfidf",
    "ok": true,
-   "ms": 0.5,
+   "ms": 0.7,
    "metric": "pure-python tf-idf ranks + pairwise ok",
    "error": ""
   },
   {
    "module": "audit_regressions",
    "ok": true,
-   "ms": 447.0,
+   "ms": 390.6,
    "metric": "loads FP, getattr, installs, n_rel, express, chaos, skills.sh, char-ngram, dissect-PT, ext-grant: all fixed",
    "error": ""
   },
   {
    "module": "monte_carlo",
    "ok": true,
-   "ms": 9.3,
+   "ms": 8.7,
    "metric": "MC P50=60.0, cv=0.083",
    "error": ""
   },
@@ -209,43 +209,64 @@
   {
    "module": "code_genetics_sqlite",
    "ok": true,
-   "ms": 20.0,
+   "ms": 22.0,
    "metric": "vaccine persists + promotes across SQLite reopen",
    "error": ""
   },
   {
    "module": "snapshot_wire",
    "ok": true,
-   "ms": 6.7,
+   "ms": 6.9,
    "metric": "run() recorded 1 findings into snapshot",
    "error": ""
   },
   {
    "module": "config",
    "ok": true,
-   "ms": 0.5,
+   "ms": 0.7,
    "metric": "config persists, validates, resolves mode (snap-up)",
    "error": ""
   },
   {
    "module": "menu",
    "ok": true,
-   "ms": 0.6,
+   "ms": 0.7,
    "metric": "menu shows 4 actions; update=OK",
    "error": ""
   },
   {
    "module": "deep_research",
    "ok": true,
-   "ms": 916.6,
+   "ms": 1061.9,
    "metric": "deep_research TARGET_REACHED in 1 rounds",
    "error": ""
   },
   {
    "module": "concurrent_executor",
    "ok": true,
-   "ms": 294.1,
+   "ms": 304.6,
    "metric": "3 stances; mode-cap budget; abort+vaccine 1; off_persona; restart",
+   "error": ""
+  },
+  {
+   "module": "chaos_operators",
+   "ok": true,
+   "ms": 0.3,
+   "metric": "levy/mutation/genius + chaos from FOGGY, A->B, RESEARCH genius",
+   "error": ""
+  },
+  {
+   "module": "competence_matrix",
+   "ok": true,
+   "ms": 0.5,
+   "metric": "difficulty+stuck+diagnosis (HARD/PERSONA_SWAP)",
+   "error": ""
+  },
+  {
+   "module": "evaluate_hypotheses",
+   "ok": true,
+   "ms": 49.8,
+   "metric": "8 directors, hashed laudos, ADOPT; abort->PERSONA_SWAP",
    "error": ""
   }
  ]

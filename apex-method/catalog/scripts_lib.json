@@ -40,12 +40,28 @@
   "path": "scripts/bayes.py"
  },
  {
+  "id": "script:chaos_operators",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "chaos,levy,mutation,recombine,genius,exploration",
+  "mass": 103,
+  "path": "scripts/chaos_operators.py"
+ },
+ {
   "id": "script:code_genetics",
   "type": "script",
   "domain": "engineering",
   "capabilities": "vaccine,error-fix,evolution,promotion",
   "mass": 62,
   "path": "scripts/code_genetics.py"
+ },
+ {
+  "id": "script:competence_matrix",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "heatmap,difficulty,diagnosis,persona-swap,inject-skill,metacognition",
+  "mass": 177,
+  "path": "scripts/competence_matrix.py"
  },
  {
   "id": "script:concurrent_executor",

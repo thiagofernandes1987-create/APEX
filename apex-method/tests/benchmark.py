@@ -426,6 +426,58 @@ def t_concurrent_executor():
     return f"3 stances; mode-cap budget; abort+vaccine {len(r3['aborted'])}; off_persona; restart"
 
 
+def t_chaos_operators():
+    import chaos_operators as ch, config
+    assert ch.p_chaos(0.5) == 0.30 and ch.p_chaos(0.05) == 0.05, "P_chaos = min(0.30, T)"
+    m = ch.structural_mutation({"stance": "optimistic"})
+    assert m["stance"] == "pessimistic" and m["mutated"], m       # structure flip
+    g = ch.genius_stance("x", [{"stance": "optimistic", "confidence": 0.8}])
+    assert g["stance"] == "genius" and g["confidence"] <= 0.30, g  # low conf (SR_11)
+    # exploration policy: chaos starts at FOGGY, parallelism switches to B, RESEARCH forces genius
+    assert config.exploration_policy("STANDARD")["parallelism"] == "A"
+    assert config.exploration_policy("FOGGY")["chaos"] and config.exploration_policy("FOGGY")["parallelism"] == "B"
+    assert config.exploration_policy("RESEARCH")["genius"] is True
+    return "levy/mutation/genius + chaos from FOGGY, A->B, RESEARCH genius"
+
+
+def t_competence_matrix():
+    import competence_matrix as cm, os
+    # isolate: a fresh ledger so reward-history doesn't flip PERSONA_SWAP into INJECT_SKILL
+    try:
+        os.remove(os.path.expanduser("~/.apex-method/competence.db"))
+    except OSError:
+        pass
+    assert cm.estimate_difficulty("navier stokes turbulência fluido pde")["bde_score"] >= 0.85
+    assert cm.is_stuck(25, [0.5])[0] and cm.is_stuck(3, [0.50, 0.505, 0.50])[0]
+    hard = cm.diagnose("architect", "science", "navier stokes turbulência fluido reynolds pde")
+    assert hard["diagnosis"] == "HARD_PROBLEM", hard
+    swap = cm.diagnose("critic", "engineering", "refatorar backend", rejections_streak=25)
+    assert swap["diagnosis"] == "PERSONA_SWAP" and "new_phase_offset" in swap, swap
+    return f"difficulty+stuck+diagnosis (HARD/{swap['diagnosis']})"
+
+
+def t_evaluate_hypotheses():
+    import concurrent_executor as ce, os
+    try:
+        os.remove(os.path.expanduser("~/.apex-method/competence.db"))  # fresh ledger
+    except OSError:
+        pass
+    hyps = [{"stance": "optimistic", "answer": "A", "confidence": 0.78},
+            {"stance": "neutral", "answer": "A", "confidence": 0.70},
+            {"stance": "pessimistic", "answer": "B", "confidence": 0.55}]
+    out = ce.evaluate_hypotheses("optimize the backend memory architecture", hyps, mode="DEEP")
+    assert out["n_directors"] >= 3, out["n_directors"]
+    assert all(len(l["sha256"]) == 64 and "best" in l for l in out["laudos"]), "hashed laudos"
+    assert out["decision"] in ("ADOPT", "REVIEW", "REJECT")
+    # re-anchored abort: a stuck persona (rejections_streak>20) is swapped, not kept
+    st = {"critic": {"rejections_streak": 25, "confidence_history": [0.75]}}
+    r = ce.run_stances("refactor", [{"name": "s", "persona": "critic",
+                                     "program": ce.qualitative_stance_program("X", 0.75)}],
+                       mode="DEEP", agent_states=st)
+    assert r["aborted"] and r["aborted"][0]["diagnosis"] == "PERSONA_SWAP", r["aborted"]
+    return f"{out['n_directors']} directors, hashed laudos, {out['decision']}; abort->PERSONA_SWAP"
+
+
 TESTS = [
     ("pot", t_pot), ("numeric", t_numeric), ("verify", t_verify), ("uco_gate", t_uco_gate),
     ("universal_code_optimizer_v4", t_uco_v4), ("router", t_router), ("skill_scout", t_skill_scout),
@@ -440,6 +492,8 @@ TESTS = [
     ("code_genetics_sqlite", t_code_genetics_sqlite), ("snapshot_wire", t_snapshot_wire),
     ("config", t_config), ("menu", t_menu), ("deep_research", t_deep_research),
     ("concurrent_executor", t_concurrent_executor),
+    ("chaos_operators", t_chaos_operators), ("competence_matrix", t_competence_matrix),
+    ("evaluate_hypotheses", t_evaluate_hypotheses),
 ]
 
 

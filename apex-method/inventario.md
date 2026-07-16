@@ -197,7 +197,24 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
 - **Seed inicial versionado** + append incremental; ligada ao `orchestrator.run` (recall no
   início) e ao `snapshot`/eventos (write). Menu ganha `memory clear|export` (retenção/privacidade).
 
-### Op2–P3 — em discussão (ver seções seguintes conforme forem fechadas)
+### Op2 — Paralelismo cognitivo · **FEITO** (v1.22–1.24)
+- `concurrent_executor` (Nível A) + protocolo de fan-out de subagentes (Nível B); 3 stances
+  canônicas, teto por modo, SHA-256 por stance, barrier→merge→PMI→RESTART.
+- **Caos ofensivo** (`chaos_operators`): Lévy/mutação/recombinação/genius; política por modo
+  (`config.exploration_policy`) — caos a partir do FOGGY, paralelismo A→B a partir do FOGGY,
+  genius obrigatório em RESEARCH.
+- **Abort reancorado** no mecanismo real do kernel: `rejections_streak>20` OU `var(conf)<0.03`
+  (não confiança nem temperatura); troca com fase+π ou inject_skill; vacina = diagnóstico.
+- **`evaluate_hypotheses`**: analista levanta 3 hipóteses → diretores especialistas dão laudo
+  SHA-256 (bayes+dificuldade+RPN+diagnóstico) → barrier → merge/PMI → decisão ou RESTART;
+  lacunas viram `needs_correction`.
+
+### Op3 — Metacognição (matriz de competência) · **FEITO** (v1.24)
+- `competence_matrix`: heat-map agente×domínio (T, reward do ledger, dificuldade via
+  BehavioralDifficultyEstimator, rejections/variância) + diagnóstico
+  **PERSONA_SWAP / INJECT_SKILL / HARD_PROBLEM**; realimenta mental_interpreter e deep_research.
+
+### Op-P3 aprendizado que persiste — parcial (ledger SQLite `competence.db` + vacinas)
 
 ## 📋 Backlog remanescente (fora do escopo imediato / pesquisa)
 
