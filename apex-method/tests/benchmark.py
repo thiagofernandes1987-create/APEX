@@ -507,6 +507,33 @@ def t_project_ledger():
     return "MACRO+micros, DSM critical-path+parallel, gate, justified-abandon, cycle, zip"
 
 
+def t_memory():
+    import memory as mem_mod, tempfile, os
+    m = mem_mod.MemoryStore(os.path.join(tempfile.mkdtemp(), "memory.db"))
+    m.remember("APEX uses beta-binomial for the Bayesian layer", "semantic")
+    m.remember("the char-n-gram backend fixes cross-language routing", "semantic")
+    # semantic dedup: same fact stored once
+    a = m.remember("dedup me exactly", "semantic")
+    b = m.remember("dedup me exactly", "semantic")
+    assert a == b, "semantic content-address dedup"
+    # episodic is NOT deduped (distinct events)
+    e1 = m.remember("same event text", "episodic")
+    e2 = m.remember("same event text", "episodic")
+    assert e1 != e2, "episodic keeps distinct events"
+    # recall ranks the relevant memory first (char-n-gram, language-robust)
+    top = m.recall("bayesian statistics")
+    assert top and "bayes" in top[0]["text"].lower() and len(top[0]["sha"]) == 64, top
+    # curated write from a snapshot
+    m.remember_from_snapshot({"objective": "build memory",
+                              "findings": [{"what": "SQLite default", "where": "memory.py",
+                                            "how": "stdlib", "confidence": "high"}]})
+    # governance ledger: SHA-256 chained + tamper-evident
+    m.record_event("vaccine_promoted", "err->fix", "promote", {"uses": 3})
+    m.record_event("skill_granted", "vt->react", "grant")
+    assert m.verify_ledger()["ok"] and m.verify_ledger()["events"] == 2
+    return f"episodic/semantic + dedup + recall + snapshot-write + chained ledger ({m.stats()['memories']} mem)"
+
+
 TESTS = [
     ("pot", t_pot), ("numeric", t_numeric), ("verify", t_verify), ("uco_gate", t_uco_gate),
     ("universal_code_optimizer_v4", t_uco_v4), ("router", t_router), ("skill_scout", t_skill_scout),
@@ -523,6 +550,7 @@ TESTS = [
     ("concurrent_executor", t_concurrent_executor),
     ("chaos_operators", t_chaos_operators), ("competence_matrix", t_competence_matrix),
     ("evaluate_hypotheses", t_evaluate_hypotheses), ("project_ledger", t_project_ledger),
+    ("memory", t_memory),
 ]
 
 

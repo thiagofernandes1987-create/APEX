@@ -144,6 +144,14 @@
   "path": "scripts/hypothesis_dag.py"
  },
  {
+  "id": "script:memory",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "live-memory,episodic,semantic,sqlite,char-ngram,recall,ledger,sha256,cross-session",
+  "mass": 190,
+  "path": "scripts/memory.py"
+ },
+ {
   "id": "script:mental_interpreter",
   "type": "script",
   "domain": "science",

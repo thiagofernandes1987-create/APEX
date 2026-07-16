@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.25.0
+version: 1.26.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -212,6 +212,19 @@ The "multi-agent" work is parallel in two distinct ways — do not conflate them
   then merge (entropy + PMI) → decision or RESTART. Gaps (missing skill/diff/rule, or wrong
   specialist) are surfaced as `needs_correction` before adoption. The abort trigger in
   `run_stances` is re-anchored on the stuck mechanism (not a flat confidence cut).
+
+## § 2.9 · Live Cross-Session Memory (`scripts/memory.py`, Op1)
+
+The durable partner of the snapshot: a SQLite store (default `~/.apex-method/memory.db`) read
+at session start and written INCREMENTALLY, so knowledge survives across sessions.
+`remember(text, kind)` stores **semantic** facts (content-addressed by SHA-256 → deduped) or
+**episodic** events (keyed by sha(text+ts+session) → distinct); `remember_from_snapshot()` is the
+curated write (findings only, not every run). `recall(query, k)` = char-n-gram cosine top-k
+(language-robust; sentence-transformers hook when present). `record_event(kind, subject, action)`
+is the **governance ledger** — a SHA-256-chained, tamper-evident log the subsystems call when a
+rule/diff/agent/skill/vaccine is promoted or demoted, mirrored into semantic memory so `recall`
+surfaces the framework's own evolution. `verify_ledger()` re-walks the chain. Stdlib-only; a
+MongoDB adapter can be plugged, SQLite is always the default.
 
 ## § 2.8 · The Living Project Inventory (`scripts/project_ledger.py`)
 
