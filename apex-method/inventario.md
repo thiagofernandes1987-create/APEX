@@ -1,6 +1,6 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.35.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.36.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
@@ -267,6 +267,9 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
   quem pula o trivial: `orchestrator.express_check`.
 
 ### Robustez + adaptabilidade a qualquer LLM · **FEITO** (v1.35)
+- **Portão de entrada (v1.36)**: `triage` virou a PRIMEIRA etapa do `orchestrator.run` — o
+  skip do trivial (EXPRESS, economia de tokens) e o escalonamento por dificuldade/MCFE acontecem
+  automaticamente, sem chamada manual; o EXPRESS passa a carregar o marcador do triage.
 - **YAML de adaptabilidade** `meta/apex_llm.yaml` (autoritativo; `llm_compat.json` = fallback stdlib):
   requisitos mínimos (caps obrigatórias + janela por modo), matriz por provedor (claude/gpt/gemini/
   **deepseek**/local), **limites anti-loop** e **aceleradores opcionais**. `llm_adapter` lê YAML

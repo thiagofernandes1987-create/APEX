@@ -234,25 +234,37 @@ def run(task, candidates=None, snapshot=None):
 
 
 def _run(task, candidates=None, snapshot=None):
-    ex = express_check(task)
-    if ex:
-        return {"path": "EXPRESS", **ex}
+    # TRIAGE IS THE ENTRY GATE (v1.36): it runs FIRST and decides both the SKIP (a trivial task ->
+    # EXPRESS, token economy) and the escalation floor (hard problem or low MCFE reliability -> DEEP+),
+    # so both happen automatically without a manual call. It wraps express_check internally; if
+    # execution_policy is unavailable, we fall back to the original express_check gate.
+    tri, ep, escalate_discovery = None, None, False
+    try:
+        import execution_policy as ep
+        tri = ep.triage(task)
+    except Exception:
+        ep = None
+    if tri is not None and tri.get("skip_pipeline"):
+        exp = tri.get("express") or express_check(task) or {"mode": "EXPRESS", "answer": None,
+                                                             "reason": "trivial"}
+        return {"path": "EXPRESS", **exp,
+                "triage": {"mode": tri["mode"], "reason": tri.get("reason")}}
+    if tri is None:                                    # execution_policy missing -> original gate
+        ex = express_check(task)
+        if ex:
+            return {"path": "EXPRESS", **ex}
     disciplines = dissect(task)
     specialists = assign_specialists(task, disciplines)
     auto_mode = "SCIENTIFIC" if any(d in disciplines for d in ("science", "math")) else \
                 "DEEP" if len(disciplines) > 1 else "STANDARD"
-    # DIFFICULTY WIRE (v1.35): a hard problem must not stay STANDARD just because it missed a
-    # discipline keyword. triage escalates by BehavioralDifficultyEstimator + MCFE reliability;
-    # take the HIGHER of the discipline-mode and the triage-mode (escalate only, never downgrade).
-    escalate_discovery = False
-    try:
-        import execution_policy as ep
-        tri = ep.triage(task, mode=auto_mode)
-        if not tri.get("skip_pipeline"):
+    # triage (already computed above) sets the escalation FLOOR — escalate only, never downgrade a
+    # discipline-driven mode: take the HIGHER of the discipline-mode and the triage-mode.
+    if tri is not None:
+        try:
             auto_mode = ep._bump(auto_mode, tri["mode"])
             escalate_discovery = tri.get("escalate_discovery", False)
-    except Exception:
-        pass
+        except Exception:
+            pass
     # honour the user's preferred/default modes from config (menu.py sets them); never
     # silently downgrade — resolve_mode snaps up to the nearest preferred mode.
     try:

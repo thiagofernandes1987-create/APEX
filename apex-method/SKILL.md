@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.35.0
+version: 1.36.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -99,10 +99,12 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
 
 ## § 2 · The Tools (run them; don't reimplement)
 
-- **`scripts/orchestrator.py`** — THE ENTRY POINT. `run(task)` executes the whole flow:
-  EXPRESS check (trivial skips the pipeline) → dissect by discipline → assign a specialist
-  agent + skills + diffs per discipline (via gravity, with gap→skills.sh install requests) →
-  pick the mode → PMI convergence decision over candidate sub-answers.
+- **`scripts/orchestrator.py`** — THE ENTRY POINT. `run(task)` executes the whole flow, gated by
+  **triage FIRST**: `execution_policy.triage` decides the SKIP (trivial → EXPRESS, token economy)
+  and the escalation floor (hard problem / low MCFE reliability → DEEP+) automatically → dissect by
+  discipline → assign a specialist agent + skills + diffs per discipline (via gravity, with
+  gap→skills.sh install requests) → pick the mode → PMI convergence. `run` never raises
+  (`ERROR_DEGRADED` on unexpected failure).
 
 - **`scripts/pot.py`** — Program-of-Thought: `run_chain([{name,code}])` runs each step
   in an isolated subprocess and chains outputs. `run_parallel()` only for slow steps.

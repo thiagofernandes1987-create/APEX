@@ -156,7 +156,8 @@ def t_bayes():
 def t_orchestrator():
     import orchestrator
     ex = orchestrator.run("2+2")
-    assert ex["path"] == "EXPRESS" and ex["answer"] == 4, ex
+    # triage is now the ENTRY GATE: the trivial skip flows through it (carries a triage marker)
+    assert ex["path"] == "EXPRESS" and ex["answer"] == 4 and "triage" in ex, ex
     hard = orchestrator.run("build a secure trading backend and value the portfolio with monte carlo")
     assert hard["path"] == "FULL_PIPELINE" and "finance" in hard["disciplines"], hard
     pmi = orchestrator.pmi_converge([{"discipline":"m","answer":2.09,"confidence":0.9,"numeric":True},
