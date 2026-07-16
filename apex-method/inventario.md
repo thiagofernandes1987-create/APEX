@@ -208,6 +208,12 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
 - **`evaluate_hypotheses`**: analista levanta 3 hipóteses → diretores especialistas dão laudo
   SHA-256 (bayes+dificuldade+RPN+diagnóstico) → barrier → merge/PMI → decisão ou RESTART;
   lacunas viram `needs_correction`.
+- **Exploração maximizada (v1.28)**: antes de convergir, o painel recebe divergência real —
+  (1) `subagent_hypotheses`: hipóteses geradas por Agent subagentes Level-B reais (manifesto
+  `spawn_subagents` nomeia personas + framing; RESEARCH inclui genius); Claude dispara os
+  subagentes e re-chama com as hipóteses deles; (2) `_chaos_expand` (FOGGY↑): mutação estrutural
+  (`chaos_*`) da hipótese mais forte + `chaos_recombine` das duas mais confiantes (conf ≤ 0.30,
+  SR_11) + genius obrigatório em RESEARCH. Só depois os diretores pontuam o conjunto completo.
 
 ### Op3 — Metacognição (matriz de competência) · **FEITO** (v1.24)
 - `competence_matrix`: heat-map agente×domínio (T, reward do ledger, dificuldade via

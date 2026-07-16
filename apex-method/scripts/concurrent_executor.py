@@ -293,28 +293,116 @@ def _director_laudo(director, task, hypotheses, mode):
     return laudo
 
 
-def evaluate_hypotheses(task, hypotheses, directors=None, mode="DEEP", p_target=0.72):
-    """The analyst (LLM) raised the 3 hypotheses {optimistic, neutral, pessimistic}; N specialist
-    DIRECTORS (one per discipline of the mode, capped by the mode budget) evaluate them
-    CONCURRENTLY and each emits a SHA-256 laudo. BARRIER: only after every laudo does the merge
-    (entropy + PMI) run -> final decision or RESTART. If a director reports a gap (needs a skill/
-    diff/rule, or isn't the right specialist), it is surfaced for correction before adopting."""
+def _chaos_expand(task, hypotheses, pol):
+    """OFFENSIVE exploration: grow the hypothesis set with divergent candidates the single-context
+    LLM would not propose on its own — a structural mutation of the strongest hypothesis (flip
+    stance / invert framing) and a recombination of the two most confident. RESEARCH additionally
+    appends the MANDATORY non-obvious 'genius'. Every chaos candidate is capped at confidence 0.30
+    (SR_11: chaos proposes, it is never the main finding alone). A task-seeded RNG keeps a given
+    task's round reproducible."""
+    try:
+        import chaos_operators
+    except Exception:
+        return hypotheses
+    import random
+    rng = random.Random(int(_sha256({"task": task})[:8], 16))
+    out = list(hypotheses)
+    ranked = sorted(hypotheses, key=lambda h: h.get("confidence", 0), reverse=True)
+    # structural mutation of the strongest — a genuinely different SHAPE, not a tweaked value
+    mut = chaos_operators.structural_mutation(dict(ranked[0]), rng=rng)
+    mut["stance"] = "chaos_" + str(mut.get("stance", "contrarian"))
+    mut.setdefault("answer", ranked[0].get("answer"))
+    mut["confidence"] = min(0.30, ranked[0].get("confidence", 0.3) or 0.3)
+    mut["source"] = "chaos"
+    if not any(h.get("stance") == mut["stance"] for h in out):
+        out.append(mut)
+    # recombine the two most confident into a child neither parent would have generated
+    if len(ranked) >= 2:
+        child = chaos_operators.recombine(dict(ranked[0]), dict(ranked[1]))
+        child["stance"] = "chaos_recombine"
+        child["confidence"] = min(0.30, child.get("confidence", 0.3) or 0.3)
+        child["source"] = "chaos"
+        if not any(h.get("stance") == "chaos_recombine" for h in out):
+            out.append(child)
+    # RESEARCH: mandatory non-obvious genius hypothesis
+    if pol.get("genius") and not any(h.get("stance") == "genius" for h in out):
+        out.append(chaos_operators.genius_stance(task, hypotheses))
+    return out
+
+
+def subagent_manifest(task, mode, hypotheses=None):
+    """Level-B directive: name the roster personas Claude should spawn as REAL Agent subagents to
+    GENERATE divergent hypotheses (one framing each), then call
+    evaluate_hypotheses(..., subagent_hypotheses=[...]) with what they return. This is the
+    Level-A -> Level-B switch the exploration policy asks for from FOGGY up: real LLM divergence
+    (separate Agent instances), not just subprocess PoT. The Python cannot spawn Agent instances
+    itself — it emits the manifest and Claude fans them out, then re-calls with their JSON."""
     cap = MODE_AGENT_CAP.get(mode.upper(), 8)
-    # EXPLORATION first (generate divergent), then CONVERGE with rigor: when the mode's
-    # exploration policy asks for chaos, expand the hypothesis set with the offensive chaos
-    # operators; RESEARCH additionally REQUIRES the mandatory genius (non-obvious) hypothesis.
-    # This is the "generate divergent -> directors converge" flow; Level-B subagents (spawned
-    # by Claude) plug in here by supplying their generated hypotheses before the directors score.
-    hypotheses = list(hypotheses)
     try:
         import config
         pol = config.exploration_policy(mode)
-        if pol["chaos"]:
-            import chaos_operators
-            if pol["genius"] and not any(h.get("stance") == "genius" for h in hypotheses):
-                hypotheses.append(chaos_operators.genius_stance(task, hypotheses))
+    except Exception:
+        pol = {"parallelism": "A", "genius": False}
+    framings = ["optimistic", "pessimistic", "neutral", "contrarian"]
+    if pol.get("genius"):
+        framings.append("genius")               # RESEARCH: force the non-obvious voice
+    personas = []
+    try:
+        import agent_registry
+        personas = [aid for aid, _c, _s in agent_registry.match_task_to_ext_agents(task, k=cap)]
     except Exception:
         pass
+    if not personas:
+        personas = ["architect", "critic", "theorist", "chaos"]
+    subagents = []
+    for i, fr in enumerate(framings[:cap]):
+        persona = personas[i % len(personas)]
+        instr = (f"You are the APEX '{persona}' persona. Task: {task[:160]}. "
+                 f"Argue the **{fr}** hypothesis. Return ONE JSON object: "
+                 f'{{"stance":"{fr}","answer":<your answer>,"confidence":0..1,'
+                 f'"rationale":"1-2 sentences"}}. '
+                 + ("Surface a NON-OBVIOUS option the others would miss." if fr == "genius"
+                    else "Be concrete and take a clear position."))
+        subagents.append({"persona": persona, "stance": fr, "instruction": instr})
+    return {"level": "B", "reason": "maximize exploration with real LLM divergence (Agent subagents)",
+            "spawn": subagents, "budget_cap": cap,
+            "how": ("Spawn each entry as an Agent subagent CONCURRENTLY; collect their JSON "
+                    "hypotheses; then re-call evaluate_hypotheses(task, base_hypotheses, mode, "
+                    "subagent_hypotheses=[...their JSON...]) so the directors score the full set.")}
+
+
+def evaluate_hypotheses(task, hypotheses, directors=None, mode="DEEP", p_target=0.72,
+                        subagent_hypotheses=None):
+    """The analyst (LLM) raised the base hypotheses {optimistic, neutral, pessimistic}; N specialist
+    DIRECTORS (one per discipline of the mode, capped by the mode budget) evaluate them
+    CONCURRENTLY and each emits a SHA-256 laudo. BARRIER: only after every laudo does the merge
+    (entropy + PMI) run -> final decision or RESTART. If a director reports a gap (needs a skill/
+    diff/rule, or isn't the right specialist), it is surfaced for correction before adopting.
+
+    EXPLORATION first, then CONVERGE with rigor. Two divergence sources feed the panel BEFORE it
+    scores, to maximize discovery:
+      (1) subagent_hypotheses — hypotheses generated by REAL Level-B Agent subagents (each wearing
+          a roster persona). Pass them and they are merged in as first-class candidates.
+      (2) chaos operators — from FOGGY up (exploration policy) the offensive operators birth
+          candidates the single-context LLM would not propose; RESEARCH forces the genius stance.
+    When the mode uses Level-B parallelism and no subagent hypotheses were supplied yet, the result
+    carries a `spawn_subagents` manifest so Claude can fan out real subagents and re-call."""
+    cap = MODE_AGENT_CAP.get(mode.upper(), 8)
+    hypotheses = list(hypotheses)
+    # (1) Level-B subagents: real divergent hypotheses merged in before the directors score.
+    for h in (subagent_hypotheses or []):
+        if isinstance(h, dict):
+            h.setdefault("source", "subagent")
+            hypotheses.append(h)
+    pol = {"chaos": False, "genius": False, "parallelism": "A", "p_chaos": 0.0}
+    try:
+        import config
+        pol = config.exploration_policy(mode)
+    except Exception:
+        pass
+    # (2) chaos expansion (FOGGY+): divergent candidates + RESEARCH's mandatory genius.
+    if pol.get("chaos") and hypotheses:
+        hypotheses = _chaos_expand(task, hypotheses, pol)
     # default directors: the best-matching APEX agents for the task, one per slot
     if directors is None:
         directors = []
@@ -346,8 +434,13 @@ def evaluate_hypotheses(task, hypotheses, directors=None, mode="DEEP", p_target=
         decision, pmi = ("ADOPT" if reliability >= p_target else "REVIEW"), {}
     out = {"task": task, "mode": mode, "n_directors": len(laudos),
            "laudos": laudos, "gaps": [g["diagnostico"] for g in gaps],
+           "hypotheses_scored": [h.get("stance") for h in hypotheses],
            "pmi": pmi, "confidence": round(reliability, 4), "decision": decision,
            "wall_ms": round((time.time() - t0) * 1000, 1)}
+    # Level-B bridge: if the mode wants real LLM divergence and none was supplied yet, tell
+    # Claude which subagents to spawn and how to feed their hypotheses back for a stronger round.
+    if pol.get("parallelism") == "B" and not subagent_hypotheses:
+        out["spawn_subagents"] = subagent_manifest(task, mode, hypotheses)
     if gaps:
         out["needs_correction"] = {"reason": "directors reported gaps before adoption",
                                    "fixes": [g["diagnostico"] for g in gaps]}

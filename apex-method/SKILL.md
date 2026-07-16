@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.27.0
+version: 1.28.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -204,14 +204,24 @@ The "multi-agent" work is parallel in two distinct ways — do not conflate them
   **INJECT_SKILL** (low domain reward → forced_skill from native/marketplace), or **HARD_PROBLEM**
   (high difficulty via BehavioralDifficultyEstimator → escalate mode/attach the governing rule).
   `heatmap(agents, domain, task)` ranks the best agents; feeds mental_interpreter & deep_research.
-- **`concurrent_executor.evaluate_hypotheses(task, hypotheses, directors, mode)`** — the
-  analyst→directors flow: the LLM-analyst raises the 3 hypotheses (optimistic/neutral/pessimistic),
-  N specialist DIRECTORS (one per discipline, capped by the mode budget) score each by Bayesian
-  posterior + difficulty + risk (FMEA/RPN) + persona/skill diagnosis, each emits a **SHA-256
-  laudo** `{ranking, best, confidence, justificativa, diagnostico}`; a BARRIER waits for all,
-  then merge (entropy + PMI) → decision or RESTART. Gaps (missing skill/diff/rule, or wrong
-  specialist) are surfaced as `needs_correction` before adoption. The abort trigger in
-  `run_stances` is re-anchored on the stuck mechanism (not a flat confidence cut).
+- **`concurrent_executor.evaluate_hypotheses(task, hypotheses, directors, mode, subagent_hypotheses)`** —
+  the analyst→directors flow, now with **maximized exploration** feeding the panel BEFORE it scores:
+  1. **Level-B subagents (real LLM divergence):** the LLM-analyst raises the base hypotheses; when
+     the mode uses Level-B parallelism (FOGGY↑) the result carries a **`spawn_subagents` manifest**
+     naming which roster personas Claude should fan out as concurrent `Agent` subagents (one framing
+     each — optimistic/pessimistic/neutral/contrarian, + **genius** in RESEARCH). Claude spawns them,
+     collects their JSON, and re-calls with `subagent_hypotheses=[…]`; those merge in as first-class
+     candidates.
+  2. **Chaos expansion (`_chaos_expand`, FOGGY↑):** the offensive operators add divergent candidates
+     the single-context LLM would not propose — a `chaos_*` structural mutation of the strongest
+     hypothesis and a `chaos_recombine` child of the two most confident (each capped at conf ≤ 0.30,
+     SR_11); **RESEARCH** appends the mandatory non-obvious `genius`.
+  3. **Converge with rigor:** N specialist DIRECTORS (one per discipline, capped by the mode budget)
+     score the full set by Bayesian posterior + difficulty + risk (FMEA/RPN) + persona/skill
+     diagnosis, each emits a **SHA-256 laudo** `{ranking, best, confidence, justificativa,
+     diagnostico}`; a BARRIER waits for all, then merge (entropy + PMI) → decision or RESTART. Gaps
+     (missing skill/diff/rule, or wrong specialist) surface as `needs_correction` before adoption.
+  The abort trigger in `run_stances` is re-anchored on the stuck mechanism (not a flat confidence cut).
 
 ## § 2.9 · Live Cross-Session Memory (`scripts/memory.py`, Op1)
 

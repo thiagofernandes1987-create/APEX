@@ -469,9 +469,26 @@ def t_evaluate_hypotheses():
     assert out["n_directors"] >= 3, out["n_directors"]
     assert all(len(l["sha256"]) == 64 and "best" in l for l in out["laudos"]), "hashed laudos"
     assert out["decision"] in ("ADOPT", "REVIEW", "REJECT")
+    # FOGGY+ : chaos operators expand the set with divergent candidates before scoring
+    assert any(s and s.startswith("chaos_") for s in out["hypotheses_scored"]), out["hypotheses_scored"]
+    # Level-B: a spawn_subagents manifest tells Claude which real Agent subagents to fan out
+    man = out.get("spawn_subagents")
+    assert man and man["level"] == "B" and man["spawn"], "level-B manifest"
+    assert {"optimistic", "pessimistic", "neutral"} <= {s["stance"] for s in man["spawn"]}, man["spawn"]
     # RESEARCH injects the mandatory genius (non-obvious) hypothesis before directors score
     res = ce.evaluate_hypotheses("optimize the backend memory architecture", hyps, mode="RESEARCH")
     assert any(x["stance"] == "genius" for x in res["laudos"][0]["ranking"]), "genius injected"
+    assert any(s["stance"] == "genius" for s in res["spawn_subagents"]["spawn"]), "genius framing in manifest"
+    # 2nd call: real subagent hypotheses merge in as first-class candidates, no further manifest
+    sub = [{"stance": "contrarian", "answer": "C", "confidence": 0.62, "rationale": "z"}]
+    res2 = ce.evaluate_hypotheses("optimize the backend memory architecture", hyps,
+                                  mode="RESEARCH", subagent_hypotheses=sub)
+    assert "contrarian" in res2["hypotheses_scored"], res2["hypotheses_scored"]
+    assert "spawn_subagents" not in res2, "no re-spawn once subagents supplied"
+    # STANDARD is Level-A: no chaos, no subagent manifest
+    stt = ce.evaluate_hypotheses("optimize", hyps, mode="STANDARD")
+    assert not any(s and s.startswith("chaos_") for s in stt["hypotheses_scored"]), stt["hypotheses_scored"]
+    assert "spawn_subagents" not in stt, "Level-A has no subagent manifest"
     # re-anchored abort: a stuck persona (rejections_streak>20) is swapped, not kept
     st = {"critic": {"rejections_streak": 25, "confidence_history": [0.75]}}
     r = ce.run_stances("refactor", [{"name": "s", "persona": "critic",
