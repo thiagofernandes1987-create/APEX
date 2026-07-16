@@ -176,6 +176,29 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
       adotados o quality-bar de installs, o tier de dono oficial (`skill_scout.trust_tier`) e a
       cascata de descoberta; rejeitados (por escopo/H5) a plumbing de CLI e auto-install.
 
+## 🧠 Roadmap cognitivo (oportunidades P1–P3 — em discussão/desenho)
+
+### Op1 — Memória vetorial viva entre sessões · **DESENHO FECHADO** (a implementar)
+`scripts/memory.py` → `MemoryStore`, decidido em discussão com o autor:
+- **Storage:** SQLite local (`~/.apex-method/memory.db`) como padrão — stdlib, offline, arquivo
+  único portável. **MongoDB como plugin opt-in** (adaptador de storage fino) para quem já roda
+  um servidor; nunca padrão (quebraria offline/zero-dep/privacidade).
+- **Vetores:** `_tfidf.CharEmbedder` (char-n-gram, puro-stdlib, language-robust) + hook para
+  sentence-transformers; `recall(query, k)` = cosine top-k (brute-force, ok até ~10–50k).
+- **SHA-256** em três usos: (1) content-addressing/dedup, (2) coluna de integridade (ecoa SR_42),
+  (3) encadeamento do ledger (hash do evento anterior → log à prova de reescrita).
+- **Dois tipos + chave:** *semântica* (fatos destilados) dedup por `sha256(texto_norm)`;
+  *episódica* (findings de sessão) chaveada por `sha256(texto+timestamp+sessão)` — não dedup.
+- **Escrita curada pelo snapshot** (não automática a cada `run()`): menos ruído.
+- **Ledger de governança** (ideia do autor, ponte para a Op-P3): API neutra
+  `memory.record_event(kind, subject, action, evidence)` que `code_genetics` (promoção de vacina),
+  `grant_skill` (agente ganha skill), crystallization/SR_35 (diff promovido/rebaixado) e SR_47
+  (regra ativada/desativada) *chamam* — memória não invade os subsistemas.
+- **Seed inicial versionado** + append incremental; ligada ao `orchestrator.run` (recall no
+  início) e ao `snapshot`/eventos (write). Menu ganha `memory clear|export` (retenção/privacidade).
+
+### Op2–P3 — em discussão (ver seções seguintes conforme forem fechadas)
+
 ## 📋 Backlog remanescente (fora do escopo imediato / pesquisa)
 
 - [x] **Embeddings/semântico FEITO**: `_tfidf.semantic_rank` adiciona backend char-n-gram
