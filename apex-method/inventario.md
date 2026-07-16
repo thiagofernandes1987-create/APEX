@@ -178,7 +178,7 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
 
 ## 🧠 Roadmap cognitivo (oportunidades P1–P3 — em discussão/desenho)
 
-### Op1 — Memória vetorial viva entre sessões · **DESENHO FECHADO** (a implementar)
+### Op1 — Memória vetorial viva entre sessões · **FEITO** (v1.26) + **Knowledge Graph B1** (v1.29)
 `scripts/memory.py` → `MemoryStore`, decidido em discussão com o autor:
 - **Storage:** SQLite local (`~/.apex-method/memory.db`) como padrão — stdlib, offline, arquivo
   único portável. **MongoDB como plugin opt-in** (adaptador de storage fino) para quem já roda
@@ -196,6 +196,14 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
   (regra ativada/desativada) *chamam* — memória não invade os subsistemas.
 - **Seed inicial versionado** + append incremental; ligada ao `orchestrator.run` (recall no
   início) e ao `snapshot`/eventos (write). Menu ganha `memory clear|export` (retenção/privacidade).
+- **B1 — Knowledge Graph (v1.29):** as memórias carregam **arestas tipadas** (`causa`, `contradiz`,
+  `depende_de`, `refina`, `suporta`), então a recuperação vira **caminhada em grafo**, não só top-k.
+  `relate(src,dst,rel)`/`relate_text` cria a aresta; as relações **direcionais** (`causa/depende_de/
+  refina`) são mantidas **acíclicas** via o motor `hypothesis_dag` (ciclo = erro de raciocínio,
+  rejeitado antes de inserir); as simétricas (`contradiz/suporta`) podem formar laços.
+  `neighbors`/`walk(start, rel_types, depth)` percorrem; **`recall_graph(query, k, depth, rel)`**
+  faz seed com `recall` e **expande** pelas arestas — responde "o fato E tudo que o `contradiz`",
+  que um top-k por similaridade não faz. Cada aresta também vai ao ledger de governança (durável).
 
 ### Op2 — Paralelismo cognitivo · **FEITO** (v1.22–1.24)
 - `concurrent_executor` (Nível A) + protocolo de fan-out de subagentes (Nível B); 3 stances

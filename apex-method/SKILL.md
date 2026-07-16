@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.28.0
+version: 1.29.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -235,6 +235,17 @@ is the **governance ledger** — a SHA-256-chained, tamper-evident log the subsy
 rule/diff/agent/skill/vaccine is promoted or demoted, mirrored into semantic memory so `recall`
 surfaces the framework's own evolution. `verify_ledger()` re-walks the chain. Stdlib-only; a
 MongoDB adapter can be plugged, SQLite is always the default.
+
+**Knowledge Graph (B1).** Memories are not just rows — they carry TYPED edges, so retrieval
+becomes a graph walk instead of a flat top-k. `relate(src_sha, dst_sha, rel)` (or `relate_text`)
+adds an edge from the vocabulary `causa | contradiz | depende_de | refina | suporta`. The
+DIRECTIONAL relations (`causa/depende_de/refina`) are kept **acyclic** — a cycle is a reasoning
+error, rejected through the faithful `hypothesis_dag` engine before insert; the symmetric ones
+(`contradiz/suporta`) may loop. `neighbors(sha, rel, direction)` and `walk(start, rel_types,
+depth)` traverse; **`recall_graph(query, k, depth, rel)`** seeds with `recall` then EXPANDS along
+the edges — answering "give me the fact AND everything that `contradiz` it", which a similarity
+top-k cannot. Every edge is also written to the governance ledger, so the graph itself is durable,
+auditable memory.
 
 ## § 2.8 · The Living Project Inventory (`scripts/project_ledger.py`)
 

@@ -1,54 +1,54 @@
 {
  "passed": 40,
  "total": 40,
- "total_ms": 4075.3,
+ "total_ms": 5009.9,
  "results": [
   {
    "module": "pot",
    "ok": true,
-   "ms": 34.3,
+   "ms": 31.0,
    "metric": "sum 1..100 = 5050",
    "error": ""
   },
   {
    "module": "numeric",
    "ok": true,
-   "ms": 4.8,
+   "ms": 4.7,
    "metric": "RK4 energy err 8.72e-12",
    "error": ""
   },
   {
    "module": "verify",
    "ok": true,
-   "ms": 462.3,
+   "ms": 598.6,
    "metric": "identity VERIFIED / REFUTED",
    "error": ""
   },
   {
    "module": "uco_gate",
    "ok": true,
-   "ms": 89.2,
+   "ms": 139.7,
    "metric": "loop REJECTED (UCO)",
    "error": ""
   },
   {
    "module": "universal_code_optimizer_v4",
    "ok": true,
-   "ms": 0.8,
+   "ms": 0.9,
    "metric": "loop_risk 0.65",
    "error": ""
   },
   {
    "module": "router",
    "ok": true,
-   "ms": 981.7,
+   "ms": 1374.7,
    "metric": "routes to frontend",
    "error": ""
   },
   {
    "module": "skill_scout",
    "ok": true,
-   "ms": 6.5,
+   "ms": 11.4,
    "metric": "3 attacks blocked, clean passes",
    "error": ""
   },
@@ -62,14 +62,14 @@
   {
    "module": "snapshot",
    "ok": true,
-   "ms": 63.6,
+   "ms": 55.5,
    "metric": "snapshot new/add/compress/decompress",
    "error": ""
   },
   {
    "module": "agent_registry",
    "ok": true,
-   "ms": 15.5,
+   "ms": 20.8,
    "metric": "core->engineer, ext->data-engineer",
    "error": ""
   },
@@ -90,42 +90,42 @@
   {
    "module": "gravity",
    "ok": true,
-   "ms": 24.6,
+   "ms": 35.8,
    "metric": "security constellation: 2 agents",
    "error": ""
   },
   {
    "module": "bayes",
    "ok": true,
-   "ms": 0.3,
+   "ms": 0.4,
    "metric": "beta-binomial 0.75, posterior A=0.7407",
    "error": ""
   },
   {
    "module": "orchestrator",
    "ok": true,
-   "ms": 33.5,
+   "ms": 30.3,
    "metric": "2+2=4 express; hard->SCIENTIFIC; pmi rel=0.875",
    "error": ""
   },
   {
    "module": "hypothesis_dag",
    "ok": true,
-   "ms": 0.3,
+   "ms": 0.2,
    "metric": "cycle rejected, cascade 3",
    "error": ""
   },
   {
    "module": "code_genetics",
    "ok": true,
-   "ms": 0.4,
+   "ms": 0.5,
    "metric": "stable sig, promote gate 0.85",
    "error": ""
   },
   {
    "module": "guards",
    "ok": true,
-   "ms": 0.5,
+   "ms": 0.4,
    "metric": "SR_36/37/38 enforced",
    "error": ""
   },
@@ -146,7 +146,7 @@
   {
    "module": "verification_gate",
    "ok": true,
-   "ms": 0.1,
+   "ms": 0.3,
    "metric": "DEEP routes H1, prune@test2",
    "error": ""
   },
@@ -174,56 +174,56 @@
   {
    "module": "repo_bridge",
    "ok": true,
-   "ms": 57.1,
+   "ms": 119.9,
    "metric": "native index 3784, traversal refused",
    "error": ""
   },
   {
    "module": "_tfidf",
    "ok": true,
-   "ms": 0.8,
+   "ms": 0.9,
    "metric": "pure-python tf-idf ranks + pairwise ok",
    "error": ""
   },
   {
    "module": "audit_regressions",
    "ok": true,
-   "ms": 384.4,
+   "ms": 397.4,
    "metric": "loads FP, getattr, installs, n_rel, express, chaos, skills.sh, char-ngram, dissect-PT, ext-grant: all fixed",
    "error": ""
   },
   {
    "module": "monte_carlo",
    "ok": true,
-   "ms": 12.7,
+   "ms": 11.2,
    "metric": "MC P50=60.0, cv=0.083",
    "error": ""
   },
   {
    "module": "pmi_monte_carlo",
    "ok": true,
-   "ms": 43.5,
+   "ms": 44.7,
    "metric": "PMI picks lowest-CV plan by real simulation",
    "error": ""
   },
   {
    "module": "code_genetics_sqlite",
    "ok": true,
-   "ms": 77.5,
+   "ms": 24.0,
    "metric": "vaccine persists + promotes across SQLite reopen",
    "error": ""
   },
   {
    "module": "snapshot_wire",
    "ok": true,
-   "ms": 9.9,
+   "ms": 10.5,
    "metric": "run() recorded 1 findings into snapshot",
    "error": ""
   },
   {
    "module": "config",
    "ok": true,
-   "ms": 1.2,
+   "ms": 1.0,
    "metric": "config persists, validates, resolves mode (snap-up)",
    "error": ""
   },
@@ -237,50 +237,50 @@
   {
    "module": "deep_research",
    "ok": true,
-   "ms": 1165.7,
+   "ms": 1395.2,
    "metric": "deep_research TARGET_REACHED in 1 rounds",
    "error": ""
   },
   {
    "module": "concurrent_executor",
    "ok": true,
-   "ms": 397.9,
+   "ms": 418.5,
    "metric": "3 stances; mode-cap budget; abort+vaccine 1; off_persona; restart",
    "error": ""
   },
   {
    "module": "chaos_operators",
    "ok": true,
-   "ms": 0.4,
+   "ms": 0.5,
    "metric": "levy/mutation/genius + chaos from FOGGY, A->B, RESEARCH genius",
    "error": ""
   },
   {
    "module": "competence_matrix",
    "ok": true,
-   "ms": 0.7,
+   "ms": 0.8,
    "metric": "difficulty+stuck+diagnosis (HARD/PERSONA_SWAP)",
    "error": ""
   },
   {
    "module": "evaluate_hypotheses",
    "ok": true,
-   "ms": 131.3,
+   "ms": 126.8,
    "metric": "8 directors, hashed laudos, ADOPT; abort->PERSONA_SWAP",
    "error": ""
   },
   {
    "module": "project_ledger",
    "ok": true,
-   "ms": 2.4,
+   "ms": 2.3,
    "metric": "MACRO+micros, DSM critical-path+parallel, gate, justified-abandon, cycle, zip",
    "error": ""
   },
   {
    "module": "memory",
    "ok": true,
-   "ms": 67.7,
-   "metric": "episodic/semantic + dedup + recall + snapshot-write + chained ledger (9 mem)",
+   "ms": 147.3,
+   "metric": "episodic/semantic + dedup + recall + snapshot + chained ledger; KG 3 edges + graph-walk + acyclic guard (17 mem)",
    "error": ""
   }
  ]

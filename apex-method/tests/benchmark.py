@@ -551,7 +551,24 @@ def t_memory():
     m.record_event("vaccine_promoted", "err->fix", "promote", {"uses": 3})
     m.record_event("skill_granted", "vt->react", "grant")
     assert m.verify_ledger()["ok"] and m.verify_ledger()["events"] == 2
-    return f"episodic/semantic + dedup + recall + snapshot-write + chained ledger ({m.stats()['memories']} mem)"
+    # ── B1 Knowledge Graph: typed edges + graph-walk recall + acyclic guard ──
+    r = m.relate_text("the default persistence store should be SQLite for offline portability",
+                      "MongoDB is the better persistence store for multi-server deployments",
+                      "contradiz")
+    assert r["status"] == "OK" and len(r["sha"]) == 64, r
+    g = m.recall_graph("persistence store", k=1, depth=1, rel="contradiz")
+    assert any("mongodb" in e["text"].lower() for e in g["expanded"]), g["expanded"]
+    # directional causa chain x->y->z; a cycle z->x MUST be rejected by the hypothesis_dag engine
+    x = m.remember("premise: the container is ephemeral", "semantic")
+    y = m.remember("therefore local db is not durable", "semantic")
+    z = m.remember("therefore durability needs git or zip export", "semantic")
+    m.relate(x, y, "causa"); m.relate(y, z, "causa")
+    assert m.relate(z, x, "causa")["status"] == "REFUSED", "acyclic guard must reject the cycle"
+    assert m.relate("nope", z, "causa")["status"] == "REFUSED", "edge needs existing nodes"
+    assert m.relate(x, y, "bogus_rel")["status"] == "REFUSED", "unknown rel refused"
+    assert m.stats()["relations"] == 3, m.stats()
+    return (f"episodic/semantic + dedup + recall + snapshot + chained ledger; "
+            f"KG {m.stats()['relations']} edges + graph-walk + acyclic guard ({m.stats()['memories']} mem)")
 
 
 TESTS = [
