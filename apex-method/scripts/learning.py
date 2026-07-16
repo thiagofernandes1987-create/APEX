@@ -182,19 +182,6 @@ def best(kind, domain, k=5, include_demoted=False):
     return _store().best(kind, domain, k, include_demoted)
 
 
-def record_round(personas, domain, adopted, confidence=0.0):
-    """Convenience the parallel engine calls after a round: credit each persona with the round's
-    outcome (success = the panel ADOPTED with healthy confidence). Non-fatal, best-effort."""
-    success = bool(adopted) and confidence >= PROMOTE_AT
-    out = []
-    for p in personas:
-        try:
-            out.append(record_outcome("persona", p, domain, success, evidence={"confidence": confidence}))
-        except Exception:
-            pass
-    return out
-
-
 if __name__ == "__main__":
     import json
     import tempfile

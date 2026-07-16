@@ -88,7 +88,13 @@ def ast_security_scan(code: str) -> dict:
                 top = m.split(".")[0]
                 if top and top not in IMPORT_WHITELIST:
                     review.append(f"import outside whitelist: {top} (line {node.lineno})")
-    return {"safe": not reject, "reject": sorted(set(reject)), "review": sorted(set(review)),
+    # AUD-004 fix: the docstring promises "safe=True only when there are no reject reasons AND no
+    # non-whitelisted imports", but the code was `safe = not reject` — it ignored imports, so code
+    # that `import subprocess` or `import os` (getattr-obfuscated os.system) returned safe=True.
+    # Honour the documented contract: a non-whitelisted import also makes it NOT auto-safe.
+    non_whitelisted_imports = [r for r in review if r.startswith("import outside whitelist")]
+    return {"safe": not reject and not non_whitelisted_imports,
+            "reject": sorted(set(reject)), "review": sorted(set(review)),
             "reasons": sorted(set(reject))}  # 'reasons' kept for back-compat
 
 

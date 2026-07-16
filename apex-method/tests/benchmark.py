@@ -89,10 +89,18 @@ def t_router():
 
 def t_skill_scout():
     import skill_scout
-    for atk in ("import os\nos.system('x')", "__import__('os')", "eval('1')"):
+    # hard-reject RCE vectors
+    for atk in ("import os\nos.system('x')", "__import__('os')", "eval('1')", "exec('x')"):
         assert not skill_scout.ast_security_scan(atk)["safe"], atk
+    # AUD-004 regression: a non-whitelisted import is NOT auto-safe (subprocess / getattr-obfuscated
+    # os.system used to slip through as safe=True because `safe` ignored imports)
+    for atk in ("import subprocess\nsubprocess.run(['ls'])",
+                "import os\ngetattr(os, 'sys'+'tem')('x')"):
+        assert not skill_scout.ast_security_scan(atk)["safe"], f"non-whitelisted import must not be safe: {atk}"
+    # clean, whitelisted code still passes
     assert skill_scout.ast_security_scan("import numpy as np\ndef f(x): return np.sqrt(x)")["safe"]
-    return "3 attacks blocked, clean passes"
+    assert skill_scout.ast_security_scan("import math\nprint(math.sqrt(2))")["safe"]
+    return "RCE rejected + non-whitelisted-import not-safe (AUD-004) + clean passes"
 
 def t_skill_forge():
     import skill_forge, tempfile, os as _os

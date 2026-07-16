@@ -139,25 +139,6 @@ def render_roster(agents_doc):
     return "\n".join(lines)
 
 
-if __name__ == "__main__":
-    agents = load(AGENTS)
-    skills = load(SKILLS)
-    cmd = sys.argv[1] if len(sys.argv) > 1 else "demo"
-
-    if cmd == "match" and len(sys.argv) > 2:
-        for aid, s in match_task_to_agents(sys.argv[2], agents):
-            print(f"{s:.3f}  {aid}  — {agents['agents'][aid]['display_name']}")
-    else:
-        # demo: grant the first finance + first software skill, show experience gain
-        by_dom = {}
-        for s in skills:
-            by_dom.setdefault(s["domain"], s)
-        demo_skills = [by_dom.get("finance"), by_dom.get("software"), by_dom.get("ai-ml")]
-        for sk in filter(None, demo_skills):
-            res = grant_skill(sk, agents, approved=True, scripts=["router.py"])
-            print(res["status"], sk["id"], "->", res["agents"])
-        print("\n" + render_roster(agents))
-
 # ── Extended roster (all 213 real APEX agents mined from thiagofernandes1987-create/APEX) ──
 ROSTER_EXT = os.path.join(HERE, "..", "catalog", "apex_agents_roster.json")
 
@@ -180,4 +161,26 @@ def match_task_to_ext_agents(task, k=5):
     order = sorted(range(len(sims)), key=lambda i: -sims[i])[:k]
     return [(roster[i]["id"], roster[i].get("category", ""), round(float(sims[i]), 3))
             for i in order if sims[i] > 0]
+
+
+if __name__ == "__main__":
+    # AUD-001 fix: this demo was misplaced ABOVE match_task_to_ext_agents (line ~173), so running
+    # the module as a script raised NameError before that def was bound. Moved to the true end.
+    agents = load(AGENTS)
+    skills = load(SKILLS)
+    cmd = sys.argv[1] if len(sys.argv) > 1 else "demo"
+
+    if cmd == "match" and len(sys.argv) > 2:
+        for aid, s in match_task_to_agents(sys.argv[2], agents):
+            print(f"{s:.3f}  {aid}  — {agents['agents'][aid]['display_name']}")
+    else:
+        # demo: grant the first finance + first software skill, show experience gain
+        by_dom = {}
+        for s in skills:
+            by_dom.setdefault(s["domain"], s)
+        demo_skills = [by_dom.get("finance"), by_dom.get("software"), by_dom.get("ai-ml")]
+        for sk in filter(None, demo_skills):
+            res = grant_skill(sk, agents, approved=True, scripts=["router.py"])
+            print(res["status"], sk["id"], "->", res["agents"])
+        print("\n" + render_roster(agents))
 

@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.37.0
+version: 1.38.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -231,7 +231,7 @@ The "multi-agent" work is parallel in two distinct ways — do not conflate them
   **PERSONA_SWAP** (stuck: rejections_streak>20 OR var(conf)<0.03 → reassign with phase_offset+π),
   **INJECT_SKILL** (low domain reward → forced_skill from native/marketplace), or **HARD_PROBLEM**
   (high difficulty via BehavioralDifficultyEstimator → escalate mode/attach the governing rule).
-  `heatmap(agents, domain, task)` ranks the best agents; feeds mental_interpreter & deep_research.
+  `heatmap(agents, domain, task)` ranks the best agents for a domain — a helper the LLM/`mental_interpreter`/`deep_research` can call when choosing a panel (it is exposed, not auto-invoked).
 - **`scripts/learning.py`** (Op-P3 — learning that persists): the durable promote/demote loop.
   `record_outcome(kind, subject, domain, success)` accumulates evidence per **(persona/skill/diff/
   rule/vaccine, domain)** and decides **PROMOTE / KEEP / DEMOTE** with the kernel's Bayesian layer
@@ -381,8 +381,12 @@ Mirrors the awesome-skills install pattern ("read a SKILL.md URL"), done safely.
    web tools) and the action `ASK_USER_TO_APPROVE_INSTALL` — Claude presents the candidate to
    the user and only proceeds (`npx skills add owner/repo`) after explicit approval (H5).
 2. **Scout & evaluate** — `skill_scout.py <raw SKILL.md url>`: parses structure, checks it
-   documents triggers/scope, and **AST-scans any shipped code** (rejects `exec`/`eval`,
-   `os.system`, `subprocess`, `__import__`, non-whitelisted imports).
+   documents triggers/scope, and **AST-scans any shipped code** in two tiers: it hard-**rejects**
+   RCE vectors (`exec`/`eval`/`__import__`, `os.system`, pickle/marshal/yaml deserializers) →
+   `safe=False`; and **flags for review** the often-benign-but-risky (`subprocess`, `getattr`,
+   any non-whitelisted import). A non-whitelisted import also makes it **not auto-safe**
+   (`safe=False`), so obfuscated `getattr(os,'system')`/`subprocess` cannot slip through as safe.
+   The scanner is best-effort static (see §12) — the human H5 approval is the real boundary.
 3. **Stage into the snapshot** — records the skill id, `use_when`, and call signature under
    `snapshot.skills_staged` with `status: STAGED`.
 4. **Gate** — installing/running requires explicit user approval. Claude never silently
