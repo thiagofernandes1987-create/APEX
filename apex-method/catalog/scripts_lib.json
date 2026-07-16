@@ -3,8 +3,8 @@
   "id": "script:_tfidf",
   "type": "script",
   "domain": "meta",
-  "capabilities": "tfidf,cosine,fallback,ranking",
-  "mass": 81,
+  "capabilities": "tfidf,cosine,fallback,ranking,semantic,char-ngram",
+  "mass": 160,
   "path": "scripts/_tfidf.py"
  },
  {
@@ -48,12 +48,28 @@
   "path": "scripts/code_genetics.py"
  },
  {
+  "id": "script:config",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "preferences,preferred-modes,router-backend,discovery-source,persist",
+  "mass": 118,
+  "path": "scripts/config.py"
+ },
+ {
   "id": "script:curated",
   "type": "script",
   "domain": "meta",
   "capabilities": "catalog,domain-map,skills.sh",
   "mass": 62,
   "path": "scripts/curated.py"
+ },
+ {
+  "id": "script:deep_research",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "goal,research,scientific,iterative,agent-need,discovery,native,skills.sh",
+  "mass": 150,
+  "path": "scripts/deep_research.py"
  },
  {
   "id": "script:fractal_compression",
@@ -110,6 +126,14 @@
   "capabilities": "n_final,speculation,warmup,planning,entropy-merge",
   "mass": 81,
   "path": "scripts/mental_interpreter.py"
+ },
+ {
+  "id": "script:menu",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "menu,update,modes,options,research,entrypoint",
+  "mass": 140,
+  "path": "scripts/menu.py"
  },
  {
   "id": "script:monte_carlo",

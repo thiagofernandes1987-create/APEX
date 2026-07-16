@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.20.0
+version: 1.21.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -145,6 +145,28 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
 **Dependencies:** stdlib only, except *optional* `scikit-learn` (better routing) and `sympy`
 (formal verify — without it `verify.py` returns `[CONJECTURA_FORMAL]` instead of crashing).
 
+## § 2.5 · The Menu (`scripts/menu.py`)
+
+Top-level actions to run on the user's request — this is the skill's "menu":
+
+- **Update** — `python3 scripts/menu.py update [--apply]`: compares the installed `version:`
+  against the copy in the APEX repo (via `repo_bridge`, allowlisted) and, with `--apply` on a
+  local clone, syncs the files and re-runs the benchmark to verify. Offline → reports and keeps
+  the current version. (Marketplace users: `npx skills update apex-method`.)
+- **Preferred modes** — `python3 scripts/menu.py modes DEEP,SCIENTIFIC`: persists the operating
+  modes the user favours (`scripts/config.py`). `orchestrator.run` then honours them —
+  `config.resolve_mode` snaps the auto-picked mode UP to the nearest preferred one and never
+  silently downgrades. Force one with `menu.py set default_mode SCIENTIFIC`.
+- **Options** — `menu.py set router_backend char|word|st`, `set discovery_source native|search|both`,
+  `set min_installs 1000`. All persisted, all honoured by the router and the discovery cascade.
+- **Deep research (goal-like)** — `python3 scripts/menu.py research "<question>" --source native|search|both`
+  (`scripts/deep_research.py`): an iterative RESEARCH/SCIENTIFIC loop that dissects the question,
+  routes each part to the best of the 213 APEX agents, RESOLVES the knowledge each agent needs —
+  from the **native** 3,784-skill library, or by **searching** skills.sh (installs ≥ the bar) +
+  GitHub for new specialised skills, or **both** — reasons, and iterates until the target
+  reliability is reached or progress stalls (stagnation via `apex_st_metric`). Discovery only
+  STAGES `npx skills add` for the user to approve (H5); nothing installs automatically.
+
 ## § 3 · Finding and Using an External Skill (safe flow)
 
 Mirrors the awesome-skills install pattern ("read a SKILL.md URL"), done safely.
@@ -257,4 +279,6 @@ skill router, audit, autopsy, structured reasoning.
   APEX reuses (install-count bar, official trust tier, discovery cascade).
 - `tests/evaluate.py` — reproducible rubric-based evaluation (objective, re-runnable; 13/13).
 - `AUDITORIA_CIENTIFICA.md` — SCIENTIFIC-mode 4-layer autopsy (DSM/Ishikawa/Pareto/FMEA) with full corrected code.
+- `CLASSIFICACAO_APEX.md` — 0–10 scoring of every aspect + what is missing to be a cognitive framework.
+- `scripts/menu.py` / `scripts/config.py` / `scripts/deep_research.py` — the menu (update / preferred modes / goal-like deep research).
 - `EVALUATION_REPORT.md` — self-scored quality report (self-graded, not external review).

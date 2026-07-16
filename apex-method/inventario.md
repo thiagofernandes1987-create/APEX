@@ -1,6 +1,6 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.20.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.21.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
@@ -16,13 +16,14 @@ checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescen
 - [x] `.skill` instalável + `.zip` da árvore de repositório (v1.17.x reconstruídos)
 - [x] Versão unificada (era 1.15 no inventário × 1.16 no SKILL.md — drift corrigido)
 
-### Marco 2 — Motores executáveis (28 scripts, 31/31 no benchmark + rubrica 13/13)
+### Marco 2 — Motores executáveis (31 scripts, 34/34 no benchmark + rubrica 13/13)
 - [x] Autópsia SCIENTIFIC (4 camadas): dissect bilíngue+semântico, grant p/ roster 213, _norm — ver `AUDITORIA_CIENTIFICA.md`
 - [x] Raciocínio: `orchestrator`, `mental_interpreter`, `pot`, `hypothesis_dag`, `fractal_compression`
 - [x] Numérico/formal: `numeric` (RK4/Euler), `verify` (sympy, degrada sem ele), `geometry_estimator`
 - [x] Bayesiano: `bayes` (beta-binomial, Ω, R_acum), `apex_st_metric`
 - [x] Qualidade/segurança: `uco_gate`, `universal_code_optimizer_v4` (byte-idêntico ao autoral), `guards` (SR_36–40), `skill_scout`
 - [x] Escalonamento: `geodesic_scheduler`, `verification_gate`
+- [x] Menu da skill: `menu` (update/modos/research), `config` (preferências persistentes), `deep_research` (goal-like RESEARCH/SCIENTIFIC, nativo vs descobrir)
 - [x] Probabilístico: `monte_carlo` (P10/P50/P90 + CV, numpy opcional; ligado ao PMI para hipóteses quantificáveis)
 - [x] Marketplace: `skills_sh` (skills.sh API, filtro >=1000 installs, tier oficial, offline-safe)
 - [x] Semântico opcional: `_tfidf.semantic_rank` (char-n-gram/sentence-transformers, resolve PT<->EN)
@@ -40,7 +41,7 @@ checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescen
 - [x] `mcp_registry.json` — 23 servidores MCP (os 5 dirs de integrations/ antes fora do registry foram indexados)
 - [x] `module_registry.json` — 111 módulos (bate 1:1 com as páginas do boot v00.39.1)
 - [x] `diffs_lib.json` — **18/18 DIFF_*** dos packs v00.33–36 (12 faltavam) + SR_42–45 + normalizações
-- [x] `scripts_lib.json` — 27 scripts (massa=LOC, para a gravidade)
+- [x] `scripts_lib.json` — 31 scripts (massa=LOC, para a gravidade)
 - [x] `algorithms_map.json` — 8 repos skills.sh de alto valor mapeados
 - [x] `uco_sensor_engines.json` — 9 motores do UCO-Sensor
 

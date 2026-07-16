@@ -226,8 +226,15 @@ def run(task, candidates=None, snapshot=None):
         return {"path": "EXPRESS", **ex}
     disciplines = dissect(task)
     specialists = assign_specialists(task, disciplines)
-    mode = "SCIENTIFIC" if any(d in disciplines for d in ("science", "math")) else \
-           "DEEP" if len(disciplines) > 1 else "STANDARD"
+    auto_mode = "SCIENTIFIC" if any(d in disciplines for d in ("science", "math")) else \
+                "DEEP" if len(disciplines) > 1 else "STANDARD"
+    # honour the user's preferred/default modes from config (menu.py sets them); never
+    # silently downgrade — resolve_mode snaps up to the nearest preferred mode.
+    try:
+        import config
+        mode = config.resolve_mode(auto_mode)
+    except Exception:
+        mode = auto_mode
     # audit fix v1.17.0: wire mental_interpreter (was documented in the flow but never called)
     import mental_interpreter
     phase_plan = mental_interpreter.plan_phases(mode, fractal_depth=len(disciplines))

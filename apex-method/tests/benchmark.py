@@ -358,6 +358,44 @@ def t_snapshot_wire():
     return f"run() recorded {len(r['snapshot']['findings'])} findings into snapshot"
 
 
+# ── menu / config / deep_research (v1.21.0) ──────────────────────────────────
+def t_config():
+    import config
+    try:
+        assert config.set_preferred_modes(["SCIENTIFIC", "RESEARCH"])["status"] == "OK"
+        # resolve must snap UP to the nearest preferred mode, never downgrade
+        assert config.resolve_mode("DEEP") == "SCIENTIFIC", config.resolve_mode("DEEP")
+        assert config.set_preferred_modes(["TURBO"])["status"] == "ERROR"
+        assert config.set_option("router_backend", "char")["status"] == "OK"
+        assert config.set_option("router_backend", "xyz")["status"] == "ERROR"
+    finally:
+        config.save(config.DEFAULTS)  # never leak preferences into other tests
+    return "config persists, validates, resolves mode (snap-up)"
+
+
+def t_menu():
+    import menu
+    show = menu.show()
+    assert "1_update" in show["menu"] and "4_research" in show["menu"], show
+    up = menu.update()  # offline or same-version -> no crash, structured result
+    assert up["status"] in ("OK", "OFFLINE") and "installed" in up, up
+    return f"menu shows {len(show['menu'])} actions; update={up['status']}"
+
+
+def t_deep_research():
+    import deep_research, config
+    try:
+        out = deep_research.research("audit and optimize the APEX agents", source="native", max_rounds=3)
+        assert out["mode"] in ("RESEARCH", "SCIENTIFIC") and out["rounds_run"] >= 1, out
+        assert out["stop_reason"] in ("TARGET_REACHED", "STAGNATION", "MAX_ROUNDS")
+        # search source offline must still stage install requests (H5), never crash
+        s = deep_research.research("obscure niche topic xyz", source="search", max_rounds=2)
+        assert s["stop_reason"] in ("STAGNATION", "MAX_ROUNDS", "TARGET_REACHED")
+    finally:
+        config.save(config.DEFAULTS)
+    return f"deep_research {out['stop_reason']} in {out['rounds_run']} rounds"
+
+
 TESTS = [
     ("pot", t_pot), ("numeric", t_numeric), ("verify", t_verify), ("uco_gate", t_uco_gate),
     ("universal_code_optimizer_v4", t_uco_v4), ("router", t_router), ("skill_scout", t_skill_scout),
@@ -370,6 +408,7 @@ TESTS = [
     ("repo_bridge", t_repo_bridge), ("_tfidf", t_tfidf_fallback), ("audit_regressions", t_regressions),
     ("monte_carlo", t_monte_carlo), ("pmi_monte_carlo", t_pmi_monte_carlo),
     ("code_genetics_sqlite", t_code_genetics_sqlite), ("snapshot_wire", t_snapshot_wire),
+    ("config", t_config), ("menu", t_menu), ("deep_research", t_deep_research),
 ]
 
 
