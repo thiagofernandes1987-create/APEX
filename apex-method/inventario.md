@@ -1,6 +1,6 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.33.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.34.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
@@ -248,6 +248,23 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
 - **Auto-registro**: `evaluate_hypotheses` credita cada diretor por rodada; o loop se fecha sozinho.
 - `numeric.py`: `solve_ode(method="auto")` usa **scipy quando importável** (fallback RK4 stdlib);
   `capabilities()` reporta numpy/scipy/sklearn/pandas — aceleração **é do ambiente, não do LLM**.
+
+### Contrato de roteamento + entrada de 3 personas · **FEITO** (v1.33–1.34)
+- `scripts/execution_policy.py`: `route(subtask)` decide a **superfície** — `subprocess` (cálculo
+  determinístico, sem internet) · `agent` (raciocínio) · `agent+internet` (descoberta: skills.sh/
+  repos/papers/MCPs, subagente com web-tools). **Regra dura no código**: `needs_internet=True`
+  **nunca** vai pro subprocess. Quem fornece as ferramentas é sempre o LLM (`provider_of_tools`).
+  Manifesto verificável, **não DSL**. Verificado: nenhum MCP nem script fazia isso.
+- `dissect_entry(task, mode, reliability)`: entrada das **3 personas** (architect/analyst/critic) —
+  por micro: SWOT + agentes/skills/tools (melhor via `learning`) + resolução (repo→skills.sh→criar)
+  + roteamento + template de documento + **governança regional** (HIPAA/GDPR/LGPD/legal/financeiro,
+  detectada pelo texto). Reusa dissect/assign/gravity/learning — não reimplementa descoberta.
+- **Wire MCFE + dificuldade (v1.34)**: `triage(task, reliability)` roda **antes** — tarefa **trivial
+  pula o pipeline** (`orchestrator.express_check` → EXPRESS, economia de tokens); baixa dificuldade
+  fica leve; **alta dificuldade** (`competence_matrix.estimate_difficulty` ≥0.85) OU **MCFE baixo**
+  (R_acum <0.50) **escala o modo e joga os micros de raciocínio para `agent+internet`** (descobrir).
+  Compute continua `subprocess`. Quem determina a dificuldade: `competence_matrix.estimate_difficulty`;
+  quem pula o trivial: `orchestrator.express_check`.
 
 ### Relatório "runtime cognitivo" (ChatGPT) — aproveitáveis implementados
 - **B1 — Knowledge Graph (v1.29):** arestas tipadas em `memory.py` + `recall_graph` (caminhada em

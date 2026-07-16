@@ -82,18 +82,84 @@ def classify_surface(subtask):
     return "agent", False
 
 
-def route(subtask, kind="auto"):
+def route(subtask, kind="auto", escalate=False):
     """The routing contract for ONE micro-task. Emits the surface, the internet flag, and who
-    provides the tools — and ENFORCES the hard rule so discovery can never land in the sandbox."""
+    provides the tools — and ENFORCES the hard rule so discovery can never land in the sandbox.
+    `escalate=True` (from triage: low MCFE reliability or high difficulty) pushes a plain reasoning
+    task to `agent+internet` so it goes DISCOVER better tools/context — but compute stays compute
+    (you never send RK4 to the internet)."""
     surface, needs_net = classify_surface(subtask)
+    escalated = False
+    if escalate and surface == "agent":                    # uncertain reasoning -> go discover
+        surface, needs_net, escalated = "agent+internet", True, True
     if needs_net and surface != "agent+internet":          # belt-and-suspenders enforcement
         surface = "agent+internet"
     if surface == "subprocess" and needs_net:              # impossible by construction, but guard
         surface, needs_net = "agent+internet", True
     return {"subtask": subtask, "surface": surface, "needs_internet": needs_net,
-            "provider_of_tools": "llm-orchestrator",
+            "escalated_to_discovery": escalated, "provider_of_tools": "llm-orchestrator",
             "rule": ("discovery/research runs in an internet-enabled agent (or subagent), NEVER the "
                      "sealed subprocess; the sandbox only runs already-provided deterministic code")}
+
+
+# ── MCFE/difficulty triage: skip trivial (token economy) · escalate uncertain (discovery) ────
+R_REPLAN = 0.50            # MCFE reliability below this -> replan/escalate to discovery (bayes R_acum)
+R_EARLY_EXIT = 0.30        # below this -> early-exit/abort candidate
+HARD_DIFF = 0.85           # BehavioralDifficultyEstimator: hard problem -> escalate
+SIMPLE_DIFF = 0.35         # low difficulty -> stay light, save tokens
+MODE_LADDER = ["EXPRESS", "STANDARD", "FOGGY", "DEEP", "SCIENTIFIC", "RESEARCH"]
+
+
+def _bump(mode, floor):
+    """Return the HIGHER of `mode` and `floor` on the ladder (never downgrades)."""
+    i = max(MODE_LADDER.index(mode) if mode in MODE_LADDER else 1,
+            MODE_LADDER.index(floor) if floor in MODE_LADDER else 1)
+    return MODE_LADDER[i]
+
+
+def _cap(mode, ceiling):
+    """Return the LOWER of `mode` and `ceiling` (used to keep simple tasks light)."""
+    i = min(MODE_LADDER.index(mode) if mode in MODE_LADDER else 1,
+            MODE_LADDER.index(ceiling) if ceiling in MODE_LADDER else 1)
+    return MODE_LADDER[i]
+
+
+def triage(task, reliability=None, mode="STANDARD"):
+    """Decide, BEFORE running the pipeline, whether to (a) SKIP it entirely for a trivial task
+    (token economy — `orchestrator.express_check`), (b) keep it LIGHT for a low-difficulty task, or
+    (c) ESCALATE mode + discovery when the problem is hard (`competence_matrix.estimate_difficulty`)
+    or the MCFE reliability signal is low (bayes R_acum gate 0.50/0.30). Returns the recommended
+    mode + whether micros should escalate to discovery."""
+    # (a) token economy: trivial input skips the whole pipeline
+    try:
+        import orchestrator
+        exp = orchestrator.express_check(task)
+    except Exception:
+        exp = None
+    if exp:
+        return {"skip_pipeline": True, "mode": "EXPRESS", "difficulty": None,
+                "reliability": reliability, "escalate_discovery": False, "express": exp,
+                "reason": f"trivial ({exp.get('reason')}) — skip pipeline, save tokens"}
+    # (b/c) difficulty + reliability
+    try:
+        import competence_matrix
+        diff = competence_matrix.estimate_difficulty(task)["bde_score"]
+    except Exception:
+        diff = 0.5
+    rec, escalate, reasons = mode, False, []
+    if diff < SIMPLE_DIFF:
+        rec = _cap(rec, "STANDARD")
+        reasons.append(f"low difficulty {diff} — light mode, save tokens")
+    if diff >= HARD_DIFF:
+        rec, escalate = _bump(rec, "DEEP"), True
+        reasons.append(f"high difficulty {diff} — escalate + discover")
+    if reliability is not None and reliability < R_REPLAN:
+        rec, escalate = _bump(rec, "DEEP"), True
+        reasons.append(f"MCFE reliability {reliability} < {R_REPLAN} — escalate to discovery (replan)")
+    if reliability is not None and reliability < R_EARLY_EXIT:
+        reasons.append(f"MCFE reliability {reliability} < {R_EARLY_EXIT} — early-exit/abort candidate")
+    return {"skip_pipeline": False, "mode": rec, "difficulty": diff, "reliability": reliability,
+            "escalate_discovery": escalate, "reasons": reasons or ["nominal difficulty/reliability"]}
 
 
 # ── the 3-persona dissect entry ──────────────────────────────────────────────────────────────
@@ -143,11 +209,19 @@ def _resolve_tools(subtask):
             "create_if_missing": not native and not market}
 
 
-def dissect_entry(task, mode="DEEP"):
-    """THE ENTRY. Returns the plan the LLM executes: the 3 dissect personas to raise, the micros
-    (each with SWOT + needed resources + resolution + ROUTING + a template + governance), the
-    provisioning rule (the LLM provides the tools) and the feedback protocol. Reuses the existing
-    dissect/assign/gravity/learning engines — no discovery is reimplemented here."""
+def dissect_entry(task, mode="DEEP", reliability=None):
+    """THE ENTRY. First TRIAGES (skip the pipeline for a trivial task; escalate mode+discovery for a
+    hard task or low MCFE reliability), then returns the plan the LLM executes: the 3 dissect personas
+    to raise, the micros (each with SWOT + needed resources + resolution + ROUTING + a template +
+    governance), the provisioning rule (the LLM provides the tools) and the feedback protocol.
+    Reuses dissect/assign/gravity/learning/express_check — no discovery is reimplemented here."""
+    tri = triage(task, reliability=reliability, mode=mode)
+    if tri["skip_pipeline"]:
+        # token economy: a trivial task never enters the pipeline
+        return {"macro": task, "skip_pipeline": True, "triage": tri,
+                "answer_directly": True, "mode": "EXPRESS"}
+    mode = tri["mode"]                       # honour the escalated/capped mode
+    escalate = tri["escalate_discovery"]
     try:
         import orchestrator
         disciplines = orchestrator.dissect(task)
@@ -172,7 +246,7 @@ def dissect_entry(task, mode="DEEP"):
             best_persona = b[0]["subject"] if b else None
         except Exception:
             pass
-        routing = route(sub)
+        routing = route(sub, escalate=escalate)
         regulated = _is_regulated(task, d)
         micros.append({
             "problem": sub, "discipline": d,
@@ -187,7 +261,8 @@ def dissect_entry(task, mode="DEEP"):
             "template": TEMPLATES.get("spec"),
         })
     return {
-        "macro": task, "mode": mode, "personas": DISSECT_PERSONAS, "micros": micros,
+        "macro": task, "mode": mode, "skip_pipeline": False, "triage": tri,
+        "personas": DISSECT_PERSONAS, "micros": micros,
         "provisioning": {"provider_of_tools": "llm-orchestrator",
                          "how": "the LLM discovers/vets and HANDS each instance its concrete tool/"
                                 "skill/persona + a template; the sealed sandbox only runs given code"},
@@ -205,10 +280,19 @@ if __name__ == "__main__":
     print("route(discover):", route("search skills.sh for a legal MCP")["surface"],
           "| internet:", route("search skills.sh for a legal MCP")["needs_internet"])
     print("route(reason):", route("decide the best architecture")["surface"])
-    plan = dissect_entry("build a compliant medical billing pipeline and find the right skills")
-    print("\ndissect_entry ->")
-    print("  personas:", [p["persona"] for p in plan["personas"]])
+    print("route(reason, escalate):", route("decide the best architecture", escalate=True)["surface"])
+    # triage: trivial skips the pipeline (token economy)
+    print("\ntriage(trivial):", triage("What is 2+2?")["skip_pipeline"], "->",
+          triage("What is 2+2?")["mode"])
+    print("triage(hard):", triage("solve navier stokes turbulência pde")["mode"],
+          "| escalate:", triage("solve navier stokes turbulência pde")["escalate_discovery"])
+    print("triage(low MCFE):", triage("refactor the module", reliability=0.4)["escalate_discovery"],
+          triage("refactor the module", reliability=0.4)["reasons"])
+    # dissect_entry short-circuits a trivial task
+    print("\ndissect_entry(trivial) skip:", dissect_entry("What is 2+2?")["skip_pipeline"])
+    plan = dissect_entry("build a compliant medical billing pipeline", reliability=0.45)
+    print("dissect_entry -> mode:", plan["mode"], "| escalate:", plan["triage"]["escalate_discovery"])
     for m in plan["micros"]:
         print(f"  micro[{m['discipline']}] surface={m['routing']['surface']} "
-              f"net={m['routing']['needs_internet']} gov={m['needed']['governance'][:30]}")
+              f"escalated={m['routing']['escalated_to_discovery']} gov={m['needed']['governance'][:28]}")
     print("  hard_rule:", plan["hard_rule"])

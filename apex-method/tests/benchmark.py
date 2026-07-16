@@ -602,7 +602,25 @@ def t_execution_policy():
     # a regulated discipline carries region-specific governance
     reg = ep.dissect_entry("draft a HIPAA healthcare data policy")
     assert any("regulatory" in m["needed"]["governance"] for m in reg["micros"]), reg["micros"]
-    return f"route compute/discover/reason + HARD-RULE; dissect_entry 3 personas, {len(plan['micros'])} micros"
+    # ── MCFE/difficulty triage: skip trivial (token economy) + escalate uncertain (discovery) ──
+    tri_triv = ep.triage("What is 2+2?")
+    assert tri_triv["skip_pipeline"] and tri_triv["mode"] == "EXPRESS", tri_triv
+    tri_hard = ep.triage("solve navier stokes turbulência fluido pde")
+    assert tri_hard["escalate_discovery"] and ep.MODE_LADDER.index(tri_hard["mode"]) >= ep.MODE_LADDER.index("DEEP"), tri_hard
+    tri_rel = ep.triage("refactor the module", reliability=0.4)
+    assert tri_rel["escalate_discovery"], tri_rel   # low MCFE reliability -> escalate to discovery
+    assert not ep.triage("refactor the module", reliability=0.9)["escalate_discovery"]
+    # escalate pushes a reasoning task to discovery but NEVER turns compute into an internet task
+    assert ep.route("decide the approach", escalate=True)["surface"] == "agent+internet"
+    assert ep.route("compute the hash", escalate=True)["surface"] == "subprocess"
+    # dissect_entry short-circuits a trivial task (no micros, saves tokens)
+    triv = ep.dissect_entry("What is 2+2?")
+    assert triv["skip_pipeline"] and "micros" not in triv, triv
+    # a hard + low-reliability entry escalates its mode and routes micros to discovery
+    esc = ep.dissect_entry("optimize a turbulent-flow solver", reliability=0.45)
+    assert esc["triage"]["escalate_discovery"] and esc["micros"], esc["triage"]
+    return (f"route+HARD-RULE; 3-persona entry {len(plan['micros'])} micros; "
+            f"triage skip-trivial/escalate-hard/MCFE-{tri_rel['escalate_discovery']}")
 
 
 def t_learning():

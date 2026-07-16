@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.33.0
+version: 1.34.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -351,6 +351,13 @@ agents/skills/tools (durable-best via `learning`), the resolution plan, the **ro
 **template** (so nothing is generic), and region-specific **governance** when the problem is
 regulated (HIPAA/GDPR/LGPD/financial/legal…). Reuses `orchestrator.dissect`/`assign_specialists`,
 `gravity.plan`, `repo_bridge`, `learning` — no discovery is reimplemented.
+**Triage (token economy + MCFE escalation):** `triage(task, reliability)` runs FIRST — a **trivial
+task skips the whole pipeline** (`orchestrator.express_check` → EXPRESS, ~400 tokens), a
+**low-difficulty** task stays light (capped at STANDARD), and a **hard** task
+(`competence_matrix.estimate_difficulty` ≥ 0.85) OR a **low MCFE reliability** signal (bayes R_acum
+gate < 0.50) **escalates the mode and flips reasoning micros to `agent+internet`** — go DISCOVER
+better tools/context. Compute always stays `subprocess` (you never send RK4 to the internet).
+`dissect_entry(task, mode, reliability)` short-circuits when triage says skip.
 
 ## § 3 · Finding and Using an External Skill (safe flow)
 

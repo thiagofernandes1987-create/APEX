@@ -1,7 +1,7 @@
 {
- "earned": 12.95,
+ "earned": 12.97,
  "possible": 13,
- "pct": 99.6,
+ "pct": 99.8,
  "criteria": [
   {
    "name": "Benchmark passes (correctness)",
@@ -18,8 +18,8 @@
   {
    "name": "SR_40 self-compliance (zero ambiguity)",
    "weight": 1,
-   "score": 0.95,
-   "evidence": "38/40 scripts + SKILL.md=ok"
+   "score": 0.975,
+   "evidence": "39/40 scripts + SKILL.md=ok"
   },
   {
    "name": "Catalog/scripts consistency",
