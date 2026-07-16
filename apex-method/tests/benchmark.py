@@ -396,6 +396,30 @@ def t_deep_research():
     return f"deep_research {out['stop_reason']} in {out['rounds_run']} rounds"
 
 
+def t_concurrent_executor():
+    import concurrent_executor as ce
+    # 3 stances run concurrently; barrier merges only when the counter is complete
+    stances = [
+        {"name": "optimistic", "persona": "architect",
+         "program": ce.qualitative_stance_program("X", 0.82)},
+        {"name": "pessimistic", "persona": "critic",
+         "program": ce.qualitative_stance_program("X", 0.78)},
+        {"name": "chaos", "persona": "chaos",
+         "program": ce.qualitative_stance_program("Y", 0.30)},
+    ]
+    rep = ce.run_stances("decide a path", stances)
+    assert rep["status"] == "PARALLEL_POT_COMPLETE", rep["status"]
+    assert rep["counter"] == {"completed": 3, "total": 3}, rep["counter"]
+    assert all(len(r["sha256"]) == 64 for r in rep["per_stance"]), "sha256 per stance"
+    assert rep["merge"]["answer"] == "X" and rep["decision"] in ("ADOPT", "REVIEW", "REJECT")
+    # low-confidence round must emit a RESTART directive naming new personas
+    low = [{"name": "a", "persona": "p1", "program": ce.qualitative_stance_program("A", 0.30)},
+           {"name": "b", "persona": "p2", "program": ce.qualitative_stance_program("B", 0.28)}]
+    r2 = ce.run_stances("weak round", low, p_target=0.72)
+    assert "restart" in r2 and r2["restart"]["assign_new_personas"], r2
+    return f"3 stances barrier->merge->PMI {rep['decision']}; restart on low conf"
+
+
 TESTS = [
     ("pot", t_pot), ("numeric", t_numeric), ("verify", t_verify), ("uco_gate", t_uco_gate),
     ("universal_code_optimizer_v4", t_uco_v4), ("router", t_router), ("skill_scout", t_skill_scout),
@@ -409,6 +433,7 @@ TESTS = [
     ("monte_carlo", t_monte_carlo), ("pmi_monte_carlo", t_pmi_monte_carlo),
     ("code_genetics_sqlite", t_code_genetics_sqlite), ("snapshot_wire", t_snapshot_wire),
     ("config", t_config), ("menu", t_menu), ("deep_research", t_deep_research),
+    ("concurrent_executor", t_concurrent_executor),
 ]
 
 

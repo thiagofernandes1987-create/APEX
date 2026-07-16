@@ -48,6 +48,14 @@
   "path": "scripts/code_genetics.py"
  },
  {
+  "id": "script:concurrent_executor",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "parallel,stances,pot,barrier,merge,pmi,restart,sha256",
+  "mass": 182,
+  "path": "scripts/concurrent_executor.py"
+ },
+ {
   "id": "script:config",
   "type": "script",
   "domain": "meta",

@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.21.0
+version: 1.22.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -166,6 +166,28 @@ Top-level actions to run on the user's request — this is the skill's "menu":
   GitHub for new specialised skills, or **both** — reasons, and iterates until the target
   reliability is reached or progress stalls (stagnation via `apex_st_metric`). Discovery only
   STAGES `npx skills add` for the user to approve (H5); nothing installs automatically.
+
+## § 2.6 · Cognitive Parallelism (two honest levels)
+
+The "multi-agent" work is parallel in two distinct ways — do not conflate them:
+
+- **Level A — parallel EXECUTION (`scripts/concurrent_executor.py`):** `run_stances(task, stances)`
+  runs each stance's PoT program in an isolated subprocess CONCURRENTLY (ThreadPool). Each
+  instance emits a SHA-256-hashed JSON result; a BARRIER merges only when the stance counter is
+  complete (`PARALLEL_POT_COMPLETE`, else `PARALLEL_POT_PARTIAL`). Then `entropy_weighted_merge`
+  fuses them and the PMI (Bayes: posterior + Ω + R_acum) reports a confidence + decision. If
+  reliability is below target it returns a **RESTART directive** naming new personas
+  (`agent_registry`) + new skills (`repo_bridge`) for a stronger next round. This is real,
+  testable, single-turn — the *generation* of each stance's code is still one LLM.
+
+- **Level B — parallel COGNITION (Claude's `Agent`/subagent tool — Claude orchestrates, not a
+  `.py`):** in DEEP/RESEARCH/SCIENTIFIC, Claude spawns N **concurrent subagents**, each a
+  separate LLM instance wearing a roster persona (load its `AGENT.md` with `repo_bridge.agent(id)`
+  into the prompt) and running its own PoT-by-stance. Collect each subagent's `STANCE_RESULT`
+  JSON, then feed them to the SAME Level-A merge + PMI. The skill supplies the persona loader and
+  the merge/PMI; Claude supplies the fan-out. The 213 roster entries are personas, not instances —
+  Level B is what turns a chosen persona into a genuinely concurrent instance. Cap N at
+  `mental_interpreter.n_final` (or `config.max_parallel`).
 
 ## § 3 · Finding and Using an External Skill (safe flow)
 
