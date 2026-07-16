@@ -571,6 +571,80 @@ def t_memory():
             f"KG {m.stats()['relations']} edges + graph-walk + acyclic guard ({m.stats()['memories']} mem)")
 
 
+def t_swap_store():
+    import swap_store as ss, memory as mem_mod, tempfile, os, json
+    root = os.path.join(tempfile.mkdtemp(), "APEX")
+    # materialize the canonical tree in a local folder (the PC-folder option)
+    res = ss.materialize(root)
+    for rel in ("apex.manifest.json", "README.md", "user/versions", "memory/versions",
+                "swap", "staging", "archive"):
+        assert os.path.exists(os.path.join(root, rel)), f"missing {rel}"
+    # seed data files carry the canonical versioned name; find them via latest()
+    up = ss.latest(os.listdir(os.path.join(root, "user")), "persona")
+    assert up and ss.parse_filename(up)["ts"] == ss.SEED_TS, up
+    man = json.load(open(os.path.join(root, "apex.manifest.json")))
+    assert man["schema_version"] == ss.SCHEMA_VERSION and "promotion_gate" in man, man
+    assert man["rotation"]["keep_backups"] == ss.KEEP_BACKUPS, man["rotation"]
+    # idempotent: a second call creates nothing new and never overwrites
+    res2 = ss.materialize(root)
+    assert res2["created"] == [], res2["created"]
+    # ── naming standard: <name>-<function>-<YYYYMMDDHHMMSS>-R<NN>.<ext> ──
+    fn = ss.make_filename("memory")
+    p = ss.parse_filename(fn)
+    assert p and p["name"] == "memory" and p["function"] == "User" and p["ext"] == "ndjson"
+    assert len(p["ts"]) == 14 and p["rev"] == ss.FILE_REVISIONS["memory"], p
+    assert ss.parse_filename("not a valid name.json") is None
+    # latest picks highest (revision, ts); a higher revision beats a newer timestamp
+    cand = ["persona-User-20260101000000-R00.json", "persona-User-20260716000000-R00.json",
+            "persona-User-20260101000000-R01.json"]
+    assert ss.latest(cand, "persona") == "persona-User-20260101000000-R01.json", ss.latest(cand)
+    # ── rotation: keep the newest N, older are obsolete; MAIN holds the latest ──
+    folder = os.path.join(root, "user")
+    for i in range(5):
+        ss.write_versioned(folder, "persona", json.dumps({"v": i}), keep=3,
+                           ts=time.strftime(ss.NAME_TS_FMT, time.gmtime(1000000000 + i)))
+    main = [x for x in os.listdir(folder) if (ss.parse_filename(x) or {}).get("name") == "persona"]
+    assert len(main) == 1, f"main holds exactly the latest, got {main}"
+    vers = [x for x in os.listdir(os.path.join(folder, "versions"))
+            if (ss.parse_filename(x) or {}).get("name") == "persona"]
+    assert len(vers) == 3, f"rotation keeps 3 backups, got {len(vers)}"
+    assert json.load(open(os.path.join(folder, main[0])))["v"] == 4, "latest content is the newest write"
+    # the standard is shipped as a repo model file (built from the same spec)
+    mpath = ss.write_model(os.path.join(root, "models"))
+    spec = json.load(open(mpath))
+    assert spec["naming"]["pattern"].startswith("<name>-<function>") and spec["folders"] == ss.FOLDERS
+    # portable memory export/import round-trips durable memory (the swap page for memory)
+    db = os.path.join(tempfile.mkdtemp(), "m.db")
+    m = mem_mod.MemoryStore(db)
+    m.remember("APEX swap survives the ephemeral container", "semantic")
+    a = m.remember("premise ephemeral", "semantic"); b = m.remember("durability needs git", "semantic")
+    m.relate(a, b, "causa")
+    dump = m.export()
+    assert dump["memory"] and dump["relations"], dump
+    db2 = os.path.join(tempfile.mkdtemp(), "m2.db")
+    stats = mem_mod.MemoryStore(db2).load_rows(dump)
+    assert stats["memories"] == m.stats()["memories"] and stats["relations"] == 1, stats
+    # page-out / page-in bundle with integrity hash
+    bundle = ss.export_bundle("sess1", memory_db=db, snapshot={"objective": "x"},
+                              working=[{"finding": "unvalidated"}], session_meta={"mode": "DEEP"})
+    assert len(bundle["sha256"]) == 64
+    back = ss.import_bundle(bundle, memory_db=db2)
+    assert back["integrity_ok"] and back["snapshot"]["objective"] == "x", back
+    # promotion gate: validated -> promote; not validated -> stays in swap
+    good = ss.promotion_manifest("sess1", [{"name": "d1", "kind": "diff", "target": "commit"}],
+                                 {"pmi_adopt": True, "ledger_ok": True, "tests_ok": True})
+    bad = ss.promotion_manifest("sess1", [{"name": "h1", "kind": "hypothesis", "target": "commit"}],
+                                {"pmi_adopt": False})
+    assert good["validated"] and good["promote"] and not good["keep_in_swap"], good
+    assert (not bad["validated"]) and bad["keep_in_swap"] and not bad["promote"], bad
+    # the Drive layout is the SAME standard (folders + static + seed files), single source of truth
+    dt = ss.drive_tree()
+    assert {e["path"] for e in dt if e["kind"] == "folder"} == set(ss.FOLDERS), "drive tree = folders"
+    assert any(e["path"].startswith("memory/memory-User-") for e in dt), "drive seeds are versioned"
+    return (f"materialize idempotent; memory export/import round-trip; bundle integrity; "
+            f"gate promote={len(good['promote'])} keep={len(bad['keep_in_swap'])}")
+
+
 def t_llm_adapter():
     import llm_adapter as la
     # claude (reference): meets all required, RESEARCH fits, Level-B parallelism, no adjustments
@@ -610,7 +684,7 @@ TESTS = [
     ("concurrent_executor", t_concurrent_executor),
     ("chaos_operators", t_chaos_operators), ("competence_matrix", t_competence_matrix),
     ("evaluate_hypotheses", t_evaluate_hypotheses), ("project_ledger", t_project_ledger),
-    ("memory", t_memory), ("llm_adapter", t_llm_adapter),
+    ("memory", t_memory), ("llm_adapter", t_llm_adapter), ("swap_store", t_swap_store),
 ]
 
 

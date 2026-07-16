@@ -252,6 +252,33 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
 - **Descartados (honestidade):** confiar no `.db` local para durabilidade (container efêmero — só
   git/zip persiste) e sincronizar histórico interno do ChatGPT (sem API pública).
 
+### Swap store — hierarquia de memória padrão (v1.31)
+- `scripts/swap_store.py`: **um layout canônico único** para todos os usuários, materializável numa
+  pasta local do PC **ou** no Google Drive. Hierarquia tipo SO: **RAM** (contexto, morre) →
+  **SWAP** (este store, sobrevive ao container) → **DISCO** (git, validado e permanente).
+- Árvore: `user/` (persona + preferências + arquivos de entrada — durável, do usuário) · `memory/`
+  (memória validada persistente em NDJSON) · `swap/<sessão>/` (estado de trabalho efêmero,
+  disposável) · `staging/` (validado, na fila do commit) · `archive/` (páginas superadas).
+- `materialize(root)` cria local (idempotente, nunca sobrescreve dados); `drive_tree()` dá ao
+  runtime o mesmo schema para criar no Drive (o script não toca credenciais — o Claude sobe via as
+  tools do Drive, como o project_ledger prepara um commit). `export_bundle`/`import_bundle` fazem
+  page-out/page-in com hash SHA-256; memória viaja como NDJSON portável (`MemoryStore.export()/
+  load_rows()`), não `.db` binário.
+- **Gate de promoção** (`is_validated`/`promotion_manifest`): só o que passa (PMI ADOPT **e** ledger
+  íntegro **e** testes) é promovido de swap → commit; o resto fica disposável no swap.
+- **Nomenclatura padrão**: `<name>-<function>-<AAAAMMDDHHMMSS>-R<NN>.<ext>` (ex.:
+  `memory-User-20260716183245-R00.json`). O timestamp versiona cada escrita; `R<NN>` é a **revisão
+  de layout** do arquivo (sobe quando o schema muda). `latest()` sempre resolve o maior `(revisão,
+  ts)`; a **pasta principal guarda a última** e as anteriores vão para `versions/`.
+- **Rotação de backups**: os `KEEP_BACKUPS` (10) mais novos sobrevivem; os antigos ficam obsoletos
+  (apagados no local; **listados para GC no Drive** — a API do Drive aqui não tem delete/move/update).
+- **Modelo-padrão no repo** (`models/apex_structure.model.json`): fonte única do padrão, com
+  instruções de build (Windows e Drive). Novos usuários **constroem a partir do modelo**, o LLM
+  nunca inventa a árvore. `materialize(root)` (local) e `drive_tree()` derivam do mesmo modelo.
+- **Estrutura criada no Drive do usuário** (`My Drive/APEX/`): raiz + user/memory/swap/staging/
+  archive (+ `versions/`) + manifest + README + modelo + seeds versionados + sessão-exemplo. Opt-in:
+  `preferences.persistence_backend = "drive-swap"`.
+
 ## 📋 Backlog remanescente (fora do escopo imediato / pesquisa)
 
 - [x] **Embeddings/semântico FEITO**: `_tfidf.semantic_rank` adiciona backend char-n-gram

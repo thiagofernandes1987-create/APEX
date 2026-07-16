@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.30.0
+version: 1.31.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,10 +47,10 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 37 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 38 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
-| **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + the **Knowledge Graph** of typed edges) — survives session death |
+| **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
 | **Integrity / audit log** | the SHA-256-chained governance ledger (`record_event`/`verify_ledger`) |
 | **Package manager** | `repo_bridge` + `skills_sh` (discover/stage skills & agents, never auto-install) |
 | **Hardware-abstraction layer** | `meta/llm_compat.json` — what the runtime needs from whatever model is underneath |
@@ -298,6 +298,30 @@ Level A, ignore `spawn_subagents`), a **capped mode** when the window is too sma
 tool-loop / best-effort-JSON adjustments — announced, never silent. An unknown model falls back to
 a conservative baseline (optional caps off, smallest window). `report(provider, mode)` bundles all
 three. This is what makes the "same core across providers" claim real, not aspirational.
+
+## § 2.11 · Swap store — durable memory hierarchy (`scripts/swap_store.py`)
+
+The container is ephemeral, so working state must "page out" somewhere durable. `swap_store.py`
+defines ONE standard, backend-agnostic layout — **identical on a local PC folder or in Google
+Drive** — that behaves like an OS memory hierarchy: **RAM** (LLM context, dies) → **SWAP** (this
+store, survives the container) → **DISK** (git, validated & permanent). Canonical tree:
+`user/` (persona + preferences + input files — durable, user-owned), `memory/` (persistent
+validated memory as NDJSON), `swap/<session>/` (ephemeral working state — disposable),
+`staging/` (validated, queued for commit), `archive/` (superseded pages). `materialize(root)`
+builds it locally (idempotent, never overwrites data); `drive_tree()` gives the runtime the same
+schema to create on Drive (the script never touches Drive credentials — Claude uploads via the
+Drive tools, exactly as project_ledger prepares a git commit). `export_bundle`/`import_bundle`
+page a session out/in with a SHA-256 integrity hash (memory travels as portable NDJSON via
+`MemoryStore.export()/load_rows()`, not a binary `.db`). **File standard:** every file is named
+`<name>-<function>-<YYYYMMDDHHMMSS>-R<NN>.<ext>` (e.g. `memory-User-20260716183245-R00.json`) — the
+timestamp versions each write, `R<NN>` is the file's **layout revision** (bump on schema change);
+`latest()` always resolves the highest `(revision, ts)`, the MAIN folder holds it and older copies go
+to `versions/`. **Rotation** keeps the newest `KEEP_BACKUPS` (10); older are deleted (local) or listed
+for GC (Drive has no delete API). New users NEVER improvise the tree — it is built from the shipped
+standard `models/apex_structure.model.json` (same on Windows or Drive), via `materialize(root)`
+(local) or `drive_tree()` (the runtime creates it on Drive). **The promotion gate** — `is_validated`
++ `promotion_manifest` — is the rule that only what passes (PMI adopt **and** intact ledger
+**and** tests) is promoted from swap to a git commit; everything else stays disposable in swap.
 
 ## § 3 · Finding and Using an External Skill (safe flow)
 

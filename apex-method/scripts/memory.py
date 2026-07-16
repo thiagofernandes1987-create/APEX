@@ -300,6 +300,43 @@ class MemoryStore:
         return {"query": query, "seeds": seeds, "expanded": expanded,
                 "edges_followed": rel or "all", "n_total": len(seeds) + len(expanded)}
 
+    # ── portable export/import (for the swap store: durable memory as NDJSON, not a binary .db) ──
+    def export(self):
+        """Return all durable rows as plain dicts (vectors omitted — re-derivable on import). This
+        is what the swap store serializes to NDJSON so memory survives the ephemeral container."""
+        con = self._con()
+
+        def rows(q):
+            cur = con.execute(q)
+            cols = [c[0] for c in cur.description]
+            return [dict(zip(cols, r)) for r in cur.fetchall()]
+        data = {"memory": rows("SELECT sha,kind,text,meta,ts,session FROM memory"),
+                "relations": rows("SELECT sha,src,dst,rel,weight,ts FROM relations"),
+                "ledger": rows("SELECT sha,ts,kind,subject,action,evidence,prev_sha FROM ledger")}
+        con.close()
+        return data
+
+    def load_rows(self, data):
+        """Rehydrate rows from export() (vectors recomputed on the way in). Idempotent via the
+        primary-key REPLACE, so re-importing a bundle is safe. Returns stats()."""
+        con = self._con()
+        for m in data.get("memory", []):
+            vec = json.dumps(self._embed(m.get("text", "")))
+            con.execute("INSERT OR REPLACE INTO memory VALUES(?,?,?,?,?,?,?)",
+                        (m["sha"], m.get("kind", "semantic"), m.get("text", ""), m.get("meta", "{}"),
+                         vec, m.get("ts", time.time()), m.get("session", "default")))
+        for r in data.get("relations", []):
+            con.execute("INSERT OR REPLACE INTO relations VALUES(?,?,?,?,?,?)",
+                        (r["sha"], r["src"], r["dst"], r["rel"], r.get("weight", 1.0),
+                         r.get("ts", time.time())))
+        for l in data.get("ledger", []):
+            con.execute("INSERT OR REPLACE INTO ledger VALUES(?,?,?,?,?,?,?)",
+                        (l["sha"], l.get("ts", time.time()), l["kind"], l["subject"], l["action"],
+                         l.get("evidence", "{}"), l.get("prev_sha", "")))
+        con.commit()
+        con.close()
+        return self.stats()
+
     def stats(self):
         con = self._con()
         n_mem = con.execute("SELECT COUNT(*) FROM memory").fetchone()[0]

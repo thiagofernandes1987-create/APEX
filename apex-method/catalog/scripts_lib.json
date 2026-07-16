@@ -294,5 +294,13 @@
   "capabilities": "llm-adapter,capabilities,degradation,provider,portability,HAL",
   "mass": 150,
   "path": "scripts/llm_adapter.py"
+ },
+ {
+  "id": "script:swap_store",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "swap,memory-hierarchy,page-out,page-in,bundle,promotion-gate,drive,local",
+  "mass": 190,
+  "path": "scripts/swap_store.py"
  }
 ]
