@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.34.0
+version: 1.35.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -53,7 +53,7 @@ marketing; it maps 1:1 to files you can run:
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
 | **Integrity / audit log** | the SHA-256-chained governance ledger (`record_event`/`verify_ledger`) |
 | **Package manager** | `repo_bridge` + `skills_sh` (discover/stage skills & agents, never auto-install) |
-| **Hardware-abstraction layer** | `meta/llm_compat.json` — what the runtime needs from whatever model is underneath |
+| **Hardware-abstraction layer** | `meta/apex_llm.yaml` (YAML, authoritative; `meta/llm_compat.json` stdlib fallback) — required caps, per-provider matrix, loop-prevention limits, optional accelerators |
 
 The honest constraint: the container is **ephemeral**, so the "disk" (`~/.apex-method/*.db`) is a
 working cache — real durability is a git commit or a `.zip` export, which is exactly what
@@ -299,10 +299,13 @@ ledger — lighter modes stay bureaucracy-free.
 ## § 2.10 · LLM Adapter — portability layer (`scripts/llm_adapter.py`, `meta/llm_compat.json`)
 
 The runtime is model-agnostic: the kernel (method + scripts) never depends on one provider's
-behaviour. `meta/llm_compat.json` is the **contract** — what the kernel REQUIRES (tool_calling,
-subprocess_exec, structured JSON, multi-turn; subagents + long_context are optional), a per-mode
-context-window budget, a per-provider capability matrix (claude/gpt/gemini/local), and the
-degradation rules. `llm_adapter.py` reads it (stdlib json, no PyYAML) and answers before a run:
+behaviour. **`meta/apex_llm.yaml`** is the authoritative **contract** (YAML; `meta/llm_compat.json`
+is the stdlib fallback mirror) — what the kernel REQUIRES (tool_calling, subprocess_exec, structured
+JSON, multi-turn; subagents + long_context optional), a per-mode context-window budget, a
+per-provider capability matrix (claude/gpt/gemini/**deepseek**/local), **loop-prevention limits**
+(`limits()`: max_iterations, max_restarts, min_progress, R_acum gates) and **optional accelerators**
+(`requirements()`: numpy/scipy/scikit-learn/sympy — all environment-gated, skill works without them).
+`llm_adapter.py` reads YAML when PyYAML is present (else the JSON) and answers before a run:
 `check(provider)` (are the REQUIRED caps met?), `fits(provider, mode)` (window big enough?), and
 **`degrade(provider, mode)`** → the concrete plan: `parallelism` **A vs B** (no native subagents →
 Level A, ignore `spawn_subagents`), a **capped mode** when the window is too small, and manual
@@ -357,7 +360,12 @@ task skips the whole pipeline** (`orchestrator.express_check` → EXPRESS, ~400 
 (`competence_matrix.estimate_difficulty` ≥ 0.85) OR a **low MCFE reliability** signal (bayes R_acum
 gate < 0.50) **escalates the mode and flips reasoning micros to `agent+internet`** — go DISCOVER
 better tools/context. Compute always stays `subprocess` (you never send RK4 to the internet).
-`dissect_entry(task, mode, reliability)` short-circuits when triage says skip.
+`dissect_entry(task, mode, reliability)` short-circuits when triage says skip. This is now wired into
+`orchestrator.run` — a hard problem escalates the mode even without a discipline-keyword hit.
+**Loop guard:** `loop_guard(iteration, progress_history, restarts, reliability)` reads the
+`apex_llm.yaml` limits and returns STOP when iterations/restarts exceed the cap, reliability drops
+under the early-exit gate, or there is no progress for 2 rounds — so the LLM can never spin.
+`orchestrator.run` never raises: any unexpected failure returns an `ERROR_DEGRADED` result.
 
 ## § 3 · Finding and Using an External Skill (safe flow)
 

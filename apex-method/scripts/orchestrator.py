@@ -79,9 +79,11 @@ DISCIPLINE_KEYWORDS = {
                 "financeiro", "fluxo de caixa", "reserva", "orçamento", "orcamento"],
     "math": ["prove", "proof", "integral", "derivative", "equation", "algebra",
              "prova", "provar", "derivada", "equação", "equacao", "álgebra", "algebra"],
-    "science": ["physics", "simulation", "ode", "monte carlo", "annealing", "hmc", "statistical",
-                "física", "fisica", "simulação", "simulacao", "estatística", "estatistica",
-                "dinâmica", "dinamica", "depleção", "deplecao"],
+    "science": ["physics", "simulation", "ode", "pde", "monte carlo", "annealing", "hmc",
+                "statistical", "navier", "stokes", "turbulência", "turbulencia", "turbulence",
+                "fluido", "fluid", "reynolds", "viscosidade", "física", "fisica", "simulação",
+                "simulacao", "estatística", "estatistica", "dinâmica", "dinamica", "depleção",
+                "deplecao"],
     "legal": ["contract", "compliance", "regulation", "clause", "liability",
               "contrato", "conformidade", "regulação", "regulacao", "cláusula", "clausula"],
     "healthcare": ["clinical", "patient", "diagnosis", "medical", "treatment",
@@ -221,6 +223,17 @@ def pmi_converge(candidates):
 
 # ── FULL FLOW ─────────────────────────────────────────────────────────────────
 def run(task, candidates=None, snapshot=None):
+    """Public entry — NEVER raises. On any unexpected failure it returns a degraded result so the
+    LLM gets a safe fallback instead of a crash (error handling contract)."""
+    try:
+        return _run(task, candidates, snapshot)
+    except Exception as e:
+        return {"path": "ERROR_DEGRADED", "mode": "STANDARD",
+                "error": f"{type(e).__name__}: {str(e)[:140]}", "task": (task or "")[:120],
+                "note": "pipeline failed safely — answer directly, flag the uncertainty, do not loop"}
+
+
+def _run(task, candidates=None, snapshot=None):
     ex = express_check(task)
     if ex:
         return {"path": "EXPRESS", **ex}
@@ -228,6 +241,18 @@ def run(task, candidates=None, snapshot=None):
     specialists = assign_specialists(task, disciplines)
     auto_mode = "SCIENTIFIC" if any(d in disciplines for d in ("science", "math")) else \
                 "DEEP" if len(disciplines) > 1 else "STANDARD"
+    # DIFFICULTY WIRE (v1.35): a hard problem must not stay STANDARD just because it missed a
+    # discipline keyword. triage escalates by BehavioralDifficultyEstimator + MCFE reliability;
+    # take the HIGHER of the discipline-mode and the triage-mode (escalate only, never downgrade).
+    escalate_discovery = False
+    try:
+        import execution_policy as ep
+        tri = ep.triage(task, mode=auto_mode)
+        if not tri.get("skip_pipeline"):
+            auto_mode = ep._bump(auto_mode, tri["mode"])
+            escalate_discovery = tri.get("escalate_discovery", False)
+    except Exception:
+        pass
     # honour the user's preferred/default modes from config (menu.py sets them); never
     # silently downgrade — resolve_mode snaps up to the nearest preferred mode.
     try:
@@ -239,7 +264,8 @@ def run(task, candidates=None, snapshot=None):
     import mental_interpreter
     phase_plan = mental_interpreter.plan_phases(mode, fractal_depth=len(disciplines))
     result = {"path": "FULL_PIPELINE", "mode": mode, "disciplines": disciplines,
-              "specialists": specialists, "phase_plan": phase_plan}
+              "specialists": specialists, "phase_plan": phase_plan,
+              "escalate_discovery": escalate_discovery}
     if candidates:
         result["pmi_decision"] = pmi_converge(candidates)
     # audit P3: close the loop in code — record the run into the snapshot (C5) so the end

@@ -1,6 +1,6 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.34.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.35.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
@@ -10,7 +10,7 @@ inferência) e a si mesma como o **runtime/SO** em volta: kernel = `SKILL.md`; s
 `scripts/*.py`; escalonador = `geodesic_scheduler` + `project_ledger.dsm()`; processos = stances/
 subagentes (Nível A/B); memória paginável e durável = `memory.py` (SQLite + Knowledge Graph);
 log de integridade = ledger SHA-256; gerenciador de pacotes = `repo_bridge`+`skills_sh`; HAL =
-`meta/llm_compat.json`. Restrição honesta: o container é **efêmero** — o `.db` local é cache de
+`meta/apex_llm.yaml` (YAML; fallback `meta/llm_compat.json`). Restrição honesta: o container é **efêmero** — o `.db` local é cache de
 trabalho; durabilidade real = commit git ou export `.zip` (backends do `project_ledger`/`memory`).
 
 ---
@@ -265,6 +265,23 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
   (R_acum <0.50) **escala o modo e joga os micros de raciocínio para `agent+internet`** (descobrir).
   Compute continua `subprocess`. Quem determina a dificuldade: `competence_matrix.estimate_difficulty`;
   quem pula o trivial: `orchestrator.express_check`.
+
+### Robustez + adaptabilidade a qualquer LLM · **FEITO** (v1.35)
+- **YAML de adaptabilidade** `meta/apex_llm.yaml` (autoritativo; `llm_compat.json` = fallback stdlib):
+  requisitos mínimos (caps obrigatórias + janela por modo), matriz por provedor (claude/gpt/gemini/
+  **deepseek**/local), **limites anti-loop** e **aceleradores opcionais**. `llm_adapter` lê YAML
+  (PyYAML) com fallback JSON; ganhou `limits()` e `requirements()`.
+- **Requisitos mínimos + guarda de loop**: `execution_policy.loop_guard(iteration, progress, restarts,
+  reliability)` — STOP em: iterações ≥ máx (8), restarts ≥ máx (3), confiabilidade < early-exit (0.30),
+  ou sem progresso por 2 rodadas (dS2 < 0.15). **O LLM nunca entra em loop.**
+- **Tratamento de erro**: `orchestrator.run` **nunca levanta exceção** — falha inesperada retorna
+  `ERROR_DEGRADED` com modo seguro (responder direto, sinalizar incerteza, não repetir).
+- **Aceleradores** numpy/scipy/scikit-learn/sympy declarados em `requirements.txt` (opcionais — a
+  skill roda em stdlib puro) + degradação documentada. `numeric.solve_ode` já usa scipy quando há.
+- **Bug comportamental corrigido (teste)**: `run()` escolhia o modo só por disciplina — "navier stokes
+  pde" (dificuldade 0.92) ia para STANDARD. Agora o `triage` (dificuldade + MCFE) está ligado ao
+  `run()` e escala (→ SCIENTIFIC), sem nunca rebaixar um modo dirigido por disciplina. Keywords de
+  ciência ampliadas (navier/stokes/pde/turbulência/fluido/reynolds).
 
 ### Relatório "runtime cognitivo" (ChatGPT) — aproveitáveis implementados
 - **B1 — Knowledge Graph (v1.29):** arestas tipadas em `memory.py` + `recall_graph` (caminhada em

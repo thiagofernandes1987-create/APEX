@@ -1,0 +1,10 @@
+# apex-method — OPTIONAL accelerators. The skill runs on PURE STDLIB without any of these;
+# each one only speeds up or sharpens a capability and degrades gracefully when absent.
+# Authoritative declaration + degradation paths: meta/apex_llm.yaml (optional_accelerators).
+numpy          # vectorized numeric / numeric.solve_ode           (degrade: pure-stdlib RK4)
+scipy          # adaptive ODE solver solve_ivp, higher accuracy   (degrade: stdlib RK4)
+scikit-learn   # tf-idf / vector ranking acceleration             (degrade: _tfidf char-n-gram)
+sympy          # symbolic identity proof (verify.py)              (degrade: verify marks CONJECTURE)
+# pandas                 # tabular analysis                       (degrade: stdlib dict/list)
+# sentence-transformers  # semantic embeddings (heavy)            (degrade: char-n-gram)
+# PyYAML                 # read meta/apex_llm.yaml directly        (degrade: meta/llm_compat.json)

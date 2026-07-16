@@ -23,7 +23,15 @@ WHAT IF IT FAILS:
 import json
 import os
 
-_CONTRACT = os.path.join(os.path.dirname(__file__), "..", "meta", "llm_compat.json")
+_META = os.path.join(os.path.dirname(__file__), "..", "meta")
+_CONTRACT_YAML = os.path.join(_META, "apex_llm.yaml")     # authoritative (PyYAML when present)
+_CONTRACT = os.path.join(_META, "llm_compat.json")        # stdlib fallback mirror
+
+# Loop-prevention defaults if the contract omits them (never let the LLM spin).
+_LIMITS_DEFAULT = {"max_iterations": 8, "max_restarts": 3, "min_progress": 0.15,
+                   "reliability_replan": 0.50, "reliability_early_exit": 0.30,
+                   "rejections_streak_abort": 20, "low_variance_abort": 0.03,
+                   "wall_seconds_per_round": 30}
 
 # Conservative fallback if the contract file is missing/corrupt: assume only the REQUIRED caps,
 # no optional ones, and a small window — so degrade() errs toward safety.
@@ -50,16 +58,44 @@ _MODE_ORDER = ["EXPRESS", "STANDARD", "FOGGY", "DEEP", "SCIENTIFIC", "RESEARCH"]
 
 
 def load():
-    """Return the contract dict (stdlib json). Degrades to the conservative baseline on any error."""
+    """Return the contract dict. Prefers the authoritative YAML (PyYAML when importable), then the
+    JSON mirror, then a conservative built-in baseline — so it never crashes and never over-promises."""
+    # 1. YAML (authoritative) when PyYAML is available
+    try:
+        import yaml
+        with open(_CONTRACT_YAML, encoding="utf-8") as f:
+            c = yaml.safe_load(f)
+        if isinstance(c, dict) and "kernel_requirements" in c and "providers" in c:
+            return c
+    except Exception:
+        pass
+    # 2. JSON mirror (stdlib fallback)
     try:
         with open(_CONTRACT, encoding="utf-8") as f:
             c = json.load(f)
-        # minimal shape check; fall back if the essential keys are absent
         if "kernel_requirements" in c and "providers" in c:
             return c
     except Exception:
         pass
     return _BASELINE
+
+
+def limits(contract=None):
+    """The loop-prevention / minimum-run limits (max iterations, min progress, R_acum gates,
+    stuck thresholds). Missing keys fall back to safe defaults so the LLM can never spin."""
+    c = contract or load()
+    lp = dict(_LIMITS_DEFAULT)
+    lp.update({k: v for k, v in (c.get("loop_prevention") or {}).items() if k in _LIMITS_DEFAULT})
+    return lp
+
+
+def requirements(contract=None):
+    """The required capabilities + the optional accelerators (numpy/scipy/scikit-learn/…), so a
+    caller can see the minimum contract and what would speed things up."""
+    c = contract or load()
+    req = [k for k, v in c["kernel_requirements"]["capabilities"].items() if v.get("required")]
+    return {"required": req, "optional_accelerators": c.get("optional_accelerators", {}),
+            "context_window_tokens": c["kernel_requirements"]["context_window_tokens"]}
 
 
 def current_provider():

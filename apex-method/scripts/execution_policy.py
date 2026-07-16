@@ -162,6 +162,33 @@ def triage(task, reliability=None, mode="STANDARD"):
             "escalate_discovery": escalate, "reasons": reasons or ["nominal difficulty/reliability"]}
 
 
+# ── loop guard: hard STOP conditions so the runtime NEVER spins (reads apex_llm.yaml limits) ──
+def loop_guard(iteration, progress_history=None, restarts=0, reliability=None):
+    """Return {stop, reason, action}. STOP when: iterations exceed the cap, restarts exceed the cap,
+    reliability falls under the early-exit gate, or there is no progress for 2 rounds (stagnation).
+    Limits come from llm_adapter (apex_llm.yaml) with safe defaults — a missing adapter still stops."""
+    try:
+        import llm_adapter
+        lim = llm_adapter.limits()
+    except Exception:
+        lim = {"max_iterations": 8, "max_restarts": 3, "min_progress": 0.15,
+               "reliability_early_exit": 0.30}
+    if iteration >= lim["max_iterations"]:
+        return {"stop": True, "reason": f"max_iterations {lim['max_iterations']} reached",
+                "action": "return best-so-far (never loop)"}
+    if restarts >= lim["max_restarts"]:
+        return {"stop": True, "reason": f"max_restarts {lim['max_restarts']} reached",
+                "action": "stop restarting; return best-so-far"}
+    if reliability is not None and reliability < lim["reliability_early_exit"]:
+        return {"stop": True, "reason": f"reliability {reliability} < early_exit "
+                f"{lim['reliability_early_exit']}", "action": "EARLY_EXIT with PARTIAL"}
+    ph = list(progress_history or [])
+    if len(ph) >= 2 and all(p < lim["min_progress"] for p in ph[-2:]):
+        return {"stop": True, "reason": f"no progress for 2 rounds (< min_progress "
+                f"{lim['min_progress']})", "action": "STOP PARTIAL; do not re-attempt the same plan"}
+    return {"stop": False, "reason": "within limits", "action": "continue"}
+
+
 # ── the 3-persona dissect entry ──────────────────────────────────────────────────────────────
 DISSECT_PERSONAS = [
     {"persona": "architect", "role": "decompose the MACRO into micro-problems; name the agents, "

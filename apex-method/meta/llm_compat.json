@@ -21,7 +21,21 @@
     "claude":  {"tool_calling": true,  "subprocess_exec": true,  "structured_json_output": true,  "multi_turn": true, "subagents": true,  "long_context": true,  "context_window_tokens": 200000,  "notes": "reference runtime; native Agent subagents give real Level-B parallelism"},
     "gpt":     {"tool_calling": true,  "subprocess_exec": true,  "structured_json_output": true,  "multi_turn": true, "subagents": false, "long_context": true,  "context_window_tokens": 128000,  "notes": "function calling present; no native subagent fan-out -> Level-A parallelism"},
     "gemini":  {"tool_calling": true,  "subprocess_exec": true,  "structured_json_output": true,  "multi_turn": true, "subagents": false, "long_context": true,  "context_window_tokens": 1000000, "notes": "very large window; Level-A parallelism"},
+    "deepseek":{"tool_calling": true,  "subprocess_exec": true,  "structured_json_output": true,  "multi_turn": true, "subagents": false, "long_context": true,  "context_window_tokens": 128000,  "notes": "function calling; Level-A parallelism"},
     "local":   {"tool_calling": false, "subprocess_exec": true,  "structured_json_output": false, "multi_turn": true, "subagents": false, "long_context": false, "context_window_tokens": 8000,    "notes": "small OSS model; sequential PoT, best-effort JSON, mode is capped"}
+  },
+
+  "loop_prevention": {"max_iterations": 8, "max_restarts": 3, "min_progress": 0.15,
+    "reliability_replan": 0.50, "reliability_early_exit": 0.30, "rejections_streak_abort": 20,
+    "low_variance_abort": 0.03, "wall_seconds_per_round": 30},
+
+  "optional_accelerators": {
+    "numpy": {"use": "vectorized numeric / solve_ode", "degrade": "pure-stdlib RK4"},
+    "scipy": {"use": "adaptive ODE (solve_ivp)", "degrade": "stdlib RK4"},
+    "scikit-learn": {"use": "tf-idf / vector ranking", "degrade": "_tfidf char-n-gram"},
+    "sympy": {"use": "symbolic verify", "degrade": "verify marks CONJECTURE"},
+    "pandas": {"use": "tabular analysis", "degrade": "stdlib dict/list"},
+    "sentence-transformers": {"use": "semantic embeddings", "degrade": "char-n-gram"}
   },
 
   "degradation_rules": [

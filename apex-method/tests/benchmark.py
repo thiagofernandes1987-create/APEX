@@ -162,7 +162,13 @@ def t_orchestrator():
     pmi = orchestrator.pmi_converge([{"discipline":"m","answer":2.09,"confidence":0.9,"numeric":True},
                                       {"discipline":"s","answer":2.09,"confidence":0.85,"numeric":True}])
     assert pmi["reliability"] > 0.8, pmi
-    return f"2+2=4 express; hard->{hard['mode']}; pmi rel={pmi['reliability']}"
+    # difficulty wire (v1.35): a hard PDE escalates to SCIENTIFIC even without a science keyword hit
+    sci = orchestrator.run("solve navier stokes turbulência de fluido pde")
+    assert sci["mode"] == "SCIENTIFIC" and sci.get("escalate_discovery") is True, sci
+    # error handling contract: run NEVER raises — bad input degrades safely, never loops
+    bad = orchestrator.run(None)
+    assert bad["path"] in ("EXPRESS", "FULL_PIPELINE", "ERROR_DEGRADED") and "mode" in bad, bad
+    return f"2+2=4 express; hard->{hard['mode']}; PDE->{sci['mode']}; pmi rel={pmi['reliability']}"
 
 def t_hypothesis_dag():
     import hypothesis_dag as hd
@@ -619,6 +625,12 @@ def t_execution_policy():
     # a hard + low-reliability entry escalates its mode and routes micros to discovery
     esc = ep.dissect_entry("optimize a turbulent-flow solver", reliability=0.45)
     assert esc["triage"]["escalate_discovery"] and esc["micros"], esc["triage"]
+    # loop guard: NEVER spin — stop on max iterations / restarts / early-exit / stagnation
+    assert ep.loop_guard(99)["stop"], "max iterations"
+    assert ep.loop_guard(1, restarts=9)["stop"], "max restarts"
+    assert ep.loop_guard(1, reliability=0.2)["stop"], "reliability early-exit"
+    assert ep.loop_guard(3, progress_history=[0.05, 0.03])["stop"], "stagnation"
+    assert not ep.loop_guard(2, progress_history=[0.4, 0.5], reliability=0.85)["stop"], "healthy continues"
     return (f"route+HARD-RULE; 3-persona entry {len(plan['micros'])} micros; "
             f"triage skip-trivial/escalate-hard/MCFE-{tri_rel['escalate_discovery']}")
 
@@ -741,7 +753,13 @@ def t_llm_adapter():
     caps = la.capabilities("mystery-xyz")
     assert caps["subagents"] is False and caps["tool_calling"] is True, caps
     assert la.degrade("mystery-xyz", "DEEP")["effective_mode"] == "EXPRESS", "tiny window caps hard"
-    return (f"claude=B/full; gpt->A; local caps->{ld['effective_mode']} +{len(ld['adjustments'])} adj; "
+    # YAML contract (apex_llm.yaml) adds DeepSeek + loop limits + optional accelerators
+    assert la.check("deepseek")["ok"] and la.capabilities("deepseek")["subagents"] is False
+    lim = la.limits()
+    assert lim["max_iterations"] >= 1 and 0 < lim["min_progress"] < 1 and lim["reliability_early_exit"] < lim["reliability_replan"], lim
+    reqs = la.requirements()
+    assert "tool_calling" in reqs["required"] and {"numpy", "scipy", "scikit-learn"} <= set(reqs["optional_accelerators"]), reqs
+    return (f"claude=B/full; gpt/deepseek->A; local->{ld['effective_mode']}; limits+accelerators; "
             f"unknown->baseline")
 
 
