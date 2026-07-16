@@ -469,6 +469,9 @@ def t_evaluate_hypotheses():
     assert out["n_directors"] >= 3, out["n_directors"]
     assert all(len(l["sha256"]) == 64 and "best" in l for l in out["laudos"]), "hashed laudos"
     assert out["decision"] in ("ADOPT", "REVIEW", "REJECT")
+    # RESEARCH injects the mandatory genius (non-obvious) hypothesis before directors score
+    res = ce.evaluate_hypotheses("optimize the backend memory architecture", hyps, mode="RESEARCH")
+    assert any(x["stance"] == "genius" for x in res["laudos"][0]["ranking"]), "genius injected"
     # re-anchored abort: a stuck persona (rejections_streak>20) is swapped, not kept
     st = {"critic": {"rejections_streak": 25, "confidence_history": [0.75]}}
     r = ce.run_stances("refactor", [{"name": "s", "persona": "critic",

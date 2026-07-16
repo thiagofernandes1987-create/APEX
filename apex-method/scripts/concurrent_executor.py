@@ -300,6 +300,21 @@ def evaluate_hypotheses(task, hypotheses, directors=None, mode="DEEP", p_target=
     (entropy + PMI) run -> final decision or RESTART. If a director reports a gap (needs a skill/
     diff/rule, or isn't the right specialist), it is surfaced for correction before adopting."""
     cap = MODE_AGENT_CAP.get(mode.upper(), 8)
+    # EXPLORATION first (generate divergent), then CONVERGE with rigor: when the mode's
+    # exploration policy asks for chaos, expand the hypothesis set with the offensive chaos
+    # operators; RESEARCH additionally REQUIRES the mandatory genius (non-obvious) hypothesis.
+    # This is the "generate divergent -> directors converge" flow; Level-B subagents (spawned
+    # by Claude) plug in here by supplying their generated hypotheses before the directors score.
+    hypotheses = list(hypotheses)
+    try:
+        import config
+        pol = config.exploration_policy(mode)
+        if pol["chaos"]:
+            import chaos_operators
+            if pol["genius"] and not any(h.get("stance") == "genius" for h in hypotheses):
+                hypotheses.append(chaos_operators.genius_stance(task, hypotheses))
+    except Exception:
+        pass
     # default directors: the best-matching APEX agents for the task, one per slot
     if directors is None:
         directors = []

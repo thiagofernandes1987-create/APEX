@@ -7,7 +7,7 @@
    "name": "Benchmark passes (correctness)",
    "weight": 3,
    "score": 1.0,
-   "evidence": "benchmark 38/38"
+   "evidence": "benchmark 40/40"
   },
   {
    "name": "Runs without heavy deps (robustness)",
@@ -19,7 +19,7 @@
    "name": "SR_40 self-compliance (zero ambiguity)",
    "weight": 1,
    "score": 1.0,
-   "evidence": "34/34 scripts + SKILL.md=ok"
+   "evidence": "36/36 scripts + SKILL.md=ok"
   },
   {
    "name": "Catalog/scripts consistency",
