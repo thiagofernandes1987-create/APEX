@@ -90,19 +90,31 @@ def estimate_difficulty(problem_text, cfi_preliminary=0.5):
 
 # ── historical reward per (agent, domain) from the competence ledger ─────────
 def _reward(agent, domain):
-    """Historical reward in [0,1]: 1 - (fraction of off_persona/low_confidence signals for
-    this agent). Neutral 0.5 when there is no history."""
+    """Historical reward in [0,1]: 1 - (fraction of off_persona/low_confidence signals for this
+    agent), from the SESSION competence ledger. When the DURABLE cross-session learning store
+    (Op-P3, learning.py) has enough evidence for (agent, domain), its validated posterior WINS —
+    that is what makes learning persist and change future picks. Neutral 0.5 when there is no
+    history."""
+    session_reward, n = 0.5, 0
     try:
         con = sqlite3.connect(_COMPETENCE_DB)
         rows = con.execute("SELECT signal, confidence FROM competence WHERE persona=?",
                            (agent,)).fetchall()
         con.close()
+        if rows:
+            bad = sum(1 for s, _ in rows if s in ("off_persona", "low_confidence_quit", "aborted_timeout"))
+            session_reward, n = round(max(0.0, 1.0 - bad / len(rows)), 3), len(rows)
     except Exception:
-        return 0.5, 0
-    if not rows:
-        return 0.5, 0
-    bad = sum(1 for s, _ in rows if s in ("off_persona", "low_confidence_quit", "aborted_timeout"))
-    return round(max(0.0, 1.0 - bad / len(rows)), 3), len(rows)
+        pass
+    # Op-P3: durable, validated reward overrides once there is enough cross-session evidence.
+    try:
+        import learning
+        d = learning.score("persona", agent, domain)
+        if d["n"] >= learning.MIN_OBS:
+            return d["mean"], d["n"] + n
+    except Exception:
+        pass
+    return session_reward, n
 
 
 def is_stuck(rejections_streak, confidence_history):

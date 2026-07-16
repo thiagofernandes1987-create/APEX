@@ -432,6 +432,18 @@ def evaluate_hypotheses(task, hypotheses, directors=None, mode="DEEP", p_target=
     except Exception:
         reliability = max((l["confidence"] for l in laudos), default=0.0)
         decision, pmi = ("ADOPT" if reliability >= p_target else "REVIEW"), {}
+    # Op-P3: this round's outcome becomes DURABLE learning — each director's (persona, domain)
+    # is credited/debited so future picks consult the validated history (promote/demote via ledger).
+    try:
+        import learning
+        adopted = (decision == "ADOPT")
+        for l in laudos:
+            learning.record_outcome("persona", l["director"], l.get("domain", mode),
+                                    adopted and reliability >= learning.PROMOTE_AT,
+                                    evidence={"confidence": round(reliability, 4)})
+    except Exception:
+        pass
+
     out = {"task": task, "mode": mode, "n_directors": len(laudos),
            "laudos": laudos, "gaps": [g["diagnostico"] for g in gaps],
            "hypotheses_scored": [h.get("stance") for h in hypotheses],

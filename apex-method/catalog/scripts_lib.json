@@ -302,5 +302,13 @@
   "capabilities": "swap,memory-hierarchy,page-out,page-in,bundle,promotion-gate,drive,local",
   "mass": 190,
   "path": "scripts/swap_store.py"
+ },
+ {
+  "id": "script:learning",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "learning,persistent,promote,demote,beta-binomial,competence,governance-ledger",
+  "mass": 170,
+  "path": "scripts/learning.py"
  }
 ]

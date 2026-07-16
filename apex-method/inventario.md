@@ -1,12 +1,12 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.29.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.32.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
 
 **Modelo mental (runtime cognitivo).** A skill trata o LLM como uma **VM cognitiva** (motor de
-inferência) e a si mesma como o **runtime/SO** em volta: kernel = `SKILL.md`; syscalls = os 37
+inferência) e a si mesma como o **runtime/SO** em volta: kernel = `SKILL.md`; syscalls = os 39
 `scripts/*.py`; escalonador = `geodesic_scheduler` + `project_ledger.dsm()`; processos = stances/
 subagentes (Nível A/B); memória paginável e durável = `memory.py` (SQLite + Knowledge Graph);
 log de integridade = ledger SHA-256; gerenciador de pacotes = `repo_bridge`+`skills_sh`; HAL =
@@ -237,7 +237,17 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
   BehavioralDifficultyEstimator, rejections/variância) + diagnóstico
   **PERSONA_SWAP / INJECT_SKILL / HARD_PROBLEM**; realimenta mental_interpreter e deep_research.
 
-### Op-P3 aprendizado que persiste — parcial (ledger SQLite `competence.db` + vacinas)
+### Op-P3 — aprendizado que persiste · **FEITO** (v1.32)
+- `scripts/learning.py`: `LearningStore` (SQLite `~/.apex-method/learning.db`) acumula evidência
+  beta-binomial por **(kind, subject, domain)** — kind ∈ persona/skill/diff/rule/vaccine — e decide
+  **PROMOTE / KEEP / DEMOTE** com a camada Bayesiana do kernel (Ω 0.72/0.5, ≥3 obs).
+- **Toda mudança de status vira memória durável**: `memory.record_event` (ledger SHA-256 encadeado),
+  fechando o loop "promoção/rebaixamento → memória à prova de adulteração".
+- **Consumo**: `best(kind, domain)` + reward durável misturado ao `competence_matrix._reward` → a
+  próxima tarefa consulta o histórico validado (persona que prova → preferida; que falha → rebaixada).
+- **Auto-registro**: `evaluate_hypotheses` credita cada diretor por rodada; o loop se fecha sozinho.
+- `numeric.py`: `solve_ode(method="auto")` usa **scipy quando importável** (fallback RK4 stdlib);
+  `capabilities()` reporta numpy/scipy/sklearn/pandas — aceleração **é do ambiente, não do LLM**.
 
 ### Relatório "runtime cognitivo" (ChatGPT) — aproveitáveis implementados
 - **B1 — Knowledge Graph (v1.29):** arestas tipadas em `memory.py` + `recall_graph` (caminhada em

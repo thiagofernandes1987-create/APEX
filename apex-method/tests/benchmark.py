@@ -51,7 +51,14 @@ def t_numeric():
     rk = numeric.rk4(d, [1.0, 0.0], 0.01, 628)
     err = abs((rk[0]**2 + rk[1]**2) - 1.0)
     assert err < 1e-3, err
-    return f"RK4 energy err {err:.2e}"
+    # environment-gated acceleration: solve_ode uses scipy when importable, else stdlib RK4 —
+    # same signature, and must conserve energy either way
+    caps = numeric.capabilities()
+    sol = numeric.solve_ode(d, [1.0, 0.0], 0.01, 628, method="auto")
+    assert sol["backend"] in ("scipy", "rk4") and abs(sol["final"][0]**2 + sol["final"][1]**2 - 1.0) < 1e-3, sol
+    forced = numeric.solve_ode(d, [1.0, 0.0], 0.01, 628, method="rk4")
+    assert forced["backend"] == "rk4", forced
+    return f"RK4 err {err:.2e}; solve_ode backend={sol['backend']} (numpy={caps['numpy']},scipy={caps['scipy']})"
 
 def t_verify():
     import verify
@@ -442,11 +449,12 @@ def t_chaos_operators():
 
 def t_competence_matrix():
     import competence_matrix as cm, os
-    # isolate: a fresh ledger so reward-history doesn't flip PERSONA_SWAP into INJECT_SKILL
-    try:
-        os.remove(os.path.expanduser("~/.apex-method/competence.db"))
-    except OSError:
-        pass
+    # isolate: a fresh session + durable ledger so reward-history doesn't flip PERSONA_SWAP
+    for db in ("competence.db", "learning.db"):
+        try:
+            os.remove(os.path.expanduser(f"~/.apex-method/{db}"))
+        except OSError:
+            pass
     assert cm.estimate_difficulty("navier stokes turbulência fluido pde")["bde_score"] >= 0.85
     assert cm.is_stuck(25, [0.5])[0] and cm.is_stuck(3, [0.50, 0.505, 0.50])[0]
     hard = cm.diagnose("architect", "science", "navier stokes turbulência fluido reynolds pde")
@@ -458,10 +466,11 @@ def t_competence_matrix():
 
 def t_evaluate_hypotheses():
     import concurrent_executor as ce, os
-    try:
-        os.remove(os.path.expanduser("~/.apex-method/competence.db"))  # fresh ledger
-    except OSError:
-        pass
+    for db in ("competence.db", "learning.db"):     # fresh session + durable ledgers
+        try:
+            os.remove(os.path.expanduser(f"~/.apex-method/{db}"))
+        except OSError:
+            pass
     hyps = [{"stance": "optimistic", "answer": "A", "confidence": 0.78},
             {"stance": "neutral", "answer": "A", "confidence": 0.70},
             {"stance": "pessimistic", "answer": "B", "confidence": 0.55}]
@@ -569,6 +578,31 @@ def t_memory():
     assert m.stats()["relations"] == 3, m.stats()
     return (f"episodic/semantic + dedup + recall + snapshot + chained ledger; "
             f"KG {m.stats()['relations']} edges + graph-walk + acyclic guard ({m.stats()['memories']} mem)")
+
+
+def t_learning():
+    import learning as lrn, tempfile, os
+    s = lrn.LearningStore(os.path.join(tempfile.mkdtemp(), "learning.db"))
+    # KEEP until MIN_OBS observations, then PROMOTE once the posterior clears Ω 0.72
+    r1 = s.record_outcome("persona", "architect", "engineering", True)
+    assert r1["decision"] == "KEEP" and r1["n"] == 1, r1
+    s.record_outcome("persona", "architect", "engineering", True)
+    r3 = s.record_outcome("persona", "architect", "engineering", True)
+    assert r3["status"] == "PROMOTED" and r3["changed"] is True, r3
+    # sustained failure DEMOTES (crosses the Ω review floor) with a durable status change
+    for _ in range(3):
+        d = s.record_outcome("persona", "poet", "engineering", False)
+    assert d["status"] == "DEMOTED", d
+    # best() ranks by validated posterior and excludes DEMOTED picks
+    best = s.best("persona", "engineering")
+    assert best and best[0]["subject"] == "architect" and all(b["status"] != "DEMOTED" for b in best), best
+    # unknown kind refused; neutral score with no history
+    assert s.record_outcome("bogus", "x", "d", True)["status"] == "REFUSED"
+    assert s.score("persona", "never-seen", "engineering")["n"] == 0
+    # the durable reward is what competence_matrix consults across sessions (Op-P3 closes the loop)
+    mean, n = s.reward("architect", "engineering")
+    assert mean >= lrn.PROMOTE_AT and n >= lrn.MIN_OBS, (mean, n)
+    return f"promote@{r3['n']} obs, demote sustained-fail, best-excludes-demoted; stats={s.stats()}"
 
 
 def t_swap_store():
@@ -685,6 +719,7 @@ TESTS = [
     ("chaos_operators", t_chaos_operators), ("competence_matrix", t_competence_matrix),
     ("evaluate_hypotheses", t_evaluate_hypotheses), ("project_ledger", t_project_ledger),
     ("memory", t_memory), ("llm_adapter", t_llm_adapter), ("swap_store", t_swap_store),
+    ("learning", t_learning),
 ]
 
 

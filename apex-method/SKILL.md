@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.31.0
+version: 1.32.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,7 +47,7 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 38 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 39 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
@@ -107,7 +107,10 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
 - **`scripts/pot.py`** — Program-of-Thought: `run_chain([{name,code}])` runs each step
   in an isolated subprocess and chains outputs. `run_parallel()` only for slow steps.
 - **`scripts/numeric.py`** — `rk4(deriv,s0,dt,steps)` / `euler(...)` for multidimensional
-  ODE systems. Prefer RK4 (orders of magnitude more accurate). Precision Claude lacks alone.
+  ODE systems. Prefer RK4 (orders of magnitude more accurate). `solve_ode(...,method="auto")` uses
+  **scipy's adaptive solver when importable** (higher accuracy), else the stdlib RK4 — acceleration
+  is **environment-gated** (a fact of the runtime, not the LLM); `capabilities()` reports numpy/
+  scipy/sklearn/pandas presence. Precision Claude lacks alone.
 - **`scripts/uco_gate.py`** — `gate(code)`: objective code check before running (loop risk,
   dead code). Uses UCO if present, else an AST fallback.
 - **`scripts/verify.py`** — `verify_identity(lhs,rhs)`: symbolic proof/refutation via sympy.
@@ -227,6 +230,14 @@ The "multi-agent" work is parallel in two distinct ways — do not conflate them
   **INJECT_SKILL** (low domain reward → forced_skill from native/marketplace), or **HARD_PROBLEM**
   (high difficulty via BehavioralDifficultyEstimator → escalate mode/attach the governing rule).
   `heatmap(agents, domain, task)` ranks the best agents; feeds mental_interpreter & deep_research.
+- **`scripts/learning.py`** (Op-P3 — learning that persists): the durable promote/demote loop.
+  `record_outcome(kind, subject, domain, success)` accumulates evidence per **(persona/skill/diff/
+  rule/vaccine, domain)** and decides **PROMOTE / KEEP / DEMOTE** with the kernel's Bayesian layer
+  (beta-binomial + Ω 0.72/0.5, ≥3 obs); every status change is mirrored to the **SHA-256 governance
+  ledger** (`memory.record_event`) so it is durable + auditable. `best(kind, domain)` and the reward
+  blended into `competence_matrix._reward` mean the NEXT task consults the validated cross-session
+  history — a persona that keeps proving out is preferred, one that keeps failing is demoted.
+  `evaluate_hypotheses` records each director's outcome automatically, so the loop closes itself.
 - **`concurrent_executor.evaluate_hypotheses(task, hypotheses, directors, mode, subagent_hypotheses)`** —
   the analyst→directors flow, now with **maximized exploration** feeding the panel BEFORE it scores:
   1. **Level-B subagents (real LLM divergence):** the LLM-analyst raises the base hypotheses; when
