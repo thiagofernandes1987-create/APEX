@@ -6,3 +6,6 @@ algorithms/uco/__pycache__/
 
 # Bundles de transferência (não versionar)
 *.bundle
+
+# Pacotes .skill gerados (artefatos de build; entregues ao usuÃ¡rio, nÃ£o versionados)
+*.skill
