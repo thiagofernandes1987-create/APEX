@@ -166,9 +166,11 @@ def t_orchestrator():
     # difficulty wire (v1.35): a hard PDE escalates to SCIENTIFIC even without a science keyword hit
     sci = orchestrator.run("solve navier stokes turbulência de fluido pde")
     assert sci["mode"] == "SCIENTIFIC" and sci.get("escalate_discovery") is True, sci
-    # error handling contract: run NEVER raises — bad input degrades safely, never loops
-    bad = orchestrator.run(None)
-    assert bad["path"] in ("EXPRESS", "FULL_PIPELINE", "ERROR_DEGRADED") and "mode" in bad, bad
+    # error handling contract: run NEVER raises — bad input degrades safely, never loops.
+    # (regression: the error handler itself must survive non-string input like int/dict — scenario audit)
+    for bad_in in (None, 12345, {"x": 1}):
+        bad = orchestrator.run(bad_in)
+        assert bad["path"] in ("EXPRESS", "FULL_PIPELINE", "ERROR_DEGRADED") and "mode" in bad, bad
     return f"2+2=4 express; hard->{hard['mode']}; PDE->{sci['mode']}; pmi rel={pmi['reliability']}"
 
 def t_hypothesis_dag():

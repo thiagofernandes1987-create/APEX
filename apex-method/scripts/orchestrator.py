@@ -228,8 +228,9 @@ def run(task, candidates=None, snapshot=None):
     try:
         return _run(task, candidates, snapshot)
     except Exception as e:
+        # the handler itself must never crash: coerce task to str (int/dict/None are all valid inputs)
         return {"path": "ERROR_DEGRADED", "mode": "STANDARD",
-                "error": f"{type(e).__name__}: {str(e)[:140]}", "task": (task or "")[:120],
+                "error": f"{type(e).__name__}: {str(e)[:140]}", "task": str(task)[:120],
                 "note": "pipeline failed safely — answer directly, flag the uncertainty, do not loop"}
 
 
