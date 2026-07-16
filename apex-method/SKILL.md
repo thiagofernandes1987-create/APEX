@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.24.0
+version: 1.25.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -212,6 +212,21 @@ The "multi-agent" work is parallel in two distinct ways — do not conflate them
   then merge (entropy + PMI) → decision or RESTART. Gaps (missing skill/diff/rule, or wrong
   specialist) are surfaced as `needs_correction` before adoption. The abort trigger in
   `run_stances` is re-anchored on the stuck mechanism (not a flat confidence cut).
+
+## § 2.8 · The Living Project Inventory (`scripts/project_ledger.py`)
+
+For DEEP/SCIENTIFIC/RESEARCH projects that may span session interruptions (usage limits,
+container recycling): a DURABLE ledger — a git-committed `PROJECT_LEDGER.md` (quick consult) +
+JSON sidecar — so a fresh session resumes exactly. Each **micro-inventory** records WHO
+(responsible persona) delivers WHAT (deliverable type: laudo/snapshot/pot_result/skill/diff/
+doc/code/decision) to WHOM, WHEN = order in the **DSM** (dependency graph via `hypothesis_dag`:
+`dsm()` gives the critical path + the parallelizable batches = process/cost optimization).
+Governance: `guard_completion()` tells the LLM to finish the open micros before new scope;
+`authorize_abandon(id, reason)` refuses to drop a mapped solution without a justified reason
+(then flags a MACRO readjust). Persistence backends (user picks one): **git** commit, **local**
+repo, or **zip** (`export_zip` bundles the ledger + competence.db/memory.db to re-upload on
+resume). At FOGGY, `request_persistence()` prompts the user to choose. Only DEEP+ create a
+ledger — lighter modes stay bureaucracy-free.
 
 ## § 3 · Finding and Using an External Skill (safe flow)
 

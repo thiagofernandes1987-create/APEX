@@ -192,6 +192,14 @@
   "path": "scripts/pot.py"
  },
  {
+  "id": "script:project_ledger",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "living-inventory,dsm,raci,milestones,checklist,persistence,git,zip,completion-gate",
+  "mass": 272,
+  "path": "scripts/project_ledger.py"
+ },
+ {
   "id": "script:repo_bridge",
   "type": "script",
   "domain": "meta",

@@ -478,6 +478,35 @@ def t_evaluate_hypotheses():
     return f"{out['n_directors']} directors, hashed laudos, {out['decision']}; abort->PERSONA_SWAP"
 
 
+def t_project_ledger():
+    import project_ledger as pl_mod, tempfile, os
+    pl = pl_mod.ProjectLedger("build memory", mode="DEEP", backend="git")
+    pl.add_micro("m1", "design", "architect", "critic", "doc")
+    pl.add_micro("m2", "implement", "engineer", "critic", "code", depends_on=["m1"])
+    pl.add_micro("m3", "test", "qa", "pmi_pm", "code", depends_on=["m2"])
+    pl.add_micro("m4", "docs", "writer", "pmi_pm", "doc", depends_on=["m2"])
+    d = pl.dsm()
+    assert d["critical_path"] == ["m1", "m2", "m3"] or d["critical_path"] == ["m1", "m2", "m4"], d["critical_path"]
+    assert ["m3", "m4"] in d["parallel_batches"] or ["m4", "m3"] in d["parallel_batches"], d["parallel_batches"]
+    assert d["cycle"] is False
+    # completion gate blocks advancing while micros are open
+    assert pl.guard_completion()["blocked_advance"] is True
+    # abandon needs a justified reason
+    assert pl.authorize_abandon("m4", "")["status"] == "REFUSED"
+    assert pl.authorize_abandon("m4", "descoped: out of scope this cycle")["status"] == "AUTHORIZED"
+    # cycle is detected, not hung
+    c = pl_mod.ProjectLedger("c", mode="DEEP")
+    c.add_micro("x", "X", "a", "b", "doc", depends_on=["y"])
+    c.add_micro("y", "Y", "a", "b", "doc", depends_on=["x"])
+    assert c.dsm()["cycle"] is True
+    # DEEP+ only; STANDARD stays bureaucracy-free; zip roundtrip
+    assert pl_mod.ProjectLedger("t", mode="STANDARD").is_active() is False
+    assert len(pl_mod.ProjectLedger.from_json(pl.to_json()).micros) == 4
+    z = pl.export_zip(directory=tempfile.mkdtemp())
+    assert os.path.isfile(z["zip"]) and "PROJECT_LEDGER.md" in z["contents"]
+    return "MACRO+micros, DSM critical-path+parallel, gate, justified-abandon, cycle, zip"
+
+
 TESTS = [
     ("pot", t_pot), ("numeric", t_numeric), ("verify", t_verify), ("uco_gate", t_uco_gate),
     ("universal_code_optimizer_v4", t_uco_v4), ("router", t_router), ("skill_scout", t_skill_scout),
@@ -493,7 +522,7 @@ TESTS = [
     ("config", t_config), ("menu", t_menu), ("deep_research", t_deep_research),
     ("concurrent_executor", t_concurrent_executor),
     ("chaos_operators", t_chaos_operators), ("competence_matrix", t_competence_matrix),
-    ("evaluate_hypotheses", t_evaluate_hypotheses),
+    ("evaluate_hypotheses", t_evaluate_hypotheses), ("project_ledger", t_project_ledger),
 ]
 
 
