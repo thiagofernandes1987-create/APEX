@@ -9,3 +9,7 @@ algorithms/uco/__pycache__/
 
 # Pacotes .skill gerados (artefatos de build; entregues ao usuário, não versionados)
 *.skill
+
+# Zips de auditoria/entrega (artefatos; não versionar)
+apex-method-audit.zip
+apexmethod-*.zip
