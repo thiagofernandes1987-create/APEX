@@ -398,26 +398,32 @@ def t_deep_research():
 
 def t_concurrent_executor():
     import concurrent_executor as ce
-    # 3 stances run concurrently; barrier merges only when the counter is complete
-    stances = [
-        {"name": "optimistic", "persona": "architect",
-         "program": ce.qualitative_stance_program("X", 0.82)},
-        {"name": "pessimistic", "persona": "critic",
-         "program": ce.qualitative_stance_program("X", 0.78)},
-        {"name": "chaos", "persona": "chaos",
-         "program": ce.qualitative_stance_program("Y", 0.30)},
-    ]
-    rep = ce.run_stances("decide a path", stances)
+    # canonical 3 stances (optimistic/neutral/pessimistic) run concurrently; barrier merges
+    stances = ce.default_stances("s['cash']/s['burn']", {"cash": 1200000, "burn": 100000}, burn_key="burn")
+    rep = ce.run_stances("size runway", stances, mode="DEEP")
     assert rep["status"] == "PARALLEL_POT_COMPLETE", rep["status"]
-    assert rep["counter"] == {"completed": 3, "total": 3}, rep["counter"]
+    assert set(rep["stance_answers"]) == {"optimistic", "neutral", "pessimistic"}, rep["stance_answers"]
     assert all(len(r["sha256"]) == 64 for r in rep["per_stance"]), "sha256 per stance"
-    assert rep["merge"]["answer"] == "X" and rep["decision"] in ("ADOPT", "REVIEW", "REJECT")
-    # low-confidence round must emit a RESTART directive naming new personas
-    low = [{"name": "a", "persona": "p1", "program": ce.qualitative_stance_program("A", 0.30)},
-           {"name": "b", "persona": "p2", "program": ce.qualitative_stance_program("B", 0.28)}]
-    r2 = ce.run_stances("weak round", low, p_target=0.72)
+    assert rep["budget_cap"] == 8, rep["budget_cap"]
+    # budget = mode agent count: 15 stances capped to the mode's cap
+    many = [{"name": f"s{i}", "persona": f"p{i}", "program": ce.qualitative_stance_program("X", 0.8)}
+            for i in range(15)]
+    assert ce.run_stances("x", many, mode="RESEARCH")["counter"]["total"] == 12
+    assert ce.run_stances("x", many, mode="DEEP")["counter"]["total"] == 8
+    # probabilistic abort + vaccine: a stance under 0.35 is quit (not merged), + off_persona flagged
+    mixed = [{"name": "optimistic", "persona": "architect", "program": ce.qualitative_stance_program("A", 0.82)},
+             {"name": "neutral", "persona": "theorist", "program": ce.qualitative_stance_program("A", 0.70)},
+             {"name": "pessimistic", "persona": "critic", "program": ce.qualitative_stance_program("B", 0.28)},
+             {"name": "wild", "persona": "poet", "program": ce.qualitative_stance_program("C", 0.60, off_persona=True)}]
+    r3 = ce.run_stances("decide", mixed, mode="SCIENTIFIC")
+    assert any(a["stance"] == "pessimistic" for a in r3["aborted"]), r3["aborted"]
+    assert "wild" in r3["off_persona"], r3["off_persona"]
+    # low-but-not-aborted round (0.35<=conf<target) must emit a RESTART directive
+    low = [{"name": "a", "persona": "p1", "program": ce.qualitative_stance_program("A", 0.50)},
+           {"name": "b", "persona": "p2", "program": ce.qualitative_stance_program("B", 0.45)}]
+    r2 = ce.run_stances("weak round", low, mode="DEEP", p_target=0.72)
     assert "restart" in r2 and r2["restart"]["assign_new_personas"], r2
-    return f"3 stances barrier->merge->PMI {rep['decision']}; restart on low conf"
+    return f"3 stances; mode-cap budget; abort+vaccine {len(r3['aborted'])}; off_persona; restart"
 
 
 TESTS = [

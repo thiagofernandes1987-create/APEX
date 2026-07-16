@@ -1,33 +1,33 @@
 {
  "passed": 35,
  "total": 35,
- "total_ms": 2468.5,
+ "total_ms": 3130.9,
  "results": [
   {
    "module": "pot",
    "ok": true,
-   "ms": 30.2,
+   "ms": 27.2,
    "metric": "sum 1..100 = 5050",
    "error": ""
   },
   {
    "module": "numeric",
    "ok": true,
-   "ms": 3.6,
+   "ms": 4.1,
    "metric": "RK4 energy err 8.72e-12",
    "error": ""
   },
   {
    "module": "verify",
    "ok": true,
-   "ms": 372.4,
+   "ms": 380.6,
    "metric": "identity VERIFIED / REFUTED",
    "error": ""
   },
   {
    "module": "uco_gate",
    "ok": true,
-   "ms": 70.3,
+   "ms": 69.2,
    "metric": "loop REJECTED (UCO)",
    "error": ""
   },
@@ -41,35 +41,35 @@
   {
    "module": "router",
    "ok": true,
-   "ms": 730.5,
+   "ms": 792.3,
    "metric": "routes to frontend",
    "error": ""
   },
   {
    "module": "skill_scout",
    "ok": true,
-   "ms": 5.0,
+   "ms": 5.4,
    "metric": "3 attacks blocked, clean passes",
    "error": ""
   },
   {
    "module": "skill_forge",
    "ok": true,
-   "ms": 1.1,
+   "ms": 0.8,
    "metric": "generates valid SKILL.md",
    "error": ""
   },
   {
    "module": "snapshot",
    "ok": true,
-   "ms": 40.0,
+   "ms": 36.5,
    "metric": "snapshot new/add/compress/decompress",
    "error": ""
   },
   {
    "module": "agent_registry",
    "ok": true,
-   "ms": 10.4,
+   "ms": 11.2,
    "metric": "core->engineer, ext->data-engineer",
    "error": ""
   },
@@ -90,7 +90,7 @@
   {
    "module": "gravity",
    "ok": true,
-   "ms": 15.3,
+   "ms": 17.0,
    "metric": "security constellation: 2 agents",
    "error": ""
   },
@@ -104,14 +104,14 @@
   {
    "module": "orchestrator",
    "ok": true,
-   "ms": 18.0,
+   "ms": 20.0,
    "metric": "2+2=4 express; hard->SCIENTIFIC; pmi rel=0.875",
    "error": ""
   },
   {
    "module": "hypothesis_dag",
    "ok": true,
-   "ms": 0.1,
+   "ms": 0.2,
    "metric": "cycle rejected, cascade 3",
    "error": ""
   },
@@ -125,7 +125,7 @@
   {
    "module": "guards",
    "ok": true,
-   "ms": 0.2,
+   "ms": 0.3,
    "metric": "SR_36/37/38 enforced",
    "error": ""
   },
@@ -139,7 +139,7 @@
   {
    "module": "geodesic_scheduler",
    "ok": true,
-   "ms": 0.1,
+   "ms": 0.2,
    "metric": "plan ['c', 'a', 'b'], ethical excluded",
    "error": ""
   },
@@ -174,7 +174,7 @@
   {
    "module": "repo_bridge",
    "ok": true,
-   "ms": 34.4,
+   "ms": 40.6,
    "metric": "native index 3784, traversal refused",
    "error": ""
   },
@@ -188,35 +188,35 @@
   {
    "module": "audit_regressions",
    "ok": true,
-   "ms": 323.7,
+   "ms": 447.0,
    "metric": "loads FP, getattr, installs, n_rel, express, chaos, skills.sh, char-ngram, dissect-PT, ext-grant: all fixed",
    "error": ""
   },
   {
    "module": "monte_carlo",
    "ok": true,
-   "ms": 7.9,
+   "ms": 9.3,
    "metric": "MC P50=60.0, cv=0.083",
    "error": ""
   },
   {
    "module": "pmi_monte_carlo",
    "ok": true,
-   "ms": 24.5,
+   "ms": 27.9,
    "metric": "PMI picks lowest-CV plan by real simulation",
    "error": ""
   },
   {
    "module": "code_genetics_sqlite",
    "ok": true,
-   "ms": 21.6,
+   "ms": 20.0,
    "metric": "vaccine persists + promotes across SQLite reopen",
    "error": ""
   },
   {
    "module": "snapshot_wire",
    "ok": true,
-   "ms": 5.8,
+   "ms": 6.7,
    "metric": "run() recorded 1 findings into snapshot",
    "error": ""
   },
@@ -237,15 +237,15 @@
   {
    "module": "deep_research",
    "ok": true,
-   "ms": 682.7,
+   "ms": 916.6,
    "metric": "deep_research TARGET_REACHED in 1 rounds",
    "error": ""
   },
   {
    "module": "concurrent_executor",
    "ok": true,
-   "ms": 67.0,
-   "metric": "3 stances barrier->merge->PMI ADOPT; restart on low conf",
+   "ms": 294.1,
+   "metric": "3 stances; mode-cap budget; abort+vaccine 1; off_persona; restart",
    "error": ""
   }
  ]
