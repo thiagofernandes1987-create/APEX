@@ -1,4 +1,5 @@
 patch_inviolable_rules:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   additions:
     scientific_rules:
     - 'SR_07: [POT_GUARD] Todo PoT program deve ter STEP_0 do tipo FMEA_GUARD. Ausência = output inválido

@@ -1,4 +1,5 @@
 patch_step_5:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   addition_at_each_level: "Em cada expansão de nível fractal (meso, micro, nano):\n  1. fractal_knowledge_indexing\
     \ injeta anchors do novo nível\n  2. specialized_skill_engine invoca skills do novo nível\n  3. mental_interpreter\
     \ executa PoTs para o nível atual\n  4. fractal_hypothesis_compression executa (todos os métodos)\n\

@@ -1,4 +1,5 @@
 geometry_estimator:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   version: v00.20.2
   tier: 2
   parent_module: cognitive_integrator_library

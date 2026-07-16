@@ -1,4 +1,5 @@
 code_genetics_map:
+executor: HYBRID  # backfilled by lint_executor (SR_40)
   executor: HYBRID
   version: v00.32.1
   opp: OPP-MAS-02

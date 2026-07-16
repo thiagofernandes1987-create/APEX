@@ -1,4 +1,5 @@
 implementation_module:
+executor: SANDBOX_CODE  # backfilled by lint_executor (SR_40)
   version: v00.21.0
   file: apex_v00_21_1.py
   embed_type: full_source

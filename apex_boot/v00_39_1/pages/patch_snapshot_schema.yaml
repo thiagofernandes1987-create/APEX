@@ -1,4 +1,5 @@
 patch_snapshot_schema:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   new_conditional_fields:
   - specialized_skill_state
   - pot_execution_log

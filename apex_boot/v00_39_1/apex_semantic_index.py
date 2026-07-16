@@ -90,9 +90,28 @@ def build(pages_dir, catalog=None, db=None):
     print(f"✓ índice: {len(docs)} docs {kinds} → {INDEX_FILE}")
 
 
+class _RestrictedUnpickler(pickle.Unpickler):
+    """V-02 audit fix: a swapped .pkl executed arbitrary code via pickle.load (RCE).
+    Only the classes the index legitimately contains may be deserialized; anything
+    else aborts. If the index is untrusted or fails here, rebuild with build() —
+    the pages/catalog text is the source of truth."""
+    _ALLOWED_PREFIXES = ("sklearn.", "scipy.", "numpy", "builtins")
+
+    def find_class(self, module, name):
+        if any(module == p.rstrip(".") or module.startswith(p) for p in self._ALLOWED_PREFIXES):
+            return super().find_class(module, name)
+        raise pickle.UnpicklingError(
+            f"blocked class {module}.{name} — index .pkl not trusted; rebuild via build()")
+
+
+def _load_index():
+    with open(INDEX_FILE, "rb") as f:
+        return _RestrictedUnpickler(f).load()
+
+
 def query(text, k=5):
     from sklearn.metrics.pairwise import cosine_similarity
-    idx = pickle.load(open(INDEX_FILE, "rb"))
+    idx = _load_index()
     q = idx["vectorizer"].transform([text])
     sims = cosine_similarity(q, idx["matrix"])[0]
     order = sims.argsort()[::-1][:k]

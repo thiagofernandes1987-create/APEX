@@ -1,0 +1,145 @@
+[
+ {
+  "id": "integrations/connectors",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/connectors",
+  "type": "mcp-related",
+  "domain": "connectors"
+ },
+ {
+  "id": "integrations/engineering-mcp",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/engineering-mcp",
+  "type": "mcp-server",
+  "domain": "engineering"
+ },
+ {
+  "id": "integrations/github-mcp-server",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/github-mcp-server",
+  "type": "mcp-server",
+  "domain": "github-server"
+ },
+ {
+  "id": "integrations/legal-mcp",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/legal-mcp",
+  "type": "mcp-server",
+  "domain": "legal"
+ },
+ {
+  "id": "integrations/marketing-mcp",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/marketing-mcp",
+  "type": "mcp-server",
+  "domain": "marketing"
+ },
+ {
+  "id": "integrations/mcp-reference-servers",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/mcp-reference-servers",
+  "type": "mcp-server",
+  "domain": "mcp-reference-servers"
+ },
+ {
+  "id": "integrations/mcp-servers",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/mcp-servers",
+  "type": "mcp-server",
+  "domain": "mcp-servers"
+ },
+ {
+  "id": "integrations/playwright-mcp",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/playwright-mcp",
+  "type": "mcp-server",
+  "domain": "playwright"
+ },
+ {
+  "id": "integrations/science-physics-mcp",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/science-physics-mcp",
+  "type": "mcp-server",
+  "domain": "science-physics"
+ },
+ {
+  "id": "algorithms/claude-ai-mcp",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/algorithms/claude-ai-mcp",
+  "type": "mcp-server",
+  "domain": "claude-ai"
+ },
+ {
+  "id": "algorithms/github-mcp-server",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/algorithms/github-mcp-server",
+  "type": "mcp-server",
+  "domain": "github-server"
+ },
+ {
+  "id": "algorithms/mcp-dotnet-sdk",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/algorithms/mcp-dotnet-sdk",
+  "type": "mcp-server",
+  "domain": "mcp-dotnet-sdk"
+ },
+ {
+  "id": "algorithms/mcp-servers-impl",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/algorithms/mcp-servers-impl",
+  "type": "mcp-server",
+  "domain": "mcp-servers-impl"
+ },
+ {
+  "id": "algorithms/mcp-typescript-sdk",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/algorithms/mcp-typescript-sdk",
+  "type": "mcp-server",
+  "domain": "mcp-typescript-sdk"
+ },
+ {
+  "id": "algorithms/playwright-mcp",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/algorithms/playwright-mcp",
+  "type": "mcp-server",
+  "domain": "playwright"
+ },
+ {
+  "id": "integrations/financial-services",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/financial-services",
+  "type": "mcp-domain-plugins",
+  "domain": "financial"
+ },
+ {
+  "id": "integrations/healthcare-plugins",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/healthcare-plugins",
+  "type": "mcp-domain-plugins",
+  "domain": "healthcare"
+ },
+ {
+  "id": "integrations/life-sciences-plugins",
+  "source": "https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/integrations/life-sciences-plugins",
+  "type": "mcp-domain-plugins",
+  "domain": "life"
+ },
+ {
+  "id": "integrations/claude-commands",
+  "domain": "tooling",
+  "type": "command-pack",
+  "treatment": "indexed",
+  "note": "CATALOG.md — Claude slash-command packs"
+ },
+ {
+  "id": "integrations/external-plugins",
+  "domain": "general",
+  "type": "plugin-catalog",
+  "treatment": "indexed",
+  "note": "CATALOG.md — third-party plugin index"
+ },
+ {
+  "id": "integrations/knowledge-work",
+  "domain": "knowledge-work",
+  "type": "skill-collection",
+  "treatment": "indexed",
+  "note": "knowledge-work source skills"
+ },
+ {
+  "id": "integrations/official-plugins",
+  "domain": "general",
+  "type": "plugin-catalog",
+  "treatment": "indexed",
+  "note": "CATALOG.md — 28 official plugins"
+ },
+ {
+  "id": "integrations/plugins",
+  "domain": "general",
+  "type": "plugin-catalog",
+  "treatment": "indexed",
+  "note": "CATALOG.md — plugin index"
+ }
+]

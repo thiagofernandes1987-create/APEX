@@ -1,4 +1,5 @@
 mental_interpreter_v2:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   version: v00.20.2
   tier: 1
   replaces: mental_interpreter_v00.20.0

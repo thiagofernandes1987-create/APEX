@@ -1,4 +1,5 @@
 pipeline_v022_modifications:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   STEP_0:
     additions:
     - 'snapshot_store.initialize(): restaura ou cria store; registra entradas do SNAP_REF anterior'

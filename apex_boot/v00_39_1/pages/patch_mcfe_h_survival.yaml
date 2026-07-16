@@ -1,4 +1,5 @@
 patch_mcfe_h_survival:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   change: 'H_survival = (n_active_after_FHC) / n_initial Fonte: fractal_hypothesis_compression.compression_report.n_after
     (em vez de advanced.hypothesis_tracker direto)
 

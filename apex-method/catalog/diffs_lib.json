@@ -1,0 +1,208 @@
+[
+ {
+  "id": "DIFF_GITHUB_SUPERREPO_BOOT_001",
+  "what": "GitHub Super-Repositório APEX como trusted_domain + boot automático",
+  "gargalo": "WHY — trusted_domains: G6 é uma regra de segurança. Adicionar o repositório do p",
+  "version": "apex_v00_33_0",
+  "text_en": "GitHub super-repository as trusted domain with automatic boot skill catalog loading"
+ },
+ {
+  "id": "DIFF_MULTI_LLM_ADAPTER_001",
+  "what": "Adaptador Multi-LLM com detecção de runtime e degradação graciosa",
+  "gargalo": "WHY — detecção em STEP_0: O LLM precisa saber suas capacidades ANTES de iniciar ",
+  "version": "apex_v00_33_0",
+  "text_en": "multi-LLM adapter with runtime detection and graceful degradation across Claude GPT Gemini"
+ },
+ {
+  "id": "DIFF_FORGESKILLS_RAPID_READER_001",
+  "what": "ForgeSkills Rapid Reader — pipeline 4-estágios para leitura rápida de repositórios",
+  "gargalo": "WHY — 4 estágios em vez de 1: Cada estágio tem fallback independente. WHY — INDE",
+  "version": "apex_v00_33_0",
+  "text_en": "four-stage rapid reading pipeline for fast external skill ingestion"
+ },
+ {
+  "id": "DIFF_HYPERBOLIC_ANCHOR_MAP_001",
+  "what": "Mapa hierárquico de anchors + bridges cross-domain para attraction_engine",
+  "gargalo": "WHY — bridges explícitos: Sem bridges, legal.art_406_cc e math.compound_interest",
+  "version": "apex_v00_33_0",
+  "text_en": "hierarchical anchor map with cross-domain bridges for the attraction engine"
+ },
+ {
+  "id": "DIFF_ZERO_AMBIGUITY_CODE_001",
+  "what": "Zero-Ambiguidade: padrão WHY/WHEN/HOW/WHAT_IF_FAILS obrigatório em todo código DSL",
+  "gargalo": "WHY — SR_40 como regra e não apenas guideline: Sem enforcement, o padrão deterio",
+  "version": "apex_v00_33_0",
+  "text_en": "mandatory why when how what-if-fails documentation pattern for all sandbox code"
+ },
+ {
+  "id": "DIFF_LLM_AGNOSTIC_FORGESKILLS_001",
+  "what": "ForgeSkills LLM-agnóstico via urllib — fallback para GPT-4o e Gemini sem git clone",
+  "gargalo": "WHY — urllib.request e não requests ou httpx: urllib é stdlib Python universal. ",
+  "version": "apex_v00_33_0",
+  "text_en": "LLM-agnostic skill forge via urllib fallback for GPT-4o and Gemini"
+ },
+ {
+  "id": "SR_42 — SHA-256 integrity gate para trusted_domains",
+  "what": "SR_42 — SHA-256 integrity gate para trusted_domains",
+  "gargalo": "Audit identificou que trusted_domains valida apenas URL mas não integridade do c",
+  "version": "apex_v00_36_0",
+  "text_en": "SHA-256 integrity gate for trusted domains supply chain pinning"
+ },
+ {
+  "id": "SR_43 — approval_required obrigatório para mudanças em conte",
+  "what": "SR_43 — approval_required obrigatório para mudanças em contexto crítico",
+  "gargalo": "Audit identificou OPPs com approval_required: false que modificavam trusted_doma",
+  "version": "apex_v00_36_0",
+  "text_en": "approval required for any change in critical context never auto-apply"
+ },
+ {
+  "id": "SR_44 — Mínimo de modos de falha por tipo de OPP",
+  "what": "SR_44 — Mínimo de modos de falha por tipo de OPP",
+  "gargalo": "Audit encontrou OPPs com what_if_fails contendo apenas 1 modo de falha trivial (",
+  "version": "apex_v00_36_0",
+  "text_en": "minimum failure modes documented per OPP type FMEA discipline"
+ },
+ {
+  "id": "SR_45 — depends_on com módulo indefinido bloqueia aprovação ",
+  "what": "SR_45 — depends_on com módulo indefinido bloqueia aprovação de OPP",
+  "gargalo": "Audit encontrou 13 ghost dependencies no v00.34.0 (módulos referenciados em depe",
+  "version": "apex_v00_36_0",
+  "text_en": "depends_on with undefined module blocks OPP approval dependency hygiene"
+ },
+ {
+  "id": "Normalização de campos obrigatórios em 8 agentes community",
+  "what": "Normalização de campos obrigatórios em 8 agentes community",
+  "gargalo": "Audit encontrou que os 8 agentes community (community_security_code_reviewer, co",
+  "version": "apex_v00_36_0",
+  "text_en": "normalize mandatory fields across community agents roster hygiene"
+ },
+ {
+  "id": "Remover duplicata apex_internals/plugins/skills/ — aponta pa",
+  "what": "Remover duplicata apex_internals/plugins/skills/ — aponta para create-cowork-plugin",
+  "gargalo": "Audit encontrou que skills/apex_internals/plugins/skills/SKILL.md é duplicata de",
+  "version": "apex_v00_36_0",
+  "text_en": "remove duplicate plugin skill directory pointing to canonical source"
+ },
+ {
+  "id": "Registrar APEX_CREATION_GUIDE.md como módulo de referência n",
+  "what": "Registrar APEX_CREATION_GUIDE.md como módulo de referência no genome",
+  "gargalo": "APEX_CREATION_GUIDE.md foi gerado em 2026-04-10 como síntese canônica de análise",
+  "version": "apex_v00_36_0",
+  "text_en": "register creation guide as reference module in the genome"
+ },
+ {
+  "id": "Logger estruturado com redação automática de PII para módulo",
+  "what": "Logger estruturado com redação automática de PII para módulos APEX",
+  "gargalo": "Audit identificou que módulos APEX não têm padrão unificado de logging. Sem reda",
+  "version": "apex_v00_36_0",
+  "text_en": "structured logger with automatic PII redaction for APEX modules"
+ },
+ {
+  "id": "DIFF_ORJSON_SNAPSHOT_001",
+  "what": "Substituir json stdlib por orjson (Rust) em todos os pontos de serialização do APEX. orjson é 10× mais rápido em dumps e",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "orjson_serializer",
+  "opp": "OPP-92",
+  "text_en": "orjson fast serialization for snapshots ten times faster dumps"
+ },
+ {
+  "id": "DIFF_CONSTITUTIONAL_ANCHOR_001",
+  "what": "Ancorar o PROTECTED_KERNEL_SEGMENT explicitamente na claude-constitution versão 2026-01-20 (documento oficial mais recen",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "constitutional_anchor",
+  "opp": "OPP-93",
+  "text_en": "constitutional anchor rules injected as always-active reasoning constraints"
+ },
+ {
+  "id": "DIFF_SKILL_QUALITY_BAR_001",
+  "what": "Implementar o pipeline de qualidade do antigravity-awesome-skills v3 no SkillIndexer. Toda skill ingerida passa por 6 ch",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "skill_quality_bar",
+  "opp": "OPP-94",
+  "text_en": "minimum quality bar gate for ingested skills structure triggers scope"
+ },
+ {
+  "id": "DIFF_RISK_TAXONOMY_EXTENSION_001",
+  "what": "Estender o risk_level do DynamicSkillForge para incluir a categoria 'offensive' do antigravity v3, com protocolo de auto",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "risk_taxonomy_extended",
+  "opp": "OPP-95",
+  "text_en": "extended risk taxonomy for FMEA severity likelihood detectability scoring"
+ },
+ {
+  "id": "DIFF_MCP_BRIDGE_REAL_001",
+  "what": "Implementar o mcp_bridge que estava declarado como activation_roadmap desde v00.17.0 mas nunca foi construído. Usa o pad",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "mcp_bridge_v2",
+  "opp": "OPP-96",
+  "text_en": "real MCP bridge connecting model context protocol servers by domain"
+ },
+ {
+  "id": "DIFF_KNOWLEDGE_GRAPH_MEMORY_001",
+  "what": "Substituir o SnapshotStore textual por um Knowledge Graph tipado persistente, usando o Memory MCP Server (servers-main/s",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "knowledge_graph_memory",
+  "opp": "OPP-97",
+  "text_en": "knowledge graph memory linking findings anchors and hypotheses across sessions"
+ },
+ {
+  "id": "DIFF_SESSION_FORK_001",
+  "what": "Adicionar fork/merge de sessão ao SnapshotStore, baseado no padrão fork_session do claude-agent-sdk-python session_mutat",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "session_fork_protocol",
+  "opp": "OPP-98",
+  "text_en": "session fork to explore alternative hypothesis branches with isolated snapshots"
+ },
+ {
+  "id": "DIFF_TOKEN_BUDGET_TRACKER_001",
+  "what": "Implementar rastreamento real de tokens por sessão, stage e skill, baseado no TokenTracker do RIV2025 (token_tracker.py)",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "token_budget_tracker",
+  "opp": "OPP-99",
+  "text_en": "token budget tracker enforcing per-mode cost ceilings during the pipeline"
+ },
+ {
+  "id": "DIFF_DESIGN_FUSION_INJECTOR_001",
+  "what": "Injetar o sistema de design fusion +3σ do RIV2025 em outputs visuais e de frontend. Elimina o \"AI slop aesthetic\" (Inter",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "design_fusion_injector",
+  "opp": "OPP-100",
+  "text_en": "design fusion injector merging UX UI design skills into engineering constellations"
+ },
+ {
+  "id": "DIFF_UCO_EXTENDED_METRICS_001",
+  "what": "Expandir o UCO gate (SB3) com 3 métricas adicionais: performance_profile (ms/KB estimado), io_call_count e serialization",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "uco_quality_gate_v2",
+  "opp": "OPP-101",
+  "text_en": "extended UCO code metrics channels for deeper static quality analysis"
+ },
+ {
+  "id": "DIFF_DOMAIN_SKILLS_INGESTION_001",
+  "what": "Ingerir 189 skills de produção institucional no SkillDB: 56 financial-services, 124 knowledge-work, 6 life-sciences, 3 h",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "domain_skills_ingestion",
+  "opp": "OPP-102",
+  "text_en": "bulk ingestion of domain skill collections finance medicine science law"
+ },
+ {
+  "id": "DIFF_SEQUENTIAL_THINKING_001",
+  "what": "Integrar o Sequential Thinking MCP Server como módulo de raciocínio estruturado para modos DEEP e RESEARCH. Complementa ",
+  "gargalo": "",
+  "version": "apex_v00_33_0",
+  "module": "sequential_thinking_module",
+  "opp": "OPP-103",
+  "text_en": "sequential thinking scaffold with explicit numbered reasoning steps"
+ }
+]

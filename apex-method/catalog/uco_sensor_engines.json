@@ -1,0 +1,65 @@
+[
+ {
+  "engine": "uco_core (spectral)",
+  "module": "uco_core/universal_code_optimizer_v4.py",
+  "standalone": true,
+  "does": "9-channel spectral code quality: H, CC, ILR, DSM_d/c, DI, dead, dups, bugs (FFT/Wavelet/PELT)",
+  "status": "NATIVIZED in skill (scripts/universal_code_optimizer_v4.py)"
+ },
+ {
+  "engine": "SCA / OSV-CVE",
+  "module": "sca/{cve_database,cve_feed,reachability,vulnerability_scanner,vendored_scanner}.py",
+  "standalone": false,
+  "does": "dependency vuln scan against CVE/OSV feeds + reachability",
+  "status": "service (needs feeds)"
+ },
+ {
+  "engine": "SAST",
+  "module": "sast/{multilang_scanner,regex_analyzer,rules_feed,ghsa_fix_resolver,guard_aware}.py",
+  "standalone": false,
+  "does": "static app security testing, 13+ rules, GHSA fix resolution",
+  "status": "service"
+ },
+ {
+  "engine": "taint / FlowVector",
+  "module": "metrics/extended_vectors.py + sca/reachability.py",
+  "standalone": false,
+  "does": "taint analysis / data-flow vectors",
+  "status": "service"
+ },
+ {
+  "engine": "IaC scan",
+  "module": "api/server.py /scan-iac",
+  "standalone": false,
+  "does": "infrastructure-as-code security",
+  "status": "service"
+ },
+ {
+  "engine": "lang_adapters (tree-sitter)",
+  "module": "lang_adapters/{c_family,csharp,functional_langs,domain_langs,generic}.py",
+  "standalone": false,
+  "does": "multi-language AST adapters (Py/JS/TS/Java/Go/C/C#…)",
+  "status": "service (needs tree-sitter)"
+ },
+ {
+  "engine": "governance (statistical)",
+  "module": "governance/{granger_causality,changepoints,compound_alert}.py",
+  "standalone": false,
+  "does": "statistical anomaly detection: Granger causality, change-point (PELT)",
+  "status": "service"
+ },
+ {
+  "engine": "HMC autofix repair",
+  "module": "sensor_core/autofix/hmc_repair.py",
+  "standalone": false,
+  "does": "Hamiltonian Monte Carlo guided code repair",
+  "status": "service"
+ },
+ {
+  "engine": "predictor / explainer",
+  "module": "sensor_core/{predictor,explainer,auto_analyzer}.py",
+  "standalone": false,
+  "does": "degradation prediction + explanation",
+  "status": "service"
+ }
+]

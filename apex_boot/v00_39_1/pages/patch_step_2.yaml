@@ -1,4 +1,5 @@
 patch_step_2:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   addition: 'Após radial_loading de anchors: invocar fractal_knowledge_indexing para filtrar anchors carregados
     por nível macro (nível inicial). Carregar generic_skills de cada agente ativo. Invocar specialized_skill_engine.resolve_initial_skills()
     para pré-carregar Specialized Skills relevantes sem ainda executar.

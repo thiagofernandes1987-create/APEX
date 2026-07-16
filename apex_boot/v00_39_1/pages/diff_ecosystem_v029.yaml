@@ -1,4 +1,5 @@
 diff_ecosystem_v029:
+executor: DOCUMENTATION  # backfilled by lint_executor (SR_40)
   base: v00.28.0 (41 DIFFs)
   registered_diffs:
   - id: DIFF_NLM_MCFE_WIRE

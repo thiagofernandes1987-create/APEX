@@ -1,0 +1,69 @@
+{
+  "_meta": {
+    "note": "Curated best-in-class skills per domain. 'installs' are from the skills.sh leaderboard (all-time) at fetch time (2026-07). Entries marked source:'skills.sh' are on the skills.sh directory; entries marked source:'github' are real repos NOT prominent on skills.sh (medicine, math, finance, science are sparse on skills.sh and live in dedicated repos). Install via the shown command; ALWAYS scout+approve before install/run (APEX H5/SR_37).",
+    "verified_at": "2026-07-12"
+  },
+  "domains": {
+    "programming": [
+      {"id": "obra/superpowers/systematic-debugging", "installs": "88.9K", "install": "npx skills add obra/superpowers", "source": "skills.sh", "use_when": "hard-to-reproduce bug; systematic root-cause", "agent": "engineer"},
+      {"id": "mattpocock/skills/tdd", "installs": "78.0K", "install": "npx skills add mattpocock/skills", "source": "skills.sh", "use_when": "test-driven development, red-green-refactor", "agent": "engineer"},
+      {"id": "mattpocock/skills/improve-codebase-architecture", "installs": "78.9K", "install": "npx skills add mattpocock/skills", "source": "skills.sh", "use_when": "restructure/refactor a codebase", "agent": "engineer"},
+      {"id": "obra/superpowers/writing-plans", "installs": "88.2K", "install": "npx skills add obra/superpowers", "source": "skills.sh", "use_when": "plan a multi-step implementation before coding", "agent": "engineer"},
+      {"id": "wshobson/agents/typescript-advanced-types", "installs": "39.9K", "install": "npx skills add wshobson/agents", "source": "skills.sh", "use_when": "advanced TypeScript typing", "agent": "engineer"}
+    ],
+    "brainstorm": [
+      {"id": "obra/superpowers/brainstorming", "installs": "148.0K", "install": "npx skills add obra/superpowers", "source": "skills.sh", "use_when": "diverge on a new idea before converging", "agent": "chaos"},
+      {"id": "mattpocock/skills/zoom-out", "installs": "54.7K", "install": "npx skills add mattpocock/skills", "source": "skills.sh", "use_when": "step back and reframe the problem", "agent": "pmi_pm"}
+    ],
+    "frontend": [
+      {"id": "anthropics/skills/frontend-design", "installs": "391.8K", "install": "npx skills add anthropics/skills", "source": "skills.sh", "use_when": "any UI/component/landing page design", "agent": "engineer"},
+      {"id": "vercel-labs/agent-skills/vercel-react-best-practices", "installs": "386.7K", "install": "npx skills add vercel-labs/agent-skills", "source": "skills.sh", "use_when": "React app best practices", "agent": "engineer"},
+      {"id": "vercel-labs/next-skills/next-best-practices", "installs": "82.7K", "install": "npx skills add vercel-labs/next-skills", "source": "skills.sh", "use_when": "Next.js apps", "agent": "engineer"},
+      {"id": "shadcn/ui/shadcn", "installs": "133.9K", "install": "npx skills add shadcn/ui", "source": "skills.sh", "use_when": "shadcn/ui component system", "agent": "engineer"}
+    ],
+    "backend": [
+      {"id": "supabase/agent-skills/supabase-postgres-best-practices", "installs": "155.5K", "install": "npx skills add supabase/agent-skills", "source": "skills.sh", "use_when": "Postgres/Supabase schema, RLS, queries", "agent": "engineer"},
+      {"id": "microsoft/azure-skills/azure-compute", "installs": "245.8K", "install": "npx skills add microsoft/azure-skills", "source": "skills.sh", "use_when": "Azure compute/hosting", "agent": "engineer"},
+      {"id": "better-auth/skills/better-auth-best-practices", "installs": "48.1K", "install": "npx skills add better-auth/skills", "source": "skills.sh", "use_when": "authentication implementation", "agent": "engineer"},
+      {"id": "firebase/agent-skills/firebase-basics", "installs": "48.8K", "install": "npx skills add firebase/agent-skills", "source": "skills.sh", "use_when": "Firebase backend", "agent": "engineer"},
+      {"id": "get-convex/agent-skills/convex-quickstart", "installs": "43.6K", "install": "npx skills add get-convex/agent-skills", "source": "skills.sh", "use_when": "Convex reactive backend", "agent": "engineer"}
+    ],
+    "design": [
+      {"id": "vercel-labs/agent-skills/web-design-guidelines", "installs": "309.0K", "install": "npx skills add vercel-labs/agent-skills", "source": "skills.sh", "use_when": "web visual design guidelines", "agent": "engineer"},
+      {"id": "pbakaus/impeccable/polish", "installs": "85.5K", "install": "npx skills add pbakaus/impeccable", "source": "skills.sh", "use_when": "polish/critique a UI to high craft", "agent": "engineer"},
+      {"id": "anthropics/skills/canvas-design", "installs": "51.1K", "install": "npx skills add anthropics/skills", "source": "skills.sh", "use_when": "poster/visual art/static design", "agent": "educator"},
+      {"id": "arvindrk/extract-design-system/extract-design-system", "installs": "89.7K", "install": "npx skills add arvindrk/extract-design-system", "source": "skills.sh", "use_when": "extract a design system from a reference", "agent": "engineer"}
+    ],
+    "ux-ui": [
+      {"id": "nextlevelbuilder/ui-ux-pro-max-skill/ui-ux-pro-max", "installs": "156.0K", "install": "npx skills add nextlevelbuilder/ui-ux-pro-max-skill", "source": "skills.sh", "use_when": "end-to-end UX/UI design", "agent": "engineer"},
+      {"id": "leonxlnx/taste-skill/design-taste-frontend", "installs": "49.5K", "install": "npx skills add leonxlnx/taste-skill", "source": "skills.sh", "use_when": "elevate frontend visual taste", "agent": "engineer"},
+      {"id": "sleekdotdesign/agent-skills/sleek-design-mobile-apps", "installs": "108.7K", "install": "npx skills add sleekdotdesign/agent-skills", "source": "skills.sh", "use_when": "mobile app UI design", "agent": "engineer"},
+      {"id": "emilkowalski/skill/emil-design-eng", "installs": "40.2K", "install": "npx skills add emilkowalski/skill", "source": "skills.sh", "use_when": "design-engineering, animation/interaction", "agent": "engineer"}
+    ],
+    "engineering": [
+      {"id": "obra/superpowers/verification-before-completion", "installs": "63.7K", "install": "npx skills add obra/superpowers", "source": "skills.sh", "use_when": "verify work before declaring done", "agent": "engineer"},
+      {"id": "obra/superpowers/requesting-code-review", "installs": "77.4K", "install": "npx skills add obra/superpowers", "source": "skills.sh", "use_when": "structured code review", "agent": "engineer"},
+      {"id": "currents-dev/playwright-best-practices-skill/playwright-best-practices", "installs": "37.2K", "install": "npx skills add currents-dev/playwright-best-practices-skill", "source": "skills.sh", "use_when": "end-to-end testing with Playwright", "agent": "engineer"}
+    ],
+    "mcp-servers": [
+      {"id": "anthropics/skills/mcp-builder", "installs": "51.0K", "install": "npx skills add anthropics/skills", "source": "skills.sh", "use_when": "build an MCP server (Python/TS)", "agent": "engineer"}
+    ],
+    "finance": [
+      {"id": "goldmansachs/gs-quant", "installs": "n/a", "install": "npx skills add goldmansachs/gs-quant", "source": "github", "use_when": "institutional quant (gs-quant SDK): pricing, risk", "agent": "finance_analyst"},
+      {"id": "agiprolabs/claude-trading-skills", "installs": "n/a", "install": "npx skills add agiprolabs/claude-trading-skills", "source": "github", "use_when": "trading/DeFi/quant: market data, backtesting, risk", "agent": "finance_analyst"},
+      {"id": "gauss314/skills", "installs": "n/a", "install": "npx skills add gauss314/skills", "source": "github", "use_when": "portfolio optimization (Markowitz/HRP), VaR/CVaR, options greeks", "agent": "finance_analyst"},
+      {"id": "himself65/finance-skills", "installs": "n/a", "install": "npx skills add himself65/finance-skills", "source": "github", "use_when": "financial analysis, DCF, earnings", "agent": "finance_analyst"}
+    ],
+    "math": [
+      {"id": "vibeeval/vibecosystem/math-help", "installs": "n/a", "install": "npx skills add vibeeval/vibecosystem", "source": "github", "use_when": "exact math: sympy algebra/calculus, Lean4 proofs, constraint solving", "agent": "scientist"}
+    ],
+    "sciences": [
+      {"id": "lllllllama/ai-paper-reproduction-skill/paper-context-resolver", "installs": "94.3K", "install": "npx skills add lllllllama/ai-paper-reproduction-skill", "source": "skills.sh", "use_when": "reproduce an AI/science paper, resolve context", "agent": "scientist"},
+      {"id": "theneoai/awesome-skills", "installs": "n/a", "install": "read a SKILL.md URL from the repo", "source": "github", "use_when": "research/biotech/aerospace domain personas (430 skills)", "agent": "scientist"}
+    ],
+    "medicine": [
+      {"id": "aipoch/medical-research-skills", "installs": "n/a", "install": "npx skills add aipoch/medical-research-skills", "source": "github", "use_when": "medical RESEARCH: protocol design, cohort/MR studies, pharmacovigilance (NOT clinical advice)", "agent": "healthcare_advisor"},
+      {"id": "FreedomIntelligence/OpenClaw-Medical-Skills", "installs": "n/a", "install": "npx skills add FreedomIntelligence/OpenClaw-Medical-Skills", "source": "github", "use_when": "medical research workflows, clinical decision frameworks (NOT diagnosis)", "agent": "healthcare_advisor"}
+    ]
+  }
+}

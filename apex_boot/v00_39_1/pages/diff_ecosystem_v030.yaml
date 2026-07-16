@@ -1,4 +1,5 @@
 diff_ecosystem_v030:
+executor: DOCUMENTATION  # backfilled by lint_executor (SR_40)
   base: v00.29.0 (44 DIFFs)
   registered_diffs:
   - id: DIFF_SYNTAX_STEP5_FIX

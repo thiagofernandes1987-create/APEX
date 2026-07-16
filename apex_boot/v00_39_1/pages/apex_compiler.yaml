@@ -1,4 +1,5 @@
 apex_compiler:
+executor: SANDBOX_CODE  # backfilled by lint_executor (SR_40)
   executor: SANDBOX_CODE
   version: v00.38.0
   opp: OPP-163
@@ -16,7 +17,7 @@ apex_compiler:
 
     '
   when: Após todo DIFF aprovado no master → recompilar → novo boot kernel.
-  description: 'O_QUE_É: pipeline de build com 4 fases — validar (SR_46), paginar, montar microkernel,
+  description: 'O_QUE_É: pipeline de build com 4 fases — validar (SR_46 + tools/lint_executor.py garante executor: em toda página, SR_40), paginar, montar microkernel,
     verificar artefatos. O_QUE_NÃO_É: compressão lossy — toda informação do master permanece acessível
     via page_load; nada é descartado. COMO_FUNCIONA: ver arquivo apex_compiler.py no repositório. Chaves
     KERNEL_KEYS ficam residentes; HOISTED_MODULES são içados (probe, boot gate, adapter, resolution, salience,

@@ -1,4 +1,5 @@
 patch_orchestrator:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   version: v00.20.2
   new_module_load_order_additions:
   - MODULE_pot_engine (TIER_1) — após symbolic_executor [DEPRECATED v00.20.2]
