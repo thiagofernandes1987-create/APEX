@@ -580,6 +580,31 @@ def t_memory():
             f"KG {m.stats()['relations']} edges + graph-walk + acyclic guard ({m.stats()['memories']} mem)")
 
 
+def t_execution_policy():
+    import execution_policy as ep
+    # routing contract: compute -> sealed subprocess; discovery -> internet-enabled agent
+    assert ep.route("integrate the ODE with rk4")["surface"] == "subprocess"
+    disc = ep.route("search skills.sh and github for a legal MCP")
+    assert disc["surface"] == "agent+internet" and disc["needs_internet"] is True, disc
+    assert ep.route("decide the best architecture")["surface"] == "agent", ep.route("decide")
+    assert ep.route("x")["provider_of_tools"] == "llm-orchestrator"
+    # HARD RULE: no classification ever routes an internet task into the sandbox
+    for probe in ("baixar paper do arxiv", "buscar skill no marketplace", "compute hash",
+                  "download latest repo", "reason about tradeoffs", "optimize the matrix"):
+        r = ep.route(probe)
+        assert not (r["surface"] == "subprocess" and r["needs_internet"]), r
+    # 3-persona dissect entry
+    plan = ep.dissect_entry("build a compliant medical billing pipeline", mode="DEEP")
+    assert [p["persona"] for p in plan["personas"]] == ["architect", "analyst", "critic"], plan["personas"]
+    assert plan["micros"] and all("swot" in m and "routing" in m and m["template"] for m in plan["micros"])
+    assert plan["provisioning"]["provider_of_tools"] == "llm-orchestrator"
+    assert "needs_internet=True is NEVER routed to the subprocess" in plan["hard_rule"]
+    # a regulated discipline carries region-specific governance
+    reg = ep.dissect_entry("draft a HIPAA healthcare data policy")
+    assert any("regulatory" in m["needed"]["governance"] for m in reg["micros"]), reg["micros"]
+    return f"route compute/discover/reason + HARD-RULE; dissect_entry 3 personas, {len(plan['micros'])} micros"
+
+
 def t_learning():
     import learning as lrn, tempfile, os
     s = lrn.LearningStore(os.path.join(tempfile.mkdtemp(), "learning.db"))
@@ -719,7 +744,7 @@ TESTS = [
     ("chaos_operators", t_chaos_operators), ("competence_matrix", t_competence_matrix),
     ("evaluate_hypotheses", t_evaluate_hypotheses), ("project_ledger", t_project_ledger),
     ("memory", t_memory), ("llm_adapter", t_llm_adapter), ("swap_store", t_swap_store),
-    ("learning", t_learning),
+    ("learning", t_learning), ("execution_policy", t_execution_policy),
 ]
 
 

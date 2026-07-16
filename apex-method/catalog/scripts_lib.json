@@ -310,5 +310,13 @@
   "capabilities": "learning,persistent,promote,demote,beta-binomial,competence,governance-ledger",
   "mass": 170,
   "path": "scripts/learning.py"
+ },
+ {
+  "id": "script:execution_policy",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "routing-contract,surface,internet,subprocess,agent,dissect-entry,3-personas,provisioning,templates,governance",
+  "mass": 175,
+  "path": "scripts/execution_policy.py"
  }
 ]

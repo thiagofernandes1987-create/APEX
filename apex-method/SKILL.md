@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.32.0
+version: 1.33.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,7 +47,7 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 39 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 40 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
@@ -333,6 +333,24 @@ standard `models/apex_structure.model.json` (same on Windows or Drive), via `mat
 (local) or `drive_tree()` (the runtime creates it on Drive). **The promotion gate** — `is_validated`
 + `promotion_manifest` — is the rule that only what passes (PMI adopt **and** intact ledger
 **and** tests) is promoted from swap to a git commit; everything else stays disposable in swap.
+
+## § 2.12 · Execution routing contract + 3-persona entry (`scripts/execution_policy.py`)
+
+The one rule that keeps the "cognitive runtime" honest: **discovery/research must never run in the
+sealed sandbox.** `route(subtask)` classifies every micro-task onto a SURFACE — `subprocess`
+(deterministic compute, NO internet), `agent` (LLM reasoning), or `agent+internet` (discovery:
+skills.sh, repos, papers, MCPs — a subagent WITH web tools) — and emits `needs_internet` +
+`provider_of_tools: "llm-orchestrator"`. **HARD RULE (enforced in code):** `needs_internet=True` is
+never routed to `subprocess`. The LLM orchestrator ALWAYS provides the tools — it discovers, vets
+(AST-scan + H5 approval), and hands each instance its concrete skill/persona; the sandbox only runs
+already-provided code. This is a machine-checkable manifest, deliberately **not a DSL** (less to
+misread). `dissect_entry(task, mode)` is the formalized ENTRY: it raises the **3 dissect personas**
+(architect → decompose macro→micro; analyst → SWOT + governance + resolve tools native→skills.sh→
+create; critic → challenge persona/tool/template), and for each micro returns SWOT, the needed
+agents/skills/tools (durable-best via `learning`), the resolution plan, the **routing**, a document
+**template** (so nothing is generic), and region-specific **governance** when the problem is
+regulated (HIPAA/GDPR/LGPD/financial/legal…). Reuses `orchestrator.dissect`/`assign_specialists`,
+`gravity.plan`, `repo_bridge`, `learning` — no discovery is reimplemented.
 
 ## § 3 · Finding and Using an External Skill (safe flow)
 

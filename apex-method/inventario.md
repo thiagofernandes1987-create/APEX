@@ -1,12 +1,12 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.32.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.33.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
 
 **Modelo mental (runtime cognitivo).** A skill trata o LLM como uma **VM cognitiva** (motor de
-inferência) e a si mesma como o **runtime/SO** em volta: kernel = `SKILL.md`; syscalls = os 39
+inferência) e a si mesma como o **runtime/SO** em volta: kernel = `SKILL.md`; syscalls = os 40
 `scripts/*.py`; escalonador = `geodesic_scheduler` + `project_ledger.dsm()`; processos = stances/
 subagentes (Nível A/B); memória paginável e durável = `memory.py` (SQLite + Knowledge Graph);
 log de integridade = ledger SHA-256; gerenciador de pacotes = `repo_bridge`+`skills_sh`; HAL =
