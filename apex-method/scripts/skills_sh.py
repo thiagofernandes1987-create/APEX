@@ -84,8 +84,12 @@ def _norm(item: dict) -> dict:
 
 
 def _extract_list(payload) -> list:
+    # RT-15: degrade safely on unexpected API shapes. A bare string/number/None must NOT crash
+    # with `AttributeError: 'str' object has no attribute 'get'` — return an empty list instead.
     if isinstance(payload, list):
         return payload
+    if not isinstance(payload, dict):
+        return []
     for k in ("skills", "data", "results", "items"):
         if isinstance(payload.get(k), list):
             return payload[k]

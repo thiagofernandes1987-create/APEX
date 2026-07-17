@@ -76,7 +76,7 @@ FOLDERS = ["user", "user/files", "user/versions", "memory", "memory/versions",
 SESSION_TYPES = ["session", "snapshot", "working", "competence", "bundle"]
 
 _NAME_RE = re.compile(
-    r"^(?P<name>[A-Za-z0-9_]+)-(?P<function>[A-Za-z0-9_]+)-(?P<ts>\d{14})-R(?P<rev>\d{2})\.(?P<ext>[A-Za-z0-9]+)$")
+    r"^(?P<name>[A-Za-z0-9_]+)-(?P<function>[A-Za-z0-9_]+)-(?P<ts>\d{14}(?:\d{6})?)-R(?P<rev>\d{2})\.(?P<ext>[A-Za-z0-9]+)$")
 
 
 def _sha(text):
@@ -97,7 +97,12 @@ def make_filename(name, ext=None, function=None, rev=None, ts=None):
     ext = ext or fext
     if rev is None:
         rev = FILE_REVISIONS.get(name, 0)
-    ts = ts or time.strftime(NAME_TS_FMT, time.gmtime())
+    # RT-09: second-resolution timestamps collide on rapid/concurrent page-outs and silently
+    # overwrite a version. Default to UTC with MICROSECONDS (20 digits) from a single clock read
+    # so two writes in the same second get distinct, still-sortable names ("every write a version").
+    if ts is None:
+        t = time.time()
+        ts = time.strftime(NAME_TS_FMT, time.gmtime(t)) + f"{int((t % 1) * 1_000_000):06d}"
     return f"{name}-{function}-{ts}-R{int(rev):02d}.{ext}"
 
 
@@ -318,22 +323,44 @@ def export_bundle(session_id, memory_db=None, snapshot=None, working=None, proje
                "filename": make_filename("bundle"), "session": session_meta or {},
                "snapshot": snapshot or {}, "working": working or [],
                "project_ledger": project_ledger or {}, "competence": competence or [], "memory": mem}
-    payload["sha256"] = _sha(json.dumps({k: payload[k] for k in
-                             ("session_id", "session", "snapshot", "working", "memory")},
-                             sort_keys=True, ensure_ascii=False))
+    # RT-08: hash EVERY field (except the signature itself) so project_ledger, competence,
+    # schema_version, ts and filename are all covered — not just the old 5-field subset.
+    payload["sha256"] = _bundle_sha(payload)
     return payload
 
 
-def import_bundle(bundle, memory_db=None):
+def _bundle_sha(bundle):
+    """SHA-256 over the whole bundle except its own `sha256` field (canonical, sorted JSON)."""
+    unsigned = {k: v for k, v in bundle.items() if k != "sha256"}
+    return _sha(json.dumps(unsigned, sort_keys=True, ensure_ascii=False))
+
+
+def import_bundle(bundle, memory_db=None, quarantine_dir=None):
     """Rehydrate a swap page (page-in): load durable memory back into the local .db and return the
-    ephemeral session state to resume from. Verifies the integrity hash."""
+    ephemeral session state to resume from.
+
+    RT-07/RT-08: verify integrity over the WHOLE payload and FAIL CLOSED — a bundle whose hash does
+    not match (or whose schema is unknown) is REJECTED before any write to the memory .db. For
+    forensics, pass quarantine_dir to copy the rejected bundle aside without hydrating it."""
     try:
-        check = _sha(json.dumps({k: bundle.get(k) for k in
-                     ("session_id", "session", "snapshot", "working", "memory")},
-                     sort_keys=True, ensure_ascii=False))
-        ok = (check == bundle.get("sha256"))
+        ok = (bundle.get("sha256") is not None and _bundle_sha(bundle) == bundle["sha256"])
     except Exception:
         ok = False
+    sv = bundle.get("schema_version")
+    if sv is not None and sv != SCHEMA_VERSION:
+        return {"integrity_ok": ok, "status": "REJECTED_SCHEMA", "memory_stats": {},
+                "reason": f"unknown schema_version {sv!r} (expected {SCHEMA_VERSION})"}
+    if not ok:
+        if quarantine_dir:                       # forensic mode: isolate, never load
+            try:
+                os.makedirs(quarantine_dir, exist_ok=True)
+                qn = os.path.join(quarantine_dir, bundle.get("filename") or "rejected-bundle.json")
+                with open(qn, "w", encoding="utf-8") as f:
+                    json.dump(bundle, f, ensure_ascii=False)
+            except Exception:
+                pass
+        return {"integrity_ok": False, "status": "REJECTED", "memory_stats": {},
+                "reason": "bundle hash mismatch — refusing to hydrate tampered state"}
     mem_stats = {}
     try:
         import memory
@@ -341,10 +368,10 @@ def import_bundle(bundle, memory_db=None):
         mem_stats = store.load_rows(bundle.get("memory", {}))
     except Exception as e:
         mem_stats = {"_error": str(e)[:80]}
-    return {"integrity_ok": ok, "session_id": bundle.get("session_id"),
+    return {"integrity_ok": True, "status": "OK", "session_id": bundle.get("session_id"),
             "session": bundle.get("session", {}), "snapshot": bundle.get("snapshot", {}),
             "working": bundle.get("working", []), "project_ledger": bundle.get("project_ledger", {}),
-            "memory_stats": mem_stats}
+            "competence": bundle.get("competence", []), "memory_stats": mem_stats}
 
 
 # ── THE EXPLICIT PERSISTENCE TRIGGER (page-out) ──────────────────────────────────────────────

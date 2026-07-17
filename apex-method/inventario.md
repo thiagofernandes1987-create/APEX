@@ -1,9 +1,20 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.40.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.41.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
+
+**v1.41.0 — endurecimento pós-autópsia de runtime (auditoria GPT).** 12 achados adversariais
+corrigidos e blindados no CI (novo teste `runtime_autopsy` no benchmark): swap recusa bundle com
+hash inválido **antes** de escrever e o hash cobre todo o payload (RT-07/08); `verify_ledger`
+recalcula o hash de conteúdo, detectando adulteração de qualquer coluna (RT-05); `skill_scout`
+bloqueia import fora da allowlist no `evaluate` (RT-11), descobre e escaneia scripts referenciados
+no `SKILL.md` (RT-13), sinaliza prompt-injection no corpo (RT-12) e recusa arquivo truncado
+(RT-14); `resolve_mode` aplica piso `min_mode` e não rebaixa modo de alto risco sem flag (RT-23);
+grants de skill persistem em store durável e sobrevivem ao reload (RT-26); nome de arquivo com
+microssegundos evita colisão no mesmo segundo (RT-09); shape inesperado de API degrada sem exceção
+(RT-15); `MemoryStore` aceita caminho relativo bare (RT-10). Suíte: benchmark 45/45, scenario 7/7.
 
 **Modelo mental (runtime cognitivo).** A skill trata o LLM como uma **VM cognitiva** (motor de
 inferência) e a si mesma como o **runtime/SO** em volta: kernel = `SKILL.md`; syscalls = os 40
@@ -323,10 +334,11 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
   load_rows()`), não `.db` binário.
 - **Gate de promoção** (`is_validated`/`promotion_manifest`): só o que passa (PMI ADOPT **e** ledger
   íntegro **e** testes) é promovido de swap → commit; o resto fica disposável no swap.
-- **Nomenclatura padrão**: `<name>-<function>-<AAAAMMDDHHMMSS>-R<NN>.<ext>` (ex.:
-  `memory-User-20260716183245-R00.json`). O timestamp versiona cada escrita; `R<NN>` é a **revisão
-  de layout** do arquivo (sobe quando o schema muda). `latest()` sempre resolve o maior `(revisão,
-  ts)`; a **pasta principal guarda a última** e as anteriores vão para `versions/`.
+- **Nomenclatura padrão**: `<name>-<function>-<AAAAMMDDHHMMSS+µs>-R<NN>.<ext>` (ex.:
+  `memory-User-20260716183245123456-R00.json`). O timestamp com **microssegundos** (20 dígitos)
+  versiona cada escrita e evita colisão em page-outs no mesmo segundo (RT-09); `R<NN>` é a
+  **revisão de layout** do arquivo (sobe quando o schema muda). `latest()` sempre resolve o maior
+  `(revisão, ts)`; a **pasta principal guarda a última** e as anteriores vão para `versions/`.
 - **Rotação de backups**: os `KEEP_BACKUPS` (10) mais novos sobrevivem; os antigos ficam obsoletos
   (apagados no local; **listados para GC no Drive** — a API do Drive aqui não tem delete/move/update).
 - **Modelo-padrão no repo** (`models/apex_structure.model.json`): fonte única do padrão, com

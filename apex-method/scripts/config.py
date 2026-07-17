@@ -126,20 +126,40 @@ def exploration_policy(mode: str) -> dict:
     return EXPLORATION_POLICY.get((mode or "STANDARD").upper(), EXPLORATION_POLICY["STANDARD"])
 
 
-def resolve_mode(auto_mode: str) -> str:
-    """Given the mode the pipeline computed, honour the user's preference:
-    a forced default_mode wins; otherwise keep auto_mode but, if it is not among the
-    preferred modes, snap up to the nearest preferred one (never silently downgrade)."""
+def _mode_rank(m: str) -> int:
+    return VALID_MODES.index(m) if m in VALID_MODES else 1
+
+
+def resolve_mode(auto_mode: str, allow_downgrade: bool = False) -> str:
+    """Resolve the effective operating mode honouring user preference WITHOUT dropping below the
+    safety floor (RT-23).
+
+    Rules:
+      - `min_mode` is a HARD floor: the result is never weaker than it.
+      - a forced `default_mode` is applied, but it cannot silently downgrade a STRONGER auto_mode
+        (e.g. a SCIENTIFIC task under default_mode=STANDARD stays SCIENTIFIC) unless the caller
+        passes allow_downgrade=True. It also cannot go below `min_mode`.
+      - otherwise keep auto_mode, snapping UP to the nearest preferred mode when auto_mode isn't
+        already preferred.
+    """
     cfg = load()
+    floor = cfg.get("min_mode")
+
+    def clamp(m):
+        return floor if (floor and _mode_rank(m) < _mode_rank(floor)) else m
+
     if cfg.get("default_mode"):
-        return cfg["default_mode"]
+        forced = cfg["default_mode"]
+        if not allow_downgrade and _mode_rank(forced) < _mode_rank(auto_mode):
+            return clamp(auto_mode)          # never silently weaken a stronger computed mode
+        return clamp(forced)
+
     pref = cfg.get("preferred_modes") or VALID_MODES
-    if auto_mode in pref:
-        return auto_mode
-    order = VALID_MODES
-    ai = order.index(auto_mode) if auto_mode in order else 1
-    stronger = [m for m in pref if m in order and order.index(m) >= ai]
-    return min(stronger, key=lambda m: order.index(m)) if stronger else auto_mode
+    chosen = auto_mode
+    if auto_mode not in pref:
+        stronger = [m for m in pref if _mode_rank(m) >= _mode_rank(auto_mode)]
+        chosen = min(stronger, key=_mode_rank) if stronger else auto_mode
+    return clamp(chosen)
 
 
 if __name__ == "__main__":

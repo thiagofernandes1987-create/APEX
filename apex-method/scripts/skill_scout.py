@@ -55,7 +55,12 @@ def fetch_text(url: str, timeout: int = 10, max_bytes: int = 2_000_000) -> str:
         # audit fix v1.17.0: a redirect can leave the allowlist — re-check the FINAL url
         if not _host_ok(r.geturl()):
             raise ValueError(f"redirect left the allowlist: {r.geturl()}")
-        return r.read(max_bytes).decode("utf-8", errors="replace")
+        # RT-14: read ONE byte past the limit. If the file overflows, refuse rather than scan a
+        # truncated prefix — a benign head could hide a malicious tail the installer later runs.
+        raw = r.read(max_bytes + 1)
+        if len(raw) > max_bytes:
+            raise ValueError(f"file exceeds scan limit ({max_bytes} bytes); refusing partial scan: {url}")
+        return raw.decode("utf-8", errors="replace")
 
 
 def ast_security_scan(code: str) -> dict:
@@ -115,12 +120,50 @@ def parse_skill_md(md: str) -> dict:
             "has_scope_limits": any("scope" in s.lower() or "limitation" in s.lower() for s in sections)}
 
 
+# RT-12: prompt-injection / policy-override patterns to flag in the SKILL.md BODY. A skill can be
+# code-clean yet still try to steer the agent (override authority, exfiltrate secrets, disable
+# guardrails). These are WARN signals surfaced at the human-approval gate, not auto-rejects.
+INJECTION_PATTERNS = [
+    (r"ignore\s+(all\s+|any\s+)?(previous|prior|above|earlier)\s+instructions", "authority-override"),
+    (r"disregard\s+(all\s+|the\s+)?(previous|prior|your)?\s*(instructions|rules|policy|guidelines)", "authority-override"),
+    (r"(reveal|print|show|output|leak)\s+.{0,40}(system\s*prompt|hidden\s+instructions|these\s+instructions)", "system-prompt-exfil"),
+    (r"(reveal|print|show|output|send|leak|exfiltrat\w*)\s+.{0,40}(api[_\s-]?key|secret|token|credential|password)", "secret-exfil"),
+    (r"(disable|turn\s+off|bypass|ignore|override)\s+.{0,30}(safety|guardrail|filter|moderation|rule)", "guardrail-bypass"),
+    (r"send\s+.{0,40}(to|via)\s+.{0,20}(http|https|webhook|curl|endpoint|exfil)", "data-exfil-channel"),
+    (r"you\s+are\s+now\s+(a\s+)?(dan|jailbroken|unfiltered|developer\s+mode)", "jailbreak-persona"),
+]
+
+
+def scan_injection(md_body: str) -> list:
+    """Flag policy-override / exfiltration instructions in a skill's Markdown body (RT-12)."""
+    low = (md_body or "").lower()
+    return sorted({label for pat, label in INJECTION_PATTERNS if re.search(pat, low)})
+
+
+def extract_code_refs(md: str, base_url: str) -> list:
+    """RT-13: discover the Python scripts a SKILL.md references so they get scanned automatically,
+    instead of trusting the caller to pass every code_url by hand. Resolves relative paths against
+    the SKILL.md's raw-URL directory; keeps only allowlisted raw.githubusercontent URLs."""
+    base_dir = base_url.rsplit("/", 1)[0] + "/" if "/" in base_url else base_url
+    refs = set()
+    for u in re.findall(r"https://raw\.githubusercontent\.com/[A-Za-z0-9_./-]+\.py", md or ""):
+        refs.add(u)
+    # relative paths / bare filenames ending in .py, but not the tail of a URL we already caught
+    for p in re.findall(r"(?<![:/\w])([A-Za-z0-9_][A-Za-z0-9_./-]*\.py)\b", md or ""):
+        if "raw.githubusercontent" in p:
+            continue
+        refs.add(base_dir + p.lstrip("./"))
+    return sorted(r for r in refs if _host_ok(r))
+
+
 def evaluate(skill_md_url: str, code_urls: list = None) -> dict:
     result = {"source": skill_md_url, "status": "STAGED", "checks": {}}
     try:
         md = fetch_text(skill_md_url)
     except ValueError as e:
-        return {"source": skill_md_url, "status": "REFUSED_HOST", "reason": str(e)}
+        # RT-14: an oversize file raises ValueError too — distinguish it from an off-allowlist host.
+        status = "REFUSED_OVERSIZE" if "exceeds scan limit" in str(e) else "REFUSED_HOST"
+        return {"source": skill_md_url, "status": status, "reason": str(e)}
     except Exception as e:
         return {"source": skill_md_url, "status": "OFFLINE", "reason": str(e)[:120]}
 
@@ -130,18 +173,37 @@ def evaluate(skill_md_url: str, code_urls: list = None) -> dict:
     result["checks"]["documents_triggers"] = meta["has_when_to_use"]
     result["checks"]["documents_scope"] = meta["has_scope_limits"]
 
+    # RT-13: scan the caller's code_urls UNION the scripts the SKILL.md itself references.
+    discovered = extract_code_refs(md, skill_md_url)
+    all_code = list(dict.fromkeys(list(code_urls or []) + discovered))
+    result["checks"]["scanned_scripts"] = all_code
+    result["checks"]["discovered_scripts"] = discovered
+
     scan_reasons = []
-    for cu in (code_urls or []):
+    for cu in all_code:
         try:
             scan = ast_security_scan(fetch_text(cu))
+            # RT-11: gate on the boolean `safe`, not the (reject-only) `reasons`. A non-whitelisted
+            # import lands in `review` with safe=False and MUST block, not silently pass as STAGED.
             if not scan["safe"]:
-                scan_reasons += [f"{cu}: {r}" for r in scan["reasons"]]
+                scan_reasons += [f"{cu}: {r}" for r in (scan["reject"] + scan["review"])]
         except Exception as e:
+            # RT-13: a referenced script we cannot fetch/scan means the inventory is incomplete —
+            # fail closed rather than approve a skill whose code was never seen.
             scan_reasons.append(f"{cu}: could not scan ({str(e)[:60]})")
     result["checks"]["ast_security"] = "PASS" if not scan_reasons else "FAIL"
     if scan_reasons:
         result["status"] = "REJECTED_UNSAFE"
         result["reasons"] = scan_reasons
+
+    # RT-12: policy scan of the Markdown body. Flags are a WARN surfaced at the approval gate;
+    # they never auto-approve, but a flagged body is marked so a human sees it before install.
+    injection_flags = scan_injection(md)
+    result["checks"]["injection_scan"] = "FLAGGED" if injection_flags else "CLEAN"
+    if injection_flags:
+        result["injection_flags"] = injection_flags
+        if result["status"] == "STAGED":
+            result["status"] = "STAGED_RISK"
 
     # trust tier (idea adopted from vercel-labs find-skills): prefer official owners.
     result["checks"]["trust_tier"] = trust_tier(skill_md_url)
@@ -150,6 +212,7 @@ def evaluate(skill_md_url: str, code_urls: list = None) -> dict:
         "id": meta["name"], "source": skill_md_url, "kind": meta["kind"],
         "use_when": meta["description"][:120], "status": result["status"],
         "trust_tier": result["checks"]["trust_tier"],
+        "injection_scan": result["checks"]["injection_scan"],
         "gate": "requires explicit user approval before install/run",
     }
     return result

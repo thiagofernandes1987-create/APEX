@@ -55,7 +55,10 @@ def _sha(text):
 class MemoryStore:
     def __init__(self, db_path=DB_DEFAULT):
         self.db_path = db_path
-        os.makedirs(os.path.dirname(db_path), exist_ok=True)
+        # RT-10: a bare relative name ("bare.db") has an empty dirname; os.makedirs("") raises.
+        # Resolve the absolute parent so a cwd-relative db path is always creatable.
+        parent = os.path.dirname(os.path.abspath(db_path))
+        os.makedirs(parent, exist_ok=True)
         self._init_db()
 
     def _con(self):
@@ -141,6 +144,17 @@ class MemoryStore:
         return [m for s, m in scored[:k] if s > 0]
 
     # ── governance ledger (promotions/demotions become durable memory) ────
+    @staticmethod
+    def _ledger_hash(ts, kind, subject, action, evidence_json, prev_sha):
+        """Canonical content hash for a ledger event. RT-05: the hash MUST cover every mutable
+        field (ts, kind, subject, action, evidence, prev_sha) so tampering any column is detectable.
+        A stable, sorted JSON canonicalization keeps write-time and verify-time hashes identical."""
+        canonical = json.dumps(
+            {"ts": ts, "kind": kind, "subject": subject, "action": action,
+             "evidence": evidence_json, "prev_sha": prev_sha},
+            sort_keys=True, ensure_ascii=False)
+        return _sha(canonical)
+
     def record_event(self, kind, subject, action, evidence=None):
         """Neutral API the subsystems CALL when a rule/diff/agent/skill/vaccine is promoted or
         demoted or an error is corrected. SHA-256 chained (each event carries the previous hash)
@@ -148,11 +162,13 @@ class MemoryStore:
         con = self._con()
         prev = con.execute("SELECT sha FROM ledger ORDER BY ts DESC LIMIT 1").fetchone()
         prev_sha = prev[0] if prev else ""
-        payload = f"{kind}|{subject}|{action}|{prev_sha}|{time.time()}"
-        sha = _sha(payload)
+        # RT-05: hash the SAME ts and evidence we store (one time.time() read, not two) so
+        # verify_ledger can recompute the content hash and detect any later column edit.
+        ts = time.time()
+        evidence_json = json.dumps(evidence or {}, ensure_ascii=False)
+        sha = self._ledger_hash(ts, kind, subject, action, evidence_json, prev_sha)
         con.execute("INSERT OR REPLACE INTO ledger VALUES(?,?,?,?,?,?,?)",
-                    (sha, time.time(), kind, subject, action,
-                     json.dumps(evidence or {}, ensure_ascii=False), prev_sha))
+                    (sha, ts, kind, subject, action, evidence_json, prev_sha))
         con.commit()
         con.close()
         # mirror into semantic memory so `recall` surfaces the evolution
@@ -161,18 +177,27 @@ class MemoryStore:
         return {"sha": sha, "prev_sha": prev_sha, "kind": kind, "subject": subject, "action": action}
 
     def verify_ledger(self):
-        """Re-walk the chain and confirm each event's prev_sha matches its predecessor."""
+        """Re-walk the chain: confirm each event's prev_sha matches its predecessor AND that its
+        stored sha equals the recomputed content hash. RT-05: recomputing the hash makes a silent
+        edit to any column (kind/subject/action/evidence/ts) break verification, not just a broken
+        prev_sha pointer."""
         con = self._con()
-        rows = con.execute("SELECT sha, ts, kind, subject, action, prev_sha FROM ledger "
+        rows = con.execute("SELECT sha, ts, kind, subject, action, evidence, prev_sha FROM ledger "
                            "ORDER BY ts ASC").fetchall()
         con.close()
-        ok, prev = True, ""
-        for sha, ts, kind, subject, action, prev_sha in rows:
+        ok, prev, reason = True, "", None
+        for sha, ts, kind, subject, action, evidence, prev_sha in rows:
             if prev_sha != prev:
-                ok = False
+                ok, reason = False, "chain pointer mismatch"
+                break
+            if self._ledger_hash(ts, kind, subject, action, evidence, prev_sha) != sha:
+                ok, reason = False, "content hash mismatch"
                 break
             prev = sha
-        return {"ok": ok, "events": len(rows)}
+        out = {"ok": ok, "events": len(rows)}
+        if reason:
+            out["reason"] = reason
+        return out
 
     # ── Knowledge Graph (B1): typed edges + graph-walk recall ──────────────
     # A small, fixed relation vocabulary. The DIRECTIONAL/logical ones (causa/depende_de/refina)
