@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.39.0
+version: 1.40.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -434,6 +434,10 @@ skill upgrades the relevant agents with new tools/scripts. Full detail in
 - Running `run_parallel()` on fast steps — the ThreadPool overhead exceeds the gain.
 - Routing across languages with TF-IDF — it is lexical; keep catalog and task in the
   same language or swap in real embeddings.
+- Trusting a low-confidence router hit — `router.route` now DEMOTES auto-generated name-stub
+  skills (e.g. "Expert skill for T-Mobile") so lexical name collisions ("mobile"→t-mobile) cannot
+  win; use `router.route_confident(...)` which returns `NO_RELIABLE_SKILL` when nothing clears the
+  confidence floor (stage a discovery/install instead of surfacing noise).
 - Auto-installing internet skills — forbidden; always stage + approve.
 
 ## § 11 · Integration with Other Skills

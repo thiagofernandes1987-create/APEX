@@ -85,7 +85,17 @@ def t_router():
            {"id": "finance", "name": "finance", "description": "valuation portfolio risk cash flow", "tags": ["finance"]}]
     r = router.route("build a react ui component", cat)
     assert r[0]["id"] == "frontend-design", r
-    return "routes to frontend"
+    # Codex-confirmed routing bug: a name-stub skill ("Expert skill for T-Mobile") must NOT outrank a
+    # real one on a lexical name collision ("mobile"->t-mobile). The stub is demoted.
+    noisy = [{"id": "t-mobile", "name": "t-mobile", "description": "Expert skill for T-Mobile", "tags": []},
+             {"id": "mobile-dev", "name": "mobile-dev", "description": "build modern mobile app user interface UI UX screens and navigation", "tags": ["mobile", "frontend"]}]
+    rr = router.route("crie uma interface moderna para aplicativo mobile", noisy, k=2)
+    assert rr and rr[0]["id"] == "mobile-dev", rr   # real skill beats the name-stub
+    # confidence gate: when nothing clears the floor, return NO_RELIABLE_SKILL (not weak noise)
+    weak = [{"id": "pixar-storyteller", "name": "pixar-storyteller", "description": "Expert skill for pixar-storyteller", "tags": []}]
+    rc = router.route_confident("faça uma auditoria de segurança em código python", weak, min_confidence=0.12)
+    assert rc["confident"] is False and "NO_RELIABLE_SKILL" in rc["verdict"], rc
+    return "routes to frontend; stub demoted; low-confidence -> NO_RELIABLE_SKILL"
 
 def t_skill_scout():
     import skill_scout
