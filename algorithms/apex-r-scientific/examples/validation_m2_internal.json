@@ -1,0 +1,22 @@
+{
+  "protocol": {
+    "protocol_id": "B-M2-INTERNAL-DEMO",
+    "version": "1.0",
+    "module_id": "M2",
+    "layer": "INTERNAL",
+    "dataset_snapshot_id": "replace-with-frozen-snapshot-id",
+    "split_id": "m2-demo-v1",
+    "minimum_sample_size": 50,
+    "preregistered": true,
+    "external_set_locked": false,
+    "synthetic_data": false,
+    "criteria": [
+      {"metric_id": "rmse_pk", "operator": "LTE", "threshold": 1.5},
+      {"metric_id": "spearman", "operator": "GTE", "threshold": 0.7}
+    ]
+  },
+  "observations": {
+    "rmse_pk": {"value": 1.2, "sample_size": 60},
+    "spearman": {"value": 0.76, "sample_size": 60}
+  }
+}

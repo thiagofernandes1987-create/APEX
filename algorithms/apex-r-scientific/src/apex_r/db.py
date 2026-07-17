@@ -6,13 +6,18 @@ import json
 import math
 import sqlite3
 from contextlib import closing
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .contracts import GateEnvelope
 
+if TYPE_CHECKING:
+    from .data import FrozenSplit, SourceSnapshot
+    from .modules.validation import ValidationOutcome, ValidationProtocol
 
-SCHEMA_VERSION = 1
+
+SCHEMA_VERSION = 2
 
 SCHEMA = """
 PRAGMA foreign_keys = ON;
@@ -42,6 +47,60 @@ CREATE TABLE IF NOT EXISTS artifact (
     sha256 TEXT NOT NULL,
     created_at TEXT NOT NULL,
     metadata_json TEXT NOT NULL DEFAULT '{}'
+);
+
+CREATE TABLE IF NOT EXISTS source_snapshot (
+    snapshot_id TEXT PRIMARY KEY,
+    source_id TEXT NOT NULL REFERENCES source(source_id),
+    source_version TEXT NOT NULL,
+    license_name TEXT NOT NULL,
+    license_class TEXT NOT NULL,
+    retrieved_at TEXT NOT NULL,
+    status TEXT NOT NULL CHECK(status IN ('STAGED', 'FROZEN', 'REJECTED')),
+    query_json TEXT NOT NULL,
+    manifest_json TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS snapshot_file (
+    snapshot_id TEXT NOT NULL REFERENCES source_snapshot(snapshot_id),
+    sha256 TEXT NOT NULL,
+    original_name TEXT NOT NULL,
+    original_path TEXT NOT NULL,
+    size_bytes INTEGER NOT NULL CHECK(size_bytes >= 0),
+    stored_locator TEXT,
+    PRIMARY KEY(snapshot_id, sha256, original_name)
+);
+
+CREATE TABLE IF NOT EXISTS benchmark_split (
+    split_id TEXT PRIMARY KEY,
+    dataset_snapshot_id TEXT NOT NULL,
+    definition_sha256 TEXT NOT NULL,
+    external_set_locked INTEGER NOT NULL CHECK(external_set_locked IN (0,1)),
+    strategy TEXT NOT NULL,
+    definition_json TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS validation_protocol (
+    protocol_id TEXT NOT NULL,
+    version TEXT NOT NULL,
+    module_id TEXT NOT NULL,
+    evidence_layer TEXT NOT NULL,
+    protocol_json TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(protocol_id, version)
+);
+
+CREATE TABLE IF NOT EXISTS validation_run (
+    validation_run_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    protocol_id TEXT NOT NULL,
+    protocol_version TEXT NOT NULL,
+    run_id TEXT NOT NULL,
+    gate_status TEXT NOT NULL,
+    candidate_evidence_label TEXT,
+    outcome_json TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(protocol_id, protocol_version) REFERENCES validation_protocol(protocol_id, version)
 );
 
 CREATE TABLE IF NOT EXISTS coefficient_definition (
@@ -99,6 +158,26 @@ CREATE TRIGGER IF NOT EXISTS audit_event_no_update
 BEFORE UPDATE ON audit_event BEGIN SELECT RAISE(ABORT, 'audit_event is append-only'); END;
 CREATE TRIGGER IF NOT EXISTS audit_event_no_delete
 BEFORE DELETE ON audit_event BEGIN SELECT RAISE(ABORT, 'audit_event is append-only'); END;
+CREATE TRIGGER IF NOT EXISTS source_snapshot_no_update
+BEFORE UPDATE ON source_snapshot BEGIN SELECT RAISE(ABORT, 'source_snapshot is immutable'); END;
+CREATE TRIGGER IF NOT EXISTS source_snapshot_no_delete
+BEFORE DELETE ON source_snapshot BEGIN SELECT RAISE(ABORT, 'source_snapshot is immutable'); END;
+CREATE TRIGGER IF NOT EXISTS snapshot_file_no_update
+BEFORE UPDATE ON snapshot_file BEGIN SELECT RAISE(ABORT, 'snapshot_file is immutable'); END;
+CREATE TRIGGER IF NOT EXISTS snapshot_file_no_delete
+BEFORE DELETE ON snapshot_file BEGIN SELECT RAISE(ABORT, 'snapshot_file is immutable'); END;
+CREATE TRIGGER IF NOT EXISTS benchmark_split_no_update
+BEFORE UPDATE ON benchmark_split BEGIN SELECT RAISE(ABORT, 'benchmark_split is immutable'); END;
+CREATE TRIGGER IF NOT EXISTS benchmark_split_no_delete
+BEFORE DELETE ON benchmark_split BEGIN SELECT RAISE(ABORT, 'benchmark_split is immutable'); END;
+CREATE TRIGGER IF NOT EXISTS validation_protocol_no_update
+BEFORE UPDATE ON validation_protocol BEGIN SELECT RAISE(ABORT, 'validation_protocol is immutable'); END;
+CREATE TRIGGER IF NOT EXISTS validation_protocol_no_delete
+BEFORE DELETE ON validation_protocol BEGIN SELECT RAISE(ABORT, 'validation_protocol is immutable'); END;
+CREATE TRIGGER IF NOT EXISTS validation_run_no_update
+BEFORE UPDATE ON validation_run BEGIN SELECT RAISE(ABORT, 'validation_run is append-only'); END;
+CREATE TRIGGER IF NOT EXISTS validation_run_no_delete
+BEFORE DELETE ON validation_run BEGIN SELECT RAISE(ABORT, 'validation_run is append-only'); END;
 """
 
 
@@ -205,6 +284,144 @@ class ApexDatabase:
                         method,
                         dataset_sha256,
                         json.dumps(metadata or {}, ensure_ascii=False, sort_keys=True),
+                    ),
+                )
+                return int(cursor.lastrowid)
+
+    def record_snapshot(self, snapshot: "SourceSnapshot") -> None:
+        manifest = snapshot.to_dict()
+        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        with closing(self.connect()) as connection:
+            with connection:
+                connection.execute(
+                    """
+                    INSERT OR IGNORE INTO source(
+                        source_id, name, uri, license, version, retrieved_at, sha256, metadata_json
+                    ) VALUES(?, ?, ?, ?, ?, ?, NULL, ?)
+                    """,
+                    (
+                        snapshot.source.source_id,
+                        snapshot.source.name,
+                        snapshot.source.uri,
+                        snapshot.source.license_name,
+                        snapshot.source.version,
+                        now,
+                        json.dumps(
+                            {
+                                "license_class": snapshot.source.license_class.value,
+                                "redistribution_allowed": snapshot.source.redistribution_allowed,
+                            },
+                            sort_keys=True,
+                        ),
+                    ),
+                )
+                connection.execute(
+                    """
+                    INSERT INTO source_snapshot(
+                        snapshot_id, source_id, source_version, license_name, license_class,
+                        retrieved_at, status, query_json, manifest_json
+                    ) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        snapshot.snapshot_id,
+                        snapshot.source.source_id,
+                        snapshot.source.version,
+                        snapshot.source.license_name,
+                        snapshot.source.license_class.value,
+                        snapshot.retrieved_at,
+                        snapshot.status,
+                        json.dumps(dict(snapshot.query), ensure_ascii=False, sort_keys=True),
+                        json.dumps(manifest, ensure_ascii=False, sort_keys=True),
+                    ),
+                )
+                connection.executemany(
+                    """
+                    INSERT INTO snapshot_file(
+                        snapshot_id, sha256, original_name, original_path, size_bytes, stored_locator
+                    ) VALUES(?, ?, ?, ?, ?, ?)
+                    """,
+                    [
+                        (
+                            snapshot.snapshot_id,
+                            item.sha256,
+                            item.original_name,
+                            item.original_path,
+                            item.size_bytes,
+                            item.stored_locator,
+                        )
+                        for item in snapshot.files
+                    ],
+                )
+
+    def record_split(self, split: "FrozenSplit") -> None:
+        definition = {
+            "split_id": split.split_id,
+            "dataset_snapshot_id": split.dataset_snapshot_id,
+            "partitions": {
+                partition.value: list(members) for partition, members in split.partitions.items()
+            },
+            "groups": dict(split.groups),
+            "external_set_locked": split.external_set_locked,
+            "strategy": split.strategy,
+        }
+        with closing(self.connect()) as connection:
+            with connection:
+                connection.execute(
+                    """
+                    INSERT INTO benchmark_split(
+                        split_id, dataset_snapshot_id, definition_sha256,
+                        external_set_locked, strategy, definition_json
+                    ) VALUES(?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        split.split_id,
+                        split.dataset_snapshot_id,
+                        split.definition_sha256(),
+                        int(split.external_set_locked),
+                        split.strategy,
+                        json.dumps(definition, ensure_ascii=False, sort_keys=True),
+                    ),
+                )
+
+    def record_validation_outcome(self, outcome: "ValidationOutcome") -> int:
+        protocol = outcome.protocol
+        with closing(self.connect()) as connection:
+            with connection:
+                connection.execute(
+                    """
+                    INSERT OR IGNORE INTO validation_protocol(
+                        protocol_id, version, module_id, evidence_layer, protocol_json
+                    ) VALUES(?, ?, ?, ?, ?)
+                    """,
+                    (
+                        protocol.protocol_id,
+                        protocol.version,
+                        protocol.module_id,
+                        protocol.layer.value,
+                        json.dumps(protocol.to_dict(), ensure_ascii=False, sort_keys=True),
+                    ),
+                )
+                cursor = connection.execute(
+                    """
+                    INSERT INTO validation_run(
+                        protocol_id, protocol_version, run_id, gate_status,
+                        candidate_evidence_label, outcome_json
+                    ) VALUES(?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        protocol.protocol_id,
+                        protocol.version,
+                        outcome.gate.run_id,
+                        outcome.gate.status.value,
+                        outcome.candidate_evidence_label,
+                        json.dumps(
+                            {
+                                "gate": outcome.gate.to_dict(),
+                                "criterion_results": dict(outcome.criterion_results),
+                            },
+                            ensure_ascii=False,
+                            sort_keys=True,
+                        ),
                     ),
                 )
                 return int(cursor.lastrowid)

@@ -215,16 +215,32 @@ Validação: `UNVALIDATED`, `INTERNAL_VALIDATED`, `PRECLINICAL_VALIDATED`, `EXTE
 | Verification gate | estrutura de gate | trocar comportamento cognitivo fail-open por científico fail-closed |
 | Event bus | eventos e triggers | snapshots, invalidação e promoção auditável |
 
-## 11. Lacunas atuais
+## 11. Estado atual e lacunas remanescentes
 
-- Não existe implementação APEX-R científica no repositório.
-- Não há banco de coeficientes, snapshots ou lineage.
-- Benchmarks do documento corrigido ainda não foram executados com outputs APEX.
-- Valores experimentais históricos de `Kd` carecem de IDs primários verificáveis.
-- A suíte anexada contém erros de sinal, baseline, circularidade e algoritmo; não pode ser adotada.
-- Não existem datasets pré-clínicos locais nem perfil SEND implementado.
-- Não há conectores/MCP científicos ativos.
-- APEX-Lang/APEX-Core permanece roadmap até haver semântica e provas implementadas.
+Implementado em 17 de julho de 2026:
+
+- pacote Python, CLI, contratos `GateEnvelope` e registro M0-M11/PCL;
+- M0 linear local, M1, M2 termodinâmico/calibração linear, M3 WK2 e núcleo de conservação M4;
+- scaffold CausalDSM tipado com regimes `STATIC_DAG` e `DYNAMIC_DSCM`;
+- M11 com protocolos pré-registrados, camadas de evidência e revisão humana obrigatória;
+- SQLite append-only para fontes, snapshots, coeficientes, splits, gates e validações;
+- armazenamento endereçado por conteúdo e snapshots locais imutáveis;
+- controle de leakage por registro e grupo nos splits;
+- conector ChEMBL Activity API estruturado, ainda sem aquisição real executada;
+- calibração M2 candidata em `TRAIN` e avaliação separada em `INTERNAL_TEST`;
+- 38 testes automatizados aprovados no fechamento dos sprints S0/S1.
+
+Lacunas remanescentes:
+
+- nenhum snapshot científico externo real foi congelado ou aprovado;
+- benchmarks externos B-M2, B-M4, B-Causal e B-M8 ainda não foram executados com outputs APEX-R;
+- M0 ainda não implementa FIM normalizada, SVD, profile likelihood ou posterior geometry;
+- M2 ainda não possui descritores/QSAR/docking reais ligados às medições;
+- M2.5 ainda não executa equações estruturais nem D-SCM temporal;
+- M4 ainda não é um PBPK fisiológico completo nem possui inferência Bayesiana;
+- M5-M10 e o perfil PCL executável permanecem incompletos;
+- não existem datasets pré-clínicos locais nem perfil SEND implementado;
+- MCP científico e APEX-Lang/APEX-Core permanecem roadmap.
 
 ## 12. Critérios de conclusão da ferramenta
 
@@ -237,7 +253,90 @@ Validação: `UNVALIDATED`, `INTERNAL_VALIDATED`, `PRECLINICAL_VALIDATED`, `EXTE
 7. Resultados publicáveis declaram dataset, versão, protocolo, métrica e domínio.
 8. Nenhum gate pode ser contornado por texto do LLM.
 
-## 13. Referências operacionais verificadas
+## 13. Marcos e sprints por rodada de resposta
+
+### 13.1 Contrato de rodada
+
+Por padrão, cada nova rodada de implementação corresponde a um sprint abaixo ou a um
+sub-sprint explicitamente identificado. A resposta deve começar informando o ID do sprint e
+terminar com:
+
+1. arquivos alterados;
+2. testes novos;
+3. total de testes aprovados;
+4. benchmarks executados e artefatos;
+5. gates aprovados, falhos ou bloqueados;
+6. limitações e próximo sprint.
+
+Um sprint não é concluído somente porque o código compila. O gate de saída exige que todos
+os testes anteriores continuem aprovados, os novos testes cubram o comportamento adicionado
+e o benchmark correspondente produza resultado rastreável. Dados sintéticos permanecem
+marcados como verificação, nunca validação externa.
+
+### 13.2 Roadmap executável
+
+| Sprint | Estado | Entrega da rodada | Testes obrigatórios | Benchmark/gate de saída |
+|---|---|---|---|---|
+| S0 - Fundação | concluído | contratos, registro de fórmulas, SQLite, CLI, macros, M0/M1/M2/M3/M4 iniciais | contratos, termodinâmica, WK2, massa, DB | `B-VERIFY-CORE` aprovado |
+| S1 - M11 e dados | concluído | protocolos M11, snapshots, splits, ChEMBL plan, calibração M2 sintética | evidência, licença, imutabilidade, leakage, calibração | `B-VERIFY-M11` e `B-VERIFY-M2-CAL` aprovados |
+| S2 - Piloto M2 real | próximo | congelar uma release/consulta ChEMBL, normalizar um endpoint e construir split por scaffold/família | schema real, IDs, unidades, duplicatas, censura, leakage | baseline real registrado; nenhum claim externo ainda |
+| S3 - M2 calibrado | pendente | features/scores versionados, baselines, ajuste e avaliação interna | determinismo, domínio, resíduos, incerteza e comparadores | B-M2 interno; RMSE/MAE/Spearman/cobertura reportados |
+| S4 - M2 externo | pendente | congelar método e threshold; abrir conjunto externo somente via M11 | teste de lock, tentativa de acesso indevido, protocolo imutável | B-M2 externo: RMSE < 1,5 pK e Spearman > 0,70, ou reprovação explícita |
+| S5 - M0 completo | pendente | Jacobiana normalizada, FIM, SVD/rank e diagnósticos combinados | reescala, colinearidade, modelo identificável/não identificável | recuperação sintética e bloqueio de parâmetros não identificáveis |
+| S6 - CausalDSM | pendente | equações tipadas, DAG estático e D-SCM temporal com intervenção | ciclo, collider, confounder, feedback, atraso e unidades | B-Causal: ACE conhecido, viés/RMSE/cobertura em seeds |
+| S7 - PBPK | pendente | compartimentos fisiológicos, total/livre, plasma/sangue, eliminação e solver | dimensionalidade, positividade, massa e solução analítica simples | B-M4 OSP: AAFE < 2 e erro de AUC < 30%, ou reprovação explícita |
+| S8 - PD | pendente | M5A Hill e M5B dinâmica ligada a exposição/DSM | limites, monotonicidade, unidade, atraso e tolerância | casos fechados e recuperação de parâmetros sintéticos |
+| S9 - Sinergia | pendente | Bliss, Loewe, HSA e ZIP separados; integração temporal | normalização, controles únicos, estático vs. dinâmico | checkerboard real; MAE e IC por modelo de referência |
+| S10 - Risco/decisão | pendente | objetivos e restrições M7 separados da camada explicativa | orientação, normalização, constraint precedence e incerteza | cenários de segurança conhecidos e decisão auditável |
+| S11 - Otimização | pendente | Pareto/NSGA-II ou alternativa, reavaliação limpa e robustez | dominância, factibilidade, seeds e ponto HV fixo | ZDT1/2/3, DTLZ2; mediana D_HV < 10% em >=30 seeds |
+| S12 - Incerteza | pendente | Monte Carlo, Sobol e contrafactuais M9 | seed, convergência, cobertura e intervenção | cobertura sintética e sensibilidade contra casos conhecidos |
+| S13 - Pré-clínico | pendente | PCL-0 a PCL-5, QC, espécie/modelo, 3Rs e translação | separação de evidência e metadados obrigatórios | pacote piloto PCL; nenhuma promoção clínica automática |
+| S14 - Produto auditável | pendente | M10, MCP, relatórios, lineage, invalidação e pacote reproduzível | ponta a ponta, segurança, licença e ambiente limpo | reprodução independente a partir de manifesto e hashes |
+
+### 13.3 Política de alteração do roadmap
+
+- Um sprint pode ser dividido, mas seus critérios não podem ser silenciosamente removidos.
+- Mudança de fórmula, threshold ou dataset cria nova versão e invalida resultados dependentes.
+- Falha de benchmark não será corrigida alterando o threshold após observar o teste.
+- Descobertas de dados reais podem reordenar sprints, desde que a decisão e o impacto sejam registrados.
+- Novos módulos não avançam se uma regressão crítica permanecer aberta.
+
+## 14. Testes de não regressão
+
+Em toda rodada com alteração de código:
+
+1. executar a suíte completa, não apenas os testes novos;
+2. registrar o total de testes e comparar com a rodada anterior;
+3. proibir remoção ou enfraquecimento de teste sem justificativa no inventário/changelog;
+4. executar `compileall` e os smoke tests da CLI afetada;
+5. executar os benchmarks do módulo alterado e `B-VERIFY-CORE`;
+6. usar seeds fixas nos testes determinísticos e múltiplas seeds nos estocásticos;
+7. comparar métricas científicas com baseline versionado;
+8. tratar mudança acima da tolerância como regressão, mesmo se o processo retornar código zero;
+9. manter tempo e memória como métricas informativas até existir runner CI com hardware controlado;
+10. salvar JSON do benchmark com versão, horário, ambiente, commit quando disponível e hashes.
+
+Baseline desta rodada: `38 testes / 0 falhas`. O número de testes pode crescer; nunca deve
+diminuir sem explicação explícita. O tempo de execução local não é critério científico.
+
+## 15. Catálogo de benchmarks
+
+| ID | Classe | Estado inicial | Métricas/critério |
+|---|---|---|---|
+| B-VERIFY-CORE | matemática sintética | executável | round-trip M2, equilíbrio WK2 e conservação M4 dentro das tolerâncias |
+| B-VERIFY-M11 | fluxo sintético | executável | pré-registro, separação de evidência, lock externo e promoção manual |
+| B-VERIFY-M2-CAL | calibração sintética | executável | recuperação de intercepto/inclinação e RMSE interno conhecido |
+| B-M2 | dados externos | bloqueado até S2-S4 | RMSE, MAE, Spearman, calibração e cobertura; critério externo normativo |
+| B-CAUSAL | verdade sintética | bloqueado até S6 | erro ACE sem ruído; viés, RMSE e cobertura em >=30 seeds |
+| B-M4 | OSP/PK real | bloqueado até S7 | AAFE/GMFE, AUC e Cmax por estudo e agregado |
+| B-M6 | checkerboard real | bloqueado até S9 | MAE/superfície e IC separados para Bliss/Loewe/HSA/ZIP |
+| B-M8 | funções analíticas | bloqueado até S11 | HV, IGD+, epsilon, factibilidade e custo em >=30 seeds |
+| B-PCL | pré-clínico | bloqueado até S13 | QC, cobertura do protocolo e relevância translacional por nível PCL |
+
+Artefatos devem usar `benchmark-<id>-<run_id>.json`. Um benchmark `BLOCKED` é um resultado
+válido de governança quando falta dado, licença, módulo ou protocolo; não conta como aprovação.
+
+## 16. Referências operacionais verificadas
 
 - ChEMBL: <https://chembl.gitbook.io/chembl-interface-documentation/downloads>
 - BindingDB API: <https://www.bindingdb.org/rwd/bind/BindingDBRESTfulAPI.jsp>

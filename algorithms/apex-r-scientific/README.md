@@ -14,8 +14,8 @@ causalidade biológica, validade clínica nem adequação regulatória.
 ## Estado dos módulos
 
 - Ativos: M0 (identificabilidade linear local), M1 (proveniência), M2 (afinidade/termodinâmica/calibração), M3
-  (Windkessel 2 elementos) e M4 (balanço de massa PBPK).
-- Com contrato inicial: M10, M11 e PCL.
+  (Windkessel 2 elementos), M4 (balanço de massa PBPK) e M11 (protocolos de validação em camadas).
+- Com contrato inicial: M10 e PCL.
 - Planejados: M2.5, M5A, M5B, M6, M7, M8 e M9.
 
 O catálogo não mascara lacunas: macros que dependem de módulos ainda não ativos retornam
@@ -30,6 +30,11 @@ $env:PYTHONPATH = "src"
 python -m apex_r modules list
 python -m apex_r formulas list
 python -m apex_r validate dsm --input .\examples\causal_dsm.json
+python -m apex_r data split-check --input .\examples\split_m2_demo.json
+python -m apex_r validate protocol --input .\examples\validation_m2_internal.json
+python -m apex_r calibrate affinity --input .\examples\m2_calibration_demo.json
+python -m apex_r benchmarks list
+python -m apex_r benchmarks run-verification
 python -m apex_r macros list
 python -m apex_r macros check full_pipeline
 python -m apex_r macros run molecular_to_pbpk --input .\examples\molecular_to_pbpk.json --db .\data\apex-r.sqlite3
@@ -40,6 +45,29 @@ python -m apex_r validate pbpk --amounts "[100,20]" --transfers "[[0,0.2],[0.1,0
 python -m apex_r db init .\data\apex-r.sqlite3
 python -m unittest discover -s tests -v
 ```
+
+Snapshots locais podem ser congelados em armazenamento endereçado por conteúdo:
+
+```powershell
+python -m apex_r data snapshot `
+  --source .\examples\source_local_documents.json `
+  --file .\INVENTARIO.md --file .\SPEC.md `
+  --store .\data\objects `
+  --manifest .\data\manifests\normative-docs.json `
+  --db .\data\apex-r.sqlite3
+```
+
+O comando apenas congela arquivos locais fornecidos explicitamente. Conectores de download
+para bancos externos serão adicionados depois da verificação de versão, licença e schema de
+cada fonte.
+
+O primeiro conector planejável é o ChEMBL Activity API. Ele mantém Kd, Ki e IC50 separados:
+
+```powershell
+python -m apex_r data chembl-plan --target CHEMBL204 --endpoint Kd --unit nM
+```
+
+O comando acima apenas mostra a consulta e a licença; não inicia download silenciosamente.
 
 Para instalar o comando `apex-r` em um ambiente virtual:
 

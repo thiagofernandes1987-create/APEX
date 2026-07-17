@@ -1,0 +1,46 @@
+{
+  "audit": {
+    "censored_records": 0,
+    "exact_records": 6594,
+    "gate": {
+      "created_at": "2026-07-17T22:46:56+00:00",
+      "errors": [],
+      "evidence": [],
+      "gate_id": "DATA.CHEMBL.ACTIVITY_QC",
+      "metrics": {
+        "censored_records": 0,
+        "endpoint": "Ki",
+        "exact_records": 6594,
+        "normalized_records": 6594,
+        "raw_records": 6594,
+        "records_with_structure": 6594,
+        "target_chembl_id": "CHEMBL251",
+        "total_count_reported": 6594,
+        "unique_activities": 6594,
+        "unique_molecules": 5345,
+        "unit": "nM"
+      },
+      "module_id": "M2",
+      "run_id": "fd9705e5-c44f-4e23-991f-08218b3a6f33",
+      "status": "PASSED",
+      "summary": "Aquisição ChEMBL completa, tipada e sem duplicatas de activity_id.",
+      "warnings": []
+    },
+    "normalized_records": 6594,
+    "raw_records": 6594,
+    "records_with_structure": 6594,
+    "total_count_reported": 6594,
+    "unique_activities": 6594,
+    "unique_molecules": 5345
+  },
+  "query": {
+    "limit": 1000,
+    "offset": 0,
+    "standard_type": "Ki",
+    "standard_units": "nM",
+    "target_chembl_id": "CHEMBL251",
+    "url": "https://www.ebi.ac.uk/chembl/api/data/activity.json?target_chembl_id=CHEMBL251&standard_type=Ki&standard_units=nM&standard_relation=%3D&limit=1000&offset=0&format=json"
+  },
+  "release": "CHEMBL_37",
+  "source": "ChEMBL"
+}

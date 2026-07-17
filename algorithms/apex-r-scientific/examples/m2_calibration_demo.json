@@ -1,0 +1,26 @@
+{
+  "model_id": "m2-linear-demo-v1",
+  "evaluation_partition": "INTERNAL_TEST",
+  "points": [
+    {"record_id": "r1", "group_id": "g1", "endpoint": "Kd", "score": 1.0, "observed_pk": 5.0},
+    {"record_id": "r2", "group_id": "g2", "endpoint": "Kd", "score": 2.0, "observed_pk": 8.0},
+    {"record_id": "r3", "group_id": "g3", "endpoint": "Kd", "score": 3.0, "observed_pk": 11.0},
+    {"record_id": "r4", "group_id": "g4", "endpoint": "Kd", "score": 4.0, "observed_pk": 14.0},
+    {"record_id": "r5", "group_id": "g5", "endpoint": "Kd", "score": 5.0, "observed_pk": 17.0},
+    {"record_id": "r6", "group_id": "g6", "endpoint": "Kd", "score": 6.0, "observed_pk": 20.0}
+  ],
+  "split": {
+    "split_id": "m2-linear-demo-split-v1",
+    "dataset_snapshot_id": "synthetic-demo-snapshot",
+    "strategy": "synthetic-independent-groups",
+    "external_set_locked": false,
+    "partitions": {
+      "TRAIN": ["r1", "r2", "r3", "r4"],
+      "INTERNAL_TEST": ["r5", "r6"]
+    },
+    "groups": {
+      "r1": "g1", "r2": "g2", "r3": "g3",
+      "r4": "g4", "r5": "g5", "r6": "g6"
+    }
+  }
+}

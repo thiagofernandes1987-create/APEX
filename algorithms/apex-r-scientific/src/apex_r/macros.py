@@ -14,6 +14,7 @@ from .modules.identifiability import validate_linear_design
 from .modules.molecular import validate_affinity
 from .modules.pbpk import validate_mass_balance
 from .modules.provenance import build_manifest
+from .modules.validation import ValidationProtocol, evaluate_protocol
 from .registry import get_module
 
 
@@ -128,6 +129,14 @@ def _execute_active_module(
             ),
             run_id=context.run_id,
         )
+    if module_id == "M11":
+        protocol = ValidationProtocol.from_dict(payload["protocol"])
+        outcome = evaluate_protocol(
+            protocol,
+            payload["observations"],
+            run_id=context.run_id,
+        )
+        return outcome.gate
     return GateEnvelope.blocked(
         f"{module_id}.IMPLEMENTATION",
         module_id,

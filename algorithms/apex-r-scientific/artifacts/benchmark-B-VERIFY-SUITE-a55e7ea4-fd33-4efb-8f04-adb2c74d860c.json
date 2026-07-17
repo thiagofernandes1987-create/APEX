@@ -1,0 +1,82 @@
+{
+  "created_at": "2026-07-17T22:04:45+00:00",
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.14.3"
+  },
+  "outcomes": [
+    {
+      "benchmark_id": "B-VERIFY-CORE",
+      "duration_ms_informational": 0.07369997911155224,
+      "gate": {
+        "created_at": "2026-07-17T22:04:45+00:00",
+        "errors": [],
+        "evidence": [],
+        "gate_id": "BENCHMARK.B-VERIFY-CORE",
+        "metrics": {
+          "m2_max_roundtrip_relative_error": 1.0097419586828951e-15,
+          "m2_tolerance": 1e-12,
+          "m3_derivative_at_equilibrium": 0.0,
+          "m3_tolerance": 1e-12,
+          "m4_mass_balance_error": 0.0,
+          "m4_tolerance": 1e-12
+        },
+        "module_id": "M11",
+        "run_id": "a55e7ea4-fd33-4efb-8f04-adb2c74d860c",
+        "status": "PASSED",
+        "summary": "Termodinâmica, equilíbrio WK2 e conservação de massa permanecem nas tolerâncias.",
+        "warnings": []
+      },
+      "run_id": "a55e7ea4-fd33-4efb-8f04-adb2c74d860c"
+    },
+    {
+      "benchmark_id": "B-VERIFY-M11",
+      "duration_ms_informational": 0.06399999256245792,
+      "gate": {
+        "created_at": "2026-07-17T22:04:45+00:00",
+        "errors": [],
+        "evidence": [],
+        "gate_id": "BENCHMARK.B-VERIFY-M11",
+        "metrics": {
+          "promotion_requires_review": true,
+          "synthetic_external_rejected": true,
+          "synthetic_protocol_passed": true
+        },
+        "module_id": "M11",
+        "run_id": "a55e7ea4-fd33-4efb-8f04-adb2c74d860c",
+        "status": "PASSED",
+        "summary": "Pré-registro, separação sintética e revisão humana foram preservados.",
+        "warnings": []
+      },
+      "run_id": "a55e7ea4-fd33-4efb-8f04-adb2c74d860c"
+    },
+    {
+      "benchmark_id": "B-VERIFY-M2-CAL",
+      "duration_ms_informational": 0.19099999917671084,
+      "gate": {
+        "created_at": "2026-07-17T22:04:45+00:00",
+        "errors": [],
+        "evidence": [],
+        "gate_id": "BENCHMARK.B-VERIFY-M2-CAL",
+        "metrics": {
+          "intercept_error": 0.0,
+          "internal_rmse_pk": 0.0,
+          "internal_spearman": 1.0,
+          "slope_error": 0.0,
+          "tolerance": 1e-12
+        },
+        "module_id": "M2",
+        "run_id": "a55e7ea4-fd33-4efb-8f04-adb2c74d860c",
+        "status": "PASSED",
+        "summary": "Coeficientes conhecidos e avaliação interna foram recuperados.",
+        "warnings": [
+          "Benchmark sintético; não constitui validação molecular externa."
+        ]
+      },
+      "run_id": "a55e7ea4-fd33-4efb-8f04-adb2c74d860c"
+    }
+  ],
+  "run_id": "a55e7ea4-fd33-4efb-8f04-adb2c74d860c",
+  "schema_version": "1.0",
+  "status": "PASSED"
+}

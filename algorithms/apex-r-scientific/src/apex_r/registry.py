@@ -19,7 +19,7 @@ MODULES: tuple[ModuleDescriptor, ...] = (
     ModuleDescriptor("M8", "Otimização robusta", "Otimização sob restrições e incerteza", ModuleReadiness.PLANNED, ("M7",)),
     ModuleDescriptor("M9", "Incerteza", "Sensibilidade, incerteza e contrafactuais", ModuleReadiness.PLANNED, ("M8",)),
     ModuleDescriptor("M10", "Relatório", "Relatório técnico reproduzível", ModuleReadiness.SCAFFOLDED, ("M11",)),
-    ModuleDescriptor("M11", "Validação em camadas", "Validação matemática, computacional e empírica", ModuleReadiness.SCAFFOLDED),
+    ModuleDescriptor("M11", "Validação em camadas", "Validação matemática, computacional e empírica", ModuleReadiness.ACTIVE),
     ModuleDescriptor("PCL", "Perfil pré-clínico", "Tradução pré-clínica PCL-0 a PCL-5", ModuleReadiness.SCAFFOLDED, ("M4", "M7"), True),
 )
 

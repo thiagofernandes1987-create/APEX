@@ -9,4 +9,6 @@ __pycache__/
 dist/
 build/
 *.egg-info/
-
+data/raw/
+data/objects/
+data/derived/
