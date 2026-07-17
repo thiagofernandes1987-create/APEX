@@ -26,7 +26,7 @@ reflects the whole framework, including pieces earlier passes missed.
   → `scripts/code_genetics.py`.
 - **Security**: trusted_domains, SR_37 AST-scan, H5. ⚠️ V-01 `apex-marketplace` claimable,
   V-02 pickle RCE, V-03 httpbin probe (see auditoria.md).
-- **MCP**: 18 servers by domain; `meta/llm_compat.yaml` (Claude/GPT/Gemini).
+- **MCP**: 18 servers by domain; `meta/llm_compat.json` (Claude/GPT/Gemini).
 
 ## Newly nativized this pass
 - `scripts/hypothesis_dag.py` — acyclic hypothesis graph (SR_32), edge-only serialization.

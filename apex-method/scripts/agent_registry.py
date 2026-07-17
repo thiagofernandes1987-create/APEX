@@ -40,6 +40,84 @@ def load(path):
         return json.load(f)
 
 
+# ── durable skill-grant store (RT-26) ────────────────────────────────────────────────────────
+# The distributed catalog is immutable; grants must NOT be written back into it (they would be
+# lost on the next reload / package update). Instead we append grant records to a SEPARATE
+# user-level store and MERGE them onto a freshly-loaded catalog, so "installing a skill upgrades
+# the agents" survives process, session, and reload.
+_GRANTS_HOME = os.path.expanduser("~/.apex-method/agent_grants.json")
+_GRANTS_LOCAL = os.path.join(HERE, "..", "agent_grants.json")
+
+
+def _grants_path():
+    d = os.path.dirname(_GRANTS_HOME)
+    try:
+        os.makedirs(d, exist_ok=True)
+        return _GRANTS_HOME
+    except Exception:
+        return os.path.abspath(_GRANTS_LOCAL)
+
+
+def load_grants():
+    """Return the list of persisted grant records (empty list if none / unreadable)."""
+    for p in (_GRANTS_HOME, os.path.abspath(_GRANTS_LOCAL)):
+        try:
+            with open(p, encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, list):
+                    return data
+        except Exception:
+            continue
+    return []
+
+
+def save_grant(skill_id, agent_id, scripts=None, source="", approved=True, ext=False):
+    """Append ONE durable grant record. Records are additive; merge_grants collapses duplicates."""
+    import time
+    grants = load_grants()
+    grants.append({"skill_id": skill_id, "agent_id": agent_id,
+                   "scripts": sorted(set(scripts or [])), "source": source or "",
+                   "approved": bool(approved), "ext": bool(ext), "ts": time.time()})
+    p = _grants_path()
+    try:
+        with open(p, "w", encoding="utf-8") as f:
+            json.dump(grants, f, indent=1, ensure_ascii=False)
+        return {"status": "OK", "path": p, "count": len(grants)}
+    except Exception as e:
+        return {"status": "ERROR", "reason": str(e)[:120]}
+
+
+def merge_grants(agents_doc, grants=None):
+    """Overlay persisted grants onto a freshly-loaded (immutable) catalog so grants survive reload.
+    Applies approved core-persona grants into `competence`; returns how many were applied plus the
+    persisted extended-agent grants (kept separate, mirroring grant_skill's return shape)."""
+    grants = load_grants() if grants is None else grants
+    applied, ext = 0, []
+    ags = agents_doc.get("agents", {})
+    for g in grants:
+        if not g.get("approved"):
+            continue
+        aid, sid = g.get("agent_id"), g.get("skill_id")
+        if not sid:
+            continue
+        if g.get("ext"):
+            ext.append((aid, sid))
+            continue
+        a = ags.get(aid)
+        if not a:
+            continue
+        comp = a.setdefault("competence", {})
+        entry = comp.get(sid, {"experience": 0, "scripts": []})
+        entry["experience"] = max(entry.get("experience", 0), 1)   # presence, no double-count
+        if g.get("scripts"):
+            entry["scripts"] = sorted(set(entry.get("scripts", []) + g["scripts"]))
+        if g.get("source"):
+            entry["source"] = g["source"]
+        comp[sid] = entry
+        applied += 1
+    return {"applied": applied, "ext_grants": ext, "agents_doc": agents_doc}
+
+
 def _agent_text(a):
     return " ".join([a["personality"],
                      " ".join(a["specialization"]["domains"]),
@@ -82,7 +160,7 @@ def match_skill_to_agents(skill, agents_doc, threshold=0.05):
     return matched or ["pmi_pm"]  # generalist fallback
 
 
-def grant_skill(skill, agents_doc, approved: bool, scripts=None, ext_grants=None):
+def grant_skill(skill, agents_doc, approved: bool, scripts=None, ext_grants=None, persist=False):
     """
     Grant an APPROVED skill to the compatible agents, updating competence + experience.
     Returns the list of (agent_id, new_experience). Refuses if not approved (APEX H5).
@@ -91,6 +169,9 @@ def grant_skill(skill, agents_doc, approved: bool, scripts=None, ext_grants=None
     core personas. `ext_grants` is an in-memory competence store {agent_id: {skill: uses}}
     the caller keeps across a session; if omitted, extended matches are still reported so
     "installing a skill upgrades the matching agent" holds for the whole roster.
+
+    RT-26: with persist=True the grant is also written to the durable grant store (save_grant),
+    so it survives a catalog reload — apply it to a fresh catalog with merge_grants().
     """
     if not approved:
         return {"status": "BLOCKED", "reason": "skill not approved by user (APEX H5)"}
@@ -110,6 +191,9 @@ def grant_skill(skill, agents_doc, approved: bool, scripts=None, ext_grants=None
         de = agents_doc["agents"][aid]["domain_experience"]
         de[dom] = de.get(dom, 0) + 1
         updated.append((aid, entry["experience"]))
+        if persist:                                   # RT-26: durable, survives reload
+            save_grant(skill["id"], aid, scripts=scripts,
+                       source=skill.get("source", ""), approved=True, ext=False)
 
     # extended roster (213): route the skill to the best-matching real APEX agents and
     # record the grant so the whole roster — not just the 11 core — gains competence.
@@ -122,8 +206,13 @@ def grant_skill(skill, agents_doc, approved: bool, scripts=None, ext_grants=None
             ext_updated.append((aid, store[skill["id"]]))
         else:
             ext_updated.append((aid, 1))
-    return {"status": "GRANTED", "skill": skill["id"],
-            "agents": updated, "ext_agents": ext_updated}
+        if persist:                                   # RT-26: durable extended grant
+            save_grant(skill["id"], aid, source=skill.get("source", ""), approved=True, ext=True)
+    out = {"status": "GRANTED", "skill": skill["id"],
+           "agents": updated, "ext_agents": ext_updated}
+    if persist:
+        out["persisted"] = True
+    return out
 
 
 def tier(exp):
@@ -138,25 +227,6 @@ def render_roster(agents_doc):
         lines.append(f"- **{a['display_name']}** [{a['role']}] :: {skills}")
     return "\n".join(lines)
 
-
-if __name__ == "__main__":
-    agents = load(AGENTS)
-    skills = load(SKILLS)
-    cmd = sys.argv[1] if len(sys.argv) > 1 else "demo"
-
-    if cmd == "match" and len(sys.argv) > 2:
-        for aid, s in match_task_to_agents(sys.argv[2], agents):
-            print(f"{s:.3f}  {aid}  — {agents['agents'][aid]['display_name']}")
-    else:
-        # demo: grant the first finance + first software skill, show experience gain
-        by_dom = {}
-        for s in skills:
-            by_dom.setdefault(s["domain"], s)
-        demo_skills = [by_dom.get("finance"), by_dom.get("software"), by_dom.get("ai-ml")]
-        for sk in filter(None, demo_skills):
-            res = grant_skill(sk, agents, approved=True, scripts=["router.py"])
-            print(res["status"], sk["id"], "->", res["agents"])
-        print("\n" + render_roster(agents))
 
 # ── Extended roster (all 213 real APEX agents mined from thiagofernandes1987-create/APEX) ──
 ROSTER_EXT = os.path.join(HERE, "..", "catalog", "apex_agents_roster.json")
@@ -180,4 +250,26 @@ def match_task_to_ext_agents(task, k=5):
     order = sorted(range(len(sims)), key=lambda i: -sims[i])[:k]
     return [(roster[i]["id"], roster[i].get("category", ""), round(float(sims[i]), 3))
             for i in order if sims[i] > 0]
+
+
+if __name__ == "__main__":
+    # AUD-001 fix: this demo was misplaced ABOVE match_task_to_ext_agents (line ~173), so running
+    # the module as a script raised NameError before that def was bound. Moved to the true end.
+    agents = load(AGENTS)
+    skills = load(SKILLS)
+    cmd = sys.argv[1] if len(sys.argv) > 1 else "demo"
+
+    if cmd == "match" and len(sys.argv) > 2:
+        for aid, s in match_task_to_agents(sys.argv[2], agents):
+            print(f"{s:.3f}  {aid}  — {agents['agents'][aid]['display_name']}")
+    else:
+        # demo: grant the first finance + first software skill, show experience gain
+        by_dom = {}
+        for s in skills:
+            by_dom.setdefault(s["domain"], s)
+        demo_skills = [by_dom.get("finance"), by_dom.get("software"), by_dom.get("ai-ml")]
+        for sk in filter(None, demo_skills):
+            res = grant_skill(sk, agents, approved=True, scripts=["router.py"])
+            print(res["status"], sk["id"], "->", res["agents"])
+        print("\n" + render_roster(agents))
 

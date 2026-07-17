@@ -1,9 +1,28 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.21.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.41.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
+
+**v1.41.0 — endurecimento pós-autópsia de runtime (auditoria GPT).** 12 achados adversariais
+corrigidos e blindados no CI (novo teste `runtime_autopsy` no benchmark): swap recusa bundle com
+hash inválido **antes** de escrever e o hash cobre todo o payload (RT-07/08); `verify_ledger`
+recalcula o hash de conteúdo, detectando adulteração de qualquer coluna (RT-05); `skill_scout`
+bloqueia import fora da allowlist no `evaluate` (RT-11), descobre e escaneia scripts referenciados
+no `SKILL.md` (RT-13), sinaliza prompt-injection no corpo (RT-12) e recusa arquivo truncado
+(RT-14); `resolve_mode` aplica piso `min_mode` e não rebaixa modo de alto risco sem flag (RT-23);
+grants de skill persistem em store durável e sobrevivem ao reload (RT-26); nome de arquivo com
+microssegundos evita colisão no mesmo segundo (RT-09); shape inesperado de API degrada sem exceção
+(RT-15); `MemoryStore` aceita caminho relativo bare (RT-10). Suíte: benchmark 45/45, scenario 7/7.
+
+**Modelo mental (runtime cognitivo).** A skill trata o LLM como uma **VM cognitiva** (motor de
+inferência) e a si mesma como o **runtime/SO** em volta: kernel = `SKILL.md`; syscalls = os 40
+`scripts/*.py`; escalonador = `geodesic_scheduler` + `project_ledger.dsm()`; processos = stances/
+subagentes (Nível A/B); memória paginável e durável = `memory.py` (SQLite + Knowledge Graph);
+log de integridade = ledger SHA-256; gerenciador de pacotes = `repo_bridge`+`skills_sh`; HAL =
+`meta/apex_llm.yaml` (YAML; fallback `meta/llm_compat.json`). Restrição honesta: o container é **efêmero** — o `.db` local é cache de
+trabalho; durabilidade real = commit git ou export `.zip` (backends do `project_ledger`/`memory`).
 
 ---
 
@@ -11,7 +30,8 @@ checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescen
 
 ### Marco 1 — Formato & validação
 - [x] Frontmatter 100% válido contra o schema neoformat (theneoai)
-- [x] SKILL.md ≤ 300 linhas (245), seções § numeradas, Trigger Words, Scope & Limitations
+- [x] SKILL.md seções § numeradas, Trigger Words, Scope & Limitations (cresceu para ~416 linhas
+      com as features v1.22–1.30; o guia neoformat ≤300 é soft e foi ultrapassado conscientemente)
 - [x] Conformidade SR_40 (why/when/what-if-fails) em 27/27 scripts + SKILL.md
 - [x] `.skill` instalável + `.zip` da árvore de repositório (v1.17.x reconstruídos)
 - [x] Versão unificada (era 1.15 no inventário × 1.16 no SKILL.md — drift corrigido)
@@ -178,7 +198,7 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
 
 ## 🧠 Roadmap cognitivo (oportunidades P1–P3 — em discussão/desenho)
 
-### Op1 — Memória vetorial viva entre sessões · **DESENHO FECHADO** (a implementar)
+### Op1 — Memória vetorial viva entre sessões · **FEITO** (v1.26) + **Knowledge Graph B1** (v1.29)
 `scripts/memory.py` → `MemoryStore`, decidido em discussão com o autor:
 - **Storage:** SQLite local (`~/.apex-method/memory.db`) como padrão — stdlib, offline, arquivo
   único portável. **MongoDB como plugin opt-in** (adaptador de storage fino) para quem já roda
@@ -196,6 +216,14 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
   (regra ativada/desativada) *chamam* — memória não invade os subsistemas.
 - **Seed inicial versionado** + append incremental; ligada ao `orchestrator.run` (recall no
   início) e ao `snapshot`/eventos (write). Menu ganha `memory clear|export` (retenção/privacidade).
+- **B1 — Knowledge Graph (v1.29):** as memórias carregam **arestas tipadas** (`causa`, `contradiz`,
+  `depende_de`, `refina`, `suporta`), então a recuperação vira **caminhada em grafo**, não só top-k.
+  `relate(src,dst,rel)`/`relate_text` cria a aresta; as relações **direcionais** (`causa/depende_de/
+  refina`) são mantidas **acíclicas** via o motor `hypothesis_dag` (ciclo = erro de raciocínio,
+  rejeitado antes de inserir); as simétricas (`contradiz/suporta`) podem formar laços.
+  `neighbors`/`walk(start, rel_types, depth)` percorrem; **`recall_graph(query, k, depth, rel)`**
+  faz seed com `recall` e **expande** pelas arestas — responde "o fato E tudo que o `contradiz`",
+  que um top-k por similaridade não faz. Cada aresta também vai ao ledger de governança (durável).
 
 ### Op2 — Paralelismo cognitivo · **FEITO** (v1.22–1.24)
 - `concurrent_executor` (Nível A) + protocolo de fan-out de subagentes (Nível B); 3 stances
@@ -208,13 +236,117 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
 - **`evaluate_hypotheses`**: analista levanta 3 hipóteses → diretores especialistas dão laudo
   SHA-256 (bayes+dificuldade+RPN+diagnóstico) → barrier → merge/PMI → decisão ou RESTART;
   lacunas viram `needs_correction`.
+- **Exploração maximizada (v1.28)**: antes de convergir, o painel recebe divergência real —
+  (1) `subagent_hypotheses`: hipóteses geradas por Agent subagentes Level-B reais (manifesto
+  `spawn_subagents` nomeia personas + framing; RESEARCH inclui genius); Claude dispara os
+  subagentes e re-chama com as hipóteses deles; (2) `_chaos_expand` (FOGGY↑): mutação estrutural
+  (`chaos_*`) da hipótese mais forte + `chaos_recombine` das duas mais confiantes (conf ≤ 0.30,
+  SR_11) + genius obrigatório em RESEARCH. Só depois os diretores pontuam o conjunto completo.
 
 ### Op3 — Metacognição (matriz de competência) · **FEITO** (v1.24)
 - `competence_matrix`: heat-map agente×domínio (T, reward do ledger, dificuldade via
   BehavioralDifficultyEstimator, rejections/variância) + diagnóstico
   **PERSONA_SWAP / INJECT_SKILL / HARD_PROBLEM**; realimenta mental_interpreter e deep_research.
 
-### Op-P3 aprendizado que persiste — parcial (ledger SQLite `competence.db` + vacinas)
+### Op-P3 — aprendizado que persiste · **FEITO** (v1.32)
+- `scripts/learning.py`: `LearningStore` (SQLite `~/.apex-method/learning.db`) acumula evidência
+  beta-binomial por **(kind, subject, domain)** — kind ∈ persona/skill/diff/rule/vaccine — e decide
+  **PROMOTE / KEEP / DEMOTE** com a camada Bayesiana do kernel (Ω 0.72/0.5, ≥3 obs).
+- **Toda mudança de status vira memória durável**: `memory.record_event` (ledger SHA-256 encadeado),
+  fechando o loop "promoção/rebaixamento → memória à prova de adulteração".
+- **Consumo**: `best(kind, domain)` + reward durável misturado ao `competence_matrix._reward` → a
+  próxima tarefa consulta o histórico validado (persona que prova → preferida; que falha → rebaixada).
+- **Auto-registro**: `evaluate_hypotheses` credita cada diretor por rodada; o loop se fecha sozinho.
+- `numeric.py`: `solve_ode(method="auto")` usa **scipy quando importável** (fallback RK4 stdlib);
+  `capabilities()` reporta numpy/scipy/sklearn/pandas — aceleração **é do ambiente, não do LLM**.
+
+### Gatilhos obrigatórios: piso de modo + persistência · **FEITO** (v1.39)
+- **Dificuldade honesta**: `estimate_difficulty` ganhou classes não-matemáticas (security_audit 0.80,
+  architecture 0.62, compliance 0.72, debugging 0.66); classe **desconhecida** → `uncertain=True` +
+  bde 0.70 (nunca mais 0.5 silencioso). Corrige a causa raiz: auditoria caía em média medíocre.
+- **Piso de modo** (`execution_policy.mode_floor` + `triage`): auditoria/segurança/compliance **nunca
+  pulam** e rodam ≥ DEEP; `uncertain` escala + **exige as 3 personas** (`require_dissect_personas`).
+- **`min_mode`** no config: piso global que **força o pipeline para toda tarefa** (`menu.py set min_mode DEEP`).
+- **Gatilho de persistência**: `swap_store.page_out` (grava swap/<sessão>/ + `drive_manifest` + log),
+  `menu.py persist`, e `orchestrator.run` retorna `persist_due` em DEEP+. Page-out nunca é silencioso.
+
+### Contrato de roteamento + entrada de 3 personas · **FEITO** (v1.33–1.34)
+- `scripts/execution_policy.py`: `route(subtask)` decide a **superfície** — `subprocess` (cálculo
+  determinístico, sem internet) · `agent` (raciocínio) · `agent+internet` (descoberta: skills.sh/
+  repos/papers/MCPs, subagente com web-tools). **Regra dura no código**: `needs_internet=True`
+  **nunca** vai pro subprocess. Quem fornece as ferramentas é sempre o LLM (`provider_of_tools`).
+  Manifesto verificável, **não DSL**. Verificado: nenhum MCP nem script fazia isso.
+- `dissect_entry(task, mode, reliability)`: entrada das **3 personas** (architect/analyst/critic) —
+  por micro: SWOT + agentes/skills/tools (melhor via `learning`) + resolução (repo→skills.sh→criar)
+  + roteamento + template de documento + **governança regional** (HIPAA/GDPR/LGPD/legal/financeiro,
+  detectada pelo texto). Reusa dissect/assign/gravity/learning — não reimplementa descoberta.
+- **Wire MCFE + dificuldade (v1.34)**: `triage(task, reliability)` roda **antes** — tarefa **trivial
+  pula o pipeline** (`orchestrator.express_check` → EXPRESS, economia de tokens); baixa dificuldade
+  fica leve; **alta dificuldade** (`competence_matrix.estimate_difficulty` ≥0.85) OU **MCFE baixo**
+  (R_acum <0.50) **escala o modo e joga os micros de raciocínio para `agent+internet`** (descobrir).
+  Compute continua `subprocess`. Quem determina a dificuldade: `competence_matrix.estimate_difficulty`;
+  quem pula o trivial: `orchestrator.express_check`.
+
+### Robustez + adaptabilidade a qualquer LLM · **FEITO** (v1.35)
+- **Portão de entrada (v1.36)**: `triage` virou a PRIMEIRA etapa do `orchestrator.run` — o
+  skip do trivial (EXPRESS, economia de tokens) e o escalonamento por dificuldade/MCFE acontecem
+  automaticamente, sem chamada manual; o EXPRESS passa a carregar o marcador do triage.
+- **YAML de adaptabilidade** `meta/apex_llm.yaml` (autoritativo; `llm_compat.json` = fallback stdlib):
+  requisitos mínimos (caps obrigatórias + janela por modo), matriz por provedor (claude/gpt/gemini/
+  **deepseek**/local), **limites anti-loop** e **aceleradores opcionais**. `llm_adapter` lê YAML
+  (PyYAML) com fallback JSON; ganhou `limits()` e `requirements()`.
+- **Requisitos mínimos + guarda de loop**: `execution_policy.loop_guard(iteration, progress, restarts,
+  reliability)` — STOP em: iterações ≥ máx (8), restarts ≥ máx (3), confiabilidade < early-exit (0.30),
+  ou sem progresso por 2 rodadas (dS2 < 0.15). **O LLM nunca entra em loop.**
+- **Tratamento de erro**: `orchestrator.run` **nunca levanta exceção** — falha inesperada retorna
+  `ERROR_DEGRADED` com modo seguro (responder direto, sinalizar incerteza, não repetir).
+- **Aceleradores** numpy/scipy/scikit-learn/sympy declarados em `requirements.txt` (opcionais — a
+  skill roda em stdlib puro) + degradação documentada. `numeric.solve_ode` já usa scipy quando há.
+- **Bug comportamental corrigido (teste)**: `run()` escolhia o modo só por disciplina — "navier stokes
+  pde" (dificuldade 0.92) ia para STANDARD. Agora o `triage` (dificuldade + MCFE) está ligado ao
+  `run()` e escala (→ SCIENTIFIC), sem nunca rebaixar um modo dirigido por disciplina. Keywords de
+  ciência ampliadas (navier/stokes/pde/turbulência/fluido/reynolds).
+
+### Relatório "runtime cognitivo" (ChatGPT) — aproveitáveis implementados
+- **B1 — Knowledge Graph (v1.29):** arestas tipadas em `memory.py` + `recall_graph` (caminhada em
+  grafo, guarda acíclica via `hypothesis_dag`). Ver seção Op1 acima.
+- **B3 — Narrativa de runtime cognitivo (v1.29):** modelo mental kernel/syscalls/escalonador/
+  processos/memória/HAL no topo do SKILL.md e deste inventário (mapa 1:1 com arquivos reais).
+- **B2 — LLM Adapter (v1.30):** `meta/llm_compat.json` (contrato: exigências do kernel + janela por
+  modo + matriz de capacidades por provedor claude/gpt/gemini/local + regras de degradação) +
+  `scripts/llm_adapter.py` (`check`/`fits`/`degrade`/`report`). Sem subagentes → Level A; janela
+  pequena → modo rebaixado; sem tool-calling/JSON → loop manual/parse best-effort; provedor
+  desconhecido → baseline conservador. É o que torna "mesmo núcleo em qualquer LLM" real.
+- **Descartados (honestidade):** confiar no `.db` local para durabilidade (container efêmero — só
+  git/zip persiste) e sincronizar histórico interno do ChatGPT (sem API pública).
+
+### Swap store — hierarquia de memória padrão (v1.31)
+- `scripts/swap_store.py`: **um layout canônico único** para todos os usuários, materializável numa
+  pasta local do PC **ou** no Google Drive. Hierarquia tipo SO: **RAM** (contexto, morre) →
+  **SWAP** (este store, sobrevive ao container) → **DISCO** (git, validado e permanente).
+- Árvore: `user/` (persona + preferências + arquivos de entrada — durável, do usuário) · `memory/`
+  (memória validada persistente em NDJSON) · `swap/<sessão>/` (estado de trabalho efêmero,
+  disposável) · `staging/` (validado, na fila do commit) · `archive/` (páginas superadas).
+- `materialize(root)` cria local (idempotente, nunca sobrescreve dados); `drive_tree()` dá ao
+  runtime o mesmo schema para criar no Drive (o script não toca credenciais — o Claude sobe via as
+  tools do Drive, como o project_ledger prepara um commit). `export_bundle`/`import_bundle` fazem
+  page-out/page-in com hash SHA-256; memória viaja como NDJSON portável (`MemoryStore.export()/
+  load_rows()`), não `.db` binário.
+- **Gate de promoção** (`is_validated`/`promotion_manifest`): só o que passa (PMI ADOPT **e** ledger
+  íntegro **e** testes) é promovido de swap → commit; o resto fica disposável no swap.
+- **Nomenclatura padrão**: `<name>-<function>-<AAAAMMDDHHMMSS+µs>-R<NN>.<ext>` (ex.:
+  `memory-User-20260716183245123456-R00.json`). O timestamp com **microssegundos** (20 dígitos)
+  versiona cada escrita e evita colisão em page-outs no mesmo segundo (RT-09); `R<NN>` é a
+  **revisão de layout** do arquivo (sobe quando o schema muda). `latest()` sempre resolve o maior
+  `(revisão, ts)`; a **pasta principal guarda a última** e as anteriores vão para `versions/`.
+- **Rotação de backups**: os `KEEP_BACKUPS` (10) mais novos sobrevivem; os antigos ficam obsoletos
+  (apagados no local; **listados para GC no Drive** — a API do Drive aqui não tem delete/move/update).
+- **Modelo-padrão no repo** (`models/apex_structure.model.json`): fonte única do padrão, com
+  instruções de build (Windows e Drive). Novos usuários **constroem a partir do modelo**, o LLM
+  nunca inventa a árvore. `materialize(root)` (local) e `drive_tree()` derivam do mesmo modelo.
+- **Estrutura criada no Drive do usuário** (`My Drive/APEX/`): raiz + user/memory/swap/staging/
+  archive (+ `versions/`) + manifest + README + modelo + seeds versionados + sessão-exemplo. Opt-in:
+  `preferences.persistence_backend = "drive-swap"`.
 
 ## 📋 Backlog remanescente (fora do escopo imediato / pesquisa)
 

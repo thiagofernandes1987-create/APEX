@@ -79,9 +79,11 @@ DISCIPLINE_KEYWORDS = {
                 "financeiro", "fluxo de caixa", "reserva", "orçamento", "orcamento"],
     "math": ["prove", "proof", "integral", "derivative", "equation", "algebra",
              "prova", "provar", "derivada", "equação", "equacao", "álgebra", "algebra"],
-    "science": ["physics", "simulation", "ode", "monte carlo", "annealing", "hmc", "statistical",
-                "física", "fisica", "simulação", "simulacao", "estatística", "estatistica",
-                "dinâmica", "dinamica", "depleção", "deplecao"],
+    "science": ["physics", "simulation", "ode", "pde", "monte carlo", "annealing", "hmc",
+                "statistical", "navier", "stokes", "turbulência", "turbulencia", "turbulence",
+                "fluido", "fluid", "reynolds", "viscosidade", "física", "fisica", "simulação",
+                "simulacao", "estatística", "estatistica", "dinâmica", "dinamica", "depleção",
+                "deplecao"],
     "legal": ["contract", "compliance", "regulation", "clause", "liability",
               "contrato", "conformidade", "regulação", "regulacao", "cláusula", "clausula"],
     "healthcare": ["clinical", "patient", "diagnosis", "medical", "treatment",
@@ -221,13 +223,49 @@ def pmi_converge(candidates):
 
 # ── FULL FLOW ─────────────────────────────────────────────────────────────────
 def run(task, candidates=None, snapshot=None):
-    ex = express_check(task)
-    if ex:
-        return {"path": "EXPRESS", **ex}
+    """Public entry — NEVER raises. On any unexpected failure it returns a degraded result so the
+    LLM gets a safe fallback instead of a crash (error handling contract)."""
+    try:
+        return _run(task, candidates, snapshot)
+    except Exception as e:
+        # the handler itself must never crash: coerce task to str (int/dict/None are all valid inputs)
+        return {"path": "ERROR_DEGRADED", "mode": "STANDARD",
+                "error": f"{type(e).__name__}: {str(e)[:140]}", "task": str(task)[:120],
+                "note": "pipeline failed safely — answer directly, flag the uncertainty, do not loop"}
+
+
+def _run(task, candidates=None, snapshot=None):
+    # TRIAGE IS THE ENTRY GATE (v1.36): it runs FIRST and decides both the SKIP (a trivial task ->
+    # EXPRESS, token economy) and the escalation floor (hard problem or low MCFE reliability -> DEEP+),
+    # so both happen automatically without a manual call. It wraps express_check internally; if
+    # execution_policy is unavailable, we fall back to the original express_check gate.
+    tri, ep, escalate_discovery = None, None, False
+    try:
+        import execution_policy as ep
+        tri = ep.triage(task)
+    except Exception:
+        ep = None
+    if tri is not None and tri.get("skip_pipeline"):
+        exp = tri.get("express") or express_check(task) or {"mode": "EXPRESS", "answer": None,
+                                                             "reason": "trivial"}
+        return {"path": "EXPRESS", **exp,
+                "triage": {"mode": tri["mode"], "reason": tri.get("reason")}}
+    if tri is None:                                    # execution_policy missing -> original gate
+        ex = express_check(task)
+        if ex:
+            return {"path": "EXPRESS", **ex}
     disciplines = dissect(task)
     specialists = assign_specialists(task, disciplines)
     auto_mode = "SCIENTIFIC" if any(d in disciplines for d in ("science", "math")) else \
                 "DEEP" if len(disciplines) > 1 else "STANDARD"
+    # triage (already computed above) sets the escalation FLOOR — escalate only, never downgrade a
+    # discipline-driven mode: take the HIGHER of the discipline-mode and the triage-mode.
+    if tri is not None:
+        try:
+            auto_mode = ep._bump(auto_mode, tri["mode"])
+            escalate_discovery = tri.get("escalate_discovery", False)
+        except Exception:
+            pass
     # honour the user's preferred/default modes from config (menu.py sets them); never
     # silently downgrade — resolve_mode snaps up to the nearest preferred mode.
     try:
@@ -239,7 +277,19 @@ def run(task, candidates=None, snapshot=None):
     import mental_interpreter
     phase_plan = mental_interpreter.plan_phases(mode, fractal_depth=len(disciplines))
     result = {"path": "FULL_PIPELINE", "mode": mode, "disciplines": disciplines,
-              "specialists": specialists, "phase_plan": phase_plan}
+              "specialists": specialists, "phase_plan": phase_plan,
+              "escalate_discovery": escalate_discovery}
+    # PERSISTENCE TRIGGER (v1.39): heavy modes MUST page out at session end. Signal it here so the
+    # LLM cannot forget — SKILL.md makes acting on `persist_due` mandatory before ending the session.
+    try:
+        import swap_store
+        if swap_store.persist_due(mode):
+            result["persist_due"] = {"due": True, "mode": mode,
+                "directive": "at session end call swap_store.page_out(session_id, memory_db, snapshot) "
+                             "and upload its drive_manifest to APEX/swap/<session>/ (or the chosen "
+                             "backend); print the returned log so the user sees the page-out"}
+    except Exception:
+        pass
     if candidates:
         result["pmi_decision"] = pmi_converge(candidates)
     # audit P3: close the loop in code — record the run into the snapshot (C5) so the end

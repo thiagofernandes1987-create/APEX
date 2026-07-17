@@ -24,6 +24,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 
 HERE = os.path.dirname(__file__)
 ROOT = os.path.dirname(HERE)
@@ -110,6 +111,17 @@ def research(question, source=None):
     return deep_research.research(question, source=source)
 
 
+def persist(session_id=None, backend=None):
+    """Explicit page-out trigger: swap the current session's durable memory to the swap store and,
+    for the drive-swap backend, return the manifest for Claude to upload to Drive. Prints the log."""
+    import swap_store
+    sid = session_id or time.strftime("session-%Y%m%d%H%M%S", time.gmtime())
+    be = backend or _config.load().get("persist_backend") or "local"
+    res = swap_store.page_out(sid, memory_db=os.path.expanduser("~/.apex-method/memory.db"),
+                              snapshot={"objective": "session page-out via menu"}, backend=be)
+    return res
+
+
 def show():
     cfg = _config.load()
     return {
@@ -119,8 +131,10 @@ def show():
             "2_modes": f"menu.py modes DEEP,SCIENTIFIC — set preferred modes (now: {cfg['preferred_modes']})",
             "3_options": (f"menu.py set router_backend char|word|st (now: {cfg['router_backend']}) · "
                           f"set discovery_source native|search|both (now: {cfg['discovery_source']}) · "
-                          f"set min_installs {cfg['min_installs']}"),
+                          f"set min_mode DEEP (force pipeline; now: {cfg.get('min_mode')}) · "
+                          f"set persist_backend drive-swap|git|zip|local (now: {cfg.get('persist_backend')})"),
             "4_research": "menu.py research \"<question>\" --source native|search|both — goal-like deep research",
+            "5_persist": "menu.py persist [session_id] [backend] — page the session's memory out to the swap store (Drive/git/zip/local)",
         },
         "preferences": cfg,
     }
@@ -146,6 +160,14 @@ def main():
         print(f"MODE {out['mode']} | SOURCE {out['source']} | STOP {out['stop_reason']} "
               f"after {out['rounds_run']} rounds | trace {out['reliability_trace']}")
         print(f"staged installs needing approval (H5): {len(out['staged_installs'])}")
+    elif cmd == "persist":
+        sid = a[1] if len(a) >= 2 else None
+        be = a[2] if len(a) >= 3 else None
+        res = persist(sid, be)
+        print(res["log"])
+        print(json.dumps({"written": res["written"], "counts": res["counts"],
+                          "drive_manifest_files": [m["path"] for m in res["drive_manifest"]]},
+                         indent=1, ensure_ascii=False))
     else:
         print(json.dumps(show(), indent=1, ensure_ascii=False))
 
