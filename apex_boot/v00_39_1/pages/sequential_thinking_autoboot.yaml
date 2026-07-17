@@ -1,4 +1,5 @@
 sequential_thinking_autoboot:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   executor: LLM_BEHAVIOR
   version: v00.35.0
   opp: OPP-123

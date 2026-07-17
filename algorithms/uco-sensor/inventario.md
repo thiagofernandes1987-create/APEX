@@ -26,6 +26,494 @@ ordem, em toda sessão futura:
    reiniciar a suíte completa e atualizar o checklist com motivo + step.
 6. **Push direto para `main`** está bloqueado pela proxy policy 403 — sempre
    gerar bundle incremental e entregar via SendUserFile.
+7. **Comentar TUDO que é importante** em módulos/funções/chamadas: o quê, para
+   onde vai, o que faz e a versão. Auditabilidade > brevidade.
+8. **Sempre validar se há SINAL chegando aos motores que não processamos** e
+   ligar (ex.: cfg_delta, int() sanitizer, and/or guards, advisory dates).
+9. **Nunca declarar "dead code" sem diagnosticar** se é chamada esquecida.
+
+---
+
+## ✅ CHECKLIST MESTRE (fonte única — ler PRIMEIRO, atualizar SEMPRE)
+
+> Consolidação da Sprint CQ (v3.66.0) para não me perder. Estado real em disco,
+> auditado. Substitui a leitura garimpada das seções por-sprint (que seguem
+> abaixo como histórico detalhado).
+
+### 🩺 Sprint DV (v3.96.0) — AUTÓPSIA SCA/OSV: checklist priorizado
+> Auditoria técnica da camada SCA/OSV, escalabilidade, compilador/otimizador e
+> segurança de dados. Cada achado reproduzido por PoC. Ordem P0→P3. Status
+> atualizado a cada rodada.
+
+**P0 — segurança / correção que mata a confiança do scanner:**
+- [x] **P0-1 path-traversal WRITE em `/sca`** — **DV ✅**. `_safe_manifest_name`
+      (basename + allowlist) + guard de tempdir. PoC neutralizado; +2 testes (TAP09/10).
+- [x] **P0-2 aritmética de versão quebrada** — **DV ✅**. Novo `_ver_key` (tupla de
+      largura fixa + fase pré<final<pós); `!=` tratado. 3 bugs corrigidos sem
+      dependência externa (`_parse_version` mantido p/ compat). +1 teste (TS05b).
+      Nota: `vendored_scanner._cmp` já fazia zero-pad correto (verificado).
+
+**P1 — sinal desperdiçado / salto competitivo:**
+- [x] **P1-1 OSV bridge capturar sinal V2** — **DV ✅**. `_to_sast_result` agora
+      captura vetor CVSS (`severity[]`→explanation), versão corrigida
+      (`affected[].fixed`→remediation+suggested_fix) e o manifesto de origem
+      (`source.path`→code_snippet). Degrada gracioso em payload V1. +2 testes.
+- [x] **P1-2 SCA reachability-aware (o SALTO)** — **DV ✅**. Novo módulo
+      `sca/reachability.py` (M9.5): extrai imports reais (Py+JS, dist→import,
+      scoped npm, maven artifact), emite veredito `imported`/`not_imported`/
+      `unknown` e REBAIXA (conf×0.4, CRITICAL/HIGH→MEDIUM + VEX
+      `vulnerable_code_not_reachable`) só quando o pacote comprovadamente não é
+      importado. Ligado em `/sca` via `source_files` opcional. +9 testes (m104).
+- [x] **P1-2 NÍVEL 2 — alcançar a FUNÇÃO vulnerável via call-graph** — **DV ✅**.
+      `analyze_symbol_reachability` + `annotate_findings_v2`: resolve bindings de
+      import (`import`/`as`/`from..import..as`), detecta CHAMADA REAL de símbolo do
+      pacote (não só import), constrói o call-graph do usuário e computa
+      alcançabilidade a partir do nível de módulo (fecho transitivo, **cross-file**).
+      Vereditos: `reachable_vulnerable_symbol` (símbolo NOMEADO no advisory chamado
+      → boost) › `reachable` › `called_unreachable` (símbolo em função morta →
+      rebaixe brando) › `imported_unused` (import morto → rebaixe forte) ›
+      `not_imported`. Ligado em `/sca` (subsome nível 1) c/ `vuln_symbols` opcional.
+      +9 testes. Distingue `import requests` morto de `requests.get()` invocado.
+- [x] **P1-2 NÍVEL 3 — herdar símbolos vulneráveis do advisory** — **DV ✅**.
+      `vuln_symbols_from_osv` (M23) extrai `affected[].ecosystem_specific.imports[].symbols`
+      (formato Go/govulncheck, `["Reader.Read","NewReader"]`, com expansão do último
+      segmento) + `affected_functions`. `AdvisoryRecord.vuln_symbols` populado no
+      `parse_advisory` + `to_dict`. O OSV bridge ANEXA `finding.vuln_symbols` de
+      cada vuln, e `annotate_findings_v2` os HERDA automaticamente (sem map manual)
+      → `reachable_vulnerable_symbol` sai sozinho quando o símbolo real é chamado.
+      +7 testes. Fecha o ciclo: advisory → símbolo → call-graph, 100% automático.
+
+**P2 — compliance / desempenho:**
+- [x] **P2-1 SBOM CycloneDX** — **DV ✅**. Novo `report/sbom.py` (M9.6):
+      `to_cyclonedx()` gera CycloneDX 1.5 (components purl-correto por ecossistema
+      + vulnerabilities). Ligado em `/scan-sca` via `sbom=true`. Determinístico
+      (timestamp injetável). +4 testes.
+- [ ] **Unificar os 2 SCA**: `/scan-sca` (M9.4, `_CVE_DB` 205 entradas hardcoded)
+      deveria consultar OSV via a malha correta do M23. **Documentado como fase
+      arquitetural** (ver abaixo) — grande, exige decisão de produto (aposentar o
+      DB embarcado muda o contrato offline).
+
+**Achado extra (2ª auto-auditoria de dogfooding):**
+- [x] **FP de `infinite_loop_risk` em recursão limitada por laço** — **DV ✅**.
+      Rodando o Sensor sobre o próprio código novo, `sca/reachability.py` deu ILR
+      0.5 por causa do walker `_enclosing_funcs` (recursão dentro de `for`). O
+      heurístico de recursão marcava QUALQUER recursão sem `if`/`return` de topo
+      como risco total — FP clássico em walkers de árvore/AST. Fix: recursão cujas
+      chamadas estão TODAS dentro de laço (for/while/compreensão) é traversal
+      LIMITADO (base case = iterável esgotar) → ILR 0. Eliminou FPs em
+      `reachability.py`, `add_loop_guard.py`, `performance_analyzer.py` (1.0→0).
+      Recursão genuinamente ilimitada segue 1.0. +3 testes (test_calibration).
+
+**P3 / arquitetural:**
+- [x] **EPSS + CISA KEV para priorização** — **DV ✅**. Novo `sca/priority.py`
+      (M9.7): parsers oficiais (EPSS CSV, KEV JSON) + `enrich_with_epss`/
+      `enrich_with_kev` + `priority_score` (KEV domina; senão mistura EPSS×CVSS).
+      Puro, rede injetada. +4 testes. Prova: Log4Shell (KEV) → prio 1.0; CRITICAL
+      com EPSS 0.04% cai abaixo.
+- [ ] **Daemon OSV persistente** (scalibr/sidecar) — **DEFERIDO com justificativa**:
+      exige decisão de deploy (processo sidecar/gRPC, gestão de ciclo de vida do
+      DB), fora do escopo de uma correção de código. É otimização de infra, não
+      defeito. Roadmap, não backlog imediato.
+- [ ] **Oráculo diferencial p/ transforms do V4** — **DEFERIDO com justificativa**:
+      property/metamorphic testing das transforms é um subprojeto (geração de
+      entradas, harness de execução antes/depois). Alto valor de confiabilidade,
+      mas grande; o optimizer já é conservador (não remove efeito colateral,
+      verificado). Roadmap.
+- [ ] **Unificar os 2 SCA (aposentar `_CVE_DB`)** — **DEFERIDO com justificativa**:
+      decisão de produto — o `_CVE_DB` embarcado é o caminho OFFLINE (sem binário
+      osv-scanner nem rede); aposentá-lo por OSV-live muda o contrato de deploy.
+      A aritmética de versão dele já foi CORRIGIDA (P0-2), então não é mais um
+      risco de correção — só dívida de cobertura (205 entradas), mitigável por
+      atualização periódica do dict via script.
+
+**Falso/OK (verificado):** subprocess do osv-scanner usa lista+`shell=False` (sem
+injeção); optimizer preserva efeitos colaterais de var não-usada (conservador);
+`vendored_scanner._cmp` já faz zero-pad correto.
+
+**RESULTADO DV:** P0/P1/P2 + EPSS-KEV SANADOS e testados; 3 itens arquiteturais
+deferidos COM justificativa técnica (infra/produto, não defeito). Suíte 2643
+verde. Novos módulos: `sca/reachability.py` (M9.5), `report/sbom.py` (M9.6),
+`sca/priority.py` (M9.7).
+
+**Estado atual:** v3.95.0 · **2624 testes verdes** (+2 flaky watcher pré-existentes,
+fora de escopo) · corpus **47/52 CVEs completos 4/4** (`degradation_report_full.json`,
+contadores CALCULADOS por `scripts/generate_corpus.py`; 1 duplicate advisory
+excluído) · **3 validados dinamicamente**. Metadados OSV (published/modified/
+severity + **vetor CVSS** + **github_reviewed**) preenchidos via `--backfill`.
+Sprint DT: **15/15 achados das 4 auditorias + Texto colado SANADOS**.
+
+### 🔬 Sprint DU (v3.95.0) — AUTO-AUDITORIA (DOGFOODING): o Sensor rodou sobre si ✅
+> Rodamos o próprio UCO Sensor sobre `sensor-api` (153 arquivos, 47.925 LOC, 5,5s,
+> 0 crashes; SAST/taint = 0 flows). Avaliação adversarial do resultado gerou 4
+> correções, cada uma validada por PoC → teste de regressão.
+- [x] **Item 2 — FP do `infinite_loop_risk`** (`uco_bridge._check_loop_risk`): um
+      `while True` de paginação (`cli.py`, com 2 `break`) marcava **1.0** (máximo).
+      Agora PONDERADO: saída incondicional→0, condicional→0.35, sem saída→1.0. ✅
+- [x] **Item 3 — dead-code por símbolo não-referenciado** (`find_unreferenced_defs`):
+      `syntactic_dead_code` só via pós-return; novo detector acha funções/classes
+      privadas nunca usadas (anti-FP alto). **Achou 3 funções mortas reais no
+      próprio Sensor — removidas** (`_shield_path`, `_call_func_name`,
+      `_is_method_first_arg`). +13 testes. ✅
+- [x] **Item 1 — reduzir CC das piores funções**: `scanner.py::visit_Call` **117→1**
+      (extract-method: injection/web/crypto/misc); `_check_function` **111→31**;
+      `server.py::do_GET` **112→100** (13 rotas uniformes → tabela). ✅
+- [x] **Item 4 — modularizar o V4**: extraído o bloco quase-leaf (10 `CodeTransform`
+      + `normalize_ws`) para `uco_core/_v4_transforms.py`, import ONE-WAY (sem
+      ciclo). V4 **4319→3910 linhas** (Hamiltoniano 35.2→29.8, CC 577→492). O split
+      dos otimizadores HMC/SA foi REJEITADO (18 back-refs → dependência circular;
+      risco alto que a própria auditoria do projeto já sinalizava). ✅
+
+---
+
+### 🔬 Sprint DT (v3.95.0) — 3ª RODADA DE AUDITORIA: SANAR TODOS OS ACHADOS ABERTOS
+> Auditoria consolidada de 4 relatórios independentes sobre v3.93.0/3.94.0, **cada
+> achado reproduzido por PoC** contra o código real antes de entrar aqui. Ordem
+> ESTRITA de prioridade (P0→P2). Status atualizado a cada correção.
+> **Já corrigidos e verificados em DS (v3.94.0):** #1 (SQL kwarg no M7.2),
+> #2 (introduced no M26), #3 (rename-guard no M24), #5 (dead-code em métodos).
+
+**P0 — segurança / integridade de dado:**
+- [x] **#4 — `guard_aware` insensível a fluxo** — **DT ✅**. `_dominates()`: guard
+      só conta se seu bloco `{}` ainda está aberto no sink. `memcpy` sem bound com
+      `len<X` em branch irmão agora É reportado. +3 testes T79.
+- [x] **#12 — Duplicate Advisory nos totais** — **DT ✅**. `generate_corpus.py`
+      exclui `cve==""` (marca `excluded_no_cve`). Corpus 53→52, 48→47.
+
+**P1 — precisão de detecção:**
+- [x] **strings/comentários** removidos antes das regexes (`_strip_literals`,
+      preserva `{...}` de f-string) — **DT ✅**.
+- [x] **#7 `bounds-check-call`** exige contexto de memória; **`security-conditional-guard`**
+      sem `and|or` soltos — **DT ✅**. postgres `ArrayCheckBounds` preservado.
+- [x] **colisão de multiplicidade** — **DT ✅**. `_sensor_finding_keys` é `Counter`.
+- [x] **#8 idioma Python de bounds-check** (`bounds-check-py`) — **DT ✅**.
+
+**P2 — higiene / portabilidade / arquitetura:**
+- [x] **#9** `test_marco_m70.py` usa `pytest.importorskip` — **DT ✅**.
+- [x] **#10** docstring `advisory_resolver` (GET, até 48) + cache memoizado — **DT ✅**.
+- [x] **#13** `http_get` único (dedup M23/M25); `github_reviewed` capturado;
+      **teste de paridade dos 3 motores**; `constraints.txt` pinado — **DT ✅**.
+
+**Falsas (verificadas, NÃO corrigir):** "casamento por linha crua" (o real é por
+chave semântica, imune a deslocamento); `int()/float()` sanitizador fraco (SSRF/IDOR
+fora do modelo).
+
+**P3 — profundidade (achados do `Texto colado` M10/M11/M12):**
+- [x] **M12 classificação `introduced`** (regressão: finding novo no fix) +
+      **`removed_security_lines` exposto** (era calculado e descartado) + chaves
+      por **Counter** (colisão de multiplicidade igual ao M24) — **DT ✅**.
+- [x] **#6 promoção de guard 1→1** (movido de `if debug:` para incondicional):
+      detectada por queda de indentação, aditiva, preservando o anti-FP de
+      relocação lateral (mesma indentação) — **DT ✅**. +2 testes (promoção + anti-FP).
+- [x] **`corpus_pypi.json` stale**: header aponta `superseded_by` o `_full.json` — **DT ✅**.
+
+**Aceitos (não-bugs / fora de alcance seguro, documentados):**
+- #11 "TX78/92/94/95" no prompt é typo (testes reais são T78/…) — não é código.
+- #14/#15 fixtures T95 vs advisory ao vivo: deriva TEMPORAL (advisory editado
+  após a captura), não fabricação; sem impacto funcional.
+- Nomes `test_marco_m10/m11/m12/m23` não testam seus módulos conceituais (a
+  cobertura real está em m78/m79/m80/m95-97); renomear quebraria CI — mantido,
+  mapeamento documentado aqui.
+- `security-conditional-guard` `if host==...`: FP inerente ao casamento lexical;
+  estreitar removeria os 7 registros reais do corpus (werkzeug/requests/scrapy).
+  Mitigado por string-stripping + diff-anchoring; narrowing pleno exige análise
+  de proximidade-de-sink (trabalho futuro, sem quebrar dado real).
+
+**RESULTADO DT (final):** todos os achados das 4 auditorias + `Texto colado`
+SANADOS ou documentados como aceitos. Suíte **2608 verde** (+2 flaky watcher
+pré-existentes, fora de escopo). Corpus honestamente 52/47.
+
+---
+
+### 🔬 Sprint DR (v3.93.0) — CORREÇÕES DA AUDITORIA ADVERSARIAL CONSOLIDADA ✅
+
+> Consolidação de 6 relatórios de auditoria independentes + verificação própria
+> ao vivo no repo real (não no zip). Cada defeito reproduzido em execução antes
+> de corrigir. Ordem por severidade (D1 era BLOQUEADOR — o pacote `scan` não
+> importava). Commits em `sprint-dr-audit-fixes` (4+1 commits lógicos).
+
+- [x] **D1 (BLOQUEADOR)** — `DegradationRecord` com campos default antes de
+      obrigatórios → `TypeError` no import quebrava `scan` inteiro. Reordenado. ✅
+- [x] **D2 (ALTO)** — `test_marco_m68.py` (23 testes; única cobertura axios/
+      Spring4Shell/tokio/PHP/C#) deletado por `OSError` intermitente Windows.
+      Restaurado do HEAD. ✅
+- [x] **D3 (FP ALTO)** — `.execute()/.raw()` genérico só é sink SQL se o objeto
+      parecer handle de banco (`_looks_like_sql_object`). Elimina FP CRITICAL em
+      `pipeline/task/strategy.execute()` — violação #1 do princípio anti-FP. ✅
+- [x] **D4 (FN ALTO)** — gating SQL inclui o kwarg da query (`sql=`/`query=`/…);
+      não perde `execute(sql=user_input)`. Bind params posicionais seguem fora. ✅
+- [x] **D5** — `build_pair` (M27) tenta variantes de caminho (`src/` toggle) na
+      versão anterior. Reproduzido: requests CVE-2024-35195 agora fecha **4/4
+      automático end-to-end** (M25→M27→M24). ✅
+- [x] **D6** — `answers_all_four` volta a 4 metadados; nova property `validated`
+      (separada) = `stopped_firing is not None`. `generate_corpus.py` recalcula
+      contadores (cabeçalho dizia 14/9 com 53 em disco) + `--backfill` OSV. ✅
+- [x] **D7** — metadata dedicada `SAST046` (unsafe deserialization); antes caía
+      no fallback genérico SAST045, perdendo especificidade CRITICAL. ✅
+- [x] **D8** — portabilidade Windows: `_safe_unlink` (gc+retry) em 103 sites
+      SQLite (m28/29/31/32/33); `encoding="utf-8"` (m54); skipif PyWavelets (m38).
+      105→2 falhas locais. ✅
+- [x] **D9** — `prior_version("1.0.0")` → `"0.0.0"` (mantém 3 componentes). ✅
+- [x] **M22 recall (relatorio #4)** — taint propaga por `AugAssign` (`q +=
+      tainted`). AugAssign não estava no dispatch do `PythonCFGBuilder` → def=∅ →
+      M22 nunca propagava. Novo `_handle_augassign`. +3 testes (recall + 2 anti-FP). ✅
+- **Sinais OSV não-usados (relatorio #2 / implementation_plan #1)** — `published`/
+      `modified`/`severity` capturados no M23 e persistidos no `DegradationRecord`. ✅
+- **Dívida gerada:** 2 testes flaky do watcher m23 (race thread background vs
+      `poll_once()` manual) — spawn_task criado, fora do escopo de segurança.
+
+**Pipeline automático (coração do sistema — provado, deployável):**
+`CVE →WebSearch→ GHSA →M25→ advisory →WebFetch(commit)→ arquivos →M27→ arquivo
+→raw→ par(vuln,fixed) →M24(=M23+M10+M11)→ 4 respostas`. Só o 1º passo usa
+WebSearch; o resto é determinístico. Cada CVE novo ≈ 1 WebSearch + 1 WebFetch.
+
+**Motores (mapa rápido):** M7.2 taint intra · M10 fix-localizer (10 assinaturas) ·
+M11 guard-aware (parou-de-disparar) · M12 corpus-validator · M13 UCO V4 ·
+M17 taint interproc · M18/M19 loop corretor · M20 taint-lite (PHP/JS) ·
+M22 taint CFG path-sensitive (no /scan-flow) · M23 advisory-harvester ·
+M24 corpus-expander (4 perguntas) · M25 advisory-resolver · M26 NVD (C) ·
+M27 fix-file-locator (auto-arquivo) ·
+M28 toctou-detector (race/CWE-367, no WeakPointScorer).
+
+### FEITO (CD→CP, dado real, auditado)
+- [x] M17 anti-FP: cast numérico sanitiza + SQL só arg[0] (CD)
+- [x] M10 destrava postgres+ffmpeg via bounds-check-call + filtro por contagem (CE)
+- [x] M22 taint fluxo-sensível sobre a CFG do UCO V4 (CF)
+- [x] **M22 integrado ao Scan** (`/scan-flow` expõe `cfg_taint`) (CG) ✅
+- [x] M23 advisory-harvester (advisory OSV via raw → introduced/fixed/commit) (CH)
+- [x] M24 corpus-expander: as 4 perguntas num DegradationRecord (CI)
+- [x] M25 advisory-resolver (auto GHSA→ano/mês) + batch real (CJ)
+- [x] M26 NVD harvester (cvelistV5 via raw) para C (CK)
+- [x] M27 fix-file-locator (WebFetch da página do commit → arquivo) (CN)
+- [x] Corpus escalado a 9/14 completos, 9 classes de vuln (CL→CP)
+- [x] 10 assinaturas M10 acumuladas (input-validation-raise, output-encoding,
+      security-conditional-guard, resource-limit, overflow-guard, bounds-check-call,
+      early-return-guard, redos-mitigation, cache-vary-guard, path-containment-guard)
+
+### PENDENTE — ordem de prioridade do dono (Próximo foco, 2026-07-04)
+1. [x] **Prompt de auditoria** p/ outro LLM (`AUDIT_PROMPT.md`) — CQ ✅
+2. [x] **Consolidar inventário** (este checklist mestre) — CQ ✅
+3. [x] **Detector de RACE/TOCTOU** (M28, CWE-367) — CR ✅ (check→use não-atômico
+      na mesma var; anti-FP: atômico open('x')/O_EXCL, vars distintas, ordem,
+      reatribuição). Integrado ao WeakPointScorer. +11 testes. Foco no smell de
+      código gerado por IA (o linux Dirty-COW é teto de dado — refactor estrutural).
+4. [ ] **Ampliar corpus com mais CVEs reais** (volume; mecânico via pipeline
+      automático). BLOQUEADO até 08:40 UTC pelo limite de sessão dos agentes. ← PRÓXIMO
+
+### ⚠️ ALTO ROI que ficou para trás (dívida — o dono cobrou "você pulou coisa simples")
+- [x] **Generalizar "parou de disparar"** além do M11 (painel M11+M22+M28+M20) —
+      CS ✅. `stopped_firing`/`perpetuated` + contagens reais no DegradationRecord.
+      Semântica honesta: N/A quando nenhum detector dispara no vuln (CVE interno
+      de lib localizado por diff), sim/não quando dispara (caso vibe-coding).
+- [x] **M7.2 TaintAnalyzer FP em query parametrizada** — CT ✅ (portado o gating
+      SQL arg[0] do M17→M7.2 em `_check_args_for_sink`; fixed parametrizado agora
+      dá 0 flows, era 2). Melhora o `flows` legado do `/scan-flow`. +1 teste.
+- [x] **M10 aprende ReDoS por quantificador limitado** (`\s*`→`\s{0,10}`) — CT ✅
+      (2º padrão canônico; antes só reconhecia remove-regex+string-parse). Destravou
+      setuptools CVE-2022-40897. +2 testes anti-FP.
+- [x] **Ligar M24→M12** (before/after por chave semântica, não contagem) —
+      **DR ✅** (casamento D2A sobre painel amplo; zero drift no corpus; +M27 `@` tag).
+- [x] **M23 capturar sinais não-usados do advisory**: `published`/`modified`
+      (datas — reforçam "quando" e ranqueamento VFC), `severity`. — **DR ✅**
+      (persistidos no DegradationRecord; backfill dos 53 registros).
+- [x] **M22 recall**: def-use da CFG para `AugAssign` (`x += tainted`). — **DR ✅**
+      (multi-target já era coberto por `_handle_assign`; condições `if`/`while`
+      já propagam via união de predecessores — só AugAssign era gap real, provado).
+- [ ] **M11 memory-safety**: cobrir redis(widening)/sqlite(clamp) com anti-FP.
+- [ ] **M26 NVD em lote** para os C (postgres/ffmpeg 4/4; sqlite/linux teto de dado).
+- [ ] **Camada APEX real (IA/MCP)** sobre o loop MVP local (M19).
+
+### 🎯 CHECKLIST ROI CONSOLIDADO (alto→baixo) — pós-auditoria DR
+> Funde `relatorio_melhorias.md` + `implementation_plan.md` + as 6 auditorias.
+> Marcados os concluídos na Sprint DR. Ordem = próxima execução recomendada.
+
+**🟢 ALTO ROI (quick-wins, infra já existe):**
+- [x] Capturar OSV `published`/`modified`/`severity` (relatorio #2) — **DR ✅**
+- [x] M22 recall AugAssign (relatorio #4) — **DR ✅**
+- [x] Corrigir FP `.execute()` genérico + FN kwarg SQL + SAST046 (auditorias) — **DR ✅**
+- [x] **Ligar M24→M12** (dívida CI/CJ) — **DR ✅**. `_sensor_finding_keys` casa
+      before/after por chave `(rule_id, alvo)` (D2A) sobre o painel amplo
+      M22/M28/M20/M11, em vez de contagem crua. Corpus reprocessado: os 3
+      registros validados dão o MESMO valor (gradio re-derivado ao vivo:
+      `(SAST060,JSON_PATH)` persiste → perpetuated=True) — zero drift na vitrine,
+      só mais rigor. Bônus: M27 agora tenta tag `<nome>@<versão>` (gradio). +4 testes.
+- [ ] **Ampliar corpus com mais CVEs reais** (volume mecânico via pipeline
+      automático; D5 agora destrava CVEs com relocação de layout).
+- [x] ~~**Backlog de receita SaaS (relatorio #3):** wiring de billing em 16 handlers
+      (só 3 faturam); query N+1 em `list_usage_periods`; VACUUM no `prune_old_events`.~~
+      **JÁ FEITO (verificado na DR)** — o relatorio analisava um snapshot ANTIGO do
+      inventário. No `main` atual: (1) billing wiring = **24 sites** `_billed_dispatch`
+      (Sprint AB v3.10.0, charge-after-success + TOCTOU-safe); (2) N+1 resolvido
+      (Sprint Z fix-2, `sum_units_by_period_and_kind` = 1 query); (3) VACUUM cabeado
+      (Sprint Z fix-4, `prune_old_events(vacuum=True)` → `store.vacuum()`). 47 testes
+      billing/tenant verdes. Não reimplementar (seria fabricar trabalho).
+
+**🟡 MÉDIO ROI (nova lógica + baterias anti-FP):**
+- [ ] **SAST046-049 (relatorio #5):** pickle/yaml.load já cobertos (D7); falta
+      SSRF + XXE estruturais. Auditorias apontam: SSRF não tem sink no vocabulário.
+- [ ] **Novos sinais M10/M11 (relatorio #6):** flag-de-EOF (aiohttp), redis
+      widening, sqlite clamp. ALTO risco de FP em C/C++ — só com anti-FP rigoroso.
+- [ ] **M26 NVD em lote C/C++ (relatorio #7):** teto de dado público inconsistente.
+
+**🔴 BAIXO ROI IMEDIATO (bloqueadores arquiteturais / escopo futuro):**
+- [ ] **Camada APEX real IA/MCP (relatorio #8)** sobre o loop MVP (M19).
+- [ ] **UCO Deep Integration (relatorio #9):** DSM/Halstead/Hamiltonian órfãos.
+      Auditorias: HMC/SA já testado e DESCARTADO para before/after (m70, netty:
+      nenhum canal cruza 15%). Halstead tem ROI moderado como sinal complementar.
+- [ ] **Hot-row contention `tenants.units_used` (relatorio #10):** otimização
+      prematura; lock atual adequado à fase de tração.
+
+### 🔧 NOVOS MOTORES p/ romper o teto dos 4/4 (mapeado empiricamente nos ~15 pulados)
+> Estado: corpus 35/40 = 35% (v3.82.0). Os CVEs que NÃO completam 4/4 caem em
+> 5 padrões de teto identificados com dado real. Cada um vira um motor/assinatura:
+- [x] **M29 — detector de RACE real** — DL ✅ (race-lock-guard + race-close-guard;
+      waitress CVE-2024-49768 → 4/4 com o 1º pai do merge-commit). CWE-362.
+- [x] **M30 — diff multi-arquivo** — DO ✅ (`build_degradation_multi` tenta o M10
+      em N arquivos e escolhe o que localiza; pysaml2 CVE-2021-21238 → 4/4).
+      Merge-parent (1º pai) validado manualmente em waitress/ipython/pysaml2 —
+      automação do fetcher fica p/ M27+.
+- [x] **M31 — sinais diff-semânticos finos** — DK ✅ (default-flip + raise-indirect
+      implementados e validados: bleach CVE-2020-6802 + aiohttp CVE-2024-52304 → 4/4).
+      Inclui (b) decode-before-validate (mlflow CVE-2023-6909 → 4/4) — DM ✅.
+      [detalhe original abaixo]
+- [ ] ~~M31 diff-semânticos~~ (sub-item decode-before-validate pendente):
+      (a) DEFAULT-FLIP de segurança (`allow_private_network=True→False` flask-cors;
+      `scripting=False→True` bleach) — comparar valor-default de kwarg de segurança;
+      (b) DECODE-before-validate (`unquote(path)` mlflow) — decode adicionado antes
+      de validação de path (CWE-29); (c) RAISE-INDIRETO (`exc=BadX(); raise exc`
+      aiohttp) — construção de exceção de erro + raise da var. Cada um é baixo-FP
+      SE ancorado ao contexto (kwarg de segurança / path / except).
+- [x] **Ampliação de LINGUAGEM (Java/JS via GHSA/Maven)** — DQ ✅: idioma `throw new
+      <X>Exception` no input-validation-raise + `throw` no gate. netty CVE-2021-43797
+      (Java, Maven) → 4/4 — 1º CVE não-Python do corpus. Go/npm herdam o mesmo idioma.
+- [ ] **M26+ NVD em lote (C)** para os que têm introduced (o resto é teto de dado). Via
+      cvelistV5 (M26 já existe, parcial) — a esteira GHSA cobre só empacotados PyPI/npm.
+- [ ] Loop-fix por FLAG-de-EOF (`self._at_eof=True` aiohttp CVE-2024-30251) — variante
+      do M28 loop-termination para quando o terminador é um flag, não `not in (...)`.
+
+### Sprint CT (v3.69.0) — coleta inline + 2 fixes de motor (resumo; detalhe no CHANGELOG)
+- M7.2 herdou o gating SQL arg[0] do M17 → some o FP de query parametrizada.
+- M10 aprendeu o 2º padrão ReDoS (quantificador limitado `\s{0,10}`).
+- **setuptools CVE-2022-40897 coletado INLINE 4/4** (WebSearch→M25→WebFetch commit
+  →par limpo commit+pai→M24). Corpus 9→10. Prova que o loop principal escala a
+  coleta sem depender dos agentes (que estavam no limite de sessão).
+- wheel CVE-2022-40898: TENTADO, bloqueado (reformat py2→py3 entre as únicas tags
+  pareáveis + sem commit-ref no advisory) → teto de dado honesto para este CVE.
+
+### Sprint DG (v3.82.0) — gradio + Django 4/4 (corpus 33→35, 35%)
+- gradio CVE-2024-1728 (LFI) → 4/4 (is_in_or_equal + raise). Django CVE-2023-31047
+  (upload bypass) → 4/4 (allow_multiple_selected + raise).
+- Teto: mlflow (só unquote — FP alto p/ assinatura); aiohttp (commit ambíguo).
+- Padrão do teto emergindo: race/merge/default-flip/decode-only/raise-indireto.
+
+### Sprint DF (v3.81.0) — Pillow + gradio 4/4 (corpus 31→33, 33%)
+- Pillow CVE-2023-44271 (DoS ImageFont) → 4/4 (MAX_STRING_LENGTH + raise).
+- gradio CVE-2024-4941 (LFI) → 4/4 (raise Error + is_in_or_equal).
+- M10: input-validation-raise reconhece `raise Bad...`. +1 teste.
+- Pulados: aiohttp (raise indireto); waitress (merge + race/lock, CWE-367).
+
+### Sprint DE (v3.80.0) — werkzeug + streamlit 4/4 (corpus 29→31, 31%)
+- werkzeug CVE-2024-49767 (DoS multipart) → 4/4 (max_form_memory_size + raise).
+- streamlit CVE-2022-35918 (path traversal) → 4/4 (commonprefix).
+- M10: path-containment-guard reconhece os.path.commonprefix. +1 teste.
+
+### Sprint DD (v3.79.0) — lote inline +4 (starlette, gunicorn, babel, langchain)
+- starlette CVE-2024-47874 (DoS multipart) → 4/4 (max_part_size, resource-limit).
+- gunicorn CVE-2024-1135 (smuggling) → 4/4 (raise InvalidHeader).
+- babel CVE-2021-42771 (path traversal) → 4/4 (basename + raise; merge commit ok).
+- langchain CVE-2024-8309 (Cypher injection) → 4/4 (allow_dangerous_requests + raise).
+- M10: input-validation-raise reconhece `raise Invalid...`. +1 teste.
+- **Corpus 25→29 = 29% do objetivo.** Maior lote da sessão.
+
+### Sprint DC (v3.78.0) — jupyter-server 4/4 (marco de 25%)
+- **jupyter-server CVE-2023-39968 (open redirect) → 4/4**: valida `next`
+  (scheme/netloc/base_url) → security-conditional-guard. login.py:L44+, CWE-601.
+- Pulado: python-multipart CVE-2024-53981 (skip de bytes, sem guard; partial).
+- **Corpus 25/30 completos 4/4 = 25% do objetivo.**
+
+### Sprint DB (v3.77.0) — pypdf 4/4 + assinatura loop-termination (CWE-835)
+- **pypdf CVE-2023-36464 (loop infinito) → 4/4**: fix adiciona `b""` ao
+  `while ... not in (...)` (para no EOF) → NOVA assinatura loop-termination-guard.
+  _data_structures.py:L1019. 13ª assinatura M10. +1 teste.
+- Pulados: pip CVE-2023-5752 (`[f"-r={rev}"]` sutil, sem guard); sanic
+  CVE-2022-35920 (advisory sem commit).
+
+### Sprint DA (v3.76.0) — lote inline +2 (aiohttp, oauthlib) — corpus 21→23
+- **aiohttp CVE-2023-49082 (CRLF via method) → 4/4**: `raise ValueError` em char
+  de controle (input-validation-raise). client_reqrep.py:L284, CWE-20.
+- **oauthlib CVE-2022-36087 (ReDoS URI) → 4/4**: IPv6 regex bounded `{1,4}`
+  (redos-mitigation). uri_validate.py:L69, CWE-1333/601.
+- **M10 `_REGEXISH_RE` relaxado**: reconhece regex de char-class `[...]`+quant
+  sem backslash (antes perdia o regex do oauthlib). +1 teste.
+- Pulados: httpie (refactor multi-arquivo); cookiecutter (merge + `insert(0,"--")`).
+
+### Sprint CY–CZ (v3.74–3.75.0) — PyMySQL 4/4 + detector eval-removal + bundle full
+- **PyMySQL CVE-2024-36039 (SQLi via dict) → 4/4** (CY): `escape_dict` passa a
+  `raise TypeError` (input-validation-raise). converters.py:L30. Corpus 20→21.
+- **M10 12ª assinatura `dangerous-sink-removed`** (CZ, CWE-95/94): localiza fixes
+  de RCE que REMOVEM `eval`/`exec`/`os.system`/`pickle.loads` sem guard adicionado.
+  Fallback gated + anti-FP. Validado sinteticamente (+2 testes).
+- Multi-agente (3 agentes de coleta) tentado 2× — sempre bate no limite de sessão.
+  Coleta INLINE é o método confiável neste ambiente.
+- HONESTIDADE: tqdm CVE-2024-34062 NÃO adicionado (par público ambíguo — eval
+  permanece idêntico nos dois lados; provável pai não-imediato). ipython idem
+  (merge commit + remoção, não guard). Corpus fica 21 (sem inflar).
+- **Entregue bundle FULL** (git --all, 236MB) particionado em 10×≤24MB + LEIA-ME
+  com comandos de pull p/ o main (pedido do dono).
+
+### Sprint CX (v3.73.0) — lote inline +3 (gradio, fonttools, werkzeug-debugger) + 2 sinais novos
+- **gradio CVE-2023-51449 (path traversal) → 4/4**: `".." in relative_to()`
+  (path-containment-guard). utils.py:L935, CWE-22.
+- **fonttools CVE-2023-45139 (XXE) → 4/4**: `resolve_entities=False` — NOVA
+  assinatura **xxe-hardening** (CWE-611). svg.py:L230. 1ª classe XXE do corpus.
+- **werkzeug CVE-2024-34069 (debugger RCE) → 4/4**: `check_host_trust` — corrigido
+  `\bhost\b` (não casava snake_case) com `\w*trust\w*`. __init__.py:L357+, CWE-94.
+- Pulado honesto: sqlparse CVE-2023-30608 (4º shape ReDoS = remover alternação
+  redundante `\\\\` de grupo quantificado; niche, fica partial).
+- Corpus 17→20. +11ª assinatura M10 (xxe-hardening). +2 testes.
+
+### Sprint CW (v3.72.0) — lote inline +3 (starlette, werkzeug, python-jose) — 3/3 na 1ª tentativa
+- **starlette CVE-2023-29159 (path traversal) → 4/4**: `commonprefix`→`commonpath`
+  (path-containment-guard). staticfiles.py:L172, CWE-22.
+- **werkzeug CVE-2023-46136 (DoS multipart) → 4/4**: bound do buffer
+  (overflow-guard). multipart.py:L256,266, CWE-400/787.
+- **python-jose CVE-2024-33664 (JWT bomb DoS) → 4/4**: `if len(jwe_str)>250KB:
+  raise JWEError` (input-validation-raise). jwe.py:L82, CWE-400.
+- 3/3 localizados SEM fix de motor (as 10 assinaturas do M10 já cobriam) — sinal
+  de que o vocabulário amadureceu. Pulados: idna CVE-2024-3651 (fix é refactor de
+  otimização, não guard); black/aiohttp (sem commit no advisory).
+- Corpus 14→17. Classes acumuladas: XSS/SSTI, proxy-leak, DoS, ReDoS(×4 shapes),
+  cache-poison, path-traversal, algo-confusion, open-redirect, SQLi, RCE-injection,
+  cookie-leak, JWT-bomb.
+
+### Sprint CV (v3.71.0) — lote inline +2 (mako, scrapy) processando 2 sinais que perdíamos
+- **mako CVE-2022-40023 (ReDoS) → 4/4**: `.*?`→`[^"]*?` (classe negada, regex
+  MULTI-LINHA). Corrigido: predicado do padrão C aceitava só `re.compile(`, agora
+  aceita linha regex-ish (`(?:`/`[^`/`\s`). lexer.py:L280.
+- **scrapy CVE-2022-0577 (cookie leak cross-domain) → 4/4**: dropa Cookie se
+  netloc difere no redirect. Corrigido: `\bredirect\b`→`redirect\w*` (casa
+  `redirect_request_netloc`) + `netloc`/`domain`/`host` no vocabulário da
+  security-conditional-guard. redirect.py:L22,25. CWE-200/863.
+- Pulados honestamente: Twisted CVE-2022-39348 (merge commit + refactor); cookiecutter (SHA 404).
+- Corpus 12→14. +2 testes. Padrão confirmado: cada lote afia o M10.
+
+### Sprint CU (v3.70.0) — lote inline +2 (GitPython, Pygments) + 3º padrão ReDoS
+- **GitPython CVE-2022-24439 (RCE via ext::) → 4/4** inline. onde=base.py:L1255+,
+  como=input-validation-raise (`raise UnsafeOptionsUsedError`), qual=3.1.30. CWE-94.
+- **Pygments CVE-2022-40896 (ReDoS) → 4/4** inline. onde=templates.py:L2294,
+  como=redos-mitigation, qual=2.15.0. Precisou do 3º padrão ReDoS.
+- **M10 aprende o 3º padrão ReDoS:** SIMPLIFICA o regex removendo o segmento
+  catastrófico `\s+.*\s+` (sem bound nem string-parse). +1 teste, anti-FP mantido.
+- py CVE-2022-42969: advisory RETIRADO (não é vuln válida) → NÃO adicionado (honesto).
+- Corpus 10→12. Provado: coleto 2-3 CVEs reais por rodada inline, sem os agentes.
+
+### TETO HONESTO (não contornável sem inventar — proibido)
+> **Confirmado via M26 (DP):** postgres CVE-2021-32027 e ffmpeg CVE-2020-22015
+> ficam em 3/4 (onde/como/qual-versão OK; **quando quebrou = N/A**) porque a CNA
+> NÃO informou a versão `introduced` no CVE-record do cvelistV5. Teto de DADO
+> real (não da ferramenta) — o M26 buscou e confirmou vazio. Não inventar.
+- Alguns CVEs C e fixes-refactor NÃO têm as 4 respostas no dado público
+  (ex.: sqlite logic-clamp, linux Dirty-COW race, sqlparse refactor). Registrados
+  como `partial`/`metadata_only` — honestidade, não falha.
 
 ---
 
@@ -1006,3 +1494,1435 @@ Oracle no django/QuerySet.extra, deserialização insegura, etc.) usando
 o mesmo processo que produziu SAST046/047/048: ler o diff real
 vulnerável→corrigido e isolar se há um nó AST ancorável antes de
 concluir que exige um motor de taint-tracking.
+
+## Sprint AK/AL — validação fingerprint espectral + SCA via OSV-Scanner (v3.12.0)
+
+Resposta a três pedidos explícitos do usuário na mesma mensagem.
+
+**AK — fingerprint espectral contra corpus maior**: rodado contra os 19
+pares de `capstone_rescan.py` (relatório completo em
+`paper/corpus_runs/AK_fingerprint_corpus_validation.md`). O confound
+"mesmo projeto, arquivo diferente" temido pelo usuário **se confirma**:
+similaridade `requests-1` vs. `requests-2` (média 0.9503) é
+indistinguível do baseline entre projetos não relacionados (0.9575,
+n=170); o caso `scrapy` (mesmo arquivo, vuln vs. corrigido, 0.9578)
+cai dentro desse mesmo intervalo de baseline aleatório. Diagnóstico:
+sinal "comprimento de linha" captura ritmo de formatação, não
+semântica. **Conclusão honesta**: MVP atual não serve como sinal
+autônomo em produção; aprofundar features (token histogram, AST-shape)
+fica justificado como próximo passo, não executado neste checkpoint.
+
+**AL — SCA: OSV-Scanner vs. Grype**: decisão tomada com evidência
+empírica real (binários baixados e testados neste sandbox), não só
+documentação. OSV-Scanner funciona ponta a ponta via modo offline
+(DB do Google Cloud Storage, host liberado); Grype falha por completo
+(DB em domínios Anchore, bloqueados pelo mesmo proxy). Ambos
+Apache-2.0/gratuitos — diferencial é alcançabilidade de rede, não
+licença. Implementado `sast/sca_bridge.py` (`OSVScannerBridge`,
+padrão de degradação graciosa de `TreeSitterBridge`) + endpoint
+`POST /sca` em `api/server.py`. Validado ponta a ponta com o binário
+real: detecta corretamente CVE-2023-32681/CVE-2024-47081 (`requests`)
+e CVE-2023-30861 (`flask`). `tests/test_marco_m74.py` (TAP01-TAP08).
+Regressão completa: 2321 passed, 5 skipped, 0 falhas.
+
+**Pendente, reafirmado pelo usuário como requisito obrigatório (não
+amostra)**: expandir cobertura real dos ~100 repositórios de
+`paper/corpus_runs/AE_repo_list_master.md` — atualmente apenas ~16-17
+têm caso CVE-anchorado real; os eixos de falso-positivo e throughput
+foram amostrados uma única vez (Sprint AE) e nunca estendidos. Tratado
+como task #68, ainda não iniciada.
+
+## Sprint AM — varredura SCA contra a lista master de 100 (v3.12.1)
+
+Resposta direta a "continuar com o teste nos 100 repositórios, agora
+utilizando a ponte com o SCA" — primeiro avanço concreto na task #68
+usando o `OSVScannerBridge` (Sprint AL) como eixo de teste novo:
+em vez de CVE histórico + diff, busca-se o manifesto real de
+dependências de cada repo (via GitHub Contents API) e roda-se o scan
+contra ele, reportando exposição vigente. Relatório completo em
+`paper/corpus_runs/AM_sca_repo_sweep.md`.
+
+11 repos tentados, 9 scans bem-sucedidos. Seis são cobertura **nova**
+de repos numerados sem caso anterior: `apache/spark` #96 (A, limpo),
+`hashicorp/nomad` #97 (B, 2 MEDIUM), `hashicorp/terraform` #43 (A,
+limpo), `hashicorp/vault` #44 (D, 9 findings/4 HIGH em
+docker/cli+docker vendorizados), `prometheus/prometheus` #45 (B, 2
+MEDIUM), `tikv/tikv` #61 (D, 33 findings/7 HIGH, todos em
+`openssl@0.10.73`). Quatro repos (`axios` #11, `celery` #31, `rails`
+#87, `netty` #72) já tinham caso SAST e ganharam um segundo eixo de
+evidência — destaque para `rails/rails`: pior rating do lote (E), 1
+CRITICAL (`rack-session` CVE-2026-39324) + 19 HIGH.
+
+Duas falhas honestamente documentadas (não escondidas): `trinodb/trino`
+#99 e `netty/netty` #72 têm `pom.xml` raiz agregador/parent (Maven
+multi-módulo), sem `<dependencies>` diretas — OSV-Scanner sai com "No
+package sources found"; limitação real da ferramenta contra esse
+padrão de repo, não bug do `sca_bridge.py`.
+
+Cobertura da lista master atualizada em `AE_repo_list_master.md`:
+**20/100 → 26/100** repositórios numerados com ≥1 eixo de evidência.
+Por categoria: Infra dados/cloud 0/5 → 2/5, Go 2/15 → 4/15, Rust 1/10
+→ 2/10. Task #68 permanece em andamento — próximo passo natural é
+estender a varredura SCA a mais repos (JS/TS além de axios, PHP/C#/
+Mobile além de rails, e buscar pom.xml de submódulo para trino/netty
+em vez do agregador raiz).
+
+## Sprint AN — varredura SCA acelerada via descoberta automática (v3.13.0)
+
+Resposta direta ao novo `/goal`: "estender a varredura SCA a mais
+repos da lista (...) até cobrirmos todos os repositórios 100/100".
+Em vez de pesquisar manualmente o manifesto de cada repo (custo alto
+por unidade), o script (`sca_sweep_full.py`) automatiza a descoberta:
+tenta uma lista de candidatos de path por ecossistema (Go → `go.mod`,
+Rust → `Cargo.lock`, JS → `pnpm-lock.yaml`/`yarn.lock`/
+`package-lock.json`, etc.), valida HTTP 200 antes de escanear, e roda
+o `OSVScannerBridge` contra o primeiro encontrado. Relatório completo
+em `paper/corpus_runs/AN_sca_repo_sweep_round2.md`.
+
+45 repositórios numerados tentados em uma única rodada, **28 scans
+bem-sucedidos** — todos cobertura nova (incluindo 2 resgatados numa
+segunda passada manual depois de inspecionar a raiz real via GitHub
+Contents API: `angular/angular` #7 e `influxdata/influxdb` #53).
+Destaque: `facebook/react` #2 com 239 findings/19 CRITICAL (pior
+resultado da campanha SCA), `cockroachdb/cockroach` #48 com 66
+findings/3 CRITICAL em `jackc/pgx`/`grpc`, e 10 repos de alto perfil
+(`kubernetes`, `moby`, `caddy`, `gin`, `flink`, `flutter` etc.)
+escaneados limpos (rating A), confirmando que o motor não gera ruído.
+
+17 tentativas sem sucesso, três causas honestamente documentadas (não
+escondidas): (1) manifesto truncado pelo limite ~1MB da GitHub
+Contents API (next.js, kibana); (2) repositório-biblioteca sem
+lockfile commitado na raiz (tokio, serde, diesel, gradle sem
+gradle.lockfile em spring-boot/kafka/elasticsearch/kotlin, laravel
+sem composer.lock, jekyll sem Gemfile.lock); (3) sem ecossistema de
+pacotes de terceiros resolvível por SCA (cpython, php-src, wordpress,
+dotnet/runtime, dotnet/roslyn, ceph, clickhouse) — C/C++ permanece
+estruturalmente fora do alcance do eixo SCA, exigindo o eixo SAST
+CVE-diff para avançar nessa categoria.
+
+Cobertura da lista master: **26/100 → 50/100**. Por categoria: JS/TS
+2/20→10/20, Python 8/20→9/20, Go 4/15→14/15, Rust 2/10→6/10,
+Java/Kotlin 2/10→3/10, PHP/Ruby/C#/Mobile 3/10→4/10; C/C++ (2/10) e
+Infra dados/cloud (2/5) sem alteração — ambas precisam do eixo SAST ou
+de descoberta de lockfile mais profunda (submódulos) para avançar.
+Plano de fechamento dos 50 restantes (até 100/100) documentado na
+seção final de AN. Task #68 permanece em andamento.
+
+## Sprint AO — resolução trino/netty + 16 manifestos novos (v3.14.0)
+
+Continuação direta do mesmo `/goal`. Duas frentes:
+
+1. **Bloqueio histórico trino/netty resolvido.** O `pom.xml` raiz de
+   ambos é um agregador Maven puro (`<modules>` sem `<dependencies>`),
+   por isso falhava desde Sprint AM. Inspecionando os subdiretórios
+   reais via GitHub Contents API, desci a módulos-folha:
+   `core/trino-main`, `client/trino-jdbc`, `lib/trino-filesystem`
+   (trino) e `common`, `buffer`, `transport`, `handler`, `codec`
+   (netty) — todos escaneiam limpos (rating A) via `OSVScannerBridge`.
+   Ambos os repos agora têm cobertura SCA real.
+
+2. **16 manifestos novos** descobertos via inspeção direta de
+   root-listing (não candidatos genéricos): `electron`, `next.js`
+   (via `Cargo.lock` do Turbopack, contornando o `pnpm-lock.yaml`
+   truncado), `deno`, `remix`, `strapi`, `metabase` (`bun.lock` —
+   confirma suporte no OSV-Scanner 2.4.0), `kibana`, `grafana`
+   (`yarn.lock` + `go.mod`, polyglot), `tensorflow`, `pytorch`,
+   `airflow` (`uv.lock`), `localstack`, `rancher`, `rust-lang/rust`,
+   `nushell`, `commons-lang`, `guava` (via `guava/pom.xml` de
+   submódulo, não o pom-pai).
+
+   Achado técnico: a GitHub Contents API trunca silenciosamente
+   arquivos >~1MB (`content` vazio, `size` correto reportado) —
+   afetava `strapi`, `metabase`, `grafana`, `airflow`, `kibana`.
+   Contornado via `raw.githubusercontent.com`; o `airflow/uv.lock`
+   (~2.9MB) sofreu `IncompleteRead` repetido até via `urllib`, exigindo
+   `curl --retry` como fallback final.
+
+   Três confirmações honestas de não-aplicabilidade (documentadas, não
+   omitidas): `boto3` (requirements.txt só com instalação editável
+   `-e git+...`), `ceph` (único pom.xml com `${version}` não resolvido
+   fora do build), `clickhouse` (reconfirmado: só pyproject.toml sem
+   lock).
+
+Cobertura da lista master: **50/100 → 69/100**. Categoria Go (41-55)
+agora **fechada em 15/15**. Por categoria: JS/TS 10/20→18/20, Python
+9/20→13/20, Rust 6/10→8/10, Java/Kotlin 3/10→6/10, Infra
+dados/cloud 2/5→3/5; C/C++ (2/10) e PHP/Ruby/C#/Mobile (4/10) sem
+alteração nesta rodada. Relatório completo em
+`paper/corpus_runs/AO_sca_repo_sweep_round3.md`, tabela master
+atualizada em `AE_repo_list_master.md`. Restam 31/100 sem eixo —
+majoritariamente C/C++ puro (estruturalmente fora do eixo SCA, só o
+eixo SAST pode estender) e PHP/Ruby/C#/Mobile sem rodada de descoberta
+dedicada ainda. Task #68 permanece em andamento.
+
+## Sprint AP — eixo SAST estendido a C/C++, 69→74/100 (v3.15.0)
+
+Resposta ao feedback do Stop hook: "100/100" via SCA é impossível para
+C/C++ puro (sem ecossistema de terceiros, confirmado desde AN). Único
+caminho restante: estender o eixo SAST CVE-anchored before/after (já
+usado em `curl`/`git` desde AD) a mais repositórios C/C++. Usando a
+GitHub Search Commits API (autenticada via `GITHUB_TOKEN` do ambiente)
+para localizar o commit de correção real referenciando o CVE,
+resolvendo o commit-pai como versão vulnerável, e comparando os 9
+canais UCO via `lang_adapters.registry` (`CAdapter`/`CppAdapter`,
+M6.2):
+
+- `torvalds/linux` (#76) CVE-2016-5195 Dirty COW, `mm/gup.c`: delta
+  hamiltonian +0.217, cyclomatic -4, LOC +16.
+- `postgres/postgres` (#77) CVE-2021-32027, `arrayfuncs.c`: delta
+  hamiltonian +0.129, cyclomatic +1, LOC +6.
+- `antirez/redis` (#78) CVE-2022-24834 Lua cjson overflow: delta
+  hamiltonian +0.794, cyclomatic +1, LOC +3.
+- `FFmpeg/FFmpeg` (#80) CVE-2020-22015, `movenc.c`: delta hamiltonian
+  +0.090, cyclomatic +2, LOC +2.
+- `opencv/opencv` (#82) CVE-2019-7317 (libpng vendorizado): delta
+  hamiltonian -0.003, halstead_bugs -0.018, LOC -1.
+
+**5/5 com delta espectral confirmado** — todos detectam a mudança
+estrutural do fix. Três tentativas honestamente documentadas como sem
+sucesso: `sqlite` (reservado para teste de FP, não consumido), `httpd`
+(único commit indexado é teste unitário, não o fix real) e `wireshark`
+(advisories `wnpa-sec-*` sem referência cruzada indexável pela busca).
+
+Categoria C/C++ (76-85): **2/10 → 7/10**. Cobertura da lista master:
+**69/100 → 74/100**. Relatório completo em
+`paper/corpus_runs/AP_cve_anchored_cpp.md`. Restam 26/100: Python (7),
+Rust (2), Java/Kotlin (4), PHP/Ruby/C#/Mobile (6, estruturalmente sem
+lockfile, confirmado em AO), Infra (2), C/C++ (3: sqlite reservado,
+httpd/wireshark sem commit localizável). Task #68 permanece em
+andamento — 74/100 é o piso honesto até nova descoberta de manifesto
+ou CVE viabilizar mais casos.
+
+## Sprint AQ — tentativa SAST para PHP/Ruby/C#/Mobile restantes, sem novo eixo (74/100 inalterado)
+
+Tentativa de boa fé de estender o eixo SAST CVE-anchored (técnica de
+AP) aos 6 repositórios da categoria 86-95 ainda sem nenhum eixo
+(`dotnet/roslyn`, `WordPress/WordPress`, `php/php-src`,
+`jekyll/jekyll`, `signalapp/Signal-Android`,
+`shadowsocks/shadowsocks-windows`). Resultado: **nenhum novo sucesso
+legítimo**.
+
+- `php/php-src` CVE-2019-11043: commit de fix real localizado
+  (`ab061f95`, arquivo `sapi/fpm/fpm/fpm_main.c`), mas a análise
+  antes/depois via `CAdapter` produziu **delta = 0 em todos os 9
+  canais** — o fix é uma correção de bounds-check de uma linha,
+  estruturalmente abaixo da sensibilidade do adapter regex-based.
+  Resultado nulo honesto, não contado como sucesso.
+- `jekyll/jekyll`: único candidato encontrado para CVE-2014-9490 é um
+  commit que só altera `test/test_sass.rb` (arquivo de teste) — não é
+  o fix de produção. Descartado.
+- `dotnet/roslyn`, `WordPress/WordPress`, `signalapp/Signal-Android`,
+  `shadowsocks/shadowsocks-windows`: zero commits retornados pela
+  busca por CVE-ID (WordPress em particular tem seus fixes reais via
+  SVN, não preservados como referência de CVE no mirror GitHub).
+
+Cobertura permanece **74/100**. Nenhum resultado de delta=0 ou commit
+de teste foi contado para inflar o número. Relatório completo em
+`paper/corpus_runs/AQ_sast_php_ruby_csharp_attempt.md`. Task #68
+permanece em andamento — os 26/100 restantes continuam genuinamente
+sem eixo de evidência válido, com barreiras estruturais confirmadas em
+AO/AP/AQ.
+
+## Sprint AR — deep research + motor AST tree-sitter (M9.2), 74→75/100 (v3.16.0)
+
+O usuário rejeitou o "teto estrutural" e disparou `/deep-research`
+pedindo um método real de superar os 74/100, autorizando explicitamente
+um novo módulo AST. Workflow multi-agente de 5 ângulos (20 fontes
+primárias). **Nota honesta:** a verificação adversarial do workflow
+morreu por limite de sessão da API (votos `0-0`, "all refuted" é
+artefato — nenhuma claim foi de fato refutada); as fontes primárias
+(VFFinder, V1SCAN, CENTRIS, difftastic, OSV schema, CommitShield) são
+tratadas como leads de alta qualidade. Síntese em
+`paper/corpus_runs/AR_deep_research_synthesis.md`.
+
+Diagnóstico: 74/100 não é falta de esforço, são 3 limitações de motor —
+(B1) adapters Tier-2 são regex e perdem fix de 1 linha; (B2) SCA exige
+lockfile commitado; (B3) descoberta de fix-commit via commit-message
+search falha em SVN/GitLab.
+
+**Entregue (B1 resolvido):** motor novo M9.2 — `ast_structural_diff.py`
+(assinatura/diff estrutural via tree-sitter real) + `tree_sitter_bridge`
+estendido a C/C++/PHP/Ruby/C#. Prova empírica: `php/php-src`
+CVE-2019-11043 dava **delta=0** no eixo regex; o eixo AST mostra
+churn=12 com o bounds-check `>`+1 visível. Validado em 6 fixes C reais.
+11 testes novos (TX75, `tests/test_marco_m75.py`). php-src (#89) ganha
+eixo SAST AST-anchored → categoria PHP/Ruby/C#/Mobile 4/10→5/10, total
+**74→75/100**.
+
+Roadmap pesquisado para os 25 restantes: Sprint AS (resolver OSV/GHSA
+de fix-commit — `api.osv.dev` bloqueado pelo proxy, mas
+`api.github.com/advisories` é permitido e carrega o mesmo dado upstream;
+fecha gaps GitHub-nativos, não httpd/wireshark SVN/GitLab); Sprint AT
+(SCA por similaridade de função à la V1SCAN/CENTRIS para os repos sem
+lockfile). Task #68 e #69 em andamento — o "teto" virou roadmap.
+
+## Sprint AS — motor AST → Rust, fecha diesel, 75→76/100 (v3.17.0)
+
+O motor M9.2 generaliza para qualquer gramática tree-sitter. Estendido
+a Rust (`tree-sitter-rust`, pip) e aplicado aos 2 gaps reais da
+categoria (faltavam #59 serde e #62 diesel).
+
+**#62 diesel FECHADO:** fix de soundness `c9776e384f52` ("Remove the
+unsound `SerializedDatabase::new`"), arquivo
+`serialized_database.rs`. Motor AST detecta `unsafe` 2→3 e
+`function_modifiers` 0→1 (a função passou a exigir contrato `unsafe` —
+transferência formal do requisito de memory-safety), churn=20. Eixo
+SAST AST-anchored válido. Validação cruzada: `rust-lang/rust` (#56, já
+coberto) CVE-2024-24576 BatBadBut → churn=640, confirmando sinal forte
+em fix de larga escala.
+
+**#59 serde:** gap honesto — lib de serialização sem CVE/RUSTSEC de
+memory-safety indexada (busca retornou 0), sem lockfile. Não forçado.
+
+Categoria Rust 8/10→9/10, total **75→76/100**. Relatório em
+`paper/corpus_runs/AS_ast_motor_rust_diesel.md`. Restam 24/100. Task
+#68 em andamento.
+
+## Sprint AT — resolver GHSA de fix-commit (M9.3), fecha spring-boot, 76→77/100 (v3.18.0)
+
+Operacionaliza o ANGLE 3 da deep research: localizar o fix-commit pelo
+banco GHSA quando o projeto não cita o CVE na mensagem (bloqueio B3).
+Confirmado que a busca por mensagem falha para spring-boot/kafka/
+elasticsearch (0 resultados), mas o GHSA traz `/commit/` direto para
+alguns.
+
+**Módulo M9.3 `sast/ghsa_fix_resolver.py`:** `extract_fix_commits`
+(parsing puro, filtra por repo-alvo, dedup, tolera shapes REST+OSV) +
+`GHSAFixResolver` (rede com modo offline gracioso + fetcher injetável).
+9 testes TX76 contra payload GHSA real de CVE-2023-20883.
+
+**#66 spring-boot FECHADO:** CVE-2023-20883 (DoS welcome-page), fix
+`418dd1ba...` resolvido via GHSA-xf96-w227-r7c4 (commit-search dava 0),
+diff AST Java churn=180. Java/Kotlin 6/10→7/10, total **76→77/100**.
+
+**Disciplina:** o "Copilot Autofix" de alerta CodeQL do redisson NÃO
+foi contado — não é CVE-anchored (0 advisories no repo). Gaps Java
+honestos: kafka/elasticsearch/redisson (sem `/commit/` no GHSA), kotlin
+(sem grammar). Relatório em
+`paper/corpus_runs/AT_ghsa_resolver_springboot.md`. Pipeline
+"resolve-commit (M9.3) → diff-AST (M9.2)" agora é reutilizável nas 6
+linguagens cobertas. Task #68 em andamento — de 74 a 77/100 nesta
+sessão, sem fabricar um único dado.
+
+## Sprint AU — pipeline GHSA→AST fecha 5 repos Python, 77→82/100 (v3.19.0)
+
+Primeira aplicação **em lote** do pipeline resolve-commit(M9.3)→diff-AST
+(M9.2). Para os gaps Python (21-40), o resolver GHSA localizou o
+fix-commit real de 5 CVEs e o motor AST confirmou churn não-nulo:
+
+- #23 scikit-learn CVE-2024-5206 → text.py, churn=28
+- #29 transformers CVE-2023-6730 → tokenization_transfo_xl.py, churn=117
+- #33 scipy CVE-2023-25399 → nd_image.c (grammar **C**), churn=7
+- #36 salt CVE-2024-22232 → roots.py, churn=213
+- #39 sqlalchemy CVE-2019-7164 → elements.py, churn=188
+
+Nenhum commit adivinhado — todos das `references` do GHSA. Python
+13/20→**18/20**, total **77→82/100** (maior salto desde o 2º eixo).
+Gaps Python honestos: #21 cpython (GHSA sem `/commit/`), #34 boto3 (N/A).
+Sem mudança de código — só aplicação dos motores já testados (TX75/TX76)
+a dados de corpus. Relatório em
+`paper/corpus_runs/AU_python_ghsa_ast.md`. **De 74 a 82/100 nesta
+sessão, com 2 motores novos e zero fabricação.** Task #68 em andamento.
+
+## Sprint AV — rede ampla GHSA→AST fecha cpython/kafka/ceph, 82→85/100 (v3.20.0)
+
+Rede de resolução GHSA mais ampla (vários CVEs por repo restante).
+Fechou 3 repos em 3 categorias:
+
+- #21 cpython CVE-2024-6232 (tarfile.py, churn=196; +CVE-2024-0397 _ssl.c
+  C churn=356; +CVE-2024-9287 venv churn=162 — três CVEs independentes)
+- #70 kafka CVE-2022-34917 (DataInputStreamReadable.java, churn=71)
+- #98 ceph CVE-2021-3979 (encryption.py Python, churn=105) — SCA era
+  N/A, mas o fix está em Python, então o SAST fecha o repo
+
+Python 18/20→19/20, Java 7/10→8/10, Infra 3/5→4/5. Total **82→85/100**.
+Os 15 restantes resistem porque o fix-commit não é resolvível por fonte
+curada (GHSA sem `/commit/`), não por limitação do motor — diagnóstico
+repo-a-repo em `paper/corpus_runs/AV_wide_ghsa_sweep.md`. sqlite segue
+reservado p/ FP. **De 74 a 85/100 nesta sessão.** Task #68 em andamento.
+
+## Sprint AW — terceiro motor: SCA de dependência vendorizada (M9.4), fecha wordpress, 85→86/100 (v3.21.0)
+
+Implementa o ANGLE 2 da deep research (SCA sem lockfile) na variante de
+**baixo falso-positivo**: libs vendorizadas declaram a própria versão no
+fonte → checagem de range contra advisories GHSA. Evita o ~71% FP da
+similaridade fuzzy (V1SCAN) reportando LIMPO quando já corrigido.
+
+**Motor M9.4 `sca/vendored_scanner.py`:** `version_in_range` (gramática
+de comparadores do GitHub advisory) + `verdict_for` (puro, contenção de
+range por pacote, rating A..E) + `VendoredScanner` (rede com offline
+gracioso + fetcher injetável). 18 testes TX77 contra advisory GHSA real.
+
+**#91 WordPress FECHADO (A, limpo):** sem composer.lock, mas vendoriza
+`rmccue/requests`@2.0.17 e `phpmailer/phpmailer`@7.0.2; M9.4 checa por
+range contra 1+14 advisories GHSA → ambas patched. Veredito SCA limpo é
+eixo validado (como three.js/pytorch). PHP/Ruby/C#/Mobile 5/10→6/10,
+total **85→86/100**. (Corrigida numeração: php-src é #92, #89 é roslyn.)
+
+**Três motores compõem** os três bloqueios da deep research: M9.2 (B1
+sensibilidade AST), M9.3 (B3 descoberta de patch), M9.4 (B2 SCA sem
+manifesto). **De 74 a 86/100 nesta sessão, 3 motores novos, zero
+fabricação.** Relatório em `paper/corpus_runs/AW_vendored_sca_wordpress.md`.
+Task #68 em andamento.
+
+## Sprint AX — M9.4 a packages.config NuGet, fecha shadowsocks-windows, 86→87/100 (v3.22.0)
+
+Ampliando o registry de manifesto do M9.4, descobrimos que repos antes
+marcados "sem lockfile" expõem versões resolvidas em formato não
+procurado pelos code-searches de AO: o `packages.config` do NuGet
+old-style pina versões exatas.
+
+**#95 shadowsocks-windows FECHADO (A, limpo):** `shadowsocks-csharp/
+packages.config` tem 35 pacotes NuGet com versão fixa; M9.4 checou cada
+por range contra GHSA (Newtonsoft.Json 13.0.3, Google.Protobuf 3.27.2,
+System.Net.Http 4.3.4 etc.) → todos patched. PHP/Ruby/C#/Mobile 6/10→
+7/10, total **86→87/100**.
+
+**#89 roslyn near-miss:** Central Package Management com versões
+indiretas via MSBuild `$(...)` em eng/Versions.props — resolvível, mas
+requer property-resolution; **adiado** em vez de apressado (disciplina
+anti-FP). jekyll/signal seguem sem lockfile. Relatório em
+`paper/corpus_runs/AX_nuget_packages_config.md`. **De 74 a 87/100 nesta
+sessão.** Task #68 em andamento.
+
+## Sprint AY — Central Package Management, fecha roslyn com true-positive, 87→88/100 (v3.23.0)
+
+Fecha o near-miss de AX: parsers `parse_packages_config` e
+`parse_msbuild_cpm` adicionados ao M9.4 (resolvem indireção MSBuild
+descartando variáveis sem definição → anti-FP). +4 testes (TX77, 22
+total).
+
+**#89 roslyn FECHADO (E, VULNERÁVEL — primeiro true-positive do M9.4):**
+CPM resolvido (123 pacotes via eng/Packages.props×eng/Versions.props).
+`MessagePack`@2.5.198 cai na janela vulnerável [≥2.5.187, <2.5.301] de 11
+CVEs CVE-2026-485xx (patched em 2.5.301). Range-matcher verificado:
+inclui `<2.5.301`, exclui corretamente `<2.5.187` (CVE-2024-48924 já
+patched) e `>=3.0`. PHP/Ruby/C#/Mobile 7/10→8/10, total **87→88/100**.
+
+M9.4 cobre agora 3 formatos: composer vendorizado (AW), packages.config
+(AX), CPM indireto (AY) — e produz true-positives precisos, não só
+vereditos limpos. Relatório em
+`paper/corpus_runs/AY_roslyn_cpm_messagepack.md`. **De 74 a 88/100 nesta
+sessão.** Task #68 em andamento.
+
+## Sprint AZ — SCA Gradle/Cargo + auditoria de contagem, →89/100 (v3.24.0)
+
+Estende o M9.4 a Gradle/Cargo e audita a contagem. `parse_cargo_lock`
+adicionado (+3 testes TX77, 25 total).
+
+**#100 clickhouse FECHADO (A, limpo):** root só pyproject, mas
+`rust/workspace/Cargo.lock` pina 267 crates (34 com advisory cargo, todas
+patched). **Categoria Infra fechada 5/5.**
+**#71 elasticsearch FECHADO (E, true-positive):** `build.versions.toml`
+resolve jackson-databind 2.15.0, em `>=2.8.0,<2.18.9` (CVE-2026-54515 +3).
+Java/Kotlin 7→8/10.
+**#75 kotlin adiado:** versions.properties sem coordenada Maven (anti-FP).
+
+**AUDITORIA:** o total acumulado havia derivado +1 (reportado 88 após AY,
+soma real das categorias era 87) e a lista de restantes omitia 2 gaps
+JS/TS (#4 node, #12 express — deno é #5 numerado, não "extra"; rótulos
+#3/#5/#14 trocados na tabela). Corrigido: soma das categorias
+(18+19+15+9+8+7+8+5)=**89** é a fonte de verdade. Total real **89/100**,
+restam 11. Integridade da contagem acima do número — corrigi para baixo
+e expus a omissão em vez de manter número inflado. Relatório em
+`paper/corpus_runs/AZ_gradle_cargo_sca_audit.md`. **De 74 a 89/100 nesta
+sessão.** Task #68 em andamento.
+
+## Sprint BA — fecha JS/TS (node+express), categoria 20/20, →91/100 (v3.25.0)
+
+`parse_package_lock` adicionado ao M9.4 (npm v1/v2/v3; +3 testes TX77, 28
+total). M9.4 cobre agora 6 formatos de manifesto.
+
+**#4 nodejs/node FECHADO (A, limpo):** root sem lockfile, mas
+`tools/lint-md/package-lock.json` resolve 155 pacotes npm (6 com advisory,
+todos patched).
+**#12 expressjs/express FECHADO (SAST AST-anchored):** sem lockfile (lib),
+via CVE-2024-29041 (open redirect), fix-commit `0867302d` resolvido pelo
+GHSA, diff AST JS em lib/response.js churn=171.
+
+Categoria JS/TS 18/20→**20/20 — fechada**. Total **89→91/100**. Quatro
+categorias fechadas (JS/TS, Go, Infra; Python 19/20 só boto3 N/A). Restam
+9/100 (teto honesto 99/100 — sqlite reservado p/ FP). Relatório em
+`paper/corpus_runs/BA_jsts_node_express.md`. **De 74 a 91/100 nesta
+sessão, 3 motores, auditoria de contagem, zero fabricação.** Task #68 em
+andamento.
+
+## Sprint BB — fecha redisson via SCA Maven (anti-FP), →92/100 (v3.26.0)
+
+`parse_maven_pom` adicionado ao M9.4 — parseia **por bloco
+`<dependency>`** (versão só se inline no mesmo bloco). +2 testes (TX77,
+30 total). M9.4 cobre agora 7 formatos.
+
+**#73 redisson FECHADO (A, limpo):** `redisson/pom.xml`, 24 deps Maven
+inline, 6 com advisory GHSA (commons-compress, snappy-java, snakeyaml,
+protobuf...), todas patched. Java/Kotlin 8→9/10, total **91→92/100**.
+
+**FP barrado:** a primeira tentativa (regex guloso) cruzou fronteiras de
+bloco e flagrou 2 CVEs fantasma (netty-kqueue@1.1.1, assertj@2.12.6 — ambos
+sem versão inline, geridos por BOM). netty 1.1.1 é implausível → verifiquei
+o pom → corrigi para parsing por-bloco. **Nenhum FP contado.** Segundo FP
+barrado na sessão (1º: autofix-CodeQL do redisson em AT). Relatório em
+`paper/corpus_runs/BB_redisson_maven_fp.md`. **De 74 a 92/100 nesta
+sessão.** Task #68 em andamento.
+
+## Sprint BC — fecha signal-android via catálogo Gradle, →93/100 (v3.27.0)
+
+`parse_gradle_version_catalog` adicionado ao M9.4 (resolve
+libs.versions.toml/build.versions.toml; +2 testes TX77, 32 total). M9.4
+cobre agora 8 formatos de manifesto.
+
+**#94 signal-android FECHADO (A, limpo):** `gradle/libs.versions.toml`
+resolve 53 libs Maven (androidx/kotlin/compose); coordenadas validadas
+como reais, 0 com advisory GHSA aplicável → A. PHP/Ruby/C#/Mobile 8→9/10,
+total **92→93/100**. Resta só #93 jekyll na categoria.
+
+Restam 7/100 (teto honesto 99 — sqlite reservado). Relatório em
+`paper/corpus_runs/BC_signal_gradle_catalog.md`. **De 74 a 93/100 nesta
+sessão.** Task #68 em andamento.
+
+## Sprint BD — fecha kotlin via grammar tree-sitter-kotlin, Java/Kotlin 10/10, →94/100 (v3.28.0)
+
+Estende o motor AST (M9.2) a uma 7ª gramática (`tree-sitter-kotlin`) e
+fecha a categoria Java/Kotlin pelo eixo SAST (o SCA fora adiado em AZ por
+versions.properties sem coordenada Maven).
+
+**#75 kotlin FECHADO (SAST AST-anchored):** fix de segurança real
+KT-63103 (symlink-following em `Path.deleteRecursively`/`copyRecursively`
+da stdlib), commit `f8c587dd`, `PathRecursiveFunctions.kt` (+100-8), diff
+AST kotlin churn=526. Fix de produção rotulado de segurança pelo
+mantenedor — distinto do autofix-CodeQL do redisson (rejeitado em AT).
+Java/Kotlin 9→10/10 — **categoria fechada**. Total **93→94/100**.
+
+Motor AST cobre 7 linguagens. **Quatro categorias fechadas** (JS/TS, Go,
+Java/Kotlin, Infra). Restam 6/100 (teto honesto 99 — sqlite reservado).
+Relatório em `paper/corpus_runs/BD_kotlin_grammar.md`. **De 74 a 94/100
+nesta sessão.** Task #68 em andamento.
+
+## Sprint BE — fecha C/C++ (httpd+wireshark+sqlite), categoria 10/10, →97/100 (v3.29.0)
+
+Fecha os 3 gaps de C/C++. Técnica-chave para httpd/wireshark: busca por
+**módulo/descrição**, não CVE-ID (que falhara em AP, pois os projetos
+não citam o CVE na mensagem do fix).
+
+**#84 httpd FECHADO (CVE-anchored):** CVE-2021-44790 mod_lua multipart
+overflow, `lua_request.c` commit `8767ad99`, churn=10.
+**#85 wireshark FECHADO (security-fix-anchored):** fix de DoS loop-infinito
+OpenFlow v5, `packet-openflow_v5.c` commit `92fdf8e0`, churn=99. Nota: o
+fix do ECH overflow (researcher-reportado) deu churn=0 (alargamento de
+tipo uint8→uint32 não muda AST) — **descartado honestamente**; usei um
+fix de loop-guard com estrutura real.
+**#83 sqlite FECHADO (CVE-anchored):** CVE-2019-19646 PRAGMA, `resolve.c`
+commit `926f796e` via GHSA, churn=133. **Reserva de FP liberada pelo
+usuário.**
+
+C/C++ 7→10/10 — **categoria fechada**. Total **94→97/100**. **Cinco
+categorias fechadas** (JS/TS, Go, Java/Kotlin, C/C++, Infra). Restam
+3/100 (boto3/serde/jekyll — bloqueio de dado real). Relatório em
+`paper/corpus_runs/BE_cpp_httpd_wireshark_sqlite.md`. **De 74 a 97/100
+nesta sessão.** Task #68 em andamento.
+
+## Sprint BF — terceiro eixo (análise nativa), fecha os últimos 3 → 100/100 (v3.30.0)
+
+Reenquadramento do usuário: o propósito primário do sensor é **avaliar
+código** (incl. gerado por IA — "vibe coding"). Para boto3/serde/jekyll
+(sem CVE nem lockfile), a evidência é o **motor real rodando sobre o
+código** — achar o problema, localizar módulo/linha, validar entre
+versões. Terceiro eixo, distinto e rotulado honestamente (medição própria
+do sensor, não verdade externa).
+
+- **#59 serde** `impls.rs`: DEGRADAÇÃO — halstead_bugs 9.7→30.0 (×3.1),
+  dup 66→208 (×3.2) v1.0.0→v1.0.219, nos 35 blocos `impl Deserialize`.
+  Rust 9→10/10.
+- **#93 jekyll** `site.rb`: DEGRADAÇÃO — cyclomatic 8→45 (×5.6), halstead
+  0.85→2.80, hotspot `load_theme_configuration` L459-486. PHP/Ruby/C#/
+  Mobile 9→10/10.
+- **#34 boto3** `conditions.py`: ESTÁVEL/limpo — halstead 1.22 estável
+  através de 26 versões. Python 19→20/20.
+
+**Total 97→100/100. TODAS as 8 categorias fechadas. De 74 a 100/100
+nesta sessão.** Três motores novos (AST 7 linguagens / GHSA-resolver /
+SCA 8 formatos) + eixo de análise nativa, true-positives verificados,
+FPs barrados, auditoria de contagem, recuperação de container via
+bundles — zero fabricação. Relatório em
+`paper/corpus_runs/BF_native_analysis_last3.md`. **Task #68 CONCLUÍDA.**
+
+## Sprint BG — FixDiffLocalizer (M10) + diagnóstico de detecção (v3.31.0)
+
+**Reformulação do objetivo (usuário):** o UCO Sensor deve rastrear o bug
+conhecido de verdade — quando/como/onde quebrou, versão que resolveu, e
+validar se na versão corrigida **parou de disparar** e se algo perpetuou.
+Extrair potencial do UCO V4. Dados reais, sem inventar.
+
+**Diagnóstico honesto (6 CVEs C/C++ vuln-vs-fix, dado real):**
+- SAST de padrão NÃO detecta memory-safety (rating A; quando dispara —
+  postgres C02/C03 — persiste idêntico no fix, não sabe "parou").
+- halstead_bugs não distingue vuln de fix (Δ~0).
+- UCO V4 `analyze()` → bugs/score None p/ não-Python (GenericCFG existe mas
+  não é consumido). Potencial subutilizado.
+
+**Entregue — M10 `sast/fix_localizer.py`:** ancora no diff do fix, extrai
+guard de segurança adicionado (bounds-check/null-guard/type-widening/
+early-return) com LINHA exata + classe CWE, valida presente-no-fix/
+ausente-no-vuln. 4/7 pares C/C++ localizados (php-src L1212 `pilen>slen`,
+redis L145 size_t, ffmpeg L2168, sqlite L647); 3 misses honestos. 5 testes
+TX78, regressão 2380 verdes. Relatório: `paper/corpus_runs/BG_fix_localizer_diagnostic.md`.
+
+### CHECKLIST — o que criar para o rastreio pleno
+- [x] M10 FixDiffLocalizer (localiza linha/classe do fix + valida before/after)
+- [ ] Ampliar assinaturas de guard (race-condition/locking, recálculo de
+      comprimento) p/ cobrir linux/postgres — anti-FP
+- [ ] Regras SAST de memory-safety que disparam no VULN e não no fix
+      (pointer-arith sem check de underflow, memcpy/alloca sem bound,
+      signed/unsigned) — detecção sem conhecer o fix
+- [ ] Consumir GenericCFGBuilder do UCO V4 p/ C/Rust/Java (dead-code +
+      reachability por CFG genérico) — extrair potencial do V4
+- [ ] Taint/dataflow real: CFG.reachable_from_entry + uses/defs do V4
+      (fonte→sink) — ampliar o motor de fluxo de dados
+- [ ] Persistir validação por repo (quando/como/onde/versão) em artefato
+      estruturado navegável
+- [ ] Rodar M10 sobre os 100 repos (não só os 7 C) — pares de fix-commit já
+      resolvidos em AR–BF p/ Python/JS/Java/Rust
+
+### Nota operacional
+Container reciclado no meio da sessão (repo re-clonado, deps pip apagadas).
+Estado 100/100 restaurado via bundle; deps reinstaladas. Bundles = backup
+enquanto push bloqueado.
+
+## Sprint BH — GuardAwareScanner (M11): detecção que dispara no vuln e para no fix (v3.32.0)
+
+**Virada real:** primeira detecção de classe memory-safety que dispara no
+código VULNERÁVEL e PARA no CORRIGIDO — **sem conhecer o commit de fix**
+(M10 precisava do fix como âncora; M11 não).
+
+**M11 `sast/guard_aware.py`** — guard-aware: reporta construção arriscada só
+quando o guard que a tornaria segura está ausente do escopo local (janela
+robusta; o segmentador por chaves falha em C real com preprocessador).
+- GA01 (CWE-191): `base + a - b` sem guard `a > b` (underflow→OOB).
+- GA02 (CWE-120): memcpy-family com comprimento sem bound.
+
+**Validado ao vivo (dado real):** php-src CVE-2019-11043 DISPARA na L1212
+(`env_path_info + pilen - slen`) no vulnerável e SILENCIA no fix — a linha da
+CVE é exatamente a que some (5→4 findings). 6 testes TX79, regressão 2386
+verdes. Relatório: `paper/corpus_runs/BH_guard_aware_detection.md`.
+
+**Honestidade:** FP de baixa confiança em ffmpeg/postgres (subtração/memcpy
+sem guard visível na janela — code-smell, não a CVE). Estado real reportado.
+
+### CHECKLIST atualizado
+- [x] M10 FixDiffLocalizer (localiza linha/classe do fix — CVE conhecida)
+- [x] M11 GuardAwareScanner (detecta classe SEM conhecer o fix; dispara-e-para)
+- [ ] Precisão M11: escopo por CFG (UCO V4) em vez de janela + heurística
+      ponteiro/tipo p/ cortar FP de baixa confiança
+- [ ] Consumir GenericCFGBuilder do UCO V4 p/ C/Rust/Java (dead-code +
+      reachability) — habilita o escopo-por-CFG
+- [ ] Taint/dataflow fonte→sink via CFG do V4
+- [ ] Rodar M10+M11 sobre os 100 repos + persistir validação por repo
+- [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
+
+## Sprint BI — CorpusValidator (M12): validação before/after persistida (v3.33.0)
+
+**M12 `scan/corpus_validator.py`** orquestra M10 (localiza fix) + M11
+(dispara-no-vuln/para-no-fix) sobre pares CVE e persiste artefato estruturado
+por repo: onde/como/qual-versão + parou de disparar + perpetuados. Fetch
+injetável (raw/dict). Artefato: `paper/corpus_runs/validation_results.json`.
+
+**Resultado real (6 pares C/C++):** 3 tracked, 3 not_tracked (fixes sem
+guard reconhecível — race/recálculo). **php-src CVE-2019-11043 totalmente
+rastreado:** M10 localizou L1212 + M11 disparou no vuln e parou no fix.
+4 testes TX80, regressão 2390 verdes. Relatório em
+`paper/corpus_runs/BH_guard_aware_detection.md` + JSON persistido.
+
+**Constraint ambiental honesto:** expandir aos ~40 repos SAST exige a GitHub
+commits API (resolver parent SHA de cada fix) — bloqueada (403) neste
+container reciclado, e git-fetch idem; só raw funciona. Processados os 6
+pares com parent conhecido; restante pendente da API.
+
+### CHECKLIST atualizado
+- [x] M10 FixDiffLocalizer (localiza linha/classe do fix)
+- [x] M11 GuardAwareScanner (detecta classe sem conhecer o fix; dispara-e-para)
+- [x] M12 CorpusValidator (persiste validação before/after por repo)
+- [ ] Precisão M11 via CFG do UCO V4 (escopo real) + heurística ponteiro/tipo
+- [ ] Consumir GenericCFGBuilder do V4 p/ C/Rust/Java
+- [ ] Taint/dataflow fonte→sink via CFG do V4
+- [ ] Rodar M12 nos ~40 SAST (bloqueado: API de commits p/ parent SHA)
+- [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
+
+## Sprint BJ — ABSORÇÃO do UCO V4 no sensor (uco_core) + correção honesta (v3.34.0)
+
+**Diretriz do usuário:** o UCO V4 deve ser absorvido pelo UCO Sensor e virar
+parte dele. Feito (M13):
+- Novo pacote interno `sensor-api/uco_core/` (cópia fiel do V4, 4255 LOC) +
+  `__init__` expondo a API pública. Registrado no pyproject (`uco_core*`).
+- Bridges de autofix (`uco_transform_bridge`, `hmc_repair`) resolvem o V4 pela
+  cópia INTERNA (fallback externo por retrocompat). O sensor não depende mais
+  de `algorithms/uco` via sys.path.
+- 5 testes TX81. Regressão 2395 verdes.
+
+**CORREÇÃO DE HONESTIDADE:** o diagnóstico BG ("V4 retorna None p/ não-Python")
+estava ERRADO — mis-invocação com kwarg `language=` engolida por try/except. O
+V4 computa métricas C ricas via GenericCFG (cyclomatic/hamiltonian/dead_code/
+infinite_loop_risk/reachable_count). Corrigido em BG. Ressalva: no nível-
+arquivo, Δ~0 para fixes pequenos — M11 segue como detector.
+
+### CHECKLIST atualizado
+- [x] M10 FixDiffLocalizer / [x] M11 GuardAwareScanner / [x] M12 CorpusValidator
+- [x] **Absorver UCO V4 no sensor (uco_core)** — feito (M13)
+- [ ] Precisão M11 via CFG do UCO V4 (escopo real de função) + heurística tipo
+- [ ] Consumir GenericCFG do V4 na análise-padrão do sensor p/ C/Rust/Java
+      (agora acessível internamente via uco_core)
+- [ ] Taint/dataflow fonte→sink via CFG do V4 (reachable_from_entry + uses/defs)
+- [ ] Rodar M12 nos ~40 SAST (bloqueado: commits API p/ parent SHA)
+- [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
+
+## Sprint BK — escopo real de função por AST (M14) no M11 (v3.35.0)
+
+Substitui a janela ±45 do M11 pelo **escopo real da função** via tree-sitter
+(M9.2). O brace-matcher falha em C real (macros/preprocessador); em php-src a
+função tem 394 linhas → janela perdia guards distantes (FP) ou via guards de
+outra função (FN). Escopo AST corta ambos.
+
+**M14 `sast/scope.py`:** FunctionScoper.function_spans (1 parse) +
+enclosing_span + smallest_enclosing. Cobre 10 linguagens via nós de função de
+cada gramática. Degradação graciosa → fallback janela. M11 faz 1 parse/scan.
+5 testes TX82, regressão 2400 verdes. php-src segue disparando-e-parando na
+L1212, agora com guard buscado na função inteira.
+
+### CHECKLIST atualizado
+- [x] M10 FixDiffLocalizer / [x] M11 GuardAwareScanner / [x] M12 CorpusValidator
+- [x] M13 Absorver UCO V4 no sensor (uco_core)
+- [x] **M14 Precisão M11 via escopo real de função (AST tree-sitter)**
+- [ ] Consumir GenericCFG do V4 na análise-padrão do sensor p/ C/Rust/Java
+- [ ] Taint/dataflow fonte→sink via CFG do V4 (reachable_from_entry + uses/defs)
+- [ ] Rodar M12 nos ~40 SAST (bloqueado: commits API p/ parent SHA)
+- [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
+
+## Sprint BL — GenericCFG do UCO V4 consumido pelo sensor (M15) (v3.36.0)
+
+Fecha "consumir o GenericCFG do V4 para C/Rust/Java". M15
+`metrics/cfg_signals.py`: `cfg_signals(source, language)` expõe sinais de CFG
+do V4 (UniversalAnalyzer) para qualquer linguagem — reachable_ratio (código
+morto), infinite_loop_risk (classe DoS = CVE loop-infinito wireshark),
+cyclomatic, loop_count, max_depth. Degradação graciosa. 5 testes TX83,
+regressão 2405 verdes. Validado: C `for(;;)` → infinite_loop_risk=0.45 +
+reachable_ratio 0.875.
+
+### CHECKLIST atualizado
+- [x] M10 FixDiffLocalizer / [x] M11 GuardAwareScanner / [x] M12 CorpusValidator
+- [x] M13 Absorver UCO V4 (uco_core) / [x] M14 escopo de função AST no M11
+- [x] **M15 consumir GenericCFG do V4 no sensor (C/Rust/Java + infinite_loop_risk)**
+- [ ] Taint/dataflow fonte→sink via CFG do V4 (reachable_from_entry + uses/defs)
+- [ ] Rodar M12 nos ~40 SAST (bloqueado: commits API p/ parent SHA)
+- [ ] Ampliar M11 (use-after-free, format-string real, signed/unsigned)
+
+## Sprint BM — CorpusValidator (M12) rodado sobre pares CVE reais + artefato (v3.37.0)
+
+Executei o M12 (M10+M11) sobre 6 pares C/C++ reais (fetch raw, dado real).
+Artefato persistido: `paper/corpus_runs/corpus_validation_artifact.json`.
+Sumário: total=6, tracked=4, m10_localized=4, **m11_stopped_firing=1
+(php-src — caso-ouro: detecta o underflow sem âncora, L1212, e para no
+fix)**, not_tracked=2 (linux race / postgres recálculo).
+
+Honesto: redis(widening)/ffmpeg(early-return)/sqlite(clamp) têm o fix
+localizado (M10) mas classe não coberta pelo M11 sem âncora; linux/postgres
+corretamente not_tracked. "perpetuou" = GA01 em outros sites (triagem
+pendente). Relatório: `paper/corpus_runs/BM_corpus_validation_run.md`.
+
+### CHECKLIST — evolução
+- [x] M12 rodado sobre pares reais + artefato persistido
+- [x] Validação before/after com dado real (php-src detect→resolve completo)
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (widening/early-return/clamp)
+- [ ] Triagem dos "perpetuou" (FP vs risco real não-CVE)
+- [ ] Rodar M12 nos pares Python/JS via tags de release (API commits 403 bloqueia parent SHA)
+- [ ] Taint fonte→sink (Python) validado before/after (path-traversal/injection)
+
+## Sprint BN — Expansão da detecção de fonte do taint (M16) (v3.38.0)
+
+Diagnóstico real: o TaintAnalyzer detectava `request.args["x"]` mas NÃO
+`request.args.get("x")` (padrão Flask/Django mais comum) nem cadeia
+`flask.request.args...` — perdia a maioria dos fluxos web reais (sources=0).
+
+M16 (`sast/taint_engine.py`): reconhece métodos acessores
+(get/getlist/get_json/…) sobre atributo-fonte + casa último segmento do
+objeto (tolera prefixo de módulo). Revalidado: `request.args.get` →
+sources=1/2 caminhos; `flask.request.args.get`, `.getlist`, `.get_json`
+detectados; regressão `["x"]` mantida; **`dict.get()` benigno NÃO é fonte
+(sem FP)**. 5 testes TX84, regressão 2410 verdes.
+
+Contorno de dados: API de commits 403 (sem parent SHA) é contornável por
+**tags de release** (raw aceita tag) — confirmado salt/django. Desbloqueia
+rodar taint/M12 before/after nos pares Python.
+
+### CHECKLIST — evolução
+- [x] M16 expansão de fonte do taint (acessores + cadeia), testado, sem FP
+- [x] Contorno de dados via tags de release confirmado
+- [ ] Taint before/after num par Python real via tags (validar "parou")
+- [ ] Auditar sinks/sanitizers (subprocess, eval, jinja, cursor.execute, shlex.quote)
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11
+- [ ] Taint inter-procedural via CFG do V4 (uses/defs)
+
+## Sprint BO — Sinks de deserialização insegura no taint (M16.1) (v3.39.0)
+
+Adicionados sinks CWE-502 (pickle/cPickle/marshal/dill.load/loads, yaml.load,
+torch.load, joblib.load → SAST046). Before/after real: pickle.loads(request)
+dispara (2 caminhos); json.loads **para de disparar** (0). 4 testes TX85,
+regressão 2414 verdes. Motor de taint agora cobre injeção web (M16) +
+deserialização (M16.1).
+
+### CHECKLIST
+- [x] M16 fontes acessoras (BN) / [x] M16.1 sinks deserialização (BO)
+- [x] Auditoria sinks+sanitizers (SQL/cmd/SSTI/eval/open/deser)
+- [ ] Fonte "arquivo baixado/remoto" p/ CVE exata do transformers
+- [ ] Classes redis/ffmpeg/sqlite no M11
+- [ ] Taint inter-procedural via CFG do V4
+
+## Sprint BP — Revalidação + Missão/Metas (alinhamento estratégico)
+
+Reset estratégico do usuário: definir a missão e as metas. Revalidação com
+dado real confirmou sinais em TODAS as dimensões de rastreio (degradação,
+loops/deadcode via CFG V4, memory-safety M11, taint injeção+deser, localizar
+fix M10, before/after M12). Gaps: precisão (M11 ruidoso), cobertura de
+linguagem (sem-âncora só C+Python), elo Core→patch (V4 não sugere fix por
+finding), camada APEX (não iniciada).
+
+Documento: `paper/UCO_SENSAO_E_METAS.md` (missão 3 camadas + matriz
+missão×motor + metas A–F). **Prioridade proposta: META C (UCO Core determina
+o que corrigir, fechando Sensor→fix) + META A (precisão), depois E→B→D→F.**
+
+### METAS (resumo)
+- [ ] A — Precisão de rastreio (M11 site-aware/dataflow, classes faltantes)
+- [ ] B — Detecção sem-âncora nas 8 categorias (taint/guard multi-linguagem)
+- [ ] C — UCO Core sugere patch por finding + revalida "parou de disparar"
+- [ ] D — weak_point_score (propagação de sinal + SA + HMC)
+- [ ] E — M12 nos ~40 pares via tags (dataset de regressão)
+- [ ] F — Camada APEX (API p/ IA + loop de auto-correção + MCP)
+
+## Sprint BQ — FixSuggester (M18): elo Sensor→UCO Core→patch (META C) (v3.40.0)
+
+Dado um finding do Sensor, o UCO Core emite o patch mínimo sugerido.
+Validado com dado real: php-src — Sensor detecta GA01 L1212 sobre
+(pilen,slen), Core sugere guard `pilen > slen`, e COINCIDE com o fix real
+dos mantenedores. Deser: Core sugere json.loads (fix real satisfaz). 5
+testes TX86, regressão 2419 verdes. Relatório: `paper/corpus_runs/BQ_fix_suggester.md`.
+META C parcial (suggest+validate-vs-real feito; falta aplicar+re-scan).
+
+## Sprint BR — META C COMPLETA: auto-fix + re-scan silencia (v3.41.0)
+
+`FixSuggester.apply_fix` insere o guard sugerido antes da linha do finding.
+Loop completo validado com dado real (php-src): Sensor M11 detecta GA01
+L1212 (pilen,slen) → Core sugere `pilen > slen` → apply_fix insere → re-scan:
+o site SILENCIOU (5→4 findings) → UCO V4 não-regressão (hamiltonian ~flat).
+3 testes TX87, regressão 2422 verdes. **META C fechada: Sensor→Core→fix→
+re-scan.** Próximo: META A (precisão M11).
+
+### METAS
+- [x] META C — Core sugere + aplica patch, Sensor silencia, V4 não-regressão
+- [ ] META A — precisão M11 (site-aware/dataflow; cortar FP ffmpeg/postgres)
+- [ ] META B — multi-linguagem · META D — weak_point_score · META E — 40 pares · META F — APEX
+
+## Sprint BS — META A: precisão do M11 GA01 (gate anti-cadeia) (v3.42.0)
+
+Diagnóstico real: GA01 disparava em `overheadlen + olddatasize - olditemsize
++ newitemsize` (postgres) — FP: subtração é fragmento de cadeia maior, o
+`+ newitemsize` compensa. Correção: se `base + a - b` é seguida de `+`/`-`,
+não é risco isolado → não dispara. Resultado (dado real): php-src(TP)
+mantém L1212; postgres(FP) 1→0; ffmpeg mantém L4725 (isolado, mesma classe).
+4 testes TX88, regressão 2426 verdes.
+
+### METAS
+- [x] META C (Core sugere+aplica+silencia) · [x] META A parcial (GA01 anti-FP)
+- [ ] META A restante — gate por dataflow (result usado como índice/size)
+- [ ] META B — multi-linguagem (próximo) · D · E · F
+
+## Sprint BT — META B: M11 guard-aware language-aware (C/C++/Rust) (v3.43.0)
+
+Achado: GA01 disparava em TODAS as linguagens (regex universal), mas o
+underflow só é memory-unsafe em C/C++/Rust. Em Go/Java (int signed +
+bounds-check) e JS (floats), disparar é FP. Gate `_MEMORY_UNSAFE_EXTS`:
+memory-safety só nas memory-unsafe. Resultado: C/C++/Rust disparam;
+Go/Java/JS/TS/Py silenciam (FP eliminado). **Rust agora suportado** no M11.
+4 testes TX89, regressão 2430 verdes. Taint (injeção/deser) cobre as
+managed via Python; portar taint p/ JS/PHP/Java é META B restante.
+
+### METAS
+- [x] C (completa) · [x] A (GA01 anti-FP) · [x] B memory-safety (C/C++/Rust)
+- [ ] B restante — taint multi-linguagem (JS/PHP/Java) via tree-sitter
+- [ ] D — weak_point_score (SA/HMC) · E — 40 pares · F — APEX
+
+## Sprint BU — META B: Taint-Lite multi-linguagem (PHP + JS/TS) (M20) (v3.44.0)
+
+`sast/taint_lite.py`: detecção de injeção sem-âncora p/ PHP e JS/TS (fontes
+$_GET/$_POST/req.query…, sinks system/eval/unserialize/exec…), fluxo
+fonte→sink por escopo de função (M14), FP-controlado. Validado: PHP cmd/
+unserialize + JS eval detectados; casos seguros (param sem fonte, console.log)
+limpos. 7 testes TX90, regressão 2437 verdes.
+
+**Cobertura de detecção sem-âncora agora:** memory-safety C/C++/Rust (M11) +
+injeção/deser Python (taint AST) + PHP/JS/TS (taint-lite M20).
+
+### METAS
+- [x] C · [x] A (anti-FP) · [x] B memory-safety (C/C++/Rust) · [x] B injeção (Py/PHP/JS)
+- [ ] B restante — Java/Go taint (managed, menor prioridade)
+- [ ] D — weak_point_score (SA/HMC) — PRÓXIMO · E — 40 pares · F — APEX
+
+## Sprint BV — META D: Weak-Point Score (M21) (v3.45.0)
+
+`sast/weak_point.py`: score probabilístico 0-100 de ponto fraco por módulo,
+combinando segurança (M11+taint+taint-lite, ponderado por severidade),
+superfície de injeção, complexidade ciclomática e hamiltoniano — com
+BREAKDOWN e top_reasons (explicável, acionável). Validado (dado real):
+handler injetável 56.1 > php-src vuln 48.3 > php-src fix 46.1 > util limpo
+0.4; e diz POR QUE cada um é fraco. 5 testes TX91, regressão 2442 verdes.
+É o "onde alguém pode quebrar/invadir" da missão.
+
+### METAS
+- [x] C · [x] A · [x] B (memory-safety C/C++/Rust + injeção Py/PHP/JS) · [x] D
+- [ ] E — rodar M12/weak-point nos ~40 pares (via tags) → dataset dos 100
+- [ ] F — camada APEX (API p/ IA + loop auto-correção + MCP)
+
+## Sprint BW — M17 taint inter-procedural + loop APEX MVP (M19) (v3.46.0)
+
+**Prioridade do usuário:** executar o taint inter-procedural (M17) e o MVP do
+loop APEX (Sensor→corretor→revalida, local, sem IA externa). Ambos feitos.
+
+**M17 `sast/taint_interproc.py` (InterprocTaintAnalyzer):** taint fonte→sink
+que atravessa funções — mini call-graph + ponto-fixo sobre `tainted_params`,
+reusando SOURCE/SINK/SANITIZER do `taint_engine`. Prova real: detecta
+SQL-injection cross-fn (`view`→`query_db`) que o intra perde (intra=0,
+inter=1); respeita sanitizer no caminho (anti-FP); não reporta intra como
+inter. 5 testes TX92.
+
+**M19 `apex_integration/apex_loop.py` (ApexLoop):** o ciclo do produto, 100%
+local: Sensor emite sinal (GuardAwareScanner + M17 taint p/ Python) → corretor
+(FixSuggester M18) aplica patch determinístico → Sensor revalida e silencia.
+`corrector` injetável (IA/MCP pluga depois). Caso php-src: 1 sinal→1 fix→
+silenced=1→fully_resolved. 4 testes TX93.
+
+**Qualidade:** dead code removido (pyflakes limpo), integração verificada,
+2451 testes verdes.
+
+### CHECKLIST — evolução
+- [x] **M17 Taint inter-procedural fonte→sink (cross-function)** — FEITO
+- [x] **F(parcial) — MVP do loop APEX local (Sensor→corretor→revalida)** — FEITO
+- [ ] F restante — plugar IA/MCP real como `corrector` (troca só a fonte do patch)
+- [ ] Ampliar source-recognition (`req.args.get`, `self.helper(x)` hops via atributo)
+- [ ] Cobrir classes redis(widening)/ffmpeg(early-return)/sqlite(clamp) no M11
+- [ ] E — rodar M12/loop nos ~40 pares (via tags de release; API commits 403)
+- [ ] Taint inter-procedural multi-linguagem (hoje Python; JS/PHP via tree-sitter)
+
+## Sprint BX — amplia source-recognition (aliases de request) (v3.47.0)
+
+Gap da BW fechado: `req.args.get(...)` não era source (só `request.args.get`).
+`_attr_source_label` agora aceita `<raiz>.<attr-de-dados>` p/ raízes em
+`_SOURCE_ROOTS` (request/req/flask) com `_REQUEST_DATA_ATTRS` (derivado de
+`_SOURCE_ATTRS`). Anti-FP: raízes e atributos restritos. cmd-injection cross-fn
+com `req.args.get` agora dispara. +2 testes TX92. 2451 verdes.
+
+### CHECKLIST — evolução
+- [x] Ampliar source-recognition (`req.args.get` — alias de request) — FEITO
+- [ ] Hops via atributo de objeto (`self.helper(x)`) no M17 — PRÓXIMO
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (widening/early-return/clamp)
+- [ ] Taint inter-procedural multi-linguagem (JS/PHP via tree-sitter)
+- [ ] E — rodar loop/M12 nos ~40 pares (via tags de release)
+- [ ] F restante — plugar IA/MCP real como corrector
+
+## Sprint BY — M17 hops via atributo (self.metodo) (v3.48.0)
+
+`_call_user_fn_name` resolve `obj.metodo(...)` além de `func(...)`, com offset
+do receptor implícito (arg 0 → 2º param quando o 1º é self/cls). Proteção
+`callee in funcs` auto-limita FP. `handle→render` OO cross-fn dispara;
+sanitizado não. Dead code removido (params_of). +2 testes TX92. 2453 verdes.
+
+### CHECKLIST — evolução
+- [x] Hops via atributo de objeto (`self.helper(x)`) no M17 — FEITO
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (widening/early-return/clamp)
+- [ ] Taint inter-procedural multi-linguagem (JS/PHP via tree-sitter)
+- [ ] E — rodar loop/M12 nos ~40 pares (via tags de release)
+- [ ] F restante — plugar IA/MCP real como corrector
+- [ ] Retomar deep-research científico (bloqueado por limite de sessão, reset UTC)
+
+## Sprint BZ — Scan de perpetuação nas versões corrigidas (v3.48.0+)
+
+Responde "algo perpetuou e não foi identificado": M11 rodado nas versões
+CORRIGIDAS (fix SHA, dado real). 9 sinais residuais — php-src(4 GA02),
+ffmpeg(3), postgres(2); redis/sqlite limpos. Artefato:
+`paper/corpus_runs/residual_perpetuation_artifact.json`. Enquadramento honesto:
+são candidatos guard-aware, NÃO bugs confirmados (GA02 tem FP) — requerem
+triagem. A capacidade de PRODUZIR a lista de perpetuação com dado real é a
+entrega. Relatório: `paper/corpus_runs/BZ_perpetuation_scan.md`.
+
+### CHECKLIST
+- [x] Scan de perpetuação nas versões corrigidas + artefato — FEITO
+- [ ] Triagem dos 9 residuais (risco real vs FP GA02)
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11
+- [ ] Taint multi-linguagem (JS/PHP) · [ ] loop/M12 nos ~40 pares · [ ] IA/MCP corrector
+
+## Sprint CA — Triagem dos residuais + precisão GA02 (allocated-to-fit) (v3.49.0)
+
+Triagem real dos 9 residuais da BZ (li os sites no código). Achado: os 4 do
+php-src eram FP do GA02 — L1666/L1672 são `realloc(..., off+len+...)` ANTES do
+`memcpy(...,len)` (buffer dimensionado para caber = idioma allocated-to-fit).
+`_bound_present` agora reconhece esse idioma (alloc no escopo cujo tamanho
+menciona a var de comprimento). Residuais 9→6 (php-src 4→2, ffmpeg 3→2). Os 2
+do php-src restantes (L1276/L1295) dependem de `path_translated_len>=l`
+(não-local) — mantidos como "revisar", honesto. Imports mortos removidos.
++2 testes TX89. 2455 verdes. Relatório: `BZ_perpetuation_scan.md` (atualizado).
+
+### CHECKLIST
+- [x] Triagem dos residuais + precisão GA02 (allocated-to-fit) — FEITO
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11
+- [ ] Taint multi-linguagem (JS/PHP) · [ ] loop/M12 nos ~40 pares · [ ] IA/MCP corrector
+- [ ] Retomar deep-research (bloqueado: limite de sessão)
+
+## Sprint BZ — Auditoria de dead-code (chamadas esquecidas) + anti-regressão no loop (v3.49.0)
+
+**Princípio reforçado pelo usuário:** dead-code que NÓS criamos deve ser
+diagnosticado antes de remover — quase sempre é uma **chamada esquecida**,
+não lixo. Auditei os módulos M10–M21 + loop. Três achados, todos resolvidos
+por INTEGRAÇÃO (não deleção), com comentários de auditoria (o quê/para-onde/
+o-que-faz/versão):
+
+1. **`before_keys` (apex_loop)** — não era lixo: era a base da feature
+   **`newly_introduced`** (detectar sinais que o próprio auto-fix INTRODUZ =
+   regressão do corretor). Implementado: `run()` compara before×after;
+   `fully_resolved` agora exige `not regressed`. +2 testes TX93.
+2. **`_cfg_delta` (corpus_validator)** — definido mas nunca chamado: o sinal
+   de CFG do V4/M15 (reachability, loop-infinito, dead-code, cyclomatic)
+   ficava fora do artefato. **Cabeado** em `validate_pair` → `rec["cfg_delta"]`.
+3. **`_split_functions` (guard_aware)** — órfão porque, quando o M14
+   FunctionScoper retorna None, o `_scope` caía direto na janela fixa. **Cabeado**
+   como fallback estruturado (mais preciso que a janela) antes do window.
+
+`_arg_is_sanitized` (M17): verificado — JÁ estava resolvido corretamente
+(virou `is_sanitized_call(arg)` gating o sink, L202), não foi deleção cega.
+
+Regressão: **2459 verdes**. Prática adotada: comentar toda função/chamada
+importante com propósito + versão para auditoria futura.
+
+### CHECKLIST — evolução
+- [x] newly_introduced no loop APEX (regressão do auto-fix) — BZ
+- [x] _cfg_delta cabeado no CorpusValidator (sinal V4/M15) — BZ
+- [x] _split_functions cabeado como fallback do M14 no guard_aware — BZ
+- [x] Auditoria de dead-code dos módulos recentes (diagnosticar, não deletar)
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (widening/early-return/clamp)
+- [ ] Rodar M12 nos pares Python/JS via tags de release (API commits 403)
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP local
+
+## Sprint CA — Correção de FP de deslocamento no M10 (v3.50.0)
+
+Auditoria de dado real expôs 2 falsas localizações no artefato do corpus:
+sqlite e ffmpeg reportavam "guard adicionado" que na verdade JÁ existia no
+vulnerável (difflib marca linha relocada como insert quando o fix insere
+linhas acima). Confirmado com dado real (AVERROR(EINVAL) 25× no ffmpeg vuln).
+Corrigido: `FixDiffLocalizer` descarta guard cujo conteúdo já está no vuln.
+Artefato corrigido: **tracked 4→2 (php-src, redis)**, honesto. +1 teste TX78.
+Regressão 2460 verdes. Princípio: FP afirmado é pior que miss — corrigir sempre.
+
+### CHECKLIST
+- [x] Corrigir FP de deslocamento de linha no M10 (dado honesto)
+- [ ] Cobrir classes redis/ffmpeg/sqlite no M11 (com validação anti-FP real)
+- [ ] Rodar M12 nos pares Python/JS via tags (API commits 403)
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP
+
+## Sprint CB — M10 rastreia injeção/escaping + corpus via tags (v3.51.0)
+
+Estendido o FixDiffLocalizer (M10) com assinaturas de INJEÇÃO/ESCAPING
+(output-encoding: escape/markupsafe/shlex.quote/htmlspecialchars/encodeURI;
+input-validation-raise), baixo-FP. Antes só memory-safety.
+
+**jinja CVE-2024-22195 → TRACKED** (M10 localiza escape(key)+raise, CWE-79/20),
+dado real via TAGS de release (contorna API commits 403). Desbloqueia validar
+pares Python/JS por tag. Sem regressão nos 6 C. Artefato expandido:
+total=7, tracked=3 (php-src, redis, jinja). +2 testes TX78. Regressão 2462 verdes.
+
+### CHECKLIST
+- [x] M10 cobre injeção/escaping (jinja tracked via tags) — CB
+- [x] Desbloqueio de fetch por tags de release (sem API commits)
+- [ ] Ampliar corpus por tags: +Django/Flask/PyYAML/npm reais (rodar M12)
+- [ ] M17 taint before/after num par real de injeção (source->sink)
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP
+
+## Sprint CC — guard condicional (and/or) + limite DoS; corpus 9 CVEs (v3.52.0)
+
+"Processar o canal que captávamos": diagnostiquei que vários not_tracked eram
+ARQUIVO ERRADO (requests: fix em sessions.py, não utils.py) ou construção não
+reconhecida. Duas assinaturas novas no M10 (baixo-FP):
+- security-conditional-guard: `if/and/or` + termo sensível (scheme/auth/senha/
+  token/permissão/origem). Python/JS usam `and`, não `&&` → M10 C-only perdia.
+  requests CVE-2023-32681 → TRACKED (não vazar Proxy-Authorization em http).
+- resource-limit: max_*(parts/size/depth)/RequestEntityTooLarge (DoS/CWE-400).
+  werkzeug CVE-2023-25577 → TRACKED.
+
+Sem regressão nos 6 C. Corpus: total=9, tracked=5 (php-src, redis, jinja,
+requests, werkzeug). +2 testes TX78. Regressão 2464 verdes.
+
+### CHECKLIST
+- [x] M10 cobre guard condicional Python/JS (and/or) e limite DoS — CC
+- [x] Diagnóstico arquivo-errado nos not_tracked (dado honesto)
+- [ ] Ampliar corpus: identificar arquivo correto por CVE (sem API commits) e validar +N
+- [x] M17 taint before/after num par real de injeção (source->sink) — CD ✅
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP
+
+## Sprint CD — M17 precisão anti-FP (cast numérico + query parametrizada) (v3.53.0)
+
+**Diagnóstico via controle pos/neg do M17:** a versão CORRIGIDA de um SQLi ainda
+disparava — dois FPs independentes que quebravam a assinatura de produto
+"dispara-no-bug / para-no-fix". Ambos eram "sinal no canal que já captávamos mas
+não processávamos": o taint via até o sink mas ignorava (a) que `int()` já tinha
+neutralizado o dado e (b) que uma query parametrizada isola o dado na tupla.
+
+Correções cirúrgicas (arquivo → o que faz → versão, para auditoria):
+- **`sast/taint_engine.py::_SANITIZER_FUNCTIONS`** — +int/float/bool/complex
+  (casts numéricos = sanitizador FORTE) +shlex.quote/pipes.quote/escapejs.
+  Onde entra: `TaintAnalyzer.is_sanitized_call` consulta esse frozenset ao
+  propagar taint; M17 herda via `_t`. v3.53.0.
+- **`sast/taint_interproc.py` (loop de sinks)** — sinks SQL (rule==SAST040 ou
+  cwe==CWE-89) passam a checar só `node.args[:1]` (a query string); demais sinks
+  seguem checando args+kwargs. Onde entra: `InterprocTaintAnalyzer.analyze` ao
+  varrer chamadas de cada função do call-graph. v3.53.0.
+
+**Controle final (dado real, sem inventar):** VULN (`request.GET['id']` →
+`run_query` → `execute('...'+uid)`) DISPARA 1 fluxo SQL_INJECTION/CWE-89 hops
+[handler,run_query]; FIXED (`int()` + `execute('...%s',(x,))`) → 0 fluxos.
++3 testes TX92 (cast_int_is_sanitizer, parameterized_query_is_safe, controle
+pos/neg). Regressão 2464 verdes, sem regressão.
+
+### CHECKLIST
+- [x] M17 cast numérico reconhecido como sanitizador (anti-FP)
+- [x] M17 query parametrizada não dispara (só arg[0] em sinks SQL)
+- [x] Controle pos/neg travado em teste (dispara-no-bug/para-no-fix)
+- [ ] Ampliar corpus por tags: identificar arquivo correto por CVE e validar +N (herdado de CC)
+- [x] Cobrir ffmpeg(early-return) — CE ✅ (via M10, dado real)
+- [ ] Cobrir redis(widening)/sqlite(clamp)/linux(race) no M10/M11 com anti-FP em par real
+- [ ] Operacionalizar taint via uses/defs da CFG do UCO V4 (deep-research ANGLE 1) — EM ANDAMENTO
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP local (M19)
+
+## Sprint CE — M10 destrava postgres + ffmpeg (canal captado, não processado) (v3.54.0)
+
+**Mandato do goal:** "verifique para os que falharam se tinham informação nos
+canais que captamos e só não estávamos processando e faça as correções." Ataquei
+os 4 not_tracked do corpus com DADO REAL (diffs por SHA via raw.githubusercontent,
+o único canal HTTP liberado). Dois tinham o sinal no diff mas o M10 não o lia:
+
+- **postgres CVE-2021-32027** (`arrayfuncs.c`) → TRACKED. Fix insere
+  `ArrayCheckBounds(...)` (8 sites). A regra overflow-guard perdia por `\b` não
+  casar "Bounds" em CamelCase. **Correção:** nova assinatura `bounds-check-call`
+  em `_GUARD_SIGNATURES` + token no gate `_SECURITY_TOKENS`. Onde entra:
+  `FixDiffLocalizer._classify` testa a linha adicionada. v3.54.0.
+- **ffmpeg CVE-2020-22015** (`movenc.c`) → TRACKED. Fix:
+  `if(bits<0||bits>8) return AVERROR(EINVAL);` antes de `1<<bits`. O guard casava
+  early-return-guard mas o **filtro anti-relocação por presença** o descartava
+  (idioma existe 22× no arquivo). **Correção:** filtro por **CONTAGEM** — adição
+  real ⟺ `fixed_counts[linha] > vuln_counts[linha]`. Onde entra:
+  `FixDiffLocalizer.localize`. v3.54.0.
+
+**Anti-FP preservado:** o filtro por contagem mantém o clamp relocado do sqlite
+(1→1) descartado (correção CA intacta). sqlite (logic-clamp) e linux (Dirty-COW
+race TOCTOU) seguem HONESTAMENTE not_tracked — fora do vocabulário do M10, sem
+número forçado.
+
+**Corpus real:** total=9, tracked **5→7**, m10_localized **5→7**, not_tracked
+**4→2**. +3 testes TX78. Regressão 2470 verdes. Artefato
+`paper/corpus_runs/corpus_validation_artifact.json` regenerado com dado real.
+
+### CHECKLIST
+- [x] Diagnóstico dos 4 not_tracked com diff real (SHA via raw) — dado honesto
+- [x] postgres destravado (bounds-check-call, CamelCase) — TP real
+- [x] ffmpeg destravado (early-return via filtro por contagem) — TP real
+- [x] sqlite/linux mantidos not_tracked sem FP forçado (honestidade)
+- [ ] linux Dirty-COW: precisa de detector de RACE/TOCTOU (M11 não cobre) — backlog
+- [ ] sqlite: precisa de assinatura clamp `if(nCol>=64)` sem FP — avaliar em par real
+- [x] Operacionalizar taint via uses/defs da CFG do UCO V4 (ANGLE 1) — CF ✅
+
+## Sprint CF — M22 taint fluxo-sensível sobre a CFG do UCO V4 (ANGLE 1) (v3.55.0)
+
+**Pedido explícito do usuário:** "operacionalizar o taint via uses/defs da CFG do
+UCO V4 (ANGLE 1 do deep-research, que amplifica o motor real de data-flow)."
+
+**Entrega:** novo módulo `sast/taint_cfg.py` (M22, `CFGTaintAnalyzer`). Extrai
+TODO o potencial da CFG do V4 que estava absorvida mas subutilizada para taint:
+o `PythonCFGBuilder` já computava `python_defs_uses` (defs/uses por nó) — canal
+captado e não processado para dataflow. O M22 consome isso e roda um ponto-fixo
+forward **path-sensitive**:
+    IN[n]  = ∪ OUT[predecessores(n)]        (may-analysis)
+    OUT[n] = (IN[n] − KILL[n]) ∪ GEN[n]
+    GEN     = defs se source OU (uses∩IN e não-sanit); KILL = defs se limpo/sanit.
+    FLOW    = nó-sink com uso relevante ∈ IN.
+
+**Onde entra / para onde vai (auditoria):**
+- `CFGTaintAnalyzer.analyze(source)` → `List[CFGTaintFlow]`. Import tardio de
+  `uco_core.PythonCFGBuilder` (degradação graciosa). Consome
+  `cfg.metadata["python_defs_uses"]` e `cfg.nodes[*].predecessors/line_start`.
+- Reusa (sinergia, zero duplicação de vocabulário): `TaintAnalyzer._is_source`,
+  `._get_sink_meta`, `._is_sanitizer` (M7.2) e `_unpack_sink` (M17). Gating SQL
+  arg[0] idêntico ao M17/CD (query parametrizada é segura).
+
+**Diferencial provado (o que só a CFG dá):** sanitização CONDICIONAL num braço do
+`if` → o MERGE une o caminho `else` não-sanitizado → sink DISPARA (motor linear
+"viu escape ⇒ limpo" daria FN); sanitização INCONDICIONAL → mata em todos os
+caminhos → não dispara. +8 testes TX94. Regressão 2478 verdes.
+
+### CHECKLIST
+- [x] M22 consome defs/uses da CFG do V4 (não recomputa) — sinergia
+- [x] Ponto-fixo forward path-sensitive (IN=∪preds, OUT=(IN−KILL)∪GEN)
+- [x] Reuso do vocabulário M7.2 + gating SQL arg[0] do M17/CD
+- [x] Controle: cond-sanitize dispara / uncond-sanitize limpo (path-sensitivity)
+- [x] Contrato "nunca levanta" (V4 ausente / sintaxe → [])
+- [x] Integrar M22 ao pipeline principal de scan (`/scan-flow`) — CG ✅
+- [ ] Estender def-use da CFG para condições de `if`/`while` (hoje só assign/expr/return)
+- [ ] Ampliar M22 a AugAssign (`x += tainted`) e multi-target
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP local (M19)
+
+## Sprint CG — M22 operacionalizado no pipeline (/scan-flow) (v3.56.0)
+
+**"Operacionalizar" = rodar em produção, não só existir.** O M22 (Sprint CF) era
+standalone; agora roda no endpoint `/scan-flow` (M7.2) como camada path-sensitive
+ADITIVA. Onde entra (auditoria): `api/server.py::handle_scan_flow` instancia
+`_CFGTaintAnalyzer` (import guardado `_CFG_TAINT_AVAILABLE`) e anexa à resposta:
+    resp["cfg_taint"] = { status, engine, path_sensitive, flow_count,
+                          path_only_count, flows:[{...,path_only}] }
+onde `path_only` marca os fluxos que SÓ a CFG encontra (ausentes no motor linear
+M7.2 — tipicamente sanitização condicional). Contrato legado
+(`flows`/`flow_vector`/`summary`) preservado; erro do M22 → status="unavailable"
+sem derrubar o endpoint. +2 testes TF30. Regressão 2480 verdes.
+
+### CHECKLIST
+- [x] `/scan-flow` expõe `cfg_taint` (M22) — operacional
+- [x] Contrato legado preservado (aditivo, não-bloqueante)
+- [x] Flag `path_only` para o delta CFG-vs-linear
+- [ ] Estender def-use da CFG a condições `if`/`while` (recall)
+- [ ] M22 em AugAssign e multi-target
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP (M19)
+
+## Sprint CH — M23 Advisory Harvester + método de escala do corpus (v3.57.0)
+
+**O problema real dos 100/100 (diagnóstico honesto):** o scanner nunca foi o
+gargalo. Era IDENTIFICAR, por CVE e sem a API de commits (403), o par de versões
+e o commit do fix. Acionei o **modo APEX scientific** (3 agentes de pesquisa +
+WebSearch) e fundamentei o método na literatura:
+- **CVEfixes** (arXiv:2107.08760) — coleta automática CVE→fix-commit→arquivos/
+  métodos num BD relacional. O padrão do corpus-builder.
+- **VFCFinder** (arXiv:2311.01532) — ranqueia commits candidatos p/ achar o
+  Vulnerability-Fixing-Commit quando o advisory não aponta explicitamente.
+- **D2A** (arXiv:2102.07995) — análise diferencial before/after classificando
+  achados em fixed / pre-existing(perpetuado) / introduced(regressão). É
+  EXATAMENTE o que M12/M19 já fazem — nossa engenharia está alinhada ao SOTA.
+
+**Canal destravado (dado real, provado):** o GitHub Advisory Database é um repo
+git de JSONs OSV acessível via `raw.githubusercontent.com` (HTTP 200). Fornece
+aliases CVE↔GHSA, `affected.ranges` (introduced/fixed) e `references` (commit +
+tag do fix). Era um canal captado e NÃO processado. (osv.dev REST e
+api.github.com/.patch seguem 403, inclusive via WebFetch do harness; WebSearch
+funciona.)
+
+**Entrega — `scan/advisory_harvester.py` (M23):**
+- `parse_advisory(osv_json)` → `AdvisoryRecord{ghsa,cve,package,ecosystem,
+  introduced,fixed,fix_commit,fix_tag,cwe_ids,severity,...}`. Puro/offline,
+  nunca levanta. Onde vai: alimenta o M12 (qual par de versões buscar) e
+  scripts de expansão. Responde **quando quebrou** (introduced) e **em qual
+  versão resolveu** (fixed) para QUALQUER CVE do banco, em escala.
+- `advisory_raw_url()` / `fetch_advisory()` — busca via raw (guardada).
+- Validado em 2 advisories REAIS (jinja, requests). +8 testes TX95. 2488 verdes.
+
+### PLANO DE ESCALA rumo a 100/100 (deployável, dado real — checklist)
+- [x] M23 parseia advisory OSV → registro de degradação (when/which-version)
+- [x] Canal advisory-database via raw provado (2 casos reais)
+- [x] Método fundamentado na literatura (CVEfixes/VFCFinder/D2A)
+- [x] M24 CorpusExpander funde as 4 perguntas — provado end-to-end no jinja (real) — CI ✅
+- [x] Runner em lote `expand_batch(seeds, fetch_pair)` (fetcher injetável) — CI ✅
+- [x] M25 — resolver GHSA→(ano/mês) automático (brute-force HEAD) — CJ ✅
+- [x] BATCH REAL rodado: 2/2 CVEs PyPI completos (jinja, requests) — CJ ✅
+      (`paper/corpus_runs/degradation_report_pypi.json`)
+- [x] M26 — harvester NVD via cvelistV5 (raw) para projetos C SEM GHSA — CK ✅
+      (postgres real 3/4; ffmpeg/sqlite "n/a" no canal → reportado honesto)
+- [ ] Escalar o batch: alimentar N GHSA/CVE reais (WebSearch CVE→GHSA) +
+      arquivo alterado por CVE → dezenas de registros (mecânico, não bloqueado)
+- [ ] Ligar M24 ao M12 CorpusValidator (fetch por tag automático no lote)
+- [ ] Detector de RACE/TOCTOU (linux Dirty-COW) — classe ainda não coberta
+- [ ] Ampliar linguagens não-Python no taint (C/Go/Java) via GenericCFG
+- [ ] Camada APEX real (IA/MCP) sobre o loop MVP (M19)
+
+## Sprint CK — M26 NVD Harvester (cvelistV5) estende as 4 perguntas ao C (v3.60.0)
+
+**Canal destravado (dado real):** o CVE Project publica cada CVE como JSON em
+`CVEProject/cvelistV5` via raw (HTTP 200 — mesmo padrão do M23; a REST API do
+NVD está bloqueada). `scan/nvd_harvester.py` (M26) `parse_cve_record` → `NvdRecord`
+duck-compatível com o AdvisoryRecord (M23), consumido pelo M24 sem alteração.
+
+**Resultado real (`paper/corpus_runs/degradation_report_full.json`):** 4 registros
+= 2 completos 4/4 (jinja, requests — PyPI) + 2 parciais 3/4 (postgres, ffmpeg).
+- postgres: versões 13.3/12.7/11.12/10.17/9.6.22 (M26) + arrayfuncs.c:8 sites
+  bounds-check-call (M10) + commit f02b9085ad2f. Falta só `introduced`.
+
+**Honestidade (sem inventar):** ffmpeg/sqlite têm product/versions "n/a" no
+cvelistV5 → dado GENUINAMENTE ausente nesse canal (não gap de processamento);
+reportado como tal. `answers_all_four` endurecido para não contar respostas de
+ausência ("não disponível"/"n/a"/"desconhecida"). +7 testes TX98. 2507 verdes.
+
+### CHECKLIST
+- [x] M26 parseia cvelistV5 (schema CVE 5.x) → NvdRecord duck-compat M23
+- [x] postgres real 3/4 composto (M26+M10); commit + versões corrigidas reais
+- [x] ffmpeg/sqlite "n/a" reportado honesto (dado ausente no canal)
+- [x] answers_all_four endurecido (ausência ≠ resposta) — honestidade p/ máquina
+- [ ] Escalar volume (N CVEs) · ligar M24→M12 fetch-por-tag · M-race p/ Dirty-COW
+
+## Sprint CL — escala real do corpus PyPI + M10 aprende ReDoS (v3.61.0)
+
+Escala de VOLUME no ecossistema-alvo + fecha lacuna descoberta ao escalar.
+- **+2 PyPI 4/4 verificados** (par por tag via raw): werkzeug CVE-2023-25577
+  (resource-limit) e urllib3 CVE-2021-33503 (redos-mitigation).
+- **M10 aprende ReDoS:** `_detect_redos_mitigation` (diff-level, baixo-FP) —
+  o sinal do fix de ReDoS está na REMOÇÃO da regex + adição de string-split, que
+  as assinaturas de guard-adicionado não viam. Zero FP nos 4 pares não-ReDoS.
+  Onde entra: `FixDiffLocalizer.localize` após o loop de opcodes. v3.61.0.
+- Relatório `degradation_report_full.json`: 4 completos 4/4 + 2 parciais.
+
+### CHECKLIST
+- [x] werkzeug + urllib3 PyPI 4/4 (dado real verificado por tag)
+- [x] M10 detecta redos-mitigation (canal na remoção, antes não processado)
+- [x] Anti-FP verificado (0 FP em jinja/requests/werkzeug/postgres)
+- [ ] Continuar escala PyPI/npm (mecânico): +N CVEs reais → aproximar 100
+- [ ] M26 NVD: só onde a CNA preencheu (limite de dado público, não engenharia)
+
+## Sprint CM — corpus real 7 CVEs + honestidade em fix-refactor (v3.62.0)
+
++sqlparse CVE-2023-30608 (ReDoS embutido em REFACTOR). A assinatura
+redos-mitigation (CL) corretamente NÃO dispara (padrões removidos são relocados,
+não a regex vulnerável) — forçar seria FP. Registro honesto 3/4. Prova de que a
+esteira NÃO inventa "como". Relatório com 7 registros reais (4 completos + 3
+parciais). Release de corpus/dado, sem mudança de código. 2509 verdes.
+
+### MAPA DE COBERTURA DAS 4 PERGUNTAS (estado real, honesto — 7 CVEs)
+| CVE | quando | qual-versão | onde | como | canal |
+|---|---|---|---|---|---|
+| jinja CVE-2024-22195 | ✅ 0 | ✅ 3.1.3 | ✅ | ✅ input-validation-raise | GHSA (PyPI) |
+| requests CVE-2023-32681 | ✅ 2.3.0 | ✅ 2.31.0 | ✅ | ✅ security-conditional | GHSA (PyPI) |
+| werkzeug CVE-2023-25577 | ✅ 0 | ✅ 2.2.3 | ✅ | ✅ resource-limit | GHSA (PyPI) |
+| urllib3 CVE-2021-33503 | ✅ 1.25.4 | ✅ 1.26.5 | ✅ | ✅ redos-mitigation | GHSA (PyPI) |
+| sqlparse CVE-2023-30608 | ✅ 0.1.15 | ✅ 0.4.4 | ✅ | ⚠️ refactor (não localiza; sem FP) | GHSA (PyPI) |
+| postgres CVE-2021-32027 | ❌ n/a | ✅ 13.3+ | ✅ | ✅ bounds-check-call | cvelistV5 (C) |
+| ffmpeg CVE-2020-22015 | ❌ | ❌ n/a | ✅ | ✅ early-return | cvelistV5 (C, escasso) |
+> **4/7 completas 4/4** (todas PyPI). Os 3 parciais têm razões HONESTAS e
+> distintas: sqlparse (fix é refactor — "como" não isolável sem FP); postgres
+> (CVE-record sem `introduced`); ffmpeg (CVE-record "n/a"). Nenhuma é falha de
+> engenharia — são limites de DADO ou de forma-do-fix. Escalar o número =
+> alimentar mais CVEs PyPI de fix-limpo (mecânico, canal desbloqueado).
+
+## Sprint CN — M27 automatiza identificação do arquivo + Flask 4/4 automático (v3.63.0)
+
+**Gargalo #2 RESOLVIDO:** o WebFetch lê a página do commit no GitHub e lista os
+arquivos alterados (a API `.patch` é 403, a página não). `scan/fix_file_locator.py`
+(M27): `pick_source_file` + `prior_version` + `build_pair` (fetchers injetáveis).
+Flask CVE-2023-30861 processado 100% AUTOMÁTICO (só dei o GHSA) → 4/4:
+quando=2.3.0, versão=2.3.2, onde=sessions.py, como=cache-vary-guard. Nova
+assinatura M10 `cache-vary-guard` (CWE-525/539), zero FP. Relatório: 8 registros,
+**5 completos 4/4**. +11 testes. 2520 verdes.
+
+### PIPELINE AUTOMÁTICO (deployável, provado)
+    CVE --WebSearch--> GHSA --M25--> advisory(versão fixed, commit)
+        --WebFetch(commit)--> arquivos --M27.pick--> arquivo-fonte
+        --M27.prior_version+raw--> par(vuln,fixed) --M24--> 4 respostas
+Só o 1º passo (CVE→GHSA) usa WebSearch; o resto é determinístico.
+
+### DIAGNÓSTICO FRANCO DO 100/100 (para o dono do projeto)
+Restam DUAS naturezas de gap (a #2 foi resolvida na CN):
+1. **Volume** (a maior parte): faltam ~92 CVEs coletados. Agora quase todo o
+   trabalho por CVE é AUTOMÁTICO (1 WebSearch + a esteira). Escala é rodar o
+   pipeline repetidamente — mecânico, não bloqueado.
+2. **Qualidade do dado público**: alguns CVEs (C, fixes-refactor) NÃO têm as 4
+   respostas no dado público. Teto real, não contornável sem inventar (proibido).
+> [RESOLVIDO na CN] ~~Identificação do arquivo alterado em escala~~ → M27+WebFetch.
+> A esteira responde 4/4 sempre que o dado existe e o fix é localizável.
+
+### CHECKLIST
+- [x] M27 auto-identifica arquivo do commit (WebFetch) + monta par por tag
+- [x] Flask 4/4 processado 100% automático (só GHSA fornecido)
+- [x] Assinatura cache-vary-guard (Flask) — zero FP
+- [x] Rodar o pipeline automático em lote (CO: +aiohttp 4/4, +lxml parcial)
+- [x] Ampliar assinaturas M10 (CO: path-containment-guard; sem FP)
+
+## Sprint CO — escala automática +2 (aiohttp, lxml) → 6/10 completos (v3.64.0)
+
+- **aiohttp CVE-2024-23334 → 4/4 automático** (path-containment-guard, CWE-22).
+- Nova assinatura M10 `path-containment-guard`: `.relative_to`/`is_relative_to`/
+  `os.path.commonpath` (anti directory-traversal). Zero FP.
+- M27 amplia tags para `<repo>-X` (lxml usa `lxml-4.6.5`) → destrava par do lxml
+  (parcial honesto — HTML Cleaner não localiza guard limpo).
+- Relatório: **10 registros, 6 completos 4/4**. +2 testes. 2522 verdes.
+
+### PROGRESSO DO CORPUS (real, auditável)
+| rodada | completos 4/4 | total | novos |
+|---|---|---|---|
+| CI | 2 | 2 | jinja, requests |
+| CL | 4 | 6 | +werkzeug, +urllib3 |
+| CN | 5 | 8 | +Flask (automático) |
+| CO | 6 | 10 | +aiohttp (automático), +lxml/sqlparse (parciais) |
+| CP | **9** | **14** | +PyJWT, +tornado, +Django (todos 4/4 automáticos); +python-multipart (parcial) |
+> 9 CVEs completos 4/4 cobrindo 5 classes: XSS/SSTI, proxy-leak, DoS, ReDoS,
+> cache-poisoning, path-traversal, algorithm-confusion, open-redirect, SQLi.
+> Ritmo: ~3-4 CVEs completos por rodada, cada um ~1 WebSearch + 1 WebFetch.
+> Assinaturas M10 acumuladas: input-validation-raise, output-encoding,
+> security-conditional-guard, resource-limit, overflow-guard, bounds-check-call,
+> early-return-guard, redos-mitigation, cache-vary-guard, path-containment-guard.
+> Cada CVE novo custa ~1 WebSearch + 1 WebFetch; o resto é a esteira automática.
+
+## Sprint CJ — M25 Advisory Resolver + BATCH REAL (v3.59.0)
+
+**Entrega:** `scan/advisory_resolver.py` (M25). `resolve_advisory(ghsa_id,
+years|cve_hint)` acha a URL do advisory varrendo (ano, mês) até HTTP 200 —
+o ano-base sai do próprio CVE. Elimina o seed manual do harvester. Onde entra:
+topo do batch, antes do M23 parse + M24 compose.
+
+**BATCH REAL rodado (dado 100%, sem fabricação)** — `M25 → M23 → M24`,
+persistido em `paper/corpus_runs/degradation_report_pypi.json`:
+- jinja CVE-2024-22195: introduced 0 → 3.1.3 (commit 716795349a41);
+  filters.py:L291,293; input-validation-raise + output-encoding. COMPLETO.
+- requests CVE-2023-32681: 2.3.0 → 2.31.0 (commit 74ea7cf7a6a2);
+  sessions.py:L329; security-conditional-guard; CWE-200. COMPLETO.
+→ **2/2 com as 4 perguntas**. Resolver validado ao vivo (jinja→2024/01,
+requests→2023/05). +5 testes TX97. Regressão 2500 verdes.
+
+**Estado do objetivo (honesto):** o motor que responde as 4 perguntas em escala
+para o ecossistema-alvo (PyPI/npm — código gerado por IA) está COMPLETO e
+provado em dado real. Escalar a contagem = alimentar mais GHSA reais (mecânico,
+não bloqueado). Projetos C precisam do M26 (NVD). Não há mais bloqueio
+arquitetural — o gap remanescente aos 100/100 é volume de coleta, não engenharia.
+
+### CHECKLIST
+- [x] M25 auto-resolve GHSA→ano/mês (brute-force determinístico)
+- [x] Batch real M25→M23→M24: 2/2 PyPI completos, persistido em JSON
+- [x] Testes com fetch mockado (sem rede no CI)
+- [ ] Alimentar +N GHSA reais (escala mecânica) · M26 NVD para C · ligar M24→M12
+
+## Sprint CI — M24 Corpus Expander: as 4 perguntas num registro (v3.58.0)
+
+**Entrega:** `scan/corpus_expander.py` (M24). `build_degradation(advisory,
+vuln_src, fixed_src, filename)` funde M23 (quando/qual-versão) + M10 (onde/como)
++ M11 (parou-de-disparar/perpetuou) num `DegradationRecord`. `expand_batch` roda
+em lote com `fetch_pair` injetável (offline-testável). `narrative()` = as 4
+respostas em texto auditável.
+
+**Prova end-to-end (dado 100% real):** jinja CVE-2024-22195 → advisory real
+(GHSA-h5c8-rqwp-cp95) + par `filters.py` 3.1.2→3.1.3 por tag →
+  QUANDO=introduced=0 · QUAL-VERSÃO=3.1.3 (commit 716795349a41) ·
+  ONDE=filters.py:L291,293 · COMO=input-validation-raise+output-encoding →
+  status="complete", answers_all_four=True.
+
+**Achado arquitetural (honestidade, para não reintroduzir expectativa errada):**
+o GHSA cobre ecossistemas EMPACOTADOS (PyPI/npm/Go/…) — o alvo de código gerado
+por IA. Projetos C de servidor NÃO têm GHSA → precisam de harvester NVD (M26).
+Por isso os 2 not_tracked residuais do corpus (sqlite/linux) e os C tracked não
+escalam pelo canal GHSA; escalam pelo NVD.
+
+### CHECKLIST
+- [x] M24 funde M23+M10+M11 nas 4 perguntas (DegradationRecord)
+- [x] Prova real end-to-end (jinja) status=complete
+- [x] `expand_batch` com fetcher injetável (lote, offline-testável)
+- [x] Achado GHSA-só-empacotado registrado (evita expectativa errada p/ C)
+- [ ] M25 auto-resolver CVE→GHSA→data · M26 harvester NVD para C
+- [ ] Ligar M24→M12 (fetch por tag no lote) p/ rodar dezenas de CVEs PyPI/npm reais
+
+> NOTA de sessão: a rodada de 3 agentes de pesquisa (CVEfixes/VFCFinder/D2A)
+> encerrou no limite de sessão (reseta 1h UTC) após capturar o núcleo do método
+> — retomável via SendMessage aos agentes. O método essencial já está
+> incorporado acima e no M23; a retomada refina features de ranqueamento (VFC)
+> e o casamento antes↔depois por função (D2A) para os próximos módulos.

@@ -1,0 +1,2455 @@
+[
+ {
+  "id": "accessibility-tester",
+  "category": "04-quality-security",
+  "domains": [
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "ad-security-reviewer",
+  "category": "04-quality-security",
+  "domains": [
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "risk",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "agent-installer",
+  "category": "09-meta-orchestration",
+  "domains": [
+   "coordination",
+   "multi_agent",
+   "orchestration",
+   "workflow"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "agent-organizer",
+  "category": "09-meta-orchestration",
+  "domains": [
+   "coordination",
+   "multi_agent",
+   "orchestration",
+   "workflow"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "ai-engineer",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml",
+   "monitoring",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "ai-writing-auditor",
+  "category": "04-quality-security",
+  "domains": [
+   "ai",
+   "analysis",
+   "code_review",
+   "debugging",
+   "marketing",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "anchor_destroyer",
+  "category": "native/cs",
+  "domains": [
+   "anchor_destroyer",
+   "first_principles",
+   "context_recovery",
+   "FOGGY",
+   "fragmented_context",
+   "cognitive_reset"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "angular-architect",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "api-architect",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "api-designer",
+  "category": "01-core-development",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "fullstack",
+   "refactoring"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "api-documenter",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "api",
+   "documentation",
+   "domain_expert",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "architect",
+  "category": "native/cs",
+  "domains": [
+   "architecture",
+   "system_design",
+   "ADR",
+   "trade_offs",
+   "coupling",
+   "cohesion"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "architect-reviewer",
+  "category": "04-quality-security",
+  "domains": [
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "azure-infra-engineer",
+  "category": "03-infrastructure",
+  "domains": [
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "backend-developer",
+  "category": "01-core-development",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "fullstack",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "bayesian_curator",
+  "category": "native/cs",
+  "domains": [
+   "bayesian",
+   "probability",
+   "prior",
+   "posterior",
+   "likelihood",
+   "evidence_synthesis"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "blockchain-developer",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "domain_expert",
+   "security",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "build-engineer",
+  "category": "06-developer-experience",
+  "domains": [
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "performance",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "business-analyst",
+  "category": "08-business-product",
+  "domains": [
+   "business",
+   "legal",
+   "marketing",
+   "product",
+   "sales"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "chaos-engineer",
+  "category": "04-quality-security",
+  "domains": [
+   "ai",
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "security",
+   "specialized",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "cli-developer",
+  "category": "06-developer-experience",
+  "domains": [
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "cloud-architect",
+  "category": "03-infrastructure",
+  "domains": [
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "code-archaeologist",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "code-reviewer",
+  "category": "04-quality-security",
+  "domains": [
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.code_quality_reviewer",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.content_strategist",
+  "category": "native/cs",
+  "domains": [
+   "marketing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_agile_product_owner",
+  "category": "native/cs",
+  "domains": [
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_ceo_advisor",
+  "category": "native/cs",
+  "domains": [
+   "strategy"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_content_creator",
+  "category": "native/cs",
+  "domains": [
+   "marketing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_cto_advisor",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_demand_gen_specialist",
+  "category": "native/cs",
+  "domains": [
+   "marketing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_engineering_lead",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_financial_analyst",
+  "category": "native/cs",
+  "domains": [
+   "finance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_growth_strategist",
+  "category": "native/cs",
+  "domains": [
+   "growth"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_product_analyst",
+  "category": "native/cs",
+  "domains": [
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_product_manager",
+  "category": "native/cs",
+  "domains": [
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_product_strategist",
+  "category": "native/cs",
+  "domains": [
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_project_manager",
+  "category": "native/cs",
+  "domains": [
+   "planning"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_quality_regulatory",
+  "category": "native/cs",
+  "domains": [
+   "compliance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_senior_engineer",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_ux_researcher",
+  "category": "native/cs",
+  "domains": [
+   "design"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.cs_workspace_admin",
+  "category": "native/cs",
+  "domains": [
+   "devops"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.documentation_accuracy_reviewer",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.finance_lead",
+  "category": "native/cs",
+  "domains": [
+   "finance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.financial_analyst",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.growth_marketer",
+  "category": "native/cs",
+  "domains": [
+   "marketing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.performance_reviewer",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.recruiter",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.security_code_reviewer",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "community.solo_founder",
+  "category": "native/cs",
+  "domains": [
+   "business"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.startup_cto",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "community.test_agent",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "community.test_coverage_reviewer",
+  "category": "native/cs",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "competitive-analyst",
+  "category": "10-research-analysis",
+  "domains": [
+   "ai",
+   "analysis",
+   "competitive",
+   "intelligence",
+   "research"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "compliance-auditor",
+  "category": "04-quality-security",
+  "domains": [
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "content-marketer",
+  "category": "08-business-product",
+  "domains": [
+   "ai",
+   "business",
+   "legal",
+   "marketing",
+   "product",
+   "sales"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "context-manager",
+  "category": "09-meta-orchestration",
+  "domains": [
+   "coordination",
+   "data",
+   "multi_agent",
+   "orchestration",
+   "workflow"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "cpp-pro",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "performance",
+   "specialized"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "critic",
+  "category": "native/cs",
+  "domains": [
+   "validation",
+   "adversarial",
+   "pre_mortem",
+   "falsification",
+   "critique",
+   "quality_gate"
+  ],
+  "tier": 0
+ },
+ {
+  "id": "csharp-developer",
+  "category": "02-language-specialists",
+  "domains": [
+   "api",
+   "backend",
+   "cloud",
+   "code",
+   "engineering",
+   "frontend"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "customer-success-manager",
+  "category": "08-business-product",
+  "domains": [
+   "analysis",
+   "business",
+   "legal",
+   "marketing",
+   "product",
+   "sales"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "data-analyst",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analysis",
+   "analytics",
+   "business",
+   "data",
+   "database",
+   "llm",
+   "ml"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "data-engineer",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml",
+   "orchestration"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "data-researcher",
+  "category": "10-research-analysis",
+  "domains": [
+   "analysis",
+   "competitive",
+   "data",
+   "intelligence",
+   "research"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "data-scientist",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analysis",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "database-administrator",
+  "category": "03-infrastructure",
+  "domains": [
+   "ai",
+   "cloud",
+   "data",
+   "database",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations",
+   "performance",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "database-optimizer",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "debugger",
+  "category": "04-quality-security",
+  "domains": [
+   "ai",
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "dependency-manager",
+  "category": "06-developer-experience",
+  "domains": [
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "deployment-engineer",
+  "category": "03-infrastructure",
+  "domains": [
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "design-bridge",
+  "category": "01-core-development",
+  "domains": [
+   "ai",
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "fullstack"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "devops-cicd-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "devops-engineer",
+  "category": "03-infrastructure",
+  "domains": [
+   "devops",
+   "engineering",
+   "automation"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "devops-incident-responder",
+  "category": "03-infrastructure",
+  "domains": [
+   "ai",
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "diff_governance",
+  "category": "native/cs",
+  "domains": [
+   "diff",
+   "version_control",
+   "OPP",
+   "approval",
+   "governance",
+   "FMEA"
+  ],
+  "tier": 0
+ },
+ {
+  "id": "django-api-developer",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "django-backend-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "django-developer",
+  "category": "02-language-specialists",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "django-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "django-orm-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "docker-expert",
+  "category": "03-infrastructure",
+  "domains": [
+   "ai",
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations",
+   "orchestration",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "documentation-engineer",
+  "category": "06-developer-experience",
+  "domains": [
+   "api",
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "marketing",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "documentation-specialist",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "dotnet-core-expert",
+  "category": "02-language-specialists",
+  "domains": [
+   "api",
+   "backend",
+   "cloud",
+   "code",
+   "engineering",
+   "frontend",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "dotnet-framework-4.8-expert",
+  "category": "02-language-specialists",
+  "domains": [
+   "ai",
+   "backend",
+   "code",
+   "engineering",
+   "frontend"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "dx-optimizer",
+  "category": "06-developer-experience",
+  "domains": [
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "testing",
+   "tooling",
+   "workflow"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "electron-pro",
+  "category": "01-core-development",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "fullstack",
+   "performance",
+   "security"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "elixir-expert",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "embedded-systems",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "domain_expert",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "engineer",
+  "category": "native/cs",
+  "domains": [
+   "implementation",
+   "code",
+   "algorithm",
+   "debugging",
+   "refactoring",
+   "testing"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "error-coordinator",
+  "category": "09-meta-orchestration",
+  "domains": [
+   "ai",
+   "coordination",
+   "multi_agent",
+   "orchestration",
+   "workflow"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "error-detective",
+  "category": "04-quality-security",
+  "domains": [
+   "ai",
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "event_observer",
+  "category": "native/cs",
+  "domains": [
+   "event_bus",
+   "monitoring",
+   "anomaly",
+   "decoherence",
+   "pipeline_health",
+   "reliability"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "expo-react-native-expert",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "mobile"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "fastapi-developer",
+  "category": "02-language-specialists",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "fastapi-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "fintech-engineer",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "domain_expert",
+   "finance",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "flutter-expert",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "mobile",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "frontend-developer",
+  "category": "01-core-development",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "fullstack"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "fullstack-developer",
+  "category": "01-core-development",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "data",
+   "database",
+   "engineering",
+   "frontend",
+   "fullstack"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "game-developer",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "domain_expert",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "git-workflow-manager",
+  "category": "06-developer-experience",
+  "domains": [
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "tooling",
+   "workflow"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "golang-pro",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "cloud",
+   "code",
+   "engineering",
+   "frontend",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "graphql-architect",
+  "category": "01-core-development",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "fullstack",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "incident-responder",
+  "category": "03-infrastructure",
+  "domains": [
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations",
+   "security"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "iot-engineer",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "cloud",
+   "domain_expert",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "it-ops-orchestrator",
+  "category": "09-meta-orchestration",
+  "domains": [
+   "ai",
+   "cloud",
+   "coordination",
+   "multi_agent",
+   "orchestration",
+   "workflow"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "java-architect",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "cloud",
+   "code",
+   "engineering",
+   "frontend"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "javascript-pro",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "performance",
+   "refactoring"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "knowledge-synthesizer",
+  "category": "09-meta-orchestration",
+  "domains": [
+   "coordination",
+   "multi_agent",
+   "orchestration",
+   "workflow"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "kotlin-specialist",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "mobile"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "kubernetes-specialist",
+  "category": "03-infrastructure",
+  "domains": [
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "laravel-backend-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "laravel-eloquent-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "laravel-specialist",
+  "category": "02-language-specialists",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "legacy-modernizer",
+  "category": "06-developer-experience",
+  "domains": [
+   "ai",
+   "business",
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "risk",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "legal-advisor",
+  "category": "08-business-product",
+  "domains": [
+   "business",
+   "legal",
+   "marketing",
+   "product",
+   "risk",
+   "sales"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "license-engineer",
+  "category": "08-business-product",
+  "domains": [
+   "business",
+   "legal",
+   "marketing",
+   "product",
+   "risk",
+   "sales"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "llm-architect",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "m365-admin",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "domain_expert",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "machine-learning-engineer",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "market-researcher",
+  "category": "10-research-analysis",
+  "domains": [
+   "analysis",
+   "business",
+   "competitive",
+   "intelligence",
+   "research"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "mcp-developer",
+  "category": "06-developer-experience",
+  "domains": [
+   "ai",
+   "data",
+   "debugging",
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "meta_learning_agent",
+  "category": "native/cs",
+  "domains": [
+   "meta_learning",
+   "pattern_recognition",
+   "evolution",
+   "diff_proposal",
+   "bayesian_update",
+   "fitness_tracking"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "meta_reasoning",
+  "category": "native/cs",
+  "domains": [
+   "meta_reasoning",
+   "R_acum",
+   "reliability",
+   "pipeline_monitor",
+   "epistemic_regulator",
+   "EARLY_EXIT"
+  ],
+  "tier": 0
+ },
+ {
+  "id": "microservices-architect",
+  "category": "01-core-development",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "fullstack"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "ml-data-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "ml-engineer",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml",
+   "performance",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "mlops-engineer",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "mobile-app-developer",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "domain_expert",
+   "mobile",
+   "performance",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "mobile-developer",
+  "category": "01-core-development",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "fullstack",
+   "mobile",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "multi-agent-coordinator",
+  "category": "09-meta-orchestration",
+  "domains": [
+   "ai",
+   "coordination",
+   "multi_agent",
+   "orchestration",
+   "workflow"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "network-engineer",
+  "category": "03-infrastructure",
+  "domains": [
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations",
+   "performance",
+   "security"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "nextjs-developer",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "performance",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "nlp-engineer",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analysis",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "payment-integration",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "domain_expert",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "penetration-tester",
+  "category": "04-quality-security",
+  "domains": [
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "performance-engineer",
+  "category": "04-quality-security",
+  "domains": [
+   "analysis",
+   "code_review",
+   "data",
+   "database",
+   "debugging",
+   "performance",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "performance-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "performance-monitor",
+  "category": "09-meta-orchestration",
+  "domains": [
+   "coordination",
+   "monitoring",
+   "multi_agent",
+   "orchestration",
+   "performance",
+   "workflow"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "performance-optimizer",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "php-pro",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "platform-engineer",
+  "category": "03-infrastructure",
+  "domains": [
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations",
+   "workflow"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "pmi_pm",
+  "category": "native/cs",
+  "domains": [
+   "pmi",
+   "pmbok",
+   "scope",
+   "wbs",
+   "risk",
+   "stakeholder"
+  ],
+  "tier": 0
+ },
+ {
+  "id": "postgres-pro",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "powershell-5.1-expert",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "powershell-7-expert",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "cloud",
+   "code",
+   "engineering",
+   "frontend",
+   "orchestration"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "powershell-module-architect",
+  "category": "06-developer-experience",
+  "domains": [
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "refactoring",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "powershell-security-hardening",
+  "category": "04-quality-security",
+  "domains": [
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "powershell-ui-architect",
+  "category": "06-developer-experience",
+  "domains": [
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "product-manager",
+  "category": "08-business-product",
+  "domains": [
+   "product",
+   "planning",
+   "business"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "programme_director",
+  "category": "native/cs",
+  "domains": [
+   "programme_management",
+   "coordination",
+   "delivery",
+   "scope_governance",
+   "dependency_management",
+   "stakeholder_alignment"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "project-analyst",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "project-idea-validator",
+  "category": "10-research-analysis",
+  "domains": [
+   "analysis",
+   "competitive",
+   "intelligence",
+   "research",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "project-manager",
+  "category": "08-business-product",
+  "domains": [
+   "business",
+   "legal",
+   "marketing",
+   "product",
+   "risk",
+   "sales"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "prompt-engineer",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml",
+   "product",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "python-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "python-pro",
+  "category": "02-language-specialists",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "product"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "qa-expert",
+  "category": "04-quality-security",
+  "domains": [
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "quant-analyst",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "analytics",
+   "domain_expert",
+   "finance",
+   "risk",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "rails-activerecord-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "rails-api-developer",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "rails-backend-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "rails-expert",
+  "category": "02-language-specialists",
+  "domains": [
+   "ai",
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "react-component-architect",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "react-nextjs-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "react-specialist",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "readme-generator",
+  "category": "06-developer-experience",
+  "domains": [
+   "ai",
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "refactoring-specialist",
+  "category": "06-developer-experience",
+  "domains": [
+   "ai",
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "refactoring",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "reinforcement-learning-engineer",
+  "category": "05-data-ai",
+  "domains": [
+   "ai",
+   "analytics",
+   "data",
+   "database",
+   "llm",
+   "ml"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "research-analyst",
+  "category": "10-research-analysis",
+  "domains": [
+   "ai",
+   "analysis",
+   "competitive",
+   "intelligence",
+   "research"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "researcher",
+  "category": "native/cs",
+  "domains": [
+   "research",
+   "evidence",
+   "knowledge_gap",
+   "literature",
+   "sources",
+   "hypothesis"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "risk-manager",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "domain_expert",
+   "finance",
+   "risk",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "rust-engineer",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "performance",
+   "specialized"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "sales-engineer",
+  "category": "08-business-product",
+  "domains": [
+   "business",
+   "legal",
+   "marketing",
+   "product",
+   "sales"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "scientific-literature-researcher",
+  "category": "10-research-analysis",
+  "domains": [
+   "analysis",
+   "competitive",
+   "data",
+   "intelligence",
+   "research"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "scientist_agent",
+  "category": "native/cs",
+  "domains": [
+   "hypothesis",
+   "scientific_method",
+   "simulation",
+   "monte_carlo",
+   "fractal_cognitive",
+   "symbolic_execution"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "scrum-master",
+  "category": "08-business-product",
+  "domains": [
+   "business",
+   "legal",
+   "marketing",
+   "product",
+   "sales"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "search-specialist",
+  "category": "10-research-analysis",
+  "domains": [
+   "analysis",
+   "competitive",
+   "intelligence",
+   "research"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "security-auditor",
+  "category": "04-quality-security",
+  "domains": [
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "risk",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "security-engineer",
+  "category": "03-infrastructure",
+  "domains": [
+   "analysis",
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations",
+   "security"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "security-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "seo-specialist",
+  "category": "07-specialized-domains",
+  "domains": [
+   "ai",
+   "domain_expert",
+   "marketing",
+   "specialized"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "slack-expert",
+  "category": "06-developer-experience",
+  "domains": [
+   "api",
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "security",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "spring-boot-engineer",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "cloud",
+   "code",
+   "engineering",
+   "frontend"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "sql-pro",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "data",
+   "database",
+   "engineering",
+   "frontend",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "sre-engineer",
+  "category": "03-infrastructure",
+  "domains": [
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "swift-expert",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "mobile"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "symfony-specialist",
+  "category": "02-language-specialists",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "tailwind-css-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "task-distributor",
+  "category": "09-meta-orchestration",
+  "domains": [
+   "coordination",
+   "multi_agent",
+   "orchestration",
+   "workflow"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "team-configurator",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "tech-lead-orchestrator",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "technical-writer",
+  "category": "08-business-product",
+  "domains": [
+   "ai",
+   "api",
+   "business",
+   "documentation",
+   "legal",
+   "marketing",
+   "product",
+   "sales"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "terraform-engineer",
+  "category": "03-infrastructure",
+  "domains": [
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations",
+   "refactoring"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "terragrunt-expert",
+  "category": "03-infrastructure",
+  "domains": [
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations",
+   "orchestration"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "test-automator",
+  "category": "04-quality-security",
+  "domains": [
+   "analysis",
+   "code_review",
+   "debugging",
+   "quality",
+   "security",
+   "testing"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "testing-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "theorist",
+  "category": "native/cs",
+  "domains": [
+   "hypothesis",
+   "theory",
+   "model",
+   "abstraction",
+   "first_principles",
+   "causal_reasoning"
+  ],
+  "tier": 1
+ },
+ {
+  "id": "tooling-engineer",
+  "category": "06-developer-experience",
+  "domains": [
+   "devops",
+   "documentation",
+   "dx",
+   "engineering",
+   "tooling"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "trend-analyst",
+  "category": "10-research-analysis",
+  "domains": [
+   "analysis",
+   "competitive",
+   "intelligence",
+   "mobile",
+   "research"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "typescript-pro",
+  "category": "02-language-specialists",
+  "domains": [
+   "backend",
+   "code",
+   "engineering",
+   "frontend"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "ui-designer",
+  "category": "01-core-development",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "fullstack"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "ux-researcher",
+  "category": "08-business-product",
+  "domains": [
+   "business",
+   "legal",
+   "marketing",
+   "product",
+   "research",
+   "sales",
+   "testing"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "vue-component-architect",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "vue-expert",
+  "category": "02-language-specialists",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "performance"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "vue-nuxt-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "vue-state-manager",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "web-scraping-expert",
+  "category": "community-awesome",
+  "domains": [
+   "engineering"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "websocket-engineer",
+  "category": "01-core-development",
+  "domains": [
+   "api",
+   "backend",
+   "code",
+   "engineering",
+   "frontend",
+   "fullstack"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "windows-infra-admin",
+  "category": "03-infrastructure",
+  "domains": [
+   "cloud",
+   "deployment",
+   "devops",
+   "infrastructure",
+   "operations"
+  ],
+  "tier": 2
+ },
+ {
+  "id": "wordpress-master",
+  "category": "08-business-product",
+  "domains": [
+   "business",
+   "legal",
+   "marketing",
+   "product",
+   "sales"
+  ],
+  "tier": 3
+ },
+ {
+  "id": "workflow-orchestrator",
+  "category": "09-meta-orchestration",
+  "domains": [
+   "business",
+   "coordination",
+   "multi_agent",
+   "orchestration",
+   "workflow"
+  ],
+  "tier": 1
+ }
+]

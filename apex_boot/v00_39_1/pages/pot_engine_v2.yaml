@@ -1,4 +1,5 @@
 pot_engine_v2:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   version: v00.20.2
   tier: 1
   replaces: pot_engine_v00.20.0

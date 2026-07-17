@@ -1,4 +1,5 @@
 fractal_hypothesis_compression:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   version: v00.20.0
   tier: 1
   description: 'Poda o espaço de hipóteses em cada transição de nível fractal. Usa outputs de Specialized

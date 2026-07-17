@@ -1,0 +1,322 @@
+[
+ {
+  "id": "script:_tfidf",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "tfidf,cosine,fallback,ranking,semantic,char-ngram",
+  "mass": 160,
+  "path": "scripts/_tfidf.py"
+ },
+ {
+  "id": "script:agent_registry",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "agent-match,competence,grant,roster",
+  "mass": 155,
+  "path": "scripts/agent_registry.py"
+ },
+ {
+  "id": "script:apex_st_metric",
+  "type": "script",
+  "domain": "science",
+  "capabilities": "progress,distance,curvature,stagnation,meta-learning",
+  "mass": 45,
+  "path": "scripts/apex_st_metric.py"
+ },
+ {
+  "id": "script:asset_manager",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "assets,mcp,route,manage",
+  "mass": 79,
+  "path": "scripts/asset_manager.py"
+ },
+ {
+  "id": "script:bayes",
+  "type": "script",
+  "domain": "math",
+  "capabilities": "bayesian,beta-binomial,posterior,omega,r_acum",
+  "mass": 100,
+  "path": "scripts/bayes.py"
+ },
+ {
+  "id": "script:chaos_operators",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "chaos,levy,mutation,recombine,genius,exploration",
+  "mass": 103,
+  "path": "scripts/chaos_operators.py"
+ },
+ {
+  "id": "script:code_genetics",
+  "type": "script",
+  "domain": "engineering",
+  "capabilities": "vaccine,error-fix,evolution,promotion",
+  "mass": 62,
+  "path": "scripts/code_genetics.py"
+ },
+ {
+  "id": "script:competence_matrix",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "heatmap,difficulty,diagnosis,persona-swap,inject-skill,metacognition",
+  "mass": 177,
+  "path": "scripts/competence_matrix.py"
+ },
+ {
+  "id": "script:concurrent_executor",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "parallel,stances,pot,barrier,merge,pmi,restart,sha256",
+  "mass": 182,
+  "path": "scripts/concurrent_executor.py"
+ },
+ {
+  "id": "script:config",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "preferences,preferred-modes,router-backend,discovery-source,persist",
+  "mass": 118,
+  "path": "scripts/config.py"
+ },
+ {
+  "id": "script:curated",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "catalog,domain-map,skills.sh",
+  "mass": 62,
+  "path": "scripts/curated.py"
+ },
+ {
+  "id": "script:deep_research",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "goal,research,scientific,iterative,agent-need,discovery,native,skills.sh",
+  "mass": 150,
+  "path": "scripts/deep_research.py"
+ },
+ {
+  "id": "script:fractal_compression",
+  "type": "script",
+  "domain": "science",
+  "capabilities": "hypothesis-prune,dominance,jaccard,absurdity",
+  "mass": 96,
+  "path": "scripts/fractal_compression.py"
+ },
+ {
+  "id": "script:geodesic_scheduler",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "step-order,delta_h,tokens,ethical-cost,rollback",
+  "mass": 85,
+  "path": "scripts/geodesic_scheduler.py"
+ },
+ {
+  "id": "script:geometry_estimator",
+  "type": "script",
+  "domain": "science",
+  "capabilities": "delta_err,step-doubling,block-size,integrator",
+  "mass": 58,
+  "path": "scripts/geometry_estimator.py"
+ },
+ {
+  "id": "script:gravity",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "attraction,synergy,constellation,tfidf,mass",
+  "mass": 220,
+  "path": "scripts/gravity.py"
+ },
+ {
+  "id": "script:guards",
+  "type": "script",
+  "domain": "security",
+  "capabilities": "sr36,sr37,sr38,sr39,sr40,crystallization,forge,runtime",
+  "mass": 133,
+  "path": "scripts/guards.py"
+ },
+ {
+  "id": "script:hypothesis_dag",
+  "type": "script",
+  "domain": "science",
+  "capabilities": "dag,acyclicity,bfs,cascade,invalidation",
+  "mass": 96,
+  "path": "scripts/hypothesis_dag.py"
+ },
+ {
+  "id": "script:memory",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "live-memory,episodic,semantic,sqlite,char-ngram,recall,ledger,sha256,cross-session",
+  "mass": 190,
+  "path": "scripts/memory.py"
+ },
+ {
+  "id": "script:mental_interpreter",
+  "type": "script",
+  "domain": "science",
+  "capabilities": "n_final,speculation,warmup,planning,entropy-merge",
+  "mass": 81,
+  "path": "scripts/mental_interpreter.py"
+ },
+ {
+  "id": "script:menu",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "menu,update,modes,options,research,entrypoint",
+  "mass": 140,
+  "path": "scripts/menu.py"
+ },
+ {
+  "id": "script:monte_carlo",
+  "type": "script",
+  "domain": "science",
+  "capabilities": "monte-carlo,simulation,percentiles,uncertainty,cv",
+  "mass": 128,
+  "path": "scripts/monte_carlo.py"
+ },
+ {
+  "id": "script:numeric",
+  "type": "script",
+  "domain": "science",
+  "capabilities": "rk4,euler,ode,integration,precision",
+  "mass": 71,
+  "path": "scripts/numeric.py"
+ },
+ {
+  "id": "script:orchestrator",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "express,dissect,discipline,pmi,convergence",
+  "mass": 154,
+  "path": "scripts/orchestrator.py"
+ },
+ {
+  "id": "script:pot",
+  "type": "script",
+  "domain": "engineering",
+  "capabilities": "decompose,subprocess,chaining,exact-compute",
+  "mass": 95,
+  "path": "scripts/pot.py"
+ },
+ {
+  "id": "script:project_ledger",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "living-inventory,dsm,raci,milestones,checklist,persistence,git,zip,completion-gate",
+  "mass": 272,
+  "path": "scripts/project_ledger.py"
+ },
+ {
+  "id": "script:repo_bridge",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "repo-fetch,native-skill-search,agent-load,page-load,allowlist",
+  "mass": 164,
+  "path": "scripts/repo_bridge.py"
+ },
+ {
+  "id": "script:router",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "skill-routing,tfidf,discovery",
+  "mass": 52,
+  "path": "scripts/router.py"
+ },
+ {
+  "id": "script:skill_forge",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "skill-creation,scaffold,neoformat",
+  "mass": 129,
+  "path": "scripts/skill_forge.py"
+ },
+ {
+  "id": "script:skill_scout",
+  "type": "script",
+  "domain": "security",
+  "capabilities": "fetch,ast-scan,stage,allowlist",
+  "mass": 142,
+  "path": "scripts/skill_scout.py"
+ },
+ {
+  "id": "script:skills_sh",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "skills.sh,marketplace,discovery,installs,leaderboard,quality-bar",
+  "mass": 152,
+  "path": "scripts/skills_sh.py"
+ },
+ {
+  "id": "script:snapshot",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "state,checklist,provenance,memory",
+  "mass": 73,
+  "path": "scripts/snapshot.py"
+ },
+ {
+  "id": "script:uco_gate",
+  "type": "script",
+  "domain": "engineering",
+  "capabilities": "code-quality,loop-risk,dead-code,hamiltonian",
+  "mass": 63,
+  "path": "scripts/uco_gate.py"
+ },
+ {
+  "id": "script:universal_code_optimizer_v4",
+  "type": "script",
+  "domain": "engineering",
+  "capabilities": "uco,spectral,metrics,optimization,cyclomatic",
+  "mass": 4255,
+  "path": "scripts/universal_code_optimizer_v4.py"
+ },
+ {
+  "id": "script:verification_gate",
+  "type": "script",
+  "domain": "science",
+  "capabilities": "p-neq-np,route,budget-gate,premature-pruning",
+  "mass": 66,
+  "path": "scripts/verification_gate.py"
+ },
+ {
+  "id": "script:verify",
+  "type": "script",
+  "domain": "math",
+  "capabilities": "sympy,formal-proof,identity,calculus",
+  "mass": 31,
+  "path": "scripts/verify.py"
+ },
+ {
+  "id": "script:llm_adapter",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "llm-adapter,capabilities,degradation,provider,portability,HAL",
+  "mass": 150,
+  "path": "scripts/llm_adapter.py"
+ },
+ {
+  "id": "script:swap_store",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "swap,memory-hierarchy,page-out,page-in,bundle,promotion-gate,drive,local",
+  "mass": 190,
+  "path": "scripts/swap_store.py"
+ },
+ {
+  "id": "script:learning",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "learning,persistent,promote,demote,beta-binomial,competence,governance-ledger",
+  "mass": 170,
+  "path": "scripts/learning.py"
+ },
+ {
+  "id": "script:execution_policy",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "routing-contract,surface,internet,subprocess,agent,dissect-entry,3-personas,provisioning,templates,governance",
+  "mass": 175,
+  "path": "scripts/execution_policy.py"
+ }
+]

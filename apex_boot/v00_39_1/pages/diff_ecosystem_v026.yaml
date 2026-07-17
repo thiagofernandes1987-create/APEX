@@ -1,4 +1,5 @@
 diff_ecosystem_v026:
+executor: DOCUMENTATION  # backfilled by lint_executor (SR_40)
   registered_diffs:
   - id: DIFF_VERIFIER_V2
     type: MODULE_PATCH

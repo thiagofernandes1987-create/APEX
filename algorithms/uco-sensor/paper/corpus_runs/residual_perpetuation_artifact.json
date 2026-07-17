@@ -1,0 +1,97 @@
+{
+  "method": "M11 na versao corrigida \u2014 residuais candidatos a perpetuacao (pos-CA: GA02 com allocated-to-fit)",
+  "records": [
+    {
+      "repo": "php-src",
+      "cve": "CVE-2019-11043",
+      "file": "sapi/fpm/fpm/fpm_main.c",
+      "fix_sha": "ab061f95ca966731b1c84cf5b7b20155c0a1c06a",
+      "residual_signals": 2,
+      "sites": [
+        {
+          "line": 1276,
+          "rule": "GA02",
+          "guard_on": [
+            "l"
+          ],
+          "snippet": "memcpy(path_translated, env_document_root, l);"
+        },
+        {
+          "line": 1295,
+          "rule": "GA02",
+          "guard_on": [
+            "ptlen"
+          ],
+          "snippet": "memcpy(path_translated, pt, ptlen);"
+        }
+      ]
+    },
+    {
+      "repo": "redis",
+      "cve": "CVE-2022-24834",
+      "file": "deps/lua/src/lua_cjson.c",
+      "fix_sha": "936cfa464f37",
+      "residual_signals": 0,
+      "sites": []
+    },
+    {
+      "repo": "ffmpeg",
+      "cve": "CVE-2020-22015",
+      "file": "libavformat/movenc.c",
+      "fix_sha": "4c1afa292520",
+      "residual_signals": 2,
+      "sites": [
+        {
+          "line": 4727,
+          "rule": "GA01",
+          "guard_on": [
+            "total_sidx_size",
+            "end_pos"
+          ],
+          "snippet": "offset = pos + total_sidx_size - end_pos;"
+        },
+        {
+          "line": 5834,
+          "rule": "GA02",
+          "guard_on": [
+            "prft_size"
+          ],
+          "snippet": "memcpy(&trk->cluster[trk->entry].prft, prft, prft_size);"
+        }
+      ]
+    },
+    {
+      "repo": "sqlite",
+      "cve": "CVE-2019-19646",
+      "file": "src/resolve.c",
+      "fix_sha": "926f796e8f",
+      "residual_signals": 0,
+      "sites": []
+    },
+    {
+      "repo": "postgres",
+      "cve": "CVE-2021-32027",
+      "file": "src/backend/utils/adt/arrayfuncs.c",
+      "fix_sha": "f02b9085ad2f",
+      "residual_signals": 2,
+      "sites": [
+        {
+          "line": 4602,
+          "rule": "GA02",
+          "guard_on": [
+            "inc"
+          ],
+          "snippet": "memmove(dest, DatumGetPointer(src), inc);"
+        },
+        {
+          "line": 4699,
+          "rule": "GA02",
+          "guard_on": [
+            "numbytes"
+          ],
+          "snippet": "memcpy(destptr, srcptr, numbytes);"
+        }
+      ]
+    }
+  ]
+}

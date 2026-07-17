@@ -1,4 +1,5 @@
 changelog_v020:
+executor: DOCUMENTATION  # backfilled by lint_executor (SR_40)
   version: v00.20.0
   changes:
   - 'NOVO: skill_hierarchy — cadeia formal Agent→Generic→Specialized→Model'

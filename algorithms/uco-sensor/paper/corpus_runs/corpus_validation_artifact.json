@@ -1,0 +1,403 @@
+{
+  "summary": {
+    "total": 9,
+    "tracked": 7,
+    "m10_localized": 7,
+    "m11_stopped_firing": 1,
+    "not_tracked": 2,
+    "fetch_error": 0
+  },
+  "records": [
+    {
+      "repo": "php/php-src",
+      "cve": "CVE-2019-11043",
+      "file": "sapi/fpm/fpm/fpm_main.c",
+      "ext": ".c",
+      "parent": "fadd7f0f1e7a44d6209b5c5cf30870e4b73efa7d",
+      "fix": "ab061f95ca966731b1c84cf5b7b20155c0a1c06a",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 1212,
+          "text": "\t\t\t\t\t\t\t\tpath_info = (env_path_info && pilen > slen) ? env_path_info + pilen - slen : NULL;",
+          "kind": "bounds-check-ternary",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 1213,
+          "text": "\t\t\t\t\t\t\t\ttflag = path_info && (orig_path_info != path_info);",
+          "kind": "null-guard",
+          "cwe_class": "CWE-476"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-190/125",
+        "CWE-476"
+      ],
+      "m11_vuln_findings": 3,
+      "m11_fix_findings": 2,
+      "m11_stopped_firing": true,
+      "m11_stopped": [
+        {
+          "line": 1212,
+          "rule": "GA01",
+          "guard_on": [
+            "pilen",
+            "slen"
+          ],
+          "snippet": "path_info = env_path_info ? env_path_info + pilen - slen : NULL;"
+        }
+      ],
+      "m11_persisted_count": 2,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.039,
+        "reachable_ratio_fix": 0.039,
+        "infinite_loop_risk_vuln": 0.5,
+        "infinite_loop_risk_fix": 0.5,
+        "dead_code_vuln": 2,
+        "dead_code_fix": 2,
+        "cyclomatic_delta": 0
+      },
+      "status": "tracked"
+    },
+    {
+      "repo": "antirez/redis",
+      "cve": "CVE-2022-24834",
+      "file": "deps/lua/src/lua_cjson.c",
+      "ext": ".c",
+      "parent": "14f802b360ef",
+      "fix": "936cfa464f37",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 145,
+          "text": "    size_t index;",
+          "kind": "type-widening",
+          "cwe_class": "CWE-190"
+        },
+        {
+          "line": 151,
+          "text": "    size_t string_len;",
+          "kind": "type-widening",
+          "cwe_class": "CWE-190"
+        },
+        {
+          "line": 477,
+          "text": "    if (len > SIZE_MAX / 6 - 3)",
+          "kind": "bounds-check-if",
+          "cwe_class": "CWE-125/787"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-125/787",
+        "CWE-190"
+      ],
+      "m11_vuln_findings": 0,
+      "m11_fix_findings": 0,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 0,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.065,
+        "reachable_ratio_fix": 0.065,
+        "infinite_loop_risk_vuln": 0.7,
+        "infinite_loop_risk_fix": 0.7,
+        "dead_code_vuln": 70,
+        "dead_code_fix": 70,
+        "cyclomatic_delta": 0
+      },
+      "status": "tracked"
+    },
+    {
+      "repo": "FFmpeg/FFmpeg",
+      "cve": "CVE-2020-22015",
+      "file": "libavformat/movenc.c",
+      "ext": ".c",
+      "parent": "38d18fb57863",
+      "fix": "4c1afa292520",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 2168,
+          "text": "return AVERROR(EINVAL);",
+          "kind": "early-return-guard",
+          "cwe_class": "CWE-20"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-20"
+      ],
+      "m11_vuln_findings": 2,
+      "m11_fix_findings": 2,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 2,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.002,
+        "reachable_ratio_fix": 0.002,
+        "infinite_loop_risk_vuln": 0.35,
+        "infinite_loop_risk_fix": 0.35,
+        "dead_code_vuln": 601,
+        "dead_code_fix": 603,
+        "cyclomatic_delta": -1
+      },
+      "status": "tracked",
+      "note_CE": "destravado v3.54.0: early-return count-based (return AVERROR)"
+    },
+    {
+      "repo": "sqlite/sqlite",
+      "cve": "CVE-2019-19646",
+      "file": "src/resolve.c",
+      "ext": ".c",
+      "parent": "ebd70eedd5",
+      "fix": "926f796e8f",
+      "fix_localized": false,
+      "fix_guards": [],
+      "vuln_classes": [],
+      "m11_vuln_findings": 0,
+      "m11_fix_findings": 0,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 0,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.006,
+        "reachable_ratio_fix": 0.006,
+        "infinite_loop_risk_vuln": 0.8,
+        "infinite_loop_risk_fix": 0.8,
+        "dead_code_vuln": 3,
+        "dead_code_fix": 3,
+        "cyclomatic_delta": 5
+      },
+      "status": "not_tracked"
+    },
+    {
+      "repo": "torvalds/linux",
+      "cve": "CVE-2016-5195",
+      "file": "mm/gup.c",
+      "ext": ".c",
+      "parent": "37887783b3fe",
+      "fix": "5535be309971",
+      "fix_localized": false,
+      "fix_guards": [],
+      "vuln_classes": [],
+      "m11_vuln_findings": 0,
+      "m11_fix_findings": 0,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 0,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.018,
+        "reachable_ratio_fix": 0.018,
+        "infinite_loop_risk_vuln": 0.8,
+        "infinite_loop_risk_fix": 0.8,
+        "dead_code_vuln": 507,
+        "dead_code_fix": 522,
+        "cyclomatic_delta": 0
+      },
+      "status": "not_tracked"
+    },
+    {
+      "repo": "postgres/postgres",
+      "cve": "CVE-2021-32027",
+      "file": "src/backend/utils/adt/arrayfuncs.c",
+      "ext": ".c",
+      "parent": "6206454bdac1",
+      "fix": "f02b9085ad2f",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 375,
+          "text": "ArrayCheckBounds(ndim, dim, lBound);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 1351,
+          "text": "ArrayCheckBounds(ndim, dim, lBound);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 2374,
+          "text": "ArrayCheckBounds(ndim, dim, lb);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 2640,
+          "text": "ArrayCheckBounds(ndim, dim, lb);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 2962,
+          "text": "ArrayCheckBounds(ndim, dim, lb);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        },
+        {
+          "line": 3379,
+          "text": "ArrayCheckBounds(ndims, dims, lbs);",
+          "kind": "bounds-check-call",
+          "cwe_class": "CWE-190/125"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-190/125"
+      ],
+      "m11_vuln_findings": 2,
+      "m11_fix_findings": 2,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 2,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.062,
+        "reachable_ratio_fix": 0.062,
+        "infinite_loop_risk_vuln": 0.6,
+        "infinite_loop_risk_fix": 0.6,
+        "dead_code_vuln": 266,
+        "dead_code_fix": 267,
+        "cyclomatic_delta": 1
+      },
+      "status": "tracked",
+      "note_CE": "destravado v3.54.0: bounds-check-call (ArrayCheckBounds)"
+    },
+    {
+      "repo": "pallets/jinja",
+      "cve": "CVE-2024-22195",
+      "file": "src/jinja2/filters.py",
+      "ext": ".py",
+      "parent": "3.1.2",
+      "fix": "3.1.3",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 291,
+          "text": "            raise ValueError(f\"Spaces are not allowed in attributes: '{key}'\")",
+          "kind": "input-validation-raise",
+          "cwe_class": "CWE-20"
+        },
+        {
+          "line": 293,
+          "text": "        items.append(f'{escape(key)}=\"{escape(value)}\"')",
+          "kind": "output-encoding",
+          "cwe_class": "CWE-79/116/78"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-20",
+        "CWE-79/116/78"
+      ],
+      "m11_vuln_findings": 0,
+      "m11_fix_findings": 0,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 0,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.985,
+        "reachable_ratio_fix": 0.985,
+        "infinite_loop_risk_vuln": 0.0,
+        "infinite_loop_risk_fix": 0.0,
+        "dead_code_vuln": 0,
+        "dead_code_fix": 0,
+        "cyclomatic_delta": 2
+      },
+      "status": "tracked"
+    },
+    {
+      "repo": "psf/requests",
+      "cve": "CVE-2023-32681",
+      "file": "requests/sessions.py",
+      "ext": ".py",
+      "parent": "v2.30.0",
+      "fix": "v2.31.0",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 329,
+          "text": "        if not scheme.startswith('https') and username and password:",
+          "kind": "security-conditional-guard",
+          "cwe_class": "CWE-287/863/200"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-287/863/200"
+      ],
+      "m11_vuln_findings": 0,
+      "m11_fix_findings": 0,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 0,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 1.0,
+        "reachable_ratio_fix": 1.0,
+        "infinite_loop_risk_vuln": 0.15,
+        "infinite_loop_risk_fix": 0.15,
+        "dead_code_vuln": 0,
+        "dead_code_fix": 0,
+        "cyclomatic_delta": 0
+      },
+      "status": "tracked"
+    },
+    {
+      "repo": "pallets/werkzeug",
+      "cve": "CVE-2023-25577",
+      "file": "src/werkzeug/formparser.py",
+      "ext": ".py",
+      "parent": "2.2.2",
+      "fix": "2.2.3",
+      "fix_localized": true,
+      "fix_guards": [
+        {
+          "line": 182,
+          "text": "    :param max_form_parts: The maximum number of parts to be parsed. If this is",
+          "kind": "resource-limit",
+          "cwe_class": "CWE-400"
+        },
+        {
+          "line": 196,
+          "text": "        max_form_parts: t.Optional[int] = None,",
+          "kind": "resource-limit",
+          "cwe_class": "CWE-400"
+        },
+        {
+          "line": 206,
+          "text": "        self.max_form_parts = max_form_parts",
+          "kind": "resource-limit",
+          "cwe_class": "CWE-400"
+        },
+        {
+          "line": 289,
+          "text": "            max_form_parts=self.max_form_parts,",
+          "kind": "resource-limit",
+          "cwe_class": "CWE-400"
+        },
+        {
+          "line": 355,
+          "text": "        max_form_parts: t.Optional[int] = None,",
+          "kind": "resource-limit",
+          "cwe_class": "CWE-400"
+        }
+      ],
+      "vuln_classes": [
+        "CWE-190",
+        "CWE-400"
+      ],
+      "m11_vuln_findings": 0,
+      "m11_fix_findings": 0,
+      "m11_stopped_firing": false,
+      "m11_stopped": [],
+      "m11_persisted_count": 0,
+      "cfg_delta": {
+        "reachable_ratio_vuln": 0.952,
+        "reachable_ratio_fix": 0.953,
+        "infinite_loop_risk_vuln": 0.65,
+        "infinite_loop_risk_fix": 0.65,
+        "dead_code_vuln": 0,
+        "dead_code_fix": 0,
+        "cyclomatic_delta": 0
+      },
+      "status": "tracked"
+    }
+  ]
+}

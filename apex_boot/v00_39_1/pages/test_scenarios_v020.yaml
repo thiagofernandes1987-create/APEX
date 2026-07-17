@@ -1,4 +1,5 @@
 test_scenarios_v020:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
 - id: scenario_20_01
   name: Agente Matemático com Skill Chain
   input:

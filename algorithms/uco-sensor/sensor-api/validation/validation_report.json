@@ -1,5 +1,5 @@
 {
-  "timestamp": 1782489025.364146,
+  "timestamp": 1782597318.4828176,
   "passed": 48,
   "failed": 0,
   "total": 48,
@@ -177,7 +177,7 @@
     {
       "name": "RepoScanner: scan < 10s",
       "passed": true,
-      "detail": "elapsed=0.04s"
+      "detail": "elapsed=0.03s"
     },
     {
       "name": "RepoScanner: summary() n\u00e3o quebra",
@@ -192,32 +192,32 @@
     {
       "name": "RepoScanner: H\u0304 plaus\u00edvel (0\u2013500)",
       "passed": true,
-      "detail": "avg_H=2.30"
+      "detail": "avg_H=0.99"
     },
     {
       "name": "RepoScanner: CC\u0304 plaus\u00edvel (1\u2013100)",
       "passed": true,
-      "detail": "avg_CC=3.25"
+      "detail": "avg_CC=6.50"
     },
     {
       "name": "Performance Python simples: < 2000ms",
       "passed": true,
-      "detail": "3.7ms"
+      "detail": "3.6ms"
     },
     {
       "name": "Performance Python complexo: < 2000ms",
       "passed": true,
-      "detail": "18.6ms"
+      "detail": "17.9ms"
     },
     {
       "name": "Performance JavaScript: < 2000ms",
       "passed": true,
-      "detail": "0.2ms"
+      "detail": "1.2ms"
     },
     {
       "name": "Performance Go: < 2000ms",
       "passed": true,
-      "detail": "0.1ms"
+      "detail": "0.8ms"
     },
     {
       "name": "ILR > 0 para while True sem escape",

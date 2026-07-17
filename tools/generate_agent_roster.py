@@ -33,7 +33,18 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='repla
 
 REPO_ROOT = Path(__file__).parent.parent
 SUBAGENTS_ROOT = REPO_ROOT / "agents" / "community-subagents" / "categories"
+AWESOME_ROOT = REPO_ROOT / "agents" / "community-awesome"
 CS_ROOT = REPO_ROOT / "agents"
+
+# community-awesome subdirs -> equivalent numbered categories (so the domain map applies)
+AWESOME_CATEGORY_MAP = {
+    "core": "01-core-development",
+    "django": "02-language-specialists", "laravel": "02-language-specialists",
+    "python": "02-language-specialists", "rails": "02-language-specialists",
+    "react": "02-language-specialists", "vue": "02-language-specialists",
+    "universal": "01-core-development",
+    "orchestrators": "09-meta-orchestration",
+}
 
 # ── Domain activation map: category → activates_when domains
 CATEGORY_DOMAIN_MAP = {
@@ -191,6 +202,31 @@ def collect_subagents() -> list[dict]:
             data["capabilities"],
             data["description"],
         )
+        agents.append(data)
+    return agents
+
+
+def collect_awesome_agents() -> list[dict]:
+    """Collect community-awesome AGENT.md files.
+
+    WHY: the original generator only scanned community-subagents + cs_* — the 30+
+    community-awesome agents existed on disk but were never registered (audit
+    finding: roster said 183 agents, repo has 213 unique)."""
+    agents = []
+    if not AWESOME_ROOT.exists():
+        return agents
+    for agent_path in sorted(AWESOME_ROOT.rglob("AGENT.md")):
+        data = parse_agent_md(agent_path)
+        if not data:
+            continue
+        rel = agent_path.relative_to(AWESOME_ROOT)
+        subdir = rel.parts[0] if len(rel.parts) > 1 else ""
+        category = AWESOME_CATEGORY_MAP.get(subdir, "01-core-development")
+        data["category"] = category
+        data["group"] = "community-awesome"
+        data["activates_when"] = extract_activates_when(
+            data.get("agent_id", ""), data["name"], category,
+            data["capabilities"], data["description"])
         agents.append(data)
     return agents
 
@@ -439,7 +475,7 @@ def main():
 
     # Collect agents
     print("  Collecting community-subagents...")
-    subagents = collect_subagents()
+    subagents = collect_subagents() + collect_awesome_agents()
     print(f"  Found: {len(subagents)} community-subagents")
 
     print("  Collecting cs_ persona agents...")

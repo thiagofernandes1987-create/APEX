@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "uco-sensor-api",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["algorithms/uco-sensor/sensor-api/cli.py", "serve", "--host", "0.0.0.0", "--port", "8080"],
+      "port": 8080
+    },
+    {
+      "name": "uco-sensor-asgi",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "--app-dir", "algorithms/uco-sensor/sensor-api", "asgi.app:app", "--host", "0.0.0.0", "--port", "8765"],
+      "port": 8765
+    }
+  ]
+}

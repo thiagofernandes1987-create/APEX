@@ -707,6 +707,47 @@ def _apex_notify_history(args, result) -> None:
 
 # ─── Comando: analyze ────────────────────────────────────────────────────────
 
+def cmd_sast(args):
+    """(DS) Roda TODOS os motores de segurança (taint M7.2 + multilang + guard
+    M11 + TOCTOU M28) sobre um arquivo/diretório e reporta os findings — pipeline
+    de segurança unificado, sem precisar subir a API nem chamar motor por motor."""
+    from scan.sast_pipeline import scan_path
+
+    path = Path(args.path)
+    if not path.exists():
+        print(f"\033[91mErro: '{args.path}' não existe.\033[0m", file=sys.stderr)
+        sys.exit(1)
+
+    report = scan_path(str(path), max_files=args.max_files or 0,
+                       include_tests=not args.no_tests)
+
+    if args.format == "json":
+        print(json.dumps(report, indent=2, default=str))
+    else:  # text
+        if not args.quiet:
+            _print_header()
+        print(f"  SAST scan: {report['root']}")
+        print(f"  Arquivos varridos    : {report['files_scanned']}")
+        print(f"  Arquivos com findings: {report['files_with_findings']}")
+        print(f"  Rating               : {report['rating']}")
+        sc = report["severity_counts"]
+        print(f"  Findings: {report['total_findings']}  "
+              f"(CRITICAL={sc['CRITICAL']} HIGH={sc['HIGH']} "
+              f"MEDIUM={sc['MEDIUM']} LOW={sc['LOW']})")
+        print()
+        for fr in report["file_results"]:
+            if not fr["findings"]:
+                continue
+            print(f"  \033[1m{fr['path']}\033[0m")
+            for f in fr["findings"]:
+                print(f"    L{f['line']:<5} {f['severity']:<8} {f['rule_id']:<10} "
+                      f"{f['vuln_type']:<24} {f['cwe_id']}  [{f['engine']}]")
+            print()
+
+    if args.fail_on_findings and report["total_findings"] > 0:
+        sys.exit(1)
+
+
 def cmd_analyze(args):
     """Analisa um único arquivo."""
     from lang_adapters.registry import get_registry
@@ -773,7 +814,11 @@ def cmd_analyze(args):
 
 def cmd_serve(args):
     """Inicia o servidor HTTP."""
-    from http.server import HTTPServer
+    # (DS) ThreadingHTTPServer, não HTTPServer: o servidor single-thread bloqueia
+    # quando um cliente mantém a conexão aberta (ex.: um proxy/preview que faz
+    # keep-alive) — novas requisições nunca são atendidas. A versão threaded serve
+    # requisições concorrentes, comportamento esperado de um dev server.
+    from http.server import ThreadingHTTPServer
     import api.server as srv
 
     srv._config.db_path      = args.db or ":memory:"
@@ -799,7 +844,7 @@ def cmd_serve(args):
     host = args.host or "0.0.0.0"
     port = args.port or 8080
 
-    server = HTTPServer((host, port), srv.UCOSensorHandler)
+    server = ThreadingHTTPServer((host, port), srv.UCOSensorHandler)
     print(f"\033[96m[UCO-Sensor v0.3.0]\033[0m Rodando em http://{host}:{port}")
     print(f"  DB       : {args.db or ':memory:'}")
     print(f"  Auth     : {args.auth}")
@@ -984,6 +1029,20 @@ Exemplos:
     p_analyze.add_argument("--fail-on-critical", action="store_true")
     p_analyze.set_defaults(func=cmd_analyze)
 
+    # ── sast ──────────────────────────────────────────────────────────────────
+    p_sast = sub.add_parser(
+        "sast", help="Scan de SEGURANÇA unificado (taint+multilang+guard+TOCTOU)")
+    p_sast.add_argument("path",         help="Arquivo ou diretório")
+    p_sast.add_argument("--format",     choices=["text", "json"], default="text")
+    p_sast.add_argument("--max-files",  type=int, default=0,
+                        help="Máximo de arquivos (0=sem limite)")
+    p_sast.add_argument("--no-tests",   action="store_true",
+                        help="Excluir arquivos de teste")
+    p_sast.add_argument("--quiet",      action="store_true")
+    p_sast.add_argument("--fail-on-findings", action="store_true",
+                        help="Exit code 1 se houver qualquer finding (para CI)")
+    p_sast.set_defaults(func=cmd_sast)
+
     # ── serve ─────────────────────────────────────────────────────────────────
     p_serve = sub.add_parser("serve", help="Inicia o servidor HTTP")
     p_serve.add_argument("--host",      default="0.0.0.0")
@@ -1009,6 +1068,14 @@ Exemplos:
 
 
 def main():
+    # (DS) Windows: o console usa cp1252 por padrão e a saída colorida/box-drawing
+    # do header derrubava a CLI inteira (UnicodeEncodeError). Reconfigura stdout/
+    # stderr para UTF-8 quando possível — no-op onde já é UTF-8 (Linux/macOS).
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+        except Exception:  # noqa: BLE001 — streams sem reconfigure (pipes/buffers)
+            pass
     parser = build_parser()
     args   = parser.parse_args()
     args.func(args)

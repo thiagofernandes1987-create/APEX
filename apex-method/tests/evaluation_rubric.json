@@ -1,0 +1,61 @@
+{
+ "earned": 12.97,
+ "possible": 13,
+ "pct": 99.8,
+ "criteria": [
+  {
+   "name": "Benchmark passes (correctness)",
+   "weight": 3,
+   "score": 1.0,
+   "evidence": "benchmark 44/44"
+  },
+  {
+   "name": "Runs without heavy deps (robustness)",
+   "weight": 2,
+   "score": 1.0,
+   "evidence": "degrades gracefully"
+  },
+  {
+   "name": "SR_40 self-compliance (zero ambiguity)",
+   "weight": 1,
+   "score": 0.975,
+   "evidence": "39/40 scripts + SKILL.md=ok"
+  },
+  {
+   "name": "Catalog/scripts consistency",
+   "weight": 1,
+   "score": 1.0,
+   "evidence": "py-lib symdiff=[]"
+  },
+  {
+   "name": "Agent roster complete (213)",
+   "weight": 1,
+   "score": 1.0,
+   "evidence": "213 agents"
+  },
+  {
+   "name": "Native index enriched (3784)",
+   "weight": 1,
+   "score": 1.0,
+   "evidence": "3784 skills, enriched=True"
+  },
+  {
+   "name": "Security gates (json/pickle/getattr)",
+   "weight": 2,
+   "score": 1.0,
+   "evidence": "json_ok=True pickle_reject=True getattr_reject=True"
+  },
+  {
+   "name": "Marketplace >=1000-install bar",
+   "weight": 1,
+   "score": 1.0,
+   "evidence": "bar keeps 1/2 at >=1000 installs"
+  },
+  {
+   "name": "Provenance discipline",
+   "weight": 1,
+   "score": 1.0,
+   "evidence": "findings carry what/where/how/confidence"
+  }
+ ]
+}

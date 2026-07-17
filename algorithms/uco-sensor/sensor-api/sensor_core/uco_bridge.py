@@ -122,6 +122,67 @@ _PYTHON_BUILTINS: frozenset = frozenset(vars(_builtins_module).keys()) - frozens
 })
 
 
+# ─── Dead-code por SÍMBOLO não-referenciado (item 3 / dogfooding) ─────────────
+# Complementa `syntactic_dead_code` (que só pega statements APÓS return/break):
+# detecta funções/classes PRIVADAS de nível de módulo que nunca são referenciadas
+# no próprio módulo.  CONSERVADOR por princípio (FP pior que FN): só sinaliza
+# símbolos privados (prefixo `_`, não dunder), SEM decorador (registro dinâmico),
+# fora de `__all__`, e não citados por string (getattr).  Símbolos PÚBLICOS não
+# são sinalizados — podem ter chamador externo à API.
+
+def find_unreferenced_defs(source: str) -> List[str]:
+    """Nomes de defs/classes privadas de nível de módulo nunca referenciadas.
+
+    Retorna [] em código não-parseável.  Anti-FP alto (ver acima).  Complementa
+    a métrica `syntactic_dead_code` sem tocar no MetricVector de 9 canais.
+    """
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return []
+
+    defined: Dict[str, ast.AST] = {}
+    exported: set = set()
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            name = node.name
+            if (name.startswith("_") and not name.startswith("__")
+                    and not node.decorator_list):
+                defined[name] = node
+        elif isinstance(node, ast.Assign):
+            for t in node.targets:
+                if isinstance(t, ast.Name) and t.id == "__all__" and isinstance(
+                        node.value, (ast.List, ast.Tuple)):
+                    for e in node.value.elts:
+                        if isinstance(e, ast.Constant) and isinstance(e.value, str):
+                            exported.add(e.value)
+    if not defined:
+        return []
+
+    referenced: set = set()
+    string_mentions: set = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load):
+            referenced.add(node.id)
+        elif isinstance(node, ast.Attribute):
+            referenced.add(node.attr)                 # obj._foo → conta como uso
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str):
+            string_mentions.add(node.value)           # getattr(x, "_foo") → não sinaliza
+
+    # convenção de HOOK de teste: `_reset_for_tests`, `_seed_for_test` — são
+    # usados por arquivos de teste (cross-module), não são dead code de produção.
+    def _is_test_hook(n: str) -> bool:
+        return n.endswith(("_for_tests", "_for_test", "_test_hook"))
+
+    return sorted(
+        name for name in defined
+        if name not in referenced
+        and name not in exported
+        and name not in string_mentions
+        and not _is_test_hook(name)
+    )
+
+
 # ─── Constantes Halstead ─────────────────────────────────────────────────────
 
 # Operadores Python (lexemas que contam como operadores em Halstead)
@@ -178,6 +239,11 @@ class _UCOVisitor(ast.NodeVisitor):
 
         # Loop risk
         self.loop_risk_count: int = 0
+        # (item 2 / dogfooding) risco PONDERADO: um `while True` com saída só
+        # CONDICIONAL (ex.: paginação `if not data: break`) é risco PARCIAL, não
+        # o mesmo risco MÁXIMO de um `while True` SEM nenhuma saída.  `count`
+        # segue como antes (compat de testes); `weight` alimenta o ILR final.
+        self.loop_risk_weight: float = 0.0
 
         # Halstead operadores
         self._ops: Dict[str, int] = {}
@@ -342,9 +408,10 @@ class _UCOVisitor(ast.NodeVisitor):
         """Detecta statements após return no mesmo bloco (dead code)."""
         self.generic_visit(node)
 
-    def visit_FunctionDef_deadcode(self, node: ast.FunctionDef) -> None:
-        """Analisa dead code em corpo de função."""
-        self._scan_dead_code(node.body)
+    # (DS/Achado #5) removido `visit_FunctionDef_deadcode`: nunca era despachado
+    # (ast.NodeVisitor despacha por `visit_<Tipo>`), portanto era código morto.
+    # A varredura de dead-code parte de `visit_Module` → `_scan_dead_code`, que
+    # agora recursa em funções E classes.
 
     def _scan_dead_code(self, stmts: List[ast.stmt]) -> None:
         """
@@ -406,6 +473,11 @@ class _UCOVisitor(ast.NodeVisitor):
                 self._scan_dead_code(stmt.body)
             elif isinstance(stmt, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 self._scan_dead_code(stmt.body)
+            elif isinstance(stmt, ast.ClassDef):
+                # (DS/Achado #5) sem este ramo, dead-code dentro de MÉTODOS de
+                # classe nunca era varrido (o caso mais comum em OO). A cadeia
+                # recursava em função mas parava na classe.
+                self._scan_dead_code(stmt.body)
 
     def _count_dead_block(self, stmts: List[ast.stmt]) -> None:
         """Conta todas as linhas de um bloco como dead code (sem recursão)."""
@@ -438,14 +510,23 @@ class _UCOVisitor(ast.NodeVisitor):
         if not is_always_true:
             return
 
-        # SOMENTE escapes INCONDICIONAIS no nível direto do while contam
+        # SOMENTE escapes INCONDICIONAIS no nível direto do while garantem término.
         has_unconditional_escape = any(
             isinstance(stmt, (ast.Break, ast.Return))
             for stmt in node.body
         )
+        if has_unconditional_escape:
+            return  # término garantido → risco 0
 
-        if not has_unconditional_escape:
-            self.loop_risk_count += 1
+        self.loop_risk_count += 1
+        # (item 2) tier: saída CONDICIONAL em qualquer ponto do corpo
+        # (`if cond: break/return/raise`, mesmo aninhada) = risco PARCIAL; corpo
+        # SEM nenhuma saída = risco TOTAL (quase certamente laço infinito).
+        has_any_escape = any(
+            isinstance(n, (ast.Break, ast.Return, ast.Raise))
+            for n in ast.walk(node)
+        )
+        self.loop_risk_weight += 0.35 if has_any_escape else 1.0
 
     def _check_recursion_risk(self, node: ast.FunctionDef, fn_name: str) -> None:
         """
@@ -492,8 +573,46 @@ class _UCOVisitor(ast.NodeVisitor):
 
         top_level_guard = has_if_guard or has_plain_return
 
+        # (dogfooding v3.96.0) recursão DENTRO de um for/while é TRAVERSAL LIMITADO:
+        # o base case é o iterável esgotar (ex.: `for child in node: walk(child)`),
+        # não uma recursão infinita. Antes toda recursão sem if/return de topo era
+        # marcada risco total — FP clássico em walkers de árvore/AST (achado ao
+        # rodar o próprio Sensor sobre `sca/reachability.py::_enclosing_funcs`).
+        if not top_level_guard and self._recursion_is_loop_bounded(node, fn_name):
+            return
+
         if not top_level_guard:
             self.loop_risk_count += 1
+            self.loop_risk_weight += 1.0   # recursão sem base case = risco total
+
+    @staticmethod
+    def _recursion_is_loop_bounded(node: ast.AST, fn_name: str) -> bool:
+        """True se TODA chamada recursiva a `fn_name` ocorre dentro de um laço
+        (for/while/compreensão) — traversal limitado pela iteração, não infinito."""
+        total = 0
+        in_loop = 0
+        _LOOP = (ast.For, ast.AsyncFor, ast.While,
+                 ast.ListComp, ast.SetComp, ast.DictComp, ast.GeneratorExp)
+
+        def visit(n: ast.AST, inside: bool) -> None:
+            nonlocal total, in_loop
+            n_is_loop = isinstance(n, _LOOP)
+            child_inside = inside or n_is_loop   # filhos de um laço estão DENTRO dele
+            for child in ast.iter_child_nodes(n):
+                # não desce em funções aninhadas (recursão delas é delas)
+                if child is not node and isinstance(
+                        child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    continue
+                if (isinstance(child, ast.Call)
+                        and isinstance(child.func, ast.Name)
+                        and child.func.id == fn_name):
+                    total += 1
+                    if child_inside:
+                        in_loop += 1
+                visit(child, child_inside)
+
+        visit(node, False)
+        return total > 0 and in_loop == total
 
     # ── AST-IMP helper methods ────────────────────────────────────────────────
 
@@ -821,12 +940,17 @@ class UCOBridge:
         hamiltonian = effort / max(1, loc) * 0.01
 
         # ── 3. ILR ────────────────────────────────────────────────────────
+        # (item 2) numerador PONDERADO (`loop_risk_weight`): while-true com saída
+        # condicional pesa 0.35, sem saída pesa 1.0 — antes qualquer while-true
+        # sem escape incondicional pesava 1.0 (ILR=1.0 num loop de paginação).
         n_loops_while = sum(
             1 for node in ast.walk(tree)
             if isinstance(node, ast.While)
         )
-        ilr = float(visitor.loop_risk_count) / max(1, n_loops_while) \
-              if n_loops_while > 0 else 0.0
+        # denominador inclui os while-loops; se só há risco de recursão (sem
+        # while), usa a própria contagem de risco como base para não zerar.
+        denom = max(1, n_loops_while) if (n_loops_while or visitor.loop_risk_count) else 0
+        ilr = (visitor.loop_risk_weight / denom) if denom > 0 else 0.0
         ilr = min(1.0, ilr)
 
         # ── 4. DSM (Dependency Structure Matrix) ─────────────────────────

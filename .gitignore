@@ -6,3 +6,10 @@ algorithms/uco/__pycache__/
 
 # Bundles de transferÍncia (n„o versionar)
 *.bundle
+
+# Pacotes .skill gerados (artefatos de build; entregues ao usu√°rio, n√£o versionados)
+*.skill
+
+# Zips de auditoria/entrega (artefatos; n√£o versionar)
+apex-method-audit.zip
+apexmethod-*.zip

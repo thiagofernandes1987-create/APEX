@@ -1,4 +1,5 @@
 diff_ecosystem_v0202:
+executor: DOCUMENTATION  # backfilled by lint_executor (SR_40)
   session: APEX_SESSION_SNAPSHOT_v00202
   budget_used: 3
   budget_max: 3

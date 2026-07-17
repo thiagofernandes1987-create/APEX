@@ -1,4 +1,5 @@
 dsl_writing_guide:
+executor: SANDBOX_CODE  # backfilled by lint_executor (SR_40)
   _note: Exemplos CORRETO vs. ERRADO para manter qualidade da documentação
   exemplo_paralelismo:
     ERRADO: "parallel_pot_executor:\n  description: \"executa N programas PoT em paralelo real\"\n"

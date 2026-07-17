@@ -1,4 +1,5 @@
 pot_sandbox_unification:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   executor: LLM_BEHAVIOR
   version: v00.34.0
   opp: OPP-117

@@ -86,6 +86,50 @@ def _parse_version(v: str) -> Tuple[int, ...]:
     return tuple(parts) if parts else (0,)
 
 
+# (DV/P0-2) ordenação de fase de pré-release (menor = mais cedo).
+_PRE_ORDER = {"dev": 0, "alpha": 1, "a": 1, "beta": 2, "b": 2,
+              "preview": 3, "pre": 3, "c": 3, "rc": 4}
+_VER_PAD = 6   # largura fixa da tupla numérica → resolve o bug de tamanho desigual
+
+
+def _ver_key(v: str) -> Tuple[int, ...]:
+    """Chave TOTALMENTE comparável de uma versão — corrige os 3 bugs do
+    `_parse_version` puro (mantido para compat de exibição):
+
+    1. **tamanho desigual** (`1.2` vs `1.2.0`): a tupla numérica é PADRONIZADA a
+       largura fixa com zeros → `1.2 == 1.2.0`.
+    2. **pré-release** (`1.2.3-rc1 < 1.2.3`): fase `pré < final < pós` codificada.
+    3. (o `!=` é tratado em `_version_satisfies`.)
+    """
+    s = v.strip().lstrip("vV")
+    if "!" in s:
+        s = s.split("!", 1)[1]
+    s = s.split("+")[0]
+    post = None
+    mpost = re.search(r"[.\-_]?post[.\-_]?(\d*)$", s, re.IGNORECASE)
+    if mpost:
+        post = int(mpost.group(1) or 0)
+        s = s[:mpost.start()]
+    pre = None
+    mpre = re.search(r"[.\-~_]?(dev|alpha|a|beta|b|preview|pre|rc|c)[.\-_]?(\d*)$",
+                     s, re.IGNORECASE)
+    if mpre:
+        pre = (_PRE_ORDER.get(mpre.group(1).lower(), 0), int(mpre.group(2) or 0))
+        s = s[:mpre.start()]
+    parts: List[int] = []
+    for seg in s.split("."):
+        m = re.match(r"^(\d+)", seg)
+        parts.append(int(m.group(1)) if m else 0)
+    parts = (parts + [0] * _VER_PAD)[:_VER_PAD]
+    if pre is not None:
+        phase = (0,) + pre           # pré-release
+    elif post is not None:
+        phase = (2, post, 0)         # pós-release
+    else:
+        phase = (1, 0, 0)            # release final
+    return tuple(parts) + phase
+
+
 def _version_satisfies(version: str, range_spec: str) -> bool:
     """
     Return True if *version* satisfies *range_spec*.
@@ -94,11 +138,15 @@ def _version_satisfies(version: str, range_spec: str) -> bool:
       • Empty string → always True (all versions affected)
       • Comma-separated constraints like ">=1.0.0,<2.15.0"
       • Single constraint like ">=4.0,<4.2.6"
+
+    (DV/P0-2) Usa `_ver_key` (comparação correta) em vez de tuplas cruas — antes
+    `1.2` escapava de `>=1.2.0` e `rc` de faixas `<x` (falsos-negativos), e `!=`
+    era ignorado (falso-positivo).
     """
     if not range_spec:
         return True
     try:
-        v = _parse_version(version)
+        vk = _ver_key(version)
     except Exception:
         return False
 
@@ -110,27 +158,27 @@ def _version_satisfies(version: str, range_spec: str) -> bool:
         for op in ('>=', '<=', '!=', '>', '<', '==', '='):
             if constraint.startswith(op):
                 try:
-                    bound = _parse_version(constraint[len(op):])
+                    bk = _ver_key(constraint[len(op):])
                 except Exception:
                     break
-                if op == '>=' :
-                    if not (v >= bound): return False
+                if op == '>=':
+                    if not (vk >= bk): return False
                 elif op == '<=':
-                    if not (v <= bound): return False
-                elif op == '>'  :
-                    if not (v >  bound): return False
-                elif op == '<'  :
-                    if not (v <  bound): return False
+                    if not (vk <= bk): return False
+                elif op == '>':
+                    if not (vk >  bk): return False
+                elif op == '<':
+                    if not (vk <  bk): return False
                 elif op in ('==', '='):
-                    if not (v == bound): return False
-                # != → skip (conservative: assume in range)
+                    if not (vk == bk): return False
+                elif op == '!=':
+                    if vk == bk: return False   # (P0-2) antes era ignorado
                 matched = True
                 break
         # If no operator matched, try treating entire token as exact version
         if not matched:
             try:
-                bound = _parse_version(constraint)
-                if v != bound:
+                if vk != _ver_key(constraint):
                     return False
             except Exception:
                 pass
