@@ -1,6 +1,6 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.38.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.39.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
@@ -248,6 +248,16 @@ o LLM debate; o PMI decide com matemática real. Paralelismo genuíno só na EXE
 - **Auto-registro**: `evaluate_hypotheses` credita cada diretor por rodada; o loop se fecha sozinho.
 - `numeric.py`: `solve_ode(method="auto")` usa **scipy quando importável** (fallback RK4 stdlib);
   `capabilities()` reporta numpy/scipy/sklearn/pandas — aceleração **é do ambiente, não do LLM**.
+
+### Gatilhos obrigatórios: piso de modo + persistência · **FEITO** (v1.39)
+- **Dificuldade honesta**: `estimate_difficulty` ganhou classes não-matemáticas (security_audit 0.80,
+  architecture 0.62, compliance 0.72, debugging 0.66); classe **desconhecida** → `uncertain=True` +
+  bde 0.70 (nunca mais 0.5 silencioso). Corrige a causa raiz: auditoria caía em média medíocre.
+- **Piso de modo** (`execution_policy.mode_floor` + `triage`): auditoria/segurança/compliance **nunca
+  pulam** e rodam ≥ DEEP; `uncertain` escala + **exige as 3 personas** (`require_dissect_personas`).
+- **`min_mode`** no config: piso global que **força o pipeline para toda tarefa** (`menu.py set min_mode DEEP`).
+- **Gatilho de persistência**: `swap_store.page_out` (grava swap/<sessão>/ + `drive_manifest` + log),
+  `menu.py persist`, e `orchestrator.run` retorna `persist_due` em DEEP+. Page-out nunca é silencioso.
 
 ### Contrato de roteamento + entrada de 3 personas · **FEITO** (v1.33–1.34)
 - `scripts/execution_policy.py`: `route(subtask)` decide a **superfície** — `subprocess` (cálculo

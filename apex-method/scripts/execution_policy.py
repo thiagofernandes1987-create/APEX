@@ -124,30 +124,74 @@ def _cap(mode, ceiling):
     return MODE_LADDER[i]
 
 
+# ── MODE FLOOR: task classes that must NEVER skip the pipeline (min mode enforced) ───────────
+# A skill the LLM can silently skip is not a skill. These classes force the pipeline: no EXPRESS
+# skip, and a minimum operating mode. The user can also set a global floor via config.min_mode.
+FLOOR_KEYWORDS = {
+    "DEEP": {"audit", "audite", "auditar", "auditando", "auditoria", "autopsy", "autópsia",
+             "autopsia", "pentest", "security", "segurança", "seguranca", "vulnerability",
+             "vulnerabilidade", "vulnerabilidades", "exploit", "threat", "ameaça", "ameaças",
+             "cve", "compliance", "conformidade", "hipaa", "gdpr", "lgpd", "regulatory",
+             "regulação", "regulacao", "regulamentação", "regulamentacao", "sox", "pci",
+             "high-stakes", "forensic", "forense", "incident", "incidente", "breach"},
+}
+
+
+def mode_floor(task):
+    """The MINIMUM mode this task must run at (or None). Comes from (1) task-class keywords
+    (audit/security/compliance never skip and run >= DEEP) and (2) the user's config.min_mode
+    (a hard global floor that forces the pipeline for EVERY task). Returns the highest floor."""
+    tl = (task or "").lower() if isinstance(task, str) else ""
+    floor = None
+    for mode, kws in FLOOR_KEYWORDS.items():
+        if any(re.search(r"\b" + re.escape(k) + r"\b", tl) for k in kws):
+            floor = _bump(floor or "EXPRESS", mode)
+    try:
+        import config
+        mm = config.load().get("min_mode")
+        if mm:
+            floor = _bump(floor or "EXPRESS", mm)
+    except Exception:
+        pass
+    return floor if floor and floor != "EXPRESS" else None
+
+
 def triage(task, reliability=None, mode="STANDARD"):
     """Decide, BEFORE running the pipeline, whether to (a) SKIP it entirely for a trivial task
     (token economy — `orchestrator.express_check`), (b) keep it LIGHT for a low-difficulty task, or
     (c) ESCALATE mode + discovery when the problem is hard (`competence_matrix.estimate_difficulty`)
-    or the MCFE reliability signal is low (bayes R_acum gate 0.50/0.30). Returns the recommended
+    or the MCFE reliability signal is low (bayes R_acum gate 0.50/0.30). A MODE FLOOR
+    (`mode_floor`: audit/security/compliance or the user's min_mode) OVERRIDES the skip and pins a
+    minimum mode — the LLM cannot skip a task that must run the pipeline. Returns the recommended
     mode + whether micros should escalate to discovery."""
-    # (a) token economy: trivial input skips the whole pipeline
-    try:
-        import orchestrator
-        exp = orchestrator.express_check(task)
-    except Exception:
-        exp = None
-    if exp:
-        return {"skip_pipeline": True, "mode": "EXPRESS", "difficulty": None,
-                "reliability": reliability, "escalate_discovery": False, "express": exp,
-                "reason": f"trivial ({exp.get('reason')}) — skip pipeline, save tokens"}
+    floor = mode_floor(task)
+    # (a) token economy: trivial input skips — but ONLY when no floor forces the pipeline
+    if floor is None:
+        try:
+            import orchestrator
+            exp = orchestrator.express_check(task)
+        except Exception:
+            exp = None
+        if exp:
+            return {"skip_pipeline": True, "mode": "EXPRESS", "difficulty": None,
+                    "reliability": reliability, "escalate_discovery": False, "express": exp,
+                    "reason": f"trivial ({exp.get('reason')}) — skip pipeline, save tokens"}
     # (b/c) difficulty + reliability
+    dinfo, uncertain = {"bde_score": 0.5, "uncertain": False}, False
     try:
         import competence_matrix
-        diff = competence_matrix.estimate_difficulty(task)["bde_score"]
+        dinfo = competence_matrix.estimate_difficulty(task)
     except Exception:
-        diff = 0.5
-    rec, escalate, reasons = mode, False, []
-    if diff < SIMPLE_DIFF:
+        pass
+    diff, uncertain = dinfo.get("bde_score", 0.5), dinfo.get("uncertain", False)
+    rec, escalate, reasons, need_personas = mode, False, [], False
+    # UNKNOWN problem class: do NOT stay light, do NOT skip — escalate and REQUIRE the 3 dissect
+    # personas to establish the real difficulty (the estimator admitted it doesn't know).
+    if uncertain:
+        rec, escalate, need_personas = _bump(rec, "DEEP"), True, True
+        reasons.append("difficulty class UNKNOWN — escalate + the 3 dissect personas MUST establish "
+                       "the real difficulty before proceeding (no silent 0.5)")
+    if diff < SIMPLE_DIFF and floor is None and not uncertain:
         rec = _cap(rec, "STANDARD")
         reasons.append(f"low difficulty {diff} — light mode, save tokens")
     if diff >= HARD_DIFF:
@@ -158,8 +202,14 @@ def triage(task, reliability=None, mode="STANDARD"):
         reasons.append(f"MCFE reliability {reliability} < {R_REPLAN} — escalate to discovery (replan)")
     if reliability is not None and reliability < R_EARLY_EXIT:
         reasons.append(f"MCFE reliability {reliability} < {R_EARLY_EXIT} — early-exit/abort candidate")
-    return {"skip_pipeline": False, "mode": rec, "difficulty": diff, "reliability": reliability,
-            "escalate_discovery": escalate, "reasons": reasons or ["nominal difficulty/reliability"]}
+    # MODE FLOOR wins last: a forced task class / user min_mode pins the minimum — no skip, no downgrade.
+    if floor:
+        rec = _bump(rec, floor)
+        reasons.append(f"mode floor {floor} enforced (forced task class / min_mode) — pipeline mandatory")
+    return {"skip_pipeline": False, "mode": rec, "difficulty": diff, "uncertain": uncertain,
+            "reliability": reliability, "escalate_discovery": escalate, "floor": floor,
+            "require_dissect_personas": need_personas or bool(floor),
+            "reasons": reasons or ["nominal difficulty/reliability"]}
 
 
 # ── loop guard: hard STOP conditions so the runtime NEVER spins (reads apex_llm.yaml limits) ──

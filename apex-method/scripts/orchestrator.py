@@ -279,6 +279,17 @@ def _run(task, candidates=None, snapshot=None):
     result = {"path": "FULL_PIPELINE", "mode": mode, "disciplines": disciplines,
               "specialists": specialists, "phase_plan": phase_plan,
               "escalate_discovery": escalate_discovery}
+    # PERSISTENCE TRIGGER (v1.39): heavy modes MUST page out at session end. Signal it here so the
+    # LLM cannot forget — SKILL.md makes acting on `persist_due` mandatory before ending the session.
+    try:
+        import swap_store
+        if swap_store.persist_due(mode):
+            result["persist_due"] = {"due": True, "mode": mode,
+                "directive": "at session end call swap_store.page_out(session_id, memory_db, snapshot) "
+                             "and upload its drive_manifest to APEX/swap/<session>/ (or the chosen "
+                             "backend); print the returned log so the user sees the page-out"}
+    except Exception:
+        pass
     if candidates:
         result["pmi_decision"] = pmi_converge(candidates)
     # audit P3: close the loop in code — record the run into the snapshot (C5) so the end

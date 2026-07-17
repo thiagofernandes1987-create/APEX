@@ -624,9 +624,12 @@ def t_execution_policy():
     assert tri_triv["skip_pipeline"] and tri_triv["mode"] == "EXPRESS", tri_triv
     tri_hard = ep.triage("solve navier stokes turbulência fluido pde")
     assert tri_hard["escalate_discovery"] and ep.MODE_LADDER.index(tri_hard["mode"]) >= ep.MODE_LADDER.index("DEEP"), tri_hard
-    tri_rel = ep.triage("refactor the module", reliability=0.4)
+    known = "minimizar o custo da função objetivo com uma variável de restrição"
+    tri_rel = ep.triage(known, reliability=0.4)
     assert tri_rel["escalate_discovery"], tri_rel   # low MCFE reliability -> escalate to discovery
-    assert not ep.triage("refactor the module", reliability=0.9)["escalate_discovery"]
+    # a RECOGNIZED low-difficulty task with healthy reliability does NOT escalate (not uncertain)
+    calm = ep.triage(known, reliability=0.9)
+    assert not calm["escalate_discovery"] and not calm["uncertain"], calm
     # escalate pushes a reasoning task to discovery but NEVER turns compute into an internet task
     assert ep.route("decide the approach", escalate=True)["surface"] == "agent+internet"
     assert ep.route("compute the hash", escalate=True)["surface"] == "subprocess"
@@ -642,8 +645,22 @@ def t_execution_policy():
     assert ep.loop_guard(1, reliability=0.2)["stop"], "reliability early-exit"
     assert ep.loop_guard(3, progress_history=[0.05, 0.03])["stop"], "stagnation"
     assert not ep.loop_guard(2, progress_history=[0.4, 0.5], reliability=0.85)["stop"], "healthy continues"
+    # MODE FLOOR: audit/security/compliance NEVER skip and run >= DEEP (the LLM cannot skip them)
+    import config
+    for forced in ("faça uma auditoria de segurança", "audit the code for vulnerabilities",
+                   "draft a HIPAA compliance policy"):
+        t = ep.triage(forced)
+        assert not t["skip_pipeline"] and ep.MODE_LADDER.index(t["mode"]) >= ep.MODE_LADDER.index("DEEP"), t
+    # UNKNOWN difficulty class -> escalate + REQUIRE the 3 dissect personas (no silent 0.5 skip)
+    unk = ep.triage("escrever um poema sobre o mar")
+    assert unk["uncertain"] and unk["require_dissect_personas"] and not unk["skip_pipeline"], unk
+    # user min_mode is a HARD global floor: even 2+2 runs the pipeline at >= min_mode
+    config.set_option("min_mode", "DEEP")
+    forced2 = ep.triage("what is 2+2?")
+    config.set_option("min_mode", "none")
+    assert not forced2["skip_pipeline"] and forced2["mode"] == "DEEP", forced2
     return (f"route+HARD-RULE; 3-persona entry {len(plan['micros'])} micros; "
-            f"triage skip-trivial/escalate-hard/MCFE-{tri_rel['escalate_discovery']}")
+            f"floor(audit/security)+uncertain+min_mode force the pipeline")
 
 
 def t_learning():
@@ -730,6 +747,13 @@ def t_swap_store():
     assert len(bundle["sha256"]) == 64
     back = ss.import_bundle(bundle, memory_db=db2)
     assert back["integrity_ok"] and back["snapshot"]["objective"] == "x", back
+    # explicit page-out trigger: writes versioned files into swap/<session>/ + a drive_manifest + log
+    po = ss.page_out("sess-po", memory_db=db, snapshot={"objective": "audit"},
+                     root=os.path.join(tempfile.mkdtemp(), "APEX"), backend="drive-swap")
+    assert po["written"]["bundle"].startswith("bundle-Session-") and po["written"]["session"].startswith("session-")
+    assert len(po["drive_manifest"]) == 2 and "PAGE-OUT" in po["log"], po
+    assert os.path.exists(os.path.join(po["session_dir"], po["written"]["bundle"])), "bundle written locally"
+    assert ss.persist_due("DEEP") and not ss.persist_due("STANDARD"), "persist due for heavy modes only"
     # promotion gate: validated -> promote; not validated -> stays in swap
     good = ss.promotion_manifest("sess1", [{"name": "d1", "kind": "diff", "target": "commit"}],
                                  {"pmi_adopt": True, "ledger_ok": True, "tests_ok": True})

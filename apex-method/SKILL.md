@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.38.0
+version: 1.39.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -368,6 +368,21 @@ better tools/context. Compute always stays `subprocess` (you never send RK4 to t
 `apex_llm.yaml` limits and returns STOP when iterations/restarts exceed the cap, reliability drops
 under the early-exit gate, or there is no progress for 2 rounds — so the LLM can never spin.
 `orchestrator.run` never raises: any unexpected failure returns an `ERROR_DEGRADED` result.
+
+**MODE FLOOR — the pipeline is not optional (v1.39).** A skill the LLM can silently skip is useless.
+`mode_floor(task)` forces the pipeline for whole task classes: **audit / security / compliance /
+forensic** never skip and run **≥ DEEP**. When `estimate_difficulty` does NOT recognize the problem
+class it returns `uncertain=True` (bde 0.70, no silent 0.5) → triage escalates to DEEP AND sets
+`require_dissect_personas=True` (the 3 dissect personas MUST establish the real difficulty before
+proceeding). The user can pin a hard global floor with `menu.py set min_mode DEEP` — then EVERY task
+runs the pipeline. This is what stops the LLM from choosing EXPRESS when it shouldn't.
+
+**PERSISTENCE TRIGGER — page out at session end (v1.39).** For DEEP/SCIENTIFIC/RESEARCH,
+`orchestrator.run` returns `persist_due` and you MUST act on it before ending: call
+`swap_store.page_out(session_id, memory_db, snapshot)` (writes versioned files into `swap/<session>/`
++ builds a `drive_manifest`), then **upload the manifest to `APEX/swap/<session>/` on Drive** (the
+`drive-swap` backend) and print the returned `log` so the user sees it happened. `menu.py persist
+[session] [backend]` is the explicit on-demand trigger. Nothing is silent — the page-out is always logged.
 
 ## § 3 · Finding and Using an External Skill (safe flow)
 

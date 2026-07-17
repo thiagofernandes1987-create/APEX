@@ -347,6 +347,53 @@ def import_bundle(bundle, memory_db=None):
             "memory_stats": mem_stats}
 
 
+# ── THE EXPLICIT PERSISTENCE TRIGGER (page-out) ──────────────────────────────────────────────
+PERSIST_MODES = ("DEEP", "SCIENTIFIC", "RESEARCH")
+
+
+def persist_due(mode):
+    """End-of-session page-out is MANDATORY for heavy modes (state worth keeping); lighter modes
+    are ephemeral by design. The orchestrator/menu use this to fire page_out at session end."""
+    return (mode or "").upper() in PERSIST_MODES
+
+
+def page_out(session_id, memory_db=None, snapshot=None, working=None, session_meta=None,
+             root=None, backend=None):
+    """THE EXPLICIT SWAP TRIGGER. Builds the session bundle, writes it (+ a session header) LOCALLY
+    into <root>/swap/<session_id>/ with canonical versioned names, and returns a `drive_manifest`
+    the runtime uploads to APEX/swap/<session_id>/ on Drive — plus a human-readable `log` so the
+    user ALWAYS sees the page-out happened (never silent). `backend` (config.persist_backend) says
+    where durability goes: 'drive-swap' = Claude uploads the manifest via the Drive tools; 'local'/
+    'git'/'zip' = the on-disk copy is the durable artifact."""
+    root = root or default_root()
+    materialize(root)
+    sdir = os.path.join(root, "swap", str(session_id))
+    os.makedirs(sdir, exist_ok=True)
+    bundle = export_bundle(session_id, memory_db=memory_db, snapshot=snapshot, working=working,
+                           session_meta=session_meta)
+    hdr = {"session_id": session_id, "ts": time.time(), "session": session_meta or {},
+           "snapshot_objective": (snapshot or {}).get("objective"), "bundle": bundle["filename"],
+           "sha256": bundle["sha256"]}
+    written = {}
+    for name, content in (("session", json.dumps(hdr, ensure_ascii=False, indent=1)),
+                          ("bundle", json.dumps(bundle, ensure_ascii=False))):
+        written[name] = write_versioned(sdir, name, content)["filename"]
+    n_mem = len(bundle.get("memory", {}).get("memory", []))
+    n_led = len(bundle.get("memory", {}).get("ledger", []))
+    drive_manifest = [
+        {"path": f"swap/{session_id}/{written['session']}",
+         "content": json.dumps(hdr, ensure_ascii=False, indent=1), "mime": "application/json"},
+        {"path": f"swap/{session_id}/{written['bundle']}",
+         "content": json.dumps(bundle, ensure_ascii=False), "mime": "application/json"}]
+    log = (f"[PAGE-OUT] session={session_id} -> swap/{session_id}/ | {written['bundle']} "
+           f"({n_mem} memories, {n_led} ledger events, sha {bundle['sha256'][:12]}) | "
+           f"backend={backend or 'local'}"
+           + (" | UPLOAD the drive_manifest to Drive to persist" if backend == "drive-swap" else ""))
+    return {"session_dir": sdir, "written": written, "bundle_sha": bundle["sha256"],
+            "counts": {"memories": n_mem, "ledger": n_led}, "backend": backend,
+            "drive_manifest": drive_manifest, "log": log}
+
+
 # ── the promotion gate: only VALIDATED artifacts go to a git commit ─────────────────────────
 def is_validated(signals):
     """The gate. Validated = PMI adopted AND the SHA-256 ledger is intact AND tests pass (if run)

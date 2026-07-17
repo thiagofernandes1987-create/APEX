@@ -34,6 +34,8 @@ DEFAULTS = {
     "discovery_source": "both",     # native | search | both
     "min_installs": 1000,           # skills.sh quality bar
     "auto_escalate": True,          # escalate mode on conflict signals
+    "min_mode": None,               # HARD floor: force the pipeline at >= this mode for EVERY task
+    "persist_backend": None,        # where end-of-session page-out goes: drive-swap | git | zip | local
 }
 
 
@@ -93,6 +95,10 @@ def set_option(key, value):
         return {"status": "ERROR", "reason": f"backend must be {VALID_BACKENDS}"}
     if key == "discovery_source" and value not in VALID_SOURCES:
         return {"status": "ERROR", "reason": f"source must be {VALID_SOURCES}"}
+    if key == "min_mode" and value not in VALID_MODES and value not in (None, "", "none"):
+        return {"status": "ERROR", "reason": f"min_mode must be one of {VALID_MODES} (or none)"}
+    if key == "min_mode" and value in ("", "none"):
+        value = None
     cfg = load()
     cfg[key] = value
     res = save(cfg)

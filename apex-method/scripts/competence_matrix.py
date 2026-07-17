@@ -57,6 +57,26 @@ DIFFICULTY_REFS = {
     "stochastic_simulation": {"keywords": {"estocástico", "monte carlo", "amostrar",
                                            "distribuição", "mcmc", "bayesiano", "probabilidade"},
                               "difficulty": 0.60},
+    # non-math classes (the old refs were math-only, so audit/security/engineering tasks fell to
+    # the average fallback ~0.5 and never escalated — the real difficulty was never established):
+    "security_audit": {"keywords": {"audit", "auditoria", "autópsia", "autopsia", "autopsy",
+                                    "security", "segurança", "seguranca", "vulnerability",
+                                    "vulnerabilidade", "exploit", "threat", "ameaça", "pentest",
+                                    "cve", "forensic", "forense", "breach", "hardening"},
+                       "difficulty": 0.80},
+    "architecture_design": {"keywords": {"architecture", "arquitetura", "design", "system",
+                                        "sistema", "distributed", "distribuído", "scalability",
+                                        "escalabilidade", "microservices", "microserviços",
+                                        "refactor", "refatorar", "coupling", "acoplamento"},
+                            "difficulty": 0.62},
+    "compliance_regulatory": {"keywords": {"compliance", "conformidade", "hipaa", "gdpr", "lgpd",
+                                          "regulatory", "regulação", "regulacao", "regulamentação",
+                                          "legal", "contract", "contrato", "sox", "pci", "privacy",
+                                          "privacidade"}, "difficulty": 0.72},
+    "debugging_rootcause": {"keywords": {"debug", "bug", "root cause", "causa raiz", "incident",
+                                        "incidente", "crash", "race condition", "deadlock",
+                                        "regression", "regressão", "flaky", "heisenbug"},
+                            "difficulty": 0.66},
 }
 
 
@@ -79,12 +99,18 @@ def estimate_difficulty(problem_text, cfi_preliminary=0.5):
         sim = _jaccard(kw, ref["keywords"])
         if sim > best_sim:
             best_sim, best_ref, best_diff = sim, name, ref["difficulty"]
-    if best_sim < 0.10:
-        bde = sum(r["difficulty"] for r in DIFFICULTY_REFS.values()) / len(DIFFICULTY_REFS)
-        best_ref = "average_fallback"
+    uncertain = best_sim < 0.10
+    if uncertain:
+        # the estimator does NOT recognize the problem class. Do NOT settle on a mediocre average
+        # (that silently under-rates novel/hard tasks — the real difficulty was never established).
+        # Treat UNKNOWN as a conservative escalation signal: bde is pushed up, uncertain=True flags
+        # that the 3 dissect personas MUST establish the real difficulty before proceeding.
+        bde = 0.70
+        best_ref = "UNKNOWN_CLASS"
     else:
         bde = best_diff
-    return {"bde_score": round(bde, 3), "best_ref": best_ref, "jaccard": round(max(0, best_sim), 3),
+    return {"bde_score": round(bde, 3), "best_ref": best_ref, "uncertain": uncertain,
+            "jaccard": round(max(0, best_sim), 3),
             "fused_cfi": round(min(1.0, 0.6 * cfi_preliminary + 0.4 * bde), 3)}
 
 
