@@ -1,0 +1,7 @@
+{
+  "macro_id": "preclinical_translation",
+  "name": "Tradução pré-clínica",
+  "description": "Integra mecanismo, exposição, efeito, risco e evidência pré-clínica.",
+  "steps": ["M1", "M2", "M2.5", "M4", "M5A", "M5B", "M7", "PCL", "M11", "M10"]
+}
+

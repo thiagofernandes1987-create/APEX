@@ -31,6 +31,8 @@ ordem, em toda sessão futura:
 
 ## Versão atual
 
+**v3.11.0** (Sprint AG — investigação paralela 6-way + 3 regras novas
+(JS11/JV11/RS01) + abertura de PHP/C#/Rust ao SAST; 2255 testes verdes) ✅
 **v3.10.4** (Sprint AF correção — SAST048 (CWE-470 unsafe reflection) +
 2 reclassificações BLIND_SPOT→SIGNAL no relatório de timeline; 2226 testes verdes) ✅
 **v3.10.3** (Sprint AE — workflow multi-agente 3 eixos + fix dispatch SAST em
@@ -870,6 +872,99 @@ alcançável e enquadrava cobertura adicional como "decisão de escopo do
 usuário". O hook de `/goal` rejeitou essa framing explicitamente,
 classificando-a como "uma decisão consciente do agente de parar de
 tentar, não porque a condição foi atingida".
+
+## Sprint AG — investigação paralela 6-way + JS11/JV11/RS01 + abre PHP/C#/Rust (concluído)
+
+Em resposta contínua ao hook de `/goal` (que rejeita "decisão de
+escopo" como resposta válida), disparei 6 agentes em paralelo, um por
+par CVE/repo dos 11 blind spots restantes da Sprint AF
+(`scrapy+flask`, `golang/go+etcd`, `rust-lang/regex+tokio`,
+`curl+git`, `axios+spring-framework+netty`, `laravel+dotnet/runtime`),
+pedindo a cada um para buscar o diff real vulnerável→corrigido via API
+do GitHub e responder com honestidade se existe um shape AST/regex
+genuinamente ancorável (generalizável, não overfit a um CVE) ou se o
+caso exige dataflow/taint-tracking real.
+
+**Resultado: 3 novas regras validadas + abertura de 3 linguagens.**
+
+- **`JS11`** (CWE-200, A01:2021, HIGH) — axios CVE-2023-45857: o token
+  XSRF é enviado cross-origin porque `withCredentials ||
+  isURLSameOrigin(...)` torna o check de origem opcional. Padrão:
+  `withCredentials\s*\|\|.*(?:isURLSameOrigin|isSameOrigin|sameOrigin)`.
+  Validada contra `axios/axios` `lib/adapters/xhr.js` vulnerável (sha
+  `7d45ab2e`) → dispara; corrigido (sha `96ee232b`) → silencia.
+- **`JV11`** (CWE-915, A08:2021, CRITICAL) — Spring4Shell
+  CVE-2022-22965: denylist de propriedade de bean por **nome** de
+  string (`"classLoader".equals(pd.getName())`) em vez de por
+  **tipo**. Validada contra `spring-projects/spring-framework`
+  `CachedIntrospectionResults.java` vulnerável (sha `1627f57f`) →
+  dispara; corrigido (sha `002546b3`, filtra por
+  `ClassLoader.class.isAssignableFrom(...)`) → silencia. Decidi
+  deliberadamente **não** baixar o threshold de 15% (estabelecido na
+  AC-3) para capturar o delta de métrica de 11-12% deste caso — isso
+  seria p-hacking; a regra estrutural é a solução correta.
+- **`RS01`** (CWE-693, A04:2021, HIGH) — abre suporte **Rust** ao
+  SAST. tokio CVE-2023-22466: `ServerOptions::pipe_mode()` sobrescreve
+  diretamente um campo bit-field (`self.pipe_mode = match ...`) que
+  `reject_remote_clients()` preserva via macro `bool_flag!` — clobber
+  cross-método. Primeiro caso no codebase que exige contexto de
+  arquivo inteiro em vez de uma linha isolada: implementado como
+  função dedicada (`_scan_rust_bitfield_setters`) chamada de um bloco
+  especial em `scan_multilang()`, não como `MLRule` regex padrão.
+  Validada contra `tokio-rs/tokio` `named_pipe.rs` vulnerável (sha
+  `5c76d070`) → dispara na linha exata 1684; corrigido (sha
+  `9241c3ed`, usa `matches!` + `bool_flag!` para o mesmo campo) →
+  silencia.
+- **PHP01-05 / CS01-05** — abrem suporte **PHP** e **C#** ao SAST com
+  4 regras core genéricas cada (injeção de comando, SQL, eval/
+  deserialização insegura, BinaryFormatter, TLS trust-all, etc.) + 1
+  regra de triagem de baixa confiança cada (`PHP05`/`CS05`), motivadas
+  pelas CVEs Laravel CVE-2026-48041 e dotnet/runtime CVE-2026-45491
+  investigadas pelo agente 6. **Resultado honesto**: nenhuma das duas
+  regras de triagem discrimina o CVE que a motivou — `PHP05` dispara
+  igualmente em `temporarySignedRoute(` antes E depois do fix Laravel
+  (linhas 82/115 em ambos os shas); `CS05` não dispara em nenhum dos
+  dois shas dotnet porque o bug real está em métodos internos
+  (`ExtractRelativeToDirectoryAsync`/`ExtractToFileInternal`), não na
+  API pública (`ExtractToDirectory`/`ExtractToFile`) que a regex
+  cobre. Mantidas porque têm valor genérico de triagem para outras
+  CVEs na linguagem, mas **não contam como detecção** dos CVEs que as
+  motivaram — `laravel`/`dotnet` permanecem BLIND_SPOT no relatório,
+  com a ressalva documentada.
+- **`scrapy` CVE-2022-0577 — investigado e não implementado**: o
+  arquivo `redirect.py` vulnerável (sha `aa0306a1`) não tem nenhum nó
+  AST/string distintivo ("Cookie" não aparece em lugar nenhum) — o
+  código vulnerável é apenas `request.replace(url=redirected_url)`,
+  indistinguível de qualquer `.replace()` seguro. BLIND_SPOT genuíno,
+  documentado com evidência, sem forçar regra overfit.
+- `netty` (Sprint AF) reclassificado: o bug é interno à lib
+  (`HttpObjectDecoder`), correto escopo de **SCA** (versão vulnerável
+  da dependência), não de SAST sobre código próprio.
+
+Também consertei um SAST049 pendente de uma rodada concorrente
+anterior (`sast/scanner.py`, CWE-400, MEDIUM — `<request>.json()`
+chamado sem checar `Content-Type`, motivado por CVE-2021-32677 do
+fastapi/fastapi) que ainda não estava documentado no CHANGELOG/
+inventário.
+
+23 novos testes em `tests/test_marco_m68.py` (TAK01-TAK23). Suite
+completa: **2255 passed, 5 skipped, 0 regressões**. Total de regras
+SAST multi-linguagem: 43.
+
+**Resultado agregado corrigido (21/21)**: 11/21 (52%) BLIND_SPOT
+limpo, 2/21 (10%) confounded, **8/21 (38%) SIGNAL confirmado**.
+**7/21 detectados por uma regra SAST disparando especificamente no
+padrão da vulnerabilidade documentada** (SAST046/047/048/049 +
+JS11/JV11/RS01), todos re-verificados empiricamente contra conteúdo
+real do GitHub.
+
+**Próximo passo concreto**: dos 11 blind spots restantes (flask,
+golang/go, curl, etcd, rust-regex/ReDoS, lodash/JS05-ReDoS, netty,
+scrapy, laravel-PHP05, dotnet-CS05, git), a maioria já tem evidência
+documentada de que exige dataflow/taint-tracking real ou está fora do
+escopo de SAST (ex.: netty é SCA). Continuar a auditoria
+caso-a-caso seguindo o mesmo processo: buscar o diff real, isolar se
+há shape ancorável antes de concluir blind spot.
 
 ## Sprint AF (correção) — SAST048 + 2 reclassificações no relatório de timeline (concluído)
 

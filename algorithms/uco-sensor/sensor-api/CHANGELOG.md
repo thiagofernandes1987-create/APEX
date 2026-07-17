@@ -5,6 +5,77 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.11.0] — 2026-06-27 — Sprint AG: investigação paralela 6-way + JS11/JV11/RS01 + abre PHP/C#/Rust
+
+Resultado de 6 agentes investigando em paralelo os 11 blind spots
+restantes do relatório `paper/corpus_runs/AF_consolidated_timeline.md`,
+buscando o diff real vulnerável→corrigido via API do GitHub.
+
+### Adicionado — `JS11`: "Axios XSRF Token Sent Cross-Origin" (CWE-200, A01:2021, HIGH)
+
+Detecta `withCredentials || isURLSameOrigin(...)` (ou variantes
+`isSameOrigin`/`sameOrigin`), padrão que torna o check de mesma origem
+opcional e leaka o token XSRF cross-origin. Motivado e validado contra
+o real `axios/axios` CVE-2023-45857: dispara em `lib/adapters/xhr.js`
+vulnerável (sha `7d45ab2e`), silencia no corrigido (sha `96ee232b`).
+
+### Adicionado — `JV11`: "Bean Property Denylisted by Name Instead of Type" (CWE-915, A08:2021, CRITICAL)
+
+Detecta `"classLoader"/"protectionDomain".equals(pd.getName())` (ou a
+forma invertida), o shape estrutural do Spring4Shell. Motivado e
+validado contra `spring-projects/spring-framework` CVE-2022-22965:
+dispara em `CachedIntrospectionResults.java` vulnerável (sha
+`1627f57f`), silencia no corrigido (sha `002546b3`, que filtra por
+tipo via `isAssignableFrom`).
+
+### Adicionado — `RS01` + suporte Rust: "Bit-Field Overwritten by One Setter While Another Preserves Flags" (CWE-693, A04:2021, HIGH)
+
+Abre suporte Rust ao SAST multi-linguagem. Primeira regra do codebase
+que precisa de contexto de arquivo inteiro (não uma linha isolada):
+implementada como função dedicada `_scan_rust_bitfield_setters`
+chamada de um bloco especial em `scan_multilang()`. Detecta um campo
+`self.<campo>` sobrescrito diretamente (`self.x = ...`) em algum
+método enquanto outro método preserva os demais bits do mesmo campo
+via `bool_flag!`/`|=`/`&=`. Motivado e validado contra `tokio-rs/tokio`
+CVE-2023-22466: dispara na linha exata 1684 de `named_pipe.rs`
+vulnerável (sha `5c76d070`), silencia no corrigido (sha `9241c3ed`).
+
+### Adicionado — suporte PHP (`PHP01-05`) e C# (`CS01-05`)
+
+4 regras core genéricas por linguagem (injeção de comando, SQL
+concatenado, eval/deserialização insegura, BinaryFormatter, TLS
+trust-all callback) + 1 regra de triagem de baixa confiança cada
+(`PHP05`, `CS05`), motivadas pelas investigações de Laravel
+CVE-2026-48041 e dotnet/runtime CVE-2026-45491. **Nota de honestidade**:
+validado empiricamente que nenhuma das duas regras de triagem
+discrimina o CVE que a motivou (`PHP05` dispara igualmente antes e
+depois do fix Laravel; `CS05` não dispara em nenhum dos dois shas
+dotnet, pois o bug real está em métodos internos fora do alcance da
+regex). Mantidas pelo valor genérico de triagem; não contam como
+detecção desses dois CVEs específicos no relatório de timeline.
+
+### Adicionado — `SAST049`: "Request Body Parsed as JSON Without Content-Type Check" (CWE-400, A04:2021, MEDIUM)
+
+Documentação retroativa de uma regra adicionada em `sast/scanner.py`
+por uma rodada concorrente anterior e ainda não registrada no
+CHANGELOG: detecta `<request>.json()` chamado sem checagem de
+`Content-Type` em nenhum ponto da função, motivado por CVE-2021-32677
+(fastapi/fastapi DoS).
+
+### Investigado e não implementado
+
+`scrapy` CVE-2022-0577: o arquivo vulnerável (`redirect.py`, sha
+`aa0306a1`) não tem nenhum shape AST/string distintivo — o código é
+apenas `request.replace(url=redirected_url)`, indistinguível de
+qualquer `.replace()` seguro. BLIND_SPOT genuíno, documentado com
+evidência em vez de forçar uma regra overfit.
+
+### Testes
+
+23 novos testes em `tests/test_marco_m68.py` (TAK01-TAK23). Suite
+completa: 2255 passed, 5 skipped, 0 regressões. Total de regras SAST
+multi-linguagem: 43.
+
 ## [3.10.4] — 2026-06-27 — Sprint AF correção: SAST048 (CWE-470 unsafe reflection) + 2 reclassificações no relatório de timeline
 
 Em resposta direta ao hook de `/goal` rejeitar o encerramento do loop

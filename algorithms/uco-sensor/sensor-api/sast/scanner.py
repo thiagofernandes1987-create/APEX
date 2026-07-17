@@ -668,6 +668,30 @@ RULES: List[SASTRuleInfo] = [
             "— and reject anything else."
         ),
     ),
+    # ── Sprint AF (audit of remaining blind spots) — fastapi/fastapi
+    # CVE-2021-32677 found another generalizable shape: parsing an
+    # incoming request body as JSON without first checking the
+    # Content-Type header (see paper/corpus_runs/AF_consolidated_timeline.md):
+    SASTRuleInfo(
+        rule_id="SAST049", title="Request Body Parsed as JSON Without Content-Type Check",
+        cwe_id="CWE-400", owasp="A04:2021",
+        severity="MEDIUM",
+        description=(
+            "A request-handling function calls '<request>.json()' to parse "
+            "the incoming body, but the function never inspects the "
+            "Content-Type header anywhere. Any body — JSON or not, and of "
+            "any size — gets fed to the JSON decoder unconditionally, "
+            "letting a client trigger expensive decoding (or framework- "
+            "specific errors) by sending a huge or malformed non-JSON "
+            "body. Real-world root cause of CVE-2021-32677 (fastapi DoS "
+            "via unconditional 'await request.json()')."
+        ),
+        remediation=(
+            "Check the Content-Type header (e.g. 'request.headers.get("
+            "\"content-type\")') and confirm it is an 'application/json' "
+            "(sub)type before calling '.json()' on the request body."
+        ),
+    ),
 ]
 
 _RULE_MAP: Dict[str, SASTRuleInfo] = {r.rule_id: r for r in RULES}
@@ -1574,6 +1598,27 @@ class _ASTScanner(ast.NodeVisitor):
                         and child.func.id in reflected_vars
                         and child.func.id not in guarded):
                     self._add("SAST048", child)
+
+        # ── Sprint AF — SAST049: '<request>.json()' called with no
+        # Content-Type check anywhere in the function — see
+        # CVE-2021-32677 (fastapi/fastapi) case study in
+        # paper/corpus_runs/AF_consolidated_timeline.md. Scoped to
+        # request-like variable names to avoid flagging the extremely
+        # common 'requests.get(url).json()' response-parsing idiom.
+        has_content_type_check = any(
+            (isinstance(c, ast.Constant) and isinstance(c.value, str)
+             and "content-type" in c.value.lower())
+            or (isinstance(c, ast.Attribute) and c.attr == "content_type")
+            for c in ast.walk(node)
+        )
+        if not has_content_type_check:
+            for child in ast.walk(node):
+                if (isinstance(child, ast.Call) and not child.args and not child.keywords
+                        and isinstance(child.func, ast.Attribute)
+                        and child.func.attr == "json"
+                        and isinstance(child.func.value, ast.Name)
+                        and child.func.value.id.lower() in ("request", "req")):
+                    self._add("SAST049", child)
 
     # ── SAST038: exception swallowing ────────────────────────────────────────
 
