@@ -20,7 +20,11 @@ import json
 import os
 
 # Prefer a user-level config; fall back to a skill-local file when HOME is not writable.
-_HOME_CFG = os.path.expanduser("~/.apex-method/config.json")
+# AUD-W1: APEX_METHOD_HOME redirects EVERY durable store (tests/CI isolation). On Windows,
+# os.environ["HOME"] does NOT redirect expanduser (Python>=3.8 uses USERPROFILE), so tests
+# that relied on a HOME swap silently wrote into the user's REAL ~/.apex-method.
+_APEX_BASE = os.environ.get("APEX_METHOD_HOME") or os.path.expanduser("~/.apex-method")
+_HOME_CFG = os.path.join(_APEX_BASE, "config.json")
 _LOCAL_CFG = os.path.join(os.path.dirname(__file__), "..", "user_config.json")
 
 VALID_MODES = ["EXPRESS", "STANDARD", "FOGGY", "DEEP", "SCIENTIFIC", "RESEARCH"]

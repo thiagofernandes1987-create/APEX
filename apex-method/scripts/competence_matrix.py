@@ -32,7 +32,9 @@ import re
 import sqlite3
 import time
 
-_COMPETENCE_DB = os.path.expanduser("~/.apex-method/competence.db")
+# AUD-W1: APEX_METHOD_HOME redirects the durable store (tests/CI isolation) — see config.py.
+_COMPETENCE_DB = os.path.join(os.environ.get("APEX_METHOD_HOME")
+                              or os.path.expanduser("~/.apex-method"), "competence.db")
 
 REJECTIONS_THRESHOLD = 20      # DIFF_v22_008
 LOW_VARIANCE_THRESHOLD = 0.03  # variance < 3% = stuck agent

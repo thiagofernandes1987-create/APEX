@@ -248,8 +248,10 @@ class ProjectLedger:
         import zipfile
         saved = self.save(directory)
         paths = [saved["md"], saved["json"]]
-        for p in (extra_paths or [os.path.expanduser("~/.apex-method/competence.db"),
-                                  os.path.expanduser("~/.apex-method/memory.db")]):
+        # AUD-W1: honour APEX_METHOD_HOME so the zip bundles the ACTIVE stores, not always ~
+        base = os.environ.get("APEX_METHOD_HOME") or os.path.expanduser("~/.apex-method")
+        for p in (extra_paths or [os.path.join(base, "competence.db"),
+                                  os.path.join(base, "memory.db")]):
             if os.path.isfile(p):
                 paths.append(p)
         out_path = os.path.join(directory, out)

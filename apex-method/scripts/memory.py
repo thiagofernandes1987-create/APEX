@@ -45,7 +45,9 @@ try:
 except Exception:                       # degrade: no vectors -> exact-text recall only
     CharEmbedder, cosine = None, None
 
-DB_DEFAULT = os.path.expanduser("~/.apex-method/memory.db")
+# AUD-W1: APEX_METHOD_HOME redirects the durable store (tests/CI isolation) — see config.py.
+DB_DEFAULT = os.path.join(os.environ.get("APEX_METHOD_HOME")
+                          or os.path.expanduser("~/.apex-method"), "memory.db")
 
 
 def _sha(text):

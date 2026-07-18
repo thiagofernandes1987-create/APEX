@@ -76,7 +76,10 @@ def update(apply=False):
             root = repo_bridge._local_root()
             if root:
                 src = os.path.join(root, "apex-method")
-                subprocess.run(["cp", "-r", src + "/.", ROOT], check=True)
+                # AUD-W2: `cp -r` is Unix-only — update --apply crashed on Windows
+                # (FileNotFoundError: 'cp'). shutil is the portable equivalent.
+                import shutil
+                shutil.copytree(src, ROOT, dirs_exist_ok=True)
                 bench = subprocess.run([sys.executable, os.path.join(ROOT, "tests", "benchmark.py")],
                                        capture_output=True, text=True)
                 total = next((l for l in bench.stdout.splitlines() if l.startswith("TOTAL")), "")
@@ -117,7 +120,8 @@ def persist(session_id=None, backend=None):
     import swap_store
     sid = session_id or time.strftime("session-%Y%m%d%H%M%S", time.gmtime())
     be = backend or _config.load().get("persist_backend") or "local"
-    res = swap_store.page_out(sid, memory_db=os.path.expanduser("~/.apex-method/memory.db"),
+    import memory as _mem                       # AUD-W1: honour APEX_METHOD_HOME, one source of truth
+    res = swap_store.page_out(sid, memory_db=_mem.DB_DEFAULT,
                               snapshot={"objective": "session page-out via menu"}, backend=be)
     return res
 

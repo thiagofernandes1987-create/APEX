@@ -35,9 +35,18 @@ AGENTS = os.path.join(HERE, "..", "catalog", "agents_catalog.json")
 SKILLS = os.path.join(HERE, "..", "catalog", "skills_catalog.json")
 
 
-def load(path):
+def load(path, merge=None):
+    """Load a catalog. RT-26b (GPT audit, validated): for the AGENTS catalog, durable grants are
+    now merged in BY DEFAULT — "installing a skill upgrades the agents" must survive a reload
+    without the caller remembering to call merge_grants(). Pass merge=False for the raw file."""
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        doc = json.load(f)
+    if merge is not False and isinstance(doc, dict) and "agents" in doc:
+        try:
+            merge_grants(doc)
+        except Exception:
+            pass                      # a broken grant store must never block the catalog
+    return doc
 
 
 # ── durable skill-grant store (RT-26) ────────────────────────────────────────────────────────
@@ -45,7 +54,9 @@ def load(path):
 # lost on the next reload / package update). Instead we append grant records to a SEPARATE
 # user-level store and MERGE them onto a freshly-loaded catalog, so "installing a skill upgrades
 # the agents" survives process, session, and reload.
-_GRANTS_HOME = os.path.expanduser("~/.apex-method/agent_grants.json")
+# AUD-W1: APEX_METHOD_HOME redirects the durable store (tests/CI isolation) — see config.py.
+_GRANTS_HOME = os.path.join(os.environ.get("APEX_METHOD_HOME")
+                            or os.path.expanduser("~/.apex-method"), "agent_grants.json")
 _GRANTS_LOCAL = os.path.join(HERE, "..", "agent_grants.json")
 
 
@@ -87,10 +98,28 @@ def save_grant(skill_id, agent_id, scripts=None, source="", approved=True, ext=F
         return {"status": "ERROR", "reason": str(e)[:120]}
 
 
+def revoke_grant(skill_id, agent_id=None):
+    """UNEQUIP: append a revocation record. merge_grants() honours it in order, so a revoked
+    skill disappears from the agent's competence on the next load — abilities can be promoted
+    AND unequipped (the spawn contract needs both). agent_id=None revokes for every agent."""
+    import time
+    grants = load_grants()
+    grants.append({"skill_id": skill_id, "agent_id": agent_id, "revoked": True,
+                   "approved": True, "ts": time.time()})
+    p = _grants_path()
+    try:
+        with open(p, "w", encoding="utf-8") as f:
+            json.dump(grants, f, indent=1, ensure_ascii=False)
+        return {"status": "REVOKED", "skill_id": skill_id, "agent_id": agent_id}
+    except Exception as e:
+        return {"status": "ERROR", "reason": str(e)[:120]}
+
+
 def merge_grants(agents_doc, grants=None):
     """Overlay persisted grants onto a freshly-loaded (immutable) catalog so grants survive reload.
-    Applies approved core-persona grants into `competence`; returns how many were applied plus the
-    persisted extended-agent grants (kept separate, mirroring grant_skill's return shape)."""
+    Applies approved core-persona grants into `competence` IN ORDER (so a later revocation record
+    unequips an earlier grant); returns how many were applied plus the persisted extended-agent
+    grants (kept separate, mirroring grant_skill's return shape)."""
     grants = load_grants() if grants is None else grants
     applied, ext = 0, []
     ags = agents_doc.get("agents", {})
@@ -99,6 +128,12 @@ def merge_grants(agents_doc, grants=None):
             continue
         aid, sid = g.get("agent_id"), g.get("skill_id")
         if not sid:
+            continue
+        if g.get("revoked"):                       # unequip: remove everywhere it applies
+            ext = [(a, s) for a, s in ext if not (s == sid and (aid is None or a == aid))]
+            for a_id, a in ags.items():
+                if aid is None or a_id == aid:
+                    a.get("competence", {}).pop(sid, None)
             continue
         if g.get("ext"):
             ext.append((aid, sid))
@@ -160,7 +195,7 @@ def match_skill_to_agents(skill, agents_doc, threshold=0.05):
     return matched or ["pmi_pm"]  # generalist fallback
 
 
-def grant_skill(skill, agents_doc, approved: bool, scripts=None, ext_grants=None, persist=False):
+def grant_skill(skill, agents_doc, approved: bool, scripts=None, ext_grants=None, persist=True):
     """
     Grant an APPROVED skill to the compatible agents, updating competence + experience.
     Returns the list of (agent_id, new_experience). Refuses if not approved (APEX H5).
@@ -170,8 +205,9 @@ def grant_skill(skill, agents_doc, approved: bool, scripts=None, ext_grants=None
     the caller keeps across a session; if omitted, extended matches are still reported so
     "installing a skill upgrades the matching agent" holds for the whole roster.
 
-    RT-26: with persist=True the grant is also written to the durable grant store (save_grant),
-    so it survives a catalog reload — apply it to a fresh catalog with merge_grants().
+    RT-26/RT-26b: persist defaults to True — the grant is written to the durable grant store
+    (save_grant) and load() auto-merges it, so "installing a skill upgrades the agents" survives
+    process, session, and reload WITHOUT the caller remembering anything. revoke_grant() unequips.
     """
     if not approved:
         return {"status": "BLOCKED", "reason": "skill not approved by user (APEX H5)"}

@@ -13,7 +13,18 @@ the rest and exits non-zero so CI catches it.
 
 USAGE: python3 tests/benchmark.py   (from the skill root, or from tests/)
 """
-import sys, os, time, json, io, contextlib
+import sys, os, time, json, io, contextlib, tempfile
+
+# AUD-W1: ISOLATE every durable store BEFORE any script import. The old RT tests swapped
+# os.environ["HOME"], which Windows expanduser IGNORES (USERPROFILE wins on Python>=3.8) —
+# so the suite silently wrote min_mode/grants/competence/learning into the user's REAL
+# ~/.apex-method, corrupting their config mid-run (t_orchestrator then failed in cascade).
+os.environ.setdefault("APEX_METHOD_HOME", tempfile.mkdtemp(prefix="apex-bench-home-"))
+# AUD-W3: Windows consoles default to cp1252 — non-ASCII output must never crash the harness.
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SCRIPTS = os.path.join(HERE, "..", "scripts")
@@ -64,6 +75,12 @@ def t_verify():
     import verify
     a = verify.verify_identity("(x+1)**2", "x**2+2*x+1")
     b = verify.verify_identity("(x+1)**2", "x**2+x+1")
+    # AUD-T1: sympy is a DECLARED optional accelerator (requirements.txt / apex_llm.yaml);
+    # without it verify must degrade to CONJECTURA_FORMAL. The old assert hard-required
+    # sympy, so the promised "stdlib-only full pass" was unreachable in a clean env.
+    if verify.sp is None:
+        assert a["tag"] == "CONJECTURA_FORMAL" and b["tag"] == "CONJECTURA_FORMAL", (a, b)
+        return "sympy absent -> declared degradation (CONJECTURA_FORMAL)"
     assert "VERIFIED" in a["tag"] and "REFUTED" in b["tag"], (a, b)
     return "identity VERIFIED / REFUTED"
 
@@ -120,7 +137,7 @@ def t_skill_forge():
     a.description="A test skill. Use when: verifying the forge produces schema-valid frontmatter."
     a.author="APEX"; a.out=_os.path.join(d,"SKILL.md")
     skill_forge.create(a)
-    txt = open(a.out).read()
+    txt = open(a.out, encoding="utf-8").read()
     assert "name: test-skill" in txt and "kind: workflow" in txt, txt[:200]
     return "generates valid SKILL.md"
 
@@ -475,11 +492,13 @@ def t_chaos_operators():
 
 
 def t_competence_matrix():
-    import competence_matrix as cm, os
-    # isolate: a fresh session + durable ledger so reward-history doesn't flip PERSONA_SWAP
-    for db in ("competence.db", "learning.db"):
+    import competence_matrix as cm, learning as lrn, os
+    # isolate: a fresh session + durable ledger so reward-history doesn't flip PERSONA_SWAP.
+    # AUD-W1: delete from the ISOLATED store paths, never expanduser("~") — the old code
+    # deleted the user's REAL ~/.apex-method/*.db (destroying their cross-session learning).
+    for db in (cm._COMPETENCE_DB, lrn.DB_DEFAULT):
         try:
-            os.remove(os.path.expanduser(f"~/.apex-method/{db}"))
+            os.remove(db)
         except OSError:
             pass
     assert cm.estimate_difficulty("navier stokes turbulência fluido pde")["bde_score"] >= 0.85
@@ -492,10 +511,10 @@ def t_competence_matrix():
 
 
 def t_evaluate_hypotheses():
-    import concurrent_executor as ce, os
-    for db in ("competence.db", "learning.db"):     # fresh session + durable ledgers
-        try:
-            os.remove(os.path.expanduser(f"~/.apex-method/{db}"))
+    import concurrent_executor as ce, competence_matrix as cm, learning as lrn, os
+    for db in (cm._COMPETENCE_DB, lrn.DB_DEFAULT):  # fresh session + durable ledgers (AUD-W1:
+        try:                                        # isolated paths, never the user's real ~)
+            os.remove(db)
         except OSError:
             pass
     hyps = [{"stance": "optimistic", "answer": "A", "confidence": 0.78},
@@ -673,6 +692,508 @@ def t_execution_policy():
             f"floor(audit/security)+uncertain+min_mode force the pipeline")
 
 
+def t_attraction_graph():
+    # v1.43: the precomputed gravitational routing JSON — the attraction chain must pull the
+    # QA/security cluster from a single audit seed, and rebuild must reflect the catalogs.
+    import attraction_graph as ag, os
+    r = ag.build()
+    assert r["nodes"] >= 300 and r["edges"] > 500, r
+    assert os.path.isfile(ag.GRAPH_PATH)
+    ag._CACHE.clear()
+    nb = ag.neighbors("agent:security-auditor")
+    assert nb and all("id" in e and e["w"] > 0 for e in nb), nb
+    exp = ag.equip_for("tech leader precisa fazer auditoria de código")
+    ids = [m["id"] for m in exp["members"]]
+    assert exp["seeds"] and len(ids) >= 5, exp
+    assert any("security" in i or "test" in i or "qa" in i or "review" in i for i in ids), ids
+    # alien seed -> empty expansion is the honest answer
+    assert ag.expand(["not-a-body"])["members"] == []
+    return f"{r['nodes']} nodes, {r['edges']} edges; audit seed pulls {len(ids)} bodies"
+
+
+def t_agent_spawn():
+    # RT-19/RT-27: spawn assembles a FULLY EXECUTABLE spec; equip/unequip persist durably.
+    import agent_spawn as sp, agent_registry as ar
+    spec = sp.spawn("tech-lead-orchestrator", "audit the backend for security issues")
+    assert spec["spawn_ready"] and all(spec["spawn_checklist"].values()), spec["spawn_checklist"]
+    assert spec["persona"] and spec["instruction"] and "output_schema" in spec, "executable spec"
+    assert spec["skills"] or spec["scripts"] or spec["tools"], "must be equipped"
+    # unknown persona -> checklist catches it (the contract forbids spawning it)
+    ghost = sp.spawn("agent-that-does-not-exist", "x")
+    assert ghost["spawn_ready"] is False and not ghost["spawn_checklist"]["persona_loaded"], ghost["spawn_checklist"]
+    # equip -> durable grant visible on reload; unequip -> revoked
+    sp.equip("react-specialist", {"id": "x/design-taste", "source": "https://x/SKILL.md"})
+    assert "x/design-taste" in sp._equipped_grants("react-specialist")
+    sp.unequip("react-specialist", "x/design-taste")
+    assert "x/design-taste" not in sp._equipped_grants("react-specialist")
+    # contract + manifest integration: every Level-B entry carries a spec + spawn_ready
+    import concurrent_executor as ce
+    man = ce.subagent_manifest("audit memory subsystem", "RESEARCH")
+    assert man["contract"] and all("spec" in e and "spawn_ready" in e for e in man["spawn"]), \
+        [list(e) for e in man["spawn"]]
+    return f"spec executable + ghost blocked + equip/unequip durable + manifest carries specs"
+
+
+def t_kernel_gate():
+    # RT-22: the run is a boolean contract — code steps done with evidence, llm steps handed
+    # back with the exact call, and gate() blocks completion until EVERYTHING is True.
+    import orchestrator as o
+    r = o.run("design a fault-tolerant payment api")
+    ck = r["kernel_checklist"]
+    done = {i["step"] for i in ck if i["done"]}
+    assert {"TRIAGE", "DISSECT", "RESOLVE_SPECIALISTS", "MODE", "PHASE_PLAN"} <= done, done
+    assert r["gate"]["pass"] is False and r["gate"]["missing"], "llm steps must block the gate"
+    assert all(i["evidence"] for i in ck if i["done"]), "code steps carry evidence"
+    for m in r["gate"]["missing"]:
+        if m["owner"] == "llm":
+            assert m["step"] in r["llm_actions"], f"llm step {m['step']} must state its exact call"
+    for i in ck:                                    # baton returns -> gate passes
+        if not i["done"]:
+            o.complete_step(ck, i["step"], "done by llm (test)")
+    assert o.gate(ck)["pass"] is True
+    # candidates supplied -> PMI_CONVERGE is code-completed with evidence
+    r2 = o.run("value the portfolio with monte carlo",
+               candidates=[{"discipline": "m", "answer": 2.0, "confidence": 0.9, "numeric": True},
+                           {"discipline": "s", "answer": 2.0, "confidence": 0.85, "numeric": True}])
+    pmi = [i for i in r2["kernel_checklist"] if i["step"] == "PMI_CONVERGE"][0]
+    assert pmi["done"] and "reliability" in pmi["evidence"], pmi
+    return f"gate blocks until complete; {len(done)}/12 code-done; PMI evidence wired"
+
+
+def t_rag_index():
+    # v1.43: node-based vector RAG with a GLOBAL IDF — PT and EN questions map to the right node.
+    import rag_index as ri, os
+    r = ri.build()
+    assert r["nodes"] >= 60 and os.path.isfile(ri.INDEX_PATH), r
+    ri._CACHE.clear()
+    pt = ri.search("como funciona a memória durável entre sessões?")
+    assert pt and any("memory" in h["id"] for h in pt[:3]), pt
+    en = ri.search("where are the 213 agents and how do I spawn one?")
+    assert en and any("agent" in h["id"] for h in en[:3]), en
+    sec = ri.search("security scan of external skills", node_type="script")
+    assert sec and all(h["type"] == "script" for h in sec), sec
+    return f"{r['nodes']} nodes; PT->'{pt[0]['id']}', EN->'{en[0]['id']}'"
+
+
+def t_routine_composer():
+    # v1.46 (author's item 2, deep): the persona composes its own ROUTINE — complementary
+    # capabilities chained with send/receive handoffs; honest gaps drive discovery; outcomes
+    # and external feedback promote/demote; routines persist and travel in the swap bundle.
+    import tempfile, os, importlib
+    import routine_composer as rc, learning as lrn, memory as mem_mod, swap_store as ss
+    import capability_map as cm, agent_spawn as sp, config as cfg, agent_registry as ar
+    import code_genetics as cg
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+    try:
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, cm, rc, sp):
+            importlib.reload(mod)
+        ch = ("criar uma landing page de alta conversão, design não-genérico, com transições "
+              "css, dados em sql e performance responsiva")
+        r = rc.compose(ch, agent_id="ui-designer")
+        stages = [s["stage"] for s in r["steps"]]
+        assert {"design", "frontend", "backend"} <= set(stages), stages
+        assert stages == sorted(stages, key=[st for st, _ in rc.STAGES].index), "canonical order"
+        # chaining: each step's send carries the previous stage's handoff
+        for a, b in zip(r["steps"], r["steps"][1:]):
+            assert a["feeds_next"].split(":")[0] in b["send"], (a["feeds_next"], b["send"])
+        # honest gaps drive discovery (marketing/psychology isn't in the library)
+        assert any(g["stage"] == "marketing" for g in r["gaps"]), r["gaps"]
+        # meta runtime tools never occupy domain stages; the skill never picks itself
+        for s in r["steps"]:
+            if s["stage"] != "verify":
+                assert not s["capability"].startswith("tool:"), s
+            assert s["capability"] != "skill:apex-method", "self-selection"
+        # persist + reuse: a saved routine is found again for a similar challenge
+        rc.save_routine(r)
+        again = rc.best_routine("ui-designer", "landing page de conversão com css e sql")
+        assert again and again["id"] == r["id"], "routine reuse"
+        # real outcomes promote the routine (beta-binomial, durable)
+        for _ in range(3):
+            out = rc.record_routine_outcome(r["id"], True)
+        assert out["status"] == "PROMOTED", out
+        # external audit + user feedback strengthen the persona (suggestions only — H5 decides)
+        fb = rc.record_feedback("ui-designer", {
+            "source": "auditoria-gpt", "user_positive": True,
+            "strengths": ["o uso de supabase-postgres-best-practices foi preciso"],
+            "weaknesses": ["a etapa com brainstorming dispersou o escopo"],
+            "gaps": ["falta skill de psicologia das cores"]})
+        assert fb["remembered"] >= 3 and fb["suggest_discover"], fb
+        assert fb["confirmed"] or fb["suggest_unequip"], fb
+        # spawn carries the routine (the agent knows HOW, not just WITH WHAT)
+        spec = sp.spawn("ui-designer", ch, mode="RESEARCH")
+        assert spec["routine"] and "ROUTINE" in spec["instruction"], "routine injected at spawn"
+        # routines travel in the plug-and-play bundle
+        db = os.path.join(os.environ["APEX_METHOD_HOME"], "m.db")
+        mem_mod.MemoryStore(db).remember("x", "semantic")
+        b = ss.export_bundle("rt", memory_db=db)
+        assert b["stores"]["routines"], "routines in bundle"
+        homeB = tempfile.mkdtemp(); os.environ["APEX_METHOD_HOME"] = homeB
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, cm, rc, sp):
+            importlib.reload(mod)
+        res = ss.import_bundle(b, memory_db=os.path.join(homeB, "m.db"))
+        assert res["stores_restored"]["routines"] >= 1, res["stores_restored"]
+        assert rc.best_routine("ui-designer", ch), "routine survives the machine swap"
+        return (f"{len(r['steps'])} passos encadeados; gaps {[g['stage'] for g in r['gaps']]}; "
+                f"reuse+PROMOTED+feedback; viaja no swap")
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, cm, rc, sp):
+            importlib.reload(mod)
+
+
+def t_routine_run_loop():
+    # v1.47 item 1: the persona RUNS the routine — handoffs are rewritten with what was REALLY
+    # received (persisted), real outcomes auto-promote/demote, failures become vaccines.
+    import tempfile, os, importlib
+    import routine_composer as rc, learning as lrn, code_genetics as cg, config as cfg
+    import agent_registry as ar, memory as mem_mod, swap_store as ss, capability_map as cm
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+    try:
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, cm, rc):
+            importlib.reload(mod)
+        r = rc.compose("criar landing page com css e sql", agent_id="ui-designer")
+        rc.save_routine(r)
+        run = rc.start_run(r)
+        rc.record_step_result(run, r["steps"][0]["order"],
+                              "briefing real: público dev, tom técnico")
+        for s in r["steps"][1:]:
+            rc.record_step_result(run, s["order"], f"saída real do {s['stage']}")
+        fin = rc.finish_run(run)
+        assert fin["success"] and fin["steps_failed"] == 0, fin
+        saved = rc.best_routine("ui-designer", "landing page com css e sql")
+        assert saved["steps"][0]["receive"].startswith("APRENDIDO:"), "handoff rewritten"
+        assert saved["steps"][1]["send"].startswith("APRENDIDO:"), "next send follows reality"
+        for _ in range(2):                          # 3 successful runs -> auto-PROMOTED
+            rr = rc.start_run(saved)
+            for s in saved["steps"]:
+                rc.record_step_result(rr, s["order"], "ok")
+            out = rc.finish_run(rr)
+        assert out["routine_status"]["status"] == "PROMOTED", out["routine_status"]
+        # a failure becomes a durable vaccine (experience -> future context)
+        rf = rc.start_run(saved)
+        rc.record_step_result(rf, saved["steps"][0]["order"], "", success=False,
+                              notes="skill dispersa o escopo")
+        assert cg.durable_store().relevant("falha no passo research"), "failure -> vaccine"
+        ff = rc.finish_run(rf)
+        assert ff["success"] is False
+        return "handoffs aprendidos + auto-PROMOTED@3 + falha->vacina"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, cm, rc):
+            importlib.reload(mod)
+
+
+def t_capability_cache():
+    # v1.47 item 2: incremental scan cache — unchanged SKILL.md served from cache; a touched
+    # file is re-parsed; entries for deleted files are pruned.
+    import tempfile, os, importlib, time as _t
+    import capability_map as cm, config as cfg
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+    try:
+        importlib.reload(cfg); importlib.reload(cm)
+        d = tempfile.mkdtemp()
+        for i in range(3):
+            os.makedirs(os.path.join(d, f"s{i}"))
+            open(os.path.join(d, f"s{i}", "SKILL.md"), "w", encoding="utf-8").write(
+                f"---\nname: cache-skill-{i}\ndescription: \"skill {i}. Use when: testing.\"\n---\n"
+                f"# When to use\nUse when testing.\n")
+        c1 = cm.scan_skill_dirs([d]); s1 = cm.scan_skill_dirs._scan_stats
+        assert s1["parsed"] == 3 and s1["cached"] == 0, s1
+        c2 = cm.scan_skill_dirs([d]); s2 = cm.scan_skill_dirs._scan_stats
+        assert s2["parsed"] == 0 and s2["cached"] == 3, s2
+        # touch one -> only it re-parses; delete one -> pruned from result
+        p = os.path.join(d, "s0", "SKILL.md")
+        _t.sleep(0.01); os.utime(p, None)
+        open(p, "a", encoding="utf-8").write("\nextra\n")
+        import shutil; shutil.rmtree(os.path.join(d, "s2"))
+        c3 = cm.scan_skill_dirs([d]); s3 = cm.scan_skill_dirs._scan_stats
+        assert s3["parsed"] == 1 and s3["cached"] == 1 and s3["total"] == 2, s3
+        assert {x["name"] for x in c3} == {"cache-skill-0", "cache-skill-1"}
+        return f"3 parsed -> 3 cached -> touch reparses 1, delete prunes 1"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(cfg); importlib.reload(cm)
+
+
+def t_token_tracker():
+    # v1.47 item 3 (OPP-99): real rounds measured (chars/4 proxy, declared) calibrate the DSM —
+    # measured averages replace estimates once >=3 samples exist.
+    import tempfile, os, importlib
+    import token_tracker as tt, orchestrator as orc, pipeline_dsm as pd, config as cfg
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+    try:
+        importlib.reload(cfg); importlib.reload(tt)
+        rnd = tt.start_round("DEEP", "t")
+        tt.record(rnd, "TRIAGE", {"mode": "DEEP"})
+        assert tt.end_round(rnd)["status"] == "OK"
+        for _ in range(3):                          # real orchestrator rounds are recorded
+            r = orc.run("design a fault-tolerant payment api")
+        assert r.get("tokens_measured", {}).get("status") == "OK", r.get("tokens_measured")
+        av = tt.averages()
+        assert "DISSECT" in av and av["DISSECT"]["n"] >= 3, av
+        flow = pd.mode_flow()
+        cal = flow["_calibration"]
+        assert cal["DISSECT"] == "measured" and cal["RUN_STANCES"] == "estimated", cal
+        rep = tt.report()
+        assert rep["rounds"] >= 3 and any(x["calibrated"] for x in rep["steps"])
+        return f"{rep['rounds']} rodadas; medido substitui estimado (DISSECT avg={av['DISSECT']['avg']}tk)"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(cfg); importlib.reload(tt)
+
+
+def t_solid_state_index():
+    # v1.47 (documento de arquitetura do autor): estado sólido — seções por sumário com
+    # dimensão taxonômica, sync incremental por hash, poda em cascata, alias de renomeio,
+    # visão macro (dim+impacto) na busca, fusão de estados e overview cristalizado.
+    import rag_index as ri, os, shutil, copy, json
+    r = ri.build()
+    assert r["nodes"] >= 250, r
+    doc = ri.load()
+    secs = [n for n in doc["nodes"] if n["type"] == "section"]
+    assert len(secs) >= 80 and all(n.get("parent") for n in secs), len(secs)
+    assert all("dim" in n and "hash" in n for n in doc["nodes"])
+    # macro view: a busca devolve dimensão + impacto (imports reversos) para scripts
+    hits = ri.search("memória durável entre sessões", k=5)
+    assert hits and all("dim" in h for h in hits), hits
+    sh = ri.search("swap page out", k=5, node_type="script")
+    assert any(h.get("affects") for h in sh), sh
+    # a pergunta de spec acha a SEÇÃO, não só o arquivo
+    sec_hit = ri.search("regras de segurança para skills externas", k=5)
+    assert any(h["type"] == "section" for h in sec_hit), sec_hit
+    # sync incremental: sem mudanças, quase nada re-vetoriza
+    s0 = ri.sync()
+    assert s0["reembedded"] <= 2 and not s0["pruned"], s0
+    # edição -> só o tocado re-vetoriza; reversão -> seção nova é podada
+    p = os.path.join(ri.ROOT, "references", "scenarios.md")
+    orig = open(p, encoding="utf-8").read()
+    try:
+        open(p, "a", encoding="utf-8").write("\n## Scenario T — solid state\nGatilho incremental sob teste.\n")
+        s1 = ri.sync()
+        assert 1 <= s1["reembedded"] <= 3, s1["reembedded"]
+        assert any("scenario-t" in h["id"] for h in ri.search("gatilho incremental sob teste", k=3))
+    finally:
+        open(p, "w", encoding="utf-8").write(orig)
+    s2 = ri.sync()
+    assert any("scenario-t" in x for x in s2["pruned"]), s2["pruned"]
+    # renomeio -> alias (identidade preservada), nada podado
+    try:
+        shutil.move(p, os.path.join(ri.ROOT, "references", "worked-scenarios.md"))
+        s3 = ri.sync()
+        assert s3["aliases"].get("reference:scenarios") == "reference:worked-scenarios", s3["aliases"]
+        assert ri.resolve("reference:scenarios") == "reference:worked-scenarios"
+        assert not s3["pruned"], s3["pruned"]
+    finally:
+        shutil.move(os.path.join(ri.ROOT, "references", "worked-scenarios.md"), p)
+        ri.sync()
+    # fusão de estados divergentes: união idempotente, o local vence
+    other = copy.deepcopy(ri.load())
+    other["nodes"].append({"id": "script:so_na_maquina_b", "type": "script", "path": "x.py",
+                           "summary": "só na B", "hash": "b", "dim": "geral", "terms": {"b": 1.0}})
+    m = ri.merge_index(other)
+    assert m["added_from_other"] == 1 and ri.merge_index(other)["added_from_other"] == 0
+    # overview cristalizado: DETERMINÍSTICO (mesmo conteúdo = mesmo prefixo cacheável)
+    ov1, ov2 = ri.overview(), ri.overview()
+    assert ov1 == ov2 and "SOLID-STATE" in ov1 and "n" + "ós por tipo" in ov1
+    ri.build()                                   # restaura o índice limpo p/ os outros testes
+    return (f"{r['nodes']} nós ({len(secs)} seções); sync incremental+poda+alias; "
+            f"merge idempotente; overview determinístico")
+
+
+def t_capability_map():
+    # v1.45 (author's item 2): the runtime LEARNS to work with installed capabilities —
+    # commands mapped (never executed), environment probed, how_to answers PT/EN, and
+    # "knowing how to use X" is promoted only by real outcomes.
+    import capability_map as cm, tempfile, os, importlib, learning as lrn
+    r = cm.build()
+    assert r["capabilities"] >= 45 and r["tools_present"] >= 2, r
+    doc = cm.load()
+    env = doc["environment"]
+    assert env["tools"].get("python") or env["tools"].get("python3"), env["tools"]
+    assert "libraries" in env and isinstance(env["libraries"].get("numpy"), bool)
+    # own scripts are capabilities with documented commands; templates are capabilities too
+    ids = {c["id"] for c in doc["capabilities"]}
+    assert "tool:pot" in ids and "template:laudo" in ids, sorted(ids)[:8]
+    # no prose masquerading as a command (the "Python cannot..." regex bug)
+    for c in doc["capabilities"]:
+        for cmd in c["commands"]:
+            assert not cmd.lower().startswith("python cannot"), cmd
+    hits = cm.how_to("qual template usar para um laudo?")
+    assert hits and any("laudo" in h["id"] for h in hits), hits
+    # promotion by REAL outcomes only
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+    try:
+        importlib.reload(lrn)
+        for _ in range(3):
+            out = cm.record_use("tool:pot", True)
+        assert out["status"] == "PROMOTED", out
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(lrn)
+    return f"{r['capabilities']} capabilities; env probed; how_to PT ok; use->PROMOTED"
+
+
+def t_pipeline_dsm():
+    # v1.45 (author's item 3): the DSM turned on the runtime — exact import matrix + per-mode
+    # flow, and the APPLIED optimization (context budget per mode) consumed by the entry point.
+    import pipeline_dsm as pd, json, os
+    r = pd.build()
+    assert r["modules"] >= 44 and r["levels"] >= 3, r
+    doc = json.load(open(pd.DSM_PATH, encoding="utf-8"))
+    dsm = doc["module_dsm"]
+    assert any(m["module"] == "_tfidf" for m in dsm["load_bearing"]), dsm["load_bearing"]
+    # the 3 known lazy cycles are surfaced (documented coupling, not load-time cycles)
+    flat = {tuple(sorted(c)) for c in dsm["cycles"]}
+    assert ("agent_spawn", "orchestrator") in flat, dsm["cycles"]
+    flow = doc["mode_flow"]
+    assert flow["EXPRESS"]["plan"] == ["TRIAGE"] and flow["EXPRESS"]["savings_vs_naive"] > 4000
+    assert len(flow["STANDARD"]["skipped"]) >= 2, flow["STANDARD"]
+    assert flow["RESEARCH"]["context_budget_chars"] > flow["STANDARD"]["context_budget_chars"]
+    assert pd.context_budget("EXPRESS") == 0, "EXPRESS must inject zero context (waste cut)"
+    # wired: a STANDARD-mode spawn uses the smaller budget
+    import agent_spawn as sp
+    spec = sp.spawn("engineer", "refactor the api handler", mode="STANDARD")
+    assert spec["context"]["chars"] <= pd.context_budget("STANDARD"), spec["context"]["chars"]
+    return (f"{r['modules']} modules, {r['levels']} levels, {len(dsm['cycles'])} lazy cycles; "
+            f"EXPRESS saves ~{flow['EXPRESS']['savings_vs_naive']}tk; ctx budget wired")
+
+
+def t_plug_and_play():
+    # v1.44 (the ORIGINAL idea): a page-in on a fresh machine restores EVERYTHING durable —
+    # habits (config), trained agents (grants), validated learning, vaccines, memory — via a
+    # delta+gzip bundle chain, with resume_due as the symmetric entry trigger.
+    import tempfile, os, importlib
+    import swap_store as ss, memory as mem_mod, agent_registry as ar, learning as lrn
+    import code_genetics as cg, config as cfg, agent_spawn as sp
+    homeA = tempfile.mkdtemp(); _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = homeA
+    try:
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, sp):
+            importlib.reload(mod)
+        c = cfg.load(); c["min_installs"] = 4321; cfg.save(c)          # a habit
+        sp.equip("react-specialist", {"id": "x/pp-skill"})             # a trained agent
+        for _ in range(3):
+            lrn.record_outcome("persona", "architect", "engineering", True)
+        v = cg.durable_store()
+        v.save_vaccine("pp: timeout no deploy", "setar timeout=30s")   # an experience
+        db = os.path.join(homeA, "memory.db")
+        m = mem_mod.MemoryStore(db)
+        m.remember("pp: hábito validar antes de commit", "semantic")
+        po = ss.page_out("pp", memory_db=db, compress=True)
+        assert po["counts"]["grants"] >= 1 and po["counts"]["learning"] >= 1, po["counts"]
+        m.remember("pp: fato tardio", "semantic")
+        po2 = ss.page_out("pp", memory_db=db, delta=True, compress=True)
+        assert po2["delta"] and po2["counts"]["memories"] == 1, po2["counts"]
+        sdir = po["session_dir"]; rootA = os.path.dirname(os.path.dirname(sdir))
+        # fresh machine B
+        homeB = tempfile.mkdtemp(); os.environ["APEX_METHOD_HOME"] = homeB
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, sp):
+            importlib.reload(mod)
+        assert ss.resume_due(root=rootA)["due"], "swap newer than local must be due"
+        dbB = os.path.join(homeB, "m.db")
+        r = ss.page_in_session(sdir, memory_db=dbB)
+        kinds = ["delta" if a["delta_of"] else "base" for a in r["applied"]]
+        assert kinds == ["base", "delta"], kinds     # chain spans main + versions/ (rotation)
+        assert cfg.load()["min_installs"] == 4321, "habit restored"
+        assert "x/pp-skill" in sp._equipped_grants("react-specialist"), "trained agent restored"
+        assert lrn.score("persona", "architect", "engineering")["status"] == "PROMOTED"
+        assert cg.durable_store().relevant("timeout deploy"), "vaccine restored"
+        mB = mem_mod.MemoryStore(dbB)
+        assert mB.recall("hábito validar") and mB.recall("fato tardio"), "base+delta memories"
+        assert not ss.resume_due(root=rootA)["due"], "marker recorded after page-in"
+        return "habits+agents+learning+vaccines+memory survive a fresh machine (base+delta chain)"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, sp):
+            importlib.reload(mod)
+
+
+def t_agent_bundle_and_context():
+    # v1.44: experience -> CONTEXT for future windows (context_pack) + the portable trained
+    # agent (export/import with integrity + H5).
+    import tempfile, os, importlib
+    import agent_spawn as sp, agent_registry as ar, learning as lrn, code_genetics as cg
+    import memory as mem_mod, swap_store as ss, config as cfg
+    homeA = tempfile.mkdtemp(); _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = homeA
+    try:
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, sp):
+            importlib.reload(mod)
+        v = cg.durable_store()
+        v.save_vaccine("ctx: timeout no deploy do backend", "setar timeout e retry limitado")
+        for ok in (True, True):
+            v.record_outcome("ctx: timeout no deploy do backend", ok)
+        for _ in range(3):
+            lrn.record_outcome("persona", "architect", "engineering", True)
+        cp = sp.context_pack("corrigir timeout no deploy do backend")
+        assert cp["rendered"] and "LESSONS" in cp["rendered"] and "PROVEN" in cp["rendered"], cp["rendered"][:200]
+        assert cp["chars"] <= 1800, "context pack must be budget-bounded"
+        spec = sp.spawn("devops-engineer", "corrigir timeout no deploy do backend")
+        assert "CONTEXT (validated experience" in spec["instruction"], "context injected at spawn"
+        # portable trained agent: export -> fresh machine -> H5 gate -> install -> reproduce
+        sp.equip("react-specialist", {"id": "x/ab-skill"})
+        ab = sp.export_agent("react-specialist")
+        assert ab["grants"] == ["x/ab-skill"] and len(ab["sha256"]) == 64, ab["grants"]
+        homeB = tempfile.mkdtemp(); os.environ["APEX_METHOD_HOME"] = homeB
+        for mod in (ar, lrn, sp):
+            importlib.reload(mod)
+        assert sp.import_agent(ab)["status"] == "BLOCKED", "H5 gate on trained agents"
+        inst = sp.import_agent(ab, approved=True)
+        assert inst["status"] == "INSTALLED" and "x/ab-skill" in sp._equipped_grants("react-specialist")
+        tam = dict(ab); tam["grants"] = list(ab["grants"]) + ["skill/evil"]
+        assert sp.import_agent(tam, approved=True)["status"] == "REJECTED", "tampered agent refused"
+        return "context_pack feeds spawns; trained agent exports/installs (H5 + integrity)"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, sp):
+            importlib.reload(mod)
+
+
+def t_taxonomy():
+    # AUD-G2: taxonomy.py shipped in v1.41 as an ORPHAN (no caller, absent from scripts_lib.json).
+    # Now registered + wired as dissect's language-independent facet fallback.
+    import taxonomy, orchestrator
+    c = taxonomy.classify("crie uma interface moderna para aplicativo mobile")
+    assert c["domain"] == "software" and c["subdomain"] == "frontend" and c["platform"] == "mobile", c
+    # PT task vs EN skill must attract on shared canonical facets (language-independent)...
+    s_real = taxonomy.facet_score("calcule moda e desvio padrão da população",
+                                  "expert in statistics: mean, variance, population, distributions")
+    # ...while a name-collision stub ("T-Mobile") must attract weakly
+    s_stub = taxonomy.facet_score("crie interface moderna para aplicativo mobile",
+                                  "Expert skill for T-Mobile")
+    assert s_real > 0 and s_real > s_stub, (s_real, s_stub)
+    # wiring: a task with no discipline keyword is routed by facets, not dumped into engineering
+    assert "math" in orchestrator.dissect("calcule a moda e a mediana da amostra"), \
+        orchestrator.dissect("calcule a moda e a mediana da amostra")
+    return f"facets classify + cross-language attraction ({s_real} > {s_stub}); dissect wired"
+
+
 def t_learning():
     import learning as lrn, tempfile, os
     s = lrn.LearningStore(os.path.join(tempfile.mkdtemp(), "learning.db"))
@@ -709,7 +1230,7 @@ def t_swap_store():
     # seed data files carry the canonical versioned name; find them via latest()
     up = ss.latest(os.listdir(os.path.join(root, "user")), "persona")
     assert up and ss.parse_filename(up)["ts"] == ss.SEED_TS, up
-    man = json.load(open(os.path.join(root, "apex.manifest.json")))
+    man = json.load(open(os.path.join(root, "apex.manifest.json"), encoding="utf-8"))
     assert man["schema_version"] == ss.SCHEMA_VERSION and "promotion_gate" in man, man
     assert man["rotation"]["keep_backups"] == ss.KEEP_BACKUPS, man["rotation"]
     # idempotent: a second call creates nothing new and never overwrites
@@ -737,10 +1258,15 @@ def t_swap_store():
     vers = [x for x in os.listdir(os.path.join(folder, "versions"))
             if (ss.parse_filename(x) or {}).get("name") == "persona"]
     assert len(vers) == 3, f"rotation keeps 3 backups, got {len(vers)}"
-    assert json.load(open(os.path.join(folder, main[0])))["v"] == 4, "latest content is the newest write"
+    assert json.load(open(os.path.join(folder, main[0]), encoding="utf-8"))["v"] == 4, "latest content is the newest write"
+    # RT-09b (GPT audit): an EXPLICIT identical ts must never overwrite — collision extends the ts
+    fixed = "20990101000000"
+    wa = ss.write_versioned(folder, "preferences", json.dumps({"v": "a"}), ts=fixed)
+    wb = ss.write_versioned(folder, "preferences", json.dumps({"v": "b"}), ts=fixed)
+    assert wa["filename"] != wb["filename"], (wa["filename"], wb["filename"])
     # the standard is shipped as a repo model file (built from the same spec)
     mpath = ss.write_model(os.path.join(root, "models"))
-    spec = json.load(open(mpath))
+    spec = json.load(open(mpath, encoding="utf-8"))
     assert spec["naming"]["pattern"].startswith("<name>-<function>") and spec["folders"] == ss.FOLDERS
     # portable memory export/import round-trips durable memory (the swap page for memory)
     db = os.path.join(tempfile.mkdtemp(), "m.db")
@@ -889,7 +1415,11 @@ def t_runtime_autopsy():
     assert skills_sh._extract_list("bad") == [] and skills_sh._extract_list(None) == []
 
     # RT-23: default_mode cannot silently downgrade a stronger auto mode; min_mode is a floor
-    home = tempfile.mkdtemp(); _oh = os.environ.get("HOME"); os.environ["HOME"] = home
+    # AUD-W1: redirect via APEX_METHOD_HOME (honoured on every OS). The old HOME swap is a
+    # no-op on Windows (expanduser uses USERPROFILE) and WROTE min_mode=DEEP into the user's
+    # REAL config — which then broke t_orchestrator's "2+2 -> EXPRESS" later in the same run.
+    home = tempfile.mkdtemp(); _oh = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = home
     import importlib; importlib.reload(config)
     try:
         c = config.load(); c["default_mode"] = "STANDARD"; c["min_mode"] = None; config.save(c)
@@ -899,25 +1429,36 @@ def t_runtime_autopsy():
         assert config.resolve_mode("EXPRESS") == "DEEP", "min_mode is a hard floor"
     finally:
         if _oh is not None:
-            os.environ["HOME"] = _oh
+            os.environ["APEX_METHOD_HOME"] = _oh
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
         importlib.reload(config)
 
     # RT-26: an approved grant persists across a catalog reload via the durable store
-    home2 = tempfile.mkdtemp(); os.environ["HOME"] = home2
+    home2 = tempfile.mkdtemp(); os.environ["APEX_METHOD_HOME"] = home2
     importlib.reload(ar)
     try:
         doc = ar.load(ar.AGENTS)
         skill = {"id": "demo/frontend", "name": "frontend", "description": "react ui",
                  "domain": "frontend", "source": "https://x/SKILL.md"}
-        g = ar.grant_skill(skill, doc, approved=True, scripts=["scripts/b.py"], persist=True)
+        g = ar.grant_skill(skill, doc, approved=True, scripts=["scripts/b.py"])  # persist DEFAULT
         assert g.get("persisted"), g
+        # RT-26b: the raw catalog stays immutable, but a default load() auto-merges the grant
+        raw = ar.load(ar.AGENTS, merge=False)
+        assert not any("demo/frontend" in a.get("competence", {}) for a in raw["agents"].values())
         fresh = ar.load(ar.AGENTS)
-        assert not any("demo/frontend" in a.get("competence", {}) for a in fresh["agents"].values())
-        merged = ar.merge_grants(fresh)
-        assert any("demo/frontend" in a.get("competence", {}) for a in merged["agents_doc"]["agents"].values())
+        assert any("demo/frontend" in a.get("competence", {}) for a in fresh["agents"].values()), \
+            "grant must survive reload by DEFAULT"
+        # unequip: a revocation record removes the ability on the next load
+        ar.revoke_grant("demo/frontend")
+        gone = ar.load(ar.AGENTS)
+        assert not any("demo/frontend" in a.get("competence", {}) for a in gone["agents"].values()), \
+            "revoked skill must be unequipped"
     finally:
         if _oh is not None:
-            os.environ["HOME"] = _oh
+            os.environ["APEX_METHOD_HOME"] = _oh
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
         importlib.reload(ar)
     return "RT-05/07/08/09/10/11/12/13/14/15/23/26 all guarded"
 
@@ -941,6 +1482,13 @@ TESTS = [
     ("evaluate_hypotheses", t_evaluate_hypotheses), ("project_ledger", t_project_ledger),
     ("memory", t_memory), ("llm_adapter", t_llm_adapter), ("swap_store", t_swap_store),
     ("learning", t_learning), ("execution_policy", t_execution_policy),
+    ("taxonomy", t_taxonomy), ("attraction_graph", t_attraction_graph),
+    ("agent_spawn", t_agent_spawn), ("kernel_gate", t_kernel_gate), ("rag_index", t_rag_index),
+    ("plug_and_play", t_plug_and_play), ("agent_bundle_context", t_agent_bundle_and_context),
+    ("capability_map", t_capability_map), ("pipeline_dsm", t_pipeline_dsm),
+    ("routine_composer", t_routine_composer), ("routine_run_loop", t_routine_run_loop),
+    ("capability_cache", t_capability_cache), ("token_tracker", t_token_tracker),
+    ("solid_state_index", t_solid_state_index),
 ]
 
 
@@ -959,7 +1507,7 @@ def main():
     print("-" * 78)
     print(f"{'TOTAL':<30}{passed}/{total:<6}{total_ms:>8} ms")
     report = {"passed": passed, "total": total, "total_ms": total_ms, "results": RESULTS}
-    with open(os.path.join(HERE, "benchmark_report.json"), "w") as f:
+    with open(os.path.join(HERE, "benchmark_report.json"), "w", encoding="utf-8") as f:
         json.dump(report, f, indent=1)
     sys.exit(0 if passed == total else 1)
 

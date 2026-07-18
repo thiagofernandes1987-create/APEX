@@ -11,8 +11,20 @@ RUN: python3 tests/scenario.py   (exit 0 = clean; exit 1 = anomalies found)
 """
 import os
 import sys
+import tempfile
 import time
 import traceback
+
+# AUD-W1: isolate every durable store BEFORE any script import (see benchmark.py). Without
+# this, the parallel_round scenario DELETED the user's real ~/.apex-method/*.db — destroying
+# the cross-session learning the skill promises to preserve.
+os.environ.setdefault("APEX_METHOD_HOME", tempfile.mkdtemp(prefix="apex-scenario-home-"))
+# AUD-W3: Windows consoles default to cp1252 — the ✅/❌ verdict print crashed the harness
+# with UnicodeEncodeError AFTER a clean run (exit code lied about the result).
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "scripts"))
 
@@ -114,9 +126,12 @@ def s_providers():
 @scenario("parallel_round")
 def s_parallel():
     import concurrent_executor as ce
-    for db in ("competence.db", "learning.db"):
+    import competence_matrix as cm
+    import learning as lrn
+    # AUD-W1: reset the ISOLATED stores only — never expanduser("~"), never real user data.
+    for db in (cm._COMPETENCE_DB, lrn.DB_DEFAULT):
         try:
-            os.remove(os.path.expanduser(f"~/.apex-method/{db}"))
+            os.remove(db)
         except OSError:
             pass
     anomalies = []

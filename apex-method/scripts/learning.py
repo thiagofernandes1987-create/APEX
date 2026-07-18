@@ -12,6 +12,10 @@ WHY THIS EXISTS:
   historically-best persona/skill. That closes Op-P3: rules/diffs/agents/skills/vaccines that prove
   out are promoted, ones that keep failing are demoted, and the framework remembers.
 
+WHEN TO USE:
+  record_outcome() after every adjudicated round (evaluate_hypotheses does it automatically);
+  best()/score()/reward() at task start to consult the validated cross-session history.
+
 KINDS: persona | skill | diff | rule | vaccine  — anything that can prove out or fail.
 
 HOW IT DECIDES (faithful to bayes.py):
@@ -31,11 +35,13 @@ import time
 import sys
 sys.path.insert(0, os.path.dirname(__file__))
 
-DB_DEFAULT = os.path.expanduser("~/.apex-method/learning.db")
+# AUD-W1: APEX_METHOD_HOME redirects the durable store (tests/CI isolation) — see config.py.
+DB_DEFAULT = os.path.join(os.environ.get("APEX_METHOD_HOME")
+                          or os.path.expanduser("~/.apex-method"), "learning.db")
 MIN_OBS = 3                       # need at least 3 observations before promoting/demoting
 PROMOTE_AT = 0.72                 # Ω adopt
 DEMOTE_AT = 0.50                  # Ω review floor
-VALID_KINDS = ("persona", "skill", "diff", "rule", "vaccine")
+VALID_KINDS = ("persona", "skill", "diff", "rule", "vaccine", "routine", "capability")
 
 
 def _sha(text):
@@ -77,7 +83,14 @@ class LearningStore:
         con.close()
 
     def _con(self):
-        return sqlite3.connect(self.db_path)
+        con = sqlite3.connect(self.db_path)
+        # resilience (v1.43 audit): if the .db was deleted mid-session (test resets, cache
+        # cleanup), a bare reconnect would create an EMPTY db and every query would raise
+        # "no such table". Ensuring the schema per-connection keeps score()/best() alive.
+        con.execute("CREATE TABLE IF NOT EXISTS outcomes("
+                    "sha TEXT PRIMARY KEY, kind TEXT, subject TEXT, domain TEXT, "
+                    "successes REAL, trials REAL, status TEXT, mean REAL, updated REAL)")
+        return con
 
     # ── write: accumulate an outcome, recompute, auto-promote/demote ───────────
     def record_outcome(self, kind, subject, domain, success, weight=1.0, evidence=None):

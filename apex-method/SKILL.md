@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.41.0
+version: 1.47.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,7 +47,7 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 40 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 48 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
@@ -104,7 +104,12 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   and the escalation floor (hard problem / low MCFE reliability → DEEP+) automatically → dissect by
   discipline → assign a specialist agent + skills + diffs per discipline (via gravity, with
   gap→skills.sh install requests) → pick the mode → PMI convergence. `run` never raises
-  (`ERROR_DEGRADED` on unexpected failure).
+  (`ERROR_DEGRADED` on unexpected failure). **KERNEL CHECKLIST + GATE (v1.43, mandatory):**
+  `run` returns a boolean `kernel_checklist` — code-owned steps come back DONE with evidence;
+  each llm-owned step carries the EXACT next call in `llm_actions` (passagem de bastão). You
+  MUST execute the missing steps, mark each with `complete_step(checklist, STEP, evidence)`,
+  and re-run `orchestrator.gate(checklist)` — a run is NOT complete until the gate says
+  COMPLETE. Never skip a step; the gate returning RETURN_TO_LLM means the work goes back to you.
 
 - **`scripts/pot.py`** — Program-of-Thought: `run_chain([{name,code}])` runs each step
   in an isolated subprocess and chains outputs. `run_parallel()` only for slow steps.
@@ -161,6 +166,78 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   optional **semantic layer** (`semantic_rank`, char-n-gram / sentence-transformers) that fixes
   the cross-language TF-IDF weakness — `router.route(..., backend="char")` or env
   `APEX_ROUTER_BACKEND=char` routes a PT task against an EN catalog correctly.
+- **`scripts/taxonomy.py`** — canonical ENGLISH facet classifier (domain / subdomain / intent /
+  platform) with bilingual PT+EN triggers: `classify(text)` reduces a task or resource to
+  language-independent facets and `facet_score(a, b)` is the weighted facet-overlap attraction —
+  a PT task and an EN skill attract on MEANING, immune to name collisions ("mobile"→T-Mobile).
+  Wired as `orchestrator.dissect`'s first no-keyword fallback (audit: shipped orphan in v1.41).
+- **`scripts/attraction_graph.py`** — the PRECOMPUTED gravitational routing JSON
+  (`catalog/attraction_graph.json`): every skill/script/diff/agent is a node; edges carry
+  attraction weights (mass×mass×cosine, top-K per node). `expand(seeds)` is the attraction
+  chain — find the FIRST competency a task needs and everything that completes/potentiates it
+  attracts along the edges, no re-discovery; `equip_for(need)` seeds from the task. Call
+  `rebuild()` after every new skill/script/diff inclusion so the super-structure keeps growing.
+- **`scripts/agent_spawn.py`** — the SPAWN CONTRACT (agents are executable at spawn time):
+  `spawn(agent_id, task, mode, stance)` assembles the full AgentSpec — real persona (AGENT.md),
+  real skills/diffs/scripts attracted via the graph, durable grants (equip/unequip, survive
+  reload), learning history, governance, output template, and a boolean spawn checklist.
+  NEVER spawn a subagent from a bare name; refuse `spawn_ready=False`. `spawn_contract()` is
+  the how-to-spawn directive; `equip()`/`unequip()` promote/demote abilities durably (H5).
+  **CONTEXT PACK (v1.44 — context beats prompt):** `context_pack(task)` assembles a bounded,
+  provenance-carrying briefing from VALIDATED experience — durable vaccines (error→fix lessons),
+  deduped memory, PROVEN/DEMOTED personas (learning), rag_index pointers — and every `spawn()`
+  injects it into the agent's window; `orchestrator.run` attaches the session-level pack too, so
+  future instances never reason cold. **AGENT BUNDLE:** `export_agent(id)` serializes a TRAINED
+  agent (persona + grants + validated history + provenance, SHA-256 signed);
+  `import_agent(bundle, approved=True)` installs it on another machine (fail-closed integrity +
+  H5) — agents become portable, verifiable, evolving artifacts.
+- **`scripts/rag_index.py`** — SOLID-STATE node RAG (v1.47, the author's crystallized-memory
+  architecture): nodes for modules/catalogs/references/repo-areas/capabilities AND per-chapter
+  SECTIONS extracted from each document's outline, every node carrying its taxonomic DIMENSION
+  (discipline→specialization→mode) + content hash. `search()` returns the MACRO view (dim, who
+  it affects via the exact import matrix, what it attracts, parent section) — no remapping.
+  `sync()` is the INCREMENTAL trigger: only changed nodes re-embed, deleted ones prune in
+  cascade, renames become ALIASES (hash fast-path + cosine >= 0.85; identity preserved,
+  `resolve()` follows). `merge_index(other)` fuses divergent instance states (idempotent, local
+  wins). **`overview()` is the crystallized memory: a DETERMINISTIC macro map (no timestamps —
+  same content = same prompt prefix = provider prompt-cache hit). LOAD IT FIRST in every new
+  session instead of remapping the repository.** Full `build()` refreshes the global IDF.
+- **`scripts/capability_map.py`** — TOOL-USE MEMORY (v1.45): maps every capability the runtime
+  can wield — the 46 syscalls' CLIs, INSTALLED skills (SKILL.md commands/triggers, scans
+  ~/.claude/skills + APEX_SKILLS_DIRS), design/document templates, and a REAL environment probe
+  (languages on PATH, importable libraries). `how_to("como faço X?")` answers with the capability
+  + exact commands via the node RAG; `record_use(id, success)` feeds real outcomes into learning
+  so "I know how to extract the maximum from X" is EARNED (promotion), never assumed. Mapping
+  documents commands — it NEVER executes them (gates/H5 still govern). `rebuild()` after every
+  install, together with attraction_graph + rag_index (the three memories grow as one).
+- **`scripts/routine_composer.py`** — the persona composes its OWN ROUTINE (v1.46): a chained
+  flow of COMPLEMENTARY capabilities that potentiate each other (the canonical example: UX/UI +
+  color-psychology/marketing + CSS/HTML5 transitions + SQL + responsive performance + audit for
+  a NON-generic landing page). Canonical stages (research→design→marketing→frontend→backend→
+  performance→verify); every step carries WHAT TO SEND and WHAT YOU RECEIVE (I/O contracts from
+  capability_map), and each step's receive feeds the next step's send. Candidates come from
+  capability_map + attraction_graph + curated; learning boosts the PROVEN and removes the
+  DEMOTED; stages with no capable tool become HONEST GAPS that drive the discovery cascade + H5.
+  Routines persist per persona (travel in the swap bundle), `record_routine_outcome` promotes by
+  real results, and `record_feedback` turns external LLM audits + user positive feedback into
+  memory with provenance + equip/unequip/discover SUGGESTIONS (H5 decides). spawn() injects the
+  routine — the agent knows HOW to work, not just WITH WHAT. **RUN LOOP (v1.47):**
+  `start_run`/`record_step_result`/`finish_run` — the persona RUNS the routine and the routine
+  LEARNS: each step's handoff is rewritten with what was REALLY received (persisted, feeds the
+  next step's send), real outcomes auto-PROMOTE/DEMOTE the routine, and a failed step becomes a
+  durable vaccine (future context).
+- **`scripts/pipeline_dsm.py`** — the DSM turned on the runtime itself (v1.45): EXACT module
+  import matrix (parallel load levels, cycles, load-bearing core) + per-mode step flow ordered
+  by geodesic ΔH/token (run/skip + [APPROX] savings: EXPRESS ~5.1k tokens saved, STANDARD ~3.8k).
+  The APPLIED optimization: `context_budget(mode)` sizes the context_pack injection per mode
+  (0 on EXPRESS → 2000 chars on RESEARCH) — orchestrator and agent_spawn consume it on every call.
+- **`scripts/token_tracker.py`** — REAL token measurement per round/step (OPP-99, v1.47):
+  every FULL_PIPELINE run records the payload each kernel step produced (chars/4 proxy,
+  declared); with >=3 samples the MEASURED average replaces the [APPROX] estimate in
+  pipeline_dsm.mode_flow (calibration map says measured vs estimated). First real data:
+  DISSECT ~6tk vs 80 estimated; CONTEXT_PACK ~119tk vs 350. `report()` shows where estimates
+  were wrong. capability_map scans also got an incremental cache (mtime+size; unchanged
+  SKILL.md served from cache, deleted pruned) for hundreds of installed skills.
 - **`scripts/monte_carlo.py`** — REAL Monte Carlo (OPP-73): `simulate(model_fn, distributions)`
   returns P10/P50/P90 + CV. Wired into PMI so QUANTIFIABLE candidates are decided by simulation,
   never by calling a weighted vote "Monte Carlo" (§10). numpy optional (stdlib fallback).
@@ -209,9 +286,11 @@ The "multi-agent" work is parallel in two distinct ways — do not conflate them
   testable, single-turn — the *generation* of each stance's code is still one LLM.
 
 - **Level B — parallel COGNITION (Claude's `Agent`/subagent tool — Claude orchestrates, not a
-  `.py`):** in DEEP/RESEARCH/SCIENTIFIC, Claude spawns N **concurrent subagents**, each a
-  separate LLM instance wearing a roster persona (load its `AGENT.md` with `repo_bridge.agent(id)`
-  into the prompt) and running its own PoT-by-stance. Collect each subagent's `STANCE_RESULT`
+  `.py`):** in DEEP/RESEARCH/SCIENTIFIC, Claude spawns N **concurrent subagents** — each from a
+  FULL `agent_spawn.spawn()` spec (real persona + equipped skills/diffs/scripts + governance +
+  template + output schema; the `subagent_manifest` entries now carry `spec` + `spawn_ready`,
+  and the spawn contract forbids spawning from a bare name) — each running its own
+  PoT-by-stance. Collect each subagent's `STANCE_RESULT`
   JSON, then feed them to the SAME Level-A merge + PMI. The skill supplies the persona loader and
   the merge/PMI; Claude supplies the fan-out. The 213 roster entries are personas, not instances —
   Level B is what turns a chosen persona into a genuinely concurrent instance. Cap N at
@@ -338,6 +417,13 @@ standard `models/apex_structure.model.json` (same on Windows or Drive), via `mat
 (local) or `drive_tree()` (the runtime creates it on Drive). **The promotion gate** — `is_validated`
 + `promotion_manifest` — is the rule that only what passes (PMI adopt **and** intact ledger
 **and** tests) is promoted from swap to a git commit; everything else stays disposable in swap.
+**PLUG-AND-PLAY (v1.44, the original idea — never start from zero):** the bundle now carries
+EVERY durable store — the user's habits/spec directives (config + persona + preferences), the
+trained agents (grants), validated learning, session competence and the durable VACCINES —
+besides memory. `page_out(..., delta=True, compress=True)` exports only the NEW rows (chained
+via `delta_of`, gzip ~10x smaller); `page_in_session(dir)` applies the whole chain (base +
+deltas, integrity-checked link by link); **`resume_due()`** is persist_due's symmetric twin —
+`orchestrator.run` reports at ENTRY when the swap holds state this machine never paged in.
 
 ## § 2.12 · Execution routing contract + 3-persona entry (`scripts/execution_policy.py`)
 
@@ -409,11 +495,14 @@ Mirrors the awesome-skills install pattern ("read a SKILL.md URL"), done safely.
 
 ## § 4 · Agent Catalog (personas with competence)
 
-APEX reasons through **agents = sequential personas** (not parallel processes), each with
-a personality, a specialization, and a **competence map** of skills with an experience
-counter. When a skill is scouted and **approved**, `scripts/agent_registry.py` grants it
-to the agents whose specialization matches and bumps their experience — so installing a
-skill upgrades the relevant agents with new tools/scripts. Full detail in
+APEX agents are **lean persona records that become fully executable at spawn time** (v1.43):
+`agent_spawn.spawn(agent_id, task)` assumes the real persona (AGENT.md), attracts real
+skills/diffs/scripts via the precomputed attraction graph, merges the durable grants and
+learning history, and returns the executable AgentSpec the host instantiates as a real
+subagent. When a skill is scouted and **approved**, `agent_registry.grant_skill` equips it
+DURABLY (persists by default, survives reload, revocable via `revoke_grant`/`unequip`) — so
+installing a skill upgrades the relevant agents with new tools/scripts, and the memory of
+what each agent equipped stays correlated with the library. Full detail in
 `references/agents.md`.
 
 - `agent_registry.match_task_to_agents(task)` — pick the best of the 11 core personas.

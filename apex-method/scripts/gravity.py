@@ -191,6 +191,16 @@ def plan(task, required_roles=None):
     strong = [o for o in con["constellation"] if o["pull"] >= ATTRACTION_RADIUS]
     if len(strong) < 3:   # too few in the strict radius -> relax (semantic_gravity fallback)
         strong = [o for o in con["constellation"] if o["pull"] >= RELAXED_RADIUS]
+    if len(strong) < 3 and con["constellation"]:
+        # AUD-G1: the absolute radii (0.12/0.06) were calibrated on sklearn TF-IDF scores; the
+        # pure-python _tfidf fallback scores lower, so EVERY relevant body fell below 0.06 and
+        # plan() reported an empty constellation + false gaps (benchmark t_gravity/t_orchestrator
+        # failed in a clean env). Backend-independent fallback = the co-load rule the engine
+        # already declares: keep bodies within NEIGHBOR_COLOAD (0.7) of the max pull, floored at
+        # RELAXED_RADIUS/3 so a truly alien task (max pull ~0) still yields an HONEST empty set.
+        mx = max(o["pull"] for o in con["constellation"])
+        floor = max(RELAXED_RADIUS / 3.0, NEIGHBOR_COLOAD * mx)
+        strong = [o for o in con["constellation"] if o["pull"] >= floor]
     con["merged_by_type"] = {}
     for o in strong:
         con["merged_by_type"].setdefault(o["type"], []).append(o["id"])

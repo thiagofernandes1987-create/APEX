@@ -19,6 +19,15 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
+
+# AUD-W1: isolate durable stores (see benchmark.py) — the benchmark subprocess inherits this env.
+os.environ.setdefault("APEX_METHOD_HOME", tempfile.mkdtemp(prefix="apex-eval-home-"))
+# AUD-W3: never let a cp1252 Windows console crash the harness on non-ASCII output.
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -45,13 +54,17 @@ def c_benchmark_pass():
 
 
 def c_clean_env():
-    """Core must not hard-depend on sklearn/sympy/numpy."""
+    """Core must not hard-depend on sklearn/sympy/numpy.
+
+    AUD-T2: the blocker must implement find_spec — the legacy find_module/load_module
+    protocol was REMOVED in Python 3.12, so the old simulation silently blocked NOTHING
+    (numpy imported normally and the 'stdlib engine' assert failed on any modern Python)."""
     code = (
         "import sys\n"
         "class B:\n"
-        " def find_module(s,n,p=None):\n"
-        "  return s if n.split('.')[0] in ('sklearn','sympy','numpy','scipy') else None\n"
-        " def load_module(s,n): raise ImportError(n)\n"
+        " def find_spec(s,n,path=None,target=None):\n"
+        "  if n.split('.')[0] in ('sklearn','sympy','numpy','scipy'): raise ImportError(n)\n"
+        "  return None\n"
         "sys.meta_path.insert(0,B()); sys.path.insert(0,%r)\n"
         "import orchestrator, verify, router, monte_carlo, repo_bridge\n"
         "assert orchestrator.run('2+2')['answer']==4\n"
@@ -66,9 +79,13 @@ def c_clean_env():
 def c_sr40_selfcompliance():
     import guards
     files = [f for f in os.listdir(SCRIPTS) if f.endswith(".py")]
+    # AUD-W4: encoding is mandatory — Windows' cp1252 default raised UnicodeDecodeError
+    # on the UTF-8 sources and zeroed this criterion.
     bad = [f for f in files
-           if not guards.zero_ambiguity_lint_module(open(os.path.join(SCRIPTS, f)).read())["ok"]]
-    skill_ok = guards.zero_ambiguity_lint_skill(open(os.path.join(ROOT, "SKILL.md")).read())["ok"]
+           if not guards.zero_ambiguity_lint_module(
+               open(os.path.join(SCRIPTS, f), encoding="utf-8").read())["ok"]]
+    skill_ok = guards.zero_ambiguity_lint_skill(
+        open(os.path.join(ROOT, "SKILL.md"), encoding="utf-8").read())["ok"]
     n = len(files)
     score = ((n - len(bad)) / n) * (1.0 if skill_ok else 0.8)
     return score, f"{n-len(bad)}/{n} scripts + SKILL.md={'ok' if skill_ok else 'fail'}"
@@ -157,7 +174,7 @@ def main():
     report = {"earned": round(earned, 2), "possible": possible, "pct": round(pct, 1),
               "criteria": [{"name": n, "weight": w, "score": round(s, 3), "evidence": e}
                            for n, w, s, e in rows]}
-    with open(os.path.join(HERE, "evaluation_rubric.json"), "w") as f:
+    with open(os.path.join(HERE, "evaluation_rubric.json"), "w", encoding="utf-8") as f:
         json.dump(report, f, indent=1)
     sys.exit(0 if pct >= 90 else 1)
 

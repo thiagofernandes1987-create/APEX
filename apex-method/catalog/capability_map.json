@@ -1,0 +1,885 @@
+{
+ "_meta": {
+  "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
+  "built_at": "2026-07-18 20:52:39",
+  "count": 54
+ },
+ "environment": {
+  "python": "python 3.14.3",
+  "tools": {
+   "python": true,
+   "python3": true,
+   "node": true,
+   "npx": true,
+   "npm": true,
+   "git": true,
+   "pip": true,
+   "docker": true,
+   "bash": true,
+   "pwsh": false,
+   "powershell": true,
+   "gh": true
+  },
+  "libraries": {
+   "numpy": true,
+   "scipy": true,
+   "sklearn": false,
+   "sympy": true,
+   "pandas": true,
+   "yaml": true,
+   "matplotlib": false,
+   "sentence_transformers": false,
+   "requests": true
+  },
+  "os": "nt",
+  "platform": "win32"
+ },
+ "capabilities": [
+  {
+   "id": "tool:_tfidf",
+   "kind": "runtime-tool",
+   "name": "_tfidf",
+   "path": "scripts/_tfidf.py",
+   "description": "_tfidf.py — Pure-Python TF-IDF + cosine fallback (no sklearn required). WHY THIS EXISTS: router/gravity/agent_registry used sklearn's TfidfVectorizer as a HARD dependency, so the orchestrator (the skill's entry point) crashed with ModuleNot",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "imported by router.py / gravity.py / agent_registry.py when sklearn is missing."
+   }
+  },
+  {
+   "id": "tool:agent_registry",
+   "kind": "runtime-tool",
+   "name": "agent_registry",
+   "path": "scripts/agent_registry.py",
+   "description": "agent_registry.py — Agent roster + competence mapping (APEX method). WHY THIS EXISTS: APEX reasons through personas (\"agents\"). This registry keeps, for each persona: its personality, its specialization, and WHICH SKILLS it is competent to ",
+   "triggers": "",
+   "commands": [
+    "python scripts/agent_registry.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:agent_spawn",
+   "kind": "runtime-tool",
+   "name": "agent_spawn",
+   "path": "scripts/agent_spawn.py",
+   "description": "agent_spawn.py — the SPAWN CONTRACT: turn a roster persona into a fully-equipped, executable agent spec (RT-19/RT-27, the author's design). WHY THIS EXISTS: The 213-entry roster is deliberately LEAN metadata — the differentiator is not ship",
+   "triggers": "",
+   "commands": [
+    "python scripts/agent_spawn.py"
+   ],
+   "io": {
+    "send": "agent_id + task + mode + stance",
+    "receive": "AgentSpec executável {instruction, skills, context, spawn_ready}",
+    "apply_when": "antes de todo fan-out Level-B"
+   }
+  },
+  {
+   "id": "tool:apex_st_metric",
+   "kind": "runtime-tool",
+   "name": "apex_st_metric",
+   "path": "scripts/apex_st_metric.py",
+   "description": "apex_st_metric.py — APEX apex_st_metric (v00.32.1, OPP-MAS-06), nativized. WHY: without this, APEX can't tell whether it's progressing or running in circles. It measures the distance between consecutive session snapshots in information spac",
+   "triggers": "",
+   "commands": [
+    "python scripts/apex_st_metric.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "STEP_13."
+   }
+  },
+  {
+   "id": "tool:asset_manager",
+   "kind": "runtime-tool",
+   "name": "asset_manager",
+   "path": "scripts/asset_manager.py",
+   "description": "asset_manager.py — APEX manages & routes all mined assets. WHY: the full APEX repo yields (a) APEX-native assets (UCO, UCO-Sensor) that are nativized, and (b) 39 third-party assets + 23 MCP servers that are INDEXED (not copied). This lets A",
+   "triggers": "",
+   "commands": [
+    "python scripts/asset_manager.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "Call at skill-resolution time to route a need across managed assets + MCPs."
+   }
+  },
+  {
+   "id": "tool:attraction_graph",
+   "kind": "runtime-tool",
+   "name": "attraction_graph",
+   "path": "scripts/attraction_graph.py",
+   "description": "attraction_graph.py — PRECOMPUTED gravitational routing graph (the author's \"super-estrutura\"). WHY THIS EXISTS: gravity.py recomputes TF-IDF attraction on every call — good for one task, wasteful for the ecosystem. The author's design: a R",
+   "triggers": "",
+   "commands": [
+    "python scripts/attraction_graph.py"
+   ],
+   "io": {
+    "send": "competência-semente ou texto da necessidade (equip_for)",
+    "receive": "membros que se completam, ranqueados por atração",
+    "apply_when": "compor ferramentas complementares sem re-descoberta"
+   }
+  },
+  {
+   "id": "tool:bayes",
+   "kind": "runtime-tool",
+   "name": "bayes",
+   "path": "scripts/bayes.py",
+   "description": "bayes.py — APEX Bayesian layer, made computable (was bayesian_curator LLM_BEHAVIOR). Implements the concrete machinery specified in the APEX kernel defaults: - beta-binomial conjugate update (class_1) -> posterior belief from evidence - Ome",
+   "triggers": "",
+   "commands": [
+    "python scripts/bayes.py"
+   ],
+   "io": {
+    "send": "priors + likelihoods (crenças do LLM)",
+    "receive": "posterior + decisão Ω (ADOPT/REVIEW/REJECT) + R_acum",
+    "apply_when": "convergência PMI / decisão entre hipóteses"
+   }
+  },
+  {
+   "id": "tool:capability_map",
+   "kind": "runtime-tool",
+   "name": "capability_map",
+   "path": "scripts/capability_map.py",
+   "description": "capability_map.py — the TOOL-USE MEMORY: map every capability the runtime can wield and REMEMBER how to extract the maximum from it (the author's item 2). WHY THIS EXISTS: Installed skills are dead text the LLM rediscovers every session. AP",
+   "triggers": "",
+   "commands": [
+    "python scripts/capability_map.py"
+   ],
+   "io": {
+    "send": "pergunta 'como faço X?'",
+    "receive": "capacidade + comandos exatos + contrato de I/O",
+    "apply_when": "antes de usar qualquer ferramenta"
+   }
+  },
+  {
+   "id": "tool:chaos_operators",
+   "kind": "runtime-tool",
+   "name": "chaos_operators",
+   "path": "scripts/chaos_operators.py",
+   "description": "chaos_operators.py — APEX ChaosOperators (DIFF_v22_001), nativized as an OFFENSIVE exploration engine. WHY THIS EXISTS: The chaos stance is not just a brake against premature convergence (SR_11) — from FOGGY up it is the INNOVATION driver t",
+   "triggers": "",
+   "commands": [
+    "python scripts/chaos_operators.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "From FOGGY upward, per the exploration policy (config.exploration_policy). In RESEARCH the"
+   }
+  },
+  {
+   "id": "tool:code_genetics",
+   "kind": "runtime-tool",
+   "name": "code_genetics",
+   "path": "scripts/code_genetics.py",
+   "description": "code_genetics.py — APEX code_genetics / vaccine store (SR_35), nativized. WHY: learn from fixed errors. save_vaccine() crystallizes an (error_signature -> fix) pattern with O(1) frozenset lookup; error_evolution_loop applies known fixes and",
+   "triggers": "",
+   "commands": [
+    "python scripts/code_genetics.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "After a PoT/code failure is fixed, to crystallize the error->fix pattern."
+   }
+  },
+  {
+   "id": "tool:competence_matrix",
+   "kind": "runtime-tool",
+   "name": "competence_matrix",
+   "path": "scripts/competence_matrix.py",
+   "description": "competence_matrix.py — APEX metacognition (Op3): the agent x domain heat-map + the persona/skill/rule diagnosis. WHY THIS EXISTS: When an agent's answer is weak, the system must know WHY: is it the wrong PERSONA (right domain, stuck perspec",
+   "triggers": "",
+   "commands": [
+    "python scripts/competence_matrix.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "- concurrent_executor: to decide abort/replace and HOW (swap persona vs inject skill)."
+   }
+  },
+  {
+   "id": "tool:concurrent_executor",
+   "kind": "runtime-tool",
+   "name": "concurrent_executor",
+   "path": "scripts/concurrent_executor.py",
+   "description": "concurrent_executor.py — Parallel PoT-by-stance executor + PMI convergence (APEX cognitive parallelism, Level A). WHY THIS EXISTS: mental_interpreter promised a SPECULATION phase — N stances (optimistic / pessimistic / neutral / chaos) gene",
+   "triggers": "",
+   "commands": [
+    "python scripts/concurrent_executor.py"
+   ],
+   "io": {
+    "send": "stances [{name, persona, program}] ou hypotheses",
+    "receive": "{merge, pmi, decision, restart?} (barrier + laudos SHA-256)",
+    "apply_when": "rodada paralela DEEP+ (Level A) / painel de diretores"
+   }
+  },
+  {
+   "id": "tool:config",
+   "kind": "runtime-tool",
+   "name": "config",
+   "path": "scripts/config.py",
+   "description": "config.py — Persistent user preferences for the apex-method skill. WHY THIS EXISTS: The skill should remember the user's choices between sessions: which operating modes they prefer, which router backend to use, and how they want skill disco",
+   "triggers": "",
+   "commands": [
+    "python scripts/config.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "Read at the start of a run (orchestrator picks the preferred mode when applicable);"
+   }
+  },
+  {
+   "id": "tool:curated",
+   "kind": "runtime-tool",
+   "name": "curated",
+   "path": "scripts/curated.py",
+   "description": "curated.py — Load the curated per-domain skill map and pre-assign skills to agents. WHY: the user picked the best skills per domain (programming, frontend, backend, design, ux-ui, engineering, mcp-servers, brainstorm, finance, math, science",
+   "triggers": "",
+   "commands": [
+    "python scripts/curated.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:deep_research",
+   "kind": "runtime-tool",
+   "name": "deep_research",
+   "path": "scripts/deep_research.py",
+   "description": "deep_research.py — Goal-like iterative deep research over the APEX domain and its agents. WHY THIS EXISTS: A \"goal\" in APEX terms is a research loop that runs in RESEARCH/SCIENTIFIC mode: dissect the question, route each part to the right A",
+   "triggers": "",
+   "commands": [
+    "python scripts/deep_research.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "Multi-part, high-stakes, or exploratory questions where the user wants the pipeline to"
+   }
+  },
+  {
+   "id": "tool:execution_policy",
+   "kind": "runtime-tool",
+   "name": "execution_policy",
+   "path": "scripts/execution_policy.py",
+   "description": "execution_policy.py — explicit ROUTING CONTRACT + the 3-persona dissect ENTRY. WHY THIS EXISTS: The single biggest failure mode of a \"cognitive runtime\" is routing DISCOVERY/RESEARCH into the sealed PoT sandbox (no internet) — you lose skil",
+   "triggers": "",
+   "commands": [
+    "python scripts/execution_policy.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:fractal_compression",
+   "kind": "runtime-tool",
+   "name": "fractal_compression",
+   "path": "scripts/fractal_compression.py",
+   "description": "fractal_compression.py — APEX fractal_hypothesis_compression (v00.20.0), nativized. WHY: at each fractal level the hypothesis space grows; without pruning, absurd/dominated hypotheses survive and waste the next level's budget. This prunes t",
+   "triggers": "",
+   "commands": [
+    "python scripts/fractal_compression.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "after STEP_5 (post-interference), when fractal_depth>0 AND hypotheses_active>1."
+   }
+  },
+  {
+   "id": "tool:geodesic_scheduler",
+   "kind": "runtime-tool",
+   "name": "geodesic_scheduler",
+   "path": "scripts/geodesic_scheduler.py",
+   "description": "geodesic_scheduler.py — APEX geodesic_scheduler (v00.32.1, OPP-MAS-B7, SR_34), nativized. WHY: a fixed step order wastes tokens when the direction is already clear. This greedily orders steps by information-per-token (ΔH_cognitive / tokens_",
+   "triggers": "",
+   "commands": [
+    "python scripts/geodesic_scheduler.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]."
+   }
+  },
+  {
+   "id": "tool:geometry_estimator",
+   "kind": "runtime-tool",
+   "name": "geometry_estimator",
+   "path": "scripts/geometry_estimator.py",
+   "description": "geometry_estimator.py — APEX geometry_estimator (v00.20.2), nativized. WHY: an LLM can't know how big an integration block can be before error blows up. This estimates the adaptive local error (DELTA_ERR) by step-doubling and derives the op",
+   "triggers": "",
+   "commands": [
+    "python scripts/geometry_estimator.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "before pot_engine_v2 / mental_interpreter run (warmup planning)."
+   }
+  },
+  {
+   "id": "tool:gravity",
+   "kind": "runtime-tool",
+   "name": "gravity",
+   "path": "scripts/gravity.py",
+   "description": "gravity.py — Gravitational resource composition (APEX synergy engine). WHY THIS EXISTS: Picking one agent or one skill in isolation misses synergy. This engine treats every resource — scripts, agents, skills, diff-rules — as a body with MAS",
+   "triggers": "",
+   "commands": [
+    "python scripts/gravity.py"
+   ],
+   "io": {
+    "send": "a necessidade/tarefa (texto)",
+    "receive": "constelação {agent, skill, script, diff} + gaps + pedidos STAGED",
+    "apply_when": "resolver especialistas e recursos por disciplina"
+   }
+  },
+  {
+   "id": "tool:guards",
+   "kind": "runtime-tool",
+   "name": "guards",
+   "path": "scripts/guards.py",
+   "description": "guards.py — APEX inviolable guards SR_36..SR_40, made enforceable. Each guard is the literal rule from the APEX kernel, implemented as a check that returns a PASS/REJECT verdict (not LLM_BEHAVIOR hand-waving). Where a guard is purely about ",
+   "triggers": "",
+   "commands": [
+    "python scripts/guards.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:hypothesis_dag",
+   "kind": "runtime-tool",
+   "name": "hypothesis_dag",
+   "path": "scripts/hypothesis_dag.py",
+   "description": "hypothesis_dag.py — APEX hypothesis_dag (v00.32.1, OPP-MAS-01, SR_32), faithful port. Tracks dependencies between hypotheses, anchors, and findings. When an anchor is destroyed, invalidation cascades to all dependents via BFS O(V+E) with a ",
+   "triggers": "",
+   "commands": [
+    "python scripts/hypothesis_dag.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:learning",
+   "kind": "runtime-tool",
+   "name": "learning",
+   "path": "scripts/learning.py",
+   "description": "learning.py — APEX Op-P3: aprendizado que persiste (durable promote/demote loop). WHY THIS EXISTS: competence_matrix diagnoses a WEAK round in the moment (PERSONA_SWAP / INJECT_SKILL / HARD_PROBLEM) and competence.db holds per-persona signa",
+   "triggers": "",
+   "commands": [
+    "python scripts/learning.py"
+   ],
+   "io": {
+    "send": "record_outcome(kind, subject, domain, success)",
+    "receive": "{mean, n, status PROMOTED/DEMOTED, changed}",
+    "apply_when": "após cada rodada adjudicada / uso real de capacidade"
+   }
+  },
+  {
+   "id": "tool:llm_adapter",
+   "kind": "runtime-tool",
+   "name": "llm_adapter",
+   "path": "scripts/llm_adapter.py",
+   "description": "llm_adapter.py — APEX LLM Adapter (B2): the hardware-abstraction layer of the cognitive runtime. WHY THIS EXISTS: The kernel (SKILL.md + the 36 scripts) must stay stable while the model underneath changes — Claude, GPT, Gemini, or a small l",
+   "triggers": "",
+   "commands": [
+    "python scripts/llm_adapter.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "At the start of a run on a NON-reference model, or whenever you need to know if a Level-B"
+   }
+  },
+  {
+   "id": "tool:memory",
+   "kind": "runtime-tool",
+   "name": "memory",
+   "path": "scripts/memory.py",
+   "description": "memory.py — APEX live cross-session vector memory (Op1): episodic + semantic, on SQLite. WHY THIS EXISTS: The snapshot lives in context and dies on interruption; the semantic index was built once at build-time. This is the live memory: an I",
+   "triggers": "",
+   "commands": [
+    "python scripts/memory.py"
+   ],
+   "io": {
+    "send": "remember(texto, kind) / recall(query) / relate(a, b, rel)",
+    "receive": "sha da memória / top-k fatos / caminhada no grafo",
+    "apply_when": "persistir e recuperar conhecimento validado"
+   }
+  },
+  {
+   "id": "tool:mental_interpreter",
+   "kind": "runtime-tool",
+   "name": "mental_interpreter",
+   "path": "scripts/mental_interpreter.py",
+   "description": "mental_interpreter.py — APEX mental_interpreter_v4 (v00.32.0, OPP-75), nativized core. WHAT IT IS: the execution orchestrator for DEEP/RESEARCH/SCIENTIFIC. It turns an intent into a sized, verified execution plan through four phases: SPECUL",
+   "triggers": "",
+   "commands": [
+    "python scripts/mental_interpreter.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "DEEP/RESEARCH/SCIENTIFIC modes; SPECULATION only when fractal_depth>=2."
+   }
+  },
+  {
+   "id": "tool:menu",
+   "kind": "runtime-tool",
+   "name": "menu",
+   "path": "scripts/menu.py",
+   "description": "menu.py — The apex-method skill menu: update, choose preferred modes, deep research. WHY THIS EXISTS: A skill has no GUI, but users still want a small set of top-level actions. This is that menu, exposed as commands Claude runs on request: ",
+   "triggers": "",
+   "commands": [
+    "python scripts/menu.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "When the user asks to update the skill, change preferred modes, or launch a deep/goal-like"
+   }
+  },
+  {
+   "id": "tool:monte_carlo",
+   "kind": "runtime-tool",
+   "name": "monte_carlo",
+   "path": "scripts/monte_carlo.py",
+   "description": "monte_carlo.py — Real Monte Carlo simulation (APEX monte_carlo_simulator, OPP-73), nativized. WHY THIS EXISTS: The skill forbids calling qualitative weighting \"Monte Carlo\" (§10 anti-pattern). This is the honest counterpart: when a hypothes",
+   "triggers": "",
+   "commands": [
+    "python scripts/monte_carlo.py"
+   ],
+   "io": {
+    "send": "model_fn(sample)->float + distribuições por input",
+    "receive": "{P10/P50/P90, cv, CI, interpretation}",
+    "apply_when": "incerteza quantificável (custo/risco/latência)"
+   }
+  },
+  {
+   "id": "tool:numeric",
+   "kind": "runtime-tool",
+   "name": "numeric",
+   "path": "scripts/numeric.py",
+   "description": "numeric.py — Deterministic numeric methods (APEX SCIENTIFIC mode). WHY THIS EXISTS: An LLM cannot integrate a differential equation by \"thinking\". Naive stepping (Euler) accumulates large error. RK4 gives orders-of-magnitude better accuracy",
+   "triggers": "",
+   "commands": [
+    "python scripts/numeric.py"
+   ],
+   "io": {
+    "send": "deriv(state)->d/dt, s0, dt, steps",
+    "receive": "estado final (RK4/scipy) — validar contra quantidade conservada",
+    "apply_when": "dinâmica/EDO multidimensional"
+   }
+  },
+  {
+   "id": "tool:orchestrator",
+   "kind": "runtime-tool",
+   "name": "orchestrator",
+   "path": "scripts/orchestrator.py",
+   "description": "orchestrator.py — The APEX flow, end to end. WHAT IT DOES (the flow you described): 1. EXPRESS CHECK — trivial input (2+2, one-line fact) skips the whole pipeline and answers directly. No bureaucracy. 2. DISSECT BY DISCIPLINE — a hard probl",
+   "triggers": "",
+   "commands": [
+    "python scripts/orchestrator.py"
+   ],
+   "io": {
+    "send": "a tarefa (string) [+ candidates, snapshot]",
+    "receive": "{mode, specialists, kernel_checklist, llm_actions, gate}",
+    "apply_when": "TODO início de trabalho não-trivial (ponto de entrada)"
+   }
+  },
+  {
+   "id": "tool:pipeline_dsm",
+   "kind": "runtime-tool",
+   "name": "pipeline_dsm",
+   "path": "scripts/pipeline_dsm.py",
+   "description": "pipeline_dsm.py — the Design Structure Matrix of the runtime itself (the author's item 3): map module coupling + the per-mode pipeline flow, and CUT token waste per execution mode. WHY THIS EXISTS: DSM is one of APEX's own validation framew",
+   "triggers": "",
+   "commands": [
+    "python scripts/pipeline_dsm.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "build() after structural changes (new modules / new kernel steps); context_budget(mode) is"
+   }
+  },
+  {
+   "id": "tool:pot",
+   "kind": "runtime-tool",
+   "name": "pot",
+   "path": "scripts/pot.py",
+   "description": "pot.py — Program-of-Thought runner (APEX method). WHY THIS EXISTS: An LLM reasoning in prose approximates arithmetic and loses precision on multi-step numeric/logical work. PoT offloads those sub-problems to a real Python interpreter, so th",
+   "triggers": "",
+   "commands": [
+    "python scripts/pot.py"
+   ],
+   "io": {
+    "send": "passos [{name, code}] — o stdout de um passo vira stdin do próximo",
+    "receive": "{ok, final_output, snapshot(checklist por passo)}",
+    "apply_when": "qualquer subproblema com >2 passos numéricos/lógicos"
+   }
+  },
+  {
+   "id": "tool:project_ledger",
+   "kind": "runtime-tool",
+   "name": "project_ledger",
+   "path": "scripts/project_ledger.py",
+   "description": "project_ledger.py — The living project inventory (MACRO + micros) that survives session interruptions (usage limits, container recycling). WHY THIS EXISTS: Long projects lose state when a session is cut by a usage limit. The snapshot lives ",
+   "triggers": "",
+   "commands": [
+    "python scripts/project_ledger.py"
+   ],
+   "io": {
+    "send": "micros {who, what, to whom, depends_on}",
+    "receive": "DSM (caminho crítico + lotes paralelos) + gate de conclusão",
+    "apply_when": "projeto DEEP+ que atravessa sessões"
+   }
+  },
+  {
+   "id": "tool:rag_index",
+   "kind": "runtime-tool",
+   "name": "rag_index",
+   "path": "scripts/rag_index.py",
+   "description": "rag_index.py — SOLID-STATE node RAG: o índice semântico multidimensional do repositório com memórias cristalizadas, sync incremental e fusão de estados (a arquitetura do autor). WHY THIS EXISTS: Toda instância nova paga o \"imposto de remape",
+   "triggers": "",
+   "commands": [
+    "python scripts/rag_index.py"
+   ],
+   "io": {
+    "send": "pergunta PT/EN",
+    "receive": "top nós {id, path, summary} para LER em seguida",
+    "apply_when": "localizar qualquer coisa no repositório"
+   }
+  },
+  {
+   "id": "tool:repo_bridge",
+   "kind": "runtime-tool",
+   "name": "repo_bridge",
+   "path": "scripts/repo_bridge.py",
+   "description": "repo_bridge.py — Full APEX repository integration (on-demand, allowlisted). WHY THIS EXISTS: The skill ships catalogs (indexes), not the 16k-file APEX repo. Before this bridge, only 430 external theneoai skills were reachable and ZERO of th",
+   "triggers": "",
+   "commands": [
+    "python scripts/repo_bridge.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "- `search_native(query)` at skill-resolution time (router step) to find a native"
+   }
+  },
+  {
+   "id": "tool:router",
+   "kind": "runtime-tool",
+   "name": "router",
+   "path": "scripts/router.py",
+   "description": "router.py — Semantic skill router (APEX skill-resolution). WHY THIS EXISTS: Given a task, decide WHICH skill (local or from the catalog) is most relevant, so the LLM loads specialized procedural knowledge on demand instead of guessing. WHEN",
+   "triggers": "",
+   "commands": [
+    "python scripts/router.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "At the \"skill resolution\" step of the pipeline (STANDARD+), whenever a task"
+   }
+  },
+  {
+   "id": "tool:routine_composer",
+   "kind": "runtime-tool",
+   "name": "routine_composer",
+   "path": "scripts/routine_composer.py",
+   "description": "routine_composer.py — a persona compõe a PRÓPRIA ROTINA: um fluxo encadeado de capacidades complementares que se potencializam (o item 2 do autor, levado à execução). WHY THIS EXISTS: Saber que uma ferramenta existe não basta — o agente pre",
+   "triggers": "",
+   "commands": [
+    "python scripts/routine_composer.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "- compose(challenge, agent_id): montar o fluxo para um desafio (o spawn injeta a rotina)."
+   }
+  },
+  {
+   "id": "tool:skill_forge",
+   "kind": "runtime-tool",
+   "name": "skill_forge",
+   "path": "scripts/skill_forge.py",
+   "description": "skill_forge.py — Native APEX skill generator (nativized from APEX tools/skill_forge.py). WHY THIS EXISTS: APEX's own skill-creation method, ported to the awesome-skills/neoformat schema so it runs STANDALONE (no APEX repo needed). Generates",
+   "triggers": "",
+   "commands": [
+    "python3 skill_forge.py create --name my-skill --kind workflow --domain engineering \\\\",
+    "python3 skill_forge.py promote --path path/to/SKILL.md"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:skill_scout",
+   "kind": "runtime-tool",
+   "name": "skill_scout",
+   "path": "scripts/skill_scout.py",
+   "description": "skill_scout.py — Discover, evaluate, and STAGE an external skill (safe). WHY THIS EXISTS: \"Find a skill on a directory -> evaluate -> know when to use it\" is useful, but silently installing/running internet code is a supply-chain risk. This",
+   "triggers": "",
+   "commands": [
+    "python scripts/skill_scout.py"
+   ],
+   "io": {
+    "send": "URL raw de um SKILL.md (+ code_urls)",
+    "receive": "{status STAGED/REJECTED_UNSAFE, checks, snapshot_entry}",
+    "apply_when": "SEMPRE antes de considerar uma skill externa (H5 depois)"
+   }
+  },
+  {
+   "id": "tool:skills_sh",
+   "kind": "runtime-tool",
+   "name": "skills_sh",
+   "path": "scripts/skills_sh.py",
+   "description": "skills_sh.py — skills.sh marketplace discovery with a popularity quality bar. WHY THIS EXISTS: The skill could search GitHub and the native library, but the richest source of battle-tested skills is the skills.sh leaderboard (Vercel's `npx ",
+   "triggers": "",
+   "commands": [
+    "python scripts/skills_sh.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "At skill-resolution time, as the marketplace tier of the discovery cascade"
+   }
+  },
+  {
+   "id": "tool:snapshot",
+   "kind": "runtime-tool",
+   "name": "snapshot",
+   "path": "scripts/snapshot.py",
+   "description": "snapshot.py — Standardized session snapshot (APEX rule C5). WHY THIS EXISTS: Across a long task or a resumed conversation, the LLM needs a compact, fixed format state summary so it doesn't lose decisions, findings, or \"why\". The snapshot li",
+   "triggers": "",
+   "commands": [
+    "python scripts/snapshot.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:swap_store",
+   "kind": "runtime-tool",
+   "name": "swap_store",
+   "path": "scripts/swap_store.py",
+   "description": "swap_store.py — APEX swap store: one STANDARD, backend-agnostic memory hierarchy with versioned, revisioned, rotated files. WHY THIS EXISTS: The container is ephemeral, so working state (`~/.apex-method/*.db`, snapshots) dies on interruptio",
+   "triggers": "",
+   "commands": [
+    "python scripts/swap_store.py"
+   ],
+   "io": {
+    "send": "page_out(session, memory_db) / page_in_session(dir)",
+    "receive": "bundle assinado + drive_manifest / stores restaurados",
+    "apply_when": "fim de sessão DEEP+ (persist_due) / retomada (resume_due)"
+   }
+  },
+  {
+   "id": "tool:taxonomy",
+   "kind": "runtime-tool",
+   "name": "taxonomy",
+   "path": "scripts/taxonomy.py",
+   "description": "taxonomy.py — canonical (ENGLISH) facet classifier: the language-independent attraction layer. WHY THIS EXISTS: Lexical routing (`router` TF-IDF) fails across languages and on name collisions (\"moderna\"-> moderna-scientist, \"mobile\"->t-mobi",
+   "triggers": "",
+   "commands": [
+    "python scripts/taxonomy.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:token_tracker",
+   "kind": "runtime-tool",
+   "name": "token_tracker",
+   "path": "scripts/token_tracker.py",
+   "description": "token_tracker.py — medição REAL de tokens por rodada e por passo do kernel (OPP-99, item 3 do autor): as estimativas do fluxo por modo deixam de ser chute e passam a ser calibradas. WHY THIS EXISTS: pipeline_dsm.mode_flow decidia rodar/pula",
+   "triggers": "",
+   "commands": [
+    "python scripts/token_tracker.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "- o orchestrator grava automaticamente (start_round/record/end_round em todo run FULL_PIPELINE);"
+   }
+  },
+  {
+   "id": "tool:uco_gate",
+   "kind": "runtime-tool",
+   "name": "uco_gate",
+   "path": "scripts/uco_gate.py",
+   "description": "uco_gate.py — Fast objective quality gate for generated code (APEX SR_33). WHY THIS EXISTS: Before running LLM-generated PoT code, check it with a DETERMINISTIC judge that does not depend on the LLM's opinion of its own code (breaks circula",
+   "triggers": "",
+   "commands": [
+    "python scripts/uco_gate.py"
+   ],
+   "io": {
+    "send": "código gerado (string)",
+    "receive": "{status PASS/REJECTED, reasons, metrics(loop_risk, hamiltonian)}",
+    "apply_when": "SEMPRE antes de executar código gerado (SR_33)"
+   }
+  },
+  {
+   "id": "tool:universal_code_optimizer_v4",
+   "kind": "runtime-tool",
+   "name": "universal_code_optimizer_v4",
+   "path": "scripts/universal_code_optimizer_v4.py",
+   "description": "Universal Code Optimizer (UCO) v4.0 ===================================== WHY: objective, LLM-independent code quality — 9-channel spectral analysis (Hamiltonian, cyclomatic, DSM, dead code, loop risk) so generated code is judged by math, n",
+   "triggers": "",
+   "commands": [
+    "python scripts/universal_code_optimizer_v4.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "the SR_33 gate (uco_gate.py) calls this on every generated program before it runs."
+   }
+  },
+  {
+   "id": "tool:verification_gate",
+   "kind": "runtime-tool",
+   "name": "verification_gate",
+   "path": "scripts/verification_gate.py",
+   "description": "verification_gate.py — APEX verification_gate (v00.32.1, OPP-MAS-07), nativized. WHY: verifying is cheaper than generating (P≠NP insight), but verifying EVERY hypothesis in SCIENTIFIC can eat 25-33% of a 12k budget. The MCFE acts as a route",
+   "triggers": "",
+   "commands": [
+    "python scripts/verification_gate.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "STEP_3, before interference. Disabled in EXPRESS/FAST/CLARIFY."
+   }
+  },
+  {
+   "id": "tool:verify",
+   "kind": "runtime-tool",
+   "name": "verify",
+   "path": "scripts/verify.py",
+   "description": "verify.py — Symbolic formal verifier (APEX C8 / SCIENTIFIC). WHY THIS EXISTS: Lets the LLM prove/refute an algebraic or calculus claim exactly, instead of asserting it. Crucially, it marks CONJECTURE when out of scope rather than inventing ",
+   "triggers": "",
+   "commands": [
+    "python scripts/verify.py"
+   ],
+   "io": {
+    "send": "lhs, rhs (expressões simbólicas)",
+    "receive": "{tag FORMAL_VERIFIED/REFUTED/CONJECTURA_FORMAL, residual}",
+    "apply_when": "qualquer identidade/derivada/integral afirmada"
+   }
+  },
+  {
+   "id": "skill:apex-method",
+   "kind": "installed-skill",
+   "name": "apex-method",
+   "path": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\.claude\\worktrees\\apex-docs-review-176ae5\\apex-method\\tests\\..\\SKILL.md",
+   "description": "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill ro",
+   "triggers": "APEX, PoT, program of thought, pipeline, scientific mode, modo científico, RK4, token",
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode.\""
+   }
+  },
+  {
+   "id": "template:laudo",
+   "kind": "design-template",
+   "name": "laudo",
+   "path": "scripts/execution_policy.py",
+   "description": "output template 'laudo' — required sections: ['director', 'ranking', 'best', 'confidence', 'justificativa', 'diagnostico', 'sha256']",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "o rascunho da entrega",
+    "receive": "documento estruturado nas seções ['director', 'ranking', 'best', 'confidence', 'justificativa', 'diagnostico', 'sha256']",
+    "apply_when": "ao produzir uma entrega do tipo 'laudo'"
+   }
+  },
+  {
+   "id": "template:decision_record",
+   "kind": "design-template",
+   "name": "decision_record",
+   "path": "scripts/execution_policy.py",
+   "description": "output template 'decision_record' — required sections: ['context', 'options', 'decision', 'rationale', 'consequences', 'reversible?']",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "o rascunho da entrega",
+    "receive": "documento estruturado nas seções ['context', 'options', 'decision', 'rationale', 'consequences', 'reversible?']",
+    "apply_when": "ao produzir uma entrega do tipo 'decision_record'"
+   }
+  },
+  {
+   "id": "template:spec",
+   "kind": "design-template",
+   "name": "spec",
+   "path": "scripts/execution_policy.py",
+   "description": "output template 'spec' — required sections: ['objective', 'scope', 'constraints', 'interfaces', 'acceptance_criteria', 'risks(FMEA)']",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "o rascunho da entrega",
+    "receive": "documento estruturado nas seções ['objective', 'scope', 'constraints', 'interfaces', 'acceptance_criteria', 'risks(FMEA)']",
+    "apply_when": "ao produzir uma entrega do tipo 'spec'"
+   }
+  },
+  {
+   "id": "template:report",
+   "kind": "design-template",
+   "name": "report",
+   "path": "scripts/execution_policy.py",
+   "description": "output template 'report' — required sections: ['summary', 'evidence(what/where/how/confidence)', 'method', 'limitations', 'next']",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "o rascunho da entrega",
+    "receive": "documento estruturado nas seções ['summary', 'evidence(what/where/how/confidence)', 'method', 'limitations', 'next']",
+    "apply_when": "ao produzir uma entrega do tipo 'report'"
+   }
+  },
+  {
+   "id": "template:apex_structure",
+   "kind": "design-template",
+   "name": "apex_structure",
+   "path": "models/apex_structure.model.json",
+   "description": "the canonical swap-tree/file-naming standard every backend must follow",
+   "triggers": "",
+   "commands": []
+  }
+ ]
+}
