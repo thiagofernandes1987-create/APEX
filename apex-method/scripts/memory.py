@@ -50,6 +50,31 @@ DB_DEFAULT = os.path.join(os.environ.get("APEX_METHOD_HOME")
                           or os.path.expanduser("~/.apex-method"), "memory.db")
 
 
+def _device_id():
+    """Identidade estável desta máquina (v1.48, merge multi-dispositivo): cada dispositivo
+    mantém a SUA cadeia de ledger; a fusão de bundles de máquinas diferentes intercala cadeias
+    sem quebrar a verificação (antes, importar o ledger de A numa máquina B com eventos
+    próprios corrompia a cadeia única). Criada no primeiro uso, persistida no home do APEX."""
+    base = os.environ.get("APEX_METHOD_HOME") or os.path.expanduser("~/.apex-method")
+    p = os.path.join(base, "device_id")
+    try:
+        with open(p, encoding="utf-8") as f:
+            did = f.read().strip()
+            if did:
+                return did
+    except OSError:
+        pass
+    import uuid
+    did = hashlib.sha256(f"{uuid.getnode()}|{uuid.uuid4()}".encode()).hexdigest()[:16]
+    try:
+        os.makedirs(base, exist_ok=True)
+        with open(p, "w", encoding="utf-8") as f:
+            f.write(did)
+    except OSError:
+        pass
+    return did
+
+
 def _sha(text):
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
@@ -73,7 +98,11 @@ class MemoryStore:
                     "ts REAL, session TEXT)")
         con.execute("CREATE TABLE IF NOT EXISTS ledger("
                     "sha TEXT PRIMARY KEY, ts REAL, kind TEXT, subject TEXT, action TEXT, "
-                    "evidence TEXT, prev_sha TEXT)")
+                    "evidence TEXT, prev_sha TEXT, device TEXT DEFAULT '')")
+        try:                                    # v1.48 migration: per-device chains
+            con.execute("ALTER TABLE ledger ADD COLUMN device TEXT DEFAULT ''")
+        except sqlite3.OperationalError:
+            pass
         # B1 — Knowledge Graph: typed edges between memories. This turns recall from "top-k by
         # similarity" into a graph walk ("give me fact X and everything that contradicts it").
         con.execute("CREATE TABLE IF NOT EXISTS relations("
@@ -147,58 +176,70 @@ class MemoryStore:
 
     # ── governance ledger (promotions/demotions become durable memory) ────
     @staticmethod
-    def _ledger_hash(ts, kind, subject, action, evidence_json, prev_sha):
+    def _ledger_hash(ts, kind, subject, action, evidence_json, prev_sha, device=""):
         """Canonical content hash for a ledger event. RT-05: the hash MUST cover every mutable
-        field (ts, kind, subject, action, evidence, prev_sha) so tampering any column is detectable.
-        A stable, sorted JSON canonicalization keeps write-time and verify-time hashes identical."""
-        canonical = json.dumps(
-            {"ts": ts, "kind": kind, "subject": subject, "action": action,
-             "evidence": evidence_json, "prev_sha": prev_sha},
-            sort_keys=True, ensure_ascii=False)
-        return _sha(canonical)
+        field so tampering any column is detectable. v1.48: `device` entra no canônico dos
+        eventos novos; eventos legados (device=='') mantêm o canônico antigo (retrocompat —
+        senão todo ledger existente falharia a verificação)."""
+        payload = {"ts": ts, "kind": kind, "subject": subject, "action": action,
+                   "evidence": evidence_json, "prev_sha": prev_sha}
+        if device:
+            payload["device"] = device
+        return _sha(json.dumps(payload, sort_keys=True, ensure_ascii=False))
 
     def record_event(self, kind, subject, action, evidence=None):
         """Neutral API the subsystems CALL when a rule/diff/agent/skill/vaccine is promoted or
-        demoted or an error is corrected. SHA-256 chained (each event carries the previous hash)
-        so the ledger is tamper-evident. Also mirrored as a semantic memory for recall."""
+        demoted. SHA-256 chained PER DEVICE (v1.48): cada máquina encadeia os próprios eventos,
+        então fundir bundles de dispositivos diferentes intercala cadeias íntegras em vez de
+        corromper uma cadeia única. Also mirrored as a semantic memory for recall."""
+        device = _device_id()
         con = self._con()
-        prev = con.execute("SELECT sha FROM ledger ORDER BY ts DESC LIMIT 1").fetchone()
+        prev = con.execute("SELECT sha FROM ledger WHERE device=? ORDER BY ts DESC LIMIT 1",
+                           (device,)).fetchone()
         prev_sha = prev[0] if prev else ""
         # RT-05: hash the SAME ts and evidence we store (one time.time() read, not two) so
         # verify_ledger can recompute the content hash and detect any later column edit.
         ts = time.time()
         evidence_json = json.dumps(evidence or {}, ensure_ascii=False)
-        sha = self._ledger_hash(ts, kind, subject, action, evidence_json, prev_sha)
-        con.execute("INSERT OR REPLACE INTO ledger VALUES(?,?,?,?,?,?,?)",
-                    (sha, ts, kind, subject, action, evidence_json, prev_sha))
+        sha = self._ledger_hash(ts, kind, subject, action, evidence_json, prev_sha, device)
+        con.execute("INSERT OR REPLACE INTO ledger VALUES(?,?,?,?,?,?,?,?)",
+                    (sha, ts, kind, subject, action, evidence_json, prev_sha, device))
         con.commit()
         con.close()
         # mirror into semantic memory so `recall` surfaces the evolution
         self.remember(f"[{kind}] {subject}: {action}", "semantic",
                       {"ledger_event": sha, "prev": prev_sha})
-        return {"sha": sha, "prev_sha": prev_sha, "kind": kind, "subject": subject, "action": action}
+        return {"sha": sha, "prev_sha": prev_sha, "kind": kind, "subject": subject,
+                "action": action, "device": device}
 
     def verify_ledger(self):
-        """Re-walk the chain: confirm each event's prev_sha matches its predecessor AND that its
-        stored sha equals the recomputed content hash. RT-05: recomputing the hash makes a silent
-        edit to any column (kind/subject/action/evidence/ts) break verification, not just a broken
-        prev_sha pointer."""
+        """Re-walk EVERY device chain independently (v1.48): prev_sha pointers + recomputed
+        content hash per chain. A merged store (bundles from N machines) verifies as N intact
+        chains; tampering ANY column of ANY row still breaks its chain."""
         con = self._con()
-        rows = con.execute("SELECT sha, ts, kind, subject, action, evidence, prev_sha FROM ledger "
-                           "ORDER BY ts ASC").fetchall()
+        rows = con.execute("SELECT sha, ts, kind, subject, action, evidence, prev_sha, "
+                           "COALESCE(device, '') FROM ledger ORDER BY ts ASC").fetchall()
         con.close()
-        ok, prev, reason = True, "", None
-        for sha, ts, kind, subject, action, evidence, prev_sha in rows:
-            if prev_sha != prev:
-                ok, reason = False, "chain pointer mismatch"
+        chains = {}
+        for r in rows:
+            chains.setdefault(r[7], []).append(r)
+        ok, reason, bad_device = True, None, None
+        for device, ch in chains.items():
+            prev = ""
+            for sha, ts, kind, subject, action, evidence, prev_sha, dev in ch:
+                if prev_sha != prev:
+                    ok, reason, bad_device = False, "chain pointer mismatch", device
+                    break
+                if self._ledger_hash(ts, kind, subject, action, evidence, prev_sha, dev) != sha:
+                    ok, reason, bad_device = False, "content hash mismatch", device
+                    break
+                prev = sha
+            if not ok:
                 break
-            if self._ledger_hash(ts, kind, subject, action, evidence, prev_sha) != sha:
-                ok, reason = False, "content hash mismatch"
-                break
-            prev = sha
-        out = {"ok": ok, "events": len(rows)}
+        out = {"ok": ok, "events": len(rows), "devices": len(chains)}
         if reason:
             out["reason"] = reason
+            out["device"] = (bad_device or "")[:8]
         return out
 
     # ── Knowledge Graph (B1): typed edges + graph-walk recall ──────────────
@@ -339,7 +380,8 @@ class MemoryStore:
             return [dict(zip(cols, r)) for r in cur.fetchall()]
         data = {"memory": rows("SELECT sha,kind,text,meta,ts,session FROM memory"),
                 "relations": rows("SELECT sha,src,dst,rel,weight,ts FROM relations"),
-                "ledger": rows("SELECT sha,ts,kind,subject,action,evidence,prev_sha FROM ledger")}
+                "ledger": rows("SELECT sha,ts,kind,subject,action,evidence,prev_sha,"
+                               "COALESCE(device,'') AS device FROM ledger")}
         con.close()
         return data
 
@@ -357,9 +399,11 @@ class MemoryStore:
                         (r["sha"], r["src"], r["dst"], r["rel"], r.get("weight", 1.0),
                          r.get("ts", time.time())))
         for l in data.get("ledger", []):
-            con.execute("INSERT OR REPLACE INTO ledger VALUES(?,?,?,?,?,?,?)",
+            # v1.48: a cadeia do dispositivo de ORIGEM viaja junto — fusão multi-máquina
+            # intercala cadeias íntegras (verify_ledger valida cada uma independentemente)
+            con.execute("INSERT OR REPLACE INTO ledger VALUES(?,?,?,?,?,?,?,?)",
                         (l["sha"], l.get("ts", time.time()), l["kind"], l["subject"], l["action"],
-                         l.get("evidence", "{}"), l.get("prev_sha", "")))
+                         l.get("evidence", "{}"), l.get("prev_sha", ""), l.get("device", "")))
         con.commit()
         con.close()
         return self.stats()
