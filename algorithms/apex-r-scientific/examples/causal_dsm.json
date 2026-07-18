@@ -1,0 +1,83 @@
+{
+  "regime": "STATIC_DAG",
+  "nodes": [
+    {
+      "node_id": "dose_compound_a",
+      "kind": "DRUG",
+      "unit": "mg",
+      "role": "DECISION",
+      "direction": "NONE",
+      "bounds": [0.0, 100.0]
+    },
+    {
+      "node_id": "target_occupancy_a",
+      "kind": "TARGET",
+      "unit": "fraction",
+      "role": "NONE",
+      "direction": "NONE",
+      "bounds": [0.0, 1.0]
+    },
+    {
+      "node_id": "pathway_activity_a",
+      "kind": "PATHWAY",
+      "unit": "fraction",
+      "role": "NONE",
+      "direction": "NONE",
+      "bounds": [0.0, 1.0]
+    },
+    {
+      "node_id": "efficacy_endpoint",
+      "kind": "OUTCOME",
+      "unit": "fraction",
+      "role": "OBJECTIVE",
+      "direction": "MAXIMIZE",
+      "bounds": [0.0, 1.0]
+    },
+    {
+      "node_id": "safety_risk",
+      "kind": "RISK",
+      "unit": "probability",
+      "role": "CONSTRAINT",
+      "direction": "NONE",
+      "bounds": [0.0, 1.0]
+    }
+  ],
+  "edges": [
+    {
+      "edge_id": "binding_a",
+      "tails": ["dose_compound_a"],
+      "head": "target_occupancy_a",
+      "mechanism": "binding_placeholder",
+      "formula_id": "M5.HILL",
+      "sign": 1,
+      "evidence_ids": []
+    },
+    {
+      "edge_id": "target_to_pathway",
+      "tails": ["target_occupancy_a"],
+      "head": "pathway_activity_a",
+      "mechanism": "activation_placeholder",
+      "formula_id": "M5.HILL",
+      "sign": 1,
+      "evidence_ids": []
+    },
+    {
+      "edge_id": "pathway_to_efficacy",
+      "tails": ["pathway_activity_a"],
+      "head": "efficacy_endpoint",
+      "mechanism": "response_placeholder",
+      "formula_id": "M5.HILL",
+      "sign": 1,
+      "evidence_ids": []
+    },
+    {
+      "edge_id": "pathway_to_risk",
+      "tails": ["pathway_activity_a"],
+      "head": "safety_risk",
+      "mechanism": "risk_placeholder",
+      "formula_id": "M5.HILL",
+      "sign": 1,
+      "evidence_ids": []
+    }
+  ]
+}

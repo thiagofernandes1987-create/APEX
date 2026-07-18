@@ -1,0 +1,4 @@
+*.egg-info/
+*.zip
+__pycache__/
+*.pyc

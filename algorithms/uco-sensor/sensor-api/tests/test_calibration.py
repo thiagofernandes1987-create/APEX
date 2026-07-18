@@ -262,6 +262,47 @@ class TestILR(unittest.TestCase):
         mv = UCOBridge().analyze(CODE_SIMPLE, "t", "h")
         self.assertEqual(mv.infinite_loop_risk, 0.0)
 
+    def test_ilr_conditional_break_is_partial_not_maximal(self):
+        """(item 2) while True com break CONDICIONAL (paginação) = risco PARCIAL,
+        não máximo — antes um loop bem-formado dava ILR=1.0 (FP de magnitude)."""
+        code = ("def paginate():\n    page = 1\n    while True:\n"
+                "        data = fetch(page)\n        if not data:\n            break\n"
+                "        page += 1\n")
+        mv = UCOBridge().analyze(code, "t", "h")
+        self.assertGreater(mv.infinite_loop_risk, 0.0)   # ainda é algum risco
+        self.assertLess(mv.infinite_loop_risk, 0.5)      # mas NÃO máximo
+
+    def test_ilr_no_escape_is_maximal(self):
+        """while True sem NENHUMA saída = risco total (distinto do condicional)."""
+        code = "def spin():\n    while True:\n        do_work()\n"
+        mv = UCOBridge().analyze(code, "t", "h")
+        self.assertEqual(mv.infinite_loop_risk, 1.0)
+
+    def test_ilr_unconditional_break_is_zero(self):
+        """while True com break/return INCONDICIONAL no corpo direto = término
+        garantido → ILR 0."""
+        code = "def once():\n    while True:\n        return compute()\n"
+        mv = UCOBridge().analyze(code, "t", "h")
+        self.assertEqual(mv.infinite_loop_risk, 0.0)
+
+    def test_ilr_tree_walk_recursion_is_bounded(self):
+        """(dogfooding v3.96.0) recursão dentro de for/while é traversal LIMITADO
+        (base case = iterável esgotar), não recursão infinita → ILR 0."""
+        walk = "def walk(node):\n    for child in node.children:\n        walk(child)\n"
+        self.assertEqual(UCOBridge().analyze(walk, "t", "h").infinite_loop_risk, 0.0)
+        forfin = "def visit(items):\n    for x in items:\n        visit(x.sub)\n"
+        self.assertEqual(UCOBridge().analyze(forfin, "t", "h").infinite_loop_risk, 0.0)
+
+    def test_ilr_unbounded_recursion_still_flagged(self):
+        """recursão SEM laço envolvente e sem base case = risco real → ILR > 0."""
+        code = "def f(n):\n    return f(n - 1)\n"
+        self.assertGreater(UCOBridge().analyze(code, "t", "h").infinite_loop_risk, 0.0)
+
+    def test_ilr_mixed_recursion_partially_unbounded_flagged(self):
+        """se NEM TODA chamada recursiva está em laço, ainda é risco."""
+        code = "def f(n):\n    for x in n:\n        f(x)\n    return f(n - 1)\n"
+        self.assertGreater(UCOBridge().analyze(code, "t", "h").infinite_loop_risk, 0.0)
+
 
 class TestDeadCode(unittest.TestCase):
     """BUG-13: Dead code detection"""

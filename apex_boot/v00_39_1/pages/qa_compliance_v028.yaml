@@ -1,4 +1,5 @@
 qa_compliance_v028:
+executor: SANDBOX_CODE  # backfilled by lint_executor (SR_40)
   base: v00.27.0 (52 QA tests — 17 base + 35 novos)
   new_qa_tests_v028:
     QA_OPP36_01: MCFEAdapter.decide() com nlm fitted → retorna tamanho sugerido por NLM

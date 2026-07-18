@@ -1,4 +1,5 @@
 diff_ecosystem_v022:
+executor: DOCUMENTATION  # backfilled by lint_executor (SR_40)
   registered_diffs:
   - id: DIFF_v22_001
     type: MODULE_NEW + MODULE_EXTEND

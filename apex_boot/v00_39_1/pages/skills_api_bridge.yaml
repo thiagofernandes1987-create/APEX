@@ -1,4 +1,5 @@
 skills_api_bridge:
+executor: HYBRID  # backfilled by lint_executor (SR_40)
   executor: HYBRID
   version: v00.34.0
   opp: OPP-115

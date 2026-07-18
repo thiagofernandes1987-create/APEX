@@ -60,16 +60,6 @@ def _last_import_index(body: List[ast.stmt]) -> int:
     return idx
 
 
-def _is_method_first_arg(fn_node: ast.FunctionDef | ast.AsyncFunctionDef,
-                          arg: ast.arg, parent_classes: Set[str]) -> bool:
-    """Return True if *arg* is the implicit self/cls of a method."""
-    if arg.arg not in _SELF_CLS:
-        return False
-    # Check if this function is defined directly inside a class
-    # (We use parent_classes set populated by the class-walk below)
-    return fn_node.name in parent_classes or True  # conservative: always skip self/cls
-
-
 class TypeHintAdder(BaseTransform):
     """
     Annotates unannotated function parameters with ``: Any`` and

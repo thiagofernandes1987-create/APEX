@@ -44,6 +44,23 @@ def _mv(module="m.mod", commit="c1", ts=1.0, h=2.0, loc=100,
     return mv
 
 
+# (DP v3.93.0/D8) Windows: SQLite mantem o arquivo aberto ate o GC fechar a
+# conexao; unlink direto levanta PermissionError.  Fecha via gc + retry e, em
+# ultimo caso, ignora (arquivo temp e' descartavel).  No-op em POSIX.
+import gc as _gc
+
+
+def _safe_unlink(path):
+    for _ in range(4):
+        try:
+            os.unlink(path)
+            return
+        except FileNotFoundError:
+            return
+        except PermissionError:
+            _gc.collect()
+
+
 def _fresh_store():
     f = tempfile.NamedTemporaryFile(suffix=".db", delete=False); f.close()
     return SnapshotStore(f.name), f.name
@@ -86,7 +103,7 @@ class TestBasics(unittest.TestCase):
             self.assertIsNone(meta.score)
             self.assertEqual(meta.n_modules_valid, 0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS04_repo_with_only_clean_modules_scores_high(self):
         store, dbf = _fresh_store()
@@ -98,7 +115,7 @@ class TestBasics(unittest.TestCase):
             self.assertGreaterEqual(meta.score, 90.0)
             self.assertEqual(meta.rating, "A")
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS05_outlier_dataclass_to_dict(self):
         o = APSOutlier(module_id="m", aps=20.0, z_score=-2.5,
@@ -131,7 +148,7 @@ class TestRepoMetaScore(unittest.TestCase):
             self.assertLess(meta.weighted_aps, 100.0)
             self.assertEqual(meta.n_modules_valid, 2)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS08_loc_weighting_favours_big_modules(self):
         store, dbf = _fresh_store()
@@ -145,7 +162,7 @@ class TestRepoMetaScore(unittest.TestCase):
             # despite tiny being perfect (100)
             self.assertLess(meta.weighted_aps, meta.mean_aps)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS09_uses_latest_aps_per_module(self):
         store, dbf = _fresh_store()
@@ -157,7 +174,7 @@ class TestRepoMetaScore(unittest.TestCase):
             # Latest is clean → meta should be high
             self.assertAlmostEqual(meta.weighted_aps, 100.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS10_n_modules_counts_all(self):
         store, dbf = _fresh_store()
@@ -166,7 +183,7 @@ class TestRepoMetaScore(unittest.TestCase):
                 store.insert(_mv(module=f"m{i}", commit="c1", h=1.0))
             self.assertEqual(compute_repo_meta_score(store).n_modules, 5)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS11_score_bounded_to_0_100(self):
         store, dbf = _fresh_store()
@@ -177,7 +194,7 @@ class TestRepoMetaScore(unittest.TestCase):
             self.assertGreaterEqual(meta.score, 0.0)
             self.assertLessEqual(meta.score, 100.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS12_red_penalty_drags_score_down(self):
         """A RED-tier compound alert must reduce the repo score."""
@@ -195,7 +212,7 @@ class TestRepoMetaScore(unittest.TestCase):
                 self.assertLess(meta.score, meta.raw_score)
                 self.assertEqual(meta.penalty_red, 5 * meta.n_red)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS13_modules_without_aps_skipped(self):
         store, dbf = _fresh_store()
@@ -207,7 +224,7 @@ class TestRepoMetaScore(unittest.TestCase):
             meta = compute_repo_meta_score(store)
             self.assertEqual(meta.n_modules_valid, 0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS14_median_independent_of_loc(self):
         store, dbf = _fresh_store()
@@ -218,7 +235,7 @@ class TestRepoMetaScore(unittest.TestCase):
             # Both clean → median should be 100 regardless of LOC
             self.assertAlmostEqual(meta.median_aps, 100.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -234,7 +251,7 @@ class TestOutliers(unittest.TestCase):
             store.insert(_mv(module="m2", commit="c1", h=1.0))
             self.assertEqual(compute_aps_outliers(store), [])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS16_identical_apses_no_outliers(self):
         """When σ = 0, the function returns []."""
@@ -244,7 +261,7 @@ class TestOutliers(unittest.TestCase):
                 store.insert(_mv(module=f"m{i}", commit="c1", h=1.0))
             self.assertEqual(compute_aps_outliers(store), [])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS17_low_aps_module_flagged(self):
         store, dbf = _fresh_store()
@@ -258,7 +275,7 @@ class TestOutliers(unittest.TestCase):
             ids = {o.module_id for o in outliers}
             self.assertIn("bad", ids)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS18_zero_or_negative_k_returns_empty(self):
         store, dbf = _fresh_store()
@@ -268,7 +285,7 @@ class TestOutliers(unittest.TestCase):
             self.assertEqual(compute_aps_outliers(store, k=0.0), [])
             self.assertEqual(compute_aps_outliers(store, k=-1.0), [])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS19_outliers_sorted_worst_first(self):
         store, dbf = _fresh_store()
@@ -282,7 +299,7 @@ class TestOutliers(unittest.TestCase):
             zs = [o.z_score for o in outliers]
             self.assertEqual(zs, sorted(zs))   # ascending = worst first
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS20_outliers_only_below_mean(self):
         """Only negative-z outliers are reported."""
@@ -296,7 +313,7 @@ class TestOutliers(unittest.TestCase):
             for o in outliers:
                 self.assertLessEqual(o.z_score, 0.0)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -310,7 +327,7 @@ class TestHistory(unittest.TestCase):
         try:
             self.assertEqual(repo_meta_score_history(store), [])
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS22_history_chronological_ascending(self):
         store, dbf = _fresh_store()
@@ -321,7 +338,7 @@ class TestHistory(unittest.TestCase):
             ts_seen = [r["timestamp"] for r in repo_meta_score_history(store)]
             self.assertEqual(ts_seen, sorted(ts_seen))
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS23_each_record_has_canonical_keys(self):
         store, dbf = _fresh_store()
@@ -333,7 +350,7 @@ class TestHistory(unittest.TestCase):
                 for k in ("timestamp", "score", "n_modules_valid"):
                     self.assertIn(k, rec)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS24_step_downsamples(self):
         store, dbf = _fresh_store()
@@ -345,7 +362,7 @@ class TestHistory(unittest.TestCase):
             half = repo_meta_score_history(store, step=2)
             self.assertLess(len(half), len(full))
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
     def test_TS25_multi_module_each_point_aggregates(self):
         store, dbf = _fresh_store()
@@ -359,7 +376,7 @@ class TestHistory(unittest.TestCase):
                 self.assertGreaterEqual(rec["n_modules_valid"], 1)
                 self.assertLessEqual(rec["n_modules_valid"], 2)
         finally:
-            os.unlink(dbf)
+            _safe_unlink(dbf)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -378,7 +395,7 @@ class TestEndpoints(unittest.TestCase):
 
     def tearDown(self):
         self.srv._store = self._orig
-        os.unlink(self.dbf)
+        _safe_unlink(self.dbf)
 
     def test_TS26_health_score_endpoint_shape(self):
         for i in range(3):

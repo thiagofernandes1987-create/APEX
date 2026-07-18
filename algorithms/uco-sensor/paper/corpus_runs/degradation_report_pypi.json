@@ -1,0 +1,60 @@
+{
+  "generated_by": "M25 resolver + M24 composer (dado real, sem fabricacao)",
+  "channel": "github/advisory-database via raw + file pairs by tag via raw",
+  "note": "ARTEFATO INICIAL (prova-de-conceito PyPI, jinja+requests). NAO e o corpus atual.",
+  "superseded_by": "degradation_report_full.json (fonte unica de verdade; gerado por scripts/generate_corpus.py)",
+  "total": 2,
+  "complete": 2,
+  "records": [
+    {
+      "cve": "CVE-2024-22195",
+      "ghsa": "GHSA-h5c8-rqwp-cp95",
+      "package": "jinja2",
+      "ecosystem": "PyPI",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.1.3",
+      "fix_commit": "716795349a41d4983a9a4771f7d883c96ea17be7",
+      "where_file": "filters.py",
+      "where_lines": [
+        291,
+        293
+      ],
+      "how_constructs": [
+        "input-validation-raise",
+        "output-encoding"
+      ],
+      "cwe_ids": [
+        "CWE-79"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "status": "complete",
+      "answers_all_four": true
+    },
+    {
+      "cve": "CVE-2023-32681",
+      "ghsa": "GHSA-j8r2-6x86-q33q",
+      "package": "requests",
+      "ecosystem": "PyPI",
+      "when_broke": "versão 2.3.0",
+      "resolved_in": "versão 2.31.0",
+      "fix_commit": "74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5",
+      "where_file": "sessions.py",
+      "where_lines": [
+        329
+      ],
+      "how_constructs": [
+        "security-conditional-guard"
+      ],
+      "cwe_ids": [
+        "CWE-200"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "status": "complete",
+      "answers_all_four": true
+    }
+  ]
+}

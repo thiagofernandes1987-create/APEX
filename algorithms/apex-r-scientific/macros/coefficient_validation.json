@@ -1,0 +1,7 @@
+{
+  "macro_id": "coefficient_validation",
+  "name": "Validação de coeficientes",
+  "description": "Fluxo mínimo para estimar, versionar e validar coeficientes sem fixá-los como universais.",
+  "steps": ["M1", "M0", "M2", "M11", "M10"]
+}
+

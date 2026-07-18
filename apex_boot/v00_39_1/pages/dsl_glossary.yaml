@@ -1,4 +1,5 @@
 dsl_glossary:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   _note: DEFINIÇÕES CANÔNICAS — usar estes termos de forma consistente em todo o arquivo
   SANDBOX:
     definicao: 'O interpretador Python real disponível via bash_tool / code interpreter. Ambiente isolado

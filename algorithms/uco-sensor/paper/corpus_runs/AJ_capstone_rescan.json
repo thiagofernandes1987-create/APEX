@@ -1,0 +1,411 @@
+[
+  {
+    "label": "requests-1",
+    "owner": "psf",
+    "repo": "requests",
+    "path": "src/requests/utils.py",
+    "cve": "CVE-2024-47081",
+    "prior_veredito": "SIGNAL (SAST046)",
+    "vulnerable_sha": "7341690e",
+    "vulnerable_date": "2025-06-01",
+    "fixed_sha": "96ba401c",
+    "fixed_date": "2025-06-04",
+    "engine": "python-ast",
+    "vuln_findings": [
+      "SAST038",
+      "SAST043",
+      "SAST046"
+    ],
+    "fix_findings": [
+      "SAST038",
+      "SAST043"
+    ],
+    "rule_only_on_vuln": [
+      "SAST046"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "requests-2",
+    "owner": "psf",
+    "repo": "requests",
+    "path": "requests/sessions.py",
+    "cve": "CVE-2023-32681",
+    "prior_veredito": "SIGNAL (SAST047)",
+    "vulnerable_sha": "30222533",
+    "vulnerable_date": "2023-05-15",
+    "fixed_sha": "74ea7cf7",
+    "fixed_date": "2023-05-22",
+    "engine": "python-ast",
+    "vuln_findings": [
+      "SAST038",
+      "SAST047"
+    ],
+    "fix_findings": [
+      "SAST038"
+    ],
+    "rule_only_on_vuln": [
+      "SAST047"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "scrapy",
+    "owner": "scrapy",
+    "repo": "scrapy",
+    "path": "scrapy/downloadermiddlewares/redirect.py",
+    "cve": "CVE-2022-0577",
+    "prior_veredito": "SIGNAL (SAST050)",
+    "vulnerable_sha": "aa0306a1",
+    "vulnerable_date": "2022-03-01",
+    "fixed_sha": "8ce01b3b",
+    "fixed_date": "2022-03-01",
+    "engine": "python-ast",
+    "vuln_findings": [
+      "SAST050"
+    ],
+    "fix_findings": [],
+    "rule_only_on_vuln": [
+      "SAST050"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "flask",
+    "owner": "pallets",
+    "repo": "flask",
+    "path": "src/flask/sessions.py",
+    "cve": "CVE-2023-30861",
+    "prior_veredito": "SIGNAL (SAST051)",
+    "vulnerable_sha": "9532cba4",
+    "vulnerable_date": "2023-05-01",
+    "fixed_sha": "8705dd39",
+    "fixed_date": "2023-05-01",
+    "engine": "python-ast",
+    "vuln_findings": [
+      "SAST051"
+    ],
+    "fix_findings": [],
+    "rule_only_on_vuln": [
+      "SAST051"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "celery",
+    "owner": "celery",
+    "repo": "celery",
+    "path": "celery/backends/base.py",
+    "cve": "CVE-2021-23727",
+    "prior_veredito": "SIGNAL (SAST048)",
+    "vulnerable_sha": "2d8dbc2a",
+    "vulnerable_date": "2021-12-26",
+    "fixed_sha": "1f7ad7e6",
+    "fixed_date": "2021-12-26",
+    "engine": "python-ast",
+    "vuln_findings": [
+      "SAST038",
+      "SAST042",
+      "SAST048"
+    ],
+    "fix_findings": [
+      "SAST038",
+      "SAST042"
+    ],
+    "rule_only_on_vuln": [
+      "SAST048"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "fastapi",
+    "owner": "tiangolo",
+    "repo": "fastapi",
+    "path": "fastapi/routing.py",
+    "cve": "CVE-2021-32677",
+    "prior_veredito": "SIGNAL (SAST049)",
+    "vulnerable_sha": "90120dd6",
+    "vulnerable_date": "2021-06-07",
+    "fixed_sha": "fa7e3c99",
+    "fixed_date": "2021-06-07",
+    "engine": "python-ast",
+    "vuln_findings": [
+      "SAST044",
+      "SAST049"
+    ],
+    "fix_findings": [
+      "SAST044"
+    ],
+    "rule_only_on_vuln": [
+      "SAST049"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "curl",
+    "owner": "curl",
+    "repo": "curl",
+    "path": "lib/socks.c",
+    "cve": "CVE-2023-38545",
+    "prior_veredito": "SIGNAL (C01)",
+    "vulnerable_sha": "09e25b9d",
+    "vulnerable_date": "2023-10-10",
+    "fixed_sha": "fb4415d8",
+    "fixed_date": "2023-10-11",
+    "engine": "multilang:c",
+    "vuln_findings": [
+      "C01",
+      "C02"
+    ],
+    "fix_findings": [
+      "C02"
+    ],
+    "rule_only_on_vuln": [
+      "C01"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "golang-go",
+    "owner": "golang",
+    "repo": "go",
+    "path": "src/cmd/go/internal/work/security.go",
+    "cve": "CVE-2023-29404",
+    "prior_veredito": "SIGNAL (GO11)",
+    "vulnerable_sha": "6d8af00a",
+    "vulnerable_date": "2023-06-06",
+    "fixed_sha": "bbeb55f5",
+    "fixed_date": "2023-06-06",
+    "engine": "multilang:go",
+    "vuln_findings": [
+      "GO11"
+    ],
+    "fix_findings": [],
+    "rule_only_on_vuln": [
+      "GO11"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "axios",
+    "owner": "axios",
+    "repo": "axios",
+    "path": "lib/adapters/xhr.js",
+    "cve": "CVE-2023-45857",
+    "prior_veredito": "SIGNAL (JS11)",
+    "vulnerable_sha": "7d45ab2e",
+    "vulnerable_date": "2023-10-22",
+    "fixed_sha": "96ee232b",
+    "fixed_date": "2023-10-26",
+    "engine": "multilang:javascript",
+    "vuln_findings": [
+      "JS11"
+    ],
+    "fix_findings": [],
+    "rule_only_on_vuln": [
+      "JS11"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "spring4shell",
+    "owner": "spring-projects",
+    "repo": "spring-framework",
+    "path": "spring-beans/src/main/java/org/springframework/beans/CachedIntrospectionResults.java",
+    "cve": "CVE-2022-22965",
+    "prior_veredito": "SIGNAL (JV11)",
+    "vulnerable_sha": "1627f57f",
+    "vulnerable_date": "2022-03-31",
+    "fixed_sha": "002546b3",
+    "fixed_date": "2022-03-31",
+    "engine": "multilang:java",
+    "vuln_findings": [
+      "JV11"
+    ],
+    "fix_findings": [],
+    "rule_only_on_vuln": [
+      "JV11"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "rust-regex",
+    "owner": "rust-lang",
+    "repo": "regex",
+    "path": "src/compile.rs",
+    "cve": "CVE-2022-24713",
+    "prior_veredito": "BLIND_SPOT",
+    "vulnerable_sha": "b92ffd54",
+    "vulnerable_date": "2022-03-03",
+    "fixed_sha": "ae70b41d",
+    "fixed_date": "2022-03-03",
+    "engine": "multilang:rust",
+    "vuln_findings": [],
+    "fix_findings": [],
+    "rule_only_on_vuln": [],
+    "status": "BLIND_SPOT_OR_CONFOUNDED"
+  },
+  {
+    "label": "etcd",
+    "owner": "etcd-io",
+    "repo": "etcd",
+    "path": "server/etcdserver/v3_server.go",
+    "cve": "CVE-2021-28235",
+    "prior_veredito": "SIGNAL (GO12)",
+    "vulnerable_sha": "801bb4c6",
+    "vulnerable_date": "2023-04-06",
+    "fixed_sha": "8b1cd036",
+    "fixed_date": "2023-04-06",
+    "engine": "multilang:go",
+    "vuln_findings": [
+      "GO12"
+    ],
+    "fix_findings": [],
+    "rule_only_on_vuln": [
+      "GO12"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "tokio",
+    "owner": "tokio-rs",
+    "repo": "tokio",
+    "path": "tokio/src/net/windows/named_pipe.rs",
+    "cve": "CVE-2023-22466",
+    "prior_veredito": "SIGNAL (RS01)",
+    "vulnerable_sha": "5c76d070",
+    "vulnerable_date": "2022-09-27",
+    "fixed_sha": "9241c3ed",
+    "fixed_date": "2023-01-03",
+    "engine": "multilang:rust",
+    "vuln_findings": [
+      "RS01"
+    ],
+    "fix_findings": [],
+    "rule_only_on_vuln": [
+      "RS01"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "netty",
+    "owner": "netty",
+    "repo": "netty",
+    "path": "codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java",
+    "cve": "CVE-2019-20444",
+    "prior_veredito": "BLIND_SPOT",
+    "vulnerable_sha": "cf63bc10",
+    "vulnerable_date": "2019-12-11",
+    "fixed_sha": "a7c18d44",
+    "fixed_date": "2019-12-11",
+    "engine": "multilang:java",
+    "vuln_findings": [],
+    "fix_findings": [],
+    "rule_only_on_vuln": [],
+    "status": "BLIND_SPOT_OR_CONFOUNDED"
+  },
+  {
+    "label": "laravel",
+    "owner": "laravel",
+    "repo": "framework",
+    "path": "src/Illuminate/Filesystem/LocalFilesystemAdapter.php",
+    "cve": "GHSA-crmm-hgp2-wgrp",
+    "prior_veredito": "SIGNAL (PHP05)",
+    "vulnerable_sha": "071ac5c3",
+    "vulnerable_date": "2026-05-14",
+    "fixed_sha": "cba82e4e",
+    "fixed_date": "2026-05-15",
+    "engine": "multilang:php",
+    "vuln_findings": [
+      "PHP05"
+    ],
+    "fix_findings": [],
+    "rule_only_on_vuln": [
+      "PHP05"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "rails",
+    "owner": "rails",
+    "repo": "rails",
+    "path": "actionview/lib/action_view/helpers/translation_helper.rb",
+    "cve": "CVE-2024-26143",
+    "prior_veredito": "SIGNAL (metric-delta)",
+    "vulnerable_sha": "723f5456",
+    "vulnerable_date": "2024-02-21",
+    "fixed_sha": "4c83b331",
+    "fixed_date": "2024-02-21",
+    "engine": "none",
+    "vuln_findings": [],
+    "fix_findings": [],
+    "rule_only_on_vuln": [],
+    "status": "BLIND_SPOT_OR_CONFOUNDED"
+  },
+  {
+    "label": "dotnet",
+    "owner": "dotnet",
+    "repo": "runtime",
+    "path": "src/libraries/System.Formats.Tar/src/System/Formats/Tar/TarEntry.cs",
+    "cve": "CVE-2026-45491",
+    "prior_veredito": "SIGNAL (CS06)",
+    "vulnerable_sha": "b06f62fc",
+    "vulnerable_date": "2026-06-24",
+    "fixed_sha": "8c91e3b2",
+    "fixed_date": "2026-06-26",
+    "engine": "multilang:csharp",
+    "vuln_findings": [
+      "CS06"
+    ],
+    "fix_findings": [],
+    "rule_only_on_vuln": [
+      "CS06"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "git",
+    "owner": "git",
+    "repo": "git",
+    "path": "unpack-trees.c",
+    "cve": "CVE-2021-21300",
+    "prior_veredito": "SIGNAL (C05)",
+    "vulnerable_sha": "0d58fef5",
+    "vulnerable_date": "2021-02-12",
+    "fixed_sha": "22539ec3",
+    "fixed_date": "2021-02-12",
+    "engine": "multilang:c",
+    "vuln_findings": [
+      "C05"
+    ],
+    "fix_findings": [],
+    "rule_only_on_vuln": [
+      "C05"
+    ],
+    "status": "SIGNAL"
+  },
+  {
+    "label": "lodash",
+    "owner": "lodash",
+    "repo": "lodash",
+    "path": "lodash.js",
+    "cve": "CVE-2021-23337",
+    "prior_veredito": "BLIND_SPOT",
+    "vulnerable_sha": "ded9bc66",
+    "vulnerable_date": "2020-08-13",
+    "fixed_sha": "3469357c",
+    "fixed_date": "2021-02-20",
+    "engine": "multilang:javascript",
+    "vuln_findings": [
+      "JS05",
+      "JS12"
+    ],
+    "fix_findings": [
+      "JS05"
+    ],
+    "rule_only_on_vuln": [
+      "JS12"
+    ],
+    "status": "SIGNAL"
+  }
+]

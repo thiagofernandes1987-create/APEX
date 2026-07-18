@@ -1,4 +1,5 @@
 diff_ecosystem_v027:
+executor: DOCUMENTATION  # backfilled by lint_executor (SR_40)
   base: v00.26.0 (21 DIFFs)
   registered_diffs:
   - id: DIFF_MCFE_DEPTH_GUARD

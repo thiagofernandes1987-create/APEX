@@ -1,4 +1,5 @@
 qa_compliance_v027:
+executor: SANDBOX_CODE  # backfilled by lint_executor (SR_40)
   base: v00.26.0 (33 QA tests — 17 base + 16 novos)
   new_qa_tests_v027:
     QA_OPP33_01: MCFEAdapter._root_id('prod_0_r0_r2') == 'prod_0'

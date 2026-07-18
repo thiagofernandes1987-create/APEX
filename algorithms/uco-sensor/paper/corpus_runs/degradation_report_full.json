@@ -1,0 +1,1726 @@
+{
+  "generated_by": "scripts/generate_corpus.py (contadores calculados, nunca manuais)",
+  "total": 52,
+  "complete_4of4": 47,
+  "validated": 3,
+  "validated_stopped_firing": 0,
+  "validated_perpetuated": 3,
+  "partial": 5,
+  "excluded_no_cve": 1,
+  "records": [
+    {
+      "cve": "CVE-2024-22195",
+      "ghsa": "GHSA-h5c8-rqwp-cp95",
+      "package": "jinja2",
+      "ecosystem": "PyPI",
+      "published": "2024-01-11T15:20:48Z",
+      "modified": "2025-11-04T16:48:33Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.1.3",
+      "fix_commit": "716795349a41d4983a9a4771f7d883c96ea17be7",
+      "where_file": "filters.py",
+      "where_lines": [
+        291,
+        293
+      ],
+      "how_constructs": [
+        "input-validation-raise",
+        "output-encoding"
+      ],
+      "cwe_ids": [
+        "CWE-79"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-32681",
+      "ghsa": "GHSA-j8r2-6x86-q33q",
+      "package": "requests",
+      "ecosystem": "PyPI",
+      "published": "2023-05-22T20:36:32Z",
+      "modified": "2025-02-13T18:54:42Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "versão 2.3.0",
+      "resolved_in": "versão 2.31.0",
+      "fix_commit": "74ea7cf7a6a27a4eeb2ae24e162bcc942a6706d5",
+      "where_file": "sessions.py",
+      "where_lines": [
+        329
+      ],
+      "how_constructs": [
+        "security-conditional-guard"
+      ],
+      "cwe_ids": [
+        "CWE-200"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-25577",
+      "ghsa": "GHSA-xg9f-g7g7-2323",
+      "package": "Werkzeug",
+      "ecosystem": "PyPI",
+      "published": "2023-02-15T15:36:26Z",
+      "modified": "2024-11-19T19:07:37Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 2.2.3",
+      "fix_commit": "517cac5a804e8c4dc4ed038bb20dacd038e7a9f1",
+      "where_file": "formparser.py",
+      "where_lines": [
+        182,
+        196,
+        206,
+        289,
+        355,
+        360,
+        421
+      ],
+      "how_constructs": [
+        "resource-limit",
+        "overflow-guard"
+      ],
+      "cwe_ids": [
+        "CWE-400",
+        "CWE-770"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2021-33503",
+      "ghsa": "GHSA-q2q7-5pp4-w6pg",
+      "package": "urllib3",
+      "ecosystem": "PyPI",
+      "published": "2021-06-01T21:19:32Z",
+      "modified": "2026-06-09T13:01:45Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "versão 1.25.4",
+      "resolved_in": "versão 1.26.5",
+      "fix_commit": "2d4a3fee6de2fa45eb82169361918f759269b4ec",
+      "where_file": "url.py",
+      "where_lines": [
+        368
+      ],
+      "how_constructs": [
+        "redos-mitigation"
+      ],
+      "cwe_ids": [
+        "CWE-400"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-30861",
+      "ghsa": "GHSA-m2qf-hxjv-5gpq",
+      "package": "Flask",
+      "ecosystem": "PyPI",
+      "published": "2023-05-01T19:22:20Z",
+      "modified": "2024-09-20T17:51:00Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "versão 2.3.0",
+      "resolved_in": "versão 2.3.2",
+      "fix_commit": "70f906c51ce49c485f1d355703e9cc3386b1cc2b",
+      "where_file": "sessions.py",
+      "where_lines": [
+        334,
+        348,
+        367
+      ],
+      "how_constructs": [
+        "cache-vary-guard"
+      ],
+      "cwe_ids": [
+        "CWE-539"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-23334",
+      "ghsa": "GHSA-5h86-8mv2-jq9f",
+      "package": "aiohttp",
+      "ecosystem": "PyPI",
+      "published": "2024-01-29T22:31:03Z",
+      "modified": "2026-02-04T21:48:51Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "versão 1.0.5",
+      "resolved_in": "versão 3.9.2",
+      "fix_commit": "1c335944d6a8b1298baf179b7c0b3069f10c514b",
+      "where_file": "web_urldispatcher.py",
+      "where_lines": [
+        602,
+        673
+      ],
+      "how_constructs": [
+        "path-containment-guard"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2022-29217",
+      "ghsa": "GHSA-ffqj-6fqr-9h24",
+      "package": "pyjwt",
+      "ecosystem": "PyPI",
+      "published": "2022-05-24T22:17:27Z",
+      "modified": "2024-10-15T16:18:12Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "versão 1.5.0",
+      "resolved_in": "versão 2.4.0",
+      "fix_commit": "9c528670c455b8d948aff95ed50e22940d1ad3fc",
+      "where_file": "algorithms.py",
+      "where_lines": [
+        417,
+        566
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-327"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-28370",
+      "ghsa": "GHSA-hj3f-6gcp-jg8j",
+      "package": "tornado",
+      "ecosystem": "PyPI",
+      "published": "2023-05-25T12:30:16Z",
+      "modified": "2025-11-04T16:44:12Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 6.3.2",
+      "fix_commit": "32ad07c54e607839273b4e1819c347f5c8976b2f",
+      "where_file": "web.py",
+      "where_lines": [
+        2888
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-601"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2022-28346",
+      "ghsa": "GHSA-2gwj-7jmv-h26r",
+      "package": "Django",
+      "ecosystem": "PyPI",
+      "published": "2022-04-13T00:00:33Z",
+      "modified": "2024-09-20T15:09:55Z",
+      "severity": "CRITICAL",
+      "cvss_vector": "",
+      "when_broke": "versão 2.2",
+      "resolved_in": "versão 2.2.28",
+      "fix_commit": "2044dac5c6968441be6f534c4139bcf48c5c7e48",
+      "where_file": "query.py",
+      "where_lines": [
+        598,
+        1097
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-89"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-53981",
+      "ghsa": "GHSA-59g5-xgcq-4qw3",
+      "package": "python-multipart",
+      "ecosystem": "PyPI",
+      "published": "2024-12-02T21:37:04Z",
+      "modified": "2024-12-02T21:37:04Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 0.0.18",
+      "fix_commit": "c4fe4d3cebc08c660e57dd709af1ffa7059b3177",
+      "where_file": "multipart.py",
+      "where_lines": [],
+      "how_constructs": [],
+      "cwe_ids": [
+        "CWE-770"
+      ],
+      "localized": false,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "metadata_only",
+      "answers_all_four": false,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2021-43818",
+      "ghsa": "GHSA-55x5-fj6c-h6m8",
+      "package": "lxml",
+      "ecosystem": "PyPI",
+      "published": "2021-12-13T18:14:36Z",
+      "modified": "2024-09-30T16:50:30Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 4.6.5",
+      "fix_commit": "12fa9669007180a7bb87d990c375cf91ca5b664a",
+      "where_file": "clean.py",
+      "where_lines": [],
+      "how_constructs": [],
+      "cwe_ids": [
+        "CWE-74",
+        "CWE-79"
+      ],
+      "localized": false,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "metadata_only",
+      "answers_all_four": false,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-30608",
+      "ghsa": "GHSA-rrm6-wvj7-cwh2",
+      "package": "sqlparse",
+      "ecosystem": "PyPI",
+      "published": "2023-04-21T20:24:21Z",
+      "modified": "2025-11-04T16:43:46Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "versão 0.1.15",
+      "resolved_in": "versão 0.4.4",
+      "fix_commit": "c457abd5f097dd13fb21543381e7cfafe7d31cfb",
+      "where_file": "keywords.py",
+      "where_lines": [],
+      "how_constructs": [],
+      "cwe_ids": [
+        "CWE-1333"
+      ],
+      "localized": false,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "metadata_only",
+      "answers_all_four": false,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2021-32027",
+      "ghsa": "",
+      "package": "postgresql",
+      "ecosystem": "C/native",
+      "published": "",
+      "modified": "",
+      "severity": "",
+      "cvss_vector": "",
+      "when_broke": "não disponível no CVE-record (CNA não informou introduced)",
+      "resolved_in": "versão 13.3/12.7/11.12/10.17/9.6.22",
+      "fix_commit": "f02b9085ad2f",
+      "where_file": "arrayfuncs.c",
+      "where_lines": [
+        375,
+        1351,
+        2374,
+        2640,
+        2962,
+        3379,
+        5456,
+        5889
+      ],
+      "how_constructs": [
+        "bounds-check-call"
+      ],
+      "cwe_ids": [
+        "CWE-190"
+      ],
+      "localized": true,
+      "stopped_firing": false,
+      "perpetuated": true,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "partial",
+      "answers_all_four": false,
+      "validated": true
+    },
+    {
+      "cve": "CVE-2020-22015",
+      "ghsa": "",
+      "package": "n/a",
+      "ecosystem": "C/native",
+      "published": "",
+      "modified": "",
+      "severity": "",
+      "cvss_vector": "",
+      "when_broke": "não disponível no CVE-record (CNA não informou introduced)",
+      "resolved_in": "",
+      "fix_commit": "4c1afa292520",
+      "where_file": "movenc.c",
+      "where_lines": [
+        2168
+      ],
+      "how_constructs": [
+        "early-return-guard"
+      ],
+      "cwe_ids": [
+        "CWE-20"
+      ],
+      "localized": true,
+      "stopped_firing": false,
+      "perpetuated": true,
+      "findings_vuln": null,
+      "findings_fixed": null,
+      "status": "partial",
+      "answers_all_four": false,
+      "validated": true
+    },
+    {
+      "cve": "CVE-2022-40897",
+      "ghsa": "GHSA-r9hx-vwmv-q579",
+      "package": "setuptools",
+      "ecosystem": "PyPI",
+      "published": "2022-12-23T00:30:23Z",
+      "modified": "2025-11-04T19:37:00Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 65.5.1",
+      "fix_commit": "43a9c9bfa6aa626ec2a22540bea28d2ca77964be",
+      "where_file": "package_index.py",
+      "where_lines": [
+        220
+      ],
+      "how_constructs": [
+        "redos-mitigation"
+      ],
+      "cwe_ids": [
+        "CWE-1333"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2022-24439",
+      "ghsa": "GHSA-hcpj-qp55-gfph",
+      "package": "GitPython",
+      "ecosystem": "PyPI",
+      "published": "2022-12-06T06:30:17Z",
+      "modified": "2025-11-04T16:40:11Z",
+      "severity": "CRITICAL",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.1.30",
+      "fix_commit": "2625ed9fc074091c531c27ffcba7902771130261",
+      "where_file": "base.py",
+      "where_lines": [
+        1255,
+        1263,
+        1297,
+        1304
+      ],
+      "how_constructs": [
+        "unsafe-contract",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-20",
+        "CWE-94"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2022-40896",
+      "ghsa": "GHSA-mrwq-x4v8-fh7p",
+      "package": "Pygments",
+      "ecosystem": "PyPI",
+      "published": "2023-07-19T15:30:26Z",
+      "modified": "2024-10-24T21:49:45Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 2.15.0",
+      "fix_commit": "97eb3d5ec7c1b3ea4fcf9dee30a2309cf92bd194",
+      "where_file": "templates.py",
+      "where_lines": [
+        2294
+      ],
+      "how_constructs": [
+        "redos-mitigation"
+      ],
+      "cwe_ids": [
+        "CWE-434"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2022-40023",
+      "ghsa": "GHSA-v973-fxgf-6xhp",
+      "package": "mako",
+      "ecosystem": "PyPI",
+      "published": "2022-09-16T17:20:25Z",
+      "modified": "2025-12-03T15:11:43Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 1.2.2",
+      "fix_commit": "925760291d6efec64fda6e9dd1fd9cfbd5be068c",
+      "where_file": "lexer.py",
+      "where_lines": [
+        280
+      ],
+      "how_constructs": [
+        "redos-mitigation"
+      ],
+      "cwe_ids": [
+        "CWE-1333"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2022-0577",
+      "ghsa": "GHSA-cjvr-mfj7-j4j8",
+      "package": "scrapy",
+      "ecosystem": "PyPI",
+      "published": "2022-03-01T22:12:47Z",
+      "modified": "2024-10-22T16:37:18Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 1.8.2",
+      "fix_commit": "8ce01b3b76d4634f55067d6cfdf632ec70ba304a",
+      "where_file": "redirect.py",
+      "where_lines": [
+        22,
+        25
+      ],
+      "how_constructs": [
+        "security-conditional-guard"
+      ],
+      "cwe_ids": [
+        "CWE-200",
+        "CWE-863"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-29159",
+      "ghsa": "GHSA-v5gw-mw7f-84px",
+      "package": "starlette",
+      "ecosystem": "PyPI",
+      "published": "2023-05-17T03:49:14Z",
+      "modified": "2024-10-28T14:29:32Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "versão 0.13.5",
+      "resolved_in": "versão 0.27.0",
+      "fix_commit": "1797de464124b090f10cf570441e8292936d63e3",
+      "where_file": "staticfiles.py",
+      "where_lines": [
+        172
+      ],
+      "how_constructs": [
+        "path-containment-guard"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-46136",
+      "ghsa": "GHSA-hrfv-mqp8-q5rw",
+      "package": "Werkzeug",
+      "ecosystem": "PyPI",
+      "published": "2023-10-25T14:22:59Z",
+      "modified": "2026-05-20T22:21:18Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "versão 3.0.0",
+      "resolved_in": "versão 3.0.1",
+      "fix_commit": "b1916c0c083e0be1c9d887ee2f3d696922bfc5c1",
+      "where_file": "multipart.py",
+      "where_lines": [
+        256,
+        266
+      ],
+      "how_constructs": [
+        "overflow-guard"
+      ],
+      "cwe_ids": [
+        "CWE-400",
+        "CWE-787"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-33664",
+      "ghsa": "GHSA-cjwg-qfpm-7377",
+      "package": "python-jose",
+      "ecosystem": "PyPI",
+      "published": "2024-04-26T00:30:35Z",
+      "modified": "2025-02-18T22:46:48Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.4.0",
+      "fix_commit": "",
+      "where_file": "jwe.py",
+      "where_lines": [
+        82
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-400"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-51449",
+      "ghsa": "GHSA-6qm2-wpxq-7qh2",
+      "package": "gradio",
+      "ecosystem": "PyPI",
+      "published": "2023-12-21T18:24:28Z",
+      "modified": "2024-02-16T21:52:40Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 4.11.0",
+      "fix_commit": "1b9d4234d6c25ef250d882c7b90e1f4039ed2d76",
+      "where_file": "utils.py",
+      "where_lines": [
+        935
+      ],
+      "how_constructs": [
+        "path-containment-guard"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": false,
+      "perpetuated": true,
+      "findings_vuln": 1,
+      "findings_fixed": 1,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": true
+    },
+    {
+      "cve": "CVE-2023-45139",
+      "ghsa": "GHSA-6673-4983-2vx5",
+      "package": "fonttools",
+      "ecosystem": "PyPI",
+      "published": "2024-01-09T16:01:10Z",
+      "modified": "2024-05-02T13:09:24Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "versão 4.28.2",
+      "resolved_in": "versão 4.43.0",
+      "fix_commit": "9f61271dc1ca82ed91f529b130fe5dc5c9bf1f4c",
+      "where_file": "svg.py",
+      "where_lines": [
+        230
+      ],
+      "how_constructs": [
+        "xxe-hardening"
+      ],
+      "cwe_ids": [
+        "CWE-611"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-34069",
+      "ghsa": "GHSA-2g68-c3qc-8985",
+      "package": "Werkzeug",
+      "ecosystem": "PyPI",
+      "published": "2024-05-06T14:21:27Z",
+      "modified": "2025-02-21T21:00:47Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.0.3",
+      "fix_commit": "3386395b24c7371db11a5b8eaac0c91da5362692",
+      "where_file": "__init__.py",
+      "where_lines": [
+        357,
+        385,
+        398,
+        462,
+        516
+      ],
+      "how_constructs": [
+        "security-conditional-guard"
+      ],
+      "cwe_ids": [
+        "CWE-352"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-36039",
+      "ghsa": "GHSA-v9hf-5j83-6xpp",
+      "package": "pymysql",
+      "ecosystem": "PyPI",
+      "published": "2024-05-21T18:31:23Z",
+      "modified": "2024-06-24T09:30:52Z",
+      "severity": "CRITICAL",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 1.1.1",
+      "fix_commit": "521e40050cb386a499f68f483fefd144c493053c",
+      "where_file": "converters.py",
+      "where_lines": [
+        30
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-89"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-49082",
+      "ghsa": "GHSA-qvrw-v9rv-5rjx",
+      "package": "aiohttp",
+      "ecosystem": "PyPI",
+      "published": "2023-11-27T23:17:24Z",
+      "modified": "2025-11-03T22:31:47Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.9.0",
+      "fix_commit": "e4ae01c2077d2cfa116aa82e4ff6866857f7c466",
+      "where_file": "client_reqrep.py",
+      "where_lines": [
+        284
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-20"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2022-36087",
+      "ghsa": "GHSA-3pgj-pg6c-r5p7",
+      "package": "oauthlib",
+      "ecosystem": "PyPI",
+      "published": "2022-09-16T21:02:52Z",
+      "modified": "2024-10-07T16:52:33Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "versão 3.1.1",
+      "resolved_in": "versão 3.2.2",
+      "fix_commit": "2e40b412c844ecc4673c3fa3f72181f228bdbacd",
+      "where_file": "uri_validate.py",
+      "where_lines": [
+        69
+      ],
+      "how_constructs": [
+        "redos-mitigation"
+      ],
+      "cwe_ids": [
+        "CWE-20",
+        "CWE-601"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-36464",
+      "ghsa": "GHSA-4vvm-4w3v-6mr8",
+      "package": "pypdf",
+      "ecosystem": "PyPI",
+      "published": "2023-06-30T20:33:57Z",
+      "modified": "2023-07-07T17:19:37Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "versão 3.1.0",
+      "resolved_in": "versão 3.9.0",
+      "fix_commit": "b0e5c689df689ab173df84dacd77b6fc3c161932",
+      "where_file": "_data_structures.py",
+      "where_lines": [
+        1019
+      ],
+      "how_constructs": [
+        "loop-termination-guard"
+      ],
+      "cwe_ids": [
+        "CWE-835"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-39968",
+      "ghsa": "GHSA-r726-vmfq-j9j3",
+      "package": "jupyter-server",
+      "ecosystem": "PyPI",
+      "published": "2023-08-29T23:34:22Z",
+      "modified": "2024-09-24T20:40:54Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 2.7.2",
+      "fix_commit": "290362593b2ffb23c59f8114d76f77875de4b925",
+      "where_file": "login.py",
+      "where_lines": [
+        44,
+        56,
+        57,
+        58,
+        62
+      ],
+      "how_constructs": [
+        "security-conditional-guard"
+      ],
+      "cwe_ids": [
+        "CWE-601"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-47874",
+      "ghsa": "GHSA-f96h-pmfr-66vw",
+      "package": "starlette",
+      "ecosystem": "PyPI",
+      "published": "2024-10-15T18:12:57Z",
+      "modified": "2024-10-15T19:56:06Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 0.40.0",
+      "fix_commit": "fd038f3070c302bff17ef7d173dbb0b007617733",
+      "where_file": "formparsers.py",
+      "where_lines": [
+        120,
+        121,
+        153,
+        154
+      ],
+      "how_constructs": [
+        "resource-limit",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-770"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-1135",
+      "ghsa": "GHSA-w3h3-4rj7-4ph4",
+      "package": "gunicorn",
+      "ecosystem": "PyPI",
+      "published": "2024-04-16T00:30:32Z",
+      "modified": "2025-09-29T21:13:05Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 22.0.0",
+      "fix_commit": "ac29c9b0a758d21f1e0fb3b3457239e523fa9f1d",
+      "where_file": "message.py",
+      "where_lines": [
+        162,
+        168,
+        193,
+        200
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-444"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2021-42771",
+      "ghsa": "GHSA-h4m5-qpfp-3mpv",
+      "package": "babel",
+      "ecosystem": "PyPI",
+      "published": "2021-10-21T17:49:59Z",
+      "modified": "2024-09-12T20:56:02Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 2.9.1",
+      "fix_commit": "412015ef642bfcc0d8ba8f4d05cdbb6aac98d9b3",
+      "where_file": "localedata.py",
+      "where_lines": [
+        54
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-8309",
+      "ghsa": "GHSA-45pg-36p6-83v9",
+      "package": "langchain-community",
+      "ecosystem": "PyPI",
+      "published": "2024-10-29T15:32:05Z",
+      "modified": "2024-11-12T19:57:59Z",
+      "severity": "LOW",
+      "cvss_vector": "",
+      "when_broke": "versão 0.2.0",
+      "resolved_in": "versão 0.2.19",
+      "fix_commit": "64c317eba05fbac0c6a6fc5aa192bc0d7130972e",
+      "where_file": "cypher.py",
+      "where_lines": [
+        201,
+        202
+      ],
+      "how_constructs": [
+        "security-conditional-guard",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-74",
+        "CWE-89"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-49767",
+      "ghsa": "GHSA-q34m-jh98-gwm2",
+      "package": "Werkzeug",
+      "ecosystem": "PyPI",
+      "published": "2024-10-25T19:44:43Z",
+      "modified": "2026-05-20T22:24:15Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "versão 2.0.0rc1",
+      "resolved_in": "versão 3.0.6",
+      "fix_commit": "5e78c4169b8eb66b91ead3e62d44721b9e1644ee",
+      "where_file": "formparser.py",
+      "where_lines": [
+        383,
+        388,
+        389
+      ],
+      "how_constructs": [
+        "resource-limit",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-400"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2022-35918",
+      "ghsa": "GHSA-v4hr-4jpx-56gc",
+      "package": "streamlit",
+      "ecosystem": "PyPI",
+      "published": "2022-08-06T05:51:50Z",
+      "modified": "2022-08-06T05:51:50Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "versão 0.63.0",
+      "resolved_in": "versão 1.11.1",
+      "fix_commit": "80d9979d5f4a00217743d607078a1d867fad8acf",
+      "where_file": "components.py",
+      "where_lines": [
+        325
+      ],
+      "how_constructs": [
+        "path-containment-guard"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-44271",
+      "ghsa": "GHSA-8ghj-p4vj-mr35",
+      "package": "pillow",
+      "ecosystem": "PyPI",
+      "published": "2023-11-03T06:36:30Z",
+      "modified": "2024-10-14T21:20:48Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 10.0.0",
+      "fix_commit": "1fe1bb49c452b0318cad12ea9d97c3bef188e9a7",
+      "where_file": "ImageFont.py",
+      "where_lines": [
+        56,
+        58
+      ],
+      "how_constructs": [
+        "resource-limit",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-400",
+        "CWE-770"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-4941",
+      "ghsa": "GHSA-6v6g-j5fq-hpvw",
+      "package": "gradio",
+      "ecosystem": "PyPI",
+      "published": "2024-06-06T18:30:58Z",
+      "modified": "2025-10-15T15:49:07Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 4.31.3",
+      "fix_commit": "ee1e2942e0a1ae84a08a05464e41c8108a03fa9c",
+      "where_file": "processing_utils.py",
+      "where_lines": [
+        352
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-20",
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-31047",
+      "ghsa": "GHSA-r3xc-prgr-mg9p",
+      "package": "Django",
+      "ecosystem": "PyPI",
+      "published": "2023-05-07T03:30:17Z",
+      "modified": "2024-09-20T15:44:03Z",
+      "severity": "CRITICAL",
+      "cvss_vector": "",
+      "when_broke": "versão 3.2a1",
+      "resolved_in": "versão 3.2.19",
+      "fix_commit": "21b1b1fc03e5f9e9f8c977ee6e35618dd3b353dd",
+      "where_file": "widgets.py",
+      "where_lines": [
+        424,
+        427,
+        431,
+        445
+      ],
+      "how_constructs": [
+        "security-conditional-guard",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-20"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-4340",
+      "ghsa": "GHSA-2m57-hf25-phgg",
+      "package": "sqlparse",
+      "ecosystem": "PyPI",
+      "published": "2024-04-15T20:21:25Z",
+      "modified": "2024-05-01T11:09:12Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 0.5.0",
+      "fix_commit": "b4a39d9850969b4e1d6940d32094ee0b42a2cf03",
+      "where_file": "sql.py",
+      "where_lines": [
+        220
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-674"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-27306",
+      "ghsa": "GHSA-7gpw-8wmc-pm8g",
+      "package": "aiohttp",
+      "ecosystem": "PyPI",
+      "published": "2024-04-18T13:45:21Z",
+      "modified": "2025-11-03T22:45:37Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.9.4",
+      "fix_commit": "28335525d1eac015a7e7584137678cbb6ff19397",
+      "where_file": "web_urldispatcher.py",
+      "where_lines": [
+        732
+      ],
+      "how_constructs": [
+        "output-encoding"
+      ],
+      "cwe_ids": [
+        "CWE-79"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-32309",
+      "ghsa": "GHSA-jh85-wwv9-24hv",
+      "package": "pymdown-extensions",
+      "ecosystem": "PyPI",
+      "published": "2023-05-15T20:50:23Z",
+      "modified": "2023-08-24T20:43:46Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "versão 1.5",
+      "resolved_in": "versão 10.0",
+      "fix_commit": "b7bb4878d6017c03c8dc97c42d8d3bb6ee81db9d",
+      "where_file": "snippets.py",
+      "where_lines": [
+        166,
+        176
+      ],
+      "how_constructs": [
+        "path-containment-guard"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2025-26699",
+      "ghsa": "GHSA-p3fp-8748-vqfq",
+      "package": "Django",
+      "ecosystem": "PyPI",
+      "published": "2025-03-06T21:31:26Z",
+      "modified": "2025-04-09T20:00:24Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "versão 4.2",
+      "resolved_in": "versão 4.2.20",
+      "fix_commit": "",
+      "where_file": "ipv6.py",
+      "where_lines": [
+        9,
+        10,
+        11,
+        21,
+        40
+      ],
+      "how_constructs": [
+        "resource-limit",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-770"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2020-6802",
+      "ghsa": "GHSA-q65m-pv3f-wr5r",
+      "package": "bleach",
+      "ecosystem": "PyPI",
+      "published": "2020-02-24T17:33:44Z",
+      "modified": "2024-09-13T15:05:52Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.1.1",
+      "fix_commit": "f77e0f6392177a06e46a49abd61a4d9f035e57fd",
+      "where_file": "html5lib_shim.py",
+      "where_lines": [
+        380
+      ],
+      "how_constructs": [
+        "security-default-flip"
+      ],
+      "cwe_ids": [
+        "CWE-79"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-52304",
+      "ghsa": "GHSA-8495-4g3g-x7pr",
+      "package": "aiohttp",
+      "ecosystem": "PyPI",
+      "published": "2024-11-18T21:02:32Z",
+      "modified": "2025-11-03T22:50:15Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.10.11",
+      "fix_commit": "259edc369075de63e6f3a4eaade058c62af0df71",
+      "where_file": "http_parser.py",
+      "where_lines": [
+        853
+      ],
+      "how_constructs": [
+        "raise-indirect"
+      ],
+      "cwe_ids": [
+        "CWE-444"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-49768",
+      "ghsa": "GHSA-9298-4cf8-g4wj",
+      "package": "waitress",
+      "ecosystem": "PyPI",
+      "published": "2024-10-29T14:45:03Z",
+      "modified": "2025-01-21T17:53:26Z",
+      "severity": "CRITICAL",
+      "cvss_vector": "",
+      "when_broke": "versão 2.0.0",
+      "resolved_in": "versão 3.0.1",
+      "fix_commit": "e4359018537af376cf24bd13616d861e2fb76f65",
+      "where_file": "channel.py",
+      "where_lines": [
+        205
+      ],
+      "how_constructs": [
+        "race-close-guard"
+      ],
+      "cwe_ids": [
+        "CWE-367",
+        "CWE-444"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-6909",
+      "ghsa": "GHSA-5r3q-93q3-f978",
+      "package": "mlflow",
+      "ecosystem": "PyPI",
+      "published": "2023-12-20T06:30:25Z",
+      "modified": "2024-09-24T21:25:26Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 2.9.2",
+      "fix_commit": "1da75dfcecd4d169e34809ade55748384e8af6c1",
+      "where_file": "uri.py",
+      "where_lines": [
+        434
+      ],
+      "how_constructs": [
+        "decode-before-validate"
+      ],
+      "cwe_ids": [
+        "CWE-29"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-6221",
+      "ghsa": "GHSA-hxwh-jpp2-84pm",
+      "package": "Flask-Cors",
+      "ecosystem": "PyPI",
+      "published": "2024-08-18T21:31:07Z",
+      "modified": "2026-06-08T20:17:50Z",
+      "severity": "HIGH",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 4.0.2",
+      "fix_commit": "03aa3f8e2256437f7bad96422a747b98ab5e31bf",
+      "where_file": "core.py",
+      "where_lines": [
+        60
+      ],
+      "how_constructs": [
+        "security-default-flip"
+      ],
+      "cwe_ids": [
+        "CWE-284"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2023-24816",
+      "ghsa": "GHSA-29gw-9793-fvw7",
+      "package": "ipython",
+      "ecosystem": "PyPI",
+      "published": "2023-02-10T19:55:53Z",
+      "modified": "2024-09-24T20:44:43Z",
+      "severity": "LOW",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 8.10.0",
+      "fix_commit": "385d69325319a5972ee9b5983638e3617f21cb1f",
+      "where_file": "terminal.py",
+      "where_lines": [
+        94
+      ],
+      "how_constructs": [
+        "dangerous-sink-removed"
+      ],
+      "cwe_ids": [
+        "CWE-20",
+        "CWE-78"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2021-21238",
+      "ghsa": "GHSA-f4g9-h89h-jgv9",
+      "package": "pysaml2",
+      "ecosystem": "PyPI",
+      "published": "2021-01-21T14:12:16Z",
+      "modified": "2024-10-14T15:50:30Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 6.5.0",
+      "fix_commit": "1d8fd268f5bf887480a403a7a5ef8f048157cc14",
+      "where_file": "sigver.py",
+      "where_lines": [
+        1476,
+        1488
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-347"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2024-49766",
+      "ghsa": "GHSA-f9vj-2wh5-fj8j",
+      "package": "Werkzeug",
+      "ecosystem": "PyPI",
+      "published": "2024-10-25T19:43:41Z",
+      "modified": "2025-01-31T15:30:42Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 3.0.6",
+      "fix_commit": "2767bcb10a7dd1c297d812cc5e6d11a474c1f092",
+      "where_file": "security.py",
+      "where_lines": [
+        154
+      ],
+      "how_constructs": [
+        "abspath-reject"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "CVE-2021-21295",
+      "ghsa": "GHSA-wm47-8v5p-wjpj",
+      "package": "io.netty:netty-codec-http2",
+      "ecosystem": "Maven",
+      "published": "2021-03-09T18:49:49Z",
+      "modified": "2021-08-31T21:19:12Z",
+      "severity": "MODERATE",
+      "cvss_vector": "",
+      "when_broke": "versão 4.0.0",
+      "resolved_in": "versão 4.1.60.Final",
+      "fix_commit": "89c241e3b1795ff257af4ad6eadc616cb2fb3dc4",
+      "where_file": "HttpUtil.java",
+      "where_lines": [
+        541,
+        544,
+        545,
+        547,
+        574,
+        575,
+        585,
+        594,
+        602,
+        609,
+        615
+      ],
+      "how_constructs": [
+        "security-conditional-guard",
+        "null-guard",
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-444"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "complete",
+      "answers_all_four": true,
+      "validated": false
+    },
+    {
+      "cve": "",
+      "ghsa": "GHSA-3f95-mxq2-2f63",
+      "package": "gradio",
+      "ecosystem": "PyPI",
+      "published": "",
+      "modified": "",
+      "severity": "",
+      "cvss_vector": "",
+      "when_broke": "desde a introdução do componente (introduced=0)",
+      "resolved_in": "versão 4.19.2",
+      "fix_commit": "16fbe9cd0cffa9f2a824a0165beb43446114eec7",
+      "where_file": "processing_utils.py",
+      "where_lines": [
+        275
+      ],
+      "how_constructs": [
+        "input-validation-raise"
+      ],
+      "cwe_ids": [
+        "CWE-22"
+      ],
+      "localized": true,
+      "stopped_firing": null,
+      "perpetuated": null,
+      "findings_vuln": 0,
+      "findings_fixed": 0,
+      "status": "excluded_no_cve",
+      "answers_all_four": true,
+      "validated": false
+    }
+  ]
+}

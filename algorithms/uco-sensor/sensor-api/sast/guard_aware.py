@@ -1,0 +1,310 @@
+"""
+UCO-Sensor — Guard-Aware Memory-Safety Scanner  (M11)
+======================================================
+Detects a *known-CVE class* of memory-safety bug **without needing the fix
+commit** — and, crucially, stops firing once the fix adds the missing guard.
+This is the real "rastrear bug conhecido / avaliar código gerado por IA"
+capability the pattern-SAST lacked (Sprint BG diagnostic showed rating A on
+the vulnerable file, or a generic rule persisting identically across the fix).
+
+The insight: a bare risky construct is not, by itself, a bug — it is a bug
+*only when the guard that would make it safe is absent from its function*.
+So M11 is **guard-aware**: it finds the risky sink, extracts the variables
+that need protection, then scans the enclosing function for a guard on those
+same variables.  It fires only when no guard is present.  The fix, which adds
+that guard, therefore suppresses the finding — a faithful before/after.
+
+Classes covered (initial, driven by the real corpus)
+----------------------------------------------------
+* **GA01 — unchecked subtraction in pointer/length arithmetic**
+  ``p = base + a - b`` (or ``len = a - b`` used as a size) without a guard
+  ``a > b`` / ``a >= b`` / ``b < a`` on the operands → integer underflow →
+  out-of-bounds (CWE-191/CWE-190/CWE-125).  This is exactly php-src
+  CVE-2019-11043 (``env_path_info + pilen - slen`` with no ``pilen > slen``).
+* **GA02 — memcpy/memmove with a length variable and no bound in scope**
+  ``memcpy(dst, src, n)`` where ``n`` is a variable never compared against a
+  size/limit in the function (CWE-120).
+
+Design
+------
+* Function segmentation is a light brace-matcher (C/C++/Rust/Java/JS-ish);
+  when it can't segment (e.g. Python), it treats the whole file as one scope
+  — conservative (fewer, not more, findings).
+* Pure and offline.  ``scan(source, ext)`` → ``list[GuardFinding]`` with the
+  1-based line, the risky expression, the variables needing a guard, and why.
+
+Public API
+----------
+    findings = GuardAwareScanner().scan(src, ".c")
+    f.line, f.rule_id, f.title, f.needs_guard_on, f.snippet
+"""
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass
+from typing import List, Set, Tuple
+
+_C_LIKE = {".c", ".h", ".cpp", ".cc", ".cxx", ".hpp", ".rs", ".java", ".js", ".ts", ".go", ".php"}
+
+# base + a - b   (pointer/length arithmetic with a subtraction)
+# META B — extensões memory-unsafe onde GA01/GA02 se aplicam (C/C++/Rust).
+_MEMORY_UNSAFE_EXTS = frozenset({
+    ".c", ".h", ".cpp", ".cc", ".cxx", ".hpp", ".hxx", ".h++", ".c++",
+    ".cp", ".inl", ".m", ".mm",          # C/C++/Objective-C
+    ".rs",                               # Rust (wraparound em release)
+})
+
+_SUBTRACT_ARITH = re.compile(
+    r"([A-Za-z_]\w*)\s*\+\s*([A-Za-z_]\w*)\s*-\s*([A-Za-z_]\w*)"
+)
+# memcpy-family with 3 args, capturing the length arg identifier
+_COPY_CALL = re.compile(
+    r"\b(memcpy|memmove|strncpy|strncat|bcopy)\s*\(\s*[^,]+,\s*[^,]+,\s*([A-Za-z_]\w*)\s*\)"
+)
+
+
+@dataclass(frozen=True)
+class GuardFinding:
+    rule_id: str
+    severity: str
+    cwe_id: str
+    title: str
+    line: int
+    snippet: str
+    needs_guard_on: Tuple[str, ...]
+    explanation: str
+
+
+def _split_functions(source: str, ext: str) -> List[Tuple[int, int]]:
+    """
+    Return list of (start_line, end_line) 1-based spans for each brace-delimited
+    function-ish block.  Falls back to a single whole-file span when the
+    language isn't brace-delimited or no braces are found.
+    """
+    lines = source.splitlines()
+    if ext not in _C_LIKE:
+        return [(1, len(lines))]
+    spans: List[Tuple[int, int]] = []
+    depth = 0
+    start = None
+    for i, ln in enumerate(lines, start=1):
+        opens = ln.count("{")
+        closes = ln.count("}")
+        if depth == 0 and opens > 0:
+            start = start if start is not None else i
+        depth += opens - closes
+        if depth <= 0 and start is not None:
+            spans.append((start, i))
+            start = None
+            depth = 0
+    if not spans:
+        return [(1, len(lines))]
+    return spans
+
+
+def _dominates(block: str, guard_pos: int, sink_pos: int) -> bool:
+    """
+    True se o guard na posição `guard_pos` DOMINA o sink em `sink_pos` — i.e., o
+    bloco `{...}` que contém o guard ainda está ABERTO na linha do sink.
+
+    (DT/Achado #4) Antes a checagem era textual sobre o escopo inteiro: um
+    `if (len < X)` num branch de debug NÃO-relacionado (que fecha antes do
+    `memcpy`) contava como bound → FN de overflow. Aqui, um guard só protege o
+    sink se: (a) precede o sink, e (b) entre os dois a profundidade de chaves
+    nunca cai abaixo da profundidade do guard (o bloco do guard não fechou).
+    Aproximação de dominância válida para código C/C++ estruturado por chaves.
+    """
+    if guard_pos >= sink_pos:
+        return False  # guard depois do sink não protege
+    depth_at_guard = block.count("{", 0, guard_pos) - block.count("}", 0, guard_pos)
+    depth = depth_at_guard
+    min_depth = depth
+    for ch in block[guard_pos:sink_pos]:
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth < min_depth:
+                min_depth = depth
+    return min_depth >= depth_at_guard
+
+
+def _guard_present(block: str, a: str, b: str, sink_pos: int) -> bool:
+    """
+    True if the function block contains a comparison guard between *a* and *b*
+    (either order / any relational operator) that DOMINATES the sink at
+    `sink_pos` (see `_dominates`).  A range check on either operand counts too.
+    """
+    if a == b:
+        return True  # x + y - y style, degenerate
+    esc_a, esc_b = re.escape(a), re.escape(b)
+    patterns = [
+        rf"\b{esc_a}\s*[<>]=?\s*{esc_b}\b",
+        rf"\b{esc_b}\s*[<>]=?\s*{esc_a}\b",
+        rf"\b{esc_a}\s*[<>]=?\s*{esc_b}\s*[?:]",
+    ]
+    for p in patterns:
+        for m in re.finditer(p, block):
+            if _dominates(block, m.start(), sink_pos):
+                return True
+    return False
+
+
+# Funções de alocação cujo argumento de TAMANHO, se contém a variável de
+# comprimento, prova que o buffer foi dimensionado para caber a cópia — o
+# idioma "allocated-to-fit". Reconhecê-lo elimina FP do GA02 (Sprint CA:
+# triagem real do php-src L1666/L1672 `realloc(..., ini_entries_len + len + ...)`
+# imediatamente antes de `memcpy(..., ..., len)`).
+_ALLOC_FN = re.compile(
+    r"\b(?:[epcx]?re?alloc\w*|malloc|calloc|alloca|safe_emalloc|"
+    r"[a-z_]*_(?:m|re|c)alloc\w*)\s*\("
+)
+
+
+def _bound_present(block: str, var: str, sink_pos: int) -> bool:
+    """
+    True se *var* está limitada por um guard que DOMINA o sink em `sink_pos` —
+    por uma comparação (`var < X`, `X >= var`, ...) OU pelo idioma
+    "allocated-to-fit": uma chamada de alocação cujo argumento de tamanho
+    menciona *var*. Ambos são bounds legítimos; reconhecê-los evita FP do GA02.
+
+    (DT/Achado #4) A dominância (`_dominates`) é exigida para não aceitar um
+    bound de um branch irmão não-relacionado que fecha antes do sink.
+    """
+    esc = re.escape(var)
+    for m in re.finditer(rf"\b{esc}\s*[<>]=?|[<>]=?\s*{esc}\b", block):
+        if _dominates(block, m.start(), sink_pos):
+            return True
+    # allocated-to-fit: alloc(...  var ...) que domina o sink (tamanho inclui a var)
+    for m in _ALLOC_FN.finditer(block):
+        tail = block[m.end(): m.end() + 200]
+        if re.search(rf"\b{esc}\b", tail) and _dominates(block, m.start(), sink_pos):
+            return True
+    return False
+
+
+class GuardAwareScanner:
+    """Guard-aware detection of unchecked memory-safety constructs."""
+
+    # guard-scope: preferimos o ESCOPO REAL DA FUNÇÃO via tree-sitter (M14);
+    # se a gramática não estiver disponível ou a linha estiver fora de função,
+    # caímos para uma janela local de ±WINDOW linhas.  A janela sozinha gerava
+    # FP por atravessar fronteiras de função (Sprint BH); o escopo por AST corta.
+    WINDOW = 45
+
+    def __init__(self) -> None:
+        try:
+            from sast.scope import FunctionScoper
+            self._scoper = FunctionScoper()
+        except Exception:  # pragma: no cover
+            self._scoper = None
+
+    @staticmethod
+    def _sink_offset(block_lines: List[str], sink_idx: int) -> int:
+        """Offset de caractere do INÍCIO da linha do sink dentro do bloco
+        `"\n".join(block_lines)` — usado para a checagem de dominância (#4)."""
+        if not (0 <= sink_idx < len(block_lines)):
+            return 0
+        return sum(len(block_lines[i]) + 1 for i in range(sink_idx))  # +1 = '\n'
+
+    def _scope(self, spans, lines: List[str], lineno: int) -> Tuple[str, int]:
+        """Retorna (bloco_do_escopo, offset_da_linha_do_sink_no_bloco)."""
+        if spans is not None:
+            from sast.scope import FunctionScoper as _FS
+            span = _FS.smallest_enclosing(spans, lineno)
+            if span is not None:
+                s, e = span
+                block_lines = lines[s - 1:e]
+                return "\n".join(block_lines), self._sink_offset(block_lines, lineno - s)
+        lo = max(0, lineno - 1 - self.WINDOW)
+        hi = min(len(lines), lineno - 1 + self.WINDOW + 1)
+        block_lines = lines[lo:hi]
+        return "\n".join(block_lines), self._sink_offset(block_lines, (lineno - 1) - lo)
+
+    def scan(self, source: str, ext: str = ".c") -> List[GuardFinding]:
+        # META B — language-aware: as classes GA01 (underflow em subtração) e
+        # GA02 (memcpy sem bound) só têm sentido em linguagens com aritmética
+        # unsigned/ponteiro e sem bounds-check de runtime: C/C++/Rust.  Em
+        # Go/Java (int com signed + arrays bounds-checked) ou JS (floats), o
+        # `a - b` NÃO é memory-unsafe → disparar seria falso-positivo.  Rust
+        # entra porque faz wraparound em release (checagem só em debug).
+        if ext.lower() not in _MEMORY_UNSAFE_EXTS:
+            return []
+        lines = source.splitlines()
+        findings: List[GuardFinding] = []
+        seen: Set[Tuple[str, int]] = set()
+        # Spans de função que delimitam o escopo onde procuramos o guard.
+        # Ordem de preferência (mais preciso → mais grosseiro):
+        #   1. M14 FunctionScoper (AST tree-sitter) — spans reais por função;
+        #   2. _split_functions() — splitter por chaves/blocos; fallback usado
+        #      quando o scoper AST não está presente ou falha. É MAIS preciso
+        #      que a janela fixa ±WINDOW do _scope;
+        #   3. janela ±WINDOW (dentro do _scope, se 1 e 2 não delimitam).
+        # (BZ v3.49.0: o passo 2 estava órfão — a chamada fora esquecida e o
+        #  fallback caía direto na janela fixa, perdendo precisão de escopo.)
+        spans = None
+        if self._scoper is not None:
+            try:
+                spans = self._scoper.function_spans(source, ext)   # M14: escopo AST real
+            except Exception:  # pragma: no cover
+                spans = None
+        if spans is None:
+            spans = _split_functions(source, ext) or None          # fallback estruturado (BZ)
+
+        for lineno, ln in enumerate(lines, start=1):
+            scope = None  # lazy — só monta a janela quando há um match
+
+            # GA01 — unchecked subtraction in pointer/length arithmetic
+            for m in _SUBTRACT_ARITH.finditer(ln):
+                base, a, b = m.group(1), m.group(2), m.group(3)
+                if a == b:
+                    continue
+                # META A (precisão): se a subtração é FRAGMENTO de uma cadeia
+                # aritmética maior (`... - b + c` / `... - b - d`), o termo
+                # seguinte tende a compensar o underflow — não é o padrão
+                # de risco isolado.  Corta FP como postgres arrayfuncs.c
+                # (`overheadlen + olddatasize - olditemsize + newitemsize`).
+                tail = ln[m.end():].lstrip()
+                if tail[:1] in ("+", "-"):
+                    continue
+                if scope is None:
+                    scope = self._scope(spans, lines, lineno)
+                # posição ABSOLUTA da subtração no bloco (offset da linha + coluna)
+                if _guard_present(scope[0], a, b, scope[1] + m.start()):
+                    continue
+                key = ("GA01", lineno, a, b)
+                if key in seen:
+                    continue
+                seen.add(key)
+                findings.append(GuardFinding(
+                    rule_id="GA01", severity="HIGH", cwe_id="CWE-191",
+                    title="Subtração não-checada em aritmética de ponteiro/comprimento (possível underflow → OOB)",
+                    line=lineno, snippet=ln.strip()[:160],
+                    needs_guard_on=(a, b),
+                    explanation=(f"`{base} + {a} - {b}` sem guard `{a} > {b}` no escopo: se "
+                                 f"{a} < {b}, o resultado faz underflow (aritmética unsigned) e "
+                                 f"aponta/aloca fora dos limites."),
+                ))
+
+            # GA02 — memcpy-family with an unbounded length variable
+            for m in _COPY_CALL.finditer(ln):
+                fn, nvar = m.group(1), m.group(2)
+                if scope is None:
+                    scope = self._scope(spans, lines, lineno)
+                # posição ABSOLUTA da chamada de cópia no bloco (offset linha + coluna)
+                if _bound_present(scope[0], nvar, scope[1] + m.start()):
+                    continue
+                key = ("GA02", lineno, nvar)
+                if key in seen:
+                    continue
+                seen.add(key)
+                findings.append(GuardFinding(
+                    rule_id="GA02", severity="HIGH", cwe_id="CWE-120",
+                    title=f"{fn}() com comprimento variável sem bound no escopo (possível overflow)",
+                    line=lineno, snippet=ln.strip()[:160],
+                    needs_guard_on=(nvar,),
+                    explanation=(f"`{fn}(..., {nvar})` sem comparação de `{nvar}` contra um "
+                                 f"tamanho/limite no escopo — comprimento não validado."),
+                ))
+        findings.sort(key=lambda f: (f.line, f.rule_id))
+        return findings

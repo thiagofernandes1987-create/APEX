@@ -87,7 +87,27 @@ _SOURCE_ATTRS: FrozenSet[Tuple[str, str]] = frozenset({
     ("os",  "environ"),
 })
 
+# Atributos de DADOS de um objeto request (derivado de _SOURCE_ATTRS): valem
+# para qualquer alias de request em _SOURCE_ROOTS (request/req/flask), cobrindo
+# ``req.args.get(...)`` além de ``request.args.get(...)``.
+_REQUEST_DATA_ATTRS: FrozenSet[str] = frozenset(
+    attr for (obj, attr) in _SOURCE_ATTRS if obj == "request"
+)
+
 # Bare function names that return tainted data when called
+# M16 — métodos acessores que, chamados sobre um atributo-fonte, retornam
+# valor controlado pelo usuário (ex.: request.args.get("x")).
+_SOURCE_ACCESSOR_METHODS: FrozenSet[str] = frozenset({
+    "get", "getlist", "getall", "getvalue", "getone", "get_json",
+    "first", "dict", "to_dict", "read", "getvalue",
+})
+# Acessores chamados DIRETAMENTE sobre o objeto request (Flask/Werkzeug/aiohttp).
+_REQUEST_ACCESSOR_METHODS: FrozenSet[str] = frozenset({
+    "get_json", "get_data", "read", "text", "json",
+})
+# Raízes de objeto que representam entrada do usuário.
+_SOURCE_ROOTS: FrozenSet[str] = frozenset({"request", "req", "flask"})
+
 _SOURCE_CALLS: FrozenSet[str] = frozenset({
     "input",
     "raw_input",       # Python 2 compat
@@ -133,6 +153,19 @@ _SINK_METHODS: Dict[Tuple[str, str], Tuple[str, str, str, str]] = {
     ("Template", "render"):   ("SAST042", "CRITICAL", "TEMPLATE_INJECTION", "CWE-94"),
     ("template", "render"):   ("SAST042", "CRITICAL", "TEMPLATE_INJECTION", "CWE-94"),
     ("env",      "get_template"): ("SAST042", "CRITICAL", "TEMPLATE_INJECTION", "CWE-94"),
+    # M16.1 — Deserialização insegura (CWE-502): pickle/marshal/dill carregam
+    # código arbitrário; yaml.load sem SafeLoader idem; torch.load usa pickle.
+    ("pickle",  "load"):     ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("pickle",  "loads"):    ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("cPickle", "load"):     ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("cPickle", "loads"):    ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("marshal", "load"):     ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("marshal", "loads"):    ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("dill",    "load"):     ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("dill",    "loads"):    ("SAST046", "CRITICAL", "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("yaml",    "load"):     ("SAST046", "HIGH",     "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("torch",   "load"):     ("SAST046", "HIGH",     "UNSAFE_DESERIALIZATION", "CWE-502"),
+    ("joblib",  "load"):     ("SAST046", "HIGH",     "UNSAFE_DESERIALIZATION", "CWE-502"),
 }
 
 # Bare function names → sink metadata
@@ -144,10 +177,40 @@ _SINK_FUNCTIONS: Dict[str, Tuple[str, str, str, str]] = {
     "__import__":("SAST043", "HIGH",     "CODE_INJECTION",  "CWE-95"),
 }
 
-# Generic: any .execute() call (handles ORM patterns like raw())
+# Generic: `.execute()/.executemany()/.raw()` on an object whose NAME looks like
+# a DB handle (cursor/conn/db/session/engine/...).  (DP v3.93.0) Antes o fallback
+# disparava para QUALQUER objeto → `pipeline.execute(x)`, `task.execute(x)`,
+# `strategy.execute(x)` viravam SQL Injection CRITICAL (FP massivo — achado
+# DEF-01/D3).  Agora exige que um segmento do nome do objeto contenha um hint de
+# SQL, restringindo a ORMs/drivers de verdade sem perder aliases (`self.cursor`,
+# `my_db`, `_conn`, `read_session`).
 _SINK_GENERIC_METHODS: FrozenSet[str] = frozenset({
     "execute", "executemany", "raw",
 })
+# Substrings que marcam um objeto como handle de banco (case-insensitive).
+_SQL_OBJ_HINTS: Tuple[str, ...] = (
+    "cursor", "conn", "connection", "session", "engine", "database",
+    "sqlalchemy", "psycopg", "sqlite", "cur", "txn", "transaction",
+)
+# Nomes de keyword que carregam a QUERY num sink SQL (o resto são bind params).
+# Usado pelo gating SQL do M17/M22 para não perder `execute(sql=user_input)`.
+_SQL_QUERY_KWARGS: FrozenSet[str] = frozenset({
+    "sql", "query", "operation", "statement", "stmt", "command", "cmd",
+})
+
+
+def _looks_like_sql_object(obj_dotted: str) -> bool:
+    """True se algum segmento do nome pontuado do objeto sugere um handle SQL.
+
+    Casos cobertos: `db`, `cursor`, `self.cursor`, `my_db`, `_conn`,
+    `read_session`, `app.db`.  `db` isolado é aceito (exact-match já cobre, mas o
+    hint garante aliases como `self.db`).
+    """
+    low = obj_dotted.lower()
+    for seg in low.replace(".", "_").split("_"):
+        if seg in ("db",) or any(h in seg for h in _SQL_OBJ_HINTS):
+            return True
+    return False
 
 
 # ─── Sanitizer registry ──────────────────────────────────────────────────────
@@ -174,10 +237,18 @@ _SANITIZER_METHODS: FrozenSet[Tuple[str, str]] = frozenset({
     ("secrets",           "token_bytes"),
 })
 
-# Bare function names that sanitize taint
+# Bare function names that sanitize taint.
+# (CD v3.53.0) Casts numéricos (int/float/bool/complex) são sanitizadores
+# FORTES contra injeção/path-traversal: levantam em entrada não-numérica e o
+# resultado não pode conter metacaracteres de SQL/shell/caminho.  shlex/pipes
+# `quote` neutralizam command injection.  Antes só {quote, escape} — o que
+# deixava `x = int(x)` propagar taint (FP contra código já seguro).
 _SANITIZER_FUNCTIONS: FrozenSet[str] = frozenset({
     "quote",
     "escape",
+    "escapejs",
+    "int", "float", "bool", "complex",   # casts numéricos → neutralizam injeção
+    "shlex.quote", "pipes.quote",         # quoting de shell
 })
 
 
@@ -243,6 +314,19 @@ _TAINT_RULE_META: Dict[str, Dict] = {
         "suggested_fix": "# Validate/sanitize user-controlled data before passing to this call",
         "explanation":   "User-controlled data reaching this call site without validation may be exploitable depending on the call's semantics (CWE-20).",
         "confidence":    0.75,
+    },
+    # (DP v3.93.0) SAST046 estava registrado como sink (pickle/yaml/torch/...)
+    # mas sem metadata — o finding caía no fallback genérico SAST045, perdendo a
+    # especificidade de uma classe CRITICAL (achado DEF-04/D7).
+    "SAST046": {
+        "title":         "Unsafe Deserialization via Taint Flow",
+        "owasp":         "A08:2021",
+        "description":   "User-controlled input is deserialized by pickle/marshal/yaml.load/torch.load without a safe loader.",
+        "remediation":   "Never deserialize untrusted data with pickle/marshal/dill. Use json for data, or yaml.safe_load; for torch use weights_only=True.",
+        "debt_minutes":  180,
+        "suggested_fix": "data = json.loads(payload)  # or yaml.safe_load(payload); never pickle.loads on untrusted input",
+        "explanation":   "pickle/marshal/dill reconstruct arbitrary Python objects and can execute code during load; yaml.load without SafeLoader and torch.load without weights_only are equally exploitable, giving RCE from attacker-controlled bytes (CWE-502).",
+        "confidence":    0.9,
     },
 }
 
@@ -467,15 +551,6 @@ def _node_name(node) -> str:
         return f"{outer}.{node.attr}" if outer else node.attr
     if isinstance(node, ast.Constant):
         return str(node.value)
-    return ""
-
-
-def _call_func_name(call: ast.Call) -> str:
-    """Return bare function name of a Call (without object prefix)."""
-    if isinstance(call.func, ast.Name):
-        return call.func.id
-    if isinstance(call.func, ast.Attribute):
-        return call.func.attr
     return ""
 
 
@@ -830,19 +905,34 @@ class TaintAnalyzer:
                 obj = _node_name(expr.func.value)
                 if (obj, expr.func.attr) in _SOURCE_MODULE_CALLS:
                     return f"{obj}.{expr.func.attr}()"
+                # M16 — accessor method on a source attribute:
+                #   request.args.get("x") / request.form.getlist(...) /
+                #   request.get_json() / flask.request.args.get(...)
+                if expr.func.attr in _SOURCE_ACCESSOR_METHODS:
+                    base = self._attr_source_label(expr.func.value)
+                    if base is not None:
+                        return f"{base}.{expr.func.attr}()"
+                    # request.get_json()/get_data() — accessor directly on request
+                    if expr.func.attr in _REQUEST_ACCESSOR_METHODS:
+                        head = _node_name(expr.func.value).split(".")[-1]
+                        if head in _SOURCE_ROOTS:
+                            return f"{head}.{expr.func.attr}()"
 
-        # request.args / request.form / etc.
+        # request.args / request.form / etc.  (M16: tolera cadeia com prefixo)
         if isinstance(expr, ast.Attribute):
-            obj = _node_name(expr.value)
-            if (obj, expr.attr) in _SOURCE_ATTRS:
-                return f"{obj}.{expr.attr}"
+            lbl = self._attr_source_label(expr)
+            if lbl is not None:
+                return lbl
 
-        # os.environ[key] / sys.argv[n]
+        # os.environ[key] / sys.argv[n] / request.args["x"]
         if isinstance(expr, ast.Subscript):
             if isinstance(expr.value, ast.Attribute):
-                obj  = _node_name(expr.value.value)
+                obj  = _node_name(expr.value.value).split(".")[-1]
                 attr = expr.value.attr
                 if (obj, attr) in _SOURCE_SUBSCRIPT_BASES:
+                    return f"{obj}.{attr}[...]"
+                # request.args["x"] — subscript de um atributo-fonte
+                if self._attr_source_label(expr.value) is not None:
                     return f"{obj}.{attr}[...]"
             elif isinstance(expr.value, ast.Name):
                 if expr.value.id in ("environ",):
@@ -850,19 +940,44 @@ class TaintAnalyzer:
 
         return None
 
+    @staticmethod
+    def _attr_source_label(node) -> Optional[str]:
+        """
+        Se *node* é um atributo-fonte (ex.: ``request.args``), retorna o rótulo,
+        tolerando cadeia com prefixo de módulo (``flask.request.args`` casa por
+        casar o ÚLTIMO segmento do objeto: ``request``).  Caso contrário None.
+
+        Além do casamento exato ``(obj, attr) ∈ _SOURCE_ATTRS``, aceita
+        **aliases de request** (``req``/``flask`` além de ``request``) com os
+        mesmos atributos de dados já whitelistados — cobrindo o padrão comum
+        ``req.args.get(...)`` sem ampliar a superfície de FP (raízes e atributos
+        continuam restritos aos conjuntos conhecidos).
+        """
+        if not isinstance(node, ast.Attribute):
+            return None
+        obj_last = _node_name(node.value).split(".")[-1]
+        if (obj_last, node.attr) in _SOURCE_ATTRS:
+            return f"{obj_last}.{node.attr}"
+        # alias de request (req/flask) com atributo de dados de request conhecido
+        if obj_last in _SOURCE_ROOTS and node.attr in _REQUEST_DATA_ATTRS:
+            return f"{obj_last}.{node.attr}"
+        return None
+
     def _get_sink_meta(
         self, call: ast.Call
     ) -> Optional[Tuple[str, str, str, str]]:
         """Return (rule_id, severity, vuln_type, cwe_id) if call is a sink, else None."""
         if isinstance(call.func, ast.Attribute):
-            obj_name  = _node_name(call.func.value).split(".")[0]  # first segment
+            obj_dotted = _node_name(call.func.value)
+            obj_name  = obj_dotted.split(".")[0]  # first segment
             meth_name = call.func.attr
             # Exact match
             key = (obj_name, meth_name)
             if key in _SINK_METHODS:
                 return _SINK_METHODS[key]
-            # Generic: any .execute() on any object → SQL injection
-            if meth_name in _SINK_GENERIC_METHODS:
+            # Generic: `.execute()/.raw()` só é SQL sink se o objeto PARECE um
+            # handle de banco — evita FP em pipeline/task/strategy.execute (D3).
+            if meth_name in _SINK_GENERIC_METHODS and _looks_like_sql_object(obj_dotted):
                 return ("SAST040", "CRITICAL", "SQL_INJECTION", "CWE-89")
 
         elif isinstance(call.func, ast.Name):
@@ -914,6 +1029,24 @@ class TaintAnalyzer:
                     cwe_id      = cwe_id,
                 ))
 
+        # (CS v3.68.0) Gating SQL arg[0] — portado do M17/M22 (Sprint CD).  Em
+        # `cursor.execute(sql, params)` só o 1º argumento (a query) carrega risco
+        # de injeção; os demais são bound parameters, que o driver escapa.  Sem
+        # isto, o M7.2 marcava `execute('... %s', (x,))` (uso CORRETO, seguro)
+        # como injeção → FP (o mesmo FP já corrigido no M17/M22).  Para sinks SQL
+        # (SAST040/CWE-89) checamos SÓ args[0]; demais sinks checam tudo.
+        is_sql = (rule_id == "SAST040") or (cwe_id == "CWE-89")
+        if is_sql:
+            if call.args:
+                _check(call.args[0])
+            # (DS) também checar o kwarg da QUERY (sql=/query=/operation=/...),
+            # igual M17/M22 — sem isto `cursor.execute(sql=user)` (query por
+            # keyword, sem posicional) passava despercebido no motor PRINCIPAL
+            # (M7.2 é o que o UCOBridge/scan usa). Achado #1 da auditoria v3.93.0.
+            for kw in call.keywords:
+                if kw.value and (kw.arg or "").lower() in _SQL_QUERY_KWARGS:
+                    _check(kw.value)
+            return
         for arg in call.args:
             _check(arg)
         for kw in call.keywords:

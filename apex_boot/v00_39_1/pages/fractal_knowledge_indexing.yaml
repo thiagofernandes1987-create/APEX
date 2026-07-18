@@ -1,4 +1,5 @@
 fractal_knowledge_indexing:
+executor: SANDBOX_CODE  # backfilled by lint_executor (SR_40)
   version: v00.20.0
   tier: 1
   description: 'Indexa anchors e Knowledge Models por nível de resolução fractal. Evita carregar conhecimento

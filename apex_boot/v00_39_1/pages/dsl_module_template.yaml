@@ -1,4 +1,5 @@
 dsl_module_template:
+executor: LLM_BEHAVIOR  # backfilled by lint_executor (SR_40)
   _note: Template OBRIGATÓRIO para todo novo módulo. Campos marcados com * são obrigatórios.
   template: "nome_do_modulo:\n  executor: LLM_BEHAVIOR | SANDBOX_CODE | DOCUMENTATION | HYBRID  # * obrigatório\n\
     \  version: v00.37.x  # exemplo — usar versão atual do sistema\n  opp: OPP-XX\n  tier: 0|1|2|3|4\n\

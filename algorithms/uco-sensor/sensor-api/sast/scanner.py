@@ -642,6 +642,56 @@ RULES: List[SASTRuleInfo] = [
             "credentials) and drop the header on mismatch."
         ),
     ),
+    # ── Sprint AF — CVE-anchored before/after corpus audit (celery/celery
+    # CVE-2021-23727) found a generalizable unsafe-reflection shape missed
+    # by every existing rule (see paper/corpus_runs/AF_consolidated_timeline.md):
+    SASTRuleInfo(
+        rule_id="SAST048", title="Dynamically Resolved Object Called Without Type Guard",
+        cwe_id="CWE-470", owasp="A08:2021",
+        severity="HIGH",
+        description=(
+            "An object is resolved via 'getattr()' using a non-literal "
+            "(data-derived) attribute name and is later called directly "
+            "('obj(...)'), with no 'isinstance()'/'issubclass()' check on "
+            "that object anywhere in the function. If the module/attribute "
+            "names ultimately come from untrusted data (e.g. a deserialized "
+            "task result or stored error payload), an attacker can resolve "
+            "an arbitrary callable (such as 'os.system') and have it "
+            "invoked. Real-world root cause of CVE-2021-23727 "
+            "(celery/celery stored command injection via "
+            "exception_to_python())."
+        ),
+        remediation=(
+            "Before calling a dynamically resolved object, verify it is of "
+            "an expected, safe type — e.g. 'if not (isinstance(cls, type) "
+            "and issubclass(cls, BaseException)): raise SecurityError(...)' "
+            "— and reject anything else."
+        ),
+    ),
+    # ── Sprint AF (audit of remaining blind spots) — fastapi/fastapi
+    # CVE-2021-32677 found another generalizable shape: parsing an
+    # incoming request body as JSON without first checking the
+    # Content-Type header (see paper/corpus_runs/AF_consolidated_timeline.md):
+    SASTRuleInfo(
+        rule_id="SAST049", title="Request Body Parsed as JSON Without Content-Type Check",
+        cwe_id="CWE-400", owasp="A04:2021",
+        severity="MEDIUM",
+        description=(
+            "A request-handling function calls '<request>.json()' to parse "
+            "the incoming body, but the function never inspects the "
+            "Content-Type header anywhere. Any body — JSON or not, and of "
+            "any size — gets fed to the JSON decoder unconditionally, "
+            "letting a client trigger expensive decoding (or framework- "
+            "specific errors) by sending a huge or malformed non-JSON "
+            "body. Real-world root cause of CVE-2021-32677 (fastapi DoS "
+            "via unconditional 'await request.json()')."
+        ),
+        remediation=(
+            "Check the Content-Type header (e.g. 'request.headers.get("
+            "\"content-type\")') and confirm it is an 'application/json' "
+            "(sub)type before calling '.json()' on the request body."
+        ),
+    ),
 ]
 
 _RULE_MAP: Dict[str, SASTRuleInfo] = {r.rule_id: r for r in RULES}
@@ -1098,10 +1148,19 @@ class _ASTScanner(ast.NodeVisitor):
 
     # ── SAST001-SAST013 + M7.1 call checks ───────────────────────────────────
 
-    def visit_Call(self, node: ast.Call) -> None:  # noqa: C901  (complex — intentional)
+    def visit_Call(self, node: ast.Call) -> None:
+        # (item 1) dispatcher fino: as ~25 regras SAST foram agrupadas em
+        # helpers coesos, na MESMA ordem — CC de visit_Call caiu de 117 p/ ~1.
         name   = self._call_name(node)
         module = self._call_module(node)
+        self._check_call_injection(node, name, module)
+        self._check_call_web(node, name, module)
+        self._check_call_crypto(node, name, module)
+        self._check_call_misc(node, name, module)
+        self.generic_visit(node)
 
+    def _check_call_injection(self, node: ast.Call, name: str, module: str) -> None:
+        """SAST001–013: SQLi, cmd, eval, pickle/yaml, hash, random, debug, open, subprocess."""
         # SAST001: SQL injection
         if name in _SQL_CALL_NAMES and node.args:
             arg0 = node.args[0]
@@ -1165,6 +1224,8 @@ class _ASTScanner(ast.NodeVisitor):
             if self._kw_is_true(node, "shell") and node.args and not self._is_literal(node.args[0]):
                 self._add("SAST013", node)
 
+    def _check_call_web(self, node: ast.Call, name: str, module: str) -> None:
+        """SAST014–019: SSRF, XXE, SSTI, ReDoS."""
         # ── M7.1 new call checks ──────────────────────────────────────────────
 
         # SAST014: SSRF — requests.get/post/... with non-literal URL
@@ -1199,6 +1260,8 @@ class _ASTScanner(ast.NodeVisitor):
                 if isinstance(pattern_str, str) and _redos_is_vulnerable(pattern_str):
                     self._add("SAST019", node)
 
+    def _check_call_crypto(self, node: ast.Call, name: str, module: str) -> None:
+        """SAST021–024: tamanho de chave, IV fraco, ECB, JWT none-alg."""
         # SAST021: weak asymmetric key size (< 2048 bits)
         # RSA.generate(1024), DSA.generate(1024), generate_private_key(key_size=1024)
         if name in ("generate", "generate_key") and node.args:
@@ -1255,6 +1318,8 @@ class _ASTScanner(ast.NodeVisitor):
                     if isinstance(elt, ast.Constant) and str(elt.value).lower() == "none":
                         self._add("SAST024", node)
 
+    def _check_call_misc(self, node: ast.Call, name: str, module: str) -> None:
+        """SAST027 (SSL verify=False) + SAST046 (host via .netloc.split)."""
         # SAST027: SSL verify=False
         if module in _REQUESTS_MODULES and name in _HTTP_REQUEST_METHODS:
             if self._kw_is_false(node, "verify"):
@@ -1268,8 +1333,6 @@ class _ASTScanner(ast.NodeVisitor):
                 and isinstance(node.func.value, ast.Attribute)
                 and node.func.value.attr == "netloc"):
             self._add("SAST046", node)
-
-        self.generic_visit(node)
 
     # ── SAST008 + SAST037: assignments ───────────────────────────────────────
 
@@ -1478,6 +1541,13 @@ class _ASTScanner(ast.NodeVisitor):
                 if not unused:
                     break
 
+        # (item 1) formatos de CVE (SAST047–051) extraídos p/ reduzir a CC de
+        # _check_function (era 111) — mesma ordem, mesmo comportamento.
+        self._check_function_cve_shapes(node)
+
+    def _check_function_cve_shapes(self, node: Any) -> None:
+        """SAST047–051 — formatos de CVE reais: reattach de header, reflection,
+        request.json() sem content-type, replace(url=), Vary:Cookie tardio."""
         # ── Sprint AC-3 — SAST047: sensitive header removed then re-set
         # (reattached) in the same function, without the origin
         # (scheme/host) it was bound to ever being *checked* — see
@@ -1514,6 +1584,61 @@ class _ASTScanner(ast.NodeVisitor):
                         sensitive_node = sensitive_node or target
         if (removed_keys & assigned_keys) and not self._has_origin_guard(node):
             self._add("SAST047", sensitive_node)
+
+        # ── Sprint AF — SAST048: dynamically resolved object (via
+        # getattr() with a non-literal attribute name) called directly,
+        # with no isinstance()/issubclass() guard anywhere in the
+        # function — see CVE-2021-23727 (celery/celery) case study in
+        # paper/corpus_runs/AF_consolidated_timeline.md. Requiring the
+        # attribute name to be non-literal keeps this specific to
+        # data-driven reflection and avoids flagging ordinary
+        # 'getattr(obj, "fixed_name")()' dispatch.
+        reflected_vars: set = set()
+        for child in ast.walk(node):
+            if (isinstance(child, ast.Assign) and len(child.targets) == 1
+                    and isinstance(child.targets[0], ast.Name)
+                    and isinstance(child.value, ast.Call)
+                    and isinstance(child.value.func, ast.Name)
+                    and child.value.func.id == "getattr"
+                    and len(child.value.args) >= 2
+                    and not isinstance(child.value.args[1], ast.Constant)):
+                reflected_vars.add(child.targets[0].id)
+
+        if reflected_vars:
+            guarded: set = set()
+            for child in ast.walk(node):
+                if (isinstance(child, ast.Call) and isinstance(child.func, ast.Name)
+                        and child.func.id in ("isinstance", "issubclass")
+                        and child.args and isinstance(child.args[0], ast.Name)
+                        and child.args[0].id in reflected_vars):
+                    guarded.add(child.args[0].id)
+
+            for child in ast.walk(node):
+                if (isinstance(child, ast.Call) and isinstance(child.func, ast.Name)
+                        and child.func.id in reflected_vars
+                        and child.func.id not in guarded):
+                    self._add("SAST048", child)
+
+        # ── Sprint AF — SAST049: '<request>.json()' called with no
+        # Content-Type check anywhere in the function — see
+        # CVE-2021-32677 (fastapi/fastapi) case study in
+        # paper/corpus_runs/AF_consolidated_timeline.md. Scoped to
+        # request-like variable names to avoid flagging the extremely
+        # common 'requests.get(url).json()' response-parsing idiom.
+        has_content_type_check = any(
+            (isinstance(c, ast.Constant) and isinstance(c.value, str)
+             and "content-type" in c.value.lower())
+            or (isinstance(c, ast.Attribute) and c.attr == "content_type")
+            for c in ast.walk(node)
+        )
+        if not has_content_type_check:
+            for child in ast.walk(node):
+                if (isinstance(child, ast.Call) and not child.args and not child.keywords
+                        and isinstance(child.func, ast.Attribute)
+                        and child.func.attr == "json"
+                        and isinstance(child.func.value, ast.Name)
+                        and child.func.value.id.lower() in ("request", "req")):
+                    self._add("SAST049", child)
 
     # ── SAST038: exception swallowing ────────────────────────────────────────
 

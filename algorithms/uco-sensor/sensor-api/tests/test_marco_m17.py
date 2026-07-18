@@ -688,6 +688,34 @@ class TestTF30_FullPipelineAndAPI:
         assert body["summary"]["taint_path_count"] >= 1
         assert body["flow_vector"]["flow_rating"] in {"B", "C", "D", "E"}
 
+    # ── Sprint CG (v3.56.0): camada M22 (CFG path-sensitive) no /scan-flow ─────
+    def test_scan_flow_exposes_cfg_taint_layer(self):
+        """O endpoint /scan-flow agora anexa a camada `cfg_taint` (M22) sem
+        quebrar o contrato legado de flows/flow_vector/summary."""
+        src = (
+            "def f(request):\n"
+            "    x = request.GET['id']\n"
+            "    cursor.execute('SELECT ' + x)\n"
+        )
+        code, body = self.scan_flow({"code": src, "module_id": "tf30g"})
+        assert code == 200
+        # contrato legado preservado
+        assert "flows" in body and "flow_vector" in body and "summary" in body
+        # nova camada presente e operacional
+        assert "cfg_taint" in body
+        ct = body["cfg_taint"]
+        assert ct["status"] == "ok"
+        assert ct["path_sensitive"] is True
+        assert ct["flow_count"] >= 1
+        assert any(f["cwe_id"] == "CWE-89" for f in ct["flows"])
+
+    def test_scan_flow_cfg_taint_clean_code_empty(self):
+        """Código sem source→sink → camada cfg_taint presente e vazia (ok)."""
+        code, body = self.scan_flow({"code": "x = 1", "module_id": "tf30h"})
+        assert code == 200
+        assert body["cfg_taint"]["status"] == "ok"
+        assert body["cfg_taint"]["flow_count"] == 0
+
     def test_metrics_flow_no_module_400(self):
         code, body = self.metrics_flow(None)
         assert code == 400
@@ -695,3 +723,19 @@ class TestTF30_FullPipelineAndAPI:
     def test_metrics_flow_unknown_module_404(self):
         code, body = self.metrics_flow("__tf30_no_such_module__")
         assert code == 404
+
+
+# ── Sprint CS (v3.68.0): M7.2 herda o gating SQL arg[0] do M17/M22 (anti-FP) ──
+def test_TF_m7_2_parameterized_query_no_fp():
+    """O M7.2 base deixou de marcar query parametrizada como injeção: em
+    `execute(sql, (x,))` só a query (arg[0]) carrega risco; o dado na tupla de
+    params é seguro. Portado do M17/M22 (Sprint CD). Fecha o FP achado na CS."""
+    from sast.taint_engine import TaintAnalyzer
+    vuln = ("def v(request):\n"
+            "    q = request.GET['id']\n"
+            "    cursor.execute('SELECT * FROM u WHERE id=' + q)\n")
+    fixed = ("def v(request):\n"
+             "    q = request.GET['id']\n"
+             "    cursor.execute('SELECT * FROM u WHERE id=%s', (q,))\n")
+    assert len(TaintAnalyzer().analyze(vuln).flows) >= 1     # concatenado dispara
+    assert TaintAnalyzer().analyze(fixed).flows == []        # parametrizado não

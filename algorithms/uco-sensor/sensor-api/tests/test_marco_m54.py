@@ -353,7 +353,7 @@ def test_TG19_isolated_store_fixture_swaps_server_store(isolated_store):
 
 def test_TG20_test_marco_m48_TJ11_no_longer_vacuous():
     """Source-level guard: TJ11/TJ12 must NOT be guarded by 'if r.root_causes:'."""
-    src = (Path(__file__).resolve().parent / "test_marco_m48.py").read_text()
+    src = (Path(__file__).resolve().parent / "test_marco_m48.py").read_text(encoding="utf-8")
     # TJ11 should now assert preconditions, not silently skip.
     tj11_start = src.index("def test_TJ11_root_causes_only_leading_channels_in_affected")
     tj11_end = src.index("def test_TJ12_primary_root_is_first_candidate")
@@ -364,7 +364,7 @@ def test_TG20_test_marco_m48_TJ11_no_longer_vacuous():
 
 
 def test_TG21_test_marco_m48_TJ16_no_longer_vacuous():
-    src = (Path(__file__).resolve().parent / "test_marco_m48.py").read_text()
+    src = (Path(__file__).resolve().parent / "test_marco_m48.py").read_text(encoding="utf-8")
     tj16_start = src.index("def test_TJ16_summary_includes_root_cause_when_present")
     tj16_end = src.index("def test_TJ17")
     tj16_body = src[tj16_start:tj16_end]

@@ -67,7 +67,7 @@ from scan.repo_scanner import RepoScanner
 from report.html_report import generate_html_report
 from report.badge import generate_badge_svg, generate_status_badge_svg
 from apex_integration.templates import get_template, render_prompt, fix_action_for, all_error_types
-from sast.scanner import scan as sast_scan, RULES as SAST_RULES
+from sast.scanner import scan as sast_scan, RULES as SAST_RULES, SASTResult
 
 # M9.0 — multi-language SAST (JS/TS, Java, Go)
 try:
@@ -84,6 +84,11 @@ except ImportError:
     _ml_rule_count = None               # type: ignore[assignment]
     _ML_RULES = []                      # type: ignore[assignment]
     _MULTILANG_SAST_AVAILABLE = False
+
+# M9.1 — SCA (dependência vulnerável) via OSV-Scanner, opcional/degradação graciosa
+from sast.sca_bridge import OSVScannerBridge
+
+_osv_bridge = OSVScannerBridge()
 from governance.policy_engine import (
     evaluate_policy, load_default_policy, policy_from_dict, mv_to_metrics_dict,
 )
@@ -131,6 +136,19 @@ except ImportError:
     _TaintAnalyzer  = None  # type: ignore[assignment,misc]
     _FlowVector     = None  # type: ignore[assignment,misc]
     _TAINT_ENGINE_AVAILABLE = False
+
+# M22 — CFGTaintAnalyzer (taint fluxo-sensível sobre a CFG do UCO V4).
+# Onde entra: opera dentro de handle_scan_flow() como CAMADA path-sensitive
+# aditiva — reporta fluxos que o motor linear M7.2 perde (sanitização só num
+# braço do `if`) sob a chave `cfg_taint` da resposta, sem tocar no contrato de
+# `flows`/`flow_vector`.  Import guardado: degradação graciosa se o UCO V4 ou o
+# módulo faltar.  (Sprint CG v3.56.0 — operacionaliza o M22 no pipeline/API.)
+try:
+    from sast.taint_cfg import CFGTaintAnalyzer as _CFGTaintAnalyzer
+    _CFG_TAINT_AVAILABLE = True
+except ImportError:
+    _CFGTaintAnalyzer = None  # type: ignore[assignment,misc]
+    _CFG_TAINT_AVAILABLE = False
 
 # M7.4 — PerformanceAnalyzer + PerformanceVector
 try:
@@ -201,7 +219,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.10.2"
+    version:      str   = "3.11.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -3043,6 +3061,55 @@ def handle_sast_rules() -> Tuple[int, Dict]:
     }
 
 
+# ─── SCA endpoint (M9.1 — OSV-Scanner) ───────────────────────────────────────
+
+def handle_sca(data: Dict) -> Tuple[int, Dict]:
+    """
+    POST /sca — Software Composition Analysis: dependências vulneráveis.
+
+    Body: {"manifest": str, "filename": str}
+    ``filename`` deve ser um nome reconhecido pelo OSV-Scanner
+    (``requirements.txt``, ``package-lock.json``, ``go.sum``,
+    ``Cargo.lock`` etc.) — é ele quem determina o ecossistema.
+    Response: SASTResult dict (mesmo shape de /sast) + "available".
+    """
+    manifest = data.get("manifest", "")
+    filename = data.get("filename", "requirements.txt")
+    if not manifest.strip():
+        return 400, {"error": "manifest is required"}
+
+    if not _osv_bridge.available():
+        return 200, {
+            "available": False,
+            "engine": "osv-scanner",
+            "error": "osv-scanner binary not found in PATH (set OSV_SCANNER_BIN)",
+            **SASTResult().to_dict(),
+        }
+
+    result = _osv_bridge.scan_manifest(manifest, filename)
+    # (DV/P1-2) reachability opcional: se o corpo trouxer `source_files`
+    # ({path: conteúdo}), rebaixa/anota findings de pacotes NÃO importados no
+    # código (VEX vulnerable_code_not_reachable) — corta ruído de SCA puro-versão.
+    source_files = data.get("source_files")
+    reach_applied = bool(isinstance(source_files, dict) and source_files)
+    if reach_applied and result.findings:
+        try:
+            # (DV nível 2) alcança a FUNÇÃO vulnerável via call-graph, não só
+            # presença de import. `vuln_symbols` opcional: {cve: [símbolos]} do
+            # advisory. Subsome o nível 1 (not_imported ainda é detectado).
+            from sca.reachability import annotate_findings_v2
+            vsym = data.get("vuln_symbols")
+            vmap = {k: set(v) for k, v in vsym.items()} if isinstance(vsym, dict) else None
+            annotate_findings_v2(result.findings, source_files, vmap)
+        except Exception:  # noqa: BLE001 — enriquecimento nunca quebra o scan
+            pass
+    out = result.to_dict()
+    out["available"] = True
+    out["engine"] = "osv-scanner"
+    out["reachability_applied"] = reach_applied
+    return 200, out
+
+
 # ─── Predictor endpoints (M6) ────────────────────────────────────────────────
 
 def handle_predict(
@@ -3200,12 +3267,24 @@ def handle_scan_sca(data: Dict) -> Tuple[int, Dict]:
         if not isinstance(files_raw, dict) or not files_raw:
             return 400, {"error": "'files' dict is required for mode='files'"}
         result = scanner.scan_files(files_raw)
-        return 200, result.to_dict()
+        return 200, _sca_out(result, data)
 
     # mode == "path"
     root = data.get("root", ".")
     result = scanner.scan_path(root)
-    return 200, result.to_dict()
+    return 200, _sca_out(result, data)
+
+
+def _sca_out(result, data: Dict) -> Dict:
+    """(DV/P2) resposta do SCA, com SBOM CycloneDX opcional (`sbom=true`)."""
+    out = result.to_dict()
+    if data.get("sbom"):
+        try:
+            from report.sbom import to_cyclonedx
+            out["sbom"] = to_cyclonedx(result)
+        except Exception:  # noqa: BLE001 — SBOM nunca quebra o scan
+            out["sbom"] = None
+    return out
 
 
 def handle_scan_iac(data: Dict) -> Tuple[int, Dict]:
@@ -3501,7 +3580,7 @@ def handle_scan_flow(data: Dict) -> Tuple[int, Dict]:
 
     fv = _FlowVector.from_taint_result(result, module_id=module_id)
 
-    return 200, {
+    resp = {
         "module_id":   module_id,
         "flow_vector": fv.to_dict(),
         "flows":       [f.to_dict() for f in result.flows],
@@ -3515,6 +3594,45 @@ def handle_scan_flow(data: Dict) -> Tuple[int, Dict]:
             "cross_fn_risk":         result.cross_fn_risk,
         },
     }
+
+    # ── M22 (Sprint CG): camada de taint fluxo-sensível sobre a CFG do V4 ──────
+    # Aditiva e não-bloqueante: roda o CFGTaintAnalyzer e anexa seus fluxos
+    # path-sensitive em `cfg_taint`, mais o DELTA (linhas de sink que a CFG
+    # confirma mas o motor linear M7.2 não reportou — tipicamente sanitização
+    # condicional).  Nunca derruba o /scan-flow: qualquer erro → cfg_taint
+    # marcado como unavailable.  Onde vai: consumido pelo cliente/loop APEX que
+    # queira a precisão de caminho sem perder o contrato legado de `flows`.
+    if _CFG_TAINT_AVAILABLE:
+        try:
+            cfg_flows = _CFGTaintAnalyzer().analyze(source)
+            # linhas de sink já cobertas pelo motor linear (para computar delta)
+            linear_sink_lines = {getattr(f, "sink_line", None) for f in result.flows}
+            cfg_dicts = [{
+                "rule_id":     cf.rule_id,
+                "severity":    cf.severity,
+                "cwe_id":      cf.cwe_id,
+                "source_desc": cf.source_desc,
+                "sink_desc":   cf.sink_desc,
+                "line":        cf.sink_line,
+                "var":         cf.var,
+                # marca os fluxos que SÓ a análise de caminho encontrou
+                "path_only":   cf.sink_line not in linear_sink_lines,
+            } for cf in cfg_flows]
+            resp["cfg_taint"] = {
+                "status":         "ok",
+                "engine":         "M22-CFGTaintAnalyzer",
+                "path_sensitive": True,
+                "flow_count":     len(cfg_dicts),
+                "path_only_count": sum(1 for d in cfg_dicts if d["path_only"]),
+                "flows":          cfg_dicts,
+            }
+        except Exception as exc:  # noqa: BLE001 — nunca derruba o endpoint
+            resp["cfg_taint"] = {"status": "unavailable", "reason": str(exc)}
+    else:
+        resp["cfg_taint"] = {"status": "unavailable",
+                             "reason": "sast.taint_cfg missing"}
+
+    return 200, resp
 
 
 def handle_metrics_flow(module_id: Optional[str], window: int = 50) -> Tuple[int, Dict]:
@@ -4712,6 +4830,26 @@ def handle_usage(key_info: Dict) -> Tuple[int, Dict]:
 
 # ─── HTTP Handler ─────────────────────────────────────────────────────────────
 
+# (item 1 / dogfooding) rotas GET uniformes `handler(module_id, window=default)`
+# — colapsadas numa tabela para reduzir a CC de do_GET (era 112). Ordem/defaults
+# preservados exatamente; qualquer rota com assinatura diferente segue no if/elif.
+_GET_MODULE_WINDOW_ROUTES = {
+    "/metrics/advanced":            (handle_metrics_advanced, 50),
+    "/metrics/reliability":         (handle_metrics_reliability, 50),
+    "/metrics/maintainability":     (handle_metrics_maintainability, 50),
+    "/metrics/flow":                (handle_metrics_flow, 50),
+    "/metrics/performance":         (handle_metrics_performance, 50),
+    "/metrics/architecture":        (handle_metrics_architecture, 50),
+    "/metrics/test-quality":        (handle_metrics_test_quality, 50),
+    "/metrics/thread-safety":       (handle_metrics_thread_safety, 50),
+    "/anti-pattern-score":          (handle_anti_pattern_score, 50),
+    "/anti-pattern-score/history":  (handle_anti_pattern_score_history, 100),
+    "/anti-pattern-score/trend":    (handle_anti_pattern_score_trend, 100),
+    "/predictor/history":           (handle_predictor_history, 100),
+    "/predictor/accuracy":          (handle_predictor_accuracy, 100),
+}
+
+
 class UCOSensorHandler(BaseHTTPRequestHandler):
     """Handler HTTP para o UCO-Sensor REST API."""
 
@@ -4808,58 +4946,12 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
                 horizon_n = _qp_int(params, "horizon", 5)
                 top_n_val = _qp_int(params, "top_n", 10)
                 code, data = handle_predict_all(window=window_n, horizon=horizon_n, top_n=top_n_val)
-            elif path == "/metrics/advanced":
+            elif path in _GET_MODULE_WINDOW_ROUTES:
+                # (item 1) 13 rotas uniformes colapsadas numa tabela.
+                _h, _dw = _GET_MODULE_WINDOW_ROUTES[path]
                 module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_advanced(module_id, window=window_n)
-            elif path == "/metrics/reliability":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_reliability(module_id, window=window_n)
-            elif path == "/metrics/maintainability":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_maintainability(module_id, window=window_n)
-            elif path == "/metrics/flow":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_flow(module_id, window=window_n)
-            elif path == "/metrics/performance":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_performance(module_id, window=window_n)
-            elif path == "/metrics/architecture":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_architecture(module_id, window=window_n)
-            elif path == "/metrics/test-quality":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_test_quality(module_id, window=window_n)
-            elif path == "/metrics/thread-safety":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_metrics_thread_safety(module_id, window=window_n)
-            elif path == "/anti-pattern-score":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 50)
-                code, data = handle_anti_pattern_score(module_id, window=window_n)
-            elif path == "/anti-pattern-score/history":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 100)
-                code, data = handle_anti_pattern_score_history(module_id, window=window_n)
-            elif path == "/anti-pattern-score/trend":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 100)
-                code, data = handle_anti_pattern_score_trend(module_id, window=window_n)
-            elif path == "/predictor/history":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 100)
-                code, data = handle_predictor_history(module_id, window=window_n)
-            elif path == "/predictor/accuracy":
-                module_id = params.get("module", [None])[0]
-                window_n  = _qp_int(params, "window", 100)
-                code, data = handle_predictor_accuracy(module_id, window=window_n)
+                window_n  = _qp_int(params, "window", _dw)
+                code, data = _h(module_id, window=window_n)
             elif path == "/apex/remediation/history":
                 module_id = params.get("module", [""])[0] or ""
                 limit_n   = _qp_int(params, "limit", 100)
@@ -5136,6 +5228,10 @@ class UCOSensorHandler(BaseHTTPRequestHandler):
             elif path == "/sast":
                 code, data = _billed_dispatch(
                     "sast", key_info, "/sast", handle_sast, body,
+                )
+            elif path == "/sca":
+                code, data = _billed_dispatch(
+                    "sast", key_info, "/sca", handle_sca, body,
                 )
             elif path == "/apex/fix":
                 code, data = _billed_dispatch(

@@ -1,10 +1,10 @@
 [build-system]
 requires      = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name        = "uco-sensor"
-version     = "3.10.2"
+version     = "3.96.0"
 description = "Spectral code-quality API powered by UCO v4 + FrequencyEngine"
 readme      = "README.md"
 license     = { text = "MIT" }
@@ -41,6 +41,14 @@ parsers = [
   "tree-sitter-typescript>=0.21.0",
   "tree-sitter-java>=0.21.0",
   "tree-sitter-go>=0.21.0",
+  # M9.2 — AST structural diff for the regex-Tier-2 languages
+  "tree-sitter-c>=0.21.0",
+  "tree-sitter-cpp>=0.21.0",
+  "tree-sitter-php>=0.22.0",
+  "tree-sitter-ruby>=0.21.0",
+  "tree-sitter-c-sharp>=0.21.0",
+  "tree-sitter-rust>=0.21.0",
+  "tree-sitter-kotlin>=0.21.0",
 ]
 dev = [
   "pytest>=7.4",
@@ -63,12 +71,20 @@ Issues        = "https://github.com/thiagofernandes1987-create/APEX/issues"
 [project.scripts]
 uco-sensor = "cli:main"
 
+# `cli.py` é um módulo solto na raiz (o console-script `uco-sensor = cli:main`
+# depende dele). `packages.find` só acha pacotes (dirs com __init__), então o
+# módulo precisa ser declarado explicitamente, senão `uco-sensor` instala mas
+# quebra com ModuleNotFoundError: cli.
+[tool.setuptools]
+py-modules = ["cli"]
+
 [tool.setuptools.packages.find]
 where   = ["."]
 include = [
   "sensor_core*", "sensor_storage*", "api*",
   "lang_adapters*", "apex_integration*", "scan*", "report*",
   "governance*", "sast*", "ci*", "sca*", "iac*", "metrics*",
+  "uco_core*",
 ]
 exclude = ["tests*", "validation*"]
 

@@ -10,7 +10,13 @@ Given a (owner, repo, path, vulnerable_sha, fixed_sha) tuple for a
 *documented* CVE/GHSA fix, this script:
 
   1. Fetches the file content at both commits via GitHub Contents API.
-  2. Runs `sast.scanner.scan` on both and diffs the finding sets.
+  2. Runs the SAST scanner on both and diffs the finding sets — dispatching
+     to `sast.multilang_scanner.scan_multilang` for JS/TS/Java/Go (mirroring
+     `api/server.py`'s `handle_sast` M9.0 routing) and to `sast.scanner.scan`
+     (Python AST engine) otherwise. (Sprint AE found this script was calling
+     `sast.scanner.scan` unconditionally for every language, silently
+     no-op'ing on every non-Python file and invalidating every prior
+     non-Python SAST verdict — see `paper/corpus_runs/AE_*.md`.)
   3. Runs the lang_adapters MetricVector analysis on both and diffs
      the 9 canonical channels.
 
@@ -62,6 +68,7 @@ def main() -> None:
     args = ap.parse_args()
 
     from sast.scanner import scan as sast_scan
+    from sast.multilang_scanner import scan_multilang, language_for_extension
     from lang_adapters.registry import get_registry
 
     registry = get_registry()
@@ -71,9 +78,14 @@ def main() -> None:
         "syntactic_dead_code", "duplicate_block_count", "halstead_bugs",
     ]
 
+    ext = Path(args.path).suffix
+    ml_lang = language_for_extension(ext)
+    engine = f"multilang:{ml_lang}" if ml_lang else "python-ast" if ext in (".py", ".pyw", ".pyi") else "none (unsupported language)"
+    print(f"SAST engine selected for {ext}: {engine}")
+
     for label, ref in [("VULNERABLE", args.vulnerable_sha), ("FIXED", args.fixed_sha)]:
         source = _fetch(args.owner, args.repo, args.path, ref)
-        result = sast_scan(source, Path(args.path).suffix)
+        result = scan_multilang(source, ext) if ml_lang else sast_scan(source, ext)
         mv = registry.analyze(
             source=source, file_extension=Path(args.path).suffix,
             module_id=Path(args.path).name, commit_hash=ref, timestamp=0,

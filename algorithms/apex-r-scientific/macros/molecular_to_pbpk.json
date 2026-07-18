@@ -1,0 +1,7 @@
+{
+  "macro_id": "molecular_to_pbpk",
+  "name": "Camada molecular até PBPK",
+  "description": "Rastreia as fontes, valida afinidade, exige identificabilidade e verifica o núcleo PBPK.",
+  "steps": ["M1", "M2", "M0", "M4", "M11"]
+}
+

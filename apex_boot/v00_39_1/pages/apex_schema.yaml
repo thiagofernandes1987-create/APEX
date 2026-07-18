@@ -1,4 +1,5 @@
 apex_schema:
+executor: DOCUMENTATION  # backfilled by lint_executor (SR_40)
   version: v00.19.0
   description: Strict JSON output schema for APEX.
   session_envelope:

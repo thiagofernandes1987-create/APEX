@@ -5,6 +5,183 @@ Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Chang
 
 ---
 
+## [3.11.0] — 2026-06-27 — Sprint AG: investigação paralela 6-way + JS11/JV11/RS01 + abre PHP/C#/Rust
+
+Resultado de 6 agentes investigando em paralelo os 11 blind spots
+restantes do relatório `paper/corpus_runs/AF_consolidated_timeline.md`,
+buscando o diff real vulnerável→corrigido via API do GitHub.
+
+### Adicionado — `JS11`: "Axios XSRF Token Sent Cross-Origin" (CWE-200, A01:2021, HIGH)
+
+Detecta `withCredentials || isURLSameOrigin(...)` (ou variantes
+`isSameOrigin`/`sameOrigin`), padrão que torna o check de mesma origem
+opcional e leaka o token XSRF cross-origin. Motivado e validado contra
+o real `axios/axios` CVE-2023-45857: dispara em `lib/adapters/xhr.js`
+vulnerável (sha `7d45ab2e`), silencia no corrigido (sha `96ee232b`).
+
+### Adicionado — `JV11`: "Bean Property Denylisted by Name Instead of Type" (CWE-915, A08:2021, CRITICAL)
+
+Detecta `"classLoader"/"protectionDomain".equals(pd.getName())` (ou a
+forma invertida), o shape estrutural do Spring4Shell. Motivado e
+validado contra `spring-projects/spring-framework` CVE-2022-22965:
+dispara em `CachedIntrospectionResults.java` vulnerável (sha
+`1627f57f`), silencia no corrigido (sha `002546b3`, que filtra por
+tipo via `isAssignableFrom`).
+
+### Adicionado — `RS01` + suporte Rust: "Bit-Field Overwritten by One Setter While Another Preserves Flags" (CWE-693, A04:2021, HIGH)
+
+Abre suporte Rust ao SAST multi-linguagem. Primeira regra do codebase
+que precisa de contexto de arquivo inteiro (não uma linha isolada):
+implementada como função dedicada `_scan_rust_bitfield_setters`
+chamada de um bloco especial em `scan_multilang()`. Detecta um campo
+`self.<campo>` sobrescrito diretamente (`self.x = ...`) em algum
+método enquanto outro método preserva os demais bits do mesmo campo
+via `bool_flag!`/`|=`/`&=`. Motivado e validado contra `tokio-rs/tokio`
+CVE-2023-22466: dispara na linha exata 1684 de `named_pipe.rs`
+vulnerável (sha `5c76d070`), silencia no corrigido (sha `9241c3ed`).
+
+### Adicionado — suporte PHP (`PHP01-05`) e C# (`CS01-05`)
+
+4 regras core genéricas por linguagem (injeção de comando, SQL
+concatenado, eval/deserialização insegura, BinaryFormatter, TLS
+trust-all callback) + 1 regra de triagem de baixa confiança cada
+(`PHP05`, `CS05`), motivadas pelas investigações de Laravel
+CVE-2026-48041 e dotnet/runtime CVE-2026-45491. **Nota de honestidade**:
+validado empiricamente que nenhuma das duas regras de triagem
+discrimina o CVE que a motivou (`PHP05` dispara igualmente antes e
+depois do fix Laravel; `CS05` não dispara em nenhum dos dois shas
+dotnet, pois o bug real está em métodos internos fora do alcance da
+regex). Mantidas pelo valor genérico de triagem; não contam como
+detecção desses dois CVEs específicos no relatório de timeline.
+
+### Adicionado — `SAST049`: "Request Body Parsed as JSON Without Content-Type Check" (CWE-400, A04:2021, MEDIUM)
+
+Documentação retroativa de uma regra adicionada em `sast/scanner.py`
+por uma rodada concorrente anterior e ainda não registrada no
+CHANGELOG: detecta `<request>.json()` chamado sem checagem de
+`Content-Type` em nenhum ponto da função, motivado por CVE-2021-32677
+(fastapi/fastapi DoS).
+
+### Investigado e não implementado
+
+`scrapy` CVE-2022-0577: o arquivo vulnerável (`redirect.py`, sha
+`aa0306a1`) não tem nenhum shape AST/string distintivo — o código é
+apenas `request.replace(url=redirected_url)`, indistinguível de
+qualquer `.replace()` seguro. BLIND_SPOT genuíno, documentado com
+evidência em vez de forçar uma regra overfit.
+
+### Testes
+
+23 novos testes em `tests/test_marco_m68.py` (TAK01-TAK23). Suite
+completa: 2255 passed, 5 skipped, 0 regressões. Total de regras SAST
+multi-linguagem: 43.
+
+## [3.10.4] — 2026-06-27 — Sprint AF correção: SAST048 (CWE-470 unsafe reflection) + 2 reclassificações no relatório de timeline
+
+Em resposta direta ao hook de `/goal` rejeitar o encerramento do loop
+de validação CVE-anchored (julgou "condição parcialmente satisfeita,
+não totalmente"), reauditei o próprio relatório
+`paper/corpus_runs/AF_consolidated_timeline.md` e encontrei dois erros
+factuais reais, além de adicionar uma nova regra SAST genuinamente
+generalizável.
+
+### Corrigido — relatório AF classificava 2 casos incorretamente como BLIND_SPOT
+
+`psf/requests` CVE-2024-47081 e CVE-2023-32681 estavam marcados
+BLIND_SPOT no relatório, mas `SAST046`/`SAST047` (criadas na Sprint
+AC-3) na verdade já disparam neles. Confirmado empiricamente nesta
+rodada rodando `sast.scanner.scan()` diretamente contra o conteúdo
+real dos arquivos vulneráveis/corrigidos buscado via API do GitHub
+(não apenas contra os textos pinados em testes): `SAST046` dispara em
+`requests/utils.py` no sha `7341690e` e silencia no sha `96ba401c`;
+`SAST047` dispara em `requests/sessions.py` no sha `30222533` e
+silencia no sha `74ea7cf7`. Ambos reclassificados para SIGNAL.
+
+### Adicionado — `SAST048`: "Dynamically Resolved Object Called Without Type Guard" (CWE-470, HIGH)
+
+Nova regra AST em `sast/scanner.py`, motivada pela investigação de
+`celery/celery` CVE-2021-23727 (injeção de comando via deserialização
+não confiável em `exception_to_python()`). Detecta um objeto resolvido
+via `getattr()` com nome de atributo não-literal (dado dinâmico) e
+chamado diretamente (`obj(...)`), sem nenhum `isinstance()`/
+`issubclass()` guardando a chamada em nenhum ponto da função.
+Generalizável (não overfit ao celery): cobre qualquer padrão de
+reflection insegura data-driven, com falso-positivo evitado quando o
+nome do atributo é um literal fixo (dispatch comum e seguro) ou quando
+o objeto resolvido nunca é chamado. Validado empiricamente contra o
+conteúdo real de `celery/backends/base.py` (sha `2d8dbc2a` vulnerável
+→ `1f7ad7e6` corrigido): dispara antes, silencia depois. Pinado em
+`tests/test_marco_m66.py` (TAG01-TAG07). Suite completa: 2226 passed,
+5 skipped, 0 regressões.
+
+### Atualizado — `paper/corpus_runs/AF_consolidated_timeline.md`
+
+Tabela e leituras agregadas corrigidas: 4/21 SIGNAL (era 1/21), 15/21
+BLIND_SPOT limpo (era 18/21), 3/21 detectados por regra SAST
+disparando especificamente no padrão documentado (era 0/21). Seção de
+fechamento reescrita: removida a framing de "decisão de
+produto/escopo a ser tomada pelo usuário" que o hook sinalizou como
+evasiva; substituída por um próximo passo concreto (auditar
+individualmente cada um dos 15 blind spots restantes em busca de
+shape de AST ancorável, seguindo o mesmo processo que produziu
+SAST046/047/048).
+
+## [3.10.3] — 2026-06-27 — Sprint AE: workflow multi-agente (3 eixos) + fix de dispatch SAST na validação + JS05 bare-call
+
+Workflow multi-agente (22 agentes, 4 fases) rodando 3 eixos em
+paralelo: precisão CVE (8 novos casos: lodash, etcd, tokio, netty,
+laravel, rails, dotnet, git), sweep de falso-positivo (sqlite/guava +
+fallback Java maduro) e sweep de throughput (kubernetes/tensorflow/
+linux/vscode). Ver `paper/corpus_runs/AE_cross_ecosystem.md` para a
+auditoria completa.
+
+### Corrigido — `paper/cve_diff_check.py`: dispatch de SAST engine ausente (bug de tooling de validação, não do produto)
+
+O script de diff CVE antes/depois chamava `sast.scanner.scan()` (motor
+AST exclusivo de Python) incondicionalmente para qualquer linguagem,
+silenciosamente no-op'ando em todo arquivo não-Python — mesmo já
+existindo o dispatch correto em produção (`api/server.py`'s
+`handle_sast`, M9.0: JS/TS/Java/Go → `multilang_scanner.scan_multilang`).
+Isso invalidava o *processo* de todos os veredictos não-Python
+anteriores das Sprints AC-3/AD/AE (8 casos). Corrigido espelhando o
+dispatch do `handle_sast`. Re-rodando os 9 casos afetados com o
+dispatch corrigido: todos os veredictos BLIND_SPOT se mantiveram —
+right by coincidence, agora confirmados by rigor.
+
+### Corrigido — `sast/multilang_scanner.py`: regra JS05 não cobria `Function(...)` sem `new`
+
+Reverificando `lodash/lodash` CVE-2021-23337 com o motor corrigido, a
+regra JS05 ("Code injection via Function constructor") não disparava no
+ponto de chamada real do lodash (`Function(importsKeys, ...)`, forma
+bare-call, sem `new` — semanticamente idêntica a `new Function(...)`).
+Regex ampliado de `\bnew\s+Function\s*\(` para
+`\b(?:new\s+)?Function\s*\(` (o `\b` inicial continua excluindo
+`isFunction(`/`castFunction(`).
+
+Fixado em `tests/test_marco_m65.py` (TAE01-TAE06, 6 testes: bare-call
+detectado, `new Function` ainda detectado, `isFunction`/`castFunction`
+sem falso-positivo, outros `*Function(` arbitrários sem falso-positivo,
+roteamento `language_for_extension` pinado, caso real lodash
+vulnerável/corrigido ambos disparam JS05 corretamente). Suíte completa:
+2219 passed, 5 skipped, 0 regressões.
+
+### Achados sem correção aplicada (honestos, disclosed)
+
+- 6/8 novos CVEs permanecem BLIND_SPOT genuíno: bugs de lógica
+  semântica/concorrência (etcd-senha-retida, tokio-race-condition,
+  netty-smuggling, laravel-path-confusion, lodash-ReDoS, git-lstat-cache)
+  fora do alcance de SAST regex/AST sintático — decisão consciente de
+  não escrever regras frágeis overfit a um único CVE.
+- `dotnet/runtime` CVE-2026-45491: BLIND_SPOT por lacuna de cobertura —
+  UCO Sensor não possui ruleset SAST para C# (nem C), confirmado em 3
+  eixos independentes (CVE diff, sweep de falso-positivo, sweep de
+  throughput).
+- 1/8 SIGNAL genuíno: `rails/rails` CVE-2024-26143 — `cyclomatic_complexity`
+  +200%, `hamiltonian` +112%, atribuíveis à lógica de sanitização XSS
+  adicionada, sem refatoração confundidora.
+
+---
+
 ## [3.10.2] — 2026-06-26 — Sprint AD: cross-ecosystem CVE audit + RustAdapter fix
 
 Estende a metodologia de diff antes/depois ancorada em CVE da AC-3 para
