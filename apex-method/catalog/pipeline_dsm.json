@@ -1,7 +1,7 @@
 {
  "_meta": {
   "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimization is context_budget(mode): experience injection sized per mode, zero on EXPRESS.",
-  "built_at": "2026-07-18 21:20:55"
+  "built_at": "2026-07-18 21:33:42"
  },
  "module_dsm": {
   "modules": 48,
@@ -51,8 +51,10 @@
     "learning",
     "mental_interpreter",
     "orchestrator",
+    "pipeline_dsm",
     "pot",
-    "repo_bridge"
+    "repo_bridge",
+    "routine_composer"
    ],
    "config": [],
    "curated": [],
@@ -272,15 +274,15 @@
     "fan_in": 5
    },
    {
+    "module": "pipeline_dsm",
+    "fan_in": 5
+   },
+   {
     "module": "agent_registry",
     "fan_in": 4
    },
    {
     "module": "bayes",
-    "fan_in": 4
-   },
-   {
-    "module": "orchestrator",
     "fan_in": 4
    }
   ]

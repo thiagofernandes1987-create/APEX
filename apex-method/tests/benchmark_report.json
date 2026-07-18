@@ -1,40 +1,40 @@
 {
  "passed": 61,
  "total": 61,
- "total_ms": 13507.9,
+ "total_ms": 11738.5,
  "results": [
   {
    "module": "runtime_autopsy",
    "ok": true,
-   "ms": 130.6,
+   "ms": 130.9,
    "metric": "RT-05/07/08/09/10/11/12/13/14/15/23/26 all guarded",
    "error": ""
   },
   {
    "module": "pot",
    "ok": true,
-   "ms": 65.6,
+   "ms": 65.8,
    "metric": "sum 1..100 = 5050",
    "error": ""
   },
   {
    "module": "numeric",
    "ok": true,
-   "ms": 789.0,
+   "ms": 814.4,
    "metric": "RK4 err 8.72e-12; solve_ode backend=scipy (numpy=True,scipy=True)",
    "error": ""
   },
   {
    "module": "verify",
    "ok": true,
-   "ms": 499.6,
+   "ms": 494.9,
    "metric": "identity VERIFIED / REFUTED",
    "error": ""
   },
   {
    "module": "uco_gate",
    "ok": true,
-   "ms": 17.1,
+   "ms": 17.0,
    "metric": "loop REJECTED (UCO)",
    "error": ""
   },
@@ -62,7 +62,7 @@
   {
    "module": "skill_forge",
    "ok": true,
-   "ms": 2.2,
+   "ms": 2.3,
    "metric": "generates valid SKILL.md",
    "error": ""
   },
@@ -83,35 +83,35 @@
   {
    "module": "curated",
    "ok": true,
-   "ms": 0.5,
+   "ms": 0.8,
    "metric": "4 finance skills",
    "error": ""
   },
   {
    "module": "asset_manager",
    "ok": true,
-   "ms": 0.6,
+   "ms": 0.7,
    "metric": "41 assets, 23 mcps",
    "error": ""
   },
   {
    "module": "gravity",
    "ok": true,
-   "ms": 84.4,
+   "ms": 85.0,
    "metric": "security constellation: 4 agents",
    "error": ""
   },
   {
    "module": "bayes",
    "ok": true,
-   "ms": 0.6,
+   "ms": 0.5,
    "metric": "beta-binomial 0.75, posterior A=0.7407",
    "error": ""
   },
   {
    "module": "orchestrator",
    "ok": true,
-   "ms": 534.3,
+   "ms": 492.9,
    "metric": "2+2=4 express; hard->SCIENTIFIC; PDE->SCIENTIFIC; pmi rel=0.875",
    "error": ""
   },
@@ -174,14 +174,14 @@
   {
    "module": "apex_st_metric",
    "ok": true,
-   "ms": 0.4,
+   "ms": 0.3,
    "metric": "progress MEDIUM, stagnation triggers",
    "error": ""
   },
   {
    "module": "repo_bridge",
    "ok": true,
-   "ms": 24.3,
+   "ms": 36.9,
    "metric": "native index 3784, traversal refused",
    "error": ""
   },
@@ -195,21 +195,21 @@
   {
    "module": "audit_regressions",
    "ok": true,
-   "ms": 378.3,
+   "ms": 296.7,
    "metric": "loads FP, getattr, installs, n_rel, express, chaos, skills.sh, char-ngram, dissect-PT, ext-grant: all fixed",
    "error": ""
   },
   {
    "module": "monte_carlo",
    "ok": true,
-   "ms": 7.4,
+   "ms": 5.8,
    "metric": "MC P50=60.0, cv=0.083",
    "error": ""
   },
   {
    "module": "pmi_monte_carlo",
    "ok": true,
-   "ms": 17.9,
+   "ms": 17.8,
    "metric": "PMI picks lowest-CV plan by real simulation",
    "error": ""
   },
@@ -223,35 +223,35 @@
   {
    "module": "snapshot_wire",
    "ok": true,
-   "ms": 95.0,
+   "ms": 93.4,
    "metric": "run() recorded 1 findings into snapshot",
    "error": ""
   },
   {
    "module": "config",
    "ok": true,
-   "ms": 2.3,
+   "ms": 2.0,
    "metric": "config persists, validates, resolves mode (snap-up)",
    "error": ""
   },
   {
    "module": "menu",
    "ok": true,
-   "ms": 2.5,
+   "ms": 2.4,
    "metric": "menu shows 5 actions; update=OK",
    "error": ""
   },
   {
    "module": "deep_research",
    "ok": true,
-   "ms": 1017.4,
+   "ms": 454.3,
    "metric": "deep_research TARGET_REACHED in 1 rounds",
    "error": ""
   },
   {
    "module": "concurrent_executor",
    "ok": true,
-   "ms": 343.8,
+   "ms": 352.1,
    "metric": "3 stances; mode-cap budget; abort+vaccine 1; off_persona; restart",
    "error": ""
   },
@@ -265,56 +265,56 @@
   {
    "module": "competence_matrix",
    "ok": true,
-   "ms": 4.5,
+   "ms": 5.0,
    "metric": "difficulty+stuck+diagnosis (HARD/PERSONA_SWAP)",
    "error": ""
   },
   {
    "module": "evaluate_hypotheses",
    "ok": true,
-   "ms": 1873.6,
+   "ms": 1216.8,
    "metric": "8 directors, hashed laudos, ADOPT; abort->PERSONA_SWAP",
    "error": ""
   },
   {
    "module": "project_ledger",
    "ok": true,
-   "ms": 10.9,
+   "ms": 15.1,
    "metric": "MACRO+micros, DSM critical-path+parallel, gate, justified-abandon, cycle, zip",
    "error": ""
   },
   {
    "module": "memory",
    "ok": true,
-   "ms": 73.1,
+   "ms": 75.3,
    "metric": "episodic/semantic + dedup + recall + snapshot + chained ledger; KG 3 edges + graph-walk + acyclic guard (17 mem)",
    "error": ""
   },
   {
    "module": "llm_adapter",
    "ok": true,
-   "ms": 60.0,
+   "ms": 60.8,
    "metric": "claude=B/full; gpt/deepseek->A; local->STANDARD; limits+accelerators; unknown->baseline",
    "error": ""
   },
   {
    "module": "swap_store",
    "ok": true,
-   "ms": 72.4,
+   "ms": 82.2,
    "metric": "materialize idempotent; memory export/import round-trip; bundle integrity; gate promote=1 keep=1",
    "error": ""
   },
   {
    "module": "learning",
    "ok": true,
-   "ms": 28.1,
+   "ms": 30.0,
    "metric": "promote@3 obs, demote sustained-fail, best-excludes-demoted; stats={'tracked': 2, 'promoted': 1, 'demoted': 1, 'active': 0}",
    "error": ""
   },
   {
    "module": "execution_policy",
    "ok": true,
-   "ms": 928.8,
+   "ms": 929.0,
    "metric": "route+HARD-RULE; 3-persona entry 3 micros; floor(audit/security)+uncertain+min_mode force the pipeline",
    "error": ""
   },
@@ -328,105 +328,105 @@
   {
    "module": "attraction_graph",
    "ok": true,
-   "ms": 182.0,
+   "ms": 183.5,
    "metric": "324 nodes, 1967 edges; audit seed pulls 10 bodies",
    "error": ""
   },
   {
    "module": "agent_spawn",
    "ok": true,
-   "ms": 1554.2,
-   "metric": "spec executable + ghost blocked + equip/unequip durable + manifest carries specs",
+   "ms": 946.2,
+   "metric": "spec executable + ghost blocked + equip/unequip durable + manifest carries shared specs",
    "error": ""
   },
   {
    "module": "kernel_gate",
    "ok": true,
-   "ms": 355.0,
+   "ms": 360.3,
    "metric": "gate blocks until complete; 5/12 code-done; PMI evidence wired",
    "error": ""
   },
   {
    "module": "rag_index",
    "ok": true,
-   "ms": 311.9,
+   "ms": 293.4,
    "metric": "432 nodes; PT->'boot:apex_st_metric', EN->'catalog:agents_catalog'",
    "error": ""
   },
   {
    "module": "plug_and_play",
    "ok": true,
-   "ms": 120.1,
+   "ms": 123.8,
    "metric": "habits+agents+learning+vaccines+memory survive a fresh machine (base+delta chain)",
    "error": ""
   },
   {
    "module": "agent_bundle_context",
    "ok": true,
-   "ms": 257.3,
+   "ms": 267.7,
    "metric": "context_pack feeds spawns; trained agent exports/installs (H5 + integrity)",
    "error": ""
   },
   {
    "module": "capability_map",
    "ok": true,
-   "ms": 139.6,
+   "ms": 138.4,
    "metric": "54 capabilities; env probed; how_to PT ok; use->PROMOTED",
    "error": ""
   },
   {
    "module": "pipeline_dsm",
    "ok": true,
-   "ms": 306.9,
+   "ms": 307.6,
    "metric": "48 modules, 6 levels, 4 lazy cycles; EXPRESS saves ~4687tk; ctx budget wired",
    "error": ""
   },
   {
    "module": "routine_composer",
    "ok": true,
-   "ms": 295.5,
+   "ms": 333.8,
    "metric": "5 passos encadeados; gaps ['marketing', 'performance']; reuse+PROMOTED+feedback; viaja no swap",
    "error": ""
   },
   {
    "module": "routine_run_loop",
    "ok": true,
-   "ms": 292.3,
+   "ms": 309.4,
    "metric": "handoffs aprendidos + auto-PROMOTED@3 + falha->vacina",
    "error": ""
   },
   {
    "module": "capability_cache",
    "ok": true,
-   "ms": 26.2,
+   "ms": 25.4,
    "metric": "3 parsed -> 3 cached -> touch reparses 1, delete prunes 1",
    "error": ""
   },
   {
    "module": "token_tracker",
    "ok": true,
-   "ms": 534.5,
+   "ms": 536.5,
    "metric": "4 rodadas; medido substitui estimado (DISSECT avg=6tk)",
    "error": ""
   },
   {
    "module": "solid_state_index",
    "ok": true,
-   "ms": 1201.0,
+   "ms": 1209.2,
    "metric": "432 n\u00f3s (163 se\u00e7\u00f5es); sync incremental+poda+alias; merge idempotente; overview determin\u00edstico",
    "error": ""
   },
   {
    "module": "index_repo_wide",
    "ok": true,
-   "ms": 772.8,
+   "ms": 831.5,
    "metric": "432 n\u00f3s; boot-pages=111, refdocs=3; drift Jaccard detectado + recomenda\u00e7\u00e3o",
    "error": ""
   },
   {
    "module": "ledger_multidevice",
    "ok": true,
-   "ms": 72.0,
+   "ms": 69.3,
    "metric": "fus\u00e3o A+B = 2 cadeias \u00edntegras; idempotente; adultera\u00e7\u00e3o pega; legado ok",
    "error": ""
   }
