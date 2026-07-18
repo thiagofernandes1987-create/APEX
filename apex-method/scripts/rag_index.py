@@ -50,6 +50,7 @@ TOP_TERMS = 48          # sparse vector size per node (bounds the index file)
 SUMMARY_CHARS = 480
 SECTION_CHARS = 300
 ALIAS_COSINE = 0.85     # removed->new same-type similarity that means RENAME, not delete+add
+DRIFT_JACCARD = 0.30    # neighborhood overlap below this = SEMANTIC DRIFT (meaning changed)
 DOCS = ("SKILL.md", "spec.md", "documentacao.md", "inventario.md", "requirements.txt")
 
 
@@ -175,7 +176,35 @@ def _collect_nodes():
         if os.path.isfile(p):
             add(f"meta:{f}", "meta", f"meta/{f}",
                 open(p, encoding="utf-8", errors="replace").read()[:SUMMARY_CHARS])
-    # repo-level pointer nodes (local clone only)
+    # as 111 PÁGINAS DO BOOT como nós (v1.48): o registry embarcado dá o purpose (offline-safe);
+    # com clone local, o cabeçalho do YAML enriquece o resumo.
+    try:
+        boot_root = None
+        try:
+            import repo_bridge
+            boot_root = repo_bridge._local_root()
+        except Exception:
+            pass
+        reg = json.load(open(os.path.join(ROOT, "catalog", "module_registry.json"),
+                             encoding="utf-8"))
+        for mrec in reg:
+            mod = mrec.get("module")
+            if not mod:
+                continue
+            rel = f"apex_boot/v00_39_1/pages/{mod}.yaml"
+            head = ""
+            if boot_root:
+                p = os.path.join(boot_root, "apex_boot", "v00_39_1", "pages", f"{mod}.yaml")
+                if os.path.isfile(p):
+                    head = " ".join(open(p, encoding="utf-8", errors="replace")
+                                    .read(900).split())[:220]
+            add(f"boot:{mod}", "boot-page", rel,
+                f"{mrec.get('purpose', '')} | executor={mrec.get('executor')} "
+                f"tier={mrec.get('tier')} status={mrec.get('status')}"
+                + (f" | {head}" if head else ""))
+    except Exception:
+        pass
+    # repo-level pointer nodes + reference-docs com SEÇÕES (v1.48; clone local)
     try:
         import repo_bridge
         root = repo_bridge._local_root()
@@ -183,6 +212,18 @@ def _collect_nodes():
             for rel, desc in REPO_AREAS.items():
                 if os.path.isdir(os.path.join(root, rel.rstrip("/"))):
                     add(f"repo:{rel.rstrip('/')}", "repo-area", rel, desc)
+            rd = os.path.join(root, "reference-docs")
+            if os.path.isdir(rd):
+                for cur, dks, files in os.walk(rd):
+                    dks[:] = [d for d in dks if d not in (".git", "__pycache__")]
+                    for f in sorted(files):
+                        if not f.endswith(".md"):
+                            continue
+                        rel_p = os.path.relpath(os.path.join(cur, f), root).replace(os.sep, "/")
+                        body = _md_body(os.path.join(cur, f))
+                        fid = f"refdoc:{rel_p[len('reference-docs/'):-3]}"
+                        add(fid, "refdoc", rel_p, " ".join(body.split())[:SUMMARY_CHARS])
+                        nodes.extend(_sections_of(fid, rel_p, body))
     except Exception:
         pass
     # tool-use memory: every mapped CAPABILITY is its own node (how_to resolves commands)
@@ -272,7 +313,7 @@ def sync(path=INDEX_PATH):
         top = sorted(vec.items(), key=lambda kv: -abs(kv[1]))[:TOP_TERMS]
         tnorm = math.sqrt(sum(w * w for _g, w in top)) or 1.0   # renormalized truncated vector
         return {g: round(w / tnorm, 4) for g, w in top}
-    unchanged, reembedded, new_nodes = 0, 0, []
+    unchanged, reembedded, new_nodes, drifted = 0, 0, [], []
     for n in fresh:
         prev = old.pop(n["id"], None)
         if prev is not None and prev.get("hash") == n["hash"]:
@@ -280,6 +321,16 @@ def sync(path=INDEX_PATH):
             unchanged += 1
         else:
             n["terms"] = embed(n["summary"])
+            # DESVIO SEMÂNTICO (documento do autor): Jaccard entre a vizinhança de termos
+            # antiga e a nova. Abaixo do limiar = o SIGNIFICADO mudou (não só o texto) —
+            # a dimensão taxonômica já foi recalculada na coleta; o nó é sinalizado e o
+            # retorno recomenda attraction_graph.rebuild() para realinhar a topologia.
+            if prev is not None and prev.get("terms"):
+                a, b = set(prev["terms"]), set(n["terms"])
+                jac = len(a & b) / (len(a | b) or 1)
+                if jac < DRIFT_JACCARD:
+                    drifted.append({"id": n["id"], "jaccard": round(jac, 3),
+                                    "dim_before": prev.get("dim"), "dim_after": n.get("dim")})
             new_nodes.append(n)
             reembedded += 1
     # o que restou em `old` sumiu -> alias (renomeio) ou poda em cascata
@@ -315,8 +366,14 @@ def sync(path=INDEX_PATH):
     with open(path, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False)
     _CACHE[path] = doc
-    return {"status": "OK", "unchanged": unchanged, "reembedded": reembedded,
-            "pruned": pruned, "aliases": {k: v for k, v in aliases.items()}}
+    out = {"status": "OK", "unchanged": unchanged, "reembedded": reembedded,
+           "pruned": pruned, "aliases": {k: v for k, v in aliases.items()},
+           "drifted": drifted}
+    if drifted:
+        out["recommend"] = ("desvio semântico detectado — rode attraction_graph.rebuild() "
+                            "(e capability_map.rebuild() se ferramentas mudaram) para "
+                            "realinhar a topologia à nova semântica")
+    return out
 
 
 def merge_index(other_doc, path=INDEX_PATH):

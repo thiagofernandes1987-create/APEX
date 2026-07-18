@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.47.0
+version: 1.48.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -202,6 +202,12 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   wins). **`overview()` is the crystallized memory: a DETERMINISTIC macro map (no timestamps —
   same content = same prompt prefix = provider prompt-cache hit). LOAD IT FIRST in every new
   session instead of remapping the repository.** Full `build()` refreshes the global IDF.
+  **v1.48 — REPO-WIDE + SEMANTIC DRIFT:** the index now covers the 111 BOOT PAGES (registry
+  purpose + YAML head; `boot:<module>` nodes) and `reference-docs/` with per-chapter sections
+  (`refdoc:` nodes, local clone). `sync()` also detects SEMANTIC DRIFT (the author's spec):
+  Jaccard over a node's old vs new term neighborhood < 0.30 = the MEANING changed, not just
+  the text — the node is flagged (`drifted`, with dim before/after) and the result recommends
+  `attraction_graph.rebuild()` to realign the topology.
 - **`scripts/capability_map.py`** — TOOL-USE MEMORY (v1.45): maps every capability the runtime
   can wield — the 46 syscalls' CLIs, INSTALLED skills (SKILL.md commands/triggers, scans
   ~/.claude/skills + APEX_SKILLS_DIRS), design/document templates, and a REAL environment probe
@@ -346,7 +352,7 @@ at session start and written INCREMENTALLY, so knowledge survives across session
 **episodic** events (keyed by sha(text+ts+session) → distinct); `remember_from_snapshot()` is the
 curated write (findings only, not every run). `recall(query, k)` = char-n-gram cosine top-k
 (language-robust; sentence-transformers hook when present). `record_event(kind, subject, action)`
-is the **governance ledger** — a SHA-256-chained, tamper-evident log the subsystems call when a
+is the **governance ledger** — a SHA-256-chained, tamper-evident log, chained PER DEVICE (v1.48): merging bundles from different machines interleaves INTACT chains — `verify_ledger` validates each device chain independently (a cross-machine import no longer corrupts verification), tampering any column of any row still breaks its chain the subsystems call when a
 rule/diff/agent/skill/vaccine is promoted or demoted, mirrored into semantic memory so `recall`
 surfaces the framework's own evolution. `verify_ledger()` re-walks the chain. Stdlib-only; a
 MongoDB adapter can be plugged, SQLite is always the default.

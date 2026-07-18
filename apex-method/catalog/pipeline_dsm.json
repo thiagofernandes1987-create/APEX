@@ -1,7 +1,7 @@
 {
  "_meta": {
   "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimization is context_budget(mode): experience injection sized per mode, zero on EXPRESS.",
-  "built_at": "2026-07-18 20:52:39"
+  "built_at": "2026-07-18 21:20:55"
  },
  "module_dsm": {
   "modules": 48,
@@ -320,7 +320,7 @@
     "PAGE_OUT"
    ],
    "tokens_est": 60,
-   "savings_vs_naive": 4682,
+   "savings_vs_naive": 4687,
    "context_budget_chars": 0,
    "note": "trivial path: triage answers directly (token economy)"
   },
@@ -342,7 +342,7 @@
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
-   "tokens_est": 1542,
+   "tokens_est": 1547,
    "savings_vs_naive": 3200,
    "context_budget_chars": 500
   },
@@ -363,7 +363,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4742,
+   "tokens_est": 4747,
    "savings_vs_naive": 0,
    "context_budget_chars": 900
   },
@@ -384,7 +384,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4742,
+   "tokens_est": 4747,
    "savings_vs_naive": 0,
    "context_budget_chars": 1300
   },
@@ -405,7 +405,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4742,
+   "tokens_est": 4747,
    "savings_vs_naive": 0,
    "context_budget_chars": 1600
   },
@@ -426,7 +426,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4742,
+   "tokens_est": 4747,
    "savings_vs_naive": 0,
    "context_budget_chars": 2000
   }

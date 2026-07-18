@@ -1016,6 +1016,98 @@ def t_solid_state_index():
             f"merge idempotente; overview determinístico")
 
 
+def t_index_repo_wide():
+    # v1.48: o índice cobre o repositório — 111 páginas de boot (registry + YAML head) e
+    # reference-docs com capítulos; e o sync detecta DESVIO SEMÂNTICO (Jaccard < 0.30).
+    import rag_index as ri, os
+    ri.build()
+    doc = ri.load()
+    by_type = {}
+    for n in doc["nodes"]:
+        by_type[n["type"]] = by_type.get(n["type"], 0) + 1
+    assert by_type.get("boot-page", 0) >= 100, by_type
+    hits = ri.search("simulador monte carlo com distribuições reais", k=6)
+    assert any(h["id"].startswith(("boot:", "script:monte")) for h in hits), hits
+    has_clone = False
+    try:
+        import repo_bridge
+        has_clone = bool(repo_bridge._local_root())
+    except Exception:
+        pass
+    if has_clone:
+        assert by_type.get("refdoc", 0) >= 2, by_type
+        rd = ri.search("argo cd deployment reference", k=4)
+        assert any(h["type"] == "refdoc" or h["id"].startswith("refdoc:") for h in rd), rd
+    # DESVIO SEMÂNTICO: reescrever uma seção por completo dispara drifted + recomendação
+    p = os.path.join(ri.ROOT, "references", "scenarios.md")
+    orig = open(p, encoding="utf-8").read()
+    try:
+        open(p, "w", encoding="utf-8").write(
+            "# Tabela de câmbio de moedas exóticas\n\n## Conversão cambial\n"
+            "Taxas de conversão do florim húngaro para o baht tailandês em feriados bancários.\n")
+        s = ri.sync()
+        assert s["drifted"] and any("scenario" in d["id"] for d in s["drifted"]), s["drifted"]
+        assert "recommend" in s and "attraction_graph" in s["recommend"], s.get("recommend")
+    finally:
+        open(p, "w", encoding="utf-8").write(orig)
+        ri.sync()
+    ri.build()
+    return (f"{doc['_meta']['count']} nós; boot-pages={by_type.get('boot-page')}, "
+            f"refdocs={by_type.get('refdoc', 0)}; drift Jaccard detectado + recomendação")
+
+
+def t_ledger_multidevice():
+    # v1.48: cadeias de ledger POR DISPOSITIVO — fundir bundles de máquinas diferentes
+    # intercala cadeias íntegras (antes corrompia a cadeia única); adulteração e retrocompat.
+    import tempfile, os, sqlite3, importlib, json as _j, time as _t
+    import memory as mem_mod, config as cfg
+    _old = os.environ.get("APEX_METHOD_HOME")
+    try:
+        os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+        importlib.reload(cfg); importlib.reload(mem_mod)
+        dbA = os.path.join(os.environ["APEX_METHOD_HOME"], "m.db")
+        mA = mem_mod.MemoryStore(dbA)
+        mA.record_event("rule", "R-A1", "promote"); mA.record_event("rule", "R-A2", "promote")
+        expA = mA.export()
+        assert all("device" in l for l in expA["ledger"]), "device travels in export"
+        # máquina B com eventos PRÓPRIOS importa A e segue a própria cadeia
+        os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+        importlib.reload(mem_mod)
+        dbB = os.path.join(os.environ["APEX_METHOD_HOME"], "m.db")
+        mB = mem_mod.MemoryStore(dbB)
+        mB.record_event("skill", "S-B1", "grant")
+        mB.load_rows(expA)
+        mB.record_event("skill", "S-B2", "grant")
+        v = mB.verify_ledger()
+        assert v["ok"] and v["devices"] == 2 and v["events"] == 4, v
+        mB.load_rows(expA)
+        assert mB.verify_ledger()["ok"], "reimport idempotente"
+        con = sqlite3.connect(dbB)
+        con.execute("UPDATE ledger SET action='x' WHERE subject='R-A1'"); con.commit(); con.close()
+        v2 = mB.verify_ledger()
+        assert not v2["ok"] and v2["reason"] == "content hash mismatch", v2
+        # retrocompat: linha legada (device='', canônico antigo) coexiste com a cadeia nova
+        os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+        importlib.reload(mem_mod)
+        dbC = os.path.join(os.environ["APEX_METHOD_HOME"], "m.db")
+        mC = mem_mod.MemoryStore(dbC)
+        ts = _t.time(); ev = _j.dumps({})
+        sha = mC._ledger_hash(ts, "rule", "LEGADO", "promote", ev, "", "")
+        con = sqlite3.connect(dbC)
+        con.execute("INSERT INTO ledger VALUES(?,?,?,?,?,?,?,?)",
+                    (sha, ts, "rule", "LEGADO", "promote", ev, "", ""))
+        con.commit(); con.close()
+        mC.record_event("rule", "NOVO", "promote")
+        assert mC.verify_ledger()["ok"], mC.verify_ledger()
+        return "fusão A+B = 2 cadeias íntegras; idempotente; adulteração pega; legado ok"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(cfg); importlib.reload(mem_mod)
+
+
 def t_capability_map():
     # v1.45 (author's item 2): the runtime LEARNS to work with installed capabilities —
     # commands mapped (never executed), environment probed, how_to answers PT/EN, and
@@ -1489,6 +1581,7 @@ TESTS = [
     ("routine_composer", t_routine_composer), ("routine_run_loop", t_routine_run_loop),
     ("capability_cache", t_capability_cache), ("token_tracker", t_token_tracker),
     ("solid_state_index", t_solid_state_index),
+    ("index_repo_wide", t_index_repo_wide), ("ledger_multidevice", t_ledger_multidevice),
 ]
 
 
