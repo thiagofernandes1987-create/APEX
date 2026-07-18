@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.44.0
+version: 1.45.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,7 +47,7 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 44 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 46 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
@@ -195,6 +195,19 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   (`catalog/rag_index.json`, global char-n-gram IDF): `search("<question>", k)` maps any PT/EN
   question to the right module/catalog/reference/repo-area in milliseconds — use it FIRST when
   you need to locate anything. `rebuild()` after adding/renaming modules.
+- **`scripts/capability_map.py`** — TOOL-USE MEMORY (v1.45): maps every capability the runtime
+  can wield — the 46 syscalls' CLIs, INSTALLED skills (SKILL.md commands/triggers, scans
+  ~/.claude/skills + APEX_SKILLS_DIRS), design/document templates, and a REAL environment probe
+  (languages on PATH, importable libraries). `how_to("como faço X?")` answers with the capability
+  + exact commands via the node RAG; `record_use(id, success)` feeds real outcomes into learning
+  so "I know how to extract the maximum from X" is EARNED (promotion), never assumed. Mapping
+  documents commands — it NEVER executes them (gates/H5 still govern). `rebuild()` after every
+  install, together with attraction_graph + rag_index (the three memories grow as one).
+- **`scripts/pipeline_dsm.py`** — the DSM turned on the runtime itself (v1.45): EXACT module
+  import matrix (parallel load levels, cycles, load-bearing core) + per-mode step flow ordered
+  by geodesic ΔH/token (run/skip + [APPROX] savings: EXPRESS ~5.1k tokens saved, STANDARD ~3.8k).
+  The APPLIED optimization: `context_budget(mode)` sizes the context_pack injection per mode
+  (0 on EXPRESS → 2000 chars on RESEARCH) — orchestrator and agent_spawn consume it on every call.
 - **`scripts/monte_carlo.py`** — REAL Monte Carlo (OPP-73): `simulate(model_fn, distributions)`
   returns P10/P50/P90 + CV. Wired into PMI so QUANTIFIABLE candidates are decided by simulation,
   never by calling a weighted vote "Monte Carlo" (§10). numpy optional (stdlib fallback).

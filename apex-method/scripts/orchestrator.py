@@ -371,9 +371,16 @@ def _run(task, candidates=None, snapshot=None):
     # future instance never reasons cold. Bounded; empty when the stores are empty (honest).
     try:
         import agent_spawn as _as
-        cp = _as.context_pack(task, budget_chars=1200)
-        if cp.get("rendered"):
-            result["context_pack"] = cp
+        budget = 1200
+        try:                                    # DSM optimization: context sized per mode
+            import pipeline_dsm
+            budget = pipeline_dsm.context_budget(mode)
+        except Exception:
+            pass
+        if budget > 0:
+            cp = _as.context_pack(task, budget_chars=budget)
+            if cp.get("rendered"):
+                result["context_pack"] = cp
     except Exception:
         pass
     result["kernel_checklist"] = ck

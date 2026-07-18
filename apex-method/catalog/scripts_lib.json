@@ -56,6 +56,14 @@
   "path": "scripts/bayes.py"
  },
  {
+  "id": "script:capability_map",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "tool-use-memory,commands,how-to,environment-probe,templates,installed-skills,record-use,promotion",
+  "mass": 271,
+  "path": "scripts/capability_map.py"
+ },
+ {
   "id": "script:chaos_operators",
   "type": "script",
   "domain": "meta",
@@ -230,6 +238,14 @@
   "capabilities": "express,dissect,discipline,pmi,convergence",
   "mass": 154,
   "path": "scripts/orchestrator.py"
+ },
+ {
+  "id": "script:pipeline_dsm",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "dsm,import-matrix,cycles,parallel-levels,mode-flow,token-optimization,context-budget",
+  "mass": 170,
+  "path": "scripts/pipeline_dsm.py"
  },
  {
   "id": "script:pot",

@@ -209,7 +209,14 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10):
     # runtime's VALIDATED experience (vaccines, memory, proven/demoted, rag pointers) inline.
     ctx = {"rendered": "", "sections": {}}
     try:
-        ctx = context_pack(task, agent_id, budget_chars=1200)
+        budget = 1200
+        try:                                    # DSM optimization: context sized per mode
+            import pipeline_dsm
+            budget = pipeline_dsm.context_budget(mode)
+        except Exception:
+            pass
+        if budget > 0:
+            ctx = context_pack(task, agent_id, budget_chars=budget)
     except Exception:
         pass
 

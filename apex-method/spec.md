@@ -14,7 +14,7 @@ O **apex-method** é um **runtime cognitivo**: um sistema operacional fino em vo
 O LLM é a **VM cognitiva** (inferência, síntese, julgamento); a skill é o **SO** que agenda
 trabalho determinístico em código real, guarda memória durável, governa segurança e força
 disciplina de raciocínio. Não é um prompt que "reprograma" o modelo — é um kernel
-(`SKILL.md`) + 44 syscalls (`scripts/*.py`) + catálogos + contratos verificáveis.
+(`SKILL.md`) + 46 syscalls (`scripts/*.py`) + catálogos + contratos verificáveis.
 
 **Objetivo:** transformar raciocínio de LLM em engenharia auditável — respostas **computadas
 e verificadas** (PoT, RK4, Bayes, gates), com custo controlado por modo, memória que
@@ -53,7 +53,7 @@ governança.
 | Camada | Arquivo(s) | Papel |
 |---|---|---|
 | Kernel / método | `SKILL.md` | disciplina + orçamentos por modo que o LLM segue |
-| Syscalls | 44 `scripts/*.py` | trabalho determinístico fora da cabeça do LLM |
+| Syscalls | 46 `scripts/*.py` | trabalho determinístico fora da cabeça do LLM |
 | Entrada | `orchestrator.run` + `execution_policy.triage` | triage → dissect → resolve → modo → **checklist/gate** |
 | Roteamento | `taxonomy` → `router`/`gravity` → **`attraction_graph`** | facetas canônicas → atração lexical → grafo pré-computado |
 | Agentes | `agent_registry` + **`agent_spawn`** + `concurrent_executor` | roster enxuto → spec executável no spawn → fan-out A/B |
@@ -63,7 +63,7 @@ governança.
 | Bayes/decisão | `bayes`, `verification_gate`, `fractal_compression`, `hypothesis_dag` | posterior, Ω, R_acum, poda, DAG acíclico |
 | Meta | `competence_matrix`, `apex_st_metric`, `mental_interpreter`, `geodesic_scheduler`, `chaos_operators` | dificuldade, estagnação, n_final, ordem ΔH/token, exploração |
 | HAL | `meta/apex_llm.yaml` + `llm_adapter` | requisitos mínimos, matriz por provedor, anti-loop |
-| Mapa | **`rag_index`** + `catalog/*.json` | recuperação por nós + catálogos 1:1 |
+| Mapa | **`rag_index`** + **`capability_map`** + **`pipeline_dsm`** + `catalog/*.json` | recuperação por nós; memória de ferramentas (how_to); DSM do runtime + orçamento de contexto por modo |
 
 ### Fluxo canônico (com passagem de bastão)
 

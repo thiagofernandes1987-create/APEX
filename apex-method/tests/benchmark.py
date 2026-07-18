@@ -775,6 +775,68 @@ def t_rag_index():
     return f"{r['nodes']} nodes; PT->'{pt[0]['id']}', EN->'{en[0]['id']}'"
 
 
+def t_capability_map():
+    # v1.45 (author's item 2): the runtime LEARNS to work with installed capabilities —
+    # commands mapped (never executed), environment probed, how_to answers PT/EN, and
+    # "knowing how to use X" is promoted only by real outcomes.
+    import capability_map as cm, tempfile, os, importlib, learning as lrn
+    r = cm.build()
+    assert r["capabilities"] >= 45 and r["tools_present"] >= 2, r
+    doc = cm.load()
+    env = doc["environment"]
+    assert env["tools"].get("python") or env["tools"].get("python3"), env["tools"]
+    assert "libraries" in env and isinstance(env["libraries"].get("numpy"), bool)
+    # own scripts are capabilities with documented commands; templates are capabilities too
+    ids = {c["id"] for c in doc["capabilities"]}
+    assert "tool:pot" in ids and "template:laudo" in ids, sorted(ids)[:8]
+    # no prose masquerading as a command (the "Python cannot..." regex bug)
+    for c in doc["capabilities"]:
+        for cmd in c["commands"]:
+            assert not cmd.lower().startswith("python cannot"), cmd
+    hits = cm.how_to("qual template usar para um laudo?")
+    assert hits and any("laudo" in h["id"] for h in hits), hits
+    # promotion by REAL outcomes only
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+    try:
+        importlib.reload(lrn)
+        for _ in range(3):
+            out = cm.record_use("tool:pot", True)
+        assert out["status"] == "PROMOTED", out
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(lrn)
+    return f"{r['capabilities']} capabilities; env probed; how_to PT ok; use->PROMOTED"
+
+
+def t_pipeline_dsm():
+    # v1.45 (author's item 3): the DSM turned on the runtime — exact import matrix + per-mode
+    # flow, and the APPLIED optimization (context budget per mode) consumed by the entry point.
+    import pipeline_dsm as pd, json, os
+    r = pd.build()
+    assert r["modules"] >= 44 and r["levels"] >= 3, r
+    doc = json.load(open(pd.DSM_PATH, encoding="utf-8"))
+    dsm = doc["module_dsm"]
+    assert any(m["module"] == "_tfidf" for m in dsm["load_bearing"]), dsm["load_bearing"]
+    # the 3 known lazy cycles are surfaced (documented coupling, not load-time cycles)
+    flat = {tuple(sorted(c)) for c in dsm["cycles"]}
+    assert ("agent_spawn", "orchestrator") in flat, dsm["cycles"]
+    flow = doc["mode_flow"]
+    assert flow["EXPRESS"]["plan"] == ["TRIAGE"] and flow["EXPRESS"]["savings_vs_naive"] > 4000
+    assert len(flow["STANDARD"]["skipped"]) >= 2, flow["STANDARD"]
+    assert flow["RESEARCH"]["context_budget_chars"] > flow["STANDARD"]["context_budget_chars"]
+    assert pd.context_budget("EXPRESS") == 0, "EXPRESS must inject zero context (waste cut)"
+    # wired: a STANDARD-mode spawn uses the smaller budget
+    import agent_spawn as sp
+    spec = sp.spawn("engineer", "refactor the api handler", mode="STANDARD")
+    assert spec["context"]["chars"] <= pd.context_budget("STANDARD"), spec["context"]["chars"]
+    return (f"{r['modules']} modules, {r['levels']} levels, {len(dsm['cycles'])} lazy cycles; "
+            f"EXPRESS saves ~{flow['EXPRESS']['savings_vs_naive']}tk; ctx budget wired")
+
+
 def t_plug_and_play():
     # v1.44 (the ORIGINAL idea): a page-in on a fresh machine restores EVERYTHING durable —
     # habits (config), trained agents (grants), validated learning, vaccines, memory — via a
@@ -1182,6 +1244,7 @@ TESTS = [
     ("taxonomy", t_taxonomy), ("attraction_graph", t_attraction_graph),
     ("agent_spawn", t_agent_spawn), ("kernel_gate", t_kernel_gate), ("rag_index", t_rag_index),
     ("plug_and_play", t_plug_and_play), ("agent_bundle_context", t_agent_bundle_and_context),
+    ("capability_map", t_capability_map), ("pipeline_dsm", t_pipeline_dsm),
 ]
 
 

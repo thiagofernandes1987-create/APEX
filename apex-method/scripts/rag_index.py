@@ -99,7 +99,7 @@ def _collect_nodes():
         if f.endswith(".md"):
             add(f"reference:{f[:-3]}", "reference", f"references/{f}",
                 _md_head(os.path.join(ROOT, "references", f)))
-    for f in ("SKILL.md", "spec.md", "inventario.md", "requirements.txt"):
+    for f in ("SKILL.md", "spec.md", "documentacao.md", "inventario.md", "requirements.txt"):
         p = os.path.join(ROOT, f)
         if os.path.isfile(p):
             add(f"doc:{f}", "doc", f, _md_head(p))
@@ -120,6 +120,16 @@ def _collect_nodes():
             for rel, desc in REPO_AREAS.items():
                 if os.path.isdir(os.path.join(root, rel.rstrip("/"))):
                     add(f"repo:{rel.rstrip('/')}", "repo-area", rel, desc)
+    except Exception:
+        pass
+    # v1.45 tool-use memory: every mapped CAPABILITY is its own node, so "how do I do X?"
+    # resolves straight to the skill/tool/template + its commands (capability_map.how_to).
+    try:
+        import capability_map
+        for c in capability_map.load()["capabilities"]:
+            add(f"capability:{c['id']}", "capability", c["path"],
+                f"{c['name']}: {c['description']} | triggers: {c['triggers']} | "
+                f"commands: {' ; '.join(c['commands'][:4])}")
     except Exception:
         pass
     return nodes
