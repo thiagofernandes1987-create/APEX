@@ -1,0 +1,76 @@
+{
+  "files": [
+    {
+      "original_name": "activity-page-00001.json",
+      "original_path": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\raw\\chembl_37\\adora2a_ki_nm_exact\\activity-page-00001.json",
+      "sha256": "43a16ee8e9feaa2704a7fc76a6a69e80e83c66dfed1f0a35d5443a1ed06ae8fb",
+      "size_bytes": 1495551,
+      "stored_locator": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\objects\\43\\43a16ee8e9feaa2704a7fc76a6a69e80e83c66dfed1f0a35d5443a1ed06ae8fb"
+    },
+    {
+      "original_name": "activity-page-00002.json",
+      "original_path": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\raw\\chembl_37\\adora2a_ki_nm_exact\\activity-page-00002.json",
+      "sha256": "bbbd7328c49ec2124e9939173eff38878204e665825c0d70fc2c03976344ebb5",
+      "size_bytes": 1488930,
+      "stored_locator": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\objects\\bb\\bbbd7328c49ec2124e9939173eff38878204e665825c0d70fc2c03976344ebb5"
+    },
+    {
+      "original_name": "activity-page-00003.json",
+      "original_path": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\raw\\chembl_37\\adora2a_ki_nm_exact\\activity-page-00003.json",
+      "sha256": "c14798a958c52b26b8f8081205c7887119f3de4039250071376cfdac8ec2034f",
+      "size_bytes": 1495957,
+      "stored_locator": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\objects\\c1\\c14798a958c52b26b8f8081205c7887119f3de4039250071376cfdac8ec2034f"
+    },
+    {
+      "original_name": "activity-page-00004.json",
+      "original_path": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\raw\\chembl_37\\adora2a_ki_nm_exact\\activity-page-00004.json",
+      "sha256": "0ee345f91ede53a5029e4568678ae1158cedfe2d6a4d3bb0765c5fc9d73033b4",
+      "size_bytes": 1505274,
+      "stored_locator": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\objects\\0e\\0ee345f91ede53a5029e4568678ae1158cedfe2d6a4d3bb0765c5fc9d73033b4"
+    },
+    {
+      "original_name": "activity-page-00005.json",
+      "original_path": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\raw\\chembl_37\\adora2a_ki_nm_exact\\activity-page-00005.json",
+      "sha256": "bc07e0bc769f56b5250461604865531e9ddff744f5482e0172e9ec3bb2f7c750",
+      "size_bytes": 1598869,
+      "stored_locator": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\objects\\bc\\bc07e0bc769f56b5250461604865531e9ddff744f5482e0172e9ec3bb2f7c750"
+    },
+    {
+      "original_name": "activity-page-00006.json",
+      "original_path": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\raw\\chembl_37\\adora2a_ki_nm_exact\\activity-page-00006.json",
+      "sha256": "d536d2e785fffd9af44ed33da085eeb1010bc4b80a94ffd5e464a949382e69ed",
+      "size_bytes": 1673036,
+      "stored_locator": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\objects\\d5\\d536d2e785fffd9af44ed33da085eeb1010bc4b80a94ffd5e464a949382e69ed"
+    },
+    {
+      "original_name": "activity-page-00007.json",
+      "original_path": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\raw\\chembl_37\\adora2a_ki_nm_exact\\activity-page-00007.json",
+      "sha256": "7436753c1ac36ee7169fe08ff7c60ba6316b109aa5d63f9618cb60d65ffdd3e1",
+      "size_bytes": 1360957,
+      "stored_locator": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\algorithms\\apex-r-scientific\\data\\objects\\74\\7436753c1ac36ee7169fe08ff7c60ba6316b109aa5d63f9618cb60d65ffdd3e1"
+    }
+  ],
+  "query": {
+    "audit_gate": "DATA.CHEMBL.ACTIVITY_QC",
+    "limit": 1000,
+    "max_records": 10000,
+    "offset": 0,
+    "standard_type": "Ki",
+    "standard_units": "nM",
+    "target_chembl_id": "CHEMBL251",
+    "total_count_reported": 6594,
+    "url": "https://www.ebi.ac.uk/chembl/api/data/activity.json?target_chembl_id=CHEMBL251&standard_type=Ki&standard_units=nM&standard_relation=%3D&limit=1000&offset=0&format=json"
+  },
+  "retrieved_at": "2026-07-17T22:46:56+00:00",
+  "snapshot_id": "74e1759657246b3509eb2356245e64f7aece4dc90331302a78b903bff5ba5ebb",
+  "source": {
+    "license_class": "ATTRIBUTION",
+    "license_name": "CC BY-SA 3.0 Unported",
+    "name": "ChEMBL",
+    "redistribution_allowed": true,
+    "source_id": "chembl",
+    "uri": "https://www.ebi.ac.uk/chembl/",
+    "version": "CHEMBL_37"
+  },
+  "status": "FROZEN"
+}

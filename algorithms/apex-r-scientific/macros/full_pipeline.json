@@ -1,0 +1,7 @@
+{
+  "macro_id": "full_pipeline",
+  "name": "Pipeline APEX-R completo",
+  "description": "Mapa integral do produto; bloqueia em qualquer módulo ainda não implementado ou não validado.",
+  "steps": ["M1", "M0", "M2", "M2.5", "M3", "M4", "M5A", "M5B", "M6", "M7", "M8", "M9", "PCL", "M11", "M10"]
+}
+

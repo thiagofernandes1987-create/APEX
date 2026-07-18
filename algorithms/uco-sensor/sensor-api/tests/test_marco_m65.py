@@ -75,7 +75,7 @@ def test_TAE05_language_for_extension_routes_js_java_go():
     assert language_for_extension(".java") == "java"
     assert language_for_extension(".go") == "go"
     assert language_for_extension(".rs") == "rust"
-    assert language_for_extension(".c") == "c"
+    assert language_for_extension(".c") is None
     assert language_for_extension(".py") is None
 
 

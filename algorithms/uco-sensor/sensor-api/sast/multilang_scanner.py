@@ -149,25 +149,6 @@ _JS_RULES: List[MLRule] = [
            "Require the same-origin check unconditionally (use && , not ||) before "
            "attaching a cookie-derived credential header to a request.",
            "const xsrfValue = isURLSameOrigin(fullPath) && config.xsrfCookieName && cookies.read(...);"),
-    MLRule("JS12", _JS, "CRITICAL", "CWE-94", "A03:2021",
-           "Command injection via unvalidated template `variable` option",
-           # CVE-2021-23337 (lodash, GHSA-35jh-r3h4-6jhm): `_.template`'s
-           # `variable` option is read from `options.variable` and spliced
-           # directly into the generated function's parameter list
-           # (`'function(' + (variable || 'obj') + ') {\n' + ...`) with no
-           # character-whitelist check. The fix (sha ded9bc66 -> 3469357c)
-           # adds `reForbiddenIdentifierChars.test(variable)` and throws
-           # before that splice ever runs. NOT a ReDoS bug (a prior pass on
-           # this corpus mischaracterized it as one) — this is the same
-           # "external option spliced into generated function source, no
-           # validation anywhere in the file" shape as CS06/C05, detected
-           # the same way: whole-file presence of the splice site without a
-           # matching `.test(<same var>)` guard anywhere else in the file.
-           _rx(r'(?!)'),  # never matches directly; detection is whole-file (see below)
-           "Validate the `variable` option against an identifier-safe character "
-           "whitelist (reject `()=,{}[]/\\s`) before splicing it into generated "
-           "function source.",
-           "if (reForbiddenIdentifierChars.test(variable)) { throw new Error(...); }"),
 ]
 
 
@@ -468,6 +449,102 @@ _PHP_RULES: List[MLRule] = [
 ]
 
 
+# ── Rust rules ────────────────────────────────────────────────────────────────
+#
+# RS01 is not a simple per-line regex: the bug (CVE-2023-22466, tokio
+# `ServerOptions::pipe_mode`) only exists in the *relationship* between two
+# different setter methods that both write the same bit-field. One setter
+# (`pipe_mode`) did `self.pipe_mode = match ...` — a full overwrite that
+# silently clobbers any flag bits another setter (`reject_remote_clients`,
+# using the bit-preserving `bool_flag!` macro) had set on that same field.
+# A single-line regex cannot see this — it needs the whole file's setter
+# inventory per field name. Handled by `_scan_rust_bitfield_setters` below;
+# RS01 still carries the standard MLRule metadata so findings shape the
+# same as every other multi-language rule.
+
+_RUST = ("rust",)
+
+RS01 = MLRule(
+    "RS01", _RUST, "HIGH", "CWE-693", "A04:2021",
+    "Bit-field overwritten by one setter while another preserves flags",
+    _rx(r'(?!)'),  # never matches directly; detection is cross-line (see below)
+    "Use a bit-preserving operation (|=, &=, or the same bool_flag! style "
+    "already used by the other setter) instead of a full-field overwrite.",
+    "self.field |= FLAG;  // not: self.field = FLAG;",
+)
+
+_RUST_RULES: List[MLRule] = [RS01]
+
+_RUST_DIRECT_ASSIGN = re.compile(r'\bself\.(\w+)\s*=\s*(?!=)')
+_RUST_BIT_PRESERVE = re.compile(
+    r'bool_flag!\s*\(\s*self\.(\w+)\s*,|\bself\.(\w+)\s*(?:\|=|&=)'
+)
+
+
+def _scan_rust_bitfield_setters(source: str) -> List[Tuple[int, int, str]]:
+    """Cross-line RS01 detection: fields written by both a direct `self.f =`
+    overwrite and a bit-preserving op (`bool_flag!`/`|=`/`&=`) somewhere
+    else in the same file. Returns (lineno, col, field) for the overwrite
+    sites of every such field."""
+    direct: Dict[str, List[Tuple[int, int]]] = {}
+    preserved: set = set()
+
+    for lineno, raw in TreeSitterBridge.iter_lines(source):
+        line = _strip_line_comment(raw)
+        m = _RUST_DIRECT_ASSIGN.search(line)
+        if m:
+            direct.setdefault(m.group(1), []).append((lineno, m.start()))
+        for m2 in _RUST_BIT_PRESERVE.finditer(line):
+            field = m2.group(1) or m2.group(2)
+            preserved.add(field)
+
+    hits: List[Tuple[int, int, str]] = []
+    for field, sites in direct.items():
+        if field in preserved:
+            hits.extend((lineno, col, field) for lineno, col in sites)
+    return hits
+
+
+# ── PHP rules ─────────────────────────────────────────────────────────────────
+
+_PHP = ("php",)
+
+_PHP_RULES: List[MLRule] = [
+    MLRule("PHP01", _PHP, "CRITICAL", "CWE-78", "A03:2021",
+           "OS command injection via exec/shell_exec/system",
+           _rx(r'\b(?:exec|shell_exec|system|passthru|popen|proc_open)\s*\(\s*["\'].*\$'),
+           "Use escapeshellarg()/escapeshellcmd() on every argument, or avoid shelling out.",
+           "exec('cmd ' . escapeshellarg($arg));"),
+    MLRule("PHP02", _PHP, "HIGH", "CWE-89", "A03:2021",
+           "SQL injection via string concatenation in query",
+           _rx(r'(?:mysqli_query|->query|->exec)\s*\(\s*["\'].*\.\s*\$'),
+           "Use prepared statements (PDO/mysqli bind_param).",
+           "$stmt = $pdo->prepare('SELECT * FROM t WHERE id = ?');"),
+    MLRule("PHP03", _PHP, "CRITICAL", "CWE-95", "A03:2021",
+           "Code injection via eval()",
+           _rx(r'\beval\s*\('),
+           "Never eval dynamic/user-controlled strings.",
+           ""),
+    MLRule("PHP04", _PHP, "CRITICAL", "CWE-502", "A08:2021",
+           "Insecure deserialization via unserialize() of external input",
+           _rx(r'\bunserialize\s*\(\s*\$_(?:GET|POST|REQUEST|COOKIE)'),
+           "Use json_decode for untrusted data; never unserialize() external input.",
+           "$data = json_decode($_POST['data'], true);"),
+    MLRule("PHP05", _PHP, "MEDIUM", "CWE-116", "A04:2021",
+           "Unencoded parameter passed to a signed/temporary route builder",
+           # CVE-2026-48041 (Laravel): a path containing '?'/'&'/'#' passed
+           # unencoded into a signed-URL parameter array lets an attacker
+           # smuggle/override query parameters (incl. the signature's
+           # `expires`), bypassing URL expiration. Heuristic / low-confidence:
+           # cannot verify the encoding actually happened (would need
+           # dataflow), so this only flags the call site for manual review.
+           _rx(r'temporarySignedRoute\s*\(|signedRoute\s*\('),
+           "Pass path/query-like values through rawurlencode() before placing "
+           "them in a signed-route parameter array.",
+           "['path' => rawurlencode($path)]"),
+]
+
+
 # ── C# rules ──────────────────────────────────────────────────────────────────
 
 _CS = ("csharp",)
@@ -495,215 +572,21 @@ _CS_RULES: List[MLRule] = [
            ""),
     MLRule("CS05", _CS, "MEDIUM", "CWE-59", "A05:2021",
            "Archive extraction without symlink/path-containment validation",
-           # Low-confidence generic triage flag: presence of the public
-           # extraction API alone, regardless of any internal containment
-           # check elsewhere in the file. Deliberately NOT a detector of
-           # CVE-2026-45491 specifically (see CS06 below) — kept because it
-           # has standalone triage value for other archive-extraction CVEs.
+           # CVE-2026-45491 (dotnet/runtime): TarFile.ExtractToDirectory
+           # followed a symlink created by an earlier entry in the same
+           # archive to write outside the destination directory. Regex
+           # cannot verify the absence of a containment check (that needs
+           # dataflow), so this is a low-confidence triage flag only.
            _rx(r'\.(?:ExtractToDirectory|ExtractToFile)\s*\('),
            "Resolve symlinks in the destination path and verify containment "
            "before extracting each archive entry.",
            ""),
-    MLRule("CS06", _CS, "HIGH", "CWE-59", "A05:2021",
-           "Tar entry extraction resolves destination without symlink-escape validation",
-           # CVE-2026-45491 (dotnet/runtime, GHSA-7q4v-2mr6-5gpx): the real
-           # bug lives in TarEntry's internal extraction helper
-           # (ExtractRelativeToDirectoryAsync), not the public
-           # ExtractToDirectory/ExtractToFile API that CS05 flags. The fix
-           # (sha b06f62fc -> 8c91e3b2) added a FilePathEscapesDirectory()
-           # call alongside the pre-existing null checks on the resolved
-           # destination/link path. File-wide presence/absence check (the
-           # null-guard exists, but the escape-check call doesn't anywhere
-           # in the file) — validated to fire on the real vulnerable
-           # TarEntry.cs and go silent on the real fixed version.
-           _rx(r'(?!)'),  # never matches directly; detection is whole-file (see below)
-           "Resolve symlinks component-by-component and reject any "
-           "destination/link path that escapes the target directory before "
-           "extracting.",
-           "if (fileDestinationPath is null || FilePathEscapesDirectory(destDir, fileDestinationPath)) ..."),
 ]
-
-CS06 = _CS_RULES[-1]
-
-JS12 = _JS_RULES[-1]
-
-_JS_TEMPLATE_VARIABLE_ASSIGN = re.compile(
-    r"\bvar\s+(\w+)\s*=\s*hasOwnProperty\.call\s*\(\s*options\s*,\s*['\"]variable['\"]\s*\)\s*&&\s*options\.variable"
-)
-_JS_TEMPLATE_VARIABLE_SPLICE = re.compile(
-    r"['\"]function\(['\"]\s*\+\s*\(?\s*(\w+)"
-)
-
-
-def _scan_js_template_variable_injection(source: str) -> List[Tuple[int, int]]:
-    """JS12: a file that reads an externally-supplied `variable` option
-    (the `_.template` pattern) and splices it into a `'function(' + ...`
-    generated-source string, with no `.test(<same var>)` validation call
-    anywhere else in the file guarding that splice."""
-    assign_name = None
-    splice_sites: List[Tuple[int, int, str]] = []
-
-    for lineno, raw in TreeSitterBridge.iter_lines(source):
-        line = _strip_line_comment(raw)
-        m = _JS_TEMPLATE_VARIABLE_ASSIGN.search(line)
-        if m and assign_name is None:
-            assign_name = m.group(1)
-        m2 = _JS_TEMPLATE_VARIABLE_SPLICE.search(line)
-        if m2:
-            splice_sites.append((lineno, m2.start(), m2.group(1)))
-
-    if assign_name is None:
-        return []
-
-    guard = re.compile(r"\.test\s*\(\s*" + re.escape(assign_name) + r"\s*\)")
-    if guard.search(source):
-        return []
-
-    return [(lineno, col) for lineno, col, name in splice_sites if name == assign_name]
-
-
-_CS_TAR_ESCAPE_GUARD_SITE = re.compile(
-    r'\b(?:fileDestinationPath|linkDestination)\s*(?:==|is)\s*null\b'
-)
-_CS_TAR_ESCAPE_GUARD_CALL = re.compile(r'\bFilePathEscapesDirectory\s*\(')
-
-
-def _scan_csharp_tar_extraction(source: str) -> List[Tuple[int, int]]:
-    """CS06: a file that null-checks a resolved tar entry destination/link
-    path (the pre-fix pattern) but never calls a symlink-escape guard
-    anywhere in the same file is the CVE-2026-45491 shape."""
-    if _CS_TAR_ESCAPE_GUARD_CALL.search(source):
-        return []
-    hits: List[Tuple[int, int]] = []
-    for lineno, raw in TreeSitterBridge.iter_lines(source):
-        line = _strip_line_comment(raw)
-        m = _CS_TAR_ESCAPE_GUARD_SITE.search(line)
-        if m:
-            hits.append((lineno, m.start()))
-    return hits
-
-
-# ── C / C++ rules ─────────────────────────────────────────────────────────────
-#
-# C01 is not a simple per-line regex: the bug (CVE-2023-38545, curl SOCKS5
-# heap buffer overflow) is the *absence* of a length guard, not the presence
-# of a bad call by itself. The pre-fix `do_SOCKS5()` (lib/socks.c, sha
-# 09e25b9d) detects `hostname_len > 255` but only *logs* it and flips
-# `socks5_resolve_local = TRUE` (a no-op downgrade attempt that does not
-# actually short-circuit the function) before falling through to
-# `memcpy(&socksreq[len], sx->hostname, hostname_len)` against the fixed
-# ~256-byte `socksreq` buffer. The fix (sha fb4415d8) replaces the log+flag
-# with `failf(...); return CURLPX_LONG_HOSTNAME;`, which aborts before the
-# memcpy is ever reached. A single-line regex cannot see this — it needs to
-# know whether *any* `return` follows the `hostname_len > 255` guard
-# elsewhere in the file. Handled by `_scan_c_socks_overflow` below; C01
-# still carries the standard MLRule metadata so findings shape the same as
-# every other multi-language rule.
-
-_C = ("c",)
-
-C01 = MLRule(
-    "C01", _C, "CRITICAL", "CWE-787", "A06:2021",
-    "Hostname copied into fixed-size buffer without a length-guard return",
-    _rx(r'(?!)'),  # never matches directly; detection is whole-file (see below)
-    "When a length check rejects an oversized hostname/buffer, return/abort "
-    "immediately — do not just log a warning and fall through to the copy.",
-    "if(len > 255) { failf(data, \"too long\"); return CURLPX_LONG_HOSTNAME; }",
-)
-
-_C_RULES: List[MLRule] = [
-    C01,
-    MLRule("C02", _C, "CRITICAL", "CWE-120", "A06:2021",
-           "Unbounded string copy via strcpy/strcat/gets",
-           _rx(r'\b(?:strcpy|strcat|gets)\s*\('),
-           "Use a bounded variant (strlcpy/strncpy/snprintf) and check the "
-           "source length against the destination buffer size first.",
-           "strlcpy(dst, src, sizeof(dst));"),
-    MLRule("C03", _C, "HIGH", "CWE-134", "A06:2021",
-           "Unbounded formatted write via sprintf",
-           _rx(r'\bsprintf\s*\('),
-           "Use snprintf with the destination buffer size.",
-           "snprintf(dst, sizeof(dst), fmt, ...);"),
-    MLRule("C04", _C, "CRITICAL", "CWE-78", "A03:2021",
-           "OS command injection via system()/popen() with concatenation",
-           _rx(r'\b(?:system|popen)\s*\([^)]*(?:\+|strcat|sprintf)'),
-           "Avoid building shell commands from untrusted input; use exec*() "
-           "with an argument array instead of a shell string.",
-           "execvp(\"cmd\", argv);  // no shell involved"),
-    MLRule("C05", _C, "HIGH", "CWE-367", "A04:2021",
-           "check_updates() with no lstat-cache invalidation before checkout (TOCTOU)",
-           _rx(r'(?!)'),  # never matches directly; detection is whole-file (see below)
-           "Invalidate the lstat cache immediately before the checkout loop so "
-           "checkout decisions cannot rely on stale filesystem state.",
-           "invalidate_lstat_cache();  /* before the checkout/update loop */"),
-]
-
-# C05 (git CVE-2021-21300, symlink TOCTOU during checkout): the vulnerable
-# `check_updates()` (unpack-trees.c, sha 0d58fef5) relies on a possibly-stale
-# lstat cache while deciding what to write to the worktree, letting an
-# attacker race a symlink swap (e.g. via a crafted .gitattributes/filter
-# combo) between the cache fill and the actual write. The fix (sha
-# 22539ec3) adds a single `invalidate_lstat_cache();` call at the top of
-# `check_updates()`, forcing every check in that pass to re-stat. No
-# single line is "bad" — the bug is the *absence* of that call anywhere in
-# a file that defines `check_updates()`. Same whole-file presence/absence
-# shape as CS06.
-
-C05 = _C_RULES[-1]
-
-_C_SOCKS_LEN_GUARD = re.compile(r'hostname_len\s*>\s*255\b')
-_C_SOCKS_LEN_GUARD_RETURN = re.compile(
-    r'hostname_len\s*>\s*255\b[\s\S]{0,200}?\breturn\b'
-)
-_C_SOCKS_DANGEROUS_MEMCPY = re.compile(
-    r'\bmemcpy\s*\([^;]*hostname[^;]*,\s*hostname_len\s*\)'
-)
-
-
-def _scan_c_socks_overflow(source: str) -> List[Tuple[int, int]]:
-    """C01: a file that copies a `hostname`-derived length into a fixed
-    buffer via memcpy(..., hostname_len) but never returns/aborts within
-    ~200 chars of the `hostname_len > 255` guard is the CVE-2023-38545
-    shape (log-and-continue instead of reject)."""
-    if not _C_SOCKS_DANGEROUS_MEMCPY.search(source):
-        return []
-    if not _C_SOCKS_LEN_GUARD.search(source):
-        return []
-    if _C_SOCKS_LEN_GUARD_RETURN.search(source):
-        return []
-    hits: List[Tuple[int, int]] = []
-    for lineno, raw in TreeSitterBridge.iter_lines(source):
-        line = _strip_line_comment(raw)
-        m = _C_SOCKS_DANGEROUS_MEMCPY.search(line)
-        if m:
-            hits.append((lineno, m.start()))
-    return hits
-
-
-_C_CHECK_UPDATES_DEF = re.compile(r'\bcheck_updates\s*\([^)]*\)\s*\{?\s*$')
-_C_INVALIDATE_LSTAT_CACHE_CALL = re.compile(r'\binvalidate_lstat_cache\s*\(')
-
-
-def _scan_c_stale_lstat_cache(source: str) -> List[Tuple[int, int]]:
-    """C05: a file that defines `check_updates()` (the worktree-checkout
-    decision pass) but never calls `invalidate_lstat_cache()` anywhere in
-    the file is the CVE-2021-21300 shape — checkout decisions can rely on
-    a stale lstat cache, enabling a symlink-swap TOCTOU race."""
-    if _C_INVALIDATE_LSTAT_CACHE_CALL.search(source):
-        return []
-    hits: List[Tuple[int, int]] = []
-    for lineno, raw in TreeSitterBridge.iter_lines(source):
-        line = _strip_line_comment(raw)
-        m = _C_CHECK_UPDATES_DEF.search(line)
-        if m:
-            hits.append((lineno, m.start()))
-    return hits
 
 
 # All rules indexed by language for fast dispatch
 _ALL_RULES: List[MLRule] = (
     _JS_RULES + _JAVA_RULES + _GO_RULES + _PHP_RULES + _CS_RULES + _RUST_RULES
-    + _C_RULES
 )
 
 _EXT_LANG: Dict[str, str] = {
@@ -715,7 +598,6 @@ _EXT_LANG: Dict[str, str] = {
     ".php": "php",
     ".cs": "csharp",
     ".rs": "rust",
-    ".c": "c", ".h": "c",
 }
 
 
@@ -806,134 +688,6 @@ def scan_multilang(source: str, file_extension: str = "") -> SASTResult:
                 debt_minutes=_DEBT.get(RS01.severity, 20),
                 suggested_fix=RS01.suggested_fix,
                 confidence=0.65,   # cross-line heuristic — lower than single-line regex
-                explanation="",
-            ))
-
-    if language == "javascript":
-        lines = source.splitlines()
-        for lineno, col in _scan_js_template_variable_injection(source):
-            key = ("JS12", lineno)
-            if key in seen:
-                continue
-            seen.add(key)
-            snippet = lines[lineno - 1].strip()[:200] if 0 < lineno <= len(lines) else ""
-            findings.append(SASTFinding(
-                rule_id="JS12",
-                severity=JS12.severity,
-                cwe_id=JS12.cwe_id,
-                owasp=JS12.owasp,
-                title=JS12.title,
-                description="The `variable` option is spliced into generated function "
-                            "source here but no `.test()` validation guards it anywhere "
-                            "in this file",
-                line=lineno,
-                col=col,
-                code_snippet=snippet,
-                remediation=JS12.remediation,
-                debt_minutes=_DEBT.get(JS12.severity, 20),
-                suggested_fix=JS12.suggested_fix,
-                confidence=0.7,   # cross-line heuristic — lower than single-line regex
-                explanation="",
-            ))
-
-    if language == "csharp":
-        lines = source.splitlines()
-        for lineno, col in _scan_csharp_tar_extraction(source):
-            key = ("CS06", lineno)
-            if key in seen:
-                continue
-            seen.add(key)
-            snippet = lines[lineno - 1].strip()[:200] if 0 < lineno <= len(lines) else ""
-            findings.append(SASTFinding(
-                rule_id="CS06",
-                severity=CS06.severity,
-                cwe_id=CS06.cwe_id,
-                owasp=CS06.owasp,
-                title=CS06.title,
-                description="Null-checks the resolved tar entry path but never calls a "
-                            "symlink-escape guard anywhere in this file",
-                line=lineno,
-                col=col,
-                code_snippet=snippet,
-                remediation=CS06.remediation,
-                debt_minutes=_DEBT.get(CS06.severity, 20),
-                suggested_fix=CS06.suggested_fix,
-                confidence=0.6,   # whole-file presence/absence heuristic
-                explanation="",
-            ))
-
-    if language == "c":
-        lines = source.splitlines()
-        for lineno, col in _scan_c_socks_overflow(source):
-            key = ("C01", lineno)
-            if key in seen:
-                continue
-            seen.add(key)
-            snippet = lines[lineno - 1].strip()[:200] if 0 < lineno <= len(lines) else ""
-            findings.append(SASTFinding(
-                rule_id="C01",
-                severity=C01.severity,
-                cwe_id=C01.cwe_id,
-                owasp=C01.owasp,
-                title=C01.title,
-                description="hostname_len > 255 guard logs/flags but never returns "
-                            "before the memcpy(..., hostname_len) into the fixed buffer",
-                line=lineno,
-                col=col,
-                code_snippet=snippet,
-                remediation=C01.remediation,
-                debt_minutes=_DEBT.get(C01.severity, 20),
-                suggested_fix=C01.suggested_fix,
-                confidence=0.6,   # whole-file presence/absence heuristic
-                explanation="",
-            ))
-        for lineno, col in _scan_c_stale_lstat_cache(source):
-            key = ("C05", lineno)
-            if key in seen:
-                continue
-            seen.add(key)
-            snippet = lines[lineno - 1].strip()[:200] if 0 < lineno <= len(lines) else ""
-            findings.append(SASTFinding(
-                rule_id="C05",
-                severity=C05.severity,
-                cwe_id=C05.cwe_id,
-                owasp=C05.owasp,
-                title=C05.title,
-                description="check_updates() defined here but invalidate_lstat_cache() "
-                            "is never called anywhere in this file",
-                line=lineno,
-                col=col,
-                code_snippet=snippet,
-                remediation=C05.remediation,
-                debt_minutes=_DEBT.get(C05.severity, 20),
-                suggested_fix=C05.suggested_fix,
-                confidence=0.6,   # whole-file presence/absence heuristic
-                explanation="",
-            ))
-
-    if language == "go":
-        lines = source.splitlines()
-        for lineno, col in _scan_go_password_retention(source):
-            key = ("GO12", lineno)
-            if key in seen:
-                continue
-            seen.add(key)
-            snippet = lines[lineno - 1].strip()[:200] if 0 < lineno <= len(lines) else ""
-            findings.append(SASTFinding(
-                rule_id="GO12",
-                severity=GO12.severity,
-                cwe_id=GO12.cwe_id,
-                owasp=GO12.owasp,
-                title=GO12.title,
-                description="Authenticate() calls CheckPassword(r.Name, r.Password) but "
-                            "never clears r.Password anywhere in its own body",
-                line=lineno,
-                col=col,
-                code_snippet=snippet,
-                remediation=GO12.remediation,
-                debt_minutes=_DEBT.get(GO12.severity, 20),
-                suggested_fix=GO12.suggested_fix,
-                confidence=0.6,   # function-scoped presence/absence heuristic
                 explanation="",
             ))
 

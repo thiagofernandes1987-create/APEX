@@ -1,0 +1,18 @@
+{
+  "M1": {
+    "paths": ["INVENTARIO.md", "SPEC.md"]
+  },
+  "M2": {
+    "kd_molar": 1e-9,
+    "temperature_k": 298.15
+  },
+  "M0": {
+    "design_matrix": [[1, 0], [1, 1], [1, 2]]
+  },
+  "M4": {
+    "amounts": [100.0, 20.0],
+    "transfer_rates": [[0.0, 0.2], [0.1, 0.0]],
+    "elimination_rates": [0.01, 0.02],
+    "input_rates": [1.4, 0.0]
+  }
+}

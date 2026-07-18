@@ -1,0 +1,19 @@
+{
+  "split_id": "m2-demo-v1",
+  "dataset_snapshot_id": "replace-with-frozen-snapshot-id",
+  "strategy": "scaffold-or-target-family",
+  "external_set_locked": true,
+  "partitions": {
+    "TRAIN": ["r1", "r2"],
+    "CALIBRATION": ["r3"],
+    "INTERNAL_TEST": ["r4"],
+    "EXTERNAL_TEST": ["r5"]
+  },
+  "groups": {
+    "r1": "g1",
+    "r2": "g2",
+    "r3": "g3",
+    "r4": "g4",
+    "r5": "g5"
+  }
+}
