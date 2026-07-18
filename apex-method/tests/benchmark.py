@@ -692,6 +692,89 @@ def t_execution_policy():
             f"floor(audit/security)+uncertain+min_mode force the pipeline")
 
 
+def t_attraction_graph():
+    # v1.43: the precomputed gravitational routing JSON — the attraction chain must pull the
+    # QA/security cluster from a single audit seed, and rebuild must reflect the catalogs.
+    import attraction_graph as ag, os
+    r = ag.build()
+    assert r["nodes"] >= 300 and r["edges"] > 500, r
+    assert os.path.isfile(ag.GRAPH_PATH)
+    ag._CACHE.clear()
+    nb = ag.neighbors("agent:security-auditor")
+    assert nb and all("id" in e and e["w"] > 0 for e in nb), nb
+    exp = ag.equip_for("tech leader precisa fazer auditoria de código")
+    ids = [m["id"] for m in exp["members"]]
+    assert exp["seeds"] and len(ids) >= 5, exp
+    assert any("security" in i or "test" in i or "qa" in i or "review" in i for i in ids), ids
+    # alien seed -> empty expansion is the honest answer
+    assert ag.expand(["not-a-body"])["members"] == []
+    return f"{r['nodes']} nodes, {r['edges']} edges; audit seed pulls {len(ids)} bodies"
+
+
+def t_agent_spawn():
+    # RT-19/RT-27: spawn assembles a FULLY EXECUTABLE spec; equip/unequip persist durably.
+    import agent_spawn as sp, agent_registry as ar
+    spec = sp.spawn("tech-lead-orchestrator", "audit the backend for security issues")
+    assert spec["spawn_ready"] and all(spec["spawn_checklist"].values()), spec["spawn_checklist"]
+    assert spec["persona"] and spec["instruction"] and "output_schema" in spec, "executable spec"
+    assert spec["skills"] or spec["scripts"] or spec["tools"], "must be equipped"
+    # unknown persona -> checklist catches it (the contract forbids spawning it)
+    ghost = sp.spawn("agent-that-does-not-exist", "x")
+    assert ghost["spawn_ready"] is False and not ghost["spawn_checklist"]["persona_loaded"], ghost["spawn_checklist"]
+    # equip -> durable grant visible on reload; unequip -> revoked
+    sp.equip("react-specialist", {"id": "x/design-taste", "source": "https://x/SKILL.md"})
+    assert "x/design-taste" in sp._equipped_grants("react-specialist")
+    sp.unequip("react-specialist", "x/design-taste")
+    assert "x/design-taste" not in sp._equipped_grants("react-specialist")
+    # contract + manifest integration: every Level-B entry carries a spec + spawn_ready
+    import concurrent_executor as ce
+    man = ce.subagent_manifest("audit memory subsystem", "RESEARCH")
+    assert man["contract"] and all("spec" in e and "spawn_ready" in e for e in man["spawn"]), \
+        [list(e) for e in man["spawn"]]
+    return f"spec executable + ghost blocked + equip/unequip durable + manifest carries specs"
+
+
+def t_kernel_gate():
+    # RT-22: the run is a boolean contract — code steps done with evidence, llm steps handed
+    # back with the exact call, and gate() blocks completion until EVERYTHING is True.
+    import orchestrator as o
+    r = o.run("design a fault-tolerant payment api")
+    ck = r["kernel_checklist"]
+    done = {i["step"] for i in ck if i["done"]}
+    assert {"TRIAGE", "DISSECT", "RESOLVE_SPECIALISTS", "MODE", "PHASE_PLAN"} <= done, done
+    assert r["gate"]["pass"] is False and r["gate"]["missing"], "llm steps must block the gate"
+    assert all(i["evidence"] for i in ck if i["done"]), "code steps carry evidence"
+    for m in r["gate"]["missing"]:
+        if m["owner"] == "llm":
+            assert m["step"] in r["llm_actions"], f"llm step {m['step']} must state its exact call"
+    for i in ck:                                    # baton returns -> gate passes
+        if not i["done"]:
+            o.complete_step(ck, i["step"], "done by llm (test)")
+    assert o.gate(ck)["pass"] is True
+    # candidates supplied -> PMI_CONVERGE is code-completed with evidence
+    r2 = o.run("value the portfolio with monte carlo",
+               candidates=[{"discipline": "m", "answer": 2.0, "confidence": 0.9, "numeric": True},
+                           {"discipline": "s", "answer": 2.0, "confidence": 0.85, "numeric": True}])
+    pmi = [i for i in r2["kernel_checklist"] if i["step"] == "PMI_CONVERGE"][0]
+    assert pmi["done"] and "reliability" in pmi["evidence"], pmi
+    return f"gate blocks until complete; {len(done)}/12 code-done; PMI evidence wired"
+
+
+def t_rag_index():
+    # v1.43: node-based vector RAG with a GLOBAL IDF — PT and EN questions map to the right node.
+    import rag_index as ri, os
+    r = ri.build()
+    assert r["nodes"] >= 60 and os.path.isfile(ri.INDEX_PATH), r
+    ri._CACHE.clear()
+    pt = ri.search("como funciona a memória durável entre sessões?")
+    assert pt and any("memory" in h["id"] for h in pt[:3]), pt
+    en = ri.search("where are the 213 agents and how do I spawn one?")
+    assert en and any("agent" in h["id"] for h in en[:3]), en
+    sec = ri.search("security scan of external skills", node_type="script")
+    assert sec and all(h["type"] == "script" for h in sec), sec
+    return f"{r['nodes']} nodes; PT->'{pt[0]['id']}', EN->'{en[0]['id']}'"
+
+
 def t_taxonomy():
     # AUD-G2: taxonomy.py shipped in v1.41 as an ORPHAN (no caller, absent from scripts_lib.json).
     # Now registered + wired as dissect's language-independent facet fallback.
@@ -776,6 +859,11 @@ def t_swap_store():
             if (ss.parse_filename(x) or {}).get("name") == "persona"]
     assert len(vers) == 3, f"rotation keeps 3 backups, got {len(vers)}"
     assert json.load(open(os.path.join(folder, main[0]), encoding="utf-8"))["v"] == 4, "latest content is the newest write"
+    # RT-09b (GPT audit): an EXPLICIT identical ts must never overwrite — collision extends the ts
+    fixed = "20990101000000"
+    wa = ss.write_versioned(folder, "preferences", json.dumps({"v": "a"}), ts=fixed)
+    wb = ss.write_versioned(folder, "preferences", json.dumps({"v": "b"}), ts=fixed)
+    assert wa["filename"] != wb["filename"], (wa["filename"], wb["filename"])
     # the standard is shipped as a repo model file (built from the same spec)
     mpath = ss.write_model(os.path.join(root, "models"))
     spec = json.load(open(mpath, encoding="utf-8"))
@@ -953,12 +1041,19 @@ def t_runtime_autopsy():
         doc = ar.load(ar.AGENTS)
         skill = {"id": "demo/frontend", "name": "frontend", "description": "react ui",
                  "domain": "frontend", "source": "https://x/SKILL.md"}
-        g = ar.grant_skill(skill, doc, approved=True, scripts=["scripts/b.py"], persist=True)
+        g = ar.grant_skill(skill, doc, approved=True, scripts=["scripts/b.py"])  # persist DEFAULT
         assert g.get("persisted"), g
+        # RT-26b: the raw catalog stays immutable, but a default load() auto-merges the grant
+        raw = ar.load(ar.AGENTS, merge=False)
+        assert not any("demo/frontend" in a.get("competence", {}) for a in raw["agents"].values())
         fresh = ar.load(ar.AGENTS)
-        assert not any("demo/frontend" in a.get("competence", {}) for a in fresh["agents"].values())
-        merged = ar.merge_grants(fresh)
-        assert any("demo/frontend" in a.get("competence", {}) for a in merged["agents_doc"]["agents"].values())
+        assert any("demo/frontend" in a.get("competence", {}) for a in fresh["agents"].values()), \
+            "grant must survive reload by DEFAULT"
+        # unequip: a revocation record removes the ability on the next load
+        ar.revoke_grant("demo/frontend")
+        gone = ar.load(ar.AGENTS)
+        assert not any("demo/frontend" in a.get("competence", {}) for a in gone["agents"].values()), \
+            "revoked skill must be unequipped"
     finally:
         if _oh is not None:
             os.environ["APEX_METHOD_HOME"] = _oh
@@ -987,7 +1082,8 @@ TESTS = [
     ("evaluate_hypotheses", t_evaluate_hypotheses), ("project_ledger", t_project_ledger),
     ("memory", t_memory), ("llm_adapter", t_llm_adapter), ("swap_store", t_swap_store),
     ("learning", t_learning), ("execution_policy", t_execution_policy),
-    ("taxonomy", t_taxonomy),
+    ("taxonomy", t_taxonomy), ("attraction_graph", t_attraction_graph),
+    ("agent_spawn", t_agent_spawn), ("kernel_gate", t_kernel_gate), ("rag_index", t_rag_index),
 ]
 
 

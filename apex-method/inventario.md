@@ -1,9 +1,11 @@
 # Inventário & Plano de Implantação — apex-method (super skill)
 
-Skill **apex-method** v1.41.0 — destilação completa e executável do framework APEX no formato
+Skill **apex-method** v1.43.0 — destilação completa e executável do framework APEX no formato
 theneoai/awesome-skills, agora **integrada ao repositório** (`apex-method/` no repo APEX) e
 auditada em estilo autópsia (ver `AUDITORIA_SKILL.md`). Este documento é o inventário integral:
 checklist por marco, fluxo de funcionamento, e o **backlog do que falta acrescentar/corrigir**.
+
+**v1.43.0 — design do autor pós-validação da auditoria GPT (v1.40 → 22/27 já corrigidos na v1.42).** Os 5 achados restantes viraram arquitetura: **RT-22** `orchestrator.run` agora devolve um **kernel checklist booleano** (passos code executados com evidência; passos llm com a chamada exata) e `gate()` que só dá COMPLETE com tudo True — o LLM não pula etapa; **RT-19/RT-27** novo `agent_spawn` (contrato de spawn): agente genérico assume persona REAL (AGENT.md), atrai skills/diffs/scripts reais via o novo **`attraction_graph`** (JSON de roteamento gravitacional pré-computado — busca a 1ª competência e o resto se atrai; `rebuild()` a cada inclusão), equipa/desequipa com persistência (**RT-26b**: grants persistem por DEFAULT e são revogáveis; `load()` faz auto-merge); manifesto Level-B carrega specs completas + `spawn_contract()`; **RT-09b** colisão de `ts` explícito no swap agora estende com microssegundos (nunca sobrescreve). Novos também: **`rag_index`** (RAG vetorial por nós, IDF global, mapeia o repositório em ms) e **`spec.md`** (especificação integral do sistema). Suíte: benchmark 50/50, evaluate 13/13, scenario 7/7.
 
 **v1.41.0 — endurecimento pós-autópsia de runtime (auditoria GPT).** 12 achados adversariais
 corrigidos e blindados no CI (novo teste `runtime_autopsy` no benchmark): swap recusa bundle com
@@ -17,7 +19,7 @@ microssegundos evita colisão no mesmo segundo (RT-09); shape inesperado de API 
 (RT-15); `MemoryStore` aceita caminho relativo bare (RT-10). Suíte: benchmark 45/45, scenario 7/7.
 
 **Modelo mental (runtime cognitivo).** A skill trata o LLM como uma **VM cognitiva** (motor de
-inferência) e a si mesma como o **runtime/SO** em volta: kernel = `SKILL.md`; syscalls = os 41
+inferência) e a si mesma como o **runtime/SO** em volta: kernel = `SKILL.md`; syscalls = os 44
 `scripts/*.py`; escalonador = `geodesic_scheduler` + `project_ledger.dsm()`; processos = stances/
 subagentes (Nível A/B); memória paginável e durável = `memory.py` (SQLite + Knowledge Graph);
 log de integridade = ledger SHA-256; gerenciador de pacotes = `repo_bridge`+`skills_sh`; HAL =

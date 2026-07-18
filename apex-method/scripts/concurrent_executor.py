@@ -359,18 +359,40 @@ def subagent_manifest(task, mode, hypotheses=None):
     subagents = []
     for i, fr in enumerate(framings[:cap]):
         persona = personas[i % len(personas)]
-        instr = (f"You are the APEX '{persona}' persona. Task: {task[:160]}. "
-                 f"Argue the **{fr}** hypothesis. Return ONE JSON object: "
-                 f'{{"stance":"{fr}","answer":<your answer>,"confidence":0..1,'
-                 f'"rationale":"1-2 sentences"}}. '
-                 + ("Surface a NON-OBVIOUS option the others would miss." if fr == "genius"
-                    else "Be concrete and take a clear position."))
-        subagents.append({"persona": persona, "stance": fr, "instruction": instr})
+        # RT-19 (GPT audit -> author's spawn contract): every manifest entry is now a FULL
+        # executable spec — persona real + skills/diffs/scripts reais + governance + template +
+        # boolean spawn checklist — assembled by agent_spawn; never a bare one-line instruction.
+        entry = {"persona": persona, "stance": fr}
+        try:
+            import agent_spawn
+            spec = agent_spawn.spawn(persona, task, mode=mode, stance=fr)
+            entry["spec"] = spec
+            entry["instruction"] = spec["instruction"] + \
+                ("\nSurface a NON-OBVIOUS option the others would miss." if fr == "genius" else "")
+            entry["spawn_ready"] = spec["spawn_ready"]
+        except Exception:                          # degraded: keep the legacy one-liner
+            entry["instruction"] = (
+                f"You are the APEX '{persona}' persona. Task: {task[:160]}. "
+                f"Argue the **{fr}** hypothesis. Return ONE JSON object: "
+                f'{{"stance":"{fr}","answer":<your answer>,"confidence":0..1,'
+                f'"rationale":"1-2 sentences"}}. '
+                + ("Surface a NON-OBVIOUS option the others would miss." if fr == "genius"
+                   else "Be concrete and take a clear position."))
+        subagents.append(entry)
+    contract = None
+    try:
+        import agent_spawn
+        contract = agent_spawn.spawn_contract()
+    except Exception:
+        pass
     return {"level": "B", "reason": "maximize exploration with real LLM divergence (Agent subagents)",
-            "spawn": subagents, "budget_cap": cap,
-            "how": ("Spawn each entry as an Agent subagent CONCURRENTLY; collect their JSON "
-                    "hypotheses; then re-call evaluate_hypotheses(task, base_hypotheses, mode, "
-                    "subagent_hypotheses=[...their JSON...]) so the directors score the full set.")}
+            "spawn": subagents, "budget_cap": cap, "contract": contract,
+            "how": ("Spawn each entry as an Agent subagent CONCURRENTLY (system prompt = "
+                    "entry['instruction']; refuse entries with spawn_ready=False); collect their "
+                    "JSON hypotheses; then re-call evaluate_hypotheses(task, base_hypotheses, "
+                    "mode, subagent_hypotheses=[...their JSON...]) so the directors score the "
+                    "full set. The barrier/merge/PMI adjudicates — no agent's answer is adopted "
+                    "alone.")}
 
 
 def evaluate_hypotheses(task, hypotheses, directors=None, mode="DEEP", p_target=0.72,

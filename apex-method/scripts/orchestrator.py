@@ -239,6 +239,43 @@ def pmi_converge(candidates):
             "r_acum": gate}
 
 
+# ── KERNEL CHECKLIST + GATE (RT-22: the pipeline is a boolean contract, not a suggestion) ────
+# Every kernel step has an OWNER: "code" steps are executed by run() itself and marked done with
+# evidence; "llm" steps are the passagem de bastão — run() hands the LLM the EXACT call to make.
+# gate() refuses to declare the run complete until every step is True: incomplete -> RETURN_TO_LLM
+# with the missing steps, so the LLM cannot silently skip validations.
+KERNEL_STEPS = [
+    ("TRIAGE", "code"), ("DISSECT", "code"), ("RESOLVE_SPECIALISTS", "code"),
+    ("MODE", "code"), ("PHASE_PLAN", "code"),
+    ("SPAWN_AGENTS", "llm"), ("RUN_STANCES", "llm"), ("BARRIER_MERGE", "llm"),
+    ("VERIFY", "llm"), ("PMI_CONVERGE", "code"), ("SNAPSHOT", "code"), ("PAGE_OUT", "llm"),
+]
+
+
+def new_checklist():
+    return [{"step": s, "owner": o, "done": False, "evidence": None} for s, o in KERNEL_STEPS]
+
+
+def complete_step(checklist, step, evidence=""):
+    """Mark one kernel step done WITH evidence (the baton comes back from the LLM here)."""
+    for item in checklist:
+        if item["step"] == step:
+            item["done"], item["evidence"] = True, str(evidence)[:200]
+            return checklist
+    return checklist
+
+
+def gate(checklist):
+    """The boolean gate: PASS only when EVERY step is done. Otherwise RETURN_TO_LLM naming the
+    missing steps + who owns each — the run is NOT complete until this gate passes."""
+    missing = [{"step": i["step"], "owner": i["owner"]} for i in checklist if not i["done"]]
+    return {"pass": not missing, "missing": missing,
+            "action": ("COMPLETE" if not missing else
+                       "RETURN_TO_LLM — execute the missing steps (llm-owned: make the stated "
+                       "call, then complete_step(checklist, STEP, evidence)); re-run gate() "
+                       "until it passes")}
+
+
 # ── FULL FLOW ─────────────────────────────────────────────────────────────────
 def run(task, candidates=None, snapshot=None):
     """Public entry — NEVER raises. On any unexpected failure it returns a degraded result so the
@@ -297,6 +334,35 @@ def _run(task, candidates=None, snapshot=None):
     result = {"path": "FULL_PIPELINE", "mode": mode, "disciplines": disciplines,
               "specialists": specialists, "phase_plan": phase_plan,
               "escalate_discovery": escalate_discovery}
+    # ── RT-22: the kernel checklist — code-owned steps are DONE here with evidence; llm-owned
+    # steps carry the exact next call (passagem de bastão). gate() blocks completion until all True.
+    ck = new_checklist()
+    complete_step(ck, "TRIAGE", f"triage mode={tri['mode'] if tri else 'n/a'}")
+    complete_step(ck, "DISSECT", f"disciplines={disciplines}")
+    complete_step(ck, "RESOLVE_SPECIALISTS", f"{len(specialists)} disciplines resolved via gravity")
+    complete_step(ck, "MODE", f"mode={mode}")
+    complete_step(ck, "PHASE_PLAN", f"phases={phase_plan['phases']} n_final={phase_plan['n_final']}")
+    llm_actions = {
+        "SPAWN_AGENTS": ("concurrent_executor.subagent_manifest(task, mode) -> spawn each entry "
+                         "(spec-based, refuse spawn_ready=False) as a real Agent subagent"),
+        "RUN_STANCES": ("collect each subagent's JSON; for numeric work also run "
+                        "concurrent_executor.run_stances(task, stances, mode)"),
+        "BARRIER_MERGE": ("concurrent_executor.evaluate_hypotheses(task, hypotheses, mode, "
+                          "subagent_hypotheses=[...]) — barrier + entropy merge + directors"),
+        "VERIFY": ("uco_gate.gate on generated code; verify.verify_identity on formal claims; "
+                   "verification_gate.route for risky hypotheses"),
+        "PAGE_OUT": ("swap_store.page_out(session_id, memory_db, snapshot) at session end; "
+                     "upload drive_manifest; print the log"),
+    }
+    try:
+        import swap_store as _ss
+        if not _ss.persist_due(mode):
+            complete_step(ck, "PAGE_OUT", f"n/a — mode {mode} is ephemeral by design")
+            llm_actions.pop("PAGE_OUT", None)
+    except Exception:
+        pass
+    result["kernel_checklist"] = ck
+    result["llm_actions"] = llm_actions
     # PERSISTENCE TRIGGER (v1.39): heavy modes MUST page out at session end. Signal it here so the
     # LLM cannot forget — SKILL.md makes acting on `persist_due` mandatory before ending the session.
     try:
@@ -310,6 +376,11 @@ def _run(task, candidates=None, snapshot=None):
         pass
     if candidates:
         result["pmi_decision"] = pmi_converge(candidates)
+        complete_step(ck, "PMI_CONVERGE", f"reliability={result['pmi_decision'].get('reliability')}")
+    else:
+        llm_actions["PMI_CONVERGE"] = ("after BARRIER_MERGE, re-call orchestrator.run(task, "
+                                       "candidates=[...merged hypotheses...]) or "
+                                       "pmi_converge(candidates) directly; then complete_step")
     # audit P3: close the loop in code — record the run into the snapshot (C5) so the end
     # of the flow (snapshot + provenance) is not left purely to the LLM's discipline.
     if snapshot is not None:
@@ -323,6 +394,12 @@ def _run(task, candidates=None, snapshot=None):
             for gap in spec.get("install_requests", []):
                 snapshot["skills_staged"].append({"id": gap, "use_when": d, "status": "STAGED"})
         result["snapshot"] = snapshot
+        complete_step(ck, "SNAPSHOT", f"{len(snapshot['findings'])} findings recorded")
+    else:
+        llm_actions["SNAPSHOT"] = ("pass snapshot=snapshot.new_snapshot(task, mode) into run(), "
+                                   "or record findings via snapshot.add_finding; then complete_step")
+    # the gate is computed LAST so it reflects everything run() itself completed
+    result["gate"] = gate(ck)
     return result
 
 

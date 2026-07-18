@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.42.0
+version: 1.43.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,7 +47,7 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 41 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 44 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
@@ -104,7 +104,12 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   and the escalation floor (hard problem / low MCFE reliability → DEEP+) automatically → dissect by
   discipline → assign a specialist agent + skills + diffs per discipline (via gravity, with
   gap→skills.sh install requests) → pick the mode → PMI convergence. `run` never raises
-  (`ERROR_DEGRADED` on unexpected failure).
+  (`ERROR_DEGRADED` on unexpected failure). **KERNEL CHECKLIST + GATE (v1.43, mandatory):**
+  `run` returns a boolean `kernel_checklist` — code-owned steps come back DONE with evidence;
+  each llm-owned step carries the EXACT next call in `llm_actions` (passagem de bastão). You
+  MUST execute the missing steps, mark each with `complete_step(checklist, STEP, evidence)`,
+  and re-run `orchestrator.gate(checklist)` — a run is NOT complete until the gate says
+  COMPLETE. Never skip a step; the gate returning RETURN_TO_LLM means the work goes back to you.
 
 - **`scripts/pot.py`** — Program-of-Thought: `run_chain([{name,code}])` runs each step
   in an isolated subprocess and chains outputs. `run_parallel()` only for slow steps.
@@ -166,6 +171,22 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   language-independent facets and `facet_score(a, b)` is the weighted facet-overlap attraction —
   a PT task and an EN skill attract on MEANING, immune to name collisions ("mobile"→T-Mobile).
   Wired as `orchestrator.dissect`'s first no-keyword fallback (audit: shipped orphan in v1.41).
+- **`scripts/attraction_graph.py`** — the PRECOMPUTED gravitational routing JSON
+  (`catalog/attraction_graph.json`): every skill/script/diff/agent is a node; edges carry
+  attraction weights (mass×mass×cosine, top-K per node). `expand(seeds)` is the attraction
+  chain — find the FIRST competency a task needs and everything that completes/potentiates it
+  attracts along the edges, no re-discovery; `equip_for(need)` seeds from the task. Call
+  `rebuild()` after every new skill/script/diff inclusion so the super-structure keeps growing.
+- **`scripts/agent_spawn.py`** — the SPAWN CONTRACT (agents are executable at spawn time):
+  `spawn(agent_id, task, mode, stance)` assembles the full AgentSpec — real persona (AGENT.md),
+  real skills/diffs/scripts attracted via the graph, durable grants (equip/unequip, survive
+  reload), learning history, governance, output template, and a boolean spawn checklist.
+  NEVER spawn a subagent from a bare name; refuse `spawn_ready=False`. `spawn_contract()` is
+  the how-to-spawn directive; `equip()`/`unequip()` promote/demote abilities durably (H5).
+- **`scripts/rag_index.py`** — node-based vector RAG index of the whole repository
+  (`catalog/rag_index.json`, global char-n-gram IDF): `search("<question>", k)` maps any PT/EN
+  question to the right module/catalog/reference/repo-area in milliseconds — use it FIRST when
+  you need to locate anything. `rebuild()` after adding/renaming modules.
 - **`scripts/monte_carlo.py`** — REAL Monte Carlo (OPP-73): `simulate(model_fn, distributions)`
   returns P10/P50/P90 + CV. Wired into PMI so QUANTIFIABLE candidates are decided by simulation,
   never by calling a weighted vote "Monte Carlo" (§10). numpy optional (stdlib fallback).
@@ -214,9 +235,11 @@ The "multi-agent" work is parallel in two distinct ways — do not conflate them
   testable, single-turn — the *generation* of each stance's code is still one LLM.
 
 - **Level B — parallel COGNITION (Claude's `Agent`/subagent tool — Claude orchestrates, not a
-  `.py`):** in DEEP/RESEARCH/SCIENTIFIC, Claude spawns N **concurrent subagents**, each a
-  separate LLM instance wearing a roster persona (load its `AGENT.md` with `repo_bridge.agent(id)`
-  into the prompt) and running its own PoT-by-stance. Collect each subagent's `STANCE_RESULT`
+  `.py`):** in DEEP/RESEARCH/SCIENTIFIC, Claude spawns N **concurrent subagents** — each from a
+  FULL `agent_spawn.spawn()` spec (real persona + equipped skills/diffs/scripts + governance +
+  template + output schema; the `subagent_manifest` entries now carry `spec` + `spawn_ready`,
+  and the spawn contract forbids spawning from a bare name) — each running its own
+  PoT-by-stance. Collect each subagent's `STANCE_RESULT`
   JSON, then feed them to the SAME Level-A merge + PMI. The skill supplies the persona loader and
   the merge/PMI; Claude supplies the fan-out. The 213 roster entries are personas, not instances —
   Level B is what turns a chosen persona into a genuinely concurrent instance. Cap N at
@@ -414,11 +437,14 @@ Mirrors the awesome-skills install pattern ("read a SKILL.md URL"), done safely.
 
 ## § 4 · Agent Catalog (personas with competence)
 
-APEX reasons through **agents = sequential personas** (not parallel processes), each with
-a personality, a specialization, and a **competence map** of skills with an experience
-counter. When a skill is scouted and **approved**, `scripts/agent_registry.py` grants it
-to the agents whose specialization matches and bumps their experience — so installing a
-skill upgrades the relevant agents with new tools/scripts. Full detail in
+APEX agents are **lean persona records that become fully executable at spawn time** (v1.43):
+`agent_spawn.spawn(agent_id, task)` assumes the real persona (AGENT.md), attracts real
+skills/diffs/scripts via the precomputed attraction graph, merges the durable grants and
+learning history, and returns the executable AgentSpec the host instantiates as a real
+subagent. When a skill is scouted and **approved**, `agent_registry.grant_skill` equips it
+DURABLY (persists by default, survives reload, revocable via `revoke_grant`/`unequip`) — so
+installing a skill upgrades the relevant agents with new tools/scripts, and the memory of
+what each agent equipped stays correlated with the library. Full detail in
 `references/agents.md`.
 
 - `agent_registry.match_task_to_agents(task)` — pick the best of the 11 core personas.

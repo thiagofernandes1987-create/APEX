@@ -16,6 +16,14 @@
   "path": "scripts/agent_registry.py"
  },
  {
+  "id": "script:agent_spawn",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "spawn-contract,executable-agents,persona,equip,unequip,grants,governance,template,checklist",
+  "mass": 224,
+  "path": "scripts/agent_spawn.py"
+ },
+ {
   "id": "script:apex_st_metric",
   "type": "script",
   "domain": "science",
@@ -30,6 +38,14 @@
   "capabilities": "assets,mcp,route,manage",
   "mass": 79,
   "path": "scripts/asset_manager.py"
+ },
+ {
+  "id": "script:attraction_graph",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "routing-json,gravitational-edges,precomputed,expand,attraction-chain,equip,super-structure",
+  "mass": 158,
+  "path": "scripts/attraction_graph.py"
  },
  {
   "id": "script:bayes",
@@ -230,6 +246,14 @@
   "capabilities": "living-inventory,dsm,raci,milestones,checklist,persistence,git,zip,completion-gate",
   "mass": 272,
   "path": "scripts/project_ledger.py"
+ },
+ {
+  "id": "script:rag_index",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "rag,vector-index,nodes,global-idf,repo-map,search,char-ngram",
+  "mass": 203,
+  "path": "scripts/rag_index.py"
  },
  {
   "id": "script:repo_bridge",

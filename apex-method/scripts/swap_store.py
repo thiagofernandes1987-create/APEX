@@ -156,6 +156,15 @@ def write_versioned(folder, name, content, keep=KEEP_BACKUPS, ts=None):
     os.makedirs(vdir, exist_ok=True)
     fn = make_filename(name, ts=ts)
     path = os.path.join(folder, fn)
+    # RT-09b (GPT audit, validated on v1.42): the DEFAULT ts is already microsecond-unique, but a
+    # caller-supplied EXPLICIT ts could collide with an existing file (same second/params) and
+    # silently OVERWRITE it — breaking "every write is a new version". On collision, extend the
+    # explicit 14-digit ts with a microsecond suffix (still matches the naming standard) until free.
+    while os.path.exists(path) or os.path.exists(os.path.join(vdir, fn)):
+        base_ts = parse_filename(fn)["ts"][:14]
+        t = time.time()
+        fn = make_filename(name, ts=base_ts + f"{int((t % 1) * 1_000_000):06d}")
+        path = os.path.join(folder, fn)
     with open(path, "w", encoding="utf-8") as f:
         f.write(content)
     function = parse_filename(fn)["function"]

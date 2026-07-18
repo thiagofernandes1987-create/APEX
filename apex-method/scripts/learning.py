@@ -83,7 +83,14 @@ class LearningStore:
         con.close()
 
     def _con(self):
-        return sqlite3.connect(self.db_path)
+        con = sqlite3.connect(self.db_path)
+        # resilience (v1.43 audit): if the .db was deleted mid-session (test resets, cache
+        # cleanup), a bare reconnect would create an EMPTY db and every query would raise
+        # "no such table". Ensuring the schema per-connection keeps score()/best() alive.
+        con.execute("CREATE TABLE IF NOT EXISTS outcomes("
+                    "sha TEXT PRIMARY KEY, kind TEXT, subject TEXT, domain TEXT, "
+                    "successes REAL, trials REAL, status TEXT, mean REAL, updated REAL)")
+        return con
 
     # ── write: accumulate an outcome, recompute, auto-promote/demote ───────────
     def record_outcome(self, kind, subject, domain, success, weight=1.0, evidence=None):
