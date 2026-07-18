@@ -162,7 +162,9 @@ def run_stances(task, stances, mode="DEEP", p_target=0.72, timeout=20, session_i
                 import code_genetics
                 fix = (f"{diag['diagnosis']}: {diag['action']}" if diag
                        else f"reassign; {r['persona']} weak here")
-                code_genetics.VaccineStore().save_vaccine(
+                # v1.44: experience must OUTLIVE the process to become future context — the
+                # in-memory store here silently discarded every vaccine at process exit.
+                code_genetics.durable_store().save_vaccine(
                     f"weak stance={r['stance']} persona={r['persona']} task={task[:60]}", fix)
             except Exception:
                 pass

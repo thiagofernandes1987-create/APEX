@@ -1,40 +1,40 @@
 {
- "passed": 50,
- "total": 50,
- "total_ms": 6607.2,
+ "passed": 52,
+ "total": 52,
+ "total_ms": 9034.5,
  "results": [
   {
    "module": "runtime_autopsy",
    "ok": true,
-   "ms": 112.5,
+   "ms": 259.8,
    "metric": "RT-05/07/08/09/10/11/12/13/14/15/23/26 all guarded",
    "error": ""
   },
   {
    "module": "pot",
    "ok": true,
-   "ms": 64.6,
+   "ms": 65.9,
    "metric": "sum 1..100 = 5050",
    "error": ""
   },
   {
    "module": "numeric",
    "ok": true,
-   "ms": 783.5,
+   "ms": 794.4,
    "metric": "RK4 err 8.72e-12; solve_ode backend=scipy (numpy=True,scipy=True)",
    "error": ""
   },
   {
    "module": "verify",
    "ok": true,
-   "ms": 515.0,
+   "ms": 544.0,
    "metric": "identity VERIFIED / REFUTED",
    "error": ""
   },
   {
    "module": "uco_gate",
    "ok": true,
-   "ms": 16.9,
+   "ms": 18.3,
    "metric": "loop REJECTED (UCO)",
    "error": ""
   },
@@ -48,7 +48,7 @@
   {
    "module": "router",
    "ok": true,
-   "ms": 1.2,
+   "ms": 1.6,
    "metric": "routes to frontend; stub demoted; low-confidence -> NO_RELIABLE_SKILL",
    "error": ""
   },
@@ -83,21 +83,21 @@
   {
    "module": "curated",
    "ok": true,
-   "ms": 0.6,
+   "ms": 0.5,
    "metric": "4 finance skills",
    "error": ""
   },
   {
    "module": "asset_manager",
    "ok": true,
-   "ms": 0.8,
+   "ms": 0.7,
    "metric": "41 assets, 23 mcps",
    "error": ""
   },
   {
    "module": "gravity",
    "ok": true,
-   "ms": 82.8,
+   "ms": 86.9,
    "metric": "security constellation: 4 agents",
    "error": ""
   },
@@ -111,7 +111,7 @@
   {
    "module": "orchestrator",
    "ok": true,
-   "ms": 330.4,
+   "ms": 402.1,
    "metric": "2+2=4 express; hard->SCIENTIFIC; PDE->SCIENTIFIC; pmi rel=0.875",
    "error": ""
   },
@@ -125,14 +125,14 @@
   {
    "module": "code_genetics",
    "ok": true,
-   "ms": 0.7,
+   "ms": 0.1,
    "metric": "stable sig, promote gate 0.85",
    "error": ""
   },
   {
    "module": "guards",
    "ok": true,
-   "ms": 0.6,
+   "ms": 0.7,
    "metric": "SR_36/37/38 enforced",
    "error": ""
   },
@@ -146,14 +146,14 @@
   {
    "module": "geodesic_scheduler",
    "ok": true,
-   "ms": 0.5,
+   "ms": 0.4,
    "metric": "plan ['c', 'a', 'b'], ethical excluded",
    "error": ""
   },
   {
    "module": "verification_gate",
    "ok": true,
-   "ms": 0.3,
+   "ms": 0.4,
    "metric": "DEEP routes H1, prune@test2",
    "error": ""
   },
@@ -181,7 +181,7 @@
   {
    "module": "repo_bridge",
    "ok": true,
-   "ms": 24.7,
+   "ms": 25.0,
    "metric": "native index 3784, traversal refused",
    "error": ""
   },
@@ -195,42 +195,42 @@
   {
    "module": "audit_regressions",
    "ok": true,
-   "ms": 290.5,
+   "ms": 379.1,
    "metric": "loads FP, getattr, installs, n_rel, express, chaos, skills.sh, char-ngram, dissect-PT, ext-grant: all fixed",
    "error": ""
   },
   {
    "module": "monte_carlo",
    "ok": true,
-   "ms": 5.8,
+   "ms": 6.1,
    "metric": "MC P50=60.0, cv=0.083",
    "error": ""
   },
   {
    "module": "pmi_monte_carlo",
    "ok": true,
-   "ms": 18.0,
+   "ms": 18.4,
    "metric": "PMI picks lowest-CV plan by real simulation",
    "error": ""
   },
   {
    "module": "code_genetics_sqlite",
    "ok": true,
-   "ms": 10.8,
+   "ms": 47.7,
    "metric": "vaccine persists + promotes across SQLite reopen",
    "error": ""
   },
   {
    "module": "snapshot_wire",
    "ok": true,
-   "ms": 81.5,
+   "ms": 84.7,
    "metric": "run() recorded 1 findings into snapshot",
    "error": ""
   },
   {
    "module": "config",
    "ok": true,
-   "ms": 2.0,
+   "ms": 2.8,
    "metric": "config persists, validates, resolves mode (snap-up)",
    "error": ""
   },
@@ -244,77 +244,77 @@
   {
    "module": "deep_research",
    "ok": true,
-   "ms": 418.7,
+   "ms": 428.8,
    "metric": "deep_research TARGET_REACHED in 1 rounds",
    "error": ""
   },
   {
    "module": "concurrent_executor",
    "ok": true,
-   "ms": 352.3,
+   "ms": 378.8,
    "metric": "3 stances; mode-cap budget; abort+vaccine 1; off_persona; restart",
    "error": ""
   },
   {
    "module": "chaos_operators",
    "ok": true,
-   "ms": 0.6,
+   "ms": 0.8,
    "metric": "levy/mutation/genius + chaos from FOGGY, A->B, RESEARCH genius",
    "error": ""
   },
   {
    "module": "competence_matrix",
    "ok": true,
-   "ms": 4.7,
+   "ms": 14.5,
    "metric": "difficulty+stuck+diagnosis (HARD/PERSONA_SWAP)",
    "error": ""
   },
   {
    "module": "evaluate_hypotheses",
    "ok": true,
-   "ms": 1068.4,
+   "ms": 1485.5,
    "metric": "8 directors, hashed laudos, ADOPT; abort->PERSONA_SWAP",
    "error": ""
   },
   {
    "module": "project_ledger",
    "ok": true,
-   "ms": 12.0,
+   "ms": 41.5,
    "metric": "MACRO+micros, DSM critical-path+parallel, gate, justified-abandon, cycle, zip",
    "error": ""
   },
   {
    "module": "memory",
    "ok": true,
-   "ms": 78.2,
+   "ms": 292.4,
    "metric": "episodic/semantic + dedup + recall + snapshot + chained ledger; KG 3 edges + graph-walk + acyclic guard (17 mem)",
    "error": ""
   },
   {
    "module": "llm_adapter",
    "ok": true,
-   "ms": 63.2,
+   "ms": 67.9,
    "metric": "claude=B/full; gpt/deepseek->A; local->STANDARD; limits+accelerators; unknown->baseline",
    "error": ""
   },
   {
    "module": "swap_store",
    "ok": true,
-   "ms": 62.4,
+   "ms": 205.6,
    "metric": "materialize idempotent; memory export/import round-trip; bundle integrity; gate promote=1 keep=1",
    "error": ""
   },
   {
    "module": "learning",
    "ok": true,
-   "ms": 30.3,
+   "ms": 100.0,
    "metric": "promote@3 obs, demote sustained-fail, best-excludes-demoted; stats={'tracked': 2, 'promoted': 1, 'demoted': 1, 'active': 0}",
    "error": ""
   },
   {
    "module": "execution_policy",
    "ok": true,
-   "ms": 920.0,
+   "ms": 979.0,
    "metric": "route+HARD-RULE; 3-persona entry 3 micros; floor(audit/security)+uncertain+min_mode force the pipeline",
    "error": ""
   },
@@ -328,29 +328,43 @@
   {
    "module": "attraction_graph",
    "ok": true,
-   "ms": 178.3,
+   "ms": 332.1,
    "metric": "320 nodes, 1966 edges; audit seed pulls 10 bodies",
    "error": ""
   },
   {
    "module": "agent_spawn",
    "ok": true,
-   "ms": 646.3,
+   "ms": 760.6,
    "metric": "spec executable + ghost blocked + equip/unequip durable + manifest carries specs",
    "error": ""
   },
   {
    "module": "kernel_gate",
    "ok": true,
-   "ms": 322.3,
+   "ms": 364.1,
    "metric": "gate blocks until complete; 5/12 code-done; PMI evidence wired",
    "error": ""
   },
   {
    "module": "rag_index",
    "ok": true,
-   "ms": 92.7,
+   "ms": 120.3,
    "metric": "94 nodes; PT->'script:memory', EN->'catalog:agents_catalog'",
+   "error": ""
+  },
+  {
+   "module": "plug_and_play",
+   "ok": true,
+   "ms": 382.6,
+   "metric": "habits+agents+learning+vaccines+memory survive a fresh machine (base+delta chain)",
+   "error": ""
+  },
+  {
+   "module": "agent_bundle_context",
+   "ok": true,
+   "ms": 327.3,
+   "metric": "context_pack feeds spawns; trained agent exports/installs (H5 + integrity)",
    "error": ""
   }
  ]

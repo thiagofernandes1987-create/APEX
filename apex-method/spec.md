@@ -57,7 +57,7 @@ governança.
 | Entrada | `orchestrator.run` + `execution_policy.triage` | triage → dissect → resolve → modo → **checklist/gate** |
 | Roteamento | `taxonomy` → `router`/`gravity` → **`attraction_graph`** | facetas canônicas → atração lexical → grafo pré-computado |
 | Agentes | `agent_registry` + **`agent_spawn`** + `concurrent_executor` | roster enxuto → spec executável no spawn → fan-out A/B |
-| Memória | `memory` (SQLite+KG+ledger) + `swap_store` + `learning` + `project_ledger` | episódica/semântica, page-out, promote/demote, inventário vivo |
+| Memória | `memory` (SQLite+KG+ledger) + `swap_store` + `learning` + `code_genetics` + `project_ledger` | episódica/semântica; page-out PLUG-AND-PLAY (todos os stores, delta+gzip, resume_due); promote/demote; vacinas duráveis; inventário vivo |
 | Segurança | `skill_scout` + `guards` + `repo_bridge` + `skills_sh` | allowlists, AST 2 níveis, injection-scan, H5 |
 | Numérico | `pot`, `numeric`, `verify`, `monte_carlo`, `geometry_estimator` | computa em subprocesso; prova ou marca conjectura |
 | Bayes/decisão | `bayes`, `verification_gate`, `fractal_compression`, `hypothesis_dag` | posterior, Ω, R_acum, poda, DAG acíclico |
@@ -103,7 +103,7 @@ tarefa → triage (código)      trivial? → EXPRESS e fim
 | Módulo | O que faz | Entrega → para quem |
 |---|---|---|
 | `agent_registry` | 11 personas núcleo + roster 213; match por tarefa; **grants persistem por default e são revogáveis (RT-26b)**; `load()` auto-merge | competência durável → spawn/roteamento |
-| **`agent_spawn`** | **contrato de spawn (RT-19/27)**: persona real (AGENT.md) + skills/diffs/scripts atraídos + grants + histórico (learning) + governança + template + checklist booleano; `equip`/`unequip` | AgentSpec executável + `spawn_contract()` → **host LLM (Agent tool)** |
+| **`agent_spawn`** | **contrato de spawn (RT-19/27)**: persona real + skills/diffs/scripts atraídos + grants + histórico + governança + template + checklist; `equip`/`unequip`; **`context_pack(task)`** (experiência validada → contexto injetado em todo spawn e no run()); **`export_agent`/`import_agent`** (agente treinado portátil, SHA-256 + H5) | AgentSpec executável + briefing + agent bundle → **host LLM (Agent tool)** |
 | `concurrent_executor` | Level A (subprocessos paralelos, barrier, merge, PMI, restart); manifesto Level-B **com specs completas**; diretores com laudos SHA-256 | rodada adjudicada ou RESTART → LLM |
 | `chaos_operators` / `competence_matrix` / `learning` | Lévy/mutação/genius; heat-map + diagnóstico PERSONA_SWAP/INJECT_SKILL/HARD_PROBLEM; promote/demote beta-binomial com ledger | exploração + metacognição + memória de desempenho → painel/spawn |
 
@@ -162,6 +162,8 @@ tarefa → triage (código)      trivial? → EXPRESS e fim
 | Adapter Level-B nativo por host (Claude Agent tool / outros) executando o manifesto | contrato pronto (`spawn_contract`); execução é do host |
 | Embeddings transformer opcionais no `rag_index`/`memory` | hook existe; char-n-gram é o piso zero-dep |
 | `attraction_graph` incremental (atualizar só as arestas do corpo novo) | `rebuild()` completo hoje; incremental é otimização futura |
+| ~~Bundle plug-and-play (todos os stores) + delta+gzip + resume_due~~ | **ENTREGUE v1.44** |
+| ~~Agent bundle (agente treinado portátil) + context pack~~ | **ENTREGUE v1.44 (protótipo)** |
 | Rotina automática: descoberta aprovada → `equip()` → `rebuild()` → nó no `rag_index` | passos existem; encadeamento automático planejado |
 | Designs padrão (ABNT etc.) como templates plugáveis por deliverable no spawn | `TEMPLATES` existe; biblioteca de templates a expandir |
 | UCO-Sensor embutível parcial (SAST leve inline) | indexado como serviço |

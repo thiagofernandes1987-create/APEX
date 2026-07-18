@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.43.0
+version: 1.44.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -183,6 +183,14 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   reload), learning history, governance, output template, and a boolean spawn checklist.
   NEVER spawn a subagent from a bare name; refuse `spawn_ready=False`. `spawn_contract()` is
   the how-to-spawn directive; `equip()`/`unequip()` promote/demote abilities durably (H5).
+  **CONTEXT PACK (v1.44 — context beats prompt):** `context_pack(task)` assembles a bounded,
+  provenance-carrying briefing from VALIDATED experience — durable vaccines (error→fix lessons),
+  deduped memory, PROVEN/DEMOTED personas (learning), rag_index pointers — and every `spawn()`
+  injects it into the agent's window; `orchestrator.run` attaches the session-level pack too, so
+  future instances never reason cold. **AGENT BUNDLE:** `export_agent(id)` serializes a TRAINED
+  agent (persona + grants + validated history + provenance, SHA-256 signed);
+  `import_agent(bundle, approved=True)` installs it on another machine (fail-closed integrity +
+  H5) — agents become portable, verifiable, evolving artifacts.
 - **`scripts/rag_index.py`** — node-based vector RAG index of the whole repository
   (`catalog/rag_index.json`, global char-n-gram IDF): `search("<question>", k)` maps any PT/EN
   question to the right module/catalog/reference/repo-area in milliseconds — use it FIRST when
@@ -366,6 +374,13 @@ standard `models/apex_structure.model.json` (same on Windows or Drive), via `mat
 (local) or `drive_tree()` (the runtime creates it on Drive). **The promotion gate** — `is_validated`
 + `promotion_manifest` — is the rule that only what passes (PMI adopt **and** intact ledger
 **and** tests) is promoted from swap to a git commit; everything else stays disposable in swap.
+**PLUG-AND-PLAY (v1.44, the original idea — never start from zero):** the bundle now carries
+EVERY durable store — the user's habits/spec directives (config + persona + preferences), the
+trained agents (grants), validated learning, session competence and the durable VACCINES —
+besides memory. `page_out(..., delta=True, compress=True)` exports only the NEW rows (chained
+via `delta_of`, gzip ~10x smaller); `page_in_session(dir)` applies the whole chain (base +
+deltas, integrity-checked link by link); **`resume_due()`** is persist_due's symmetric twin —
+`orchestrator.run` reports at ENTRY when the swap holds state this machine never paged in.
 
 ## § 2.12 · Execution routing contract + 3-persona entry (`scripts/execution_policy.py`)
 

@@ -359,6 +359,21 @@ def _run(task, candidates=None, snapshot=None):
         if not _ss.persist_due(mode):
             complete_step(ck, "PAGE_OUT", f"n/a — mode {mode} is ephemeral by design")
             llm_actions.pop("PAGE_OUT", None)
+        # v1.44 plug-and-play: the symmetric twin of persist_due — if the swap holds state this
+        # machine never paged in (habits, trained agents, grants, learning), say so AT ENTRY.
+        rd = _ss.resume_due()
+        if rd.get("due"):
+            result["resume_due"] = rd
+    except Exception:
+        pass
+    # v1.44 (author's thesis: context beats prompt): every FULL_PIPELINE run starts with the
+    # runtime's VALIDATED experience — vaccines, memory, proven/demoted, rag pointers — so a
+    # future instance never reasons cold. Bounded; empty when the stores are empty (honest).
+    try:
+        import agent_spawn as _as
+        cp = _as.context_pack(task, budget_chars=1200)
+        if cp.get("rendered"):
+            result["context_pack"] = cp
     except Exception:
         pass
     result["kernel_checklist"] = ck

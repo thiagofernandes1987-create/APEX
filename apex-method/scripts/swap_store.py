@@ -318,22 +318,86 @@ def drive_tree():
     return tree
 
 
-# ── the swap page: a portable bundle of the session's working + durable memory ───────────────
+# ── the swap page: a portable bundle of the session's working + ALL durable state ────────────
+def _sqlite_rows(db_path, query):
+    """Best-effort row export from a store .db (missing db/table -> [])."""
+    import sqlite3
+    try:
+        con = sqlite3.connect(db_path)
+        cur = con.execute(query)
+        cols = [c[0] for c in cur.description]
+        rows = [dict(zip(cols, r)) for r in cur.fetchall()]
+        con.close()
+        return rows
+    except Exception:
+        return []
+
+
+def collect_stores(root=None):
+    """PLUG-AND-PLAY (the original idea): capture EVERY durable store, so a page-in on a fresh
+    machine never starts from zero — the user's habits/spec directives (config + persona +
+    preferences), the trained agents (grants = what each agent equipped), the validated
+    promote/demote history (learning), the session competence signals, and who-connects-to-whom
+    is re-derivable from the shipped attraction_graph. Memory itself travels separately (delta-able)."""
+    base = os.environ.get("APEX_METHOD_HOME") or os.path.expanduser("~/.apex-method")
+    stores = {"grants": [], "learning": [], "competence": [], "config": {}, "user": {}}
+    try:
+        import agent_registry
+        stores["grants"] = agent_registry.load_grants()
+    except Exception:
+        pass
+    stores["learning"] = _sqlite_rows(os.path.join(base, "learning.db"),
+                                      "SELECT sha,kind,subject,domain,successes,trials,status,mean,updated FROM outcomes")
+    stores["competence"] = _sqlite_rows(os.path.join(base, "competence.db"),
+                                        "SELECT sha,ts,persona,stance,task,signal,confidence FROM competence")
+    stores["vaccines"] = _sqlite_rows(os.path.join(base, "vaccines.db"),
+                                      "SELECT sig,fix,uses,successes,error FROM vaccines")
+    try:
+        import config
+        stores["config"] = config.load()
+    except Exception:
+        pass
+    # the user tier of the swap tree: persona + preferences (habits / standard spec directives)
+    try:
+        udir = os.path.join(root or default_root(), "user")
+        for name in ("persona", "preferences"):
+            fn = latest(os.listdir(udir), name)
+            if fn:
+                stores["user"][name] = json.loads(open(os.path.join(udir, fn), encoding="utf-8").read())
+    except Exception:
+        pass
+    return stores
+
+
 def export_bundle(session_id, memory_db=None, snapshot=None, working=None, project_ledger=None,
-                  competence=None, session_meta=None):
-    """Build ONE portable JSON page (page-out): durable memory export + ephemeral session state, with
-    a SHA-256 over the canonical payload for integrity. The runtime writes it under swap/<session>/
-    with a canonical `bundle-...` name (make_filename('bundle'))."""
+                  competence=None, session_meta=None, stores=None, root=None, delta_known=None):
+    """Build ONE portable JSON page (page-out): durable memory export + ALL durable stores +
+    ephemeral session state, with a SHA-256 over the canonical payload for integrity.
+
+    v1.44 (plug-and-play): `stores` carries grants/learning/competence/config/persona — the full
+    "never start from zero" state. `delta_known` = {"memory": set, "relations": set, "ledger": set}
+    of shas already persisted: when given, only NEW memory rows are exported and the bundle records
+    `delta_of` (the previous bundle's sha) so page-in applies the chain in order. Stores are small
+    and always travel FULL (idempotent to reapply)."""
     mem = {}
     try:
         import memory
         mem = (memory.MemoryStore(memory_db) if memory_db else memory.MemoryStore()).export()
     except Exception as e:
         mem = {"_error": str(e)[:80]}
+    delta_of = None
+    if delta_known:
+        delta_of = delta_known.get("bundle_sha")
+        for table, key in (("memory", "memory"), ("relations", "relations"), ("ledger", "ledger")):
+            known = set(delta_known.get(key) or ())
+            if isinstance(mem.get(table), list):
+                mem[table] = [r for r in mem[table] if r.get("sha") not in known]
     payload = {"schema_version": SCHEMA_VERSION, "session_id": session_id, "ts": time.time(),
                "filename": make_filename("bundle"), "session": session_meta or {},
                "snapshot": snapshot or {}, "working": working or [],
-               "project_ledger": project_ledger or {}, "competence": competence or [], "memory": mem}
+               "project_ledger": project_ledger or {}, "competence": competence or [],
+               "memory": mem, "stores": (stores if stores is not None else collect_stores(root)),
+               "delta_of": delta_of}
     # RT-08: hash EVERY field (except the signature itself) so project_ledger, competence,
     # schema_version, ts and filename are all covered — not just the old 5-field subset.
     payload["sha256"] = _bundle_sha(payload)
@@ -346,13 +410,100 @@ def _bundle_sha(bundle):
     return _sha(json.dumps(unsigned, sort_keys=True, ensure_ascii=False))
 
 
-def import_bundle(bundle, memory_db=None, quarantine_dir=None):
-    """Rehydrate a swap page (page-in): load durable memory back into the local .db and return the
-    ephemeral session state to resume from.
+def _restore_stores(stores):
+    """Rehydrate the plug-and-play stores. Semantics: bundle WINS (idempotent restore — re-applying
+    the same bundle is a no-op). Grants merge by record identity; learning/competence REPLACE by
+    primary key; config merges known keys; persona/preferences are returned for the user tier."""
+    import sqlite3
+    out = {"grants": 0, "learning": 0, "competence": 0, "vaccines": 0, "config": False,
+           "user": list((stores or {}).get("user", {}))}
+    if not stores:
+        return out
+    base = os.environ.get("APEX_METHOD_HOME") or os.path.expanduser("~/.apex-method")
+    os.makedirs(base, exist_ok=True)
+    try:                                           # grants: union preserving order (identity = full record)
+        import agent_registry
+        local = agent_registry.load_grants()
+        seen = [json.dumps(g, sort_keys=True) for g in local]
+        added = [g for g in stores.get("grants", []) if json.dumps(g, sort_keys=True) not in seen]
+        if added:
+            merged = local + added
+            with open(agent_registry._grants_path(), "w", encoding="utf-8") as f:
+                json.dump(merged, f, indent=1, ensure_ascii=False)
+        out["grants"] = len(added)
+    except Exception:
+        pass
+    try:                                           # learning: bundle rows REPLACE by sha
+        import learning
+        s = learning.LearningStore()               # ensures schema
+        con = sqlite3.connect(s.db_path)
+        for r in stores.get("learning", []):
+            con.execute("INSERT OR REPLACE INTO outcomes VALUES(?,?,?,?,?,?,?,?,?)",
+                        (r["sha"], r["kind"], r["subject"], r["domain"], r["successes"],
+                         r["trials"], r["status"], r["mean"], r["updated"]))
+            out["learning"] += 1
+        con.commit(); con.close()
+    except Exception:
+        pass
+    try:                                           # competence: session signals REPLACE by sha
+        con = sqlite3.connect(os.path.join(base, "competence.db"))
+        con.execute("CREATE TABLE IF NOT EXISTS competence("
+                    "sha TEXT PRIMARY KEY, ts REAL, persona TEXT, stance TEXT, task TEXT, "
+                    "signal TEXT, confidence REAL)")
+        for r in stores.get("competence", []):
+            con.execute("INSERT OR REPLACE INTO competence VALUES(?,?,?,?,?,?,?)",
+                        (r["sha"], r["ts"], r["persona"], r["stance"], r["task"],
+                         r["signal"], r["confidence"]))
+            out["competence"] += 1
+        con.commit(); con.close()
+    except Exception:
+        pass
+    try:                                           # vaccines: experience -> future context
+        con = sqlite3.connect(os.path.join(base, "vaccines.db"))
+        con.execute("CREATE TABLE IF NOT EXISTS vaccines "
+                    "(sig TEXT PRIMARY KEY, fix TEXT, uses INTEGER, successes INTEGER, error TEXT)")
+        for r in stores.get("vaccines", []):
+            con.execute("INSERT OR REPLACE INTO vaccines VALUES(?,?,?,?,?)",
+                        (r["sig"], r["fix"], r["uses"], r["successes"], r.get("error", "")))
+            out["vaccines"] += 1
+        con.commit(); con.close()
+    except Exception:
+        pass
+    try:                                           # config: the user's habits/spec directives win
+        import config as cfg_mod
+        if stores.get("config"):
+            local_cfg = cfg_mod.load()
+            local_cfg.update({k: v for k, v in stores["config"].items() if k in cfg_mod.DEFAULTS})
+            cfg_mod.save(local_cfg)
+            out["config"] = True
+    except Exception:
+        pass
+    return out
+
+
+def _decode_envelope(bundle):
+    """Accept a gzip+b64 envelope (v1.44 compress=True) transparently."""
+    if isinstance(bundle, dict) and bundle.get("encoding") == "gzip+b64":
+        import base64
+        import gzip
+        return json.loads(gzip.decompress(base64.b64decode(bundle["payload"])).decode("utf-8"))
+    return bundle
+
+
+def _marker_path():
+    base = os.environ.get("APEX_METHOD_HOME") or os.path.expanduser("~/.apex-method")
+    return os.path.join(base, "last_page_in.json")
+
+
+def import_bundle(bundle, memory_db=None, quarantine_dir=None, restore_stores=True, root=None):
+    """Rehydrate a swap page (page-in): load durable memory back into the local .db, restore the
+    plug-and-play stores (grants/learning/competence/config), record the page-in marker (feeds
+    resume_due), and return the ephemeral session state to resume from.
 
     RT-07/RT-08: verify integrity over the WHOLE payload and FAIL CLOSED — a bundle whose hash does
     not match (or whose schema is unknown) is REJECTED before any write to the memory .db. For
     forensics, pass quarantine_dir to copy the rejected bundle aside without hydrating it."""
+    bundle = _decode_envelope(bundle)
     try:
         ok = (bundle.get("sha256") is not None and _bundle_sha(bundle) == bundle["sha256"])
     except Exception:
@@ -379,10 +530,26 @@ def import_bundle(bundle, memory_db=None, quarantine_dir=None):
         mem_stats = store.load_rows(bundle.get("memory", {}))
     except Exception as e:
         mem_stats = {"_error": str(e)[:80]}
+    stores_restored = _restore_stores(bundle.get("stores")) if restore_stores else None
+    # user tier files (persona/preferences) are re-materialized into the swap tree when known
+    if restore_stores and root and (bundle.get("stores") or {}).get("user"):
+        try:
+            udir = os.path.join(root, "user")
+            for name, content in bundle["stores"]["user"].items():
+                write_versioned(udir, name, json.dumps(content, ensure_ascii=False, indent=1))
+        except Exception:
+            pass
+    try:                                           # resume_due marker: this bundle is now local
+        with open(_marker_path(), "w", encoding="utf-8") as f:
+            json.dump({"bundle_sha": bundle["sha256"], "filename": bundle.get("filename"),
+                       "session_id": bundle.get("session_id"), "ts": time.time()}, f)
+    except Exception:
+        pass
     return {"integrity_ok": True, "status": "OK", "session_id": bundle.get("session_id"),
             "session": bundle.get("session", {}), "snapshot": bundle.get("snapshot", {}),
             "working": bundle.get("working", []), "project_ledger": bundle.get("project_ledger", {}),
-            "competence": bundle.get("competence", []), "memory_stats": mem_stats}
+            "competence": bundle.get("competence", []), "memory_stats": mem_stats,
+            "stores_restored": stores_restored, "delta_of": bundle.get("delta_of")}
 
 
 # ── THE EXPLICIT PERSISTENCE TRIGGER (page-out) ──────────────────────────────────────────────
@@ -395,8 +562,31 @@ def persist_due(mode):
     return (mode or "").upper() in PERSIST_MODES
 
 
+def _load_bundle_file(path):
+    """Read a bundle file (plain JSON or gzip+b64 envelope)."""
+    with open(path, encoding="utf-8") as f:
+        return _decode_envelope(json.load(f))
+
+
+def _session_bundles(sdir):
+    """The session's bundle files, oldest -> newest by (revision, ts). Rotation keeps only the
+    LATEST in the main folder and moves older versions into versions/ — a delta CHAIN therefore
+    spans both places, so the versions/ subfolder MUST be scanned too (found by the plug-and-play
+    smoke test: without it, page_in_session applied the delta but lost the base memories)."""
+    out = []
+    for base, sub in ((sdir, ""), (os.path.join(sdir, "versions"), "versions/")):
+        try:
+            for x in os.listdir(base):
+                if (parse_filename(x) or {}).get("name") == "bundle":
+                    out.append(sub + x)
+        except OSError:
+            continue
+    return sorted(out, key=lambda fn: (parse_filename(os.path.basename(fn))["rev"],
+                                       parse_filename(os.path.basename(fn))["ts"]))
+
+
 def page_out(session_id, memory_db=None, snapshot=None, working=None, session_meta=None,
-             root=None, backend=None):
+             root=None, backend=None, delta=False, compress=False):
     """THE EXPLICIT SWAP TRIGGER. Builds the session bundle, writes it (+ a session header) LOCALLY
     into <root>/swap/<session_id>/ with canonical versioned names, and returns a `drive_manifest`
     the runtime uploads to APEX/swap/<session_id>/ on Drive — plus a human-readable `log` so the
@@ -407,29 +597,115 @@ def page_out(session_id, memory_db=None, snapshot=None, working=None, session_me
     materialize(root)
     sdir = os.path.join(root, "swap", str(session_id))
     os.makedirs(sdir, exist_ok=True)
+    # v1.44 delta: export only what the session's previous bundles haven't persisted yet
+    delta_known = None
+    if delta:
+        prev = _session_bundles(sdir)
+        if prev:
+            known = {"memory": set(), "relations": set(), "ledger": set()}
+            last_sha = None
+            for fn in prev:
+                try:
+                    b = _load_bundle_file(os.path.join(sdir, fn))
+                    for key in known:
+                        known[key] |= {r.get("sha") for r in b.get("memory", {}).get(key, [])}
+                    last_sha = b.get("sha256", last_sha)
+                except Exception:
+                    continue
+            delta_known = {**known, "bundle_sha": last_sha}
     bundle = export_bundle(session_id, memory_db=memory_db, snapshot=snapshot, working=working,
-                           session_meta=session_meta)
+                           session_meta=session_meta, root=root, delta_known=delta_known)
     hdr = {"session_id": session_id, "ts": time.time(), "session": session_meta or {},
            "snapshot_objective": (snapshot or {}).get("objective"), "bundle": bundle["filename"],
-           "sha256": bundle["sha256"]}
+           "sha256": bundle["sha256"], "delta_of": bundle.get("delta_of")}
+    raw = json.dumps(bundle, ensure_ascii=False)
+    if compress:                                   # v1.44: ~10x smaller on the wire/Drive
+        import base64
+        import gzip
+        raw = json.dumps({"schema_version": SCHEMA_VERSION, "encoding": "gzip+b64",
+                          "payload": base64.b64encode(gzip.compress(raw.encode("utf-8"), 6)).decode()})
     written = {}
     for name, content in (("session", json.dumps(hdr, ensure_ascii=False, indent=1)),
-                          ("bundle", json.dumps(bundle, ensure_ascii=False))):
+                          ("bundle", raw)):
         written[name] = write_versioned(sdir, name, content)["filename"]
     n_mem = len(bundle.get("memory", {}).get("memory", []))
     n_led = len(bundle.get("memory", {}).get("ledger", []))
+    st = bundle.get("stores", {})
     drive_manifest = [
         {"path": f"swap/{session_id}/{written['session']}",
          "content": json.dumps(hdr, ensure_ascii=False, indent=1), "mime": "application/json"},
         {"path": f"swap/{session_id}/{written['bundle']}",
-         "content": json.dumps(bundle, ensure_ascii=False), "mime": "application/json"}]
+         "content": raw, "mime": "application/json"}]
     log = (f"[PAGE-OUT] session={session_id} -> swap/{session_id}/ | {written['bundle']} "
-           f"({n_mem} memories, {n_led} ledger events, sha {bundle['sha256'][:12]}) | "
-           f"backend={backend or 'local'}"
+           f"({n_mem} memories{' DELTA' if bundle.get('delta_of') else ''}, {n_led} ledger events, "
+           f"{len(st.get('grants', []))} grants, {len(st.get('learning', []))} learning rows, "
+           f"sha {bundle['sha256'][:12]}) | backend={backend or 'local'}"
+           + (" | compressed" if compress else "")
            + (" | UPLOAD the drive_manifest to Drive to persist" if backend == "drive-swap" else ""))
     return {"session_dir": sdir, "written": written, "bundle_sha": bundle["sha256"],
-            "counts": {"memories": n_mem, "ledger": n_led}, "backend": backend,
+            "counts": {"memories": n_mem, "ledger": n_led,
+                       "grants": len(st.get("grants", [])), "learning": len(st.get("learning", []))},
+            "backend": backend, "delta": bool(bundle.get("delta_of")), "compressed": compress,
             "drive_manifest": drive_manifest, "log": log}
+
+
+def page_in_session(session_dir, memory_db=None, root=None):
+    """Apply a session's WHOLE bundle chain (base + deltas), oldest -> newest. Each bundle is
+    integrity-checked individually; a tampered link is skipped and reported, never hydrated."""
+    applied, skipped = [], []
+    last = None
+    for fn in _session_bundles(session_dir):
+        try:
+            b = _load_bundle_file(os.path.join(session_dir, fn))
+        except Exception as e:
+            skipped.append({"file": fn, "reason": f"unreadable: {str(e)[:60]}"})
+            continue
+        r = import_bundle(b, memory_db=memory_db, root=root)
+        if r["status"] == "OK":
+            applied.append({"file": fn, "delta_of": r.get("delta_of")})
+            last = r
+        else:
+            skipped.append({"file": fn, "reason": r.get("reason", r["status"])})
+    return {"status": "OK" if applied else "EMPTY", "applied": applied, "skipped": skipped,
+            "resumed": last}
+
+
+def resume_due(root=None):
+    """The symmetric twin of persist_due (v1.44): is there swap state NEWER than what this machine
+    already paged in? Scans swap/<session>/ for the newest bundle and compares against the local
+    page-in marker. due=True carries the exact page-in call — plug-and-play resume at session start."""
+    root = root or default_root()
+    swap = os.path.join(root, "swap")
+    newest = None                                   # (rev, ts, session, filename)
+    try:
+        for sess in os.listdir(swap):
+            sdir = os.path.join(swap, sess)
+            if not os.path.isdir(sdir):
+                continue
+            for fn in _session_bundles(sdir):
+                p = parse_filename(os.path.basename(fn))
+                key = (p["rev"], p["ts"])
+                if newest is None or key > newest[0]:
+                    newest = (key, sess, fn)
+    except OSError:
+        pass
+    if newest is None:
+        return {"due": False, "reason": "no swap state found"}
+    _, sess, fn = newest
+    try:
+        marker = json.load(open(_marker_path(), encoding="utf-8"))
+    except Exception:
+        marker = {}
+    try:
+        newest_sha = _load_bundle_file(os.path.join(swap, sess, fn)).get("sha256")
+    except Exception:
+        newest_sha = None
+    if newest_sha and marker.get("bundle_sha") == newest_sha:
+        return {"due": False, "reason": "latest swap state already paged in", "session": sess}
+    return {"due": True, "session": sess, "bundle": fn, "bundle_sha": newest_sha,
+            "directive": (f"swap has state this machine hasn't loaded — call "
+                          f"swap_store.page_in_session(r'{os.path.join(swap, sess)}') to resume "
+                          f"with the user's habits, trained agents, grants and validated learning")}
 
 
 # ── the promotion gate: only VALIDATED artifacts go to a git commit ─────────────────────────

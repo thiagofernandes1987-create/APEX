@@ -95,6 +95,70 @@ def _equipped_grants(agent_id):
         return []
 
 
+def context_pack(task, agent_id=None, budget_chars=1800):
+    """EXPERIENCE -> CONTEXT (the author's thesis: context beats prompt). Assemble a bounded,
+    provenance-carrying briefing from everything the runtime LEARNED, so a future window/agent
+    never starts cold:
+      - vaccines (code_genetics durable store): past error->fix lessons relevant to this task;
+      - validated memory (memory.recall): facts with what/where/how provenance;
+      - learning: which personas/skills PROVED OUT (and which were demoted — the don'ts);
+      - rag_index nodes: where to read more (pointers, not dumps).
+    Everything here passed a gate (promotion/dedup/ledger) — it is validated experience, not
+    chat history. Returns {sections, rendered} with `rendered` capped at budget_chars."""
+    sections = {"vaccines": [], "memories": [], "proven": [], "demoted": [], "nodes": []}
+    try:
+        import code_genetics
+        sections["vaccines"] = [
+            {"lesson": v.get("error", ""), "fix": v["fix"],
+             "proof": f"{v['successes']}/{v['uses']} uses"}
+            for v in code_genetics.durable_store().relevant(task, k=3)]
+    except Exception:
+        pass
+    try:
+        import memory
+        sections["memories"] = [{"fact": r["text"][:160], "score": r["score"]}
+                                for r in memory.MemoryStore().recall(task, k=3)]
+    except Exception:
+        pass
+    try:
+        import learning
+        dom = "general"
+        try:
+            import orchestrator
+            disc = orchestrator.dissect(task)
+            dom = disc[0] if disc else "general"
+        except Exception:
+            pass
+        sections["proven"] = learning.best("persona", dom, k=3)
+        allb = learning.best("persona", dom, k=10, include_demoted=True)
+        sections["demoted"] = [b for b in allb if b["status"] == "DEMOTED"][:3]
+    except Exception:
+        pass
+    try:
+        import rag_index
+        sections["nodes"] = rag_index.search(task, k=3)
+    except Exception:
+        pass
+    lines = []
+    if sections["vaccines"]:
+        lines.append("LESSONS (validated error->fix vaccines):")
+        lines += [f"- {v['lesson'][:90]} -> {v['fix'][:90]} [{v['proof']}]" for v in sections["vaccines"]]
+    if sections["memories"]:
+        lines.append("VALIDATED MEMORY (durable, deduped):")
+        lines += [f"- {m['fact']}" for m in sections["memories"]]
+    if sections["proven"]:
+        lines.append("PROVEN for this domain (cross-session, beta-binomial): "
+                     + ", ".join(f"{b['subject']} ({b['mean']:.2f}, n={b['n']})" for b in sections["proven"]))
+    if sections["demoted"]:
+        lines.append("DEMOTED (do NOT default to): "
+                     + ", ".join(b["subject"] for b in sections["demoted"]))
+    if sections["nodes"]:
+        lines.append("READ MORE (rag nodes): "
+                     + "; ".join(f"{n['id']} -> {n['path']}" for n in sections["nodes"]))
+    rendered = "\n".join(lines)[:budget_chars]
+    return {"sections": sections, "rendered": rendered, "chars": len(rendered)}
+
+
 def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10):
     """Assemble the EXECUTABLE AgentSpec: persona real + skills/diffs/scripts reais (attracted
     via the precomputed graph + durable grants) + governance + template + output contract +
@@ -141,6 +205,14 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10):
     scripts = equipment.get("by_type", {}).get("script", []) or [f"scripts/{t}" for t in tools]
     agents_nearby = [a for a in equipment.get("by_type", {}).get("agent", []) if a != agent_id]
 
+    # v1.44 — the author's thesis: context beats prompt. Every spawned agent receives the
+    # runtime's VALIDATED experience (vaccines, memory, proven/demoted, rag pointers) inline.
+    ctx = {"rendered": "", "sections": {}}
+    try:
+        ctx = context_pack(task, agent_id, budget_chars=1200)
+    except Exception:
+        pass
+
     instruction = (
         f"You are the APEX '{agent_id}' agent (a REAL specialized instance, not a label).\n"
         f"PERSONA: {personality or 'generalist (persona file unavailable — say so in output)'}\n"
@@ -152,6 +224,8 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10):
         + ("GOVERNANCE: this task is REGULATED — attach the region-specific rules "
            "(HIPAA/GDPR/LGPD/financial/legal) to every recommendation.\n" if regulated else "")
         + (f"OUTPUT TEMPLATE (never generic): sections {template}\n" if template else "")
+        + (f"CONTEXT (validated experience — use it, don't rediscover):\n{ctx['rendered']}\n"
+           if ctx.get("rendered") else "")
         + f"Return ONE JSON object exactly: {OUTPUT_SCHEMA}")
 
     checklist = {
@@ -169,7 +243,7 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10):
         "skills": skills, "diffs": diffs, "scripts": scripts, "tools": tools,
         "grants": grants, "collaborators": agents_nearby[:3],
         "history": history, "regulated": regulated, "template": template,
-        "instruction": instruction, "output_schema": OUTPUT_SCHEMA,
+        "context": ctx, "instruction": instruction, "output_schema": OUTPUT_SCHEMA,
         "spawn_checklist": checklist,
         "spawn_ready": all(checklist.values()),
     }
@@ -191,6 +265,100 @@ def unequip(agent_id, skill_id):
     """DEMOTE/unequip an ability durably (revocation record; disappears on next load)."""
     import agent_registry
     return agent_registry.revoke_grant(skill_id, agent_id)
+
+
+# ── the AGENT BUNDLE: a trained agent as a portable, verifiable artifact ─────────────────────
+AGENT_BUNDLE_SCHEMA = "agent/1.0"
+
+
+def _agent_sha(bundle):
+    import hashlib
+    unsigned = {k: v for k, v in bundle.items() if k != "sha256"}
+    return hashlib.sha256(json.dumps(unsigned, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def export_agent(agent_id, path=None):
+    """Serialize a TRAINED agent as a portable artifact: persona + equipped grants + validated
+    learning history + attraction edges + ledger provenance, SHA-256 signed. Share/install it
+    like a skill — except it arrives TRAINED and keeps learning (the product leap: agents as
+    versioned, evolving artifacts; nobody ships verifiable track record with a persona)."""
+    import time
+    learning_rows = []
+    try:
+        import learning, sqlite3
+        s = learning.LearningStore()
+        con = sqlite3.connect(s.db_path)
+        for r in con.execute("SELECT sha,kind,subject,domain,successes,trials,status,mean,updated "
+                             "FROM outcomes WHERE subject=?", (agent_id,)):
+            learning_rows.append(dict(zip(("sha", "kind", "subject", "domain", "successes",
+                                           "trials", "status", "mean", "updated"), r)))
+        con.close()
+    except Exception:
+        pass
+    edges = []
+    try:
+        import attraction_graph
+        edges = attraction_graph.neighbors(f"agent:{agent_id}", k=8)
+    except Exception:
+        pass
+    provenance = []
+    try:
+        import memory, sqlite3
+        con = sqlite3.connect(memory.DB_DEFAULT)
+        for r in con.execute("SELECT sha,ts,kind,subject,action,evidence,prev_sha FROM ledger "
+                             "WHERE subject LIKE ? ORDER BY ts ASC", (f"%{agent_id}%",)):
+            provenance.append(dict(zip(("sha", "ts", "kind", "subject", "action",
+                                        "evidence", "prev_sha"), r)))
+    except Exception:
+        pass
+    bundle = {"schema": AGENT_BUNDLE_SCHEMA, "agent_id": agent_id, "exported_at": time.time(),
+              "persona": {"roster": _roster_entry(agent_id), "core": _core_entry(agent_id),
+                          "agent_md": _persona_md(agent_id, max_chars=2000)},
+              "grants": _equipped_grants(agent_id), "learning": learning_rows,
+              "edges": edges, "provenance": provenance}
+    bundle["sha256"] = _agent_sha(bundle)
+    if path:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(bundle, f, ensure_ascii=False, indent=1)
+    return bundle
+
+
+def import_agent(bundle, approved=False):
+    """Install a trained agent from a bundle. FAIL CLOSED: integrity first, then the H5 human
+    gate (approved=True required — a trained agent equips abilities, exactly what H5 governs).
+    Restores grants + learning history durably; spawn(agent_id, ...) then reproduces the
+    trained agent on this machine."""
+    if _agent_sha(bundle) != bundle.get("sha256"):
+        return {"status": "REJECTED", "reason": "agent bundle hash mismatch — refusing tampered agent"}
+    if bundle.get("schema") != AGENT_BUNDLE_SCHEMA:
+        return {"status": "REJECTED_SCHEMA", "reason": f"unknown schema {bundle.get('schema')!r}"}
+    if not approved:
+        return {"status": "BLOCKED", "reason": "importing a trained agent requires user approval (H5)"}
+    aid = bundle["agent_id"]
+    equipped = 0
+    try:
+        import agent_registry
+        for sid in bundle.get("grants", []):
+            agent_registry.save_grant(sid, aid, approved=True, ext=True)
+            equipped += 1
+    except Exception:
+        pass
+    learned = 0
+    try:
+        import learning, sqlite3
+        s = learning.LearningStore()
+        con = sqlite3.connect(s.db_path)
+        for r in bundle.get("learning", []):
+            con.execute("INSERT OR REPLACE INTO outcomes VALUES(?,?,?,?,?,?,?,?,?)",
+                        (r["sha"], r["kind"], r["subject"], r["domain"], r["successes"],
+                         r["trials"], r["status"], r["mean"], r["updated"]))
+            learned += 1
+        con.commit(); con.close()
+    except Exception:
+        pass
+    return {"status": "INSTALLED", "agent_id": aid, "equipped": equipped,
+            "learning_rows": learned, "provenance_events": len(bundle.get("provenance", [])),
+            "next": f"agent_spawn.spawn({aid!r}, task) now reproduces the trained agent"}
 
 
 def spawn_contract():
@@ -215,6 +383,18 @@ def spawn_contract():
 
 
 if __name__ == "__main__":
+    if len(sys.argv) > 2 and sys.argv[1] == "export":
+        out = sys.argv[3] if len(sys.argv) > 3 else f"{sys.argv[2]}.agent.json"
+        b = export_agent(sys.argv[2], path=out)
+        print(json.dumps({"agent_id": b["agent_id"], "grants": len(b["grants"]),
+                          "learning": len(b["learning"]), "sha": b["sha256"][:16],
+                          "written": out}, ensure_ascii=False, indent=1))
+        sys.exit(0)
+    if len(sys.argv) > 2 and sys.argv[1] == "import":
+        b = json.load(open(sys.argv[2], encoding="utf-8"))
+        print(json.dumps(import_agent(b, approved="--approved" in sys.argv),
+                         ensure_ascii=False, indent=1))
+        sys.exit(0)
     aid = sys.argv[1] if len(sys.argv) > 1 else "tech-lead-orchestrator"
     task = " ".join(sys.argv[2:]) or "audit the backend code for security issues"
     spec = spawn(aid, task)

@@ -775,6 +775,103 @@ def t_rag_index():
     return f"{r['nodes']} nodes; PT->'{pt[0]['id']}', EN->'{en[0]['id']}'"
 
 
+def t_plug_and_play():
+    # v1.44 (the ORIGINAL idea): a page-in on a fresh machine restores EVERYTHING durable —
+    # habits (config), trained agents (grants), validated learning, vaccines, memory — via a
+    # delta+gzip bundle chain, with resume_due as the symmetric entry trigger.
+    import tempfile, os, importlib
+    import swap_store as ss, memory as mem_mod, agent_registry as ar, learning as lrn
+    import code_genetics as cg, config as cfg, agent_spawn as sp
+    homeA = tempfile.mkdtemp(); _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = homeA
+    try:
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, sp):
+            importlib.reload(mod)
+        c = cfg.load(); c["min_installs"] = 4321; cfg.save(c)          # a habit
+        sp.equip("react-specialist", {"id": "x/pp-skill"})             # a trained agent
+        for _ in range(3):
+            lrn.record_outcome("persona", "architect", "engineering", True)
+        v = cg.durable_store()
+        v.save_vaccine("pp: timeout no deploy", "setar timeout=30s")   # an experience
+        db = os.path.join(homeA, "memory.db")
+        m = mem_mod.MemoryStore(db)
+        m.remember("pp: hábito validar antes de commit", "semantic")
+        po = ss.page_out("pp", memory_db=db, compress=True)
+        assert po["counts"]["grants"] >= 1 and po["counts"]["learning"] >= 1, po["counts"]
+        m.remember("pp: fato tardio", "semantic")
+        po2 = ss.page_out("pp", memory_db=db, delta=True, compress=True)
+        assert po2["delta"] and po2["counts"]["memories"] == 1, po2["counts"]
+        sdir = po["session_dir"]; rootA = os.path.dirname(os.path.dirname(sdir))
+        # fresh machine B
+        homeB = tempfile.mkdtemp(); os.environ["APEX_METHOD_HOME"] = homeB
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, sp):
+            importlib.reload(mod)
+        assert ss.resume_due(root=rootA)["due"], "swap newer than local must be due"
+        dbB = os.path.join(homeB, "m.db")
+        r = ss.page_in_session(sdir, memory_db=dbB)
+        kinds = ["delta" if a["delta_of"] else "base" for a in r["applied"]]
+        assert kinds == ["base", "delta"], kinds     # chain spans main + versions/ (rotation)
+        assert cfg.load()["min_installs"] == 4321, "habit restored"
+        assert "x/pp-skill" in sp._equipped_grants("react-specialist"), "trained agent restored"
+        assert lrn.score("persona", "architect", "engineering")["status"] == "PROMOTED"
+        assert cg.durable_store().relevant("timeout deploy"), "vaccine restored"
+        mB = mem_mod.MemoryStore(dbB)
+        assert mB.recall("hábito validar") and mB.recall("fato tardio"), "base+delta memories"
+        assert not ss.resume_due(root=rootA)["due"], "marker recorded after page-in"
+        return "habits+agents+learning+vaccines+memory survive a fresh machine (base+delta chain)"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, sp):
+            importlib.reload(mod)
+
+
+def t_agent_bundle_and_context():
+    # v1.44: experience -> CONTEXT for future windows (context_pack) + the portable trained
+    # agent (export/import with integrity + H5).
+    import tempfile, os, importlib
+    import agent_spawn as sp, agent_registry as ar, learning as lrn, code_genetics as cg
+    import memory as mem_mod, swap_store as ss, config as cfg
+    homeA = tempfile.mkdtemp(); _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = homeA
+    try:
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, sp):
+            importlib.reload(mod)
+        v = cg.durable_store()
+        v.save_vaccine("ctx: timeout no deploy do backend", "setar timeout e retry limitado")
+        for ok in (True, True):
+            v.record_outcome("ctx: timeout no deploy do backend", ok)
+        for _ in range(3):
+            lrn.record_outcome("persona", "architect", "engineering", True)
+        cp = sp.context_pack("corrigir timeout no deploy do backend")
+        assert cp["rendered"] and "LESSONS" in cp["rendered"] and "PROVEN" in cp["rendered"], cp["rendered"][:200]
+        assert cp["chars"] <= 1800, "context pack must be budget-bounded"
+        spec = sp.spawn("devops-engineer", "corrigir timeout no deploy do backend")
+        assert "CONTEXT (validated experience" in spec["instruction"], "context injected at spawn"
+        # portable trained agent: export -> fresh machine -> H5 gate -> install -> reproduce
+        sp.equip("react-specialist", {"id": "x/ab-skill"})
+        ab = sp.export_agent("react-specialist")
+        assert ab["grants"] == ["x/ab-skill"] and len(ab["sha256"]) == 64, ab["grants"]
+        homeB = tempfile.mkdtemp(); os.environ["APEX_METHOD_HOME"] = homeB
+        for mod in (ar, lrn, sp):
+            importlib.reload(mod)
+        assert sp.import_agent(ab)["status"] == "BLOCKED", "H5 gate on trained agents"
+        inst = sp.import_agent(ab, approved=True)
+        assert inst["status"] == "INSTALLED" and "x/ab-skill" in sp._equipped_grants("react-specialist")
+        tam = dict(ab); tam["grants"] = list(ab["grants"]) + ["skill/evil"]
+        assert sp.import_agent(tam, approved=True)["status"] == "REJECTED", "tampered agent refused"
+        return "context_pack feeds spawns; trained agent exports/installs (H5 + integrity)"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, sp):
+            importlib.reload(mod)
+
+
 def t_taxonomy():
     # AUD-G2: taxonomy.py shipped in v1.41 as an ORPHAN (no caller, absent from scripts_lib.json).
     # Now registered + wired as dissect's language-independent facet fallback.
@@ -1084,6 +1181,7 @@ TESTS = [
     ("learning", t_learning), ("execution_policy", t_execution_policy),
     ("taxonomy", t_taxonomy), ("attraction_graph", t_attraction_graph),
     ("agent_spawn", t_agent_spawn), ("kernel_gate", t_kernel_gate), ("rag_index", t_rag_index),
+    ("plug_and_play", t_plug_and_play), ("agent_bundle_context", t_agent_bundle_and_context),
 ]
 
 
