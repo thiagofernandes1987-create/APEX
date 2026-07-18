@@ -1,0 +1,119 @@
+{
+ "schema_version": "1.0",
+ "product": "apex-method",
+ "naming": {
+  "pattern": "<name>-<function>-<YYYYMMDDHHMMSS>-R<NN>.<ext>",
+  "example": "memory-User-20260716183245-R00.json",
+  "ts_format": "%Y%m%d%H%M%S (UTC, 14 digits, sortable)",
+  "revision": "R<NN> is the file's LAYOUT revision; bump on schema change; readers take the highest (revision, ts) — the latest validated model"
+ },
+ "rotation": {
+  "keep_backups": 10,
+  "versions_folder": "versions",
+  "policy": "newest KEEP by (revision, ts) survive in versions/; older are obsolete (deleted on local; listed for GC on Drive — no delete API)"
+ },
+ "main_vs_versions": "the MAIN folder always holds the LATEST; older copies live in versions/",
+ "file_revisions": {
+  "persona": 0,
+  "preferences": 0,
+  "memory": 0,
+  "knowledge_graph": 0,
+  "ledger": 0,
+  "session": 0,
+  "snapshot": 0,
+  "working": 0,
+  "competence": 0,
+  "bundle": 0
+ },
+ "file_spec": {
+  "persona": {
+   "function": "User",
+   "ext": "json",
+   "folder": "user"
+  },
+  "preferences": {
+   "function": "User",
+   "ext": "json",
+   "folder": "user"
+  },
+  "memory": {
+   "function": "User",
+   "ext": "ndjson",
+   "folder": "memory"
+  },
+  "knowledge_graph": {
+   "function": "User",
+   "ext": "ndjson",
+   "folder": "memory"
+  },
+  "ledger": {
+   "function": "User",
+   "ext": "ndjson",
+   "folder": "memory"
+  },
+  "session": {
+   "function": "Session",
+   "ext": "json",
+   "folder": null
+  },
+  "snapshot": {
+   "function": "Session",
+   "ext": "json",
+   "folder": null
+  },
+  "working": {
+   "function": "Session",
+   "ext": "ndjson",
+   "folder": null
+  },
+  "competence": {
+   "function": "Session",
+   "ext": "ndjson",
+   "folder": null
+  },
+  "bundle": {
+   "function": "Session",
+   "ext": "json",
+   "folder": null
+  }
+ },
+ "folders": [
+  "user",
+  "user/files",
+  "user/versions",
+  "memory",
+  "memory/versions",
+  "swap",
+  "staging",
+  "archive"
+ ],
+ "session_types": [
+  "session",
+  "snapshot",
+  "working",
+  "competence",
+  "bundle"
+ ],
+ "static_files": [
+  "apex.manifest.json",
+  "README.md"
+ ],
+ "tiers": {
+  "user": "durable, user-owned (persona + preferences + input files)",
+  "memory": "persistent validated memory (data, NDJSON)",
+  "swap": "ephemeral per-session working state (disposable)",
+  "staging": "validated, queued to promote to git",
+  "archive": "superseded swap pages (GC target)"
+ },
+ "promotion_gate": [
+  "pmi_adopt",
+  "ledger_ok",
+  "tests_ok",
+  "completion_not_blocked"
+ ],
+ "build_instructions": {
+  "principle": "ALWAYS build from this standard model; never let the LLM invent the tree.",
+  "windows": "materialize() into the user-provided folder; latest file in the main folder, older in versions/.",
+  "drive": "create the same folders/files via the Drive connector (drive_tree()); append-only (no delete/move) — latest is computed by (revision, ts), obsolete listed for GC."
+ }
+}

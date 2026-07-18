@@ -1,0 +1,64 @@
+# apex_llm.yaml — the master adaptability + minimum-requirements + loop-prevention contract.
+#
+# WHY: makes apex-method adaptable to ANY LLM (Claude/GPT/Gemini/DeepSeek/local) and states, in ONE
+# human-readable place, the MINIMUM the runtime needs, the OPTIONAL accelerators it can use, and the
+# HARD limits that stop the LLM from ever looping. Read by scripts/llm_adapter.py (PyYAML when
+# present; a JSON mirror meta/llm_compat.json is the stdlib fallback). Authoritative source = this file.
+schema_version: "1.1"
+product: apex-method
+
+# ── what the kernel REQUIRES from whatever model runs underneath ──────────────────────────────
+kernel_requirements:
+  capabilities:
+    tool_calling:           {required: true,  why: "the runtime invokes scripts/*.py as tools"}
+    subprocess_exec:        {required: true,  why: "PoT/RK4/stances run in isolated subprocesses"}
+    structured_json_output: {required: true,  why: "stances emit {answer,confidence}; laudos are JSON"}
+    multi_turn:             {required: true,  why: "snapshot + memory recall resume across turns"}
+    subagents:              {required: false, why: "Level-B parallelism; absence degrades to Level A"}
+    long_context:           {required: false, why: "heavy modes want more window; caps the mode if small"}
+  # minimum context window (tokens) a mode needs; below it, the mode is capped (announced, not silent)
+  context_window_tokens:
+    EXPRESS: 4000
+    STANDARD: 8000
+    FOGGY: 16000
+    DEEP: 32000
+    SCIENTIFIC: 48000
+    RESEARCH: 64000
+
+# ── loop prevention + minimum run requirements (so the LLM NEVER spins) ───────────────────────
+loop_prevention:
+  max_iterations: 8            # hard cap on pipeline/round iterations before STOP-with-best
+  max_restarts: 3             # evaluate_hypotheses / run_stances RESTART directives cap
+  min_progress: 0.15          # apex_st dS2 below this for 2 rounds -> stagnation -> STOP
+  reliability_replan: 0.50    # R_acum below -> replan / escalate to discovery ONCE
+  reliability_early_exit: 0.30 # R_acum below -> abort with PARTIAL (do not keep trying)
+  rejections_streak_abort: 20 # DIFF_v22_008 stuck trigger -> swap persona, don't loop
+  low_variance_abort: 0.03    # var(confidence) below -> stuck -> STOP the stance
+  wall_seconds_per_round: 30  # subprocess soft timeout per round
+
+# ── optional accelerators (ENVIRONMENT-gated, not model-gated); the skill works WITHOUT them ──
+optional_accelerators:
+  numpy:                 {use: "vectorized numeric / solve_ode",             degrade: "pure-stdlib RK4"}
+  scipy:                 {use: "adaptive ODE (solve_ivp), higher accuracy",  degrade: "stdlib RK4"}
+  scikit-learn:          {use: "tf-idf / vector ranking acceleration",       degrade: "_tfidf char-n-gram (pure python)"}
+  sympy:                 {use: "symbolic identity proof (verify.py)",        degrade: "verify marks CONJECTURE"}
+  pandas:                {use: "tabular analysis",                            degrade: "stdlib dict/list"}
+  sentence-transformers: {use: "semantic embeddings",                        degrade: "char-n-gram embeddings"}
+
+# ── per-provider capability matrix ────────────────────────────────────────────────────────────
+providers:
+  claude:   {tool_calling: true,  subprocess_exec: true, structured_json_output: true, multi_turn: true, subagents: true,  long_context: true,  context_window_tokens: 200000,  notes: "reference runtime; native Agent subagents give real Level-B parallelism"}
+  gpt:      {tool_calling: true,  subprocess_exec: true, structured_json_output: true, multi_turn: true, subagents: false, long_context: true,  context_window_tokens: 128000,  notes: "function calling; no native subagent fan-out -> Level A"}
+  gemini:   {tool_calling: true,  subprocess_exec: true, structured_json_output: true, multi_turn: true, subagents: false, long_context: true,  context_window_tokens: 1000000, notes: "very large window; Level A"}
+  deepseek: {tool_calling: true,  subprocess_exec: true, structured_json_output: true, multi_turn: true, subagents: false, long_context: true,  context_window_tokens: 128000,  notes: "function calling; Level A"}
+  local:    {tool_calling: false, subprocess_exec: true, structured_json_output: false, multi_turn: true, subagents: false, long_context: false, context_window_tokens: 8000,    notes: "small OSS model; sequential PoT, best-effort JSON, capped mode"}
+
+# ── graceful degradation rules (applied by llm_adapter.degrade / the loop guard) ──────────────
+degradation_rules:
+  - {when: "subagents == false",                    action: "force parallelism Level A (subprocess PoT); ignore spawn_subagents manifests"}
+  - {when: "tool_calling == false",                 action: "run scripts manually and paste output; PoT becomes copy-run-paste; no auto tool loop"}
+  - {when: "structured_json_output == false",       action: "parse the last JSON-looking line; wrap prompts with 'print exactly one JSON object' and validate"}
+  - {when: "context_window_tokens < required(mode)", action: "cap the mode to the largest that fits; announce the downgrade"}
+  - {when: "iteration >= max_iterations",           action: "STOP and return best-so-far (never loop)"}
+  - {when: "no progress for 2 rounds (dS2 < min_progress)", action: "STOP with PARTIAL; do not re-attempt the same plan"}
+  - {when: "reliability < reliability_early_exit",  action: "EARLY_EXIT with PARTIAL"}

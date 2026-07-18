@@ -1,0 +1,329 @@
+{
+ "passed": 46,
+ "total": 46,
+ "total_ms": 5436.4,
+ "results": [
+  {
+   "module": "runtime_autopsy",
+   "ok": true,
+   "ms": 121.5,
+   "metric": "RT-05/07/08/09/10/11/12/13/14/15/23/26 all guarded",
+   "error": ""
+  },
+  {
+   "module": "pot",
+   "ok": true,
+   "ms": 70.1,
+   "metric": "sum 1..100 = 5050",
+   "error": ""
+  },
+  {
+   "module": "numeric",
+   "ok": true,
+   "ms": 939.0,
+   "metric": "RK4 err 8.72e-12; solve_ode backend=scipy (numpy=True,scipy=True)",
+   "error": ""
+  },
+  {
+   "module": "verify",
+   "ok": true,
+   "ms": 762.7,
+   "metric": "identity VERIFIED / REFUTED",
+   "error": ""
+  },
+  {
+   "module": "uco_gate",
+   "ok": true,
+   "ms": 17.8,
+   "metric": "loop REJECTED (UCO)",
+   "error": ""
+  },
+  {
+   "module": "universal_code_optimizer_v4",
+   "ok": true,
+   "ms": 0.4,
+   "metric": "loop_risk 0.65",
+   "error": ""
+  },
+  {
+   "module": "router",
+   "ok": true,
+   "ms": 1.2,
+   "metric": "routes to frontend; stub demoted; low-confidence -> NO_RELIABLE_SKILL",
+   "error": ""
+  },
+  {
+   "module": "skill_scout",
+   "ok": true,
+   "ms": 0.2,
+   "metric": "RCE rejected + non-whitelisted-import not-safe (AUD-004) + clean passes",
+   "error": ""
+  },
+  {
+   "module": "skill_forge",
+   "ok": true,
+   "ms": 3.7,
+   "metric": "generates valid SKILL.md",
+   "error": ""
+  },
+  {
+   "module": "snapshot",
+   "ok": true,
+   "ms": 0.5,
+   "metric": "snapshot new/add/compress/decompress",
+   "error": ""
+  },
+  {
+   "module": "agent_registry",
+   "ok": true,
+   "ms": 4.3,
+   "metric": "core->engineer, ext->data-engineer",
+   "error": ""
+  },
+  {
+   "module": "curated",
+   "ok": true,
+   "ms": 0.5,
+   "metric": "4 finance skills",
+   "error": ""
+  },
+  {
+   "module": "asset_manager",
+   "ok": true,
+   "ms": 0.5,
+   "metric": "41 assets, 23 mcps",
+   "error": ""
+  },
+  {
+   "module": "gravity",
+   "ok": true,
+   "ms": 85.6,
+   "metric": "security constellation: 4 agents",
+   "error": ""
+  },
+  {
+   "module": "bayes",
+   "ok": true,
+   "ms": 0.4,
+   "metric": "beta-binomial 0.75, posterior A=0.7407",
+   "error": ""
+  },
+  {
+   "module": "orchestrator",
+   "ok": true,
+   "ms": 343.9,
+   "metric": "2+2=4 express; hard->SCIENTIFIC; PDE->SCIENTIFIC; pmi rel=0.875",
+   "error": ""
+  },
+  {
+   "module": "hypothesis_dag",
+   "ok": true,
+   "ms": 0.4,
+   "metric": "cycle rejected, cascade 3",
+   "error": ""
+  },
+  {
+   "module": "code_genetics",
+   "ok": true,
+   "ms": 0.4,
+   "metric": "stable sig, promote gate 0.85",
+   "error": ""
+  },
+  {
+   "module": "guards",
+   "ok": true,
+   "ms": 0.4,
+   "metric": "SR_36/37/38 enforced",
+   "error": ""
+  },
+  {
+   "module": "mental_interpreter",
+   "ok": true,
+   "ms": 0.0,
+   "metric": "n_final=2, merge->X",
+   "error": ""
+  },
+  {
+   "module": "geodesic_scheduler",
+   "ok": true,
+   "ms": 0.3,
+   "metric": "plan ['c', 'a', 'b'], ethical excluded",
+   "error": ""
+  },
+  {
+   "module": "verification_gate",
+   "ok": true,
+   "ms": 0.3,
+   "metric": "DEEP routes H1, prune@test2",
+   "error": ""
+  },
+  {
+   "module": "fractal_compression",
+   "ok": true,
+   "ms": 0.3,
+   "metric": "kept ['H1', 'H2']",
+   "error": ""
+  },
+  {
+   "module": "geometry_estimator",
+   "ok": true,
+   "ms": 0.2,
+   "metric": "euler block size 5",
+   "error": ""
+  },
+  {
+   "module": "apex_st_metric",
+   "ok": true,
+   "ms": 0.2,
+   "metric": "progress MEDIUM, stagnation triggers",
+   "error": ""
+  },
+  {
+   "module": "repo_bridge",
+   "ok": true,
+   "ms": 26.4,
+   "metric": "native index 3784, traversal refused",
+   "error": ""
+  },
+  {
+   "module": "_tfidf",
+   "ok": true,
+   "ms": 0.1,
+   "metric": "pure-python tf-idf ranks + pairwise ok",
+   "error": ""
+  },
+  {
+   "module": "audit_regressions",
+   "ok": true,
+   "ms": 479.5,
+   "metric": "loads FP, getattr, installs, n_rel, express, chaos, skills.sh, char-ngram, dissect-PT, ext-grant: all fixed",
+   "error": ""
+  },
+  {
+   "module": "monte_carlo",
+   "ok": true,
+   "ms": 6.5,
+   "metric": "MC P50=60.0, cv=0.083",
+   "error": ""
+  },
+  {
+   "module": "pmi_monte_carlo",
+   "ok": true,
+   "ms": 19.0,
+   "metric": "PMI picks lowest-CV plan by real simulation",
+   "error": ""
+  },
+  {
+   "module": "code_genetics_sqlite",
+   "ok": true,
+   "ms": 11.8,
+   "metric": "vaccine persists + promotes across SQLite reopen",
+   "error": ""
+  },
+  {
+   "module": "snapshot_wire",
+   "ok": true,
+   "ms": 82.8,
+   "metric": "run() recorded 1 findings into snapshot",
+   "error": ""
+  },
+  {
+   "module": "config",
+   "ok": true,
+   "ms": 2.5,
+   "metric": "config persists, validates, resolves mode (snap-up)",
+   "error": ""
+  },
+  {
+   "module": "menu",
+   "ok": true,
+   "ms": 7.3,
+   "metric": "menu shows 5 actions; update=OK",
+   "error": ""
+  },
+  {
+   "module": "deep_research",
+   "ok": true,
+   "ms": 805.9,
+   "metric": "deep_research TARGET_REACHED in 1 rounds",
+   "error": ""
+  },
+  {
+   "module": "concurrent_executor",
+   "ok": true,
+   "ms": 346.8,
+   "metric": "3 stances; mode-cap budget; abort+vaccine 1; off_persona; restart",
+   "error": ""
+  },
+  {
+   "module": "chaos_operators",
+   "ok": true,
+   "ms": 0.4,
+   "metric": "levy/mutation/genius + chaos from FOGGY, A->B, RESEARCH genius",
+   "error": ""
+  },
+  {
+   "module": "competence_matrix",
+   "ok": true,
+   "ms": 1.7,
+   "metric": "difficulty+stuck+diagnosis (HARD/PERSONA_SWAP)",
+   "error": ""
+  },
+  {
+   "module": "evaluate_hypotheses",
+   "ok": true,
+   "ms": 87.7,
+   "metric": "8 directors, hashed laudos, ADOPT; abort->PERSONA_SWAP",
+   "error": ""
+  },
+  {
+   "module": "project_ledger",
+   "ok": true,
+   "ms": 30.2,
+   "metric": "MACRO+micros, DSM critical-path+parallel, gate, justified-abandon, cycle, zip",
+   "error": ""
+  },
+  {
+   "module": "memory",
+   "ok": true,
+   "ms": 78.2,
+   "metric": "episodic/semantic + dedup + recall + snapshot + chained ledger; KG 3 edges + graph-walk + acyclic guard (17 mem)",
+   "error": ""
+  },
+  {
+   "module": "llm_adapter",
+   "ok": true,
+   "ms": 63.4,
+   "metric": "claude=B/full; gpt/deepseek->A; local->STANDARD; limits+accelerators; unknown->baseline",
+   "error": ""
+  },
+  {
+   "module": "swap_store",
+   "ok": true,
+   "ms": 56.8,
+   "metric": "materialize idempotent; memory export/import round-trip; bundle integrity; gate promote=1 keep=1",
+   "error": ""
+  },
+  {
+   "module": "learning",
+   "ok": true,
+   "ms": 33.6,
+   "metric": "promote@3 obs, demote sustained-fail, best-excludes-demoted; stats={'tracked': 2, 'promoted': 1, 'demoted': 1, 'active': 0}",
+   "error": ""
+  },
+  {
+   "module": "execution_policy",
+   "ok": true,
+   "ms": 940.7,
+   "metric": "route+HARD-RULE; 3-persona entry 3 micros; floor(audit/security)+uncertain+min_mode force the pipeline",
+   "error": ""
+  },
+  {
+   "module": "taxonomy",
+   "ok": true,
+   "ms": 0.3,
+   "metric": "facets classify + cross-language attraction (0.7857 > 0.0); dissect wired",
+   "error": ""
+  }
+ ]
+}
