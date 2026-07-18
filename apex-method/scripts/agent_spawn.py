@@ -220,6 +220,23 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10):
     except Exception:
         pass
 
+    # v1.46 — a ROTINA da persona: o fluxo encadeado de capacidades complementares (o que
+    # enviar, o que receber, para onde alimenta). Reutiliza uma rotina COMPROVADA quando há;
+    # senão compõe uma nova. A persona sabe COMO trabalhar, não só com o quê.
+    routine = None
+    try:
+        import routine_composer as rc
+        routine = rc.best_routine(agent_id, task) or rc.compose(task, agent_id=agent_id)
+    except Exception:
+        pass
+    routine_txt = ""
+    if routine and routine.get("steps"):
+        lines = [f"  {s['order']}. [{s['stage']}] {s['capability']} — envia: {s['send'][:70]} | "
+                 f"recebe: {s['receive'][:70]}" for s in routine["steps"][:7]]
+        if routine.get("gaps"):
+            lines.append(f"  GAPS (descubra + H5 antes): {[g['stage'] for g in routine['gaps']]}")
+        routine_txt = "ROUTINE (execute IN ORDER; each receive feeds the next send):\n" + "\n".join(lines) + "\n"
+
     instruction = (
         f"You are the APEX '{agent_id}' agent (a REAL specialized instance, not a label).\n"
         f"PERSONA: {personality or 'generalist (persona file unavailable — say so in output)'}\n"
@@ -233,6 +250,7 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10):
         + (f"OUTPUT TEMPLATE (never generic): sections {template}\n" if template else "")
         + (f"CONTEXT (validated experience — use it, don't rediscover):\n{ctx['rendered']}\n"
            if ctx.get("rendered") else "")
+        + routine_txt
         + f"Return ONE JSON object exactly: {OUTPUT_SCHEMA}")
 
     checklist = {
@@ -250,7 +268,8 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10):
         "skills": skills, "diffs": diffs, "scripts": scripts, "tools": tools,
         "grants": grants, "collaborators": agents_nearby[:3],
         "history": history, "regulated": regulated, "template": template,
-        "context": ctx, "instruction": instruction, "output_schema": OUTPUT_SCHEMA,
+        "context": ctx, "routine": routine, "instruction": instruction,
+        "output_schema": OUTPUT_SCHEMA,
         "spawn_checklist": checklist,
         "spawn_ready": all(checklist.values()),
     }

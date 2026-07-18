@@ -41,7 +41,7 @@ DB_DEFAULT = os.path.join(os.environ.get("APEX_METHOD_HOME")
 MIN_OBS = 3                       # need at least 3 observations before promoting/demoting
 PROMOTE_AT = 0.72                 # Ω adopt
 DEMOTE_AT = 0.50                  # Ω review floor
-VALID_KINDS = ("persona", "skill", "diff", "rule", "vaccine")
+VALID_KINDS = ("persona", "skill", "diff", "rule", "vaccine", "routine", "capability")
 
 
 def _sha(text):

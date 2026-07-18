@@ -352,6 +352,11 @@ def collect_stores(root=None):
                                         "SELECT sha,ts,persona,stance,task,signal,confidence FROM competence")
     stores["vaccines"] = _sqlite_rows(os.path.join(base, "vaccines.db"),
                                       "SELECT sig,fix,uses,successes,error FROM vaccines")
+    try:                                           # v1.46: as ROTINAS das personas viajam também
+        import routine_composer
+        stores["routines"] = routine_composer.load_routines()
+    except Exception:
+        stores["routines"] = []
     try:
         import config
         stores["config"] = config.load()
@@ -415,8 +420,8 @@ def _restore_stores(stores):
     the same bundle is a no-op). Grants merge by record identity; learning/competence REPLACE by
     primary key; config merges known keys; persona/preferences are returned for the user tier."""
     import sqlite3
-    out = {"grants": 0, "learning": 0, "competence": 0, "vaccines": 0, "config": False,
-           "user": list((stores or {}).get("user", {}))}
+    out = {"grants": 0, "learning": 0, "competence": 0, "vaccines": 0, "routines": 0,
+           "config": False, "user": list((stores or {}).get("user", {}))}
     if not stores:
         return out
     base = os.environ.get("APEX_METHOD_HOME") or os.path.expanduser("~/.apex-method")
@@ -467,6 +472,13 @@ def _restore_stores(stores):
                         (r["sig"], r["fix"], r["uses"], r["successes"], r.get("error", "")))
             out["vaccines"] += 1
         con.commit(); con.close()
+    except Exception:
+        pass
+    try:                                           # routines: a persona reutiliza o que funcionou
+        import routine_composer
+        for r in stores.get("routines", []):
+            if routine_composer.save_routine(r).get("status") == "OK":
+                out["routines"] += 1
     except Exception:
         pass
     try:                                           # config: the user's habits/spec directives win

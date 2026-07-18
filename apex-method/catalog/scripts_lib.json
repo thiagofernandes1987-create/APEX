@@ -288,6 +288,14 @@
   "path": "scripts/router.py"
  },
  {
+  "id": "script:routine_composer",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "routine,flow,io-chaining,stages,complementary-tools,handoff,feedback,promote-demote,persona-workflow",
+  "mass": 328,
+  "path": "scripts/routine_composer.py"
+ },
+ {
   "id": "script:skill_forge",
   "type": "script",
   "domain": "meta",

@@ -1,8 +1,8 @@
 {
  "_meta": {
   "note": "Precomputed gravitational routing: node = body (script/agent/skill/diff), edge = attraction (nmass*nmass*cosine), top-8 per node, floor 0.02. Rebuild after every new discovery/inclusion so the super-structure keeps growing.",
-  "built_at": "2026-07-18 14:49:22",
-  "nodes": 322,
+  "built_at": "2026-07-18 15:02:27",
+  "nodes": 323,
   "top_k": 8,
   "floor": 0.02
  },
@@ -186,6 +186,11 @@
    "id": "script:router",
    "type": "script",
    "mass": 0.415
+  },
+  {
+   "id": "script:routine_composer",
+   "type": "script",
+   "mass": 0.535
   },
   {
    "id": "script:skill_forge",
@@ -1626,7 +1631,7 @@
    },
    {
     "id": "script:rag_index",
-    "w": 0.0386
+    "w": 0.0385
    },
    {
     "id": "script:gravity",
@@ -1647,23 +1652,23 @@
     "w": 0.0247
    },
    {
-    "id": "agent:multi-agent-coordinator",
-    "w": 0.0215
+    "id": "script:learning",
+    "w": 0.0214
    },
    {
-    "id": "script:learning",
-    "w": 0.0213
+    "id": "agent:multi-agent-coordinator",
+    "w": 0.0214
    }
   ],
   "script:agent_spawn": [],
   "script:apex_st_metric": [
    {
     "id": "agent:meta_learning_agent",
-    "w": 0.0413
+    "w": 0.0412
    },
    {
     "id": "script:learning",
-    "w": 0.0248
+    "w": 0.025
    }
   ],
   "script:asset_manager": [
@@ -1681,7 +1686,7 @@
   "script:bayes": [
    {
     "id": "script:learning",
-    "w": 0.0392
+    "w": 0.0397
    },
    {
     "id": "agent:bayesian_curator",
@@ -1689,7 +1694,7 @@
    },
    {
     "id": "agent:meta_reasoning",
-    "w": 0.0284
+    "w": 0.0285
    }
   ],
   "script:capability_map": [],
@@ -1703,7 +1708,7 @@
    },
    {
     "id": "script:orchestrator",
-    "w": 0.0201
+    "w": 0.02
    }
   ],
   "script:config": [
@@ -1715,7 +1720,7 @@
   "script:curated": [
    {
     "id": "script:skills_sh",
-    "w": 0.0446
+    "w": 0.0445
    },
    {
     "id": "script:deep_research",
@@ -1748,7 +1753,7 @@
   "script:gravity": [
    {
     "id": "script:router",
-    "w": 0.0265
+    "w": 0.0264
    },
    {
     "id": "script:_tfidf",
@@ -1756,7 +1761,7 @@
    },
    {
     "id": "script:taxonomy",
-    "w": 0.0201
+    "w": 0.02
    }
   ],
   "script:guards": [],
@@ -1764,19 +1769,23 @@
   "script:learning": [
    {
     "id": "agent:meta_learning_agent",
-    "w": 0.041
+    "w": 0.0414
    },
    {
     "id": "script:bayes",
-    "w": 0.0392
+    "w": 0.0397
+   },
+   {
+    "id": "script:routine_composer",
+    "w": 0.0374
    },
    {
     "id": "script:apex_st_metric",
-    "w": 0.0248
+    "w": 0.025
    },
    {
     "id": "script:agent_registry",
-    "w": 0.0213
+    "w": 0.0214
    }
   ],
   "script:llm_adapter": [
@@ -1816,7 +1825,7 @@
    },
    {
     "id": "script:concurrent_executor",
-    "w": 0.0201
+    "w": 0.02
    }
   ],
   "script:pipeline_dsm": [
@@ -1828,14 +1837,14 @@
   "script:pot": [
    {
     "id": "skill:microsoft/azure-skills/azure-compute",
-    "w": 0.0503
+    "w": 0.0507
    }
   ],
   "script:project_ledger": [],
   "script:rag_index": [
    {
     "id": "script:_tfidf",
-    "w": 0.0386
+    "w": 0.0385
    },
    {
     "id": "script:memory",
@@ -1843,7 +1852,7 @@
    },
    {
     "id": "script:repo_bridge",
-    "w": 0.0231
+    "w": 0.023
    }
   ],
   "script:repo_bridge": [
@@ -1857,7 +1866,7 @@
    },
    {
     "id": "script:rag_index",
-    "w": 0.0231
+    "w": 0.023
    },
    {
     "id": "script:swap_store",
@@ -1867,21 +1876,27 @@
   "script:router": [
    {
     "id": "script:skill_forge",
-    "w": 0.0445
+    "w": 0.0444
    },
    {
     "id": "script:gravity",
-    "w": 0.0265
+    "w": 0.0264
    },
    {
     "id": "script:_tfidf",
     "w": 0.0219
    }
   ],
+  "script:routine_composer": [
+   {
+    "id": "script:learning",
+    "w": 0.0374
+   }
+  ],
   "script:skill_forge": [
    {
     "id": "script:router",
-    "w": 0.0445
+    "w": 0.0444
    },
    {
     "id": "diff:Registrar APEX_CREATION_GUIDE.md como módulo de referência n",
@@ -1901,7 +1916,7 @@
    },
    {
     "id": "script:curated",
-    "w": 0.0446
+    "w": 0.0445
    },
    {
     "id": "diff:DIFF_SKILL_QUALITY_BAR_001",
@@ -1927,7 +1942,7 @@
   "script:taxonomy": [
    {
     "id": "script:gravity",
-    "w": 0.0201
+    "w": 0.02
    }
   ],
   "script:uco_gate": [
@@ -1945,7 +1960,7 @@
    },
    {
     "id": "agent:security-auditor",
-    "w": 0.0244
+    "w": 0.0245
    },
    {
     "id": "agent:ad-security-reviewer",
@@ -1955,7 +1970,7 @@
   "script:universal_code_optimizer_v4": [
    {
     "id": "diff:DIFF_UCO_EXTENDED_METRICS_001",
-    "w": 0.0356
+    "w": 0.0357
    }
   ],
   "script:verification_gate": [],
@@ -1972,7 +1987,7 @@
    },
    {
     "id": "agent:code-reviewer",
-    "w": 0.1795
+    "w": 0.1796
    },
    {
     "id": "agent:architect-reviewer",
@@ -1980,7 +1995,7 @@
    },
    {
     "id": "agent:qa-expert",
-    "w": 0.1722
+    "w": 0.1723
    },
    {
     "id": "agent:compliance-auditor",
@@ -2006,23 +2021,23 @@
    },
    {
     "id": "agent:code-reviewer",
-    "w": 0.1799
+    "w": 0.18
    },
    {
     "id": "agent:architect-reviewer",
-    "w": 0.176
+    "w": 0.1761
    },
    {
     "id": "agent:qa-expert",
     "w": 0.1518
    },
    {
-    "id": "agent:compliance-auditor",
+    "id": "agent:powershell-security-hardening",
     "w": 0.1506
    },
    {
-    "id": "agent:powershell-security-hardening",
-    "w": 0.1505
+    "id": "agent:compliance-auditor",
+    "w": 0.1506
    },
    {
     "id": "agent:test-automator",
@@ -2036,69 +2051,69 @@
   "agent:agent-installer": [
    {
     "id": "agent:agent-organizer",
-    "w": 0.2122
+    "w": 0.2121
    },
    {
     "id": "agent:knowledge-synthesizer",
-    "w": 0.1981
+    "w": 0.198
    },
    {
     "id": "agent:task-distributor",
-    "w": 0.1958
+    "w": 0.1957
    },
    {
     "id": "agent:multi-agent-coordinator",
-    "w": 0.1918
+    "w": 0.1917
    },
    {
     "id": "agent:workflow-orchestrator",
-    "w": 0.1791
+    "w": 0.1789
    },
    {
     "id": "agent:context-manager",
-    "w": 0.1763
+    "w": 0.1761
    },
    {
     "id": "agent:error-coordinator",
-    "w": 0.1759
+    "w": 0.1758
    },
    {
     "id": "agent:it-ops-orchestrator",
-    "w": 0.1572
+    "w": 0.157
    }
   ],
   "agent:agent-organizer": [
    {
     "id": "agent:agent-installer",
-    "w": 0.2122
+    "w": 0.2121
    },
    {
     "id": "agent:knowledge-synthesizer",
-    "w": 0.1981
+    "w": 0.198
    },
    {
     "id": "agent:task-distributor",
-    "w": 0.1958
+    "w": 0.1957
    },
    {
     "id": "agent:multi-agent-coordinator",
-    "w": 0.1918
+    "w": 0.1917
    },
    {
     "id": "agent:workflow-orchestrator",
-    "w": 0.1791
+    "w": 0.1789
    },
    {
     "id": "agent:context-manager",
-    "w": 0.1763
+    "w": 0.1761
    },
    {
     "id": "agent:error-coordinator",
-    "w": 0.1759
+    "w": 0.1758
    },
    {
     "id": "agent:it-ops-orchestrator",
-    "w": 0.1572
+    "w": 0.157
    }
   ],
   "agent:ai-engineer": [
@@ -2108,11 +2123,11 @@
    },
    {
     "id": "agent:data-engineer",
-    "w": 0.1737
+    "w": 0.1738
    },
    {
     "id": "agent:ml-engineer",
-    "w": 0.1725
+    "w": 0.1726
    },
    {
     "id": "agent:reinforcement-learning-engineer",
@@ -2124,11 +2139,11 @@
    },
    {
     "id": "agent:machine-learning-engineer",
-    "w": 0.1647
+    "w": 0.1648
    },
    {
     "id": "agent:llm-architect",
-    "w": 0.1613
+    "w": 0.1614
    },
    {
     "id": "agent:nlp-engineer",
@@ -2138,11 +2153,11 @@
   "agent:ai-writing-auditor": [
    {
     "id": "agent:debugger",
-    "w": 0.1625
+    "w": 0.1626
    },
    {
     "id": "agent:compliance-auditor",
-    "w": 0.1575
+    "w": 0.1576
    },
    {
     "id": "agent:error-detective",
@@ -2150,7 +2165,7 @@
    },
    {
     "id": "agent:security-auditor",
-    "w": 0.1453
+    "w": 0.1454
    },
    {
     "id": "agent:code-reviewer",
@@ -2198,7 +2213,7 @@
    },
    {
     "id": "agent:cpp-pro",
-    "w": 0.1233
+    "w": 0.1234
    },
    {
     "id": "agent:javascript-pro",
@@ -2210,7 +2225,7 @@
    },
    {
     "id": "agent:elixir-expert",
-    "w": 0.1182
+    "w": 0.1183
    }
   ],
   "agent:api-architect": [
@@ -2228,19 +2243,19 @@
    },
    {
     "id": "agent:security-expert",
-    "w": 0.0819
+    "w": 0.082
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.0816
+    "w": 0.0817
    },
    {
     "id": "agent:django-api-developer",
-    "w": 0.0804
+    "w": 0.0805
    },
    {
     "id": "agent:rails-api-developer",
-    "w": 0.08
+    "w": 0.0801
    },
    {
     "id": "agent:python-expert",
@@ -2274,7 +2289,7 @@
    },
    {
     "id": "agent:fullstack-developer",
-    "w": 0.1323
+    "w": 0.1324
    },
    {
     "id": "agent:electron-pro",
@@ -2288,11 +2303,11 @@
    },
    {
     "id": "agent:m365-admin",
-    "w": 0.1201
+    "w": 0.1202
    },
    {
     "id": "agent:payment-integration",
-    "w": 0.1196
+    "w": 0.1197
    },
    {
     "id": "agent:embedded-systems",
@@ -2308,17 +2323,17 @@
    },
    {
     "id": "agent:fintech-engineer",
-    "w": 0.1025
+    "w": 0.1026
    },
    {
     "id": "agent:seo-specialist",
-    "w": 0.1006
+    "w": 0.1007
    }
   ],
   "agent:architect": [
    {
     "id": "skill:arvindrk/extract-design-system/extract-design-system",
-    "w": 0.0507
+    "w": 0.0508
    },
    {
     "id": "skill:vercel-labs/agent-skills/web-design-guidelines",
@@ -2330,11 +2345,11 @@
    },
    {
     "id": "agent:community.cs_ux_researcher",
-    "w": 0.0318
+    "w": 0.0319
    },
    {
     "id": "skill:anthropics/skills/canvas-design",
-    "w": 0.0315
+    "w": 0.0316
    },
    {
     "id": "agent:community.cs_senior_engineer",
@@ -2342,7 +2357,7 @@
    },
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.022
+    "w": 0.0221
    },
    {
     "id": "agent:community.cs_cto_advisor",
@@ -2364,11 +2379,11 @@
    },
    {
     "id": "agent:ad-security-reviewer",
-    "w": 0.176
+    "w": 0.1761
    },
    {
     "id": "agent:test-automator",
-    "w": 0.1754
+    "w": 0.1755
    },
    {
     "id": "agent:penetration-tester",
@@ -2390,15 +2405,15 @@
    },
    {
     "id": "agent:sre-engineer",
-    "w": 0.1676
+    "w": 0.1677
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1557
+    "w": 0.1558
    },
    {
     "id": "agent:terraform-engineer",
-    "w": 0.1544
+    "w": 0.1545
    },
    {
     "id": "agent:cloud-architect",
@@ -2406,7 +2421,7 @@
    },
    {
     "id": "agent:network-engineer",
-    "w": 0.1493
+    "w": 0.1494
    },
    {
     "id": "agent:windows-infra-admin",
@@ -2432,7 +2447,7 @@
    },
    {
     "id": "agent:ui-designer",
-    "w": 0.1529
+    "w": 0.153
    },
    {
     "id": "agent:websocket-engineer",
@@ -2440,7 +2455,7 @@
    },
    {
     "id": "agent:microservices-architect",
-    "w": 0.1523
+    "w": 0.1524
    },
    {
     "id": "agent:api-designer",
@@ -2470,11 +2485,11 @@
    },
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.0208
+    "w": 0.0209
    },
    {
     "id": "agent:community.cs_cto_advisor",
-    "w": 0.0207
+    "w": 0.0208
    },
    {
     "id": "agent:community.cs_financial_analyst",
@@ -2488,7 +2503,7 @@
   "agent:blockchain-developer": [
    {
     "id": "agent:game-developer",
-    "w": 0.1584
+    "w": 0.1585
    },
    {
     "id": "agent:m365-admin",
@@ -2496,7 +2511,7 @@
    },
    {
     "id": "agent:payment-integration",
-    "w": 0.1287
+    "w": 0.1288
    },
    {
     "id": "agent:mobile-app-developer",
@@ -2504,15 +2519,15 @@
    },
    {
     "id": "agent:embedded-systems",
-    "w": 0.1279
+    "w": 0.128
    },
    {
     "id": "agent:fintech-engineer",
-    "w": 0.1231
+    "w": 0.1232
    },
    {
     "id": "agent:seo-specialist",
-    "w": 0.1208
+    "w": 0.1209
    },
    {
     "id": "agent:risk-manager",
@@ -2538,7 +2553,7 @@
    },
    {
     "id": "agent:powershell-ui-architect",
-    "w": 0.1226
+    "w": 0.1227
    },
    {
     "id": "agent:dx-optimizer",
@@ -2550,7 +2565,7 @@
    },
    {
     "id": "agent:git-workflow-manager",
-    "w": 0.1111
+    "w": 0.1113
    }
   ],
   "agent:business-analyst": [
@@ -2572,7 +2587,7 @@
    },
    {
     "id": "agent:project-manager",
-    "w": 0.1568
+    "w": 0.1569
    },
    {
     "id": "agent:license-engineer",
@@ -2606,15 +2621,15 @@
    },
    {
     "id": "agent:qa-expert",
-    "w": 0.1443
+    "w": 0.1444
    },
    {
     "id": "agent:compliance-auditor",
-    "w": 0.1432
+    "w": 0.1433
    },
    {
     "id": "agent:test-automator",
-    "w": 0.1417
+    "w": 0.1418
    },
    {
     "id": "agent:penetration-tester",
@@ -2640,7 +2655,7 @@
    },
    {
     "id": "agent:git-workflow-manager",
-    "w": 0.1341
+    "w": 0.1344
    },
    {
     "id": "agent:build-engineer",
@@ -2652,7 +2667,7 @@
    },
    {
     "id": "agent:dx-optimizer",
-    "w": 0.1295
+    "w": 0.1296
    }
   ],
   "agent:cloud-architect": [
@@ -2666,7 +2681,7 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1522
+    "w": 0.1524
    },
    {
     "id": "agent:terragrunt-expert",
@@ -2674,7 +2689,7 @@
    },
    {
     "id": "agent:terraform-engineer",
-    "w": 0.151
+    "w": 0.1511
    },
    {
     "id": "agent:azure-infra-engineer",
@@ -2716,11 +2731,11 @@
    },
    {
     "id": "agent:api-architect",
-    "w": 0.0696
+    "w": 0.0697
    },
    {
     "id": "agent:documentation-specialist",
-    "w": 0.0667
+    "w": 0.0668
    }
   ],
   "agent:code-reviewer": [
@@ -2738,7 +2753,7 @@
    },
    {
     "id": "agent:ad-security-reviewer",
-    "w": 0.1799
+    "w": 0.18
    },
    {
     "id": "agent:test-automator",
@@ -2746,11 +2761,11 @@
    },
    {
     "id": "agent:penetration-tester",
-    "w": 0.1795
+    "w": 0.1796
    },
    {
     "id": "agent:accessibility-tester",
-    "w": 0.1795
+    "w": 0.1796
    },
    {
     "id": "agent:debugger",
@@ -2780,7 +2795,7 @@
    },
    {
     "id": "agent:community.recruiter",
-    "w": 0.0671
+    "w": 0.0672
    },
    {
     "id": "agent:community.cs_senior_engineer",
@@ -2794,7 +2809,7 @@
   "agent:community.content_strategist": [
    {
     "id": "agent:community.cs_content_creator",
-    "w": 0.1003
+    "w": 0.1004
    },
    {
     "id": "agent:community.cs_product_strategist",
@@ -2810,7 +2825,7 @@
    },
    {
     "id": "agent:community.cs_demand_gen_specialist",
-    "w": 0.0675
+    "w": 0.0676
    },
    {
     "id": "agent:community.cs_senior_engineer",
@@ -2828,11 +2843,11 @@
   "agent:community.cs_agile_product_owner": [
    {
     "id": "agent:community.cs_product_manager",
-    "w": 0.1205
+    "w": 0.1206
    },
    {
     "id": "agent:community.cs_product_analyst",
-    "w": 0.1202
+    "w": 0.1203
    },
    {
     "id": "agent:community.cs_product_strategist",
@@ -2844,15 +2859,15 @@
    },
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.057
+    "w": 0.0571
    },
    {
     "id": "agent:community.cs_cto_advisor",
-    "w": 0.0567
+    "w": 0.0568
    },
    {
     "id": "agent:community.cs_financial_analyst",
-    "w": 0.0561
+    "w": 0.0562
    },
    {
     "id": "agent:community.cs_ux_researcher",
@@ -2870,7 +2885,7 @@
    },
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.0611
+    "w": 0.0612
    },
    {
     "id": "agent:community.cs_financial_analyst",
@@ -2896,7 +2911,7 @@
   "agent:community.cs_content_creator": [
    {
     "id": "agent:community.content_strategist",
-    "w": 0.1003
+    "w": 0.1004
    },
    {
     "id": "agent:community.cs_demand_gen_specialist",
@@ -2916,15 +2931,15 @@
    },
    {
     "id": "agent:community.cs_cto_advisor",
-    "w": 0.0636
+    "w": 0.0637
    },
    {
     "id": "agent:community.cs_financial_analyst",
-    "w": 0.0629
+    "w": 0.063
    },
    {
     "id": "agent:community.cs_ux_researcher",
-    "w": 0.0623
+    "w": 0.0624
    }
   ],
   "agent:community.cs_cto_advisor": [
@@ -2938,11 +2953,11 @@
    },
    {
     "id": "agent:community.startup_cto",
-    "w": 0.0906
+    "w": 0.0907
    },
    {
     "id": "agent:community.cs_senior_engineer",
-    "w": 0.0887
+    "w": 0.0888
    },
    {
     "id": "agent:community.recruiter",
@@ -2950,7 +2965,7 @@
    },
    {
     "id": "agent:community.security_code_reviewer",
-    "w": 0.0696
+    "w": 0.0697
    },
    {
     "id": "agent:community.performance_reviewer",
@@ -2968,7 +2983,7 @@
    },
    {
     "id": "agent:community.content_strategist",
-    "w": 0.0675
+    "w": 0.0676
    },
    {
     "id": "agent:community.growth_marketer",
@@ -2976,7 +2991,7 @@
    },
    {
     "id": "agent:community.cs_senior_engineer",
-    "w": 0.0591
+    "w": 0.0592
    },
    {
     "id": "agent:community.cs_engineering_lead",
@@ -2988,7 +3003,7 @@
    },
    {
     "id": "agent:community.cs_financial_analyst",
-    "w": 0.057
+    "w": 0.0571
    },
    {
     "id": "agent:community.cs_ux_researcher",
@@ -2998,7 +3013,7 @@
   "agent:community.cs_engineering_lead": [
    {
     "id": "agent:community.cs_senior_engineer",
-    "w": 0.1093
+    "w": 0.1094
    },
    {
     "id": "agent:community.cs_cto_advisor",
@@ -3006,7 +3021,7 @@
    },
    {
     "id": "agent:community.recruiter",
-    "w": 0.0971
+    "w": 0.0972
    },
    {
     "id": "agent:community.security_code_reviewer",
@@ -3022,11 +3037,11 @@
    },
    {
     "id": "agent:community.test_agent",
-    "w": 0.0897
+    "w": 0.0898
    },
    {
     "id": "agent:community.financial_analyst",
-    "w": 0.0887
+    "w": 0.0888
    }
   ],
   "agent:community.cs_financial_analyst": [
@@ -3040,7 +3055,7 @@
    },
    {
     "id": "agent:community.finance_lead",
-    "w": 0.0964
+    "w": 0.0965
    },
    {
     "id": "agent:community.cs_senior_engineer",
@@ -3082,7 +3097,7 @@
    },
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.0518
+    "w": 0.0519
    },
    {
     "id": "agent:community.cs_cto_advisor",
@@ -3090,17 +3105,17 @@
    },
    {
     "id": "agent:community.cs_financial_analyst",
-    "w": 0.051
+    "w": 0.0511
    },
    {
     "id": "agent:community.cs_ux_researcher",
-    "w": 0.0505
+    "w": 0.0506
    }
   ],
   "agent:community.cs_product_analyst": [
    {
     "id": "agent:community.cs_product_manager",
-    "w": 0.1709
+    "w": 0.171
    },
    {
     "id": "agent:community.cs_product_strategist",
@@ -3108,7 +3123,7 @@
    },
    {
     "id": "agent:community.cs_agile_product_owner",
-    "w": 0.1202
+    "w": 0.1203
    },
    {
     "id": "agent:community.cs_financial_analyst",
@@ -3120,7 +3135,7 @@
    },
    {
     "id": "agent:community.cs_senior_engineer",
-    "w": 0.0632
+    "w": 0.0633
    },
    {
     "id": "agent:community.cs_engineering_lead",
@@ -3134,7 +3149,7 @@
   "agent:community.cs_product_manager": [
    {
     "id": "agent:community.cs_product_analyst",
-    "w": 0.1709
+    "w": 0.171
    },
    {
     "id": "agent:community.cs_product_strategist",
@@ -3142,7 +3157,7 @@
    },
    {
     "id": "agent:community.cs_agile_product_owner",
-    "w": 0.1205
+    "w": 0.1206
    },
    {
     "id": "agent:community.cs_project_manager",
@@ -3158,7 +3173,7 @@
    },
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.0621
+    "w": 0.0622
    },
    {
     "id": "agent:community.cs_cto_advisor",
@@ -3206,7 +3221,7 @@
    },
    {
     "id": "agent:community.cs_senior_engineer",
-    "w": 0.0658
+    "w": 0.0659
    },
    {
     "id": "agent:community.cs_engineering_lead",
@@ -3230,7 +3245,7 @@
    },
    {
     "id": "agent:community.cs_workspace_admin",
-    "w": 0.0603
+    "w": 0.0604
    }
   ],
   "agent:community.cs_quality_regulatory": [
@@ -3260,7 +3275,7 @@
    },
    {
     "id": "agent:community.cs_content_creator",
-    "w": 0.0592
+    "w": 0.0593
    },
    {
     "id": "agent:community.cs_workspace_admin",
@@ -3270,19 +3285,19 @@
   "agent:community.cs_senior_engineer": [
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.1093
+    "w": 0.1094
    },
    {
     "id": "agent:community.cs_cto_advisor",
-    "w": 0.0887
+    "w": 0.0888
    },
    {
     "id": "agent:community.recruiter",
-    "w": 0.0738
+    "w": 0.0739
    },
    {
     "id": "agent:community.security_code_reviewer",
-    "w": 0.0714
+    "w": 0.0715
    },
    {
     "id": "agent:community.performance_reviewer",
@@ -3298,7 +3313,7 @@
    },
    {
     "id": "agent:community.financial_analyst",
-    "w": 0.0674
+    "w": 0.0675
    }
   ],
   "agent:community.cs_ux_researcher": [
@@ -3312,7 +3327,7 @@
    },
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.0659
+    "w": 0.066
    },
    {
     "id": "agent:community.cs_cto_advisor",
@@ -3328,7 +3343,7 @@
    },
    {
     "id": "agent:community.cs_content_creator",
-    "w": 0.0623
+    "w": 0.0624
    },
    {
     "id": "agent:community.cs_workspace_admin",
@@ -3346,7 +3361,7 @@
    },
    {
     "id": "agent:community.cs_cto_advisor",
-    "w": 0.0629
+    "w": 0.063
    },
    {
     "id": "agent:community.cs_financial_analyst",
@@ -3358,7 +3373,7 @@
    },
    {
     "id": "agent:community.cs_project_manager",
-    "w": 0.0603
+    "w": 0.0604
    },
    {
     "id": "agent:community.cs_content_creator",
@@ -3376,7 +3391,7 @@
    },
    {
     "id": "agent:community.performance_reviewer",
-    "w": 0.1065
+    "w": 0.1066
    },
    {
     "id": "agent:community.code_quality_reviewer",
@@ -3384,7 +3399,7 @@
    },
    {
     "id": "agent:community.test_coverage_reviewer",
-    "w": 0.0883
+    "w": 0.0884
    },
    {
     "id": "agent:community.cs_engineering_lead",
@@ -3392,7 +3407,7 @@
    },
    {
     "id": "agent:community.recruiter",
-    "w": 0.0623
+    "w": 0.0624
    },
    {
     "id": "agent:community.cs_senior_engineer",
@@ -3406,7 +3421,7 @@
   "agent:community.finance_lead": [
    {
     "id": "agent:community.cs_financial_analyst",
-    "w": 0.0964
+    "w": 0.0965
    },
    {
     "id": "agent:community.cs_engineering_lead",
@@ -3422,7 +3437,7 @@
    },
    {
     "id": "agent:community.recruiter",
-    "w": 0.0365
+    "w": 0.0366
    },
    {
     "id": "agent:community.cs_ux_researcher",
@@ -3434,7 +3449,7 @@
    },
    {
     "id": "agent:community.cs_project_manager",
-    "w": 0.0351
+    "w": 0.0352
    }
   ],
   "agent:community.financial_analyst": [
@@ -3444,7 +3459,7 @@
    },
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.0887
+    "w": 0.0888
    },
    {
     "id": "agent:community.cs_product_analyst",
@@ -3464,11 +3479,11 @@
    },
    {
     "id": "agent:community.cs_senior_engineer",
-    "w": 0.0674
+    "w": 0.0675
    },
    {
     "id": "agent:community.test_agent",
-    "w": 0.066
+    "w": 0.0661
    }
   ],
   "agent:community.growth_marketer": [
@@ -3508,7 +3523,7 @@
   "agent:community.performance_reviewer": [
    {
     "id": "agent:community.security_code_reviewer",
-    "w": 0.1294
+    "w": 0.1295
    },
    {
     "id": "agent:community.code_quality_reviewer",
@@ -3516,11 +3531,11 @@
    },
    {
     "id": "agent:community.documentation_accuracy_reviewer",
-    "w": 0.1065
+    "w": 0.1066
    },
    {
     "id": "agent:community.test_coverage_reviewer",
-    "w": 0.105
+    "w": 0.1051
    },
    {
     "id": "agent:community.cs_engineering_lead",
@@ -3528,7 +3543,7 @@
    },
    {
     "id": "agent:community.recruiter",
-    "w": 0.0741
+    "w": 0.0742
    },
    {
     "id": "agent:community.cs_senior_engineer",
@@ -3542,23 +3557,23 @@
   "agent:community.recruiter": [
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.0971
+    "w": 0.0972
    },
    {
     "id": "agent:community.security_code_reviewer",
-    "w": 0.0757
+    "w": 0.0758
    },
    {
     "id": "agent:community.performance_reviewer",
-    "w": 0.0741
+    "w": 0.0742
    },
    {
     "id": "agent:community.cs_senior_engineer",
-    "w": 0.0738
+    "w": 0.0739
    },
    {
     "id": "agent:community.test_agent",
-    "w": 0.0723
+    "w": 0.0724
    },
    {
     "id": "agent:community.cs_cto_advisor",
@@ -3570,13 +3585,13 @@
    },
    {
     "id": "agent:community.code_quality_reviewer",
-    "w": 0.0671
+    "w": 0.0672
    }
   ],
   "agent:community.security_code_reviewer": [
    {
     "id": "agent:community.performance_reviewer",
-    "w": 0.1294
+    "w": 0.1295
    },
    {
     "id": "agent:community.code_quality_reviewer",
@@ -3596,11 +3611,11 @@
    },
    {
     "id": "agent:community.recruiter",
-    "w": 0.0757
+    "w": 0.0758
    },
    {
     "id": "agent:community.cs_senior_engineer",
-    "w": 0.0714
+    "w": 0.0715
    },
    {
     "id": "agent:code-reviewer",
@@ -3614,11 +3629,11 @@
    },
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.0373
+    "w": 0.0374
    },
    {
     "id": "agent:community.cs_cto_advisor",
-    "w": 0.0371
+    "w": 0.0372
    },
    {
     "id": "agent:community.recruiter",
@@ -3626,7 +3641,7 @@
    },
    {
     "id": "agent:community.cs_financial_analyst",
-    "w": 0.0367
+    "w": 0.0368
    },
    {
     "id": "agent:community.cs_ux_researcher",
@@ -3644,7 +3659,7 @@
   "agent:community.startup_cto": [
    {
     "id": "agent:community.cs_cto_advisor",
-    "w": 0.0906
+    "w": 0.0907
    },
    {
     "id": "agent:community.cs_engineering_lead",
@@ -3652,7 +3667,7 @@
    },
    {
     "id": "agent:community.recruiter",
-    "w": 0.0658
+    "w": 0.0659
    },
    {
     "id": "agent:community.security_code_reviewer",
@@ -3682,11 +3697,11 @@
    },
    {
     "id": "agent:community.cs_engineering_lead",
-    "w": 0.0897
+    "w": 0.0898
    },
    {
     "id": "agent:community.recruiter",
-    "w": 0.0723
+    "w": 0.0724
    },
    {
     "id": "agent:community.security_code_reviewer",
@@ -3706,7 +3721,7 @@
    },
    {
     "id": "agent:community.financial_analyst",
-    "w": 0.066
+    "w": 0.0661
    }
   ],
   "agent:community.test_coverage_reviewer": [
@@ -3720,7 +3735,7 @@
    },
    {
     "id": "agent:community.performance_reviewer",
-    "w": 0.105
+    "w": 0.1051
    },
    {
     "id": "agent:community.code_quality_reviewer",
@@ -3728,7 +3743,7 @@
    },
    {
     "id": "agent:community.documentation_accuracy_reviewer",
-    "w": 0.0883
+    "w": 0.0884
    },
    {
     "id": "agent:community.cs_engineering_lead",
@@ -3796,7 +3811,7 @@
    },
    {
     "id": "agent:test-automator",
-    "w": 0.171
+    "w": 0.1711
    },
    {
     "id": "agent:penetration-tester",
@@ -3848,35 +3863,35 @@
   "agent:context-manager": [
    {
     "id": "agent:agent-organizer",
-    "w": 0.1763
+    "w": 0.1761
    },
    {
     "id": "agent:agent-installer",
-    "w": 0.1763
+    "w": 0.1761
    },
    {
     "id": "agent:knowledge-synthesizer",
-    "w": 0.1708
+    "w": 0.1707
    },
    {
     "id": "agent:task-distributor",
-    "w": 0.1689
+    "w": 0.1687
    },
    {
     "id": "agent:multi-agent-coordinator",
-    "w": 0.1603
+    "w": 0.1602
    },
    {
     "id": "agent:workflow-orchestrator",
-    "w": 0.154
+    "w": 0.1538
    },
    {
     "id": "agent:error-coordinator",
-    "w": 0.1502
+    "w": 0.15
    },
    {
     "id": "agent:performance-monitor",
-    "w": 0.1371
+    "w": 0.1369
    }
   ],
   "agent:cpp-pro": [
@@ -3886,7 +3901,7 @@
    },
    {
     "id": "agent:typescript-pro",
-    "w": 0.1444
+    "w": 0.1445
    },
    {
     "id": "agent:javascript-pro",
@@ -3894,7 +3909,7 @@
    },
    {
     "id": "agent:php-pro",
-    "w": 0.143
+    "w": 0.1431
    },
    {
     "id": "agent:golang-pro",
@@ -3910,7 +3925,7 @@
    },
    {
     "id": "agent:angular-architect",
-    "w": 0.1233
+    "w": 0.1234
    }
   ],
   "agent:critic": [
@@ -3924,7 +3939,7 @@
    },
    {
     "id": "agent:community.code_quality_reviewer",
-    "w": 0.0242
+    "w": 0.0243
    },
    {
     "id": "agent:community.cs_senior_engineer",
@@ -3942,7 +3957,7 @@
    },
    {
     "id": "agent:fastapi-developer",
-    "w": 0.1428
+    "w": 0.1429
    },
    {
     "id": "agent:dotnet-core-expert",
@@ -3954,7 +3969,7 @@
    },
    {
     "id": "agent:golang-pro",
-    "w": 0.1185
+    "w": 0.1186
    },
    {
     "id": "agent:symfony-specialist",
@@ -3966,7 +3981,7 @@
    },
    {
     "id": "agent:laravel-specialist",
-    "w": 0.1129
+    "w": 0.113
    }
   ],
   "agent:customer-success-manager": [
@@ -3992,7 +4007,7 @@
    },
    {
     "id": "agent:content-marketer",
-    "w": 0.1274
+    "w": 0.1275
    },
    {
     "id": "agent:legal-advisor",
@@ -4022,7 +4037,7 @@
    },
    {
     "id": "agent:llm-architect",
-    "w": 0.1376
+    "w": 0.1377
    },
    {
     "id": "agent:database-optimizer",
@@ -4044,7 +4059,7 @@
    },
    {
     "id": "agent:ml-engineer",
-    "w": 0.178
+    "w": 0.1781
    },
    {
     "id": "agent:reinforcement-learning-engineer",
@@ -4052,7 +4067,7 @@
    },
    {
     "id": "agent:ai-engineer",
-    "w": 0.1737
+    "w": 0.1738
    },
    {
     "id": "agent:prompt-engineer",
@@ -4086,7 +4101,7 @@
    },
    {
     "id": "agent:research-analyst",
-    "w": 0.1357
+    "w": 0.1358
    },
    {
     "id": "agent:competitive-analyst",
@@ -4124,7 +4139,7 @@
    },
    {
     "id": "agent:llm-architect",
-    "w": 0.1466
+    "w": 0.1467
    },
    {
     "id": "agent:database-optimizer",
@@ -4142,15 +4157,15 @@
   "agent:database-administrator": [
    {
     "id": "agent:devops-incident-responder",
-    "w": 0.1166
+    "w": 0.1167
    },
    {
     "id": "agent:docker-expert",
-    "w": 0.1155
+    "w": 0.1156
    },
    {
     "id": "agent:network-engineer",
-    "w": 0.1099
+    "w": 0.11
    },
    {
     "id": "agent:deployment-engineer",
@@ -4170,7 +4185,7 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.0938
+    "w": 0.0939
    }
   ],
   "agent:database-optimizer": [
@@ -4248,7 +4263,7 @@
    },
    {
     "id": "agent:git-workflow-manager",
-    "w": 0.1611
+    "w": 0.1615
    },
    {
     "id": "agent:cli-developer",
@@ -4256,7 +4271,7 @@
    },
    {
     "id": "agent:powershell-ui-architect",
-    "w": 0.1457
+    "w": 0.1458
    },
    {
     "id": "agent:build-engineer",
@@ -4268,7 +4283,7 @@
    },
    {
     "id": "agent:dx-optimizer",
-    "w": 0.1273
+    "w": 0.1274
    },
    {
     "id": "agent:mcp-developer",
@@ -4282,7 +4297,7 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1773
+    "w": 0.1774
    },
    {
     "id": "agent:terraform-engineer",
@@ -4324,7 +4339,7 @@
    },
    {
     "id": "agent:websocket-engineer",
-    "w": 0.1303
+    "w": 0.1304
    },
    {
     "id": "agent:microservices-architect",
@@ -4336,7 +4351,7 @@
    },
    {
     "id": "agent:graphql-architect",
-    "w": 0.1227
+    "w": 0.1228
    },
    {
     "id": "agent:fullstack-developer",
@@ -4346,7 +4361,7 @@
   "agent:devops-cicd-expert": [
    {
     "id": "agent:performance-expert",
-    "w": 0.1074
+    "w": 0.1075
    },
    {
     "id": "agent:security-expert",
@@ -4354,15 +4369,15 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.1067
+    "w": 0.1068
    },
    {
     "id": "agent:python-expert",
-    "w": 0.1017
+    "w": 0.1018
    },
    {
     "id": "agent:django-expert",
-    "w": 0.1017
+    "w": 0.1018
    },
    {
     "id": "agent:fastapi-expert",
@@ -4374,7 +4389,7 @@
    },
    {
     "id": "agent:rails-backend-expert",
-    "w": 0.0892
+    "w": 0.0893
    }
   ],
   "agent:devops-engineer": [
@@ -4388,7 +4403,7 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.0776
+    "w": 0.0777
    },
    {
     "id": "agent:terraform-engineer",
@@ -4418,11 +4433,11 @@
    },
    {
     "id": "agent:docker-expert",
-    "w": 0.1388
+    "w": 0.1389
    },
    {
     "id": "agent:kubernetes-specialist",
-    "w": 0.1369
+    "w": 0.137
    },
    {
     "id": "agent:deployment-engineer",
@@ -4438,11 +4453,11 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1166
+    "w": 0.1167
    },
    {
     "id": "agent:database-administrator",
-    "w": 0.1166
+    "w": 0.1167
    }
   ],
   "agent:diff_governance": [
@@ -4462,11 +4477,11 @@
    },
    {
     "id": "agent:django-expert",
-    "w": 0.1024
+    "w": 0.1025
    },
    {
     "id": "agent:django-backend-expert",
-    "w": 0.0903
+    "w": 0.0904
    },
    {
     "id": "agent:django-orm-expert",
@@ -4474,11 +4489,11 @@
    },
    {
     "id": "agent:api-architect",
-    "w": 0.0804
+    "w": 0.0805
    },
    {
     "id": "agent:performance-expert",
-    "w": 0.0696
+    "w": 0.0697
    },
    {
     "id": "agent:security-expert",
@@ -4512,11 +4527,11 @@
    },
    {
     "id": "agent:security-expert",
-    "w": 0.1141
+    "w": 0.1142
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.1137
+    "w": 0.1138
    },
    {
     "id": "agent:python-expert",
@@ -4526,7 +4541,7 @@
   "agent:django-developer": [
    {
     "id": "agent:fastapi-developer",
-    "w": 0.1674
+    "w": 0.1675
    },
    {
     "id": "agent:csharp-developer",
@@ -4542,7 +4557,7 @@
    },
    {
     "id": "agent:laravel-specialist",
-    "w": 0.1341
+    "w": 0.1342
    },
    {
     "id": "agent:python-pro",
@@ -4564,15 +4579,15 @@
    },
    {
     "id": "agent:django-orm-expert",
-    "w": 0.1338
+    "w": 0.1339
    },
    {
     "id": "agent:performance-expert",
-    "w": 0.1298
+    "w": 0.1299
    },
    {
     "id": "agent:security-expert",
-    "w": 0.1294
+    "w": 0.1295
    },
    {
     "id": "agent:testing-expert",
@@ -4580,7 +4595,7 @@
    },
    {
     "id": "agent:python-expert",
-    "w": 0.1229
+    "w": 0.123
    },
    {
     "id": "agent:fastapi-expert",
@@ -4594,7 +4609,7 @@
   "agent:django-orm-expert": [
    {
     "id": "agent:django-expert",
-    "w": 0.1338
+    "w": 0.1339
    },
    {
     "id": "agent:django-backend-expert",
@@ -4606,7 +4621,7 @@
    },
    {
     "id": "agent:security-expert",
-    "w": 0.1033
+    "w": 0.1034
    },
    {
     "id": "agent:testing-expert",
@@ -4632,7 +4647,7 @@
    },
    {
     "id": "agent:devops-incident-responder",
-    "w": 0.1388
+    "w": 0.1389
    },
    {
     "id": "agent:deployment-engineer",
@@ -4640,11 +4655,11 @@
    },
    {
     "id": "agent:cloud-architect",
-    "w": 0.1262
+    "w": 0.1263
    },
    {
     "id": "agent:sre-engineer",
-    "w": 0.1231
+    "w": 0.1232
    },
    {
     "id": "agent:kubernetes-specialist",
@@ -4652,11 +4667,11 @@
    },
    {
     "id": "agent:database-administrator",
-    "w": 0.1155
+    "w": 0.1156
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1143
+    "w": 0.1144
    }
   ],
   "agent:documentation-engineer": [
@@ -4690,13 +4705,13 @@
    },
    {
     "id": "agent:dx-optimizer",
-    "w": 0.1062
+    "w": 0.1063
    }
   ],
   "agent:documentation-specialist": [
    {
     "id": "agent:performance-expert",
-    "w": 0.0787
+    "w": 0.0788
    },
    {
     "id": "agent:security-expert",
@@ -4704,7 +4719,7 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.0782
+    "w": 0.0783
    },
    {
     "id": "agent:python-expert",
@@ -4716,15 +4731,15 @@
    },
    {
     "id": "agent:fastapi-expert",
-    "w": 0.0725
+    "w": 0.0726
    },
    {
     "id": "agent:api-architect",
-    "w": 0.0719
+    "w": 0.072
    },
    {
     "id": "agent:performance-optimizer",
-    "w": 0.0674
+    "w": 0.0675
    }
   ],
   "agent:dotnet-core-expert": [
@@ -4738,11 +4753,11 @@
    },
    {
     "id": "agent:golang-pro",
-    "w": 0.1268
+    "w": 0.1269
    },
    {
     "id": "agent:fastapi-developer",
-    "w": 0.1232
+    "w": 0.1233
    },
    {
     "id": "agent:laravel-specialist",
@@ -4758,21 +4773,21 @@
    },
    {
     "id": "agent:django-developer",
-    "w": 0.1102
+    "w": 0.1103
    }
   ],
   "agent:dotnet-framework-4.8-expert": [
    {
     "id": "agent:rails-expert",
-    "w": 0.1105
+    "w": 0.1106
    },
    {
     "id": "agent:elixir-expert",
-    "w": 0.0979
+    "w": 0.098
    },
    {
     "id": "agent:swift-expert",
-    "w": 0.0891
+    "w": 0.0892
    },
    {
     "id": "agent:vue-expert",
@@ -4788,7 +4803,7 @@
    },
    {
     "id": "agent:powershell-5.1-expert",
-    "w": 0.0785
+    "w": 0.0786
    },
    {
     "id": "agent:typescript-pro",
@@ -4798,23 +4813,23 @@
   "agent:dx-optimizer": [
    {
     "id": "agent:git-workflow-manager",
-    "w": 0.1394
+    "w": 0.1393
    },
    {
     "id": "agent:tooling-engineer",
-    "w": 0.1348
+    "w": 0.1349
    },
    {
     "id": "agent:cli-developer",
-    "w": 0.1295
+    "w": 0.1296
    },
    {
     "id": "agent:dependency-manager",
-    "w": 0.1273
+    "w": 0.1274
    },
    {
     "id": "agent:powershell-ui-architect",
-    "w": 0.1191
+    "w": 0.1192
    },
    {
     "id": "agent:build-engineer",
@@ -4822,11 +4837,11 @@
    },
    {
     "id": "agent:powershell-module-architect",
-    "w": 0.1093
+    "w": 0.1094
    },
    {
     "id": "agent:documentation-engineer",
-    "w": 0.1062
+    "w": 0.1063
    }
   ],
   "agent:electron-pro": [
@@ -4840,19 +4855,19 @@
    },
    {
     "id": "agent:ui-designer",
-    "w": 0.1355
+    "w": 0.1356
    },
    {
     "id": "agent:websocket-engineer",
     "w": 0.1353
    },
    {
-    "id": "agent:backend-developer",
+    "id": "agent:microservices-architect",
     "w": 0.1351
    },
    {
-    "id": "agent:microservices-architect",
-    "w": 0.135
+    "id": "agent:backend-developer",
+    "w": 0.1351
    },
    {
     "id": "agent:api-designer",
@@ -4870,11 +4885,11 @@
    },
    {
     "id": "agent:flutter-expert",
-    "w": 0.1352
+    "w": 0.1353
    },
    {
     "id": "agent:vue-expert",
-    "w": 0.1306
+    "w": 0.1307
    },
    {
     "id": "agent:typescript-pro",
@@ -4886,21 +4901,21 @@
    },
    {
     "id": "agent:rails-expert",
-    "w": 0.1268
+    "w": 0.1269
    },
    {
     "id": "agent:php-pro",
-    "w": 0.1267
+    "w": 0.1268
    },
    {
     "id": "agent:expo-react-native-expert",
-    "w": 0.1229
+    "w": 0.123
    }
   ],
   "agent:embedded-systems": [
    {
     "id": "agent:game-developer",
-    "w": 0.1524
+    "w": 0.1525
    },
    {
     "id": "agent:m365-admin",
@@ -4916,7 +4931,7 @@
    },
    {
     "id": "agent:blockchain-developer",
-    "w": 0.1279
+    "w": 0.128
    },
    {
     "id": "agent:fintech-engineer",
@@ -4968,35 +4983,35 @@
   "agent:error-coordinator": [
    {
     "id": "agent:multi-agent-coordinator",
-    "w": 0.2418
+    "w": 0.2417
    },
    {
     "id": "agent:agent-organizer",
-    "w": 0.1759
+    "w": 0.1758
    },
    {
     "id": "agent:agent-installer",
-    "w": 0.1759
+    "w": 0.1758
    },
    {
     "id": "agent:knowledge-synthesizer",
-    "w": 0.1704
+    "w": 0.1702
    },
    {
     "id": "agent:task-distributor",
-    "w": 0.1684
+    "w": 0.1683
    },
    {
     "id": "agent:workflow-orchestrator",
-    "w": 0.1667
+    "w": 0.1665
    },
    {
     "id": "agent:it-ops-orchestrator",
-    "w": 0.1654
+    "w": 0.1653
    },
    {
     "id": "agent:context-manager",
-    "w": 0.1502
+    "w": 0.15
    }
   ],
   "agent:error-detective": [
@@ -5022,7 +5037,7 @@
    },
    {
     "id": "agent:compliance-auditor",
-    "w": 0.1562
+    "w": 0.1563
    },
    {
     "id": "agent:test-automator",
@@ -5037,6 +5052,10 @@
    {
     "id": "agent:meta_reasoning",
     "w": 0.0236
+   },
+   {
+    "id": "agent:community.cs_senior_engineer",
+    "w": 0.02
    }
   ],
   "agent:expo-react-native-expert": [
@@ -5050,7 +5069,7 @@
    },
    {
     "id": "agent:elixir-expert",
-    "w": 0.1229
+    "w": 0.123
    },
    {
     "id": "agent:kotlin-specialist",
@@ -5058,7 +5077,7 @@
    },
    {
     "id": "agent:react-specialist",
-    "w": 0.1122
+    "w": 0.1123
    },
    {
     "id": "agent:vue-expert",
@@ -5066,7 +5085,7 @@
    },
    {
     "id": "agent:typescript-pro",
-    "w": 0.0989
+    "w": 0.099
    },
    {
     "id": "agent:powershell-5.1-expert",
@@ -5076,11 +5095,11 @@
   "agent:fastapi-developer": [
    {
     "id": "agent:django-developer",
-    "w": 0.1674
+    "w": 0.1675
    },
    {
     "id": "agent:vue-expert",
-    "w": 0.1536
+    "w": 0.1537
    },
    {
     "id": "agent:laravel-specialist",
@@ -5088,7 +5107,7 @@
    },
    {
     "id": "agent:csharp-developer",
-    "w": 0.1428
+    "w": 0.1429
    },
    {
     "id": "agent:nextjs-developer",
@@ -5104,7 +5123,7 @@
    },
    {
     "id": "agent:dotnet-core-expert",
-    "w": 0.1232
+    "w": 0.1233
    }
   ],
   "agent:fastapi-expert": [
@@ -5118,7 +5137,7 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.1254
+    "w": 0.1255
    },
    {
     "id": "agent:python-expert",
@@ -5130,15 +5149,15 @@
    },
    {
     "id": "agent:django-backend-expert",
-    "w": 0.1054
+    "w": 0.1055
    },
    {
     "id": "agent:rails-backend-expert",
     "w": 0.1049
    },
    {
-    "id": "agent:ml-data-expert",
-    "w": 0.1041
+    "id": "agent:laravel-backend-expert",
+    "w": 0.1042
    }
   ],
   "agent:fintech-engineer": [
@@ -5172,7 +5191,7 @@
    },
    {
     "id": "agent:blockchain-developer",
-    "w": 0.1231
+    "w": 0.1232
    }
   ],
   "agent:flutter-expert": [
@@ -5186,7 +5205,7 @@
    },
    {
     "id": "agent:elixir-expert",
-    "w": 0.1352
+    "w": 0.1353
    },
    {
     "id": "agent:kotlin-specialist",
@@ -5194,11 +5213,11 @@
    },
    {
     "id": "agent:vue-expert",
-    "w": 0.12
+    "w": 0.1201
    },
    {
     "id": "agent:react-specialist",
-    "w": 0.1126
+    "w": 0.1127
    },
    {
     "id": "agent:angular-architect",
@@ -5206,7 +5225,7 @@
    },
    {
     "id": "agent:typescript-pro",
-    "w": 0.1088
+    "w": 0.1089
    }
   ],
   "agent:frontend-developer": [
@@ -5254,7 +5273,7 @@
    },
    {
     "id": "agent:mobile-developer",
-    "w": 0.1401
+    "w": 0.1402
    },
    {
     "id": "agent:ui-designer",
@@ -5270,7 +5289,7 @@
    },
    {
     "id": "agent:api-designer",
-    "w": 0.1323
+    "w": 0.1324
    },
    {
     "id": "agent:graphql-architect",
@@ -5280,7 +5299,7 @@
   "agent:game-developer": [
    {
     "id": "agent:blockchain-developer",
-    "w": 0.1584
+    "w": 0.1585
    },
    {
     "id": "agent:m365-admin",
@@ -5292,15 +5311,15 @@
    },
    {
     "id": "agent:embedded-systems",
-    "w": 0.1524
+    "w": 0.1525
    },
    {
     "id": "agent:mobile-app-developer",
-    "w": 0.1379
+    "w": 0.138
    },
    {
     "id": "agent:iot-engineer",
-    "w": 0.1358
+    "w": 0.1359
    },
    {
     "id": "agent:fintech-engineer",
@@ -5308,41 +5327,41 @@
    },
    {
     "id": "agent:seo-specialist",
-    "w": 0.1302
+    "w": 0.1303
    }
   ],
   "agent:git-workflow-manager": [
    {
     "id": "agent:dependency-manager",
-    "w": 0.1611
+    "w": 0.1615
    },
    {
     "id": "agent:tooling-engineer",
-    "w": 0.1395
+    "w": 0.1398
    },
    {
     "id": "agent:dx-optimizer",
-    "w": 0.1394
+    "w": 0.1393
    },
    {
     "id": "agent:cli-developer",
-    "w": 0.1341
+    "w": 0.1344
    },
    {
     "id": "agent:powershell-ui-architect",
-    "w": 0.1235
+    "w": 0.1238
    },
    {
     "id": "agent:build-engineer",
-    "w": 0.1111
+    "w": 0.1113
    },
    {
     "id": "agent:readme-generator",
-    "w": 0.1088
+    "w": 0.1091
    },
    {
     "id": "agent:mcp-developer",
-    "w": 0.1047
+    "w": 0.105
    }
   ],
   "agent:golang-pro": [
@@ -5368,7 +5387,7 @@
    },
    {
     "id": "agent:dotnet-core-expert",
-    "w": 0.1268
+    "w": 0.1269
    },
    {
     "id": "agent:sql-pro",
@@ -5382,7 +5401,7 @@
   "agent:graphql-architect": [
    {
     "id": "agent:microservices-architect",
-    "w": 0.1745
+    "w": 0.1746
    },
    {
     "id": "agent:frontend-developer",
@@ -5440,7 +5459,7 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1363
+    "w": 0.1364
    },
    {
     "id": "agent:terragrunt-expert",
@@ -5454,7 +5473,7 @@
    },
    {
     "id": "agent:game-developer",
-    "w": 0.1358
+    "w": 0.1359
    },
    {
     "id": "agent:m365-admin",
@@ -5474,7 +5493,7 @@
    },
    {
     "id": "agent:blockchain-developer",
-    "w": 0.1129
+    "w": 0.113
    },
    {
     "id": "agent:seo-specialist",
@@ -5484,35 +5503,35 @@
   "agent:it-ops-orchestrator": [
    {
     "id": "agent:workflow-orchestrator",
-    "w": 0.1797
+    "w": 0.1796
    },
    {
     "id": "agent:multi-agent-coordinator",
-    "w": 0.1712
+    "w": 0.1711
    },
    {
     "id": "agent:error-coordinator",
-    "w": 0.1654
+    "w": 0.1653
    },
    {
     "id": "agent:agent-organizer",
-    "w": 0.1572
+    "w": 0.157
    },
    {
     "id": "agent:agent-installer",
-    "w": 0.1572
+    "w": 0.157
    },
    {
     "id": "agent:knowledge-synthesizer",
-    "w": 0.1522
+    "w": 0.1521
    },
    {
     "id": "agent:task-distributor",
-    "w": 0.1505
+    "w": 0.1503
    },
    {
     "id": "agent:context-manager",
-    "w": 0.1342
+    "w": 0.134
    }
   ],
   "agent:java-architect": [
@@ -5526,7 +5545,7 @@
    },
    {
     "id": "agent:spring-boot-engineer",
-    "w": 0.1256
+    "w": 0.1257
    },
    {
     "id": "agent:csharp-developer",
@@ -5534,7 +5553,7 @@
    },
    {
     "id": "agent:powershell-7-expert",
-    "w": 0.1206
+    "w": 0.1207
    },
    {
     "id": "agent:dotnet-core-expert",
@@ -5546,7 +5565,7 @@
    },
    {
     "id": "agent:typescript-pro",
-    "w": 0.1029
+    "w": 0.103
    }
   ],
   "agent:javascript-pro": [
@@ -5560,7 +5579,7 @@
    },
    {
     "id": "agent:php-pro",
-    "w": 0.1397
+    "w": 0.1398
    },
    {
     "id": "agent:golang-pro",
@@ -5586,35 +5605,35 @@
   "agent:knowledge-synthesizer": [
    {
     "id": "agent:agent-organizer",
-    "w": 0.1981
+    "w": 0.198
    },
    {
     "id": "agent:agent-installer",
-    "w": 0.1981
+    "w": 0.198
    },
    {
     "id": "agent:task-distributor",
-    "w": 0.1904
+    "w": 0.1903
    },
    {
     "id": "agent:multi-agent-coordinator",
-    "w": 0.1796
+    "w": 0.1795
    },
    {
     "id": "agent:workflow-orchestrator",
-    "w": 0.1739
+    "w": 0.1738
    },
    {
     "id": "agent:context-manager",
-    "w": 0.1708
+    "w": 0.1707
    },
    {
     "id": "agent:error-coordinator",
-    "w": 0.1704
+    "w": 0.1702
    },
    {
     "id": "agent:it-ops-orchestrator",
-    "w": 0.1522
+    "w": 0.1521
    }
   ],
   "agent:kotlin-specialist": [
@@ -5624,7 +5643,7 @@
    },
    {
     "id": "agent:swift-expert",
-    "w": 0.1437
+    "w": 0.1438
    },
    {
     "id": "agent:flutter-expert",
@@ -5636,7 +5655,7 @@
    },
    {
     "id": "agent:laravel-specialist",
-    "w": 0.1253
+    "w": 0.1254
    },
    {
     "id": "agent:expo-react-native-expert",
@@ -5648,7 +5667,7 @@
    },
    {
     "id": "agent:typescript-pro",
-    "w": 0.1129
+    "w": 0.113
    }
   ],
   "agent:kubernetes-specialist": [
@@ -5666,11 +5685,11 @@
    },
    {
     "id": "agent:devops-incident-responder",
-    "w": 0.1369
+    "w": 0.137
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1362
+    "w": 0.1363
    },
    {
     "id": "agent:terragrunt-expert",
@@ -5682,7 +5701,7 @@
    },
    {
     "id": "agent:azure-infra-engineer",
-    "w": 0.1344
+    "w": 0.1345
    }
   ],
   "agent:laravel-backend-expert": [
@@ -5704,11 +5723,11 @@
    },
    {
     "id": "agent:security-expert",
-    "w": 0.1127
+    "w": 0.1128
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.1123
+    "w": 0.1124
    },
    {
     "id": "agent:python-expert",
@@ -5726,7 +5745,7 @@
    },
    {
     "id": "agent:performance-expert",
-    "w": 0.1026
+    "w": 0.1027
    },
    {
     "id": "agent:security-expert",
@@ -5734,7 +5753,7 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.1019
+    "w": 0.102
    },
    {
     "id": "agent:python-expert",
@@ -5746,7 +5765,7 @@
    },
    {
     "id": "agent:fastapi-expert",
-    "w": 0.0945
+    "w": 0.0946
    },
    {
     "id": "agent:django-backend-expert",
@@ -5772,15 +5791,15 @@
    },
    {
     "id": "agent:django-developer",
-    "w": 0.1341
+    "w": 0.1342
    },
    {
     "id": "agent:kotlin-specialist",
-    "w": 0.1253
+    "w": 0.1254
    },
    {
     "id": "agent:python-pro",
-    "w": 0.1225
+    "w": 0.1226
    },
    {
     "id": "agent:dotnet-core-expert",
@@ -5790,7 +5809,7 @@
   "agent:legacy-modernizer": [
    {
     "id": "agent:tooling-engineer",
-    "w": 0.1089
+    "w": 0.109
    },
    {
     "id": "agent:readme-generator",
@@ -5802,7 +5821,7 @@
    },
    {
     "id": "agent:cli-developer",
-    "w": 0.1043
+    "w": 0.1044
    },
    {
     "id": "agent:dependency-manager",
@@ -5814,7 +5833,7 @@
    },
    {
     "id": "agent:powershell-ui-architect",
-    "w": 0.095
+    "w": 0.0951
    },
    {
     "id": "agent:build-engineer",
@@ -5824,7 +5843,7 @@
   "agent:legal-advisor": [
    {
     "id": "agent:project-manager",
-    "w": 0.1803
+    "w": 0.1804
    },
    {
     "id": "agent:license-engineer",
@@ -5840,11 +5859,11 @@
    },
    {
     "id": "agent:wordpress-master",
-    "w": 0.1481
+    "w": 0.1482
    },
    {
     "id": "agent:scrum-master",
-    "w": 0.1481
+    "w": 0.1482
    },
    {
     "id": "agent:ux-researcher",
@@ -5908,7 +5927,7 @@
    },
    {
     "id": "agent:ml-engineer",
-    "w": 0.1653
+    "w": 0.1654
    },
    {
     "id": "agent:nlp-engineer",
@@ -5916,7 +5935,7 @@
    },
    {
     "id": "agent:ai-engineer",
-    "w": 0.1613
+    "w": 0.1614
    },
    {
     "id": "agent:database-optimizer",
@@ -5954,7 +5973,7 @@
    },
    {
     "id": "agent:api-documenter",
-    "w": 0.1201
+    "w": 0.1202
    }
   ],
   "agent:machine-learning-engineer": [
@@ -5968,7 +5987,7 @@
    },
    {
     "id": "agent:mlops-engineer",
-    "w": 0.1727
+    "w": 0.1728
    },
    {
     "id": "agent:data-engineer",
@@ -5980,7 +5999,7 @@
    },
    {
     "id": "agent:ml-engineer",
-    "w": 0.1688
+    "w": 0.1689
    },
    {
     "id": "agent:nlp-engineer",
@@ -5988,7 +6007,7 @@
    },
    {
     "id": "agent:ai-engineer",
-    "w": 0.1647
+    "w": 0.1648
    }
   ],
   "agent:market-researcher": [
@@ -6052,7 +6071,7 @@
    },
    {
     "id": "agent:git-workflow-manager",
-    "w": 0.1047
+    "w": 0.105
    },
    {
     "id": "agent:legacy-modernizer",
@@ -6061,12 +6080,12 @@
   ],
   "agent:meta_learning_agent": [
    {
-    "id": "script:apex_st_metric",
-    "w": 0.0413
+    "id": "script:learning",
+    "w": 0.0414
    },
    {
-    "id": "script:learning",
-    "w": 0.041
+    "id": "script:apex_st_metric",
+    "w": 0.0412
    },
    {
     "id": "agent:community.test_agent",
@@ -6082,7 +6101,7 @@
    },
    {
     "id": "agent:meta_reasoning",
-    "w": 0.0237
+    "w": 0.0236
    },
    {
     "id": "agent:scientist_agent",
@@ -6092,7 +6111,7 @@
   "agent:meta_reasoning": [
    {
     "id": "script:bayes",
-    "w": 0.0284
+    "w": 0.0285
    },
    {
     "id": "agent:theorist",
@@ -6100,7 +6119,7 @@
    },
    {
     "id": "agent:meta_learning_agent",
-    "w": 0.0237
+    "w": 0.0236
    },
    {
     "id": "agent:event_observer",
@@ -6110,7 +6129,7 @@
   "agent:microservices-architect": [
    {
     "id": "agent:graphql-architect",
-    "w": 0.1745
+    "w": 0.1746
    },
    {
     "id": "agent:frontend-developer",
@@ -6118,7 +6137,7 @@
    },
    {
     "id": "agent:ui-designer",
-    "w": 0.1528
+    "w": 0.1529
    },
    {
     "id": "agent:websocket-engineer",
@@ -6126,7 +6145,7 @@
    },
    {
     "id": "agent:backend-developer",
-    "w": 0.1523
+    "w": 0.1524
    },
    {
     "id": "agent:api-designer",
@@ -6138,7 +6157,7 @@
    },
    {
     "id": "agent:electron-pro",
-    "w": 0.135
+    "w": 0.1351
    }
   ],
   "agent:ml-data-expert": [
@@ -6148,11 +6167,11 @@
    },
    {
     "id": "agent:security-expert",
-    "w": 0.1126
+    "w": 0.1127
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.1122
+    "w": 0.1123
    },
    {
     "id": "agent:python-expert",
@@ -6168,11 +6187,11 @@
    },
    {
     "id": "agent:django-backend-expert",
-    "w": 0.0943
+    "w": 0.0944
    },
    {
     "id": "agent:rails-backend-expert",
-    "w": 0.0938
+    "w": 0.0939
    }
   ],
   "agent:ml-engineer": [
@@ -6182,7 +6201,7 @@
    },
    {
     "id": "agent:data-engineer",
-    "w": 0.178
+    "w": 0.1781
    },
    {
     "id": "agent:database-optimizer",
@@ -6194,7 +6213,7 @@
    },
    {
     "id": "agent:ai-engineer",
-    "w": 0.1725
+    "w": 0.1726
    },
    {
     "id": "agent:reinforcement-learning-engineer",
@@ -6202,11 +6221,11 @@
    },
    {
     "id": "agent:prompt-engineer",
-    "w": 0.17
+    "w": 0.1701
    },
    {
     "id": "agent:machine-learning-engineer",
-    "w": 0.1688
+    "w": 0.1689
    }
   ],
   "agent:mlops-engineer": [
@@ -6232,7 +6251,7 @@
    },
    {
     "id": "agent:machine-learning-engineer",
-    "w": 0.1727
+    "w": 0.1728
    },
    {
     "id": "agent:llm-architect",
@@ -6246,7 +6265,7 @@
   "agent:mobile-app-developer": [
    {
     "id": "agent:game-developer",
-    "w": 0.1379
+    "w": 0.138
    },
    {
     "id": "agent:blockchain-developer",
@@ -6254,7 +6273,7 @@
    },
    {
     "id": "agent:m365-admin",
-    "w": 0.1125
+    "w": 0.1126
    },
    {
     "id": "agent:payment-integration",
@@ -6288,7 +6307,7 @@
    },
    {
     "id": "agent:fullstack-developer",
-    "w": 0.1401
+    "w": 0.1402
    },
    {
     "id": "agent:ui-designer",
@@ -6296,7 +6315,7 @@
    },
    {
     "id": "agent:websocket-engineer",
-    "w": 0.1326
+    "w": 0.1327
    },
    {
     "id": "agent:microservices-architect",
@@ -6314,35 +6333,35 @@
   "agent:multi-agent-coordinator": [
    {
     "id": "agent:error-coordinator",
-    "w": 0.2418
+    "w": 0.2417
    },
    {
     "id": "agent:agent-organizer",
-    "w": 0.1918
+    "w": 0.1917
    },
    {
     "id": "agent:agent-installer",
-    "w": 0.1918
+    "w": 0.1917
    },
    {
     "id": "agent:knowledge-synthesizer",
-    "w": 0.1796
+    "w": 0.1795
    },
    {
     "id": "agent:task-distributor",
-    "w": 0.1776
+    "w": 0.1775
    },
    {
     "id": "agent:workflow-orchestrator",
-    "w": 0.1742
+    "w": 0.1741
    },
    {
     "id": "agent:it-ops-orchestrator",
-    "w": 0.1712
+    "w": 0.1711
    },
    {
     "id": "agent:context-manager",
-    "w": 0.1603
+    "w": 0.1602
    }
   ],
   "agent:network-engineer": [
@@ -6356,7 +6375,7 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1513
+    "w": 0.1514
    },
    {
     "id": "agent:terraform-engineer",
@@ -6364,7 +6383,7 @@
    },
    {
     "id": "agent:azure-infra-engineer",
-    "w": 0.1493
+    "w": 0.1494
    },
    {
     "id": "agent:cloud-architect",
@@ -6386,7 +6405,7 @@
    },
    {
     "id": "agent:react-specialist",
-    "w": 0.1295
+    "w": 0.1296
    },
    {
     "id": "agent:django-developer",
@@ -6398,7 +6417,7 @@
    },
    {
     "id": "agent:rust-engineer",
-    "w": 0.1188
+    "w": 0.1189
    },
    {
     "id": "agent:cpp-pro",
@@ -6440,7 +6459,7 @@
    },
    {
     "id": "agent:ml-engineer",
-    "w": 0.1627
+    "w": 0.1628
    },
    {
     "id": "agent:ai-engineer",
@@ -6466,7 +6485,7 @@
    },
    {
     "id": "agent:blockchain-developer",
-    "w": 0.1287
+    "w": 0.1288
    },
    {
     "id": "agent:fintech-engineer",
@@ -6478,7 +6497,7 @@
    },
    {
     "id": "agent:api-documenter",
-    "w": 0.1196
+    "w": 0.1197
    }
   ],
   "agent:penetration-tester": [
@@ -6488,7 +6507,7 @@
    },
    {
     "id": "agent:code-reviewer",
-    "w": 0.1795
+    "w": 0.1796
    },
    {
     "id": "agent:architect-reviewer",
@@ -6496,7 +6515,7 @@
    },
    {
     "id": "agent:qa-expert",
-    "w": 0.1722
+    "w": 0.1723
    },
    {
     "id": "agent:compliance-auditor",
@@ -6518,7 +6537,7 @@
   "agent:performance-engineer": [
    {
     "id": "agent:code-reviewer",
-    "w": 0.1434
+    "w": 0.1435
    },
    {
     "id": "agent:architect-reviewer",
@@ -6526,7 +6545,7 @@
    },
    {
     "id": "agent:qa-expert",
-    "w": 0.1373
+    "w": 0.1374
    },
    {
     "id": "agent:compliance-auditor",
@@ -6534,15 +6553,15 @@
    },
    {
     "id": "agent:test-automator",
-    "w": 0.1348
+    "w": 0.1349
    },
    {
     "id": "agent:penetration-tester",
-    "w": 0.1347
+    "w": 0.1348
    },
    {
     "id": "agent:accessibility-tester",
-    "w": 0.1347
+    "w": 0.1348
    },
    {
     "id": "agent:powershell-security-hardening",
@@ -6560,11 +6579,11 @@
    },
    {
     "id": "agent:python-expert",
-    "w": 0.1298
+    "w": 0.1299
    },
    {
     "id": "agent:django-expert",
-    "w": 0.1298
+    "w": 0.1299
    },
    {
     "id": "agent:fastapi-expert",
@@ -6576,7 +6595,7 @@
    },
    {
     "id": "agent:rails-backend-expert",
-    "w": 0.1138
+    "w": 0.1139
    },
    {
     "id": "agent:laravel-backend-expert",
@@ -6586,35 +6605,35 @@
   "agent:performance-monitor": [
    {
     "id": "agent:agent-organizer",
-    "w": 0.149
+    "w": 0.1489
    },
    {
     "id": "agent:agent-installer",
-    "w": 0.149
+    "w": 0.1489
    },
    {
     "id": "agent:knowledge-synthesizer",
-    "w": 0.1439
+    "w": 0.1437
    },
    {
     "id": "agent:task-distributor",
-    "w": 0.1422
+    "w": 0.1421
    },
    {
     "id": "agent:context-manager",
-    "w": 0.1371
+    "w": 0.1369
    },
    {
     "id": "agent:multi-agent-coordinator",
-    "w": 0.136
+    "w": 0.1358
    },
    {
     "id": "agent:workflow-orchestrator",
-    "w": 0.1295
+    "w": 0.1293
    },
    {
     "id": "agent:error-coordinator",
-    "w": 0.1256
+    "w": 0.1254
    }
   ],
   "agent:performance-optimizer": [
@@ -6632,23 +6651,23 @@
    },
    {
     "id": "agent:python-expert",
-    "w": 0.0729
+    "w": 0.073
    },
    {
     "id": "agent:django-expert",
-    "w": 0.0729
+    "w": 0.073
    },
    {
     "id": "agent:fastapi-expert",
-    "w": 0.0709
+    "w": 0.071
    },
    {
     "id": "agent:api-architect",
-    "w": 0.0703
+    "w": 0.0704
    },
    {
     "id": "agent:documentation-specialist",
-    "w": 0.0674
+    "w": 0.0675
    }
   ],
   "agent:php-pro": [
@@ -6658,11 +6677,11 @@
    },
    {
     "id": "agent:cpp-pro",
-    "w": 0.143
+    "w": 0.1431
    },
    {
     "id": "agent:javascript-pro",
-    "w": 0.1397
+    "w": 0.1398
    },
    {
     "id": "agent:golang-pro",
@@ -6674,11 +6693,11 @@
    },
    {
     "id": "agent:elixir-expert",
-    "w": 0.1267
+    "w": 0.1268
    },
    {
     "id": "agent:sql-pro",
-    "w": 0.1249
+    "w": 0.125
    },
    {
     "id": "agent:react-specialist",
@@ -6688,35 +6707,35 @@
   "agent:platform-engineer": [
    {
     "id": "agent:deployment-engineer",
-    "w": 0.1773
+    "w": 0.1774
    },
    {
     "id": "agent:sre-engineer",
-    "w": 0.1698
+    "w": 0.17
    },
    {
     "id": "agent:terraform-engineer",
-    "w": 0.1565
+    "w": 0.1566
    },
    {
     "id": "agent:azure-infra-engineer",
-    "w": 0.1557
+    "w": 0.1558
    },
    {
     "id": "agent:cloud-architect",
-    "w": 0.1522
+    "w": 0.1524
    },
    {
     "id": "agent:network-engineer",
-    "w": 0.1513
+    "w": 0.1514
    },
    {
     "id": "agent:terragrunt-expert",
-    "w": 0.1379
+    "w": 0.138
    },
    {
     "id": "agent:security-engineer",
-    "w": 0.1372
+    "w": 0.1373
    }
   ],
   "agent:pmi_pm": [
@@ -6768,7 +6787,7 @@
    },
    {
     "id": "agent:llm-architect",
-    "w": 0.1572
+    "w": 0.1573
    },
    {
     "id": "agent:reinforcement-learning-engineer",
@@ -6776,7 +6795,7 @@
    },
    {
     "id": "agent:ai-engineer",
-    "w": 0.1502
+    "w": 0.1503
    },
    {
     "id": "agent:prompt-engineer",
@@ -6790,11 +6809,11 @@
    },
    {
     "id": "agent:swift-expert",
-    "w": 0.116
+    "w": 0.1161
    },
    {
     "id": "agent:flutter-expert",
-    "w": 0.1084
+    "w": 0.1085
    },
    {
     "id": "agent:powershell-7-expert",
@@ -6806,21 +6825,21 @@
    },
    {
     "id": "agent:typescript-pro",
-    "w": 0.1026
+    "w": 0.1027
    },
    {
     "id": "agent:rails-expert",
-    "w": 0.1017
+    "w": 0.1018
    },
    {
     "id": "agent:php-pro",
-    "w": 0.1016
+    "w": 0.1017
    }
   ],
   "agent:powershell-7-expert": [
    {
     "id": "agent:java-architect",
-    "w": 0.1206
+    "w": 0.1207
    },
    {
     "id": "agent:golang-pro",
@@ -6870,7 +6889,7 @@
    },
    {
     "id": "agent:dependency-manager",
-    "w": 0.121
+    "w": 0.1211
    },
    {
     "id": "agent:build-engineer",
@@ -6878,11 +6897,11 @@
    },
    {
     "id": "agent:dx-optimizer",
-    "w": 0.1093
+    "w": 0.1094
    },
    {
     "id": "agent:git-workflow-manager",
-    "w": 0.1026
+    "w": 0.1028
    }
   ],
   "agent:powershell-security-hardening": [
@@ -6916,7 +6935,7 @@
    },
    {
     "id": "agent:debugger",
-    "w": 0.1619
+    "w": 0.162
    }
   ],
   "agent:powershell-ui-architect": [
@@ -6934,23 +6953,23 @@
    },
    {
     "id": "agent:dependency-manager",
-    "w": 0.1457
+    "w": 0.1458
    },
    {
     "id": "agent:git-workflow-manager",
-    "w": 0.1235
+    "w": 0.1238
    },
    {
     "id": "agent:build-engineer",
-    "w": 0.1226
+    "w": 0.1227
    },
    {
     "id": "agent:readme-generator",
-    "w": 0.1201
+    "w": 0.1202
    },
    {
     "id": "agent:dx-optimizer",
-    "w": 0.1191
+    "w": 0.1192
    }
   ],
   "agent:product-manager": [
@@ -6964,7 +6983,7 @@
    },
    {
     "id": "agent:customer-success-manager",
-    "w": 0.1085
+    "w": 0.1086
    },
    {
     "id": "agent:sales-engineer",
@@ -6984,7 +7003,7 @@
    },
    {
     "id": "agent:content-marketer",
-    "w": 0.0915
+    "w": 0.0916
    }
   ],
   "agent:programme_director": [
@@ -7000,7 +7019,7 @@
   "agent:project-analyst": [
    {
     "id": "agent:performance-expert",
-    "w": 0.0757
+    "w": 0.0758
    },
    {
     "id": "agent:security-expert",
@@ -7008,7 +7027,7 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.0752
+    "w": 0.0753
    },
    {
     "id": "agent:python-expert",
@@ -7068,7 +7087,7 @@
   "agent:project-manager": [
    {
     "id": "agent:legal-advisor",
-    "w": 0.1803
+    "w": 0.1804
    },
    {
     "id": "agent:license-engineer",
@@ -7076,7 +7095,7 @@
    },
    {
     "id": "agent:business-analyst",
-    "w": 0.1568
+    "w": 0.1569
    },
    {
     "id": "agent:sales-engineer",
@@ -7096,7 +7115,7 @@
    },
    {
     "id": "agent:ux-researcher",
-    "w": 0.1333
+    "w": 0.1334
    }
   ],
   "agent:prompt-engineer": [
@@ -7118,7 +7137,7 @@
    },
    {
     "id": "agent:ml-engineer",
-    "w": 0.17
+    "w": 0.1701
    },
    {
     "id": "agent:nlp-engineer",
@@ -7136,11 +7155,11 @@
   "agent:python-expert": [
    {
     "id": "agent:performance-expert",
-    "w": 0.1298
+    "w": 0.1299
    },
    {
     "id": "agent:security-expert",
-    "w": 0.1294
+    "w": 0.1295
    },
    {
     "id": "agent:testing-expert",
@@ -7148,7 +7167,7 @@
    },
    {
     "id": "agent:django-expert",
-    "w": 0.1229
+    "w": 0.123
    },
    {
     "id": "agent:fastapi-expert",
@@ -7186,7 +7205,7 @@
    },
    {
     "id": "agent:vue-expert",
-    "w": 0.1268
+    "w": 0.1269
    },
    {
     "id": "agent:fastapi-developer",
@@ -7194,7 +7213,7 @@
    },
    {
     "id": "agent:laravel-specialist",
-    "w": 0.1225
+    "w": 0.1226
    },
    {
     "id": "agent:cpp-pro",
@@ -7220,11 +7239,11 @@
    },
    {
     "id": "agent:penetration-tester",
-    "w": 0.1722
+    "w": 0.1723
    },
    {
     "id": "agent:accessibility-tester",
-    "w": 0.1722
+    "w": 0.1723
    },
    {
     "id": "agent:powershell-security-hardening",
@@ -7284,15 +7303,15 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.1025
+    "w": 0.1026
    },
    {
     "id": "agent:python-expert",
-    "w": 0.0977
+    "w": 0.0978
    },
    {
     "id": "agent:django-expert",
-    "w": 0.0977
+    "w": 0.0978
    },
    {
     "id": "agent:fastapi-expert",
@@ -7318,7 +7337,7 @@
    },
    {
     "id": "agent:api-architect",
-    "w": 0.08
+    "w": 0.0801
    },
    {
     "id": "agent:performance-expert",
@@ -7330,7 +7349,7 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.0688
+    "w": 0.0689
    },
    {
     "id": "agent:python-expert",
@@ -7352,7 +7371,7 @@
    },
    {
     "id": "agent:performance-expert",
-    "w": 0.1138
+    "w": 0.1139
    },
    {
     "id": "agent:security-expert",
@@ -7374,11 +7393,11 @@
   "agent:rails-expert": [
    {
     "id": "agent:vue-expert",
-    "w": 0.1355
+    "w": 0.1356
    },
    {
     "id": "agent:elixir-expert",
-    "w": 0.1268
+    "w": 0.1269
    },
    {
     "id": "agent:django-developer",
@@ -7390,15 +7409,15 @@
    },
    {
     "id": "agent:symfony-specialist",
-    "w": 0.1131
+    "w": 0.1132
    },
    {
     "id": "agent:dotnet-framework-4.8-expert",
-    "w": 0.1105
+    "w": 0.1106
    },
    {
     "id": "agent:fastapi-developer",
-    "w": 0.1098
+    "w": 0.1099
    },
    {
     "id": "agent:laravel-specialist",
@@ -7428,15 +7447,15 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.0663
+    "w": 0.0664
    },
    {
     "id": "agent:python-expert",
-    "w": 0.0632
+    "w": 0.0633
    },
    {
     "id": "agent:django-expert",
-    "w": 0.0632
+    "w": 0.0633
    }
   ],
   "agent:react-nextjs-expert": [
@@ -7454,15 +7473,15 @@
    },
    {
     "id": "agent:python-expert",
-    "w": 0.0993
+    "w": 0.0994
    },
    {
     "id": "agent:django-expert",
-    "w": 0.0993
+    "w": 0.0994
    },
    {
     "id": "agent:fastapi-expert",
-    "w": 0.0966
+    "w": 0.0967
    },
    {
     "id": "agent:django-backend-expert",
@@ -7492,7 +7511,7 @@
    },
    {
     "id": "agent:nextjs-developer",
-    "w": 0.1295
+    "w": 0.1296
    },
    {
     "id": "agent:rust-engineer",
@@ -7517,12 +7536,12 @@
     "w": 0.1311
    },
    {
-    "id": "agent:mcp-developer",
+    "id": "agent:refactoring-specialist",
     "w": 0.1294
    },
    {
-    "id": "agent:refactoring-specialist",
-    "w": 0.1293
+    "id": "agent:mcp-developer",
+    "w": 0.1294
    },
    {
     "id": "agent:dependency-manager",
@@ -7530,15 +7549,15 @@
    },
    {
     "id": "agent:powershell-ui-architect",
-    "w": 0.1201
+    "w": 0.1202
+   },
+   {
+    "id": "agent:git-workflow-manager",
+    "w": 0.1091
    },
    {
     "id": "agent:legacy-modernizer",
     "w": 0.1089
-   },
-   {
-    "id": "agent:git-workflow-manager",
-    "w": 0.1088
    }
   ],
   "agent:refactoring-specialist": [
@@ -7548,7 +7567,7 @@
    },
    {
     "id": "agent:readme-generator",
-    "w": 0.1293
+    "w": 0.1294
    },
    {
     "id": "agent:tooling-engineer",
@@ -7602,7 +7621,7 @@
    },
    {
     "id": "agent:llm-architect",
-    "w": 0.1578
+    "w": 0.1579
    },
    {
     "id": "agent:database-optimizer",
@@ -7632,7 +7651,7 @@
    },
    {
     "id": "agent:data-researcher",
-    "w": 0.1357
+    "w": 0.1358
    },
    {
     "id": "agent:scientific-literature-researcher",
@@ -7692,7 +7711,7 @@
    },
    {
     "id": "agent:m365-admin",
-    "w": 0.1186
+    "w": 0.1187
    },
    {
     "id": "agent:payment-integration",
@@ -7700,7 +7719,7 @@
    },
    {
     "id": "agent:embedded-systems",
-    "w": 0.1174
+    "w": 0.1175
    },
    {
     "id": "agent:blockchain-developer",
@@ -7726,11 +7745,11 @@
    },
    {
     "id": "agent:nextjs-developer",
-    "w": 0.1188
+    "w": 0.1189
    },
    {
     "id": "agent:javascript-pro",
-    "w": 0.1137
+    "w": 0.1138
    },
    {
     "id": "agent:vue-expert",
@@ -7850,7 +7869,7 @@
    },
    {
     "id": "agent:legal-advisor",
-    "w": 0.1481
+    "w": 0.1482
    },
    {
     "id": "agent:project-manager",
@@ -7952,7 +7971,7 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1372
+    "w": 0.1373
    },
    {
     "id": "agent:terraform-engineer",
@@ -7978,11 +7997,11 @@
    },
    {
     "id": "agent:python-expert",
-    "w": 0.1294
+    "w": 0.1295
    },
    {
     "id": "agent:django-expert",
-    "w": 0.1294
+    "w": 0.1295
    },
    {
     "id": "agent:fastapi-expert",
@@ -7990,7 +8009,7 @@
    },
    {
     "id": "agent:django-backend-expert",
-    "w": 0.1141
+    "w": 0.1142
    },
    {
     "id": "agent:rails-backend-expert",
@@ -7998,13 +8017,13 @@
    },
    {
     "id": "agent:laravel-backend-expert",
-    "w": 0.1127
+    "w": 0.1128
    }
   ],
   "agent:seo-specialist": [
    {
     "id": "agent:game-developer",
-    "w": 0.1302
+    "w": 0.1303
    },
    {
     "id": "agent:m365-admin",
@@ -8020,11 +8039,11 @@
    },
    {
     "id": "agent:blockchain-developer",
-    "w": 0.1208
+    "w": 0.1209
    },
    {
     "id": "agent:fintech-engineer",
-    "w": 0.1199
+    "w": 0.12
    },
    {
     "id": "agent:risk-manager",
@@ -8046,11 +8065,11 @@
    },
    {
     "id": "agent:cli-developer",
-    "w": 0.1124
+    "w": 0.1125
    },
    {
     "id": "agent:dependency-manager",
-    "w": 0.1094
+    "w": 0.1095
    },
    {
     "id": "agent:powershell-ui-architect",
@@ -8062,17 +8081,17 @@
    },
    {
     "id": "agent:dx-optimizer",
-    "w": 0.0996
+    "w": 0.0997
    },
    {
     "id": "agent:readme-generator",
-    "w": 0.0991
+    "w": 0.0992
    }
   ],
   "agent:spring-boot-engineer": [
    {
     "id": "agent:java-architect",
-    "w": 0.1256
+    "w": 0.1257
    },
    {
     "id": "agent:golang-pro",
@@ -8092,11 +8111,11 @@
    },
    {
     "id": "agent:dotnet-core-expert",
-    "w": 0.1013
+    "w": 0.1014
    },
    {
     "id": "agent:elixir-expert",
-    "w": 0.0954
+    "w": 0.0955
    },
    {
     "id": "agent:typescript-pro",
@@ -8118,7 +8137,7 @@
    },
    {
     "id": "agent:php-pro",
-    "w": 0.1249
+    "w": 0.125
    },
    {
     "id": "agent:golang-pro",
@@ -8134,7 +8153,7 @@
    },
    {
     "id": "agent:nextjs-developer",
-    "w": 0.1027
+    "w": 0.1028
    }
   ],
   "agent:sre-engineer": [
@@ -8144,7 +8163,7 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1698
+    "w": 0.17
    },
    {
     "id": "agent:terraform-engineer",
@@ -8152,7 +8171,7 @@
    },
    {
     "id": "agent:azure-infra-engineer",
-    "w": 0.1676
+    "w": 0.1677
    },
    {
     "id": "agent:cloud-architect",
@@ -8186,11 +8205,11 @@
    },
    {
     "id": "agent:kotlin-specialist",
-    "w": 0.1437
+    "w": 0.1438
    },
    {
     "id": "agent:vue-expert",
-    "w": 0.1189
+    "w": 0.119
    },
    {
     "id": "agent:typescript-pro",
@@ -8198,7 +8217,7 @@
    },
    {
     "id": "agent:powershell-5.1-expert",
-    "w": 0.116
+    "w": 0.1161
    },
    {
     "id": "agent:rails-expert",
@@ -8242,7 +8261,7 @@
   "agent:tailwind-css-expert": [
    {
     "id": "agent:performance-expert",
-    "w": 0.1007
+    "w": 0.1008
    },
    {
     "id": "agent:security-expert",
@@ -8250,7 +8269,7 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.1
+    "w": 0.1001
    },
    {
     "id": "agent:python-expert",
@@ -8270,41 +8289,41 @@
    },
    {
     "id": "agent:rails-backend-expert",
-    "w": 0.0836
+    "w": 0.0837
    }
   ],
   "agent:task-distributor": [
    {
     "id": "agent:agent-organizer",
-    "w": 0.1958
+    "w": 0.1957
    },
    {
     "id": "agent:agent-installer",
-    "w": 0.1958
+    "w": 0.1957
    },
    {
     "id": "agent:knowledge-synthesizer",
-    "w": 0.1904
+    "w": 0.1903
    },
    {
     "id": "agent:multi-agent-coordinator",
-    "w": 0.1776
+    "w": 0.1775
    },
    {
     "id": "agent:workflow-orchestrator",
-    "w": 0.1719
+    "w": 0.1718
    },
    {
     "id": "agent:context-manager",
-    "w": 0.1689
+    "w": 0.1687
    },
    {
     "id": "agent:error-coordinator",
-    "w": 0.1684
+    "w": 0.1683
    },
    {
     "id": "agent:it-ops-orchestrator",
-    "w": 0.1505
+    "w": 0.1503
    }
   ],
   "agent:team-configurator": [
@@ -8318,7 +8337,7 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.0695
+    "w": 0.0696
    },
    {
     "id": "agent:python-expert",
@@ -8334,7 +8353,7 @@
    },
    {
     "id": "agent:api-architect",
-    "w": 0.0639
+    "w": 0.064
    },
    {
     "id": "agent:documentation-specialist",
@@ -8344,7 +8363,7 @@
   "agent:tech-lead-orchestrator": [
    {
     "id": "agent:performance-expert",
-    "w": 0.0613
+    "w": 0.0614
    },
    {
     "id": "agent:security-expert",
@@ -8352,7 +8371,7 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.0609
+    "w": 0.061
    },
    {
     "id": "agent:python-expert",
@@ -8368,7 +8387,7 @@
    },
    {
     "id": "agent:api-architect",
-    "w": 0.056
+    "w": 0.0561
    },
    {
     "id": "agent:documentation-specialist",
@@ -8402,7 +8421,7 @@
    },
    {
     "id": "agent:project-manager",
-    "w": 0.107
+    "w": 0.1071
    },
    {
     "id": "agent:customer-success-manager",
@@ -8420,15 +8439,15 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1565
+    "w": 0.1566
    },
    {
     "id": "agent:azure-infra-engineer",
-    "w": 0.1544
+    "w": 0.1545
    },
    {
     "id": "agent:cloud-architect",
-    "w": 0.151
+    "w": 0.1511
    },
    {
     "id": "agent:network-engineer",
@@ -8462,7 +8481,7 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1379
+    "w": 0.138
    },
    {
     "id": "agent:terraform-engineer",
@@ -8484,7 +8503,7 @@
    },
    {
     "id": "agent:architect-reviewer",
-    "w": 0.1754
+    "w": 0.1755
    },
    {
     "id": "agent:qa-expert",
@@ -8492,7 +8511,7 @@
    },
    {
     "id": "agent:compliance-auditor",
-    "w": 0.171
+    "w": 0.1711
    },
    {
     "id": "agent:penetration-tester",
@@ -8530,11 +8549,11 @@
    },
    {
     "id": "agent:fastapi-expert",
-    "w": 0.1254
+    "w": 0.1255
    },
    {
     "id": "agent:django-backend-expert",
-    "w": 0.1137
+    "w": 0.1138
    },
    {
     "id": "agent:rails-backend-expert",
@@ -8542,7 +8561,7 @@
    },
    {
     "id": "agent:laravel-backend-expert",
-    "w": 0.1123
+    "w": 0.1124
    }
   ],
   "agent:theorist": [
@@ -8602,7 +8621,7 @@
    },
    {
     "id": "agent:git-workflow-manager",
-    "w": 0.1395
+    "w": 0.1398
    },
    {
     "id": "agent:readme-generator",
@@ -8610,7 +8629,7 @@
    },
    {
     "id": "agent:dx-optimizer",
-    "w": 0.1348
+    "w": 0.1349
    }
   ],
   "agent:trend-analyst": [
@@ -8654,7 +8673,7 @@
    },
    {
     "id": "agent:cpp-pro",
-    "w": 0.1444
+    "w": 0.1445
    },
    {
     "id": "agent:javascript-pro",
@@ -8696,11 +8715,11 @@
    },
    {
     "id": "agent:backend-developer",
-    "w": 0.1529
+    "w": 0.153
    },
    {
     "id": "agent:microservices-architect",
-    "w": 0.1528
+    "w": 0.1529
    },
    {
     "id": "agent:graphql-architect",
@@ -8712,7 +8731,7 @@
    },
    {
     "id": "agent:electron-pro",
-    "w": 0.1355
+    "w": 0.1356
    }
   ],
   "agent:ux-researcher": [
@@ -8738,7 +8757,7 @@
    },
    {
     "id": "agent:project-manager",
-    "w": 0.1333
+    "w": 0.1334
    },
    {
     "id": "agent:license-engineer",
@@ -8760,11 +8779,11 @@
    },
    {
     "id": "agent:vue-nuxt-expert",
-    "w": 0.0798
+    "w": 0.0799
    },
    {
     "id": "agent:vue-state-manager",
-    "w": 0.0749
+    "w": 0.075
    },
    {
     "id": "agent:performance-expert",
@@ -8786,7 +8805,7 @@
   "agent:vue-expert": [
    {
     "id": "agent:fastapi-developer",
-    "w": 0.1536
+    "w": 0.1537
    },
    {
     "id": "agent:laravel-specialist",
@@ -8802,7 +8821,7 @@
    },
    {
     "id": "agent:rails-expert",
-    "w": 0.1355
+    "w": 0.1356
    },
    {
     "id": "agent:symfony-specialist",
@@ -8810,11 +8829,11 @@
    },
    {
     "id": "agent:elixir-expert",
-    "w": 0.1306
+    "w": 0.1307
    },
    {
     "id": "agent:python-pro",
-    "w": 0.1268
+    "w": 0.1269
    }
   ],
   "agent:vue-nuxt-expert": [
@@ -8828,15 +8847,15 @@
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.1025
+    "w": 0.1026
    },
    {
     "id": "agent:python-expert",
-    "w": 0.0977
+    "w": 0.0978
    },
    {
     "id": "agent:django-expert",
-    "w": 0.0977
+    "w": 0.0978
    },
    {
     "id": "agent:fastapi-expert",
@@ -8858,19 +8877,19 @@
    },
    {
     "id": "agent:vue-component-architect",
-    "w": 0.0749
+    "w": 0.075
    },
    {
     "id": "agent:performance-expert",
-    "w": 0.0635
+    "w": 0.0636
    },
    {
     "id": "agent:security-expert",
-    "w": 0.0633
+    "w": 0.0634
    },
    {
     "id": "agent:testing-expert",
-    "w": 0.0631
+    "w": 0.0632
    },
    {
     "id": "agent:python-expert",
@@ -8882,17 +8901,17 @@
    },
    {
     "id": "agent:fastapi-expert",
-    "w": 0.0585
+    "w": 0.0586
    }
   ],
   "agent:web-scraping-expert": [
    {
     "id": "agent:performance-expert",
-    "w": 0.1018
+    "w": 0.1019
    },
    {
     "id": "agent:security-expert",
-    "w": 0.1015
+    "w": 0.1016
    },
    {
     "id": "agent:testing-expert",
@@ -8900,19 +8919,19 @@
    },
    {
     "id": "agent:python-expert",
-    "w": 0.0964
+    "w": 0.0965
    },
    {
     "id": "agent:django-expert",
-    "w": 0.0964
+    "w": 0.0965
    },
    {
     "id": "agent:fastapi-expert",
-    "w": 0.0938
+    "w": 0.0939
    },
    {
     "id": "agent:django-backend-expert",
-    "w": 0.085
+    "w": 0.0851
    },
    {
     "id": "agent:rails-backend-expert",
@@ -8964,7 +8983,7 @@
    },
    {
     "id": "agent:cloud-architect",
-    "w": 0.1435
+    "w": 0.1436
    },
    {
     "id": "agent:sre-engineer",
@@ -8972,7 +8991,7 @@
    },
    {
     "id": "agent:platform-engineer",
-    "w": 0.1306
+    "w": 0.1307
    },
    {
     "id": "agent:terragrunt-expert",
@@ -9002,7 +9021,7 @@
    },
    {
     "id": "agent:legal-advisor",
-    "w": 0.1481
+    "w": 0.1482
    },
    {
     "id": "agent:project-manager",
@@ -9024,35 +9043,35 @@
   "agent:workflow-orchestrator": [
    {
     "id": "agent:it-ops-orchestrator",
-    "w": 0.1797
+    "w": 0.1796
    },
    {
     "id": "agent:agent-organizer",
-    "w": 0.1791
+    "w": 0.1789
    },
    {
     "id": "agent:agent-installer",
-    "w": 0.1791
+    "w": 0.1789
    },
    {
     "id": "agent:multi-agent-coordinator",
-    "w": 0.1742
+    "w": 0.1741
    },
    {
     "id": "agent:knowledge-synthesizer",
-    "w": 0.1739
+    "w": 0.1738
    },
    {
     "id": "agent:task-distributor",
-    "w": 0.1719
+    "w": 0.1718
    },
    {
     "id": "agent:error-coordinator",
-    "w": 0.1667
+    "w": 0.1665
    },
    {
     "id": "agent:context-manager",
-    "w": 0.154
+    "w": 0.1538
    }
   ],
   "skill:obra/superpowers/systematic-debugging": [
@@ -9074,7 +9093,7 @@
    },
    {
     "id": "skill:obra/superpowers/writing-plans",
-    "w": 0.0403
+    "w": 0.0404
    },
    {
     "id": "skill:pbakaus/impeccable/polish",
@@ -9100,7 +9119,7 @@
    },
    {
     "id": "skill:obra/superpowers/writing-plans",
-    "w": 0.0438
+    "w": 0.0439
    },
    {
     "id": "skill:obra/superpowers/systematic-debugging",
@@ -9120,7 +9139,7 @@
    },
    {
     "id": "agent:frontend-developer",
-    "w": 0.0202
+    "w": 0.0203
    }
   ],
   "skill:mattpocock/skills/improve-codebase-architecture": [
@@ -9134,7 +9153,7 @@
    },
    {
     "id": "skill:arvindrk/extract-design-system/extract-design-system",
-    "w": 0.0875
+    "w": 0.0876
    },
    {
     "id": "skill:wshobson/agents/typescript-advanced-types",
@@ -9180,7 +9199,7 @@
    },
    {
     "id": "skill:mattpocock/skills/tdd",
-    "w": 0.0438
+    "w": 0.0439
    },
    {
     "id": "skill:mattpocock/skills/zoom-out",
@@ -9216,7 +9235,7 @@
    },
    {
     "id": "skill:arvindrk/extract-design-system/extract-design-system",
-    "w": 0.0698
+    "w": 0.0699
    },
    {
     "id": "skill:obra/superpowers/verification-before-completion",
@@ -9256,7 +9275,7 @@
   "skill:anthropics/skills/frontend-design": [
    {
     "id": "skill:shadcn/ui/shadcn",
-    "w": 0.2521
+    "w": 0.2522
    },
    {
     "id": "skill:sleekdotdesign/agent-skills/sleek-design-mobile-apps",
@@ -9264,7 +9283,7 @@
    },
    {
     "id": "skill:nextlevelbuilder/ui-ux-pro-max-skill/ui-ux-pro-max",
-    "w": 0.1083
+    "w": 0.1084
    },
    {
     "id": "skill:vercel-labs/agent-skills/web-design-guidelines",
@@ -9276,7 +9295,7 @@
    },
    {
     "id": "skill:anthropics/skills/canvas-design",
-    "w": 0.0769
+    "w": 0.077
    },
    {
     "id": "skill:pbakaus/impeccable/polish",
@@ -9318,7 +9337,7 @@
    },
    {
     "id": "skill:shadcn/ui/shadcn",
-    "w": 0.029
+    "w": 0.0291
    }
   ],
   "skill:vercel-labs/next-skills/next-best-practices": [
@@ -9336,7 +9355,7 @@
    },
    {
     "id": "skill:anthropics/skills/frontend-design",
-    "w": 0.0257
+    "w": 0.0258
    },
    {
     "id": "skill:leonxlnx/taste-skill/design-taste-frontend",
@@ -9346,7 +9365,7 @@
   "skill:shadcn/ui/shadcn": [
    {
     "id": "skill:anthropics/skills/frontend-design",
-    "w": 0.2521
+    "w": 0.2522
    },
    {
     "id": "skill:sleekdotdesign/agent-skills/sleek-design-mobile-apps",
@@ -9358,7 +9377,7 @@
    },
    {
     "id": "skill:leonxlnx/taste-skill/design-taste-frontend",
-    "w": 0.076
+    "w": 0.0761
    },
    {
     "id": "skill:arvindrk/extract-design-system/extract-design-system",
@@ -9366,7 +9385,7 @@
    },
    {
     "id": "skill:emilkowalski/skill/emil-design-eng",
-    "w": 0.0539
+    "w": 0.054
    },
    {
     "id": "agent:react-component-architect",
@@ -9380,7 +9399,7 @@
   "skill:supabase/agent-skills/supabase-postgres-best-practices": [
    {
     "id": "skill:firebase/agent-skills/firebase-basics",
-    "w": 0.0574
+    "w": 0.0575
    },
    {
     "id": "skill:get-convex/agent-skills/convex-quickstart",
@@ -9396,29 +9415,29 @@
    },
    {
     "id": "skill:microsoft/azure-skills/azure-compute",
-    "w": 0.026
+    "w": 0.0261
    }
   ],
   "skill:microsoft/azure-skills/azure-compute": [
    {
     "id": "skill:firebase/agent-skills/firebase-basics",
-    "w": 0.0771
+    "w": 0.0772
    },
    {
     "id": "skill:get-convex/agent-skills/convex-quickstart",
-    "w": 0.0621
+    "w": 0.0622
+   },
+   {
+    "id": "script:pot",
+    "w": 0.0507
    },
    {
     "id": "agent:azure-infra-engineer",
     "w": 0.0507
    },
    {
-    "id": "script:pot",
-    "w": 0.0503
-   },
-   {
     "id": "skill:better-auth/skills/better-auth-best-practices",
-    "w": 0.0379
+    "w": 0.038
    },
    {
     "id": "agent:backend-developer",
@@ -9426,7 +9445,7 @@
    },
    {
     "id": "skill:supabase/agent-skills/supabase-postgres-best-practices",
-    "w": 0.026
+    "w": 0.0261
    },
    {
     "id": "agent:django-backend-expert",
@@ -9440,11 +9459,11 @@
    },
    {
     "id": "skill:firebase/agent-skills/firebase-basics",
-    "w": 0.0837
+    "w": 0.0838
    },
    {
     "id": "skill:get-convex/agent-skills/convex-quickstart",
-    "w": 0.0674
+    "w": 0.0675
    },
    {
     "id": "agent:engineer",
@@ -9452,11 +9471,11 @@
    },
    {
     "id": "skill:microsoft/azure-skills/azure-compute",
-    "w": 0.0379
+    "w": 0.038
    },
    {
     "id": "agent:backend-developer",
-    "w": 0.0289
+    "w": 0.029
    },
    {
     "id": "skill:supabase/agent-skills/supabase-postgres-best-practices",
@@ -9464,29 +9483,29 @@
    },
    {
     "id": "agent:django-backend-expert",
-    "w": 0.0217
+    "w": 0.0218
    }
   ],
   "skill:firebase/agent-skills/firebase-basics": [
    {
     "id": "skill:get-convex/agent-skills/convex-quickstart",
-    "w": 0.137
+    "w": 0.1372
    },
    {
     "id": "skill:better-auth/skills/better-auth-best-practices",
-    "w": 0.0837
+    "w": 0.0838
    },
    {
     "id": "skill:microsoft/azure-skills/azure-compute",
-    "w": 0.0771
+    "w": 0.0772
    },
    {
     "id": "agent:backend-developer",
-    "w": 0.0588
+    "w": 0.0589
    },
    {
     "id": "skill:supabase/agent-skills/supabase-postgres-best-practices",
-    "w": 0.0574
+    "w": 0.0575
    },
    {
     "id": "agent:django-backend-expert",
@@ -9494,25 +9513,25 @@
    },
    {
     "id": "agent:rails-backend-expert",
-    "w": 0.0439
+    "w": 0.044
    },
    {
     "id": "agent:laravel-backend-expert",
-    "w": 0.0436
+    "w": 0.0437
    }
   ],
   "skill:get-convex/agent-skills/convex-quickstart": [
    {
     "id": "skill:firebase/agent-skills/firebase-basics",
-    "w": 0.137
+    "w": 0.1372
    },
    {
     "id": "skill:better-auth/skills/better-auth-best-practices",
-    "w": 0.0674
+    "w": 0.0675
    },
    {
     "id": "skill:microsoft/azure-skills/azure-compute",
-    "w": 0.0621
+    "w": 0.0622
    },
    {
     "id": "agent:backend-developer",
@@ -9538,7 +9557,7 @@
   "skill:vercel-labs/agent-skills/web-design-guidelines": [
    {
     "id": "skill:anthropics/skills/canvas-design",
-    "w": 0.2392
+    "w": 0.2393
    },
    {
     "id": "skill:arvindrk/extract-design-system/extract-design-system",
@@ -9558,7 +9577,7 @@
    },
    {
     "id": "skill:pbakaus/impeccable/polish",
-    "w": 0.0778
+    "w": 0.0779
    },
    {
     "id": "skill:leonxlnx/taste-skill/design-taste-frontend",
@@ -9572,7 +9591,7 @@
   "skill:pbakaus/impeccable/polish": [
    {
     "id": "skill:arvindrk/extract-design-system/extract-design-system",
-    "w": 0.1235
+    "w": 0.1236
    },
    {
     "id": "skill:nextlevelbuilder/ui-ux-pro-max-skill/ui-ux-pro-max",
@@ -9584,7 +9603,7 @@
    },
    {
     "id": "skill:vercel-labs/agent-skills/web-design-guidelines",
-    "w": 0.0778
+    "w": 0.0779
    },
    {
     "id": "skill:anthropics/skills/frontend-design",
@@ -9606,7 +9625,7 @@
   "skill:anthropics/skills/canvas-design": [
    {
     "id": "skill:vercel-labs/agent-skills/web-design-guidelines",
-    "w": 0.2392
+    "w": 0.2393
    },
    {
     "id": "skill:arvindrk/extract-design-system/extract-design-system",
@@ -9614,11 +9633,11 @@
    },
    {
     "id": "skill:sleekdotdesign/agent-skills/sleek-design-mobile-apps",
-    "w": 0.077
+    "w": 0.0771
    },
    {
     "id": "skill:anthropics/skills/frontend-design",
-    "w": 0.0769
+    "w": 0.077
    },
    {
     "id": "skill:emilkowalski/skill/emil-design-eng",
@@ -9644,7 +9663,7 @@
    },
    {
     "id": "skill:pbakaus/impeccable/polish",
-    "w": 0.1235
+    "w": 0.1236
    },
    {
     "id": "skill:anthropics/skills/canvas-design",
@@ -9652,7 +9671,7 @@
    },
    {
     "id": "skill:mattpocock/skills/improve-codebase-architecture",
-    "w": 0.0875
+    "w": 0.0876
    },
    {
     "id": "skill:obra/superpowers/writing-plans",
@@ -9660,7 +9679,7 @@
    },
    {
     "id": "skill:obra/superpowers/brainstorming",
-    "w": 0.0698
+    "w": 0.0699
    },
    {
     "id": "skill:sleekdotdesign/agent-skills/sleek-design-mobile-apps",
@@ -9674,7 +9693,7 @@
   "skill:nextlevelbuilder/ui-ux-pro-max-skill/ui-ux-pro-max": [
    {
     "id": "skill:sleekdotdesign/agent-skills/sleek-design-mobile-apps",
-    "w": 0.4193
+    "w": 0.4194
    },
    {
     "id": "skill:currents-dev/playwright-best-practices-skill/playwright-best-practices",
@@ -9686,7 +9705,7 @@
    },
    {
     "id": "skill:leonxlnx/taste-skill/design-taste-frontend",
-    "w": 0.2432
+    "w": 0.2433
    },
    {
     "id": "skill:pbakaus/impeccable/polish",
@@ -9694,7 +9713,7 @@
    },
    {
     "id": "skill:anthropics/skills/frontend-design",
-    "w": 0.1083
+    "w": 0.1084
    },
    {
     "id": "skill:shadcn/ui/shadcn",
@@ -9708,7 +9727,7 @@
   "skill:leonxlnx/taste-skill/design-taste-frontend": [
    {
     "id": "skill:nextlevelbuilder/ui-ux-pro-max-skill/ui-ux-pro-max",
-    "w": 0.2432
+    "w": 0.2433
    },
    {
     "id": "skill:sleekdotdesign/agent-skills/sleek-design-mobile-apps",
@@ -9716,7 +9735,7 @@
    },
    {
     "id": "skill:emilkowalski/skill/emil-design-eng",
-    "w": 0.1555
+    "w": 0.1556
    },
    {
     "id": "skill:vercel-labs/agent-skills/web-design-guidelines",
@@ -9724,7 +9743,7 @@
    },
    {
     "id": "skill:shadcn/ui/shadcn",
-    "w": 0.076
+    "w": 0.0761
    },
    {
     "id": "skill:anthropics/skills/frontend-design",
@@ -9742,7 +9761,7 @@
   "skill:sleekdotdesign/agent-skills/sleek-design-mobile-apps": [
    {
     "id": "skill:nextlevelbuilder/ui-ux-pro-max-skill/ui-ux-pro-max",
-    "w": 0.4193
+    "w": 0.4194
    },
    {
     "id": "skill:emilkowalski/skill/emil-design-eng",
@@ -9784,7 +9803,7 @@
    },
    {
     "id": "skill:leonxlnx/taste-skill/design-taste-frontend",
-    "w": 0.1555
+    "w": 0.1556
    },
    {
     "id": "skill:vercel-labs/agent-skills/web-design-guidelines",
@@ -9844,11 +9863,11 @@
    },
    {
     "id": "agent:penetration-tester",
-    "w": 0.0602
+    "w": 0.0603
    },
    {
     "id": "agent:accessibility-tester",
-    "w": 0.0602
+    "w": 0.0603
    }
   ],
   "skill:currents-dev/playwright-best-practices-skill/playwright-best-practices": [
@@ -10061,7 +10080,7 @@
   "diff:DIFF_DESIGN_FUSION_INJECTOR_001": [
    {
     "id": "skill:sleekdotdesign/agent-skills/sleek-design-mobile-apps",
-    "w": 0.0775
+    "w": 0.0776
    },
    {
     "id": "skill:nextlevelbuilder/ui-ux-pro-max-skill/ui-ux-pro-max",
@@ -10077,7 +10096,7 @@
    },
    {
     "id": "skill:anthropics/skills/canvas-design",
-    "w": 0.0423
+    "w": 0.0424
    },
    {
     "id": "skill:anthropics/skills/frontend-design",
@@ -10095,7 +10114,7 @@
   "diff:DIFF_UCO_EXTENDED_METRICS_001": [
    {
     "id": "script:universal_code_optimizer_v4",
-    "w": 0.0356
+    "w": 0.0357
    }
   ],
   "diff:DIFF_DOMAIN_SKILLS_INGESTION_001": [

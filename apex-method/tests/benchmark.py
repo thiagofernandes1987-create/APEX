@@ -775,6 +775,76 @@ def t_rag_index():
     return f"{r['nodes']} nodes; PT->'{pt[0]['id']}', EN->'{en[0]['id']}'"
 
 
+def t_routine_composer():
+    # v1.46 (author's item 2, deep): the persona composes its own ROUTINE — complementary
+    # capabilities chained with send/receive handoffs; honest gaps drive discovery; outcomes
+    # and external feedback promote/demote; routines persist and travel in the swap bundle.
+    import tempfile, os, importlib
+    import routine_composer as rc, learning as lrn, memory as mem_mod, swap_store as ss
+    import capability_map as cm, agent_spawn as sp, config as cfg, agent_registry as ar
+    import code_genetics as cg
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+    try:
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, cm, rc, sp):
+            importlib.reload(mod)
+        ch = ("criar uma landing page de alta conversão, design não-genérico, com transições "
+              "css, dados em sql e performance responsiva")
+        r = rc.compose(ch, agent_id="ui-designer")
+        stages = [s["stage"] for s in r["steps"]]
+        assert {"design", "frontend", "backend"} <= set(stages), stages
+        assert stages == sorted(stages, key=[st for st, _ in rc.STAGES].index), "canonical order"
+        # chaining: each step's send carries the previous stage's handoff
+        for a, b in zip(r["steps"], r["steps"][1:]):
+            assert a["feeds_next"].split(":")[0] in b["send"], (a["feeds_next"], b["send"])
+        # honest gaps drive discovery (marketing/psychology isn't in the library)
+        assert any(g["stage"] == "marketing" for g in r["gaps"]), r["gaps"]
+        # meta runtime tools never occupy domain stages; the skill never picks itself
+        for s in r["steps"]:
+            if s["stage"] != "verify":
+                assert not s["capability"].startswith("tool:"), s
+            assert s["capability"] != "skill:apex-method", "self-selection"
+        # persist + reuse: a saved routine is found again for a similar challenge
+        rc.save_routine(r)
+        again = rc.best_routine("ui-designer", "landing page de conversão com css e sql")
+        assert again and again["id"] == r["id"], "routine reuse"
+        # real outcomes promote the routine (beta-binomial, durable)
+        for _ in range(3):
+            out = rc.record_routine_outcome(r["id"], True)
+        assert out["status"] == "PROMOTED", out
+        # external audit + user feedback strengthen the persona (suggestions only — H5 decides)
+        fb = rc.record_feedback("ui-designer", {
+            "source": "auditoria-gpt", "user_positive": True,
+            "strengths": ["o uso de supabase-postgres-best-practices foi preciso"],
+            "weaknesses": ["a etapa com brainstorming dispersou o escopo"],
+            "gaps": ["falta skill de psicologia das cores"]})
+        assert fb["remembered"] >= 3 and fb["suggest_discover"], fb
+        assert fb["confirmed"] or fb["suggest_unequip"], fb
+        # spawn carries the routine (the agent knows HOW, not just WITH WHAT)
+        spec = sp.spawn("ui-designer", ch, mode="RESEARCH")
+        assert spec["routine"] and "ROUTINE" in spec["instruction"], "routine injected at spawn"
+        # routines travel in the plug-and-play bundle
+        db = os.path.join(os.environ["APEX_METHOD_HOME"], "m.db")
+        mem_mod.MemoryStore(db).remember("x", "semantic")
+        b = ss.export_bundle("rt", memory_db=db)
+        assert b["stores"]["routines"], "routines in bundle"
+        homeB = tempfile.mkdtemp(); os.environ["APEX_METHOD_HOME"] = homeB
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, cm, rc, sp):
+            importlib.reload(mod)
+        res = ss.import_bundle(b, memory_db=os.path.join(homeB, "m.db"))
+        assert res["stores_restored"]["routines"] >= 1, res["stores_restored"]
+        assert rc.best_routine("ui-designer", ch), "routine survives the machine swap"
+        return (f"{len(r['steps'])} passos encadeados; gaps {[g['stage'] for g in r['gaps']]}; "
+                f"reuse+PROMOTED+feedback; viaja no swap")
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, cm, rc, sp):
+            importlib.reload(mod)
+
+
 def t_capability_map():
     # v1.45 (author's item 2): the runtime LEARNS to work with installed capabilities —
     # commands mapped (never executed), environment probed, how_to answers PT/EN, and
@@ -1245,6 +1315,7 @@ TESTS = [
     ("agent_spawn", t_agent_spawn), ("kernel_gate", t_kernel_gate), ("rag_index", t_rag_index),
     ("plug_and_play", t_plug_and_play), ("agent_bundle_context", t_agent_bundle_and_context),
     ("capability_map", t_capability_map), ("pipeline_dsm", t_pipeline_dsm),
+    ("routine_composer", t_routine_composer),
 ]
 
 

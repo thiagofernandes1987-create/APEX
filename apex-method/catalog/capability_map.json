@@ -1,8 +1,8 @@
 {
  "_meta": {
   "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
-  "built_at": "2026-07-18 14:49:24",
-  "count": 52
+  "built_at": "2026-07-18 15:02:30",
+  "count": 53
  },
  "environment": {
   "python": "python 3.14.3",
@@ -42,7 +42,12 @@
    "path": "scripts/_tfidf.py",
    "description": "_tfidf.py — Pure-Python TF-IDF + cosine fallback (no sklearn required). WHY THIS EXISTS: router/gravity/agent_registry used sklearn's TfidfVectorizer as a HARD dependency, so the orchestrator (the skill's entry point) crashed with ModuleNot",
    "triggers": "",
-   "commands": []
+   "commands": [],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "imported by router.py / gravity.py / agent_registry.py when sklearn is missing."
+   }
   },
   {
    "id": "tool:agent_registry",
@@ -53,7 +58,12 @@
    "triggers": "",
    "commands": [
     "python scripts/agent_registry.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
   },
   {
    "id": "tool:agent_spawn",
@@ -64,7 +74,12 @@
    "triggers": "",
    "commands": [
     "python scripts/agent_spawn.py"
-   ]
+   ],
+   "io": {
+    "send": "agent_id + task + mode + stance",
+    "receive": "AgentSpec executável {instruction, skills, context, spawn_ready}",
+    "apply_when": "antes de todo fan-out Level-B"
+   }
   },
   {
    "id": "tool:apex_st_metric",
@@ -75,7 +90,12 @@
    "triggers": "",
    "commands": [
     "python scripts/apex_st_metric.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "STEP_13."
+   }
   },
   {
    "id": "tool:asset_manager",
@@ -86,7 +106,12 @@
    "triggers": "",
    "commands": [
     "python scripts/asset_manager.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "Call at skill-resolution time to route a need across managed assets + MCPs."
+   }
   },
   {
    "id": "tool:attraction_graph",
@@ -97,7 +122,12 @@
    "triggers": "",
    "commands": [
     "python scripts/attraction_graph.py"
-   ]
+   ],
+   "io": {
+    "send": "competência-semente ou texto da necessidade (equip_for)",
+    "receive": "membros que se completam, ranqueados por atração",
+    "apply_when": "compor ferramentas complementares sem re-descoberta"
+   }
   },
   {
    "id": "tool:bayes",
@@ -108,7 +138,12 @@
    "triggers": "",
    "commands": [
     "python scripts/bayes.py"
-   ]
+   ],
+   "io": {
+    "send": "priors + likelihoods (crenças do LLM)",
+    "receive": "posterior + decisão Ω (ADOPT/REVIEW/REJECT) + R_acum",
+    "apply_when": "convergência PMI / decisão entre hipóteses"
+   }
   },
   {
    "id": "tool:capability_map",
@@ -119,7 +154,12 @@
    "triggers": "",
    "commands": [
     "python scripts/capability_map.py"
-   ]
+   ],
+   "io": {
+    "send": "pergunta 'como faço X?'",
+    "receive": "capacidade + comandos exatos + contrato de I/O",
+    "apply_when": "antes de usar qualquer ferramenta"
+   }
   },
   {
    "id": "tool:chaos_operators",
@@ -130,7 +170,12 @@
    "triggers": "",
    "commands": [
     "python scripts/chaos_operators.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "From FOGGY upward, per the exploration policy (config.exploration_policy). In RESEARCH the"
+   }
   },
   {
    "id": "tool:code_genetics",
@@ -141,7 +186,12 @@
    "triggers": "",
    "commands": [
     "python scripts/code_genetics.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "After a PoT/code failure is fixed, to crystallize the error->fix pattern."
+   }
   },
   {
    "id": "tool:competence_matrix",
@@ -152,7 +202,12 @@
    "triggers": "",
    "commands": [
     "python scripts/competence_matrix.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "- concurrent_executor: to decide abort/replace and HOW (swap persona vs inject skill)."
+   }
   },
   {
    "id": "tool:concurrent_executor",
@@ -163,7 +218,12 @@
    "triggers": "",
    "commands": [
     "python scripts/concurrent_executor.py"
-   ]
+   ],
+   "io": {
+    "send": "stances [{name, persona, program}] ou hypotheses",
+    "receive": "{merge, pmi, decision, restart?} (barrier + laudos SHA-256)",
+    "apply_when": "rodada paralela DEEP+ (Level A) / painel de diretores"
+   }
   },
   {
    "id": "tool:config",
@@ -174,7 +234,12 @@
    "triggers": "",
    "commands": [
     "python scripts/config.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "Read at the start of a run (orchestrator picks the preferred mode when applicable);"
+   }
   },
   {
    "id": "tool:curated",
@@ -185,7 +250,12 @@
    "triggers": "",
    "commands": [
     "python scripts/curated.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
   },
   {
    "id": "tool:deep_research",
@@ -196,7 +266,12 @@
    "triggers": "",
    "commands": [
     "python scripts/deep_research.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "Multi-part, high-stakes, or exploratory questions where the user wants the pipeline to"
+   }
   },
   {
    "id": "tool:execution_policy",
@@ -207,7 +282,12 @@
    "triggers": "",
    "commands": [
     "python scripts/execution_policy.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
   },
   {
    "id": "tool:fractal_compression",
@@ -218,7 +298,12 @@
    "triggers": "",
    "commands": [
     "python scripts/fractal_compression.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "after STEP_5 (post-interference), when fractal_depth>0 AND hypotheses_active>1."
+   }
   },
   {
    "id": "tool:geodesic_scheduler",
@@ -229,7 +314,12 @@
    "triggers": "",
    "commands": [
     "python scripts/geodesic_scheduler.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "cognitive_mode IN [DEEP, RESEARCH, SCIENTIFIC]."
+   }
   },
   {
    "id": "tool:geometry_estimator",
@@ -240,7 +330,12 @@
    "triggers": "",
    "commands": [
     "python scripts/geometry_estimator.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "before pot_engine_v2 / mental_interpreter run (warmup planning)."
+   }
   },
   {
    "id": "tool:gravity",
@@ -251,7 +346,12 @@
    "triggers": "",
    "commands": [
     "python scripts/gravity.py"
-   ]
+   ],
+   "io": {
+    "send": "a necessidade/tarefa (texto)",
+    "receive": "constelação {agent, skill, script, diff} + gaps + pedidos STAGED",
+    "apply_when": "resolver especialistas e recursos por disciplina"
+   }
   },
   {
    "id": "tool:guards",
@@ -262,7 +362,12 @@
    "triggers": "",
    "commands": [
     "python scripts/guards.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
   },
   {
    "id": "tool:hypothesis_dag",
@@ -273,7 +378,12 @@
    "triggers": "",
    "commands": [
     "python scripts/hypothesis_dag.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
   },
   {
    "id": "tool:learning",
@@ -284,7 +394,12 @@
    "triggers": "",
    "commands": [
     "python scripts/learning.py"
-   ]
+   ],
+   "io": {
+    "send": "record_outcome(kind, subject, domain, success)",
+    "receive": "{mean, n, status PROMOTED/DEMOTED, changed}",
+    "apply_when": "após cada rodada adjudicada / uso real de capacidade"
+   }
   },
   {
    "id": "tool:llm_adapter",
@@ -295,7 +410,12 @@
    "triggers": "",
    "commands": [
     "python scripts/llm_adapter.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "At the start of a run on a NON-reference model, or whenever you need to know if a Level-B"
+   }
   },
   {
    "id": "tool:memory",
@@ -306,7 +426,12 @@
    "triggers": "",
    "commands": [
     "python scripts/memory.py"
-   ]
+   ],
+   "io": {
+    "send": "remember(texto, kind) / recall(query) / relate(a, b, rel)",
+    "receive": "sha da memória / top-k fatos / caminhada no grafo",
+    "apply_when": "persistir e recuperar conhecimento validado"
+   }
   },
   {
    "id": "tool:mental_interpreter",
@@ -317,7 +442,12 @@
    "triggers": "",
    "commands": [
     "python scripts/mental_interpreter.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "DEEP/RESEARCH/SCIENTIFIC modes; SPECULATION only when fractal_depth>=2."
+   }
   },
   {
    "id": "tool:menu",
@@ -328,7 +458,12 @@
    "triggers": "",
    "commands": [
     "python scripts/menu.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "When the user asks to update the skill, change preferred modes, or launch a deep/goal-like"
+   }
   },
   {
    "id": "tool:monte_carlo",
@@ -339,7 +474,12 @@
    "triggers": "",
    "commands": [
     "python scripts/monte_carlo.py"
-   ]
+   ],
+   "io": {
+    "send": "model_fn(sample)->float + distribuições por input",
+    "receive": "{P10/P50/P90, cv, CI, interpretation}",
+    "apply_when": "incerteza quantificável (custo/risco/latência)"
+   }
   },
   {
    "id": "tool:numeric",
@@ -350,7 +490,12 @@
    "triggers": "",
    "commands": [
     "python scripts/numeric.py"
-   ]
+   ],
+   "io": {
+    "send": "deriv(state)->d/dt, s0, dt, steps",
+    "receive": "estado final (RK4/scipy) — validar contra quantidade conservada",
+    "apply_when": "dinâmica/EDO multidimensional"
+   }
   },
   {
    "id": "tool:orchestrator",
@@ -361,7 +506,12 @@
    "triggers": "",
    "commands": [
     "python scripts/orchestrator.py"
-   ]
+   ],
+   "io": {
+    "send": "a tarefa (string) [+ candidates, snapshot]",
+    "receive": "{mode, specialists, kernel_checklist, llm_actions, gate}",
+    "apply_when": "TODO início de trabalho não-trivial (ponto de entrada)"
+   }
   },
   {
    "id": "tool:pipeline_dsm",
@@ -372,7 +522,12 @@
    "triggers": "",
    "commands": [
     "python scripts/pipeline_dsm.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "build() after structural changes (new modules / new kernel steps); context_budget(mode) is"
+   }
   },
   {
    "id": "tool:pot",
@@ -383,7 +538,12 @@
    "triggers": "",
    "commands": [
     "python scripts/pot.py"
-   ]
+   ],
+   "io": {
+    "send": "passos [{name, code}] — o stdout de um passo vira stdin do próximo",
+    "receive": "{ok, final_output, snapshot(checklist por passo)}",
+    "apply_when": "qualquer subproblema com >2 passos numéricos/lógicos"
+   }
   },
   {
    "id": "tool:project_ledger",
@@ -394,7 +554,12 @@
    "triggers": "",
    "commands": [
     "python scripts/project_ledger.py"
-   ]
+   ],
+   "io": {
+    "send": "micros {who, what, to whom, depends_on}",
+    "receive": "DSM (caminho crítico + lotes paralelos) + gate de conclusão",
+    "apply_when": "projeto DEEP+ que atravessa sessões"
+   }
   },
   {
    "id": "tool:rag_index",
@@ -405,7 +570,12 @@
    "triggers": "",
    "commands": [
     "python scripts/rag_index.py"
-   ]
+   ],
+   "io": {
+    "send": "pergunta PT/EN",
+    "receive": "top nós {id, path, summary} para LER em seguida",
+    "apply_when": "localizar qualquer coisa no repositório"
+   }
   },
   {
    "id": "tool:repo_bridge",
@@ -416,7 +586,12 @@
    "triggers": "",
    "commands": [
     "python scripts/repo_bridge.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "- `search_native(query)` at skill-resolution time (router step) to find a native"
+   }
   },
   {
    "id": "tool:router",
@@ -427,7 +602,28 @@
    "triggers": "",
    "commands": [
     "python scripts/router.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "At the \"skill resolution\" step of the pipeline (STANDARD+), whenever a task"
+   }
+  },
+  {
+   "id": "tool:routine_composer",
+   "kind": "runtime-tool",
+   "name": "routine_composer",
+   "path": "scripts/routine_composer.py",
+   "description": "routine_composer.py — a persona compõe a PRÓPRIA ROTINA: um fluxo encadeado de capacidades complementares que se potencializam (o item 2 do autor, levado à execução). WHY THIS EXISTS: Saber que uma ferramenta existe não basta — o agente pre",
+   "triggers": "",
+   "commands": [
+    "python scripts/routine_composer.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "- compose(challenge, agent_id): montar o fluxo para um desafio (o spawn injeta a rotina)."
+   }
   },
   {
    "id": "tool:skill_forge",
@@ -439,7 +635,12 @@
    "commands": [
     "python3 skill_forge.py create --name my-skill --kind workflow --domain engineering \\\\",
     "python3 skill_forge.py promote --path path/to/SKILL.md"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
   },
   {
    "id": "tool:skill_scout",
@@ -450,7 +651,12 @@
    "triggers": "",
    "commands": [
     "python scripts/skill_scout.py"
-   ]
+   ],
+   "io": {
+    "send": "URL raw de um SKILL.md (+ code_urls)",
+    "receive": "{status STAGED/REJECTED_UNSAFE, checks, snapshot_entry}",
+    "apply_when": "SEMPRE antes de considerar uma skill externa (H5 depois)"
+   }
   },
   {
    "id": "tool:skills_sh",
@@ -461,7 +667,12 @@
    "triggers": "",
    "commands": [
     "python scripts/skills_sh.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "At skill-resolution time, as the marketplace tier of the discovery cascade"
+   }
   },
   {
    "id": "tool:snapshot",
@@ -472,7 +683,12 @@
    "triggers": "",
    "commands": [
     "python scripts/snapshot.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
   },
   {
    "id": "tool:swap_store",
@@ -483,7 +699,12 @@
    "triggers": "",
    "commands": [
     "python scripts/swap_store.py"
-   ]
+   ],
+   "io": {
+    "send": "page_out(session, memory_db) / page_in_session(dir)",
+    "receive": "bundle assinado + drive_manifest / stores restaurados",
+    "apply_when": "fim de sessão DEEP+ (persist_due) / retomada (resume_due)"
+   }
   },
   {
    "id": "tool:taxonomy",
@@ -494,7 +715,12 @@
    "triggers": "",
    "commands": [
     "python scripts/taxonomy.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
   },
   {
    "id": "tool:uco_gate",
@@ -505,7 +731,12 @@
    "triggers": "",
    "commands": [
     "python scripts/uco_gate.py"
-   ]
+   ],
+   "io": {
+    "send": "código gerado (string)",
+    "receive": "{status PASS/REJECTED, reasons, metrics(loop_risk, hamiltonian)}",
+    "apply_when": "SEMPRE antes de executar código gerado (SR_33)"
+   }
   },
   {
    "id": "tool:universal_code_optimizer_v4",
@@ -516,7 +747,12 @@
    "triggers": "",
    "commands": [
     "python scripts/universal_code_optimizer_v4.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "the SR_33 gate (uco_gate.py) calls this on every generated program before it runs."
+   }
   },
   {
    "id": "tool:verification_gate",
@@ -527,7 +763,12 @@
    "triggers": "",
    "commands": [
     "python scripts/verification_gate.py"
-   ]
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "STEP_3, before interference. Disabled in EXPRESS/FAST/CLARIFY."
+   }
   },
   {
    "id": "tool:verify",
@@ -538,7 +779,12 @@
    "triggers": "",
    "commands": [
     "python scripts/verify.py"
-   ]
+   ],
+   "io": {
+    "send": "lhs, rhs (expressões simbólicas)",
+    "receive": "{tag FORMAL_VERIFIED/REFUTED/CONJECTURA_FORMAL, residual}",
+    "apply_when": "qualquer identidade/derivada/integral afirmada"
+   }
   },
   {
    "id": "skill:apex-method",
@@ -547,7 +793,12 @@
    "path": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\.claude\\worktrees\\apex-docs-review-176ae5\\apex-method\\tests\\..\\SKILL.md",
    "description": "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill ro",
    "triggers": "APEX, PoT, program of thought, pipeline, scientific mode, modo científico, RK4, token",
-   "commands": []
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode.\""
+   }
   },
   {
    "id": "template:laudo",
@@ -556,7 +807,12 @@
    "path": "scripts/execution_policy.py",
    "description": "output template 'laudo' — required sections: ['director', 'ranking', 'best', 'confidence', 'justificativa', 'diagnostico', 'sha256']",
    "triggers": "",
-   "commands": []
+   "commands": [],
+   "io": {
+    "send": "o rascunho da entrega",
+    "receive": "documento estruturado nas seções ['director', 'ranking', 'best', 'confidence', 'justificativa', 'diagnostico', 'sha256']",
+    "apply_when": "ao produzir uma entrega do tipo 'laudo'"
+   }
   },
   {
    "id": "template:decision_record",
@@ -565,7 +821,12 @@
    "path": "scripts/execution_policy.py",
    "description": "output template 'decision_record' — required sections: ['context', 'options', 'decision', 'rationale', 'consequences', 'reversible?']",
    "triggers": "",
-   "commands": []
+   "commands": [],
+   "io": {
+    "send": "o rascunho da entrega",
+    "receive": "documento estruturado nas seções ['context', 'options', 'decision', 'rationale', 'consequences', 'reversible?']",
+    "apply_when": "ao produzir uma entrega do tipo 'decision_record'"
+   }
   },
   {
    "id": "template:spec",
@@ -574,7 +835,12 @@
    "path": "scripts/execution_policy.py",
    "description": "output template 'spec' — required sections: ['objective', 'scope', 'constraints', 'interfaces', 'acceptance_criteria', 'risks(FMEA)']",
    "triggers": "",
-   "commands": []
+   "commands": [],
+   "io": {
+    "send": "o rascunho da entrega",
+    "receive": "documento estruturado nas seções ['objective', 'scope', 'constraints', 'interfaces', 'acceptance_criteria', 'risks(FMEA)']",
+    "apply_when": "ao produzir uma entrega do tipo 'spec'"
+   }
   },
   {
    "id": "template:report",
@@ -583,7 +849,12 @@
    "path": "scripts/execution_policy.py",
    "description": "output template 'report' — required sections: ['summary', 'evidence(what/where/how/confidence)', 'method', 'limitations', 'next']",
    "triggers": "",
-   "commands": []
+   "commands": [],
+   "io": {
+    "send": "o rascunho da entrega",
+    "receive": "documento estruturado nas seções ['summary', 'evidence(what/where/how/confidence)', 'method', 'limitations', 'next']",
+    "apply_when": "ao produzir uma entrega do tipo 'report'"
+   }
   },
   {
    "id": "template:apex_structure",

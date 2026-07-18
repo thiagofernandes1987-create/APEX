@@ -54,6 +54,67 @@ _TOOLS = ("python", "python3", "node", "npx", "npm", "git", "pip", "docker", "ba
           "pwsh", "powershell", "gh")
 
 
+# ── I/O CONTRACTS (v1.46): what you SEND, what you RECEIVE, where to APPLY ───────────────────
+# Curated for the load-bearing runtime tools (accurate beats guessed); heuristic fallback for
+# the rest. This is what lets a routine CHAIN capabilities: step N's `receive` feeds step N+1.
+IO_CONTRACTS = {
+    "tool:pot": {"send": "passos [{name, code}] — o stdout de um passo vira stdin do próximo",
+                 "receive": "{ok, final_output, snapshot(checklist por passo)}",
+                 "apply_when": "qualquer subproblema com >2 passos numéricos/lógicos"},
+    "tool:uco_gate": {"send": "código gerado (string)",
+                      "receive": "{status PASS/REJECTED, reasons, metrics(loop_risk, hamiltonian)}",
+                      "apply_when": "SEMPRE antes de executar código gerado (SR_33)"},
+    "tool:verify": {"send": "lhs, rhs (expressões simbólicas)",
+                    "receive": "{tag FORMAL_VERIFIED/REFUTED/CONJECTURA_FORMAL, residual}",
+                    "apply_when": "qualquer identidade/derivada/integral afirmada"},
+    "tool:numeric": {"send": "deriv(state)->d/dt, s0, dt, steps",
+                     "receive": "estado final (RK4/scipy) — validar contra quantidade conservada",
+                     "apply_when": "dinâmica/EDO multidimensional"},
+    "tool:monte_carlo": {"send": "model_fn(sample)->float + distribuições por input",
+                         "receive": "{P10/P50/P90, cv, CI, interpretation}",
+                         "apply_when": "incerteza quantificável (custo/risco/latência)"},
+    "tool:orchestrator": {"send": "a tarefa (string) [+ candidates, snapshot]",
+                          "receive": "{mode, specialists, kernel_checklist, llm_actions, gate}",
+                          "apply_when": "TODO início de trabalho não-trivial (ponto de entrada)"},
+    "tool:agent_spawn": {"send": "agent_id + task + mode + stance",
+                         "receive": "AgentSpec executável {instruction, skills, context, spawn_ready}",
+                         "apply_when": "antes de todo fan-out Level-B"},
+    "tool:concurrent_executor": {"send": "stances [{name, persona, program}] ou hypotheses",
+                                 "receive": "{merge, pmi, decision, restart?} (barrier + laudos SHA-256)",
+                                 "apply_when": "rodada paralela DEEP+ (Level A) / painel de diretores"},
+    "tool:gravity": {"send": "a necessidade/tarefa (texto)",
+                     "receive": "constelação {agent, skill, script, diff} + gaps + pedidos STAGED",
+                     "apply_when": "resolver especialistas e recursos por disciplina"},
+    "tool:attraction_graph": {"send": "competência-semente ou texto da necessidade (equip_for)",
+                              "receive": "membros que se completam, ranqueados por atração",
+                              "apply_when": "compor ferramentas complementares sem re-descoberta"},
+    "tool:rag_index": {"send": "pergunta PT/EN",
+                       "receive": "top nós {id, path, summary} para LER em seguida",
+                       "apply_when": "localizar qualquer coisa no repositório"},
+    "tool:capability_map": {"send": "pergunta 'como faço X?'",
+                            "receive": "capacidade + comandos exatos + contrato de I/O",
+                            "apply_when": "antes de usar qualquer ferramenta"},
+    "tool:memory": {"send": "remember(texto, kind) / recall(query) / relate(a, b, rel)",
+                    "receive": "sha da memória / top-k fatos / caminhada no grafo",
+                    "apply_when": "persistir e recuperar conhecimento validado"},
+    "tool:swap_store": {"send": "page_out(session, memory_db) / page_in_session(dir)",
+                        "receive": "bundle assinado + drive_manifest / stores restaurados",
+                        "apply_when": "fim de sessão DEEP+ (persist_due) / retomada (resume_due)"},
+    "tool:skill_scout": {"send": "URL raw de um SKILL.md (+ code_urls)",
+                         "receive": "{status STAGED/REJECTED_UNSAFE, checks, snapshot_entry}",
+                         "apply_when": "SEMPRE antes de considerar uma skill externa (H5 depois)"},
+    "tool:learning": {"send": "record_outcome(kind, subject, domain, success)",
+                      "receive": "{mean, n, status PROMOTED/DEMOTED, changed}",
+                      "apply_when": "após cada rodada adjudicada / uso real de capacidade"},
+    "tool:bayes": {"send": "priors + likelihoods (crenças do LLM)",
+                   "receive": "posterior + decisão Ω (ADOPT/REVIEW/REJECT) + R_acum",
+                   "apply_when": "convergência PMI / decisão entre hipóteses"},
+    "tool:project_ledger": {"send": "micros {who, what, to whom, depends_on}",
+                            "receive": "DSM (caminho crítico + lotes paralelos) + gate de conclusão",
+                            "apply_when": "projeto DEEP+ que atravessa sessões"},
+}
+
+
 def probe_environment():
     """What this machine actually offers: languages/CLIs on PATH + importable libraries.
     An environment FACT (not an LLM capability) — the same split numeric.capabilities uses."""
@@ -125,10 +186,18 @@ def scan_skill_dirs(dirs=None, max_depth=3, cap=200):
             tm = re.search(r"Trigger Words\s*\n+(.+)", md)
             if tm:
                 trig = tm.group(1)[:160]
+            desc = (fm.get("description") or "")[:240]
+            use_when = ""
+            uw = re.search(r"Use when:?\s*(.+)", md, re.I)
+            if uw:
+                use_when = uw.group(1)[:140]
             caps.append({"id": f"skill:{name}", "kind": "installed-skill",
                          "name": name, "path": os.path.join(cur, "SKILL.md"),
-                         "description": (fm.get("description") or "")[:240],
-                         "triggers": trig, "commands": _commands_in(md)})
+                         "description": desc, "triggers": trig,
+                         "commands": _commands_in(md),
+                         "io": {"send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+                                "receive": "orientação/artefato conforme a seção de uso da skill",
+                                "apply_when": use_when or trig[:140] or desc[:140]}})
             if len(caps) >= cap:
                 return caps
     return caps
@@ -153,9 +222,16 @@ def scan_own_scripts():
         cmds = _commands_in(doc)
         if not cmds and "__main__" in src:
             cmds = [f"python scripts/{f}"]
-        caps.append({"id": f"tool:{f[:-3]}", "kind": "runtime-tool", "name": f[:-3],
+        cid = f"tool:{f[:-3]}"
+        # I/O contract: curated when we have it (accurate), heuristic WHEN-line otherwise
+        io = IO_CONTRACTS.get(cid)
+        if not io:
+            wm = re.search(r"WHEN(?:\s+TO\s+USE)?:?\s*\n?\s*(.+)", doc)
+            io = {"send": "ver docstring/CLI", "receive": "ver docstring",
+                  "apply_when": (wm.group(1)[:120] if wm else "")}
+        caps.append({"id": cid, "kind": "runtime-tool", "name": f[:-3],
                      "path": f"scripts/{f}", "description": " ".join(doc.split())[:240],
-                     "triggers": "", "commands": cmds})
+                     "triggers": "", "commands": cmds, "io": io})
     return caps
 
 
@@ -170,7 +246,10 @@ def design_models():
             caps.append({"id": f"template:{name}", "kind": "design-template", "name": name,
                          "path": "scripts/execution_policy.py",
                          "description": f"output template '{name}' — required sections: {sections}",
-                         "triggers": "", "commands": []})
+                         "triggers": "", "commands": [],
+                         "io": {"send": "o rascunho da entrega",
+                                "receive": f"documento estruturado nas seções {sections}",
+                                "apply_when": f"ao produzir uma entrega do tipo '{name}'"}})
     except Exception:
         pass
     mp = os.path.join(ROOT, "models", "apex_structure.model.json")
