@@ -1,10 +1,10 @@
 {
  "_meta": {
   "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimization is context_budget(mode): experience injection sized per mode, zero on EXPRESS.",
-  "built_at": "2026-07-18 15:02:30"
+  "built_at": "2026-07-18 20:52:39"
  },
  "module_dsm": {
-  "modules": 47,
+  "modules": 48,
   "deps": {
    "_tfidf": [],
    "agent_registry": [
@@ -116,10 +116,12 @@
     "pipeline_dsm",
     "snapshot",
     "swap_store",
-    "taxonomy"
+    "taxonomy",
+    "token_tracker"
    ],
    "pipeline_dsm": [
-    "geodesic_scheduler"
+    "geodesic_scheduler",
+    "token_tracker"
    ],
    "pot": [],
    "project_ledger": [
@@ -127,8 +129,11 @@
    ],
    "rag_index": [
     "_tfidf",
+    "attraction_graph",
     "capability_map",
-    "repo_bridge"
+    "pipeline_dsm",
+    "repo_bridge",
+    "taxonomy"
    ],
    "repo_bridge": [],
    "router": [
@@ -138,6 +143,7 @@
     "asset_manager",
     "attraction_graph",
     "capability_map",
+    "code_genetics",
     "curated",
     "learning",
     "memory"
@@ -154,6 +160,9 @@
     "routine_composer"
    ],
    "taxonomy": [],
+   "token_tracker": [
+    "pipeline_dsm"
+   ],
    "uco_gate": [
     "universal_code_optimizer_v4"
    ],
@@ -187,6 +196,7 @@
     "skills_sh",
     "snapshot",
     "taxonomy",
+    "token_tracker",
     "universal_code_optimizer_v4",
     "verification_gate",
     "verify"
@@ -197,7 +207,6 @@
     "memory",
     "pipeline_dsm",
     "project_ledger",
-    "rag_index",
     "router",
     "uco_gate"
    ],
@@ -209,6 +218,7 @@
    [
     "capability_map",
     "competence_matrix",
+    "rag_index",
     "routine_composer"
    ],
    [
@@ -234,6 +244,10 @@
    [
     "execution_policy",
     "orchestrator"
+   ],
+   [
+    "pipeline_dsm",
+    "token_tracker"
    ]
   ],
   "load_bearing": [
@@ -272,6 +286,21 @@
   ]
  },
  "mode_flow": {
+  "_calibration": {
+   "TRIAGE": "measured",
+   "DISSECT": "measured",
+   "RESOLVE_SPECIALISTS": "measured",
+   "MODE": "estimated",
+   "PHASE_PLAN": "measured",
+   "CONTEXT_PACK": "measured",
+   "SPAWN_AGENTS": "estimated",
+   "RUN_STANCES": "estimated",
+   "BARRIER_MERGE": "estimated",
+   "VERIFY": "estimated",
+   "PMI_CONVERGE": "estimated",
+   "SNAPSHOT": "estimated",
+   "PAGE_OUT": "estimated"
+  },
   "EXPRESS": {
    "plan": [
     "TRIAGE"
@@ -291,113 +320,113 @@
     "PAGE_OUT"
    ],
    "tokens_est": 60,
-   "savings_vs_naive": 5160,
+   "savings_vs_naive": 4682,
    "context_budget_chars": 0,
    "note": "trivial path: triage answers directly (token economy)"
   },
   "STANDARD": {
    "plan": [
-    "MODE",
-    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "PMI_CONVERGE",
+    "MODE",
+    "CONTEXT_PACK",
+    "TRIAGE",
     "RESOLVE_SPECIALISTS",
+    "PMI_CONVERGE",
     "PAGE_OUT",
     "SNAPSHOT",
-    "CONTEXT_PACK"
+    "BARRIER_MERGE"
    ],
    "skipped": [
-    "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
-   "tokens_est": 1420,
-   "savings_vs_naive": 3800,
+   "tokens_est": 1542,
+   "savings_vs_naive": 3200,
    "context_budget_chars": 500
   },
   "FOGGY": {
    "plan": [
-    "MODE",
-    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "PMI_CONVERGE",
+    "MODE",
+    "CONTEXT_PACK",
+    "TRIAGE",
     "RESOLVE_SPECIALISTS",
+    "PMI_CONVERGE",
     "PAGE_OUT",
     "SNAPSHOT",
-    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 5220,
+   "tokens_est": 4742,
    "savings_vs_naive": 0,
    "context_budget_chars": 900
   },
   "DEEP": {
    "plan": [
-    "MODE",
-    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "PMI_CONVERGE",
+    "MODE",
+    "CONTEXT_PACK",
+    "TRIAGE",
     "RESOLVE_SPECIALISTS",
+    "PMI_CONVERGE",
     "PAGE_OUT",
     "SNAPSHOT",
-    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 5220,
+   "tokens_est": 4742,
    "savings_vs_naive": 0,
    "context_budget_chars": 1300
   },
   "SCIENTIFIC": {
    "plan": [
-    "MODE",
-    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "PMI_CONVERGE",
+    "MODE",
+    "CONTEXT_PACK",
+    "TRIAGE",
     "RESOLVE_SPECIALISTS",
+    "PMI_CONVERGE",
     "PAGE_OUT",
     "SNAPSHOT",
-    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 5220,
+   "tokens_est": 4742,
    "savings_vs_naive": 0,
    "context_budget_chars": 1600
   },
   "RESEARCH": {
    "plan": [
-    "MODE",
-    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "PMI_CONVERGE",
+    "MODE",
+    "CONTEXT_PACK",
+    "TRIAGE",
     "RESOLVE_SPECIALISTS",
+    "PMI_CONVERGE",
     "PAGE_OUT",
     "SNAPSHOT",
-    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 5220,
+   "tokens_est": 4742,
    "savings_vs_naive": 0,
    "context_budget_chars": 2000
   }

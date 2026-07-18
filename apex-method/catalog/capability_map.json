@@ -1,8 +1,8 @@
 {
  "_meta": {
   "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
-  "built_at": "2026-07-18 15:02:30",
-  "count": 53
+  "built_at": "2026-07-18 20:52:39",
+  "count": 54
  },
  "environment": {
   "python": "python 3.14.3",
@@ -566,7 +566,7 @@
    "kind": "runtime-tool",
    "name": "rag_index",
    "path": "scripts/rag_index.py",
-   "description": "rag_index.py — node-based vector RAG index for FAST mapping of the whole repository. WHY THIS EXISTS: \"Where does X live?\" should never require re-reading 16k files. This builds ONE index of NODES — every script, catalog, reference, test, m",
+   "description": "rag_index.py — SOLID-STATE node RAG: o índice semântico multidimensional do repositório com memórias cristalizadas, sync incremental e fusão de estados (a arquitetura do autor). WHY THIS EXISTS: Toda instância nova paga o \"imposto de remape",
    "triggers": "",
    "commands": [
     "python scripts/rag_index.py"
@@ -720,6 +720,22 @@
     "send": "ver docstring/CLI",
     "receive": "ver docstring",
     "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:token_tracker",
+   "kind": "runtime-tool",
+   "name": "token_tracker",
+   "path": "scripts/token_tracker.py",
+   "description": "token_tracker.py — medição REAL de tokens por rodada e por passo do kernel (OPP-99, item 3 do autor): as estimativas do fluxo por modo deixam de ser chute e passam a ser calibradas. WHY THIS EXISTS: pipeline_dsm.mode_flow decidia rodar/pula",
+   "triggers": "",
+   "commands": [
+    "python scripts/token_tracker.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "- o orchestrator grava automaticamente (start_round/record/end_round em todo run FULL_PIPELINE);"
    }
   },
   {

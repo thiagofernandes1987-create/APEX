@@ -240,6 +240,81 @@ def best_routine(agent_id, challenge):
     return best if best_s >= 0.25 else None
 
 
+# ── o CICLO DE EXECUÇÃO (v1.47): a persona RODA a rotina e a rotina APRENDE ──────────────────
+def start_run(routine):
+    """Inicia uma execução da rotina: um registro por passo (pending) que a persona vai
+    preenchendo com o que REALMENTE recebeu. O run é o diário de bordo do fluxo."""
+    import hashlib
+    rid = hashlib.sha256(f"{routine['id']}|{time.time()}".encode()).hexdigest()[:12]
+    return {"run_id": rid, "routine_id": routine["id"], "agent_id": routine.get("agent_id"),
+            "challenge": routine.get("challenge", ""),
+            "steps": [{"order": s["order"], "stage": s["stage"], "capability": s["capability"],
+                       "status": "pending", "received": None, "notes": ""}
+                      for s in routine.get("steps", [])],
+            "started": time.time()}
+
+
+def record_step_result(run, order, received, success=True, notes=""):
+    """A persona registra o que REALMENTE recebeu do passo. Três efeitos permanentes:
+      1. o handoff da rotina SALVA é reescrito com a realidade (receive do passo N e send do
+         N+1 viram 'APRENDIDO: <o que veio de verdade>') — a rotina aprende de ponta a ponta;
+      2. a capacidade ganha um outcome real no learning (promove/rebaixa com evidência);
+      3. uma falha vira VACINA durável (a lição entra no contexto de janelas futuras)."""
+    step = next((s for s in run["steps"] if s["order"] == order), None)
+    if step is None:
+        return {"status": "ERROR", "reason": f"passo {order} não existe no run"}
+    step["status"] = "ok" if success else "failed"
+    step["received"] = (received or "")[:200]
+    step["notes"] = (notes or "")[:200]
+    # 1) reescrever o handoff na rotina persistida (o fluxo aprendido substitui o template)
+    routines = load_routines()
+    for r in routines:
+        if r.get("id") != run["routine_id"]:
+            continue
+        for i, s in enumerate(r.get("steps", [])):
+            if s["order"] == order:
+                if success and received:
+                    s["receive"] = f"APRENDIDO: {received[:160]}"
+                    s["feeds_next"] = received[:160]
+                    if i + 1 < len(r["steps"]):
+                        r["steps"][i + 1]["send"] = f"APRENDIDO: {received[:160]}"
+                s["last_status"] = step["status"]
+        save_routine(r)
+        break
+    # 2) outcome real da capacidade
+    try:
+        import learning
+        learning.record_outcome("capability", step["capability"], "routine", bool(success),
+                                evidence={"routine": run["routine_id"], "stage": step["stage"]})
+    except Exception:
+        pass
+    # 3) falha -> vacina durável (experiência vira contexto futuro)
+    if not success:
+        try:
+            import code_genetics
+            code_genetics.durable_store().save_vaccine(
+                f"falha no passo {step['stage']} ({step['capability']}) — desafio: "
+                f"{run.get('challenge', '')[:60]}",
+                notes or "revisar o handoff/skill deste estágio antes de repetir")
+        except Exception:
+            pass
+    return {"status": "OK", "step": step}
+
+
+def finish_run(run):
+    """Fecha o run: o RESULTADO REAL promove/rebaixa a rotina AUTOMATICAMENTE (beta-binomial
+    durável) — nenhum julgamento manual. Sucesso = todos os passos executados ok."""
+    done = [s for s in run["steps"] if s["status"] != "pending"]
+    failed = [s for s in run["steps"] if s["status"] == "failed"]
+    success = bool(done) and not failed
+    out = record_routine_outcome(run["routine_id"], success,
+                                 evidence={"run": run["run_id"], "ok": len(done) - len(failed),
+                                           "failed": len(failed)})
+    return {"run_id": run["run_id"], "routine_id": run["routine_id"], "success": success,
+            "steps_ok": len(done) - len(failed), "steps_failed": len(failed),
+            "pending": len(run["steps"]) - len(done), "routine_status": out}
+
+
 def record_routine_outcome(routine_id, success, evidence=None):
     """Resultado REAL de rodar a rotina -> promoção/rebaixamento beta-binomial durável."""
     try:

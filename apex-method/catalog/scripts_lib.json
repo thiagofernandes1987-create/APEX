@@ -344,6 +344,14 @@
   "path": "scripts/taxonomy.py"
  },
  {
+  "id": "script:token_tracker",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "token-measurement,rounds,per-step,calibration,opp-99,chars4-proxy,report",
+  "mass": 137,
+  "path": "scripts/token_tracker.py"
+ },
+ {
   "id": "script:uco_gate",
   "type": "script",
   "domain": "engineering",

@@ -156,15 +156,33 @@ def _commands_in(md, limit=8):
     return cmds
 
 
-def scan_skill_dirs(dirs=None, max_depth=3, cap=200):
+def _scan_cache_path():
+    base = os.environ.get("APEX_METHOD_HOME") or os.path.expanduser("~/.apex-method")
+    os.makedirs(base, exist_ok=True)
+    return os.path.join(base, "capability_scan_cache.json")
+
+
+def scan_skill_dirs(dirs=None, max_depth=3, cap=500, use_cache=True):
     """Find installed SKILL.md files (the user's installed skills + this one) and map each to a
     capability: what it does, its trigger words, and the exact commands it documents.
-    Default roots: this skill, ~/.claude/skills, plus APEX_SKILLS_DIRS (os.pathsep-separated)."""
+    Default roots: this skill, ~/.claude/skills, plus APEX_SKILLS_DIRS (os.pathsep-separated).
+
+    v1.47 INCREMENTAL CACHE: with hundreds of installed skills a full re-parse per build gets
+    slow. Each SKILL.md's parsed entry is cached by (path, mtime, size) in the machine-local
+    APEX home; unchanged files are served from cache, changed/new ones re-parsed, and entries
+    whose file disappeared are pruned. scan stats ride along in `_scan_stats`."""
     roots = list(dirs or [])
     if not dirs:
         roots = [ROOT, os.path.expanduser("~/.claude/skills")]
         roots += [d for d in (os.environ.get("APEX_SKILLS_DIRS") or "").split(os.pathsep) if d]
-    caps = []
+    cache = {}
+    if use_cache:
+        try:
+            with open(_scan_cache_path(), encoding="utf-8") as f:
+                cache = json.load(f)
+        except Exception:
+            cache = {}
+    caps, seen_paths, parsed, cached = [], set(), 0, 0
     for root in roots:
         if not os.path.isdir(root):
             continue
@@ -176,10 +194,25 @@ def scan_skill_dirs(dirs=None, max_depth=3, cap=200):
             dks[:] = [d for d in dks if d not in (".git", "__pycache__", "node_modules")]
             if "SKILL.md" not in files:
                 continue
+            mdp = os.path.join(cur, "SKILL.md")
+            seen_paths.add(mdp)
             try:
-                md = open(os.path.join(cur, "SKILL.md"), encoding="utf-8", errors="replace").read()
+                st = os.stat(mdp)
+                key = f"{st.st_mtime_ns}:{st.st_size}"
             except OSError:
                 continue
+            hit = cache.get(mdp)
+            if use_cache and hit and hit.get("key") == key:
+                caps.append(hit["entry"])
+                cached += 1
+                if len(caps) >= cap:
+                    break
+                continue
+            try:
+                md = open(mdp, encoding="utf-8", errors="replace").read()
+            except OSError:
+                continue
+            parsed += 1
             fm = _frontmatter(md)
             name = fm.get("name") or os.path.basename(cur)
             trig = ""
@@ -191,15 +224,26 @@ def scan_skill_dirs(dirs=None, max_depth=3, cap=200):
             uw = re.search(r"Use when:?\s*(.+)", md, re.I)
             if uw:
                 use_when = uw.group(1)[:140]
-            caps.append({"id": f"skill:{name}", "kind": "installed-skill",
-                         "name": name, "path": os.path.join(cur, "SKILL.md"),
-                         "description": desc, "triggers": trig,
-                         "commands": _commands_in(md),
-                         "io": {"send": "a tarefa/artefato descrito nos triggers do SKILL.md",
-                                "receive": "orientação/artefato conforme a seção de uso da skill",
-                                "apply_when": use_when or trig[:140] or desc[:140]}})
+            entry = {"id": f"skill:{name}", "kind": "installed-skill",
+                     "name": name, "path": mdp,
+                     "description": desc, "triggers": trig,
+                     "commands": _commands_in(md),
+                     "io": {"send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+                            "receive": "orientação/artefato conforme a seção de uso da skill",
+                            "apply_when": use_when or trig[:140] or desc[:140]}}
+            caps.append(entry)
+            cache[mdp] = {"key": key, "entry": entry}
             if len(caps) >= cap:
-                return caps
+                break
+    # prune entries whose file vanished; persist the incremental cache (machine-local)
+    if use_cache:
+        cache = {p: v for p, v in cache.items() if p in seen_paths}
+        try:
+            with open(_scan_cache_path(), "w", encoding="utf-8") as f:
+                json.dump(cache, f, ensure_ascii=False)
+        except Exception:
+            pass
+    scan_skill_dirs._scan_stats = {"parsed": parsed, "cached": cached, "total": len(caps)}
     return caps
 
 
@@ -281,7 +325,8 @@ def build(extra_dirs=None, extra_capabilities=None, path=MAP_PATH):
         json.dump(doc, f, ensure_ascii=False, indent=1)
     return {"status": "OK", "path": path, "capabilities": len(caps),
             "tools_present": sum(doc["environment"]["tools"].values()),
-            "libs_present": sum(doc["environment"]["libraries"].values())}
+            "libs_present": sum(doc["environment"]["libraries"].values()),
+            "scan": getattr(scan_skill_dirs, "_scan_stats", {})}
 
 
 def rebuild(path=MAP_PATH):

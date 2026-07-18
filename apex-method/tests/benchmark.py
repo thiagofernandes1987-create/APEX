@@ -845,6 +845,177 @@ def t_routine_composer():
             importlib.reload(mod)
 
 
+def t_routine_run_loop():
+    # v1.47 item 1: the persona RUNS the routine — handoffs are rewritten with what was REALLY
+    # received (persisted), real outcomes auto-promote/demote, failures become vaccines.
+    import tempfile, os, importlib
+    import routine_composer as rc, learning as lrn, code_genetics as cg, config as cfg
+    import agent_registry as ar, memory as mem_mod, swap_store as ss, capability_map as cm
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+    try:
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, cm, rc):
+            importlib.reload(mod)
+        r = rc.compose("criar landing page com css e sql", agent_id="ui-designer")
+        rc.save_routine(r)
+        run = rc.start_run(r)
+        rc.record_step_result(run, r["steps"][0]["order"],
+                              "briefing real: público dev, tom técnico")
+        for s in r["steps"][1:]:
+            rc.record_step_result(run, s["order"], f"saída real do {s['stage']}")
+        fin = rc.finish_run(run)
+        assert fin["success"] and fin["steps_failed"] == 0, fin
+        saved = rc.best_routine("ui-designer", "landing page com css e sql")
+        assert saved["steps"][0]["receive"].startswith("APRENDIDO:"), "handoff rewritten"
+        assert saved["steps"][1]["send"].startswith("APRENDIDO:"), "next send follows reality"
+        for _ in range(2):                          # 3 successful runs -> auto-PROMOTED
+            rr = rc.start_run(saved)
+            for s in saved["steps"]:
+                rc.record_step_result(rr, s["order"], "ok")
+            out = rc.finish_run(rr)
+        assert out["routine_status"]["status"] == "PROMOTED", out["routine_status"]
+        # a failure becomes a durable vaccine (experience -> future context)
+        rf = rc.start_run(saved)
+        rc.record_step_result(rf, saved["steps"][0]["order"], "", success=False,
+                              notes="skill dispersa o escopo")
+        assert cg.durable_store().relevant("falha no passo research"), "failure -> vaccine"
+        ff = rc.finish_run(rf)
+        assert ff["success"] is False
+        return "handoffs aprendidos + auto-PROMOTED@3 + falha->vacina"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        for mod in (cfg, ar, lrn, mem_mod, ss, cg, cm, rc):
+            importlib.reload(mod)
+
+
+def t_capability_cache():
+    # v1.47 item 2: incremental scan cache — unchanged SKILL.md served from cache; a touched
+    # file is re-parsed; entries for deleted files are pruned.
+    import tempfile, os, importlib, time as _t
+    import capability_map as cm, config as cfg
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+    try:
+        importlib.reload(cfg); importlib.reload(cm)
+        d = tempfile.mkdtemp()
+        for i in range(3):
+            os.makedirs(os.path.join(d, f"s{i}"))
+            open(os.path.join(d, f"s{i}", "SKILL.md"), "w", encoding="utf-8").write(
+                f"---\nname: cache-skill-{i}\ndescription: \"skill {i}. Use when: testing.\"\n---\n"
+                f"# When to use\nUse when testing.\n")
+        c1 = cm.scan_skill_dirs([d]); s1 = cm.scan_skill_dirs._scan_stats
+        assert s1["parsed"] == 3 and s1["cached"] == 0, s1
+        c2 = cm.scan_skill_dirs([d]); s2 = cm.scan_skill_dirs._scan_stats
+        assert s2["parsed"] == 0 and s2["cached"] == 3, s2
+        # touch one -> only it re-parses; delete one -> pruned from result
+        p = os.path.join(d, "s0", "SKILL.md")
+        _t.sleep(0.01); os.utime(p, None)
+        open(p, "a", encoding="utf-8").write("\nextra\n")
+        import shutil; shutil.rmtree(os.path.join(d, "s2"))
+        c3 = cm.scan_skill_dirs([d]); s3 = cm.scan_skill_dirs._scan_stats
+        assert s3["parsed"] == 1 and s3["cached"] == 1 and s3["total"] == 2, s3
+        assert {x["name"] for x in c3} == {"cache-skill-0", "cache-skill-1"}
+        return f"3 parsed -> 3 cached -> touch reparses 1, delete prunes 1"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(cfg); importlib.reload(cm)
+
+
+def t_token_tracker():
+    # v1.47 item 3 (OPP-99): real rounds measured (chars/4 proxy, declared) calibrate the DSM —
+    # measured averages replace estimates once >=3 samples exist.
+    import tempfile, os, importlib
+    import token_tracker as tt, orchestrator as orc, pipeline_dsm as pd, config as cfg
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+    try:
+        importlib.reload(cfg); importlib.reload(tt)
+        rnd = tt.start_round("DEEP", "t")
+        tt.record(rnd, "TRIAGE", {"mode": "DEEP"})
+        assert tt.end_round(rnd)["status"] == "OK"
+        for _ in range(3):                          # real orchestrator rounds are recorded
+            r = orc.run("design a fault-tolerant payment api")
+        assert r.get("tokens_measured", {}).get("status") == "OK", r.get("tokens_measured")
+        av = tt.averages()
+        assert "DISSECT" in av and av["DISSECT"]["n"] >= 3, av
+        flow = pd.mode_flow()
+        cal = flow["_calibration"]
+        assert cal["DISSECT"] == "measured" and cal["RUN_STANCES"] == "estimated", cal
+        rep = tt.report()
+        assert rep["rounds"] >= 3 and any(x["calibrated"] for x in rep["steps"])
+        return f"{rep['rounds']} rodadas; medido substitui estimado (DISSECT avg={av['DISSECT']['avg']}tk)"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(cfg); importlib.reload(tt)
+
+
+def t_solid_state_index():
+    # v1.47 (documento de arquitetura do autor): estado sólido — seções por sumário com
+    # dimensão taxonômica, sync incremental por hash, poda em cascata, alias de renomeio,
+    # visão macro (dim+impacto) na busca, fusão de estados e overview cristalizado.
+    import rag_index as ri, os, shutil, copy, json
+    r = ri.build()
+    assert r["nodes"] >= 250, r
+    doc = ri.load()
+    secs = [n for n in doc["nodes"] if n["type"] == "section"]
+    assert len(secs) >= 80 and all(n.get("parent") for n in secs), len(secs)
+    assert all("dim" in n and "hash" in n for n in doc["nodes"])
+    # macro view: a busca devolve dimensão + impacto (imports reversos) para scripts
+    hits = ri.search("memória durável entre sessões", k=5)
+    assert hits and all("dim" in h for h in hits), hits
+    sh = ri.search("swap page out", k=5, node_type="script")
+    assert any(h.get("affects") for h in sh), sh
+    # a pergunta de spec acha a SEÇÃO, não só o arquivo
+    sec_hit = ri.search("regras de segurança para skills externas", k=5)
+    assert any(h["type"] == "section" for h in sec_hit), sec_hit
+    # sync incremental: sem mudanças, quase nada re-vetoriza
+    s0 = ri.sync()
+    assert s0["reembedded"] <= 2 and not s0["pruned"], s0
+    # edição -> só o tocado re-vetoriza; reversão -> seção nova é podada
+    p = os.path.join(ri.ROOT, "references", "scenarios.md")
+    orig = open(p, encoding="utf-8").read()
+    try:
+        open(p, "a", encoding="utf-8").write("\n## Scenario T — solid state\nGatilho incremental sob teste.\n")
+        s1 = ri.sync()
+        assert 1 <= s1["reembedded"] <= 3, s1["reembedded"]
+        assert any("scenario-t" in h["id"] for h in ri.search("gatilho incremental sob teste", k=3))
+    finally:
+        open(p, "w", encoding="utf-8").write(orig)
+    s2 = ri.sync()
+    assert any("scenario-t" in x for x in s2["pruned"]), s2["pruned"]
+    # renomeio -> alias (identidade preservada), nada podado
+    try:
+        shutil.move(p, os.path.join(ri.ROOT, "references", "worked-scenarios.md"))
+        s3 = ri.sync()
+        assert s3["aliases"].get("reference:scenarios") == "reference:worked-scenarios", s3["aliases"]
+        assert ri.resolve("reference:scenarios") == "reference:worked-scenarios"
+        assert not s3["pruned"], s3["pruned"]
+    finally:
+        shutil.move(os.path.join(ri.ROOT, "references", "worked-scenarios.md"), p)
+        ri.sync()
+    # fusão de estados divergentes: união idempotente, o local vence
+    other = copy.deepcopy(ri.load())
+    other["nodes"].append({"id": "script:so_na_maquina_b", "type": "script", "path": "x.py",
+                           "summary": "só na B", "hash": "b", "dim": "geral", "terms": {"b": 1.0}})
+    m = ri.merge_index(other)
+    assert m["added_from_other"] == 1 and ri.merge_index(other)["added_from_other"] == 0
+    # overview cristalizado: DETERMINÍSTICO (mesmo conteúdo = mesmo prefixo cacheável)
+    ov1, ov2 = ri.overview(), ri.overview()
+    assert ov1 == ov2 and "SOLID-STATE" in ov1 and "n" + "ós por tipo" in ov1
+    ri.build()                                   # restaura o índice limpo p/ os outros testes
+    return (f"{r['nodes']} nós ({len(secs)} seções); sync incremental+poda+alias; "
+            f"merge idempotente; overview determinístico")
+
+
 def t_capability_map():
     # v1.45 (author's item 2): the runtime LEARNS to work with installed capabilities —
     # commands mapped (never executed), environment probed, how_to answers PT/EN, and
@@ -1315,7 +1486,9 @@ TESTS = [
     ("agent_spawn", t_agent_spawn), ("kernel_gate", t_kernel_gate), ("rag_index", t_rag_index),
     ("plug_and_play", t_plug_and_play), ("agent_bundle_context", t_agent_bundle_and_context),
     ("capability_map", t_capability_map), ("pipeline_dsm", t_pipeline_dsm),
-    ("routine_composer", t_routine_composer),
+    ("routine_composer", t_routine_composer), ("routine_run_loop", t_routine_run_loop),
+    ("capability_cache", t_capability_cache), ("token_tracker", t_token_tracker),
+    ("solid_state_index", t_solid_state_index),
 ]
 
 

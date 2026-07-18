@@ -420,6 +420,24 @@ def _run(task, candidates=None, snapshot=None):
     else:
         llm_actions["SNAPSHOT"] = ("pass snapshot=snapshot.new_snapshot(task, mode) into run(), "
                                    "or record findings via snapshot.add_finding; then complete_step")
+    # v1.47 (OPP-99): measure the REAL payload each code step produced (chars/4 proxy, declared)
+    # so pipeline_dsm's per-mode flow calibrates itself with data instead of estimates.
+    try:
+        import token_tracker as tt
+        rnd = tt.start_round(mode, str(task))
+        tt.record(rnd, "TRIAGE", tri or {})
+        tt.record(rnd, "DISSECT", disciplines)
+        tt.record(rnd, "RESOLVE_SPECIALISTS", specialists)
+        tt.record(rnd, "PHASE_PLAN", phase_plan)
+        if result.get("context_pack"):
+            tt.record(rnd, "CONTEXT_PACK", result["context_pack"].get("rendered", ""))
+        if result.get("pmi_decision"):
+            tt.record(rnd, "PMI_CONVERGE", result["pmi_decision"])
+        if snapshot is not None:
+            tt.record(rnd, "SNAPSHOT", snapshot)
+        result["tokens_measured"] = tt.end_round(rnd)
+    except Exception:
+        pass
     # the gate is computed LAST so it reflects everything run() itself completed
     result["gate"] = gate(ck)
     return result

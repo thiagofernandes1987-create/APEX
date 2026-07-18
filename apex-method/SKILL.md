@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.46.0
+version: 1.47.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,7 +47,7 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 47 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 48 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
@@ -191,10 +191,17 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   agent (persona + grants + validated history + provenance, SHA-256 signed);
   `import_agent(bundle, approved=True)` installs it on another machine (fail-closed integrity +
   H5) — agents become portable, verifiable, evolving artifacts.
-- **`scripts/rag_index.py`** — node-based vector RAG index of the whole repository
-  (`catalog/rag_index.json`, global char-n-gram IDF): `search("<question>", k)` maps any PT/EN
-  question to the right module/catalog/reference/repo-area in milliseconds — use it FIRST when
-  you need to locate anything. `rebuild()` after adding/renaming modules.
+- **`scripts/rag_index.py`** — SOLID-STATE node RAG (v1.47, the author's crystallized-memory
+  architecture): nodes for modules/catalogs/references/repo-areas/capabilities AND per-chapter
+  SECTIONS extracted from each document's outline, every node carrying its taxonomic DIMENSION
+  (discipline→specialization→mode) + content hash. `search()` returns the MACRO view (dim, who
+  it affects via the exact import matrix, what it attracts, parent section) — no remapping.
+  `sync()` is the INCREMENTAL trigger: only changed nodes re-embed, deleted ones prune in
+  cascade, renames become ALIASES (hash fast-path + cosine >= 0.85; identity preserved,
+  `resolve()` follows). `merge_index(other)` fuses divergent instance states (idempotent, local
+  wins). **`overview()` is the crystallized memory: a DETERMINISTIC macro map (no timestamps —
+  same content = same prompt prefix = provider prompt-cache hit). LOAD IT FIRST in every new
+  session instead of remapping the repository.** Full `build()` refreshes the global IDF.
 - **`scripts/capability_map.py`** — TOOL-USE MEMORY (v1.45): maps every capability the runtime
   can wield — the 46 syscalls' CLIs, INSTALLED skills (SKILL.md commands/triggers, scans
   ~/.claude/skills + APEX_SKILLS_DIRS), design/document templates, and a REAL environment probe
@@ -214,12 +221,23 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   Routines persist per persona (travel in the swap bundle), `record_routine_outcome` promotes by
   real results, and `record_feedback` turns external LLM audits + user positive feedback into
   memory with provenance + equip/unequip/discover SUGGESTIONS (H5 decides). spawn() injects the
-  routine — the agent knows HOW to work, not just WITH WHAT.
+  routine — the agent knows HOW to work, not just WITH WHAT. **RUN LOOP (v1.47):**
+  `start_run`/`record_step_result`/`finish_run` — the persona RUNS the routine and the routine
+  LEARNS: each step's handoff is rewritten with what was REALLY received (persisted, feeds the
+  next step's send), real outcomes auto-PROMOTE/DEMOTE the routine, and a failed step becomes a
+  durable vaccine (future context).
 - **`scripts/pipeline_dsm.py`** — the DSM turned on the runtime itself (v1.45): EXACT module
   import matrix (parallel load levels, cycles, load-bearing core) + per-mode step flow ordered
   by geodesic ΔH/token (run/skip + [APPROX] savings: EXPRESS ~5.1k tokens saved, STANDARD ~3.8k).
   The APPLIED optimization: `context_budget(mode)` sizes the context_pack injection per mode
   (0 on EXPRESS → 2000 chars on RESEARCH) — orchestrator and agent_spawn consume it on every call.
+- **`scripts/token_tracker.py`** — REAL token measurement per round/step (OPP-99, v1.47):
+  every FULL_PIPELINE run records the payload each kernel step produced (chars/4 proxy,
+  declared); with >=3 samples the MEASURED average replaces the [APPROX] estimate in
+  pipeline_dsm.mode_flow (calibration map says measured vs estimated). First real data:
+  DISSECT ~6tk vs 80 estimated; CONTEXT_PACK ~119tk vs 350. `report()` shows where estimates
+  were wrong. capability_map scans also got an incremental cache (mtime+size; unchanged
+  SKILL.md served from cache, deleted pruned) for hundreds of installed skills.
 - **`scripts/monte_carlo.py`** — REAL Monte Carlo (OPP-73): `simulate(model_fn, distributions)`
   returns P10/P50/P90 + CV. Wired into PMI so QUANTIFIABLE candidates are decided by simulation,
   never by calling a weighted vote "Monte Carlo" (§10). numpy optional (stdlib fallback).

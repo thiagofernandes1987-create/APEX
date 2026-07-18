@@ -117,11 +117,23 @@ def module_dsm():
 
 def mode_flow():
     """Per mode: the geodesic-ordered step plan under the mode's token budget — which steps
-    run, which are skipped as low value-per-token, and the [APPROX] savings vs run-everything."""
-    flows = {}
-    naive_cost = sum(t for _, _, t in STEP_EST)
+    run, which are skipped as low value-per-token, and the savings vs run-everything.
+
+    v1.47 (OPP-99): when token_tracker has enough REAL samples for a step (>=3 rounds), the
+    MEASURED average replaces the [APPROX] estimate — the flow optimizes on this machine's
+    actual usage. `calibration` says which steps are measured vs estimated."""
+    measured = {}
+    try:
+        import token_tracker
+        measured = token_tracker.averages()
+    except Exception:
+        pass
+    est = [(s, dh, measured[s]["avg"] if s in measured else tk) for s, dh, tk in STEP_EST]
+    calibration = {s: ("measured" if s in measured else "estimated") for s, _dh, _tk in STEP_EST}
+    flows = {"_calibration": calibration}
+    naive_cost = sum(t for _, _, t in est)
     for mode, budget in MODE_TOKENS.items():
-        steps = [{"id": s, "delta_h": dh, "tokens": tk} for s, dh, tk in STEP_EST]
+        steps = [{"id": s, "delta_h": dh, "tokens": tk} for s, dh, tk in est]
         # mode-specific pruning facts: EXPRESS answers directly; light modes skip heavy fan-out
         if mode == "EXPRESS":
             flows[mode] = {"plan": ["TRIAGE"], "skipped": [s["id"] for s in steps[1:]],
@@ -164,7 +176,10 @@ if __name__ == "__main__":
     r = build()
     print(json.dumps(r, ensure_ascii=False, indent=1))
     doc = json.load(open(DSM_PATH, encoding="utf-8"))
-    print("\nMODE FLOW (run/skip + [APPROX] savings):")
+    print("\nMODE FLOW (run/skip + savings; calibration:",
+          doc["mode_flow"].get("_calibration", {}), "):")
     for mode, f in doc["mode_flow"].items():
+        if mode.startswith("_"):
+            continue
         print(f"  {mode:10} ctx={f['context_budget_chars']:>4}ch  run={len(f['plan'])} "
               f"skip={len(f['skipped'])} est={f['tokens_est']}tk save~{f['savings_vs_naive']}tk")
