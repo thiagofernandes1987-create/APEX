@@ -333,6 +333,9 @@ def t_regressions():
     assert (1 - 0.05) ** n >= 0.9, (n, (1 - 0.05) ** n)
     # express: case-insensitive + pow DoS capped
     assert orchestrator.express_check("What is 2+2?")["answer"] == 4
+    # v1.49 dogfooding: sufixos PT também computam (antes "2+2 é quanto?" -> answer=None)
+    assert orchestrator.express_check("2+2 é quanto?")["answer"] == 4
+    assert orchestrator.express_check("15*3 dá quanto?")["answer"] == 45
     try:
         orchestrator._safe_arith("9**9**9"); assert False, "pow not capped"
     except ValueError:
@@ -731,7 +734,14 @@ def t_agent_spawn():
     man = ce.subagent_manifest("audit memory subsystem", "RESEARCH")
     assert man["contract"] and all("spec" in e and "spawn_ready" in e for e in man["spawn"]), \
         [list(e) for e in man["spawn"]]
-    return f"spec executable + ghost blocked + equip/unequip durable + manifest carries specs"
+    # v1.49 dogfooding: contexto e rotina são POR TAREFA — computados 1x e compartilhados entre
+    # os framings (o exercício provou 5 contextos idênticos recomputados 5x à toa, ~956ms)
+    rids = {e["spec"]["routine"]["id"] for e in man["spawn"]
+            if e.get("spec") and e["spec"].get("routine")}
+    assert len(rids) <= 1, f"rotina deve ser compartilhada no fan-out: {rids}"
+    ctxs = {e["spec"]["context"]["rendered"] for e in man["spawn"] if e.get("spec")}
+    assert len(ctxs) <= 1, "contexto deve ser compartilhado no fan-out"
+    return f"spec executable + ghost blocked + equip/unequip durable + manifest carries shared specs"
 
 
 def t_kernel_gate():

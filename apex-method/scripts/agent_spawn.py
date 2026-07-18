@@ -159,7 +159,7 @@ def context_pack(task, agent_id=None, budget_chars=1800):
     return {"sections": sections, "rendered": rendered, "chars": len(rendered)}
 
 
-def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10):
+def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10, shared=None):
     """Assemble the EXECUTABLE AgentSpec: persona real + skills/diffs/scripts reais (attracted
     via the precomputed graph + durable grants) + governance + template + output contract +
     a boolean spawn checklist. The host instantiates it as a real subagent (Level B)."""
@@ -207,28 +207,37 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10):
 
     # v1.44 — the author's thesis: context beats prompt. Every spawned agent receives the
     # runtime's VALIDATED experience (vaccines, memory, proven/demoted, rag pointers) inline.
+    # v1.49 dogfooding fix: `shared` deduplica o trabalho POR TAREFA num fan-out — o exercício
+    # instrumentado provou que os 5 framings de um manifesto produziam contextos IDÊNTICOS
+    # (1 distinto em 5) e rotinas de conteúdo igual: context_pack 5x, compose 5x, ~956ms à toa.
+    # O chamador (subagent_manifest) computa uma vez e compartilha; sem `shared`, tudo igual.
+    shared = shared or {}
     ctx = {"rendered": "", "sections": {}}
-    try:
-        budget = 1200
-        try:                                    # DSM optimization: context sized per mode
-            import pipeline_dsm
-            budget = pipeline_dsm.context_budget(mode)
+    if shared.get("context") is not None:
+        ctx = shared["context"]
+    else:
+        try:
+            cbudget = 1200
+            try:                                # DSM optimization: context sized per mode
+                import pipeline_dsm
+                cbudget = pipeline_dsm.context_budget(mode)
+            except Exception:
+                pass
+            if cbudget > 0:
+                ctx = context_pack(task, agent_id, budget_chars=cbudget)
         except Exception:
             pass
-        if budget > 0:
-            ctx = context_pack(task, agent_id, budget_chars=budget)
-    except Exception:
-        pass
 
     # v1.46 — a ROTINA da persona: o fluxo encadeado de capacidades complementares (o que
     # enviar, o que receber, para onde alimenta). Reutiliza uma rotina COMPROVADA quando há;
     # senão compõe uma nova. A persona sabe COMO trabalhar, não só com o quê.
-    routine = None
-    try:
-        import routine_composer as rc
-        routine = rc.best_routine(agent_id, task) or rc.compose(task, agent_id=agent_id)
-    except Exception:
-        pass
+    routine = shared.get("routine")
+    if routine is None:
+        try:
+            import routine_composer as rc
+            routine = rc.best_routine(agent_id, task) or rc.compose(task, agent_id=agent_id)
+        except Exception:
+            pass
     routine_txt = ""
     if routine and routine.get("steps"):
         lines = [f"  {s['order']}. [{s['stage']}] {s['capability']} — envia: {s['send'][:70]} | "

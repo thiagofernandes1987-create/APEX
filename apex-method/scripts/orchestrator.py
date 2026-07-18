@@ -49,7 +49,13 @@ def express_check(task):
     """Return an EXPRESS answer for trivial input, else None (go to full pipeline)."""
     t = task.strip()
     # audit fix v1.17.0: lowercase before stripping the question prefix ("What is 2+2?" missed)
-    core = t.rstrip("=? ").lower().replace("what is", "").replace("quanto é", "").strip()
+    # v1.49 dogfooding: SUFIXOS PT também ("2+2 é quanto?" caía no ramo factual com answer=None
+    # e o cálculo real se perdia) — remove prefixos E sufixos interrogativos antes do parse.
+    core = t.rstrip("=? ").lower()
+    for pat in ("what is", "how much is", "quanto é", "quanto e", "quanto dá", "quanto da",
+                "é quanto", "e quanto", "dá quanto", "da quanto", "calcule", "calculate"):
+        core = core.replace(pat, " ")
+    core = core.strip()
     if _ARITH.match(core) and any(op in core for op in "+-*/"):
         try:
             return {"mode": "EXPRESS", "answer": _safe_arith(core), "reason": "pure arithmetic"}

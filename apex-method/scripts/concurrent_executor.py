@@ -358,6 +358,26 @@ def subagent_manifest(task, mode, hypotheses=None):
         pass
     if not personas:
         personas = ["architect", "critic", "theorist", "chaos"]
+    # v1.49 dogfooding fix: o contexto e a rotina dependem da TAREFA, não do framing — o
+    # exercício instrumentado provou 5 contextos idênticos computados 5x (~956ms no manifesto).
+    # Computa UMA vez e compartilha com todos os spawns (equipamento/persona seguem por agente).
+    shared = {}
+    try:
+        import agent_spawn
+        try:
+            import pipeline_dsm
+            cbudget = pipeline_dsm.context_budget(mode)
+        except Exception:
+            cbudget = 1200
+        if cbudget > 0:
+            shared["context"] = agent_spawn.context_pack(task, budget_chars=cbudget)
+        try:
+            import routine_composer as _rc
+            shared["routine"] = _rc.best_routine(None, task) or _rc.compose(task)
+        except Exception:
+            pass
+    except Exception:
+        shared = {}
     subagents = []
     for i, fr in enumerate(framings[:cap]):
         persona = personas[i % len(personas)]
@@ -367,7 +387,7 @@ def subagent_manifest(task, mode, hypotheses=None):
         entry = {"persona": persona, "stance": fr}
         try:
             import agent_spawn
-            spec = agent_spawn.spawn(persona, task, mode=mode, stance=fr)
+            spec = agent_spawn.spawn(persona, task, mode=mode, stance=fr, shared=shared)
             entry["spec"] = spec
             entry["instruction"] = spec["instruction"] + \
                 ("\nSurface a NON-OBVIOUS option the others would miss." if fr == "genius" else "")

@@ -1,7 +1,7 @@
 {
  "_meta": {
   "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
-  "built_at": "2026-07-18 21:20:54",
+  "built_at": "2026-07-18 21:33:42",
   "count": 54
  },
  "environment": {
