@@ -1,11 +1,10 @@
 {
  "_meta": {
   "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
-  "built_at": "2026-07-19 09:30:27",
-  "count": 55
+  "count": 65
  },
  "environment": {
-  "python": "python 3.14.3",
+  "python": "python 3.11.15",
   "tools": {
    "python": true,
    "python3": true,
@@ -17,22 +16,22 @@
    "docker": true,
    "bash": true,
    "pwsh": false,
-   "powershell": true,
-   "gh": true
+   "powershell": false,
+   "gh": false
   },
   "libraries": {
-   "numpy": true,
-   "scipy": true,
+   "numpy": false,
+   "scipy": false,
    "sklearn": false,
-   "sympy": true,
-   "pandas": true,
+   "sympy": false,
+   "pandas": false,
    "yaml": true,
    "matplotlib": false,
    "sentence_transformers": false,
    "requests": true
   },
-  "os": "nt",
-  "platform": "win32"
+  "os": "posix",
+  "platform": "linux"
  },
  "capabilities": [
   {
@@ -47,6 +46,38 @@
     "send": "ver docstring/CLI",
     "receive": "ver docstring",
     "apply_when": "imported by router.py / gravity.py / agent_registry.py when sklearn is missing."
+   }
+  },
+  {
+   "id": "tool:agent_lifecycle",
+   "kind": "runtime-tool",
+   "name": "agent_lifecycle",
+   "path": "scripts/agent_lifecycle.py",
+   "description": "agent_lifecycle.py — the CLOSED-LOOP agent pipeline: dissect → competence matrix → find-or-create agent → validate/equip skills (discovery cascade) → executable spec → (host executes) → evolve. WHY THIS EXISTS (the author's O-2 flow, made r",
+   "triggers": "",
+   "commands": [
+    "python scripts/agent_lifecycle.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:agent_materializer",
+   "kind": "runtime-tool",
+   "name": "agent_materializer",
+   "path": "scripts/agent_materializer.py",
+   "description": "agent_materializer.py — turn a VALIDATED generic spawn into a STANDARDIZED, durable specialist artifact, so the prompt library self-evolves across sessions (the author's auto-evolutive vision). WHY THIS EXISTS: agent_lifecycle can SYNTHESIZ",
+   "triggers": "",
+   "commands": [
+    "python scripts/agent_materializer.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
    }
   },
   {
@@ -822,7 +853,7 @@
    "id": "skill:apex-method",
    "kind": "installed-skill",
    "name": "apex-method",
-   "path": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\.claude\\worktrees\\apex-docs-review-176ae5\\apex-method\\tests\\..\\SKILL.md",
+   "path": "/home/user/APEX/apex-method/SKILL.md",
    "description": "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill ro",
    "triggers": "APEX, PoT, program of thought, pipeline, scientific mode, modo científico, RK4, token",
    "commands": [
@@ -832,6 +863,143 @@
     "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
     "receive": "orientação/artefato conforme a seção de uso da skill",
     "apply_when": "multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode.\""
+   }
+  },
+  {
+   "id": "skill:apex-method",
+   "kind": "installed-skill",
+   "name": "apex-method",
+   "path": "/root/.claude/skills/apex-method/SKILL.md",
+   "description": "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill ro",
+   "triggers": "APEX, PoT, program of thought, pipeline, scientific mode, modo científico, RK4, token",
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode.\""
+   }
+  },
+  {
+   "id": "skill:startup-hook-skill",
+   "kind": "installed-skill",
+   "name": "startup-hook-skill",
+   "path": "/root/.claude/skills/session-start-hook/SKILL.md",
+   "description": "Creating and developing startup hooks for Claude Code on the web. Use when the user wants to set up a repository for Claude Code on the web, create a SessionStart hook to ensure their project can run tests and linters during web sessions.",
+   "triggers": "",
+   "commands": [
+    "npm install"
+   ],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "the user wants to set up a repository for Claude Code on the web, create a SessionStart hook to ensure their project can run tests and linte"
+   }
+  },
+  {
+   "id": "skill:skill-creator",
+   "kind": "installed-skill",
+   "name": "skill-creator",
+   "path": "/root/.claude/skills/skill-creator/SKILL.md",
+   "description": "Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, edit, or optimize an existing skill, run evals to test a skill, benchmark skill performance with varia",
+   "triggers": "",
+   "commands": [
+    "python -m scripts.aggregate_benchmark <workspace>/iteration-N --skill-name <name>",
+    "python -m scripts.run_loop \\",
+    "python -m scripts.package_skill <path/to/skill-folder>"
+   ],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "users want to create a skill from scratch, edit, or optimize an existing skill, run evals to test a skill, benchmark skill performance with "
+   }
+  },
+  {
+   "id": "skill:morning",
+   "kind": "installed-skill",
+   "name": "morning",
+   "path": "/root/.claude/skills/morning/SKILL.md",
+   "description": "Render the user's morning brief as a styled HTML artifact, or set it up as a recurring weekday task. Use only when the user explicitly asks to run, see, or set up their morning brief, or if they invoke /morning by name. A question about the",
+   "triggers": "",
+   "commands": [
+    "npm pack @fontsource/fraunces",
+    "node -e \"const{chromium}=require('playwright');(async()=>{const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium'});const p=await b.newPage({viewport:{width:960,height:1400}});await p.goto('file://<abs path>');await p.waitForTimeout(600);await p.screenshot({path:'brief.png',fullPage:true});await b.close();})();\""
+   ],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "Render the user's morning brief as a styled HTML artifact, or set it up as a recurring weekday task. Use only when the user explicitly asks "
+   }
+  },
+  {
+   "id": "skill:docx",
+   "kind": "installed-skill",
+   "name": "docx",
+   "path": "/root/.claude/skills/docx/SKILL.md",
+   "description": "Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files) or Word templates (.dotx files). Triggers include: any mention of 'Word doc', 'word document', '.docx', '.dotx', or requests to produce",
+   "triggers": "",
+   "commands": [
+    "python scripts/office/soffice.py --headless --convert-to pdf output.docx",
+    "python scripts/merge_runs.py unpacked/   # coalesce fragmented runs so text is findable",
+    "python scripts/office/validate.py out.docx --original doc.docx   # XSD checks; --auto-repair fixes common issues",
+    "python scripts/comment.py unpacked/ \"Fees & expenses cap is too low\"",
+    "python scripts/comment.py unpacked/ \"Agreed\" --parent 0",
+    "python scripts/comment.py contract.docx \"This cap is too low\" -o annotated.docx"
+   ],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "extracting or reorganizing content from .docx or .dotx files, inserting or replacing images in documents, performing find-and-replace in Wor"
+   }
+  },
+  {
+   "id": "skill:xlsx",
+   "kind": "installed-skill",
+   "name": "xlsx",
+   "path": "/root/.claude/skills/xlsx/SKILL.md",
+   "description": "Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, read, edit, or fix an existing .xlsx, .xlsm, .xltx, .csv, or .tsv file (e.g., adding columns, computing formulas, ",
+   "triggers": "",
+   "commands": [
+    "python scripts/recalc.py output.xlsx [timeout_seconds]   # default 30"
+   ],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, read, edit, or"
+   }
+  },
+  {
+   "id": "skill:pptx",
+   "kind": "installed-skill",
+   "name": "pptx",
+   "path": "/root/.claude/skills/pptx/SKILL.md",
+   "description": "Use this skill any time a .pptx or .potx file is involved in any way — as input, output, or both. This includes: creating slide decks, pitch decks, or presentations; reading, parsing, or extracting text from any .pptx or .potx file (even if",
+   "triggers": "",
+   "commands": [
+    "python scripts/add_slide.py unpacked/ slide2.xml --after slide2.xml   # duplicate a slide (or slideLayoutN.xml); prints the new slide's path",
+    "python scripts/clean.py unpacked/                                     # after deletions: removes orphaned slides, media, rels",
+    "python scripts/office/validate.py out.pptx --original deck.pptx",
+    "python scripts/office/validate.py output.pptx                      # built from scratch",
+    "python scripts/office/validate.py output.pptx --original src.pptx  # built from a template",
+    "python scripts/office/soffice.py --headless --convert-to pdf output.pptx"
+   ],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "Use this skill any time a .pptx or .potx file is involved in any way — as input, output, or both. This includes: creating slide decks, pitch"
+   }
+  },
+  {
+   "id": "skill:pdf",
+   "kind": "installed-skill",
+   "name": "pdf",
+   "path": "/root/.claude/skills/pdf/SKILL.md",
+   "description": "Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables from PDFs, combining or merging multiple PDFs into one, splitting PDFs apart, rotating pages, adding watermarks, creating ",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables from PDFs, combining o"
    }
   },
   {

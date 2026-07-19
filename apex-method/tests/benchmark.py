@@ -1811,6 +1811,37 @@ def t_runtime_autopsy():
     return "RT-05/07/08/09/10/11/12/13/14/15/23/26 all guarded"
 
 
+def t_catalog_determinism():
+    """v1.57: the 4 precomputed index catalogs MUST be byte-identical across rebuilds for the same
+    input — no `built_at` timestamps, no set/hash-order leakage. This locks the fix so the catalogs
+    stop churning on every test run (the audit's non-determinism finding)."""
+    import importlib
+    _oh = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp(prefix="apex-det-")   # empty, uncontaminated
+    try:
+        import attraction_graph, capability_map, pipeline_dsm, rag_index
+        d = tempfile.mkdtemp(prefix="apex-cat-")
+        gens = {"attraction_graph": attraction_graph.build, "capability_map": capability_map.build,
+                "pipeline_dsm": pipeline_dsm.build, "rag_index": rag_index.build}
+        churny = []
+        for name, build in gens.items():
+            p1, p2 = os.path.join(d, name + "_1.json"), os.path.join(d, name + "_2.json")
+            build(path=p1)
+            build(path=p2)
+            a = open(p1, encoding="utf-8").read()
+            b = open(p2, encoding="utf-8").read()
+            if a != b:
+                churny.append(name)
+            assert "built_at" not in a, f"{name} still persists a built_at timestamp"
+        assert not churny, f"non-deterministic catalogs still churn: {churny}"
+    finally:
+        if _oh is not None:
+            os.environ["APEX_METHOD_HOME"] = _oh
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+    return "4 catalogs byte-identical across rebuilds; no built_at"
+
+
 def t_autopsy_v152():
     """Regression locks for the v1.52.0 autopsy fixes (validated by reproduction before fixing):
     SEC-001/003 PoT env-scrub + output cap, SEC-002 process-tree kill, SEC-004 gate file-write,
@@ -1895,6 +1926,7 @@ TESTS = [
     ("index_repo_wide", t_index_repo_wide), ("ledger_multidevice", t_ledger_multidevice),
     ("prefix_and_dim", t_prefix_and_dim), ("federation", t_federation),
     ("federation_publish", t_federation_publish),
+    ("catalog_determinism", t_catalog_determinism),
 ]
 
 

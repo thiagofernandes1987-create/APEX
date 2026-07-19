@@ -1,12 +1,29 @@
 {
  "_meta": {
-  "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimization is context_budget(mode): experience injection sized per mode, zero on EXPRESS.",
-  "built_at": "2026-07-19 09:30:27"
+  "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimization is context_budget(mode): experience injection sized per mode, zero on EXPRESS."
  },
  "module_dsm": {
-  "modules": 49,
+  "modules": 51,
   "deps": {
    "_tfidf": [],
+   "agent_lifecycle": [
+    "agent_materializer",
+    "agent_registry",
+    "agent_spawn",
+    "code_genetics",
+    "gravity",
+    "learning",
+    "memory",
+    "orchestrator",
+    "rag_index",
+    "repo_bridge",
+    "skill_forge",
+    "skills_sh",
+    "taxonomy"
+   ],
+   "agent_materializer": [
+    "agent_registry"
+   ],
    "agent_registry": [
     "_tfidf"
    ],
@@ -21,7 +38,8 @@
     "pipeline_dsm",
     "rag_index",
     "repo_bridge",
-    "routine_composer"
+    "routine_composer",
+    "taxonomy"
    ],
    "apex_st_metric": [],
    "asset_manager": [],
@@ -170,7 +188,9 @@
     "memory",
     "routine_composer"
    ],
-   "taxonomy": [],
+   "taxonomy": [
+    "memory"
+   ],
    "token_tracker": [
     "pipeline_dsm"
    ],
@@ -206,7 +226,6 @@
     "skill_scout",
     "skills_sh",
     "snapshot",
-    "taxonomy",
     "token_tracker",
     "universal_code_optimizer_v4",
     "verification_gate",
@@ -222,11 +241,14 @@
     "uco_gate"
    ],
    [
+    "agent_materializer",
     "attraction_graph",
     "deep_research",
-    "learning"
+    "learning",
+    "taxonomy"
    ],
    [
+    "agent_lifecycle",
     "capability_map",
     "competence_matrix",
     "rag_index",
@@ -265,10 +287,14 @@
   "load_bearing": [
    {
     "module": "learning",
-    "fan_in": 8
+    "fan_in": 9
    },
    {
     "module": "repo_bridge",
+    "fan_in": 9
+   },
+   {
+    "module": "memory",
     "fan_in": 8
    },
    {
@@ -276,35 +302,31 @@
     "fan_in": 7
    },
    {
+    "module": "agent_registry",
+    "fan_in": 7
+   },
+   {
     "module": "config",
     "fan_in": 6
    },
    {
-    "module": "memory",
-    "fan_in": 6
-   },
-   {
-    "module": "agent_registry",
+    "module": "code_genetics",
     "fan_in": 5
    },
    {
-    "module": "pipeline_dsm",
+    "module": "orchestrator",
     "fan_in": 5
-   },
-   {
-    "module": "bayes",
-    "fan_in": 4
    }
   ]
  },
  "mode_flow": {
   "_calibration": {
-   "TRIAGE": "measured",
-   "DISSECT": "measured",
-   "RESOLVE_SPECIALISTS": "measured",
+   "TRIAGE": "estimated",
+   "DISSECT": "estimated",
+   "RESOLVE_SPECIALISTS": "estimated",
    "MODE": "estimated",
-   "PHASE_PLAN": "measured",
-   "CONTEXT_PACK": "measured",
+   "PHASE_PLAN": "estimated",
+   "CONTEXT_PACK": "estimated",
    "SPAWN_AGENTS": "estimated",
    "RUN_STANCES": "estimated",
    "BARRIER_MERGE": "estimated",
@@ -332,113 +354,113 @@
     "PAGE_OUT"
    ],
    "tokens_est": 60,
-   "savings_vs_naive": 4687,
+   "savings_vs_naive": 5160,
    "context_budget_chars": 0,
    "note": "trivial path: triage answers directly (token economy)"
   },
   "STANDARD": {
    "plan": [
+    "MODE",
+    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "MODE",
-    "CONTEXT_PACK",
-    "TRIAGE",
-    "RESOLVE_SPECIALISTS",
     "PMI_CONVERGE",
+    "RESOLVE_SPECIALISTS",
     "PAGE_OUT",
     "SNAPSHOT",
-    "BARRIER_MERGE"
+    "CONTEXT_PACK"
    ],
    "skipped": [
+    "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
-   "tokens_est": 1547,
-   "savings_vs_naive": 3200,
+   "tokens_est": 1420,
+   "savings_vs_naive": 3800,
    "context_budget_chars": 500
   },
   "FOGGY": {
    "plan": [
+    "MODE",
+    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "MODE",
-    "CONTEXT_PACK",
-    "TRIAGE",
-    "RESOLVE_SPECIALISTS",
     "PMI_CONVERGE",
+    "RESOLVE_SPECIALISTS",
     "PAGE_OUT",
     "SNAPSHOT",
+    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4747,
+   "tokens_est": 5220,
    "savings_vs_naive": 0,
    "context_budget_chars": 900
   },
   "DEEP": {
    "plan": [
+    "MODE",
+    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "MODE",
-    "CONTEXT_PACK",
-    "TRIAGE",
-    "RESOLVE_SPECIALISTS",
     "PMI_CONVERGE",
+    "RESOLVE_SPECIALISTS",
     "PAGE_OUT",
     "SNAPSHOT",
+    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4747,
+   "tokens_est": 5220,
    "savings_vs_naive": 0,
    "context_budget_chars": 1300
   },
   "SCIENTIFIC": {
    "plan": [
+    "MODE",
+    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "MODE",
-    "CONTEXT_PACK",
-    "TRIAGE",
-    "RESOLVE_SPECIALISTS",
     "PMI_CONVERGE",
+    "RESOLVE_SPECIALISTS",
     "PAGE_OUT",
     "SNAPSHOT",
+    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4747,
+   "tokens_est": 5220,
    "savings_vs_naive": 0,
    "context_budget_chars": 1600
   },
   "RESEARCH": {
    "plan": [
+    "MODE",
+    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "MODE",
-    "CONTEXT_PACK",
-    "TRIAGE",
-    "RESOLVE_SPECIALISTS",
     "PMI_CONVERGE",
+    "RESOLVE_SPECIALISTS",
     "PAGE_OUT",
     "SNAPSHOT",
+    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4747,
+   "tokens_est": 5220,
    "savings_vs_naive": 0,
    "context_budget_chars": 2000
   }

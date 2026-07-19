@@ -32,7 +32,6 @@ WHAT IF IT FAILS:
 import json
 import os
 import sys
-import time
 
 sys.path.insert(0, os.path.dirname(__file__))
 
@@ -68,7 +67,6 @@ def build(top_k=TOP_K, floor=EDGE_FLOOR, path=GRAPH_PATH):
                               "skill/diff), edge = attraction (nmass*nmass*cosine), top-"
                               f"{top_k} per node, floor {floor}. Rebuild after every new "
                               "discovery/inclusion so the super-structure keeps growing."),
-                     "built_at": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()),
                      "nodes": n, "top_k": top_k, "floor": floor},
            "nodes": [{"id": r["id"], "type": r["type"], "mass": round(r["nmass"], 3)} for r in R],
            "edges": edges}

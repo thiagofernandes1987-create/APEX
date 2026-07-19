@@ -155,13 +155,11 @@ def mode_flow():
 
 
 def build(path=DSM_PATH):
-    import time
     doc = {"_meta": {"note": ("DSM of the runtime: (a) EXACT module-import matrix -> parallel "
                               "load levels, cycles, load-bearing core; (b) [APPROX] per-mode "
                               "step flow via geodesic ΔH/token -> run/skip + savings. The "
                               "applied optimization is context_budget(mode): experience "
-                              "injection sized per mode, zero on EXPRESS."),
-                     "built_at": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())},
+                              "injection sized per mode, zero on EXPRESS.")},
            "module_dsm": module_dsm(), "mode_flow": mode_flow(),
            "context_budget_chars": CONTEXT_BUDGET_CHARS}
     with open(path, "w", encoding="utf-8") as f:
