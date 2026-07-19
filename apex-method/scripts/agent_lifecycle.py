@@ -274,6 +274,17 @@ def finalize(task, agent_id, matrix=None, validated=False, equipped_skills=None,
         out["rag"] = r.get("status") if isinstance(r, dict) else "OK"
     except Exception as e:
         out["rag"] = f"err:{str(e)[:40]}"
+    # v1.55: GROW THE TAXONOMY from this validated run — associate the task's salient terms with the
+    # domain/subdomain that proved out, so future similar tasks classify correctly (the vocabulary
+    # expands with experience). Durable overlay, loaded next session. Gated on validation (here).
+    try:
+        import taxonomy
+        ev = taxonomy.evolve(task, domain=matrix.get("domain") or dom,
+                             subdomain=matrix.get("subdomain"),
+                             specialties=matrix.get("specialties"))
+        out["taxonomy"] = {"status": ev.get("status"), "added_terms": ev.get("added_terms")}
+    except Exception as e:
+        out["taxonomy"] = f"err:{str(e)[:40]}"
     # v1.54: if this was a GROWN generic agent, crystallize it into a STANDARDIZED, discoverable
     # specialist (AGENT.md + SKILL.md in the repo layout) + register it in the roster overlay, so
     # NEXT session finds the specialist instead of re-synthesizing. Only for synthesized agents.

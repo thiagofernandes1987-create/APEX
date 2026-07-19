@@ -1505,7 +1505,31 @@ def t_taxonomy():
     # wiring: a task with no discipline keyword is routed by facets, not dumped into engineering
     assert "math" in orchestrator.dissect("calcule a moda e a mediana da amostra"), \
         orchestrator.dissect("calcule a moda e a mediana da amostra")
-    return f"facets classify + cross-language attraction ({s_real} > {s_stub}); dissect wired"
+    # v1.55: engineering domain — a structural task classifies correctly (was legal/calculus)
+    eng = taxonomy.classify("dimensione uma viga de concreto no estado limite ultimo com NBR 6118")
+    assert eng["domain"] == "engineering" and eng["subdomain"] == "structural", eng
+    # v1.55: SELF-EVOLVING — an unknown term is learned from a validated run and then classifies,
+    # and the durable overlay is written (loads next session via load_evolved at import).
+    import tempfile, os as _os
+    _old = _os.environ.get("APEX_METHOD_HOME")
+    _os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp(prefix="apex-tax-")
+    try:
+        import importlib
+        importlib.reload(taxonomy)                       # fresh session: empty overlay
+        assert taxonomy.classify("projete um vertedouro de barragem CCR")["domain"] is None
+        ev = taxonomy.evolve("projete um vertedouro de barragem CCR",
+                             domain="engineering", subdomain="structural")
+        assert ev["status"] == "EVOLVED" and ev["added_terms"] >= 1, ev
+        assert taxonomy.classify("vertedouro de barragem CCR")["domain"] == "engineering"
+        assert _os.path.isfile(taxonomy._evolved_path()), "durable overlay must persist"
+    finally:
+        if _old is not None:
+            _os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            _os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(taxonomy)
+    return (f"facets classify + cross-language attraction ({s_real} > {s_stub}); dissect wired; "
+            f"engineering/structural; self-evolving overlay (learn->classify)")
 
 
 def t_learning():

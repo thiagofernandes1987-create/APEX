@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.54.0
+version: 1.55.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -174,6 +174,13 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   language-independent facets and `facet_score(a, b)` is the weighted facet-overlap attraction —
   a PT task and an EN skill attract on MEANING, immune to name collisions ("mobile"→T-Mobile).
   Wired as `orchestrator.dissect`'s first no-keyword fallback (audit: shipped orphan in v1.41).
+  **SELF-EVOLVING (v1.55):** the base tables are a seed. A durable JSON overlay
+  (`APEX_METHOD_HOME/library/taxonomy_evolved.json`) is loaded at SESSION START (`load_evolved()`
+  at import) and merged in; every validated run calls `evolve(task, domain, subdomain, …)` to
+  append the task's salient terms to the facet it proved out — so the vocabulary GROWS with
+  experience. v1.55 also adds the `engineering` domain + structural/geotechnical/mechanical/
+  electrical subdomains (a structural task now classifies as engineering/structural, not the old
+  legal/calculus mislabel). See `references/self-evolution.md`.
 - **`scripts/attraction_graph.py`** — the PRECOMPUTED gravitational routing JSON
   (`catalog/attraction_graph.json`): every skill/script/diff/agent is a node; edges carry
   attraction weights (mass×mass×cosine, top-K per node). `expand(seeds)` is the attraction

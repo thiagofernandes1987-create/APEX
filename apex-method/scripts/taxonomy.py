@@ -55,13 +55,35 @@ DOMAIN = {
                      "paciente", "medical", "médico", "medico", "diagnosis", "diagnóstico"},
     "science":      {"physics", "física", "fisica", "simulation", "simulação", "simulacao",
                      "chemistry", "química", "quimica", "biology", "biologia", "dynamics", "dinâmica"},
+    "engineering":  {"engineering", "engenharia", "structural", "estrutural", "viga", "beam",
+                     "concreto", "concrete", "laje", "slab", "pilar", "coluna", "column",
+                     "fundação", "fundacao", "foundation", "dimensionamento", "dimensione",
+                     "dimensionar", "nbr", "aço", "aco", "steel", "carga", "load", "momento",
+                     "moment", "tensão", "tensao", "stress", "flexão", "flexao", "bending",
+                     "cisalhamento", "shear", "armadura", "rebar", "geotécnica", "geotecnica",
+                     "geotechnical", "mecânica", "mecanica", "mechanical", "elétrica", "eletrica",
+                     "electrical", "hidráulica", "hidraulica", "hydraulic", "civil"},
 }
 SUBDOMAIN = {
     "frontend":     {"ui", "ux", "interface", "frontend", "front-end", "react", "vue", "angular",
                      "component", "componente", "layout", "css", "design", "screen", "tela",
                      "usabilidade", "usability", "responsive", "responsivo"},
     "backend":      {"backend", "back-end", "server", "servidor", "database", "banco", "api",
-                     "endpoint", "microservice", "queue", "fila", "cache"},
+                     "endpoint", "microservice", "queue", "fila", "cache", "sharding", "shard",
+                     "replication", "replicação", "partition", "partição", "distributed",
+                     "distribuído", "distribuido", "sql", "postgres", "index", "índice"},
+    "structural":   {"structural", "estrutural", "viga", "beam", "laje", "slab", "pilar", "coluna",
+                     "column", "concreto", "concrete", "armadura", "rebar", "reinforcement",
+                     "flexão", "flexao", "bending", "cisalhamento", "shear", "momento", "moment",
+                     "carga", "load", "dimensionamento", "dimensione", "elu", "els",
+                     "estado", "limite", "limit", "nbr"},
+    "geotechnical": {"geotécnica", "geotecnica", "geotechnical", "fundação", "fundacao",
+                     "foundation", "solo", "soil", "estaca", "pile", "sapata", "footing",
+                     "recalque", "settlement", "empuxo", "retaining", "contenção"},
+    "mechanical":   {"mecânica", "mecanica", "mechanical", "torque", "fadiga", "fatigue",
+                     "vibração", "vibration", "engrenagem", "gear", "rolamento", "bearing"},
+    "electrical":   {"elétrica", "eletrica", "electrical", "circuito", "circuit", "tensão",
+                     "voltage", "corrente", "current", "transformador", "transformer"},
     "statistics":   {"statistics", "estatística", "estatistica", "moda", "mode", "mean", "média",
                      "media", "median", "mediana", "desvio", "deviation", "variance", "variância",
                      "variancia", "população", "populacao", "population", "sample", "amostra",
@@ -78,7 +100,8 @@ INTENT = {
     "ui_ux_design": {"design", "interface", "ui", "ux", "moderna", "modern", "layout", "protótipo",
                      "prototype", "wireframe", "mockup", "usabilidade", "usability"},
     "compute":      {"calcule", "calculate", "compute", "cálculo", "calculo", "resolva", "solve",
-                     "integrate", "integrar", "simule", "simulate", "estime", "estimate", "medir"},
+                     "integrate", "integrar", "simule", "simulate", "estime", "estimate", "medir",
+                     "dimensione", "dimensionar", "dimensionamento", "verifique", "verify"},
     "audit":        {"audit", "auditoria", "autópsia", "autopsy", "review", "revisar", "revisão",
                      "inspect", "inspecionar", "verificar", "verify", "analise", "analyze", "análise"},
     "build":        {"build", "construa", "construir", "crie", "create", "criar", "implemente",
@@ -99,6 +122,120 @@ AXES = {"domain": DOMAIN, "subdomain": SUBDOMAIN, "intent": INTENT, "platform": 
 
 # facet weights when scoring attraction (domain/subdomain matter most; platform least)
 AXIS_WEIGHT = {"domain": 3.0, "subdomain": 2.5, "intent": 1.5, "platform": 1.0}
+
+
+# ── SELF-EVOLVING TAXONOMY (v1.55) ───────────────────────────────────────────────────────────
+# The base tables above are the seed. A DURABLE overlay (JSON, under APEX_METHOD_HOME/library) is
+# loaded at SESSION START and merged in, and every VALIDATED run appends the task's salient terms
+# to the facet the run proved out — so the taxonomy's vocabulary GROWS with experience instead of
+# staying frozen. JSON (not YAML/MD) is deliberate: stdlib-only, no PyYAML dependency, and the same
+# durable-overlay pattern as grown_agents.json / agent_grants.json — deterministically mergeable.
+import json as _json
+import os as _os
+import time as _time
+
+# stopwords (PT+EN) so evolved anchors are SALIENT task terms, not filler
+_STOP = {"a", "o", "as", "os", "de", "da", "do", "das", "dos", "um", "uma", "e", "para", "por",
+         "com", "no", "na", "em", "que", "the", "of", "for", "and", "to", "in", "on", "with",
+         "seu", "sua", "como", "ao", "à", "uns", "umas", "ou", "se", "é", "por"}
+
+
+def _evolved_path():
+    base = _os.environ.get("APEX_METHOD_HOME") or _os.path.expanduser("~/.apex-method")
+    d = _os.path.join(base, "library")
+    try:
+        _os.makedirs(d, exist_ok=True)
+    except Exception:
+        pass
+    return _os.path.join(d, "taxonomy_evolved.json")
+
+
+def _salient_terms(text, k=10):
+    """Task terms worth learning: len>=4, not stopwords, deduped, order-preserving."""
+    seen, out = set(), []
+    for w in re.findall(r"[a-zà-ÿ0-9]{4,}", (text or "").lower()):
+        if w in _STOP or w in seen:
+            continue
+        seen.add(w)
+        out.append(w)
+        if len(out) >= k:
+            break
+    return out
+
+
+def _merge_evolved(axes_overlay):
+    """Merge {axis: {facet: [terms]}} into the LIVE facet tables (idempotent; sets dedupe). New
+    facets introduced by evolution are created on demand."""
+    for axis, facets_map in (axes_overlay or {}).items():
+        table = AXES.get(axis)
+        if table is None or not isinstance(facets_map, dict):
+            continue
+        for facet, terms in facets_map.items():
+            bucket = table.setdefault(facet, set())
+            for t in (terms or []):
+                if isinstance(t, str) and t.strip():
+                    bucket.add(t.strip().lower())
+
+
+def load_evolved():
+    """Load the durable evolved-taxonomy overlay and merge it into the live tables. Called at import
+    (SESSION START) so a vocabulary the runtime GREW in past sessions is active from the first
+    classify(). Never raises."""
+    try:
+        with open(_evolved_path(), encoding="utf-8") as f:
+            data = _json.load(f)
+        _merge_evolved(data.get("axes", data))
+        return data
+    except Exception:
+        return {}
+
+
+def evolve(task, domain=None, subdomain=None, specialties=None, terms=None, persist=True):
+    """Grow the taxonomy from a VALIDATED run: associate the task's salient terms with the
+    validated-good domain/subdomain (and specialty subdomains), so future similar tasks classify
+    correctly. Appends to the durable overlay and merges live. The CALLER gates on validation —
+    this only learns from proven outcomes, never reinforces an unvalidated guess."""
+    terms = terms or _salient_terms(task)
+    if not terms or not (domain or subdomain or specialties):
+        return {"status": "SKIPPED", "reason": "need salient terms + at least one target facet"}
+    try:
+        with open(_evolved_path(), encoding="utf-8") as f:
+            data = _json.load(f)
+    except Exception:
+        data = {}
+    axes = data.setdefault("axes", {})
+    added = 0
+
+    def _add(axis, facet):
+        nonlocal added
+        if not facet:
+            return
+        bucket = axes.setdefault(axis, {}).setdefault(facet, [])
+        live = AXES.get(axis, {}).get(facet, set())
+        for t in terms:
+            if t not in bucket and t not in live:
+                bucket.append(t)
+                added += 1
+
+    _add("domain", domain)
+    _add("subdomain", subdomain)
+    for sp in (specialties or []):
+        _add("subdomain", sp)
+    data["version"] = data.get("version", 1)
+    data["updated_at"] = _time.strftime("%Y-%m-%dT%H:%M:%SZ", _time.gmtime())
+    if persist:
+        try:
+            with open(_evolved_path(), "w", encoding="utf-8") as f:
+                _json.dump(data, f, ensure_ascii=False, indent=1)
+        except Exception as e:
+            return {"status": "ERROR", "reason": str(e)[:80]}
+    _merge_evolved(axes)                          # live-merge so THIS session sees it immediately
+    return {"status": "EVOLVED", "added_terms": added, "path": _evolved_path(),
+            "domain": domain, "subdomain": subdomain}
+
+
+# session-start load: the grown vocabulary is active from the first classify()
+_EVOLVED = load_evolved()
 
 
 def _tokens(text):

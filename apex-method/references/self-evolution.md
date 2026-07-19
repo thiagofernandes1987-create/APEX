@@ -50,6 +50,27 @@ grown artifacts into the repo's standard folders (`agents/grown/…`, `skills/gr
 git commit. It never auto-commits — the human reviews and approves (H5). Committed, the grown
 specialists become part of the shipped library for every future clone.
 
+## The taxonomy itself grows (self-evolving vocabulary)
+
+The competence matrix is only as good as the classifier that feeds it. `taxonomy.py` ships a seed
+set of bilingual (PT+EN) facet triggers, but it is **not frozen**:
+
+- A durable JSON overlay lives at `APEX_METHOD_HOME/library/taxonomy_evolved.json`. It is loaded at
+  **session start** (`taxonomy.load_evolved()` runs at import) and merged into the live facet
+  tables, so a vocabulary the runtime grew in past sessions is active from the first `classify()`.
+- Every **validated** run calls `taxonomy.evolve(task, domain=…, subdomain=…, specialties=…)`
+  (from `agent_lifecycle.finalize`), which appends the task's salient terms to the facet the run
+  proved out. A term the classifier did not know — e.g. "vertedouro" (spillway) — is learned once
+  and classifies correctly forever after. JSON was chosen over YAML/MD deliberately: stdlib-only
+  (no PyYAML dependency), deterministically mergeable, same durable-overlay pattern as
+  `grown_agents.json`.
+- Evolution learns **only from validated successes** (the caller gates), so it never reinforces an
+  unvalidated guess. The overlay travels with the swap/git-export like the other durable stores.
+
+The v1.55 base also gained an `engineering` domain (+ structural / geotechnical / mechanical /
+electrical subdomains), so out of the box a structural task classifies as `engineering/structural`
+instead of the old `legal/calculus` mislabel — and the overlay expands coverage from there.
+
 ## The swap memory carries what was promoted, demoted, AND what went wrong
 
 `swap_store.page_out(session_id)` bundles the durable stores; `page_in_session(dir)` restores them
