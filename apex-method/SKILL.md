@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.52.0
+version: 1.53.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,7 +47,7 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 49 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 50 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
@@ -194,6 +194,18 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   agent (persona + grants + validated history + provenance, SHA-256 signed);
   `import_agent(bundle, approved=True)` installs it on another machine (fail-closed integrity +
   H5) — agents become portable, verifiable, evolving artifacts.
+- **`scripts/agent_lifecycle.py`** — the CLOSED-LOOP agent pipeline (v1.53, the O-2 full flow):
+  `run(task)` wires the eight steps end to end — dissect (`orchestrator.dissect`) → competence
+  matrix (`taxonomy.classify`: discipline→subdomain→specialization) → tools/diffs (`gravity.plan`)
+  → **find-or-create agent** (`match_task_to_ext_agents`/`repo_bridge.agent`; if none clears the
+  bar, `spawn(synthesize=True)` fabricates a generic-but-honest persona from the facets) → validate
+  equipment + **discovery cascade** (native `search_native` → `skills_sh` → GitHub) → STAGE a
+  `skill_forge` scaffold when nothing is found → executable spec for the host to run. After a
+  validated run, `finalize(task, agent_id, matrix, validated=True)` EVOLVES the library — records
+  the outcome (`learning`), persists equipment durably (`agent_registry.save_grant`), drops a
+  memory anchor, and re-syncs the node RAG (`rag_index.sync`). GATES: nothing auto-installs/equips
+  (H5); the library evolves ONLY on a validated success (no reputation poisoning). The host
+  executes the subagent and authors any forged skill body — Python returns the plan, not the run.
 - **`scripts/rag_index.py`** — SOLID-STATE node RAG (v1.47, the author's crystallized-memory
   architecture): nodes for modules/catalogs/references/repo-areas/capabilities AND per-chapter
   SECTIONS extracted from each document's outline, every node carrying its taxonomic DIMENSION

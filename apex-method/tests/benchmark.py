@@ -724,6 +724,15 @@ def t_agent_spawn():
     # unknown persona -> checklist catches it (the contract forbids spawning it)
     ghost = sp.spawn("agent-that-does-not-exist", "x")
     assert ghost["spawn_ready"] is False and not ghost["spawn_checklist"]["persona_loaded"], ghost["spawn_checklist"]
+    # O-2 (v1.53): the soft-gate now carries an explicit status; the misleading "REAL instance"
+    # claim is gone for an unresolved agent.
+    assert ghost["status"] == "BLOCKED_UNKNOWN_AGENT" and ghost["synthesized"] is False, ghost["status"]
+    assert "UNRESOLVED" in ghost["instruction"] and "REAL specialized instance" not in ghost["instruction"]
+    # O-2: synthesize=True fabricates a generic persona from the task taxonomy so a generic agent
+    # can become spawn_ready — and it is HONEST about being synthesized (no false authority).
+    syn = sp.spawn("no-such-agent", "dimensione uma viga no estado limite ultimo", synthesize=True)
+    assert syn["synthesized"] is True and syn["persona"] and "SYNTHESIZED" in syn["instruction"]
+    assert syn["status"] in ("SYNTHESIZED", "READY")
     # equip -> durable grant visible on reload; unequip -> revoked
     sp.equip("react-specialist", {"id": "x/design-taste", "source": "https://x/SKILL.md"})
     assert "x/design-taste" in sp._equipped_grants("react-specialist")
@@ -742,6 +751,34 @@ def t_agent_spawn():
     ctxs = {e["spec"]["context"]["rendered"] for e in man["spawn"] if e.get("spec")}
     assert len(ctxs) <= 1, "contexto deve ser compartilhado no fan-out"
     return f"spec executable + ghost blocked + equip/unequip durable + manifest carries shared specs"
+
+
+def t_agent_lifecycle():
+    # O-2 full flow (v1.53): the CLOSED loop dissect->matrix->find-or-create->equip/discover->spec,
+    # then finalize() evolves the library ONLY on a validated success.
+    import agent_lifecycle as al
+    # 1+2: competence matrix — disciplines + canonical facets, JSON-serializable (facets not a set)
+    mx = al.competence_matrix("optimize a react frontend for accessibility and performance")
+    import json as _j; _j.dumps(mx)                       # must not raise (facets normalized)
+    assert isinstance(mx["disciplines"], list) and "specialties" in mx
+    # 4: a task WITH a real roster agent picks it (postgres-pro ~0.095, above the 0.05 bar)
+    a_real = al.resolve_agent("design a distributed database sharding strategy for postgres")
+    assert a_real["synthesize"] is False and a_real["source"] in ("roster", "repo"), a_real
+    # 4: a task with NO roster match synthesizes a generic agent (empty match -> synthesize)
+    a_syn = al.resolve_agent("dimensione uma viga de concreto no estado limite ultimo")
+    assert a_syn["synthesize"] is True and a_syn["agent_id"].startswith("generic-"), a_syn
+    # full run -> executable spec + equipment plan with the discovery cascade (native/skills.sh)
+    plan = al.run("build an ETL data pipeline with airflow")
+    assert plan["spec"]["instruction"] and "cascade" in plan["equipment"]
+    assert "native" in plan["equipment"]["cascade"], plan["equipment"]["cascade"]
+    # 6-8 gate: an UNVALIDATED result must NOT evolve the library (no reputation poisoning)
+    assert al.finalize("t", "generic-x", validated=False)["status"] == "SKIPPED"
+    # a VALIDATED result evolves: learning recorded + durable grant + memory anchor
+    ev = al.finalize("design sharding", "postgres-pro", matrix=a_real["matrix"], validated=True,
+                     equipped_skills=["skill:x/db-tune"])
+    assert ev["status"] == "EVOLVED" and ev["grants"] >= 1 and ev["anchor"], ev
+    return (f"matrix+resolve(real={a_real['agent_id']},syn={a_syn['agent_id']}) + cascade + "
+            f"finalize gate (skip@unvalidated, evolve@validated)")
 
 
 def t_kernel_gate():
@@ -1781,7 +1818,8 @@ TESTS = [
     ("memory", t_memory), ("llm_adapter", t_llm_adapter), ("swap_store", t_swap_store),
     ("learning", t_learning), ("execution_policy", t_execution_policy),
     ("taxonomy", t_taxonomy), ("attraction_graph", t_attraction_graph),
-    ("agent_spawn", t_agent_spawn), ("kernel_gate", t_kernel_gate), ("rag_index", t_rag_index),
+    ("agent_spawn", t_agent_spawn), ("agent_lifecycle", t_agent_lifecycle),
+    ("kernel_gate", t_kernel_gate), ("rag_index", t_rag_index),
     ("plug_and_play", t_plug_and_play), ("agent_bundle_context", t_agent_bundle_and_context),
     ("capability_map", t_capability_map), ("pipeline_dsm", t_pipeline_dsm),
     ("routine_composer", t_routine_composer), ("routine_run_loop", t_routine_run_loop),

@@ -159,10 +159,38 @@ def context_pack(task, agent_id=None, budget_chars=1800):
     return {"sections": sections, "rendered": rendered, "chars": len(rendered)}
 
 
-def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10, shared=None):
+def _synthesize_persona(agent_id, task, domains):
+    """O-2 fix (v1.53.0): when NO roster/repo persona exists, SYNTHESIZE a generic-but-specialized
+    persona from the task's canonical facets (taxonomy) instead of soft-blocking. This is the
+    author's stated design — "spawning GENERIC agents that ASSUME a real persona and ATTRACT their
+    specialization". The agent still equips real skills/scripts by attraction; it just was not
+    pre-authored in the 213-entry roster. The persona is HONEST about being synthesized."""
+    facets = {}
+    try:
+        import taxonomy
+        facets = taxonomy.classify(task)
+    except Exception:
+        pass
+    dom = facets.get("domain") or (domains[0] if domains else None) or "general"
+    sub = facets.get("subdomain")
+    spec = facets.get("specialties") or []
+    where = f"{dom}/{sub}" if sub else dom
+    focus = ", ".join(spec[:5]) or "the task domain"
+    return (f"Generic APEX agent synthesized for {where} (no roster persona existed). "
+            f"Assume a specialist in {focus}; equip real skills/scripts by attraction and state "
+            f"in the output that this persona was synthesized, not pre-authored.")
+
+
+def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10, shared=None,
+          synthesize=False):
     """Assemble the EXECUTABLE AgentSpec: persona real + skills/diffs/scripts reais (attracted
     via the precomputed graph + durable grants) + governance + template + output contract +
-    a boolean spawn checklist. The host instantiates it as a real subagent (Level B)."""
+    a boolean spawn checklist. The host instantiates it as a real subagent (Level B).
+
+    synthesize (O-2, v1.53.0): when the agent_id is UNKNOWN (not in roster/repo), default False
+    keeps the historical soft-block (persona=None, spawn_ready=False, status BLOCKED_UNKNOWN_AGENT).
+    Pass synthesize=True (agent_lifecycle does) to instead SYNTHESIZE a generic persona from the
+    task's taxonomy so the generic agent can become spawn_ready once equipped."""
     roster = _roster_entry(agent_id)
     core = _core_entry(agent_id)
     domains = (roster or {}).get("domains", []) or \
@@ -171,6 +199,10 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10, shared=None)
                   (f"Specialist persona '{agent_id}'"
                    f" ({(roster or {}).get('category', 'general')}): expert in "
                    f"{', '.join(domains) or 'the task domain'}." if roster else None)
+    synthesized = False
+    if personality is None and synthesize:
+        personality = _synthesize_persona(agent_id, task, domains)
+        synthesized = True
 
     # ── attraction: the graph equips without re-discovery; grants overlay durably ──
     equipment = {"by_type": {}, "members": []}
@@ -250,8 +282,19 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10, shared=None)
             lines.append(f"  GAPS (descubra + H5 antes): {[g['stage'] for g in routine['gaps']]}")
         routine_txt = "ROUTINE (execute IN ORDER; each receive feeds the next send):\n" + "\n".join(lines) + "\n"
 
+    # O-2 fix: the leading line must NOT claim "a REAL specialized instance" when the persona is
+    # synthesized or unresolved — that fabricated authority is exactly the soft-gate risk the audit
+    # flagged. Tell the truth in all three states.
+    if synthesized:
+        head = (f"You are a SYNTHESIZED APEX '{agent_id}' agent (generic persona assumed for this "
+                f"task — NOT a pre-authored roster persona; say so in your output).\n")
+    elif personality:
+        head = f"You are the APEX '{agent_id}' agent (a REAL specialized instance, not a label).\n"
+    else:
+        head = (f"You are an UNRESOLVED APEX '{agent_id}' agent (no persona was found — do not "
+                f"claim expertise; flag this and ask to synthesize or pick a real agent).\n")
     instruction = (
-        f"You are the APEX '{agent_id}' agent (a REAL specialized instance, not a label).\n"
+        head +
         f"PERSONA: {personality or 'generalist (persona file unavailable — say so in output)'}\n"
         f"TASK: {task[:200]}\nSTANCE: argue the **{stance}** hypothesis; be concrete.\n"
         f"EQUIPPED SKILLS: {', '.join(skills) or '—'}\n"
@@ -275,16 +318,29 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10, shared=None)
         "template_attached": bool(template),
         "output_contract_set": True,
     }
+    ready = all(checklist.values())
+    # O-2: an explicit top-level status so a caller is never forced to infer the gate from a
+    # missing key (the audit's soft-gate finding). BLOCKED_UNKNOWN_AGENT is the honest signal for
+    # an unknown agent that was not synthesized.
+    if ready:
+        status = "READY"
+    elif synthesized:
+        status = "SYNTHESIZED"            # generic persona assumed; may still be under-equipped
+    elif personality is None:
+        status = "BLOCKED_UNKNOWN_AGENT"  # unknown id, synthesize=False -> historical soft-block
+    else:
+        status = "INCOMPLETE"             # real persona but a checklist item failed
     return {
         "agent_id": agent_id, "stance": stance, "mode": mode, "task": task[:200],
-        "persona": personality, "domains": domains,
+        "persona": personality, "domains": domains, "synthesized": synthesized,
+        "status": status,
         "skills": skills, "diffs": diffs, "scripts": scripts, "tools": tools,
         "grants": grants, "collaborators": agents_nearby[:3],
         "history": history, "regulated": regulated, "template": template,
         "context": ctx, "routine": routine, "instruction": instruction,
         "output_schema": OUTPUT_SCHEMA,
         "spawn_checklist": checklist,
-        "spawn_ready": all(checklist.values()),
+        "spawn_ready": ready,
     }
 
 

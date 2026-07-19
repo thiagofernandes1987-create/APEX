@@ -8,6 +8,14 @@
   "path": "scripts/_tfidf.py"
  },
  {
+  "id": "script:agent_lifecycle",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "agent-lifecycle,spawn-or-create,competence-matrix,discovery-cascade,skill-forge,evolve-library",
+  "mass": 150,
+  "path": "scripts/agent_lifecycle.py"
+ },
+ {
   "id": "script:agent_registry",
   "type": "script",
   "domain": "meta",
