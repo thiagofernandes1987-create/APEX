@@ -873,7 +873,29 @@ def t_rag_index():
     assert en and any("agent" in h["id"] for h in en[:3]), en
     sec = ri.search("security scan of external skills", node_type="script")
     assert sec and all(h["type"] == "script" for h in sec), sec
-    return f"{r['nodes']} nodes; PT->'{pt[0]['id']}', EN->'{en[0]['id']}'"
+    # v1.60: expand(id) — "ponteiros por padrão, expande sob demanda". The search hit is a
+    # POINTER (summary capped at 160); expand pulls THE node with the FULL summary + relations.
+    hit = pt[0]
+    assert len(hit["summary"]) <= 160, "search must return a truncated pointer"
+    ex = ri.expand(hit["id"])
+    assert ex["found"] and ex["id"] == hit["id"], ex
+    assert len(ex["summary"]) >= len(hit["summary"]) and ex["open"] == ex["path"], ex
+    # a doc node expands to its section children (one level, on demand)
+    exdoc = ri.expand("doc:SKILL.md")
+    assert exdoc["found"] and len(exdoc.get("sections", [])) >= 3, exdoc
+    # missing id -> honest {found:False}; alias resolves through resolve()
+    assert ri.expand("script:__nope__")["found"] is False
+    import tempfile, json as _j
+    tmp = os.path.join(tempfile.mkdtemp(), "idx.json")
+    _j.dump({"_meta": {"idf": {}}, "aliases": {"old:x": "script:memory"},
+             "nodes": [{"id": "script:memory", "type": "script", "path": "scripts/memory.py",
+                        "summary": "durable stores", "dim": "compute", "terms": {}}]},
+            open(tmp, "w"))
+    ri._CACHE.pop(tmp, None)
+    assert ri.expand("old:x", path=tmp)["id"] == "script:memory", "alias must resolve in expand"
+    return (f"{r['nodes']} nodes; PT->'{pt[0]['id']}', EN->'{en[0]['id']}'; "
+            f"expand: pointer{len(hit['summary'])}->node{len(ex['summary'])}ch, SKILL.md "
+            f"{len(exdoc['sections'])} secs, alias resolves")
 
 
 def t_routine_composer():
