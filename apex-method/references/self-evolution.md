@@ -50,26 +50,46 @@ grown artifacts into the repo's standard folders (`agents/grown/…`, `skills/gr
 git commit. It never auto-commits — the human reviews and approves (H5). Committed, the grown
 specialists become part of the shipped library for every future clone.
 
-## The taxonomy itself grows (self-evolving vocabulary)
+## The taxonomy itself grows (self-evolving vocabulary — two-tier, SQLite-backed)
 
 The competence matrix is only as good as the classifier that feeds it. `taxonomy.py` ships a seed
-set of bilingual (PT+EN) facet triggers, but it is **not frozen**:
+set of bilingual (PT+EN) facet triggers, but it is **not frozen** — and it is engineered to stay
+fast as the learned vocabulary grows large.
 
-- A durable JSON overlay lives at `APEX_METHOD_HOME/library/taxonomy_evolved.json`. It is loaded at
-  **session start** (`taxonomy.load_evolved()` runs at import) and merged into the live facet
-  tables, so a vocabulary the runtime grew in past sessions is active from the first `classify()`.
-- Every **validated** run calls `taxonomy.evolve(task, domain=…, subdomain=…, specialties=…)`
-  (from `agent_lifecycle.finalize`), which appends the task's salient terms to the facet the run
-  proved out. A term the classifier did not know — e.g. "vertedouro" (spillway) — is learned once
-  and classifies correctly forever after. JSON was chosen over YAML/MD deliberately: stdlib-only
-  (no PyYAML dependency), deterministically mergeable, same durable-overlay pattern as
-  `grown_agents.json`.
-- Evolution learns **only from validated successes** (the caller gates), so it never reinforces an
-  unvalidated guess. The overlay travels with the swap/git-export like the other durable stores.
+**Storage decision (v1.56): SQLite, not a monolithic document.** A JSON/XML overlay would have to be
+parsed whole on every session start — O(n) load that degrades as the file grows. The overlay is a
+**lookup index**, so it lives in a durable SQLite DB (`APEX_METHOD_HOME/library/taxonomy_evolved.db`,
+stdlib `sqlite3`) with the term column indexed. `classify()` queries **only the current task's
+tokens** (`WHERE term IN (…)`, O(len(tokens)·log n)) — it never loads the whole table. When no
+overlay exists yet, `classify()` adds **zero** overhead (no DB is opened). The v1.55 JSON overlay is
+migrated into the DB **once, losslessly** (its terms enter as ADOPTED; the file is renamed
+`*.migrated`). XML was rejected outright: larger on disk, slower to parse, no query advantage.
 
-The v1.55 base also gained an `engineering` domain (+ structural / geotechnical / mechanical /
+**Two tiers, one unified schema** (the same conceptual fields as AGENT.md/SKILL.md):
+
+| Tier | Table | Fields | Touched by `classify()`? |
+|---|---|---|---|
+| HOT (index) | `triggers` | `term, axis, facet, status, uses` | yes — only the task's tokens |
+| COLD (metadata) | `term_meta` | `term, en, pt, validated_by, ts` | no |
+
+- **Promotion gate (CANDIDATE → ADOPTED).** `evolve(task, domain, subdomain, specialties)` (called by
+  `finalize` on a validated success) records each salient term as CANDIDATE, and promotes it to
+  ADOPTED only after `PROMOTE_N` validations (default 2, matching the vaccine gate). `classify()`
+  reads **ADOPTED only**, so a single run's tokens never pollute classification. Evolution learns
+  **only from validated successes** — never reinforces an unvalidated guess.
+- **Bilingual pair (LLM-validated).** `translate(term, en, pt, validated_by)` records the EN/PT pair
+  in `term_meta` and **propagates the term's facets to both languages**, so a PT task and its EN
+  translation attract on the same facet — the bilingual convention of AGENT.md/SKILL.md, now in the
+  taxonomy. Translation is an LLM act (like authoring a skill body), not a stdlib guess.
+- **Relations reuse the Knowledge Graph.** `relate_facets(src, dst, rel)` records facet↔facet
+  dependency / escalation in the EXISTING KG (`memory.relate`), reusing its typed-edge vocabulary
+  (`causa | depende_de | refina | contradiz | suporta`) — a subdomain that "escalates to" its
+  domain is modeled as `depende_de`. No new relation language is invented.
+
+The base seed also carries an `engineering` domain (+ structural / geotechnical / mechanical /
 electrical subdomains), so out of the box a structural task classifies as `engineering/structural`
-instead of the old `legal/calculus` mislabel — and the overlay expands coverage from there.
+instead of the old `legal/calculus` mislabel — and the ADOPTED overlay expands coverage from there.
+The DB travels with the swap/git-export like the other durable stores.
 
 ## The swap memory carries what was promoted, demoted, AND what went wrong
 

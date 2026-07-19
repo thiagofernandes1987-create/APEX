@@ -124,15 +124,25 @@ AXES = {"domain": DOMAIN, "subdomain": SUBDOMAIN, "intent": INTENT, "platform": 
 AXIS_WEIGHT = {"domain": 3.0, "subdomain": 2.5, "intent": 1.5, "platform": 1.0}
 
 
-# ── SELF-EVOLVING TAXONOMY (v1.55) ───────────────────────────────────────────────────────────
-# The base tables above are the seed. A DURABLE overlay (JSON, under APEX_METHOD_HOME/library) is
-# loaded at SESSION START and merged in, and every VALIDATED run appends the task's salient terms
-# to the facet the run proved out — so the taxonomy's vocabulary GROWS with experience instead of
-# staying frozen. JSON (not YAML/MD) is deliberate: stdlib-only, no PyYAML dependency, and the same
-# durable-overlay pattern as grown_agents.json / agent_grants.json — deterministically mergeable.
+# ── SELF-EVOLVING TAXONOMY (v1.56) — two-tier, SQLite-backed ─────────────────────────────────
+# The base tables above are the SEED. Learned vocabulary lives in a DURABLE SQLite overlay (stdlib
+# sqlite3), NOT a monolithic JSON document — so it scales by INDEXED PARTIAL lookup (O(log n), only
+# the task's tokens are queried) instead of loading the whole file every session. Two tiers, unified
+# schema (same conceptual fields as AGENT.md/SKILL.md — bilingual + provenance + status):
+#   triggers(term, axis, facet, status, uses)  — HOT PATH: term->facet, indexed; classify() reads
+#         ONLY the ADOPTED rows for the CURRENT task's tokens (never the whole table).
+#   term_meta(term, en, pt, validated_by, ts)  — COLD PATH: the bilingual pair + provenance the LLM
+#         validates; never touched by classify().
+# A term is CANDIDATE on first sight and ADOPTED after PROMOTE_N validations (like skills/vaccines),
+# so one run's tokens never pollute classification. Facet↔facet dependency/escalation relations
+# REUSE the existing Knowledge Graph vocabulary (memory.relate: causa|depende_de|refina|contradiz|
+# suporta) — no new relation language. JSON overlays from v1.55 are migrated once, losslessly.
 import json as _json
 import os as _os
 import time as _time
+import sqlite3 as _sqlite
+
+PROMOTE_N = 2          # validations before a learned term is ADOPTED (matches the vaccine gate)
 
 # stopwords (PT+EN) so evolved anchors are SALIENT task terms, not filler
 _STOP = {"a", "o", "as", "os", "de", "da", "do", "das", "dos", "um", "uma", "e", "para", "por",
@@ -140,14 +150,68 @@ _STOP = {"a", "o", "as", "os", "de", "da", "do", "das", "dos", "um", "uma", "e",
          "seu", "sua", "como", "ao", "à", "uns", "umas", "ou", "se", "é", "por"}
 
 
-def _evolved_path():
+def _library_dir():
     base = _os.environ.get("APEX_METHOD_HOME") or _os.path.expanduser("~/.apex-method")
     d = _os.path.join(base, "library")
     try:
         _os.makedirs(d, exist_ok=True)
     except Exception:
         pass
-    return _os.path.join(d, "taxonomy_evolved.json")
+    return d
+
+
+def _db_path():
+    return _os.path.join(_library_dir(), "taxonomy_evolved.db")
+
+
+def _legacy_json():
+    return _os.path.join(_library_dir(), "taxonomy_evolved.json")
+
+
+def _init_db(con):
+    con.execute("CREATE TABLE IF NOT EXISTS triggers("
+                "term TEXT NOT NULL, axis TEXT NOT NULL, facet TEXT NOT NULL, "
+                "status TEXT NOT NULL DEFAULT 'CANDIDATE', uses INTEGER NOT NULL DEFAULT 0, "
+                "PRIMARY KEY(term, axis, facet))")
+    con.execute("CREATE INDEX IF NOT EXISTS idx_triggers_term ON triggers(term)")
+    con.execute("CREATE TABLE IF NOT EXISTS term_meta("
+                "term TEXT PRIMARY KEY, en TEXT, pt TEXT, validated_by TEXT, ts TEXT)")
+    con.commit()
+    _migrate_legacy(con)
+
+
+def _migrate_legacy(con):
+    """One-time, lossless import of the v1.55 JSON overlay: its terms were already validated, so they
+    enter ADOPTED. The file is renamed to *.migrated so the import runs exactly once."""
+    p = _legacy_json()
+    if not _os.path.isfile(p):
+        return
+    try:
+        with open(p, encoding="utf-8") as f:
+            data = _json.load(f)
+        for axis, fmap in (data.get("axes", {}) or {}).items():
+            for facet, terms in (fmap or {}).items():
+                for t in (terms or []):
+                    con.execute("INSERT OR IGNORE INTO triggers(term,axis,facet,status,uses) "
+                                "VALUES(?,?,?,?,?)", (str(t).lower(), axis, facet, "ADOPTED", PROMOTE_N))
+        con.commit()
+        _os.rename(p, p + ".migrated")
+    except Exception:
+        pass
+
+
+def _con(create=False):
+    """Open the overlay DB. Returns None (zero cost) when no overlay exists yet AND create=False —
+    so classify() adds NO overhead until the runtime has actually learned something."""
+    p = _db_path()
+    if not create and not _os.path.isfile(p) and not _os.path.isfile(_legacy_json()):
+        return None
+    try:
+        con = _sqlite.connect(p)
+        _init_db(con)
+        return con
+    except Exception:
+        return None
 
 
 def _salient_terms(text, k=10):
@@ -163,78 +227,145 @@ def _salient_terms(text, k=10):
     return out
 
 
-def _merge_evolved(axes_overlay):
-    """Merge {axis: {facet: [terms]}} into the LIVE facet tables (idempotent; sets dedupe). New
-    facets introduced by evolution are created on demand."""
-    for axis, facets_map in (axes_overlay or {}).items():
-        table = AXES.get(axis)
-        if table is None or not isinstance(facets_map, dict):
-            continue
-        for facet, terms in facets_map.items():
-            bucket = table.setdefault(facet, set())
-            for t in (terms or []):
-                if isinstance(t, str) and t.strip():
-                    bucket.add(t.strip().lower())
+def _overlay_hits(tokens):
+    """{axis: {facet: hits}} from the ADOPTED overlay, querying ONLY the current task's tokens via
+    the term index (O(len(tokens)·log n)) — never a full-table scan/load."""
+    out = {ax: {} for ax in AXES}
+    if not tokens:
+        return out
+    con = _con(create=False)
+    if con is None:
+        return out
+    try:
+        toks = list(tokens)
+        qs = ",".join("?" * len(toks))
+        for axis, facet in con.execute(
+                f"SELECT axis, facet FROM triggers WHERE status='ADOPTED' AND term IN ({qs})",
+                toks):
+            if axis in out:
+                out[axis][facet] = out[axis].get(facet, 0) + 1
+    except Exception:
+        pass
+    finally:
+        con.close()
+    return out
 
 
 def load_evolved():
-    """Load the durable evolved-taxonomy overlay and merge it into the live tables. Called at import
-    (SESSION START) so a vocabulary the runtime GREW in past sessions is active from the first
-    classify(). Never raises."""
-    try:
-        with open(_evolved_path(), encoding="utf-8") as f:
-            data = _json.load(f)
-        _merge_evolved(data.get("axes", data))
-        return data
-    except Exception:
-        return {}
+    """Ensure the overlay DB exists and the legacy v1.55 JSON is migrated. Does NOT bulk-load into
+    memory — the whole point of SQLite is INDEXED PARTIAL lookup, so nothing is loaded until the
+    first classify() queries the task's own tokens. Called at import (cheap: no-op if no overlay)."""
+    if _os.path.isfile(_db_path()) or _os.path.isfile(_legacy_json()):
+        con = _con(create=True)
+        if con:
+            con.close()
+    return {"db": _db_path()}
 
 
 def evolve(task, domain=None, subdomain=None, specialties=None, terms=None, persist=True):
     """Grow the taxonomy from a VALIDATED run: associate the task's salient terms with the
-    validated-good domain/subdomain (and specialty subdomains), so future similar tasks classify
-    correctly. Appends to the durable overlay and merges live. The CALLER gates on validation —
-    this only learns from proven outcomes, never reinforces an unvalidated guess."""
+    validated-good domain/subdomain. Each term is CANDIDATE on first sight and ADOPTED after
+    PROMOTE_N validations (so one run's tokens never drive classification). Terms already in the
+    BASE tables are skipped. The CALLER gates on validation — this never reinforces an unvalidated
+    guess. Indexed append; no whole-file rewrite."""
     terms = terms or _salient_terms(task)
-    if not terms or not (domain or subdomain or specialties):
+    targets = [("domain", domain), ("subdomain", subdomain)]
+    targets += [("subdomain", sp) for sp in (specialties or [])]
+    targets = [(ax, f) for ax, f in targets if f]
+    if not terms or not targets:
         return {"status": "SKIPPED", "reason": "need salient terms + at least one target facet"}
+    con = _con(create=True)
+    if con is None:
+        return {"status": "ERROR", "reason": "cannot open overlay db"}
+    added = promoted = 0
+    now = _time.strftime("%Y-%m-%dT%H:%M:%SZ", _time.gmtime())
     try:
-        with open(_evolved_path(), encoding="utf-8") as f:
-            data = _json.load(f)
-    except Exception:
-        data = {}
-    axes = data.setdefault("axes", {})
-    added = 0
-
-    def _add(axis, facet):
-        nonlocal added
-        if not facet:
-            return
-        bucket = axes.setdefault(axis, {}).setdefault(facet, [])
-        live = AXES.get(axis, {}).get(facet, set())
         for t in terms:
-            if t not in bucket and t not in live:
-                bucket.append(t)
-                added += 1
+            con.execute("INSERT OR IGNORE INTO term_meta(term, ts) VALUES(?, ?)", (t, now))
+            for axis, facet in targets:
+                if t in AXES.get(axis, {}).get(facet, set()):
+                    continue                     # already a base trigger — nothing to learn
+                row = con.execute("SELECT uses, status FROM triggers WHERE term=? AND axis=? "
+                                  "AND facet=?", (t, axis, facet)).fetchone()
+                if row is None:
+                    st = "ADOPTED" if PROMOTE_N <= 1 else "CANDIDATE"
+                    con.execute("INSERT INTO triggers(term,axis,facet,status,uses) VALUES(?,?,?,?,1)",
+                                (t, axis, facet, st))
+                    added += 1
+                    if st == "ADOPTED":
+                        promoted += 1
+                else:
+                    uses = row[0] + 1
+                    st = "ADOPTED" if uses >= PROMOTE_N else "CANDIDATE"
+                    con.execute("UPDATE triggers SET uses=?, status=? WHERE term=? AND axis=? "
+                                "AND facet=?", (uses, st, t, axis, facet))
+                    if st == "ADOPTED" and row[1] != "ADOPTED":
+                        promoted += 1
+        con.commit()
+    except Exception as e:
+        con.close()
+        return {"status": "ERROR", "reason": str(e)[:80]}
+    con.close()
+    return {"status": "EVOLVED", "added_terms": added, "promoted": promoted,
+            "db": _db_path(), "domain": domain, "subdomain": subdomain}
 
-    _add("domain", domain)
-    _add("subdomain", subdomain)
-    for sp in (specialties or []):
-        _add("subdomain", sp)
-    data["version"] = data.get("version", 1)
-    data["updated_at"] = _time.strftime("%Y-%m-%dT%H:%M:%SZ", _time.gmtime())
-    if persist:
-        try:
-            with open(_evolved_path(), "w", encoding="utf-8") as f:
-                _json.dump(data, f, ensure_ascii=False, indent=1)
-        except Exception as e:
-            return {"status": "ERROR", "reason": str(e)[:80]}
-    _merge_evolved(axes)                          # live-merge so THIS session sees it immediately
-    return {"status": "EVOLVED", "added_terms": added, "path": _evolved_path(),
-            "domain": domain, "subdomain": subdomain}
+
+def translate(term, en, pt, validated_by="llm", facets_from=None):
+    """UNIFIED SCHEMA — the bilingual pair the LLM validates (cold path). Records EN/PT + provenance
+    in term_meta, and PROPAGATES the term's facets to BOTH languages so a PT task and its EN
+    translation attract on the same facet (the bilingual convention of AGENT.md/SKILL.md, now in the
+    taxonomy). `facets_from` defaults to `term`'s own triggers."""
+    con = _con(create=True)
+    if con is None:
+        return {"status": "ERROR", "reason": "cannot open overlay db"}
+    now = _time.strftime("%Y-%m-%dT%H:%M:%SZ", _time.gmtime())
+    src = (facets_from or term).lower()
+    try:
+        con.execute("INSERT OR REPLACE INTO term_meta(term, en, pt, validated_by, ts) "
+                    "VALUES(?,?,?,?,?)", (term.lower(), en, pt, validated_by, now))
+        rows = con.execute("SELECT axis, facet, status, uses FROM triggers WHERE term=?",
+                           (src,)).fetchall()
+        propagated = 0
+        for lang_term in {en.lower(), pt.lower()} - {""}:
+            for axis, facet, status, uses in rows:
+                con.execute("INSERT OR IGNORE INTO triggers(term,axis,facet,status,uses) "
+                            "VALUES(?,?,?,?,?)", (lang_term, axis, facet, status, uses))
+                propagated += 1
+        con.commit()
+    except Exception as e:
+        con.close()
+        return {"status": "ERROR", "reason": str(e)[:80]}
+    con.close()
+    return {"status": "OK", "term": term.lower(), "en": en, "pt": pt, "propagated": propagated}
 
 
-# session-start load: the grown vocabulary is active from the first classify()
+def relate_facets(src_facet, dst_facet, rel="depende_de"):
+    """Facet↔facet dependency / escalation, recorded in the EXISTING Knowledge Graph (memory.relate)
+    — REUSING its typed-edge vocabulary (causa|depende_de|refina|contradiz|suporta), never a new
+    relation language. A subdomain that 'escalates to' its domain is modeled as `depende_de`."""
+    try:
+        import memory
+        return memory.MemoryStore().relate_text(f"facet:{src_facet}", f"facet:{dst_facet}", rel)
+    except Exception as e:
+        return {"status": "ERROR", "reason": str(e)[:80]}
+
+
+def stats():
+    """Overlay health: candidate/adopted counts + how many terms carry a validated bilingual pair."""
+    con = _con(create=False)
+    if con is None:
+        return {"adopted": 0, "candidate": 0, "translated": 0}
+    try:
+        adopted = con.execute("SELECT COUNT(*) FROM triggers WHERE status='ADOPTED'").fetchone()[0]
+        cand = con.execute("SELECT COUNT(*) FROM triggers WHERE status='CANDIDATE'").fetchone()[0]
+        tr = con.execute("SELECT COUNT(*) FROM term_meta WHERE en IS NOT NULL AND pt IS NOT NULL"
+                         ).fetchone()[0]
+        return {"adopted": adopted, "candidate": cand, "translated": tr, "db": _db_path()}
+    finally:
+        con.close()
+
+
+# session-start: ensure the overlay DB exists / migrate legacy JSON (no bulk load)
 _EVOLVED = load_evolved()
 
 
@@ -252,20 +383,40 @@ def _score_axis(tokens, table):
     return best, best_hits
 
 
+def _combined_hits(tokens):
+    """Per-axis facet hit counts merging the in-memory BASE tables with the ADOPTED SQLite overlay
+    (one indexed query for the task's tokens). This is the single place base + learned vocabulary
+    meet, so classify() and specialties stay consistent."""
+    overlay = _overlay_hits(tokens)
+    out = {}
+    for axis, table in AXES.items():
+        hits = {}
+        for facet, trg in table.items():
+            h = len(tokens & trg)
+            if h:
+                hits[facet] = h
+        for facet, h in overlay.get(axis, {}).items():
+            hits[facet] = hits.get(facet, 0) + h
+        out[axis] = hits
+    return out
+
+
 def classify(text):
     """Reduce free text (PT or EN) to canonical ENGLISH facets. This is the author's target output:
     {domain, subdomain, intent, platform, specialties, facets}. Language-independent by construction:
-    both a PT task and an EN description map to the same facet tokens."""
+    both a PT task and an EN description map to the same facet tokens. Merges the base seed with the
+    ADOPTED learned overlay (SQLite, queried for this task's tokens only)."""
     tokens = _tokens(text)
+    hits = _combined_hits(tokens)
     picked, flat = {}, set()
-    for axis, table in AXES.items():
-        facet, hits = _score_axis(tokens, table)
+    for axis in AXES:
+        d = hits.get(axis, {})
+        facet = max(d, key=d.get) if d else None
         picked[axis] = facet
         if facet:
             flat.add(f"{axis}:{facet}")
-    # specialties = every facet (any axis) that had at least one hit, as bare canonical tokens
-    specialties = sorted({f for axis, table in AXES.items() for f, trg in table.items()
-                          if tokens & trg})
+    # specialties = every facet (any axis) that had at least one hit (base OR learned overlay)
+    specialties = sorted({f for axis in AXES for f in hits.get(axis, {})})
     return {"domain": picked["domain"], "subdomain": picked["subdomain"],
             "intent": picked["intent"], "platform": picked["platform"],
             "specialties": specialties, "facets": flat}

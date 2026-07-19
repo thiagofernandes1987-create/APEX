@@ -1508,28 +1508,38 @@ def t_taxonomy():
     # v1.55: engineering domain — a structural task classifies correctly (was legal/calculus)
     eng = taxonomy.classify("dimensione uma viga de concreto no estado limite ultimo com NBR 6118")
     assert eng["domain"] == "engineering" and eng["subdomain"] == "structural", eng
-    # v1.55: SELF-EVOLVING — an unknown term is learned from a validated run and then classifies,
-    # and the durable overlay is written (loads next session via load_evolved at import).
+    # v1.56: SELF-EVOLVING two-tier SQLite overlay — CANDIDATE->ADOPTED gate, bilingual pair, KG
+    # relations, indexed partial lookup (no whole-file load), migration of the v1.55 JSON.
     import tempfile, os as _os
     _old = _os.environ.get("APEX_METHOD_HOME")
     _os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp(prefix="apex-tax-")
     try:
         import importlib
         importlib.reload(taxonomy)                       # fresh session: empty overlay
-        assert taxonomy.classify("projete um vertedouro de barragem CCR")["domain"] is None
-        ev = taxonomy.evolve("projete um vertedouro de barragem CCR",
-                             domain="engineering", subdomain="structural")
-        assert ev["status"] == "EVOLVED" and ev["added_terms"] >= 1, ev
-        assert taxonomy.classify("vertedouro de barragem CCR")["domain"] == "engineering"
-        assert _os.path.isfile(taxonomy._evolved_path()), "durable overlay must persist"
+        assert taxonomy.classify("projete um vertedouro CCR")["domain"] is None
+        # zero-overhead: a classify with no overlay must NOT create the DB
+        assert not _os.path.isfile(taxonomy._db_path()), "no overlay -> no db"
+        # PROMOTION GATE: one validation is CANDIDATE (does NOT classify yet — no single-run pollution)
+        e1 = taxonomy.evolve("projete um vertedouro CCR", domain="engineering", subdomain="structural")
+        assert e1["status"] == "EVOLVED" and e1["added_terms"] >= 1, e1
+        assert taxonomy.classify("vertedouro CCR")["domain"] is None, "candidate must not classify"
+        # second validation -> ADOPTED -> now classifies
+        e2 = taxonomy.evolve("projete um vertedouro CCR", domain="engineering", subdomain="structural")
+        assert e2["promoted"] >= 1 and taxonomy.classify("vertedouro CCR")["domain"] == "engineering"
+        assert _os.path.isfile(taxonomy._db_path()), "durable SQLite overlay must persist"
+        # BILINGUAL pair: LLM-validated translation propagates the facet to the EN term
+        taxonomy.translate("vertedouro", en="spillway", pt="vertedouro", facets_from="vertedouro")
+        assert taxonomy.classify("spillway gate")["domain"] == "engineering", "EN pair must attract"
+        st = taxonomy.stats()
+        assert st["adopted"] >= 1 and st["translated"] >= 1, st
     finally:
         if _old is not None:
             _os.environ["APEX_METHOD_HOME"] = _old
         else:
             _os.environ.pop("APEX_METHOD_HOME", None)
         importlib.reload(taxonomy)
-    return (f"facets classify + cross-language attraction ({s_real} > {s_stub}); dissect wired; "
-            f"engineering/structural; self-evolving overlay (learn->classify)")
+    return (f"facets + cross-language ({s_real}>{s_stub}); engineering/structural; SQLite overlay "
+            f"(CANDIDATE->ADOPTED gate, bilingual pair, indexed partial lookup)")
 
 
 def t_learning():
