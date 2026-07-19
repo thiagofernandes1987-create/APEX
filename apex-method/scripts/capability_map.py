@@ -308,7 +308,6 @@ def design_models():
 def build(extra_dirs=None, extra_capabilities=None, path=MAP_PATH):
     """Assemble the full capability map and persist it. Call after ANY install/approval (the
     same rebuild trigger as attraction_graph + rag_index: the three memories grow together)."""
-    import time
     caps = scan_own_scripts() + scan_skill_dirs(extra_dirs) + design_models()
     caps += list(extra_capabilities or [])
     doc = {"_meta": {"note": ("Tool-use memory: every capability the runtime can wield — "
@@ -318,7 +317,6 @@ def build(extra_dirs=None, extra_capabilities=None, path=MAP_PATH):
                               "commands; it NEVER executes them (gates/H5 still govern). "
                               "record_use() feeds real outcomes into learning so promotion is "
                               "earned. Rebuild after every install."),
-                     "built_at": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()),
                      "count": len(caps)},
            "environment": probe_environment(), "capabilities": caps}
     with open(path, "w", encoding="utf-8") as f:

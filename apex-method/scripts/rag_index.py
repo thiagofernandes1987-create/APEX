@@ -38,7 +38,6 @@ import math
 import os
 import re
 import sys
-import time
 
 sys.path.insert(0, os.path.dirname(__file__))
 
@@ -249,7 +248,10 @@ def build(path=INDEX_PATH):
     emb = CharEmbedder().fit([n["summary"] for n in nodes])
     for n in nodes:
         vec = emb.embed(n["summary"])
-        top = sorted(vec.items(), key=lambda kv: -abs(kv[1]))[:TOP_TERMS]
+        # DETERMINISM (v1.57): tie-break by ngram key so the selected top-terms don't depend on
+        # dict/set iteration order (which is hash-randomized across processes) — the persisted
+        # index must be byte-identical for the same input, or it churns every rebuild.
+        top = sorted(vec.items(), key=lambda kv: (-abs(kv[1]), kv[0]))[:TOP_TERMS]
         # RENORMALIZE after truncation: top-48 keeps ~28% of a char-ngram vector's mass, so
         # without this, identical texts scored cosine ~0.28 (broke alias detection at 0.85).
         tnorm = math.sqrt(sum(w * w for _g, w in top)) or 1.0
@@ -259,9 +261,9 @@ def build(path=INDEX_PATH):
                               "dimensão taxonômica e vetor sob IDF GLOBAL. sync()=incremental; "
                               "merge_index()=fusão entre instâncias; overview()=memória "
                               "cristalizada (prefixo estável p/ prompt-caching)."),
-                     "built_at": time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()),
                      "count": len(nodes), "top_terms": TOP_TERMS,
-                     "idf": {g: round(v, 4) for g, v in emb.idf.items()}},
+                     # sorted keys: the idf dict order must not depend on set/hash iteration
+                     "idf": {g: round(emb.idf[g], 4) for g in sorted(emb.idf)}},
            "aliases": {}, "nodes": nodes}
     with open(path, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False)
@@ -310,7 +312,7 @@ def sync(path=INDEX_PATH):
     def embed(summary):
         tf = Counter(_char_ngrams(summary))
         vec = {g: c * idf.get(g, 1.0) for g, c in tf.items()}
-        top = sorted(vec.items(), key=lambda kv: -abs(kv[1]))[:TOP_TERMS]
+        top = sorted(vec.items(), key=lambda kv: (-abs(kv[1]), kv[0]))[:TOP_TERMS]  # stable tie-break
         tnorm = math.sqrt(sum(w * w for _g, w in top)) or 1.0   # renormalized truncated vector
         return {g: round(w / tnorm, 4) for g, w in top}
     unchanged, reembedded, new_nodes, drifted = 0, 0, [], []
@@ -360,8 +362,7 @@ def sync(path=INDEX_PATH):
             aliases[gone_id] = target              # renomeio: identidade preservada
         else:
             pruned.append(gone_id)                 # deleção real: poda (seções caem c/ o pai)
-    doc = {"_meta": dict(doc["_meta"], count=len(new_nodes),
-                         synced_at=time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())),
+    doc = {"_meta": dict(doc["_meta"], count=len(new_nodes)),
            "aliases": aliases, "nodes": new_nodes}
     with open(path, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False)
