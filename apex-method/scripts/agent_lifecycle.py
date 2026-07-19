@@ -189,20 +189,63 @@ def run(task, mode="DEEP", min_score=MIN_ROSTER_SCORE):
     }
 
 
+# ── learn from a FAILURE: demote + vaccinate (error → WHY), so the mistake is not repeated ─
+def record_failure(task, agent_id, error, why, matrix=None):
+    """A run that did NOT validate still TEACHES. This records the mistake into the DURABLE stores
+    the swap carries: a DEMOTION (learning: this persona/skill under-performed for the domain) and
+    a VACCINE (code_genetics: the exact error text + WHY it was wrong / the fix), plus a memory
+    anchor. Next session, context_pack surfaces these as 'DEMOTED (do NOT default to)' and
+    'LESSONS (validated error→fix)' so the same error is not committed again. This is the honest
+    other half of finalize: the library learns from failures, not only successes."""
+    matrix = matrix or competence_matrix(task)
+    dom = matrix.get("domain") or (matrix.get("disciplines") or ["general"])[0]
+    out = {"status": "LEARNED_FROM_FAILURE", "agent_id": agent_id, "domain": dom,
+           "demoted": None, "vaccine": None, "anchor": None}
+    try:                                        # learning: record the negative outcome for the domain
+        import learning
+        learning.record_outcome("persona", agent_id, dom, False, evidence=(error or "")[:120])
+        out["demoted"] = learning.score("persona", agent_id, dom).get("status")
+    except Exception as e:
+        out["demoted"] = f"err:{str(e)[:40]}"
+    try:                                        # vaccine: the ERROR and WHY, for future context
+        import code_genetics
+        code_genetics.durable_store().save_vaccine(error or "unspecified error",
+                                                   why or "no root-cause recorded")
+        out["vaccine"] = "SAVED"
+    except Exception as e:
+        out["vaccine"] = f"err:{str(e)[:40]}"
+    try:                                        # memory anchor: the failure is durable + auditable
+        import memory
+        m = memory.MemoryStore()
+        sha = m.remember(f"MISTAKE by '{agent_id}' in {dom}: {(error or '')[:100]} — WHY: "
+                         f"{(why or '')[:100]}", kind="semantic")
+        m.record_event("demote", agent_id, f"error in {dom}: {(error or '')[:60]}")
+        out["anchor"] = sha[:12]
+    except Exception as e:
+        out["anchor"] = f"err:{str(e)[:40]}"
+    return out
+
+
 # ── steps 6–8 (post-validation): evolve the library, gated on a validated success ─
 def finalize(task, agent_id, matrix=None, validated=False, equipped_skills=None,
-             success_evidence=None, index_path=None):
-    """After the host executes and VALIDATES the run: record the outcome (learning), persist the
-    agent's equipment durably (grants = create/update the agent), drop a memory anchor, and re-sync
-    the vector-node RAG index so the newly-proven agent/skill is discoverable next session.
-    Guarded: refuses to evolve the library on an unvalidated result (no reputation poisoning)."""
+             success_evidence=None, index_path=None, error=None, why=None):
+    """After the host executes: on a VALIDATED success, record the outcome (learning), persist the
+    agent's equipment durably (grants), drop a memory anchor, re-sync the vector-node RAG index, and
+    (for a grown generic agent) MATERIALIZE it as a standardized specialist. On a FAILURE with an
+    `error`/`why`, it does NOT evolve the library but DOES learn from the mistake (record_failure:
+    demote + vaccine) so the swap carries what went wrong and why. No reputation poisoning: only a
+    validated success promotes."""
     if not validated:
+        if error:                               # unvalidated BUT we know what went wrong → learn it
+            res = record_failure(task, agent_id, error, why, matrix=matrix)
+            res["status"] = "SKIPPED_EVOLUTION_LEARNED_FAILURE"
+            return res
         return {"status": "SKIPPED",
                 "reason": "not validated — the library evolves only on a gated, validated success"}
     matrix = matrix or competence_matrix(task)
     dom = matrix.get("domain") or (matrix.get("disciplines") or ["general"])[0]
     out = {"status": "EVOLVED", "agent_id": agent_id, "domain": dom,
-           "learning": None, "grants": 0, "anchor": None, "rag": None}
+           "learning": None, "grants": 0, "anchor": None, "rag": None, "materialized": None}
     try:                                        # learning: the persona proved out for this domain
         import learning
         learning.record_outcome("persona", agent_id, dom, True,
@@ -231,6 +274,20 @@ def finalize(task, agent_id, matrix=None, validated=False, equipped_skills=None,
         out["rag"] = r.get("status") if isinstance(r, dict) else "OK"
     except Exception as e:
         out["rag"] = f"err:{str(e)[:40]}"
+    # v1.54: if this was a GROWN generic agent, crystallize it into a STANDARDIZED, discoverable
+    # specialist (AGENT.md + SKILL.md in the repo layout) + register it in the roster overlay, so
+    # NEXT session finds the specialist instead of re-synthesizing. Only for synthesized agents.
+    if str(agent_id).startswith("generic-"):
+        try:
+            import agent_materializer
+            m = agent_materializer.materialize(agent_id, matrix, validated=True,
+                                               promoted_skills=equipped_skills,
+                                               evidence=success_evidence)
+            out["materialized"] = {"status": m.get("status"),
+                                   "written": len(m.get("written", [])),
+                                   "registered": (m.get("registered") or {}).get("status")}
+        except Exception as e:
+            out["materialized"] = f"err:{str(e)[:40]}"
     return out
 
 

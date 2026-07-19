@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.53.0
+version: 1.54.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,7 +47,7 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 50 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 51 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
@@ -206,6 +206,24 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   memory anchor, and re-syncs the node RAG (`rag_index.sync`). GATES: nothing auto-installs/equips
   (H5); the library evolves ONLY on a validated success (no reputation poisoning). The host
   executes the subagent and authors any forged skill body — Python returns the plan, not the run.
+  **LEARN FROM FAILURE (v1.54):** `finalize(..., validated=False, error=…, why=…)` (or
+  `record_failure`) does NOT promote, but records a DEMOTION + a VACCINE (the error text + WHY it
+  was wrong) so `context_pack` surfaces it next time as `LESSONS`/`DEMOTED` — the same mistake is
+  not repeated. The swap carries promoted (grants/learning), demoted (learning), and error→why
+  (vaccines) across machines. See `references/self-evolution.md`.
+- **`scripts/agent_materializer.py`** — GENERIC→SPECIALIST crystallization (v1.54, the
+  auto-evolutive library): on a validated success, `materialize(agent_id, matrix, validated=True, …)`
+  renders the grown agent as a STANDARDIZED `AGENT.md` (canonical frontmatter: agent_id / anchors /
+  activates_in / capabilities / input_schema / output_schema / what_if_fails / security /
+  primary_domain, plus honest `origin: grown_from_generic_spawn`) and each forged skill as a
+  standardized `SKILL.md`, writes them to the durable grown-library
+  (`APEX_METHOD_HOME/library/{agents,skills}`), and **registers the specialist in the roster
+  overlay** (`agent_registry.register_grown_agent`, anchored on facets + salient task terms) so
+  NEXT session `resolve_agent` finds the specialist instead of re-synthesizing. `finalize` calls
+  this automatically for a grown (`generic-…`) agent. `consolidate_to_repo(repo_root, commit=False)`
+  copies the grown artifacts into the repo's `agents/grown/` + `skills/grown/` and STAGES a git
+  commit (H5) — never auto-commits. A generic that solved a problem becomes a permanent,
+  discoverable engineer. See `references/self-evolution.md`.
 - **`scripts/rag_index.py`** — SOLID-STATE node RAG (v1.47, the author's crystallized-memory
   architecture): nodes for modules/catalogs/references/repo-areas/capabilities AND per-chapter
   SECTIONS extracted from each document's outline, every node carrying its taxonomic DIMENSION
@@ -630,6 +648,9 @@ skill router, audit, autopsy, structured reasoning.
 - `references/apex-assets.md` — full APEX repo mined: 213 agents + skill_forge + UCO + UCO-Sensor
   (nativized) and 39 third-party assets + 23 MCP servers (indexed/managed). Catalogs:
   `managed_assets.json`, `mcp_registry.json`, `apex_agents_roster.json`.
+- `references/self-evolution.md` — the auto-evolutive loop: generic→validated→materialized
+  standardized specialist (AGENT.md/SKILL.md), discoverable next session; the swap carrying
+  promoted/demoted + error→why so mistakes are not repeated; and the H5 gates.
 - `references/scenarios.md` — worked end-to-end examples.
 - `catalog/apex_native_skills_index.json` — the FULL native library: all 3,784 repo skills
   (id, category, path, description) — the on-demand index behind `repo_bridge.search_native`.

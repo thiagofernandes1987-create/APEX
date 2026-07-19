@@ -777,8 +777,40 @@ def t_agent_lifecycle():
     ev = al.finalize("design sharding", "postgres-pro", matrix=a_real["matrix"], validated=True,
                      equipped_skills=["skill:x/db-tune"])
     assert ev["status"] == "EVOLVED" and ev["grants"] >= 1 and ev["anchor"], ev
+    # v1.54 LEARN FROM FAILURE: an unvalidated run WITH a diagnosis records a demotion + vaccine
+    fl = al.finalize("bad run", "generic-y", validated=False,
+                     error="used E=210GPa for concrete", why="concrete uses E_cs=alpha_e*5600*sqrt(fck)")
+    assert fl["status"] == "SKIPPED_EVOLUTION_LEARNED_FAILURE" and fl["vaccine"] == "SAVED", fl
     return (f"matrix+resolve(real={a_real['agent_id']},syn={a_syn['agent_id']}) + cascade + "
-            f"finalize gate (skip@unvalidated, evolve@validated)")
+            f"finalize gate (skip@unvalidated, evolve@validated, learn@failure)")
+
+
+def t_agent_materializer():
+    # v1.54: a VALIDATED generic agent is crystallized into a STANDARDIZED specialist and becomes
+    # discoverable next session — the auto-evolutive library closes the cross-session loop.
+    import agent_lifecycle as al, agent_registry as ar, agent_materializer as am
+    TASK = "dimensione uma viga de concreto no estado limite ultimo"
+    # SESSION 1: no roster match -> synthesize -> validate -> materialize
+    d1 = al.resolve_agent(TASK)
+    assert d1["synthesize"] is True, d1
+    fin = al.finalize(TASK, d1["agent_id"], matrix=d1["matrix"], validated=True,
+                      equipped_skills=["forge/els-check"], success_evidence="ULS ok")
+    assert fin["materialized"] and fin["materialized"]["status"] == "MATERIALIZED", fin["materialized"]
+    # the standardized AGENT.md exists with the canonical frontmatter fields
+    ap = os.path.join(ar._library_dir(), "agents", d1["agent_id"], "AGENT.md")
+    txt = open(ap, encoding="utf-8").read()
+    for field in ("agent_id:", "anchors:", "capabilities:", "input_schema:", "output_schema:",
+                  "what_if_fails:", "security:", "origin: grown_from_generic_spawn"):
+        assert field in txt, f"AGENT.md missing {field}"
+    # the specialist is now in the durable roster overlay (merged into load_ext_roster)
+    assert d1["agent_id"] in {a["id"] for a in ar.load_grown_roster()}
+    # SESSION 2 (same durable home): resolve now FINDS the specialist — no re-synthesis
+    d2 = al.resolve_agent(TASK)
+    assert d2["synthesize"] is False and d2["agent_id"] == d1["agent_id"], d2
+    # render helpers produce standardized SKILL.md too
+    smd = am.render_skill_md("engineering.els-check", "engineering", "ULS/SLS check", anchors=["ELU"])
+    assert "skill_id:" in smd and "domain_path:" in smd and "llm_compat:" in smd
+    return f"grow->materialize(AGENT.md)->register; session2 finds {d2['agent_id']} (no re-synth)"
 
 
 def t_kernel_gate():
@@ -1819,6 +1851,7 @@ TESTS = [
     ("learning", t_learning), ("execution_policy", t_execution_policy),
     ("taxonomy", t_taxonomy), ("attraction_graph", t_attraction_graph),
     ("agent_spawn", t_agent_spawn), ("agent_lifecycle", t_agent_lifecycle),
+    ("agent_materializer", t_agent_materializer),
     ("kernel_gate", t_kernel_gate), ("rag_index", t_rag_index),
     ("plug_and_play", t_plug_and_play), ("agent_bundle_context", t_agent_bundle_and_context),
     ("capability_map", t_capability_map), ("pipeline_dsm", t_pipeline_dsm),

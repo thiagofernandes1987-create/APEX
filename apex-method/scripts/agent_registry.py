@@ -268,12 +268,61 @@ def render_roster(agents_doc):
 ROSTER_EXT = os.path.join(HERE, "..", "catalog", "apex_agents_roster.json")
 
 
-def load_ext_roster():
+# ── grown-library overlay (v1.54): agents MATERIALIZED from a validated generic spawn persist here
+# under APEX_METHOD_HOME, so a specialist the runtime GREW in a past session is discoverable next
+# session WITHOUT rewriting the shipped 1 MB roster index. Durable (swappable / git-exportable). ──
+def _library_dir():
+    base = os.environ.get("APEX_METHOD_HOME") or os.path.expanduser("~/.apex-method")
+    d = os.path.join(base, "library")
     try:
-        with open(ROSTER_EXT, encoding="utf-8") as f:
-            return json.load(f)
+        os.makedirs(os.path.join(d, "agents"), exist_ok=True)
+    except Exception:
+        pass
+    return d
+
+
+def _grown_roster_path():
+    return os.path.join(_library_dir(), "grown_agents.json")
+
+
+def load_grown_roster():
+    """The durable overlay of agents the runtime grew from validated generic spawns (may be empty)."""
+    try:
+        with open(_grown_roster_path(), encoding="utf-8") as f:
+            data = json.load(f)
+            return data if isinstance(data, list) else []
     except Exception:
         return []
+
+
+def register_grown_agent(agent_id, category="grown", domains=None, tier=2):
+    """Add/refresh a grown specialist in the durable overlay (idempotent by id). Called by
+    agent_materializer after a validated generic agent is written as a standardized AGENT.md."""
+    roster = load_grown_roster()
+    entry = {"id": agent_id, "category": category, "domains": sorted(set(domains or [])),
+             "tier": tier, "grown": True}
+    roster = [a for a in roster if a.get("id") != agent_id] + [entry]
+    try:
+        with open(_grown_roster_path(), "w", encoding="utf-8") as f:
+            json.dump(roster, f, ensure_ascii=False, indent=1)
+        return {"status": "OK", "agent_id": agent_id, "path": _grown_roster_path(),
+                "total_grown": len(roster)}
+    except Exception as e:
+        return {"status": "ERROR", "reason": str(e)[:80]}
+
+
+def load_ext_roster():
+    """Shipped 213-agent roster MERGED with the durable grown-agent overlay (grown wins on id)."""
+    try:
+        with open(ROSTER_EXT, encoding="utf-8") as f:
+            base = json.load(f)
+    except Exception:
+        base = []
+    grown = load_grown_roster()
+    if not grown:
+        return base
+    grown_ids = {a.get("id") for a in grown}
+    return [a for a in base if a.get("id") not in grown_ids] + grown
 
 
 def match_task_to_ext_agents(task, k=5):

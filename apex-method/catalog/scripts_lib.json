@@ -11,9 +11,17 @@
   "id": "script:agent_lifecycle",
   "type": "script",
   "domain": "meta",
-  "capabilities": "agent-lifecycle,spawn-or-create,competence-matrix,discovery-cascade,skill-forge,evolve-library",
+  "capabilities": "agent-lifecycle,spawn-or-create,competence-matrix,discovery-cascade,skill-forge,evolve-library,learn-from-failure",
   "mass": 150,
   "path": "scripts/agent_lifecycle.py"
+ },
+ {
+  "id": "script:agent_materializer",
+  "type": "script",
+  "domain": "meta",
+  "capabilities": "materialize,generic-to-specialist,standardized-agent-md,standardized-skill-md,grown-library,roster-overlay,consolidate-repo",
+  "mass": 150,
+  "path": "scripts/agent_materializer.py"
  },
  {
   "id": "script:agent_registry",
