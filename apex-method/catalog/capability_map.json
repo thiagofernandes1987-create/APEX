@@ -1,7 +1,7 @@
 {
  "_meta": {
   "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
-  "built_at": "2026-07-19 09:22:40",
+  "built_at": "2026-07-19 09:30:27",
   "count": 55
  },
  "environment": {
@@ -825,7 +825,9 @@
    "path": "C:\\Users\\Thiag\\Downloads\\APEX_GITHUB_REPO\\.claude\\worktrees\\apex-docs-review-176ae5\\apex-method\\tests\\..\\SKILL.md",
    "description": "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill ro",
    "triggers": "APEX, PoT, program of thought, pipeline, scientific mode, modo científico, RK4, token",
-   "commands": [],
+   "commands": [
+    "git COMMIT (the DISK of the RAM->SWAP->DISK hierarchy; push/PR stays a user action)."
+   ],
    "io": {
     "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
     "receive": "orientação/artefato conforme a seção de uso da skill",

@@ -1,7 +1,7 @@
 {
  "_meta": {
   "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimization is context_budget(mode): experience injection sized per mode, zero on EXPRESS.",
-  "built_at": "2026-07-19 09:22:40"
+  "built_at": "2026-07-19 09:30:27"
  },
  "module_dsm": {
   "modules": 49,
@@ -82,7 +82,9 @@
     "code_genetics",
     "learning",
     "memory",
-    "routine_composer"
+    "repo_bridge",
+    "routine_composer",
+    "swap_store"
    ],
    "fractal_compression": [],
    "geodesic_scheduler": [],
@@ -234,10 +236,10 @@
     "agent_spawn",
     "concurrent_executor",
     "execution_policy",
-    "federation",
     "swap_store"
    ],
    [
+    "federation",
     "menu",
     "orchestrator"
    ]
@@ -266,11 +268,11 @@
     "fan_in": 8
    },
    {
-    "module": "_tfidf",
-    "fan_in": 7
+    "module": "repo_bridge",
+    "fan_in": 8
    },
    {
-    "module": "repo_bridge",
+    "module": "_tfidf",
     "fan_in": 7
    },
    {

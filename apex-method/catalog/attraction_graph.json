@@ -1,7 +1,7 @@
 {
  "_meta": {
   "note": "Precomputed gravitational routing: node = body (script/agent/skill/diff), edge = attraction (nmass*nmass*cosine), top-8 per node, floor 0.02. Rebuild after every new discovery/inclusion so the super-structure keeps growing.",
-  "built_at": "2026-07-19 09:22:38",
+  "built_at": "2026-07-19 09:30:24",
   "nodes": 325,
   "top_k": 8,
   "floor": 0.02
