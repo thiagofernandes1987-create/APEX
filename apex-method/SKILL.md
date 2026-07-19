@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.59.0
+version: 1.60.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -244,6 +244,11 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   SECTIONS extracted from each document's outline, every node carrying its taxonomic DIMENSION
   (discipline→specialization→mode) + content hash. `search()` returns the MACRO view (dim, who
   it affects via the exact import matrix, what it attracts, parent section) — no remapping.
+  **v1.60 (pointers by default, expand on demand):** `search()` hands back POINTERS (id + path +
+  `summary[:160]` + relations as ids); when the LLM decides WHICH node matters, `expand(id)`
+  pulls only that node — the FULL stored summary/section (not the truncated one), resolved macro
+  relations, and, for a doc, its section children — trading "re-read the whole file" for "fetch
+  exactly the node" (aliases resolve; missing id → `{found:False}`).
   `sync()` is the INCREMENTAL trigger: only changed nodes re-embed, deleted ones prune in
   cascade, renames become ALIASES (hash fast-path + cosine >= 0.85; identity preserved,
   `resolve()` follows). `merge_index(other)` fuses divergent instance states (idempotent, local

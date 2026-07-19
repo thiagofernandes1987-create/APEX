@@ -484,6 +484,30 @@ def resolve(node_id, path=INDEX_PATH):
     return node_id
 
 
+def expand(node_id, path=INDEX_PATH):
+    """EXPANSÃO SOB DEMANDA (v1.60): 'ponteiros por padrão, expande sob demanda'. A busca devolve
+    ponteiros (id + summary[:160] + relações como ids); quando o LLM decide QUAL nó importa,
+    expand(id) puxa SÓ esse nó — o summary/seção COMPLETO já armazenado no índice (não o
+    truncado), a dimensão, o pai, as relações macro resolvidas (afeta/atrai) e, se for um doc,
+    os FILHOS (seções). Troca 'reler o arquivo inteiro' por 'puxar exatamente o nó'. Aliases
+    resolvem (nome antigo -> nó renomeado). id inexistente -> {found: False} (honesto)."""
+    doc = load(path)
+    rid = resolve(node_id, path)
+    node = next((n for n in doc["nodes"] if n["id"] == rid), None)
+    if node is None:
+        return {"found": False, "id": node_id, "resolved": rid,
+                "note": "id não indexado — rode rag_index.search(...) para localizar"}
+    out = {"found": True, "id": node["id"], "type": node["type"], "path": node["path"],
+           "summary": node["summary"]}                       # summary COMPLETO, não o [:160]
+    out.update(_enrich(node))                                # dim, parent, affects, attracts
+    kids = [{"id": c["id"], "path": c["path"], "summary": c["summary"][:120]}
+            for c in doc["nodes"] if c.get("parent") == node["id"]]
+    if kids:
+        out["sections"] = kids[:40]                          # doc -> suas seções (expandir 1 nível)
+    out["open"] = node["path"]        # siga isto só se o corpo integral ainda for necessário
+    return out
+
+
 def overview(path=INDEX_PATH):
     """A MEMÓRIA CRISTALIZADA: o mapa macro DETERMINÍSTICO (sem timestamps — mesmo conteúdo =
     mesmo texto = prefixo cacheável no provedor). Carregue isto PRIMEIRO em toda sessão nova:
@@ -505,7 +529,8 @@ def overview(path=INDEX_PATH):
              "nós por tipo: " + ", ".join(f"{t}={c}" for t, c in sorted(by_type.items())),
              "disciplinas: " + ", ".join(f"{d}={c}" for d, c in sorted(by_dim.items(), key=lambda x: -x[1])),
              "núcleo de sustentação (mudou? rode a suíte): " + ", ".join(core),
-             "como navegar: rag_index.search('pergunta') -> nó + dimensão + impacto; "
+             "como navegar: rag_index.search('pergunta') -> ponteiros (nó + dimensão + impacto); "
+             "rag_index.expand(id) -> só esse nó, completo (ponteiros por padrão, expande sob demanda); "
              "capability_map.how_to('como faço X') -> comandos; "
              "attraction_graph.equip_for(need) -> o que se completa",
              "estado durável: swap_store.resume_due() diz se há memória mais nova que esta máquina"]
@@ -551,6 +576,8 @@ if __name__ == "__main__":
         print(json.dumps(sync(), indent=1, ensure_ascii=False))
     elif len(sys.argv) > 1 and sys.argv[1] == "overview":
         print(overview())
+    elif len(sys.argv) > 2 and sys.argv[1] == "expand":
+        print(json.dumps(expand(sys.argv[2]), ensure_ascii=False, indent=1))
     else:
         q = " ".join(sys.argv[1:]) or "como funciona a memória durável entre sessões?"
         for hit in search(q):
