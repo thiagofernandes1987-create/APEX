@@ -45,6 +45,23 @@ FORGE_IMPORT_WHITELIST = {
 FORGE_ALLOWLIST = ("https://raw.githubusercontent.com/", "https://github.com/")
 
 
+def _write_open_mode(n):
+    """True if this is a builtin open()/Path.open() in a write/append/create mode.
+    Audit fix (v1.52.0, SEC-004): the gates modelled dangerous imports/attrs but NOT the
+    builtin `open`, so `open('x','w').write(...)` wrote arbitrary files and passed clean."""
+    if not (isinstance(n, ast.Call) and (
+            (isinstance(n.func, ast.Name) and n.func.id == "open")
+            or (isinstance(n.func, ast.Attribute) and n.func.attr == "open"))):
+        return False
+    mode = None
+    if len(n.args) >= 2 and isinstance(n.args[1], ast.Constant):
+        mode = n.args[1].value
+    for kw in n.keywords:
+        if kw.arg == "mode" and isinstance(kw.value, ast.Constant):
+            mode = kw.value.value
+    return isinstance(mode, str) and any(c in mode for c in ("w", "a", "x", "+"))
+
+
 def forge_load_gate(code, url=None):
     """SR_37: mandatory AST security scan before exec/importlib. REJECT on any violation."""
     reasons = []
@@ -55,6 +72,13 @@ def forge_load_gate(code, url=None):
     except SyntaxError as e:
         return {"verdict": "REJECTED", "reasons": [f"syntax: {e}"]}
     for n in ast.walk(tree):
+        if _write_open_mode(n):
+            reasons.append(f"filesystem write via open(...,'w'/'a'/'x'/'+') line {n.lineno}")
+        # builtin file-mutating helpers that need no import (os.* is import-caught already)
+        if (isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
+                and n.func.attr in ("write_text", "write_bytes", "unlink", "mkdir", "rmdir",
+                                     "replace", "rename", "chmod", "symlink_to", "touch")):
+            reasons.append(f"filesystem-mutating call .{n.func.attr}() line {n.lineno}")
         if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id in ("exec", "eval", "__import__", "compile"):
             reasons.append(f"exec/eval detected: {n.func.id}() line {n.lineno}")
         if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute):

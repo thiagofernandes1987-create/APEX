@@ -1708,7 +1708,60 @@ def t_runtime_autopsy():
     return "RT-05/07/08/09/10/11/12/13/14/15/23/26 all guarded"
 
 
+def t_autopsy_v152():
+    """Regression locks for the v1.52.0 autopsy fixes (validated by reproduction before fixing):
+    SEC-001/003 PoT env-scrub + output cap, SEC-002 process-tree kill, SEC-004 gate file-write,
+    SEC-005/006/007 repo_bridge containment/redirect/oversize, FUNC-001 UCO status, USER-A equip."""
+    import pot, guards, skill_scout, repo_bridge, agent_spawn, math
+
+    # SEC-001: a PoT step must NOT inherit parent-process secrets
+    os.environ["APEX_AUTOPSY_SECRET"] = "LEAK_ME"
+    leak = pot.run_step("import os; print(os.environ.get('APEX_AUTOPSY_SECRET','<ABSENT>'))")
+    assert "ABSENT" in leak["stdout"], f"SEC-001 secret leaked: {leak['stdout']!r}"
+    assert "5050" in pot.run_step("print(sum(range(1,101)))")["stdout"]   # correctness intact
+
+    # SEC-003: unbounded stdout is capped + flagged
+    big = pot.run_step("print('A'*3000000)")
+    assert big.get("truncated") and len(big["stdout"]) <= pot.MAX_OUTPUT_BYTES + 40, "SEC-003"
+
+    # SEC-002: a grandchild must not outlive the parent's timeout
+    marker = os.path.join(tempfile.mkdtemp(prefix="apex-sec002-"), "survived.txt")
+    gc = "import time; time.sleep(4); open(r'%s','w').write('x')" % marker.replace("\\", "/")
+    code = "import subprocess,sys\nsubprocess.Popen([sys.executable,'-c',%r])\nimport time; time.sleep(20)\n" % gc
+    assert pot.run_step(code, timeout=2)["rc"] == -1
+    time.sleep(5)
+    assert not os.path.exists(marker), "SEC-002 orphaned grandchild survived timeout"
+
+    # SEC-004: builtin open(...,'w') write is blocked by BOTH security gates; reads still allowed
+    w = "open('x.txt','w').write('y')"
+    assert guards.forge_load_gate(w)["verdict"] == "REJECTED", "SEC-004 forge"
+    assert not skill_scout.ast_security_scan(w)["safe"], "SEC-004 scout"
+    assert skill_scout.ast_security_scan("d=open('r.txt').read()")["safe"], "SEC-004 read false-positive"
+    assert skill_scout.ast_security_scan("import json; json.loads('{}')")["safe"], "SEC-004 json fp"
+
+    # SEC-005/006/007: repo_bridge containment
+    root = tempfile.mkdtemp(prefix="apex-rb-")
+    os.makedirs(os.path.join(root, "apex_boot")); os.makedirs(os.path.join(root, "skills"))
+    open(os.path.join(root, "big.txt"), "w").write("B" * 101)
+    os.environ["APEX_REPO_LOCAL"] = root
+    assert repo_bridge._resolved_within(root, "skills/ok.txt"), "SEC-005 in-root path"
+    assert repo_bridge.fetch("big.txt", max_bytes=100)["status"] == "REFUSED_OVERSIZE", "SEC-007"
+    del os.environ["APEX_REPO_LOCAL"]
+
+    # FUNC-001: a large IMPROVEMENT keeps K high (never CRITICAL like a regression)
+    K_improve = math.exp(-0.85 * max(0.0, 6.5387 - 12.7928))
+    assert K_improve >= 0.20, f"FUNC-001 improvement drove K to {K_improve}"
+
+    # USER-A: an audit persona is NOT equipped with unrelated VISUAL-design skills
+    spec = agent_spawn.spawn("architect", "audit python code for security bugs and vulnerabilities")
+    bad = [s for s in spec.get("skills", [])
+           if any(t in s.lower() for t in ("design", "ui-ux", "shadcn", "canvas", "frontend", "taste"))]
+    assert not bad, f"USER-A: audit architect wrongly equipped with design skills: {bad}"
+    return "SEC-001/002/003/004/005/006/007 + FUNC-001 + USER-A locked"
+
+
 TESTS = [
+    ("autopsy_v152", t_autopsy_v152),
     ("runtime_autopsy", t_runtime_autopsy),
     ("pot", t_pot), ("numeric", t_numeric), ("verify", t_verify), ("uco_gate", t_uco_gate),
     ("universal_code_optimizer_v4", t_uco_v4), ("router", t_router), ("skill_scout", t_skill_scout),

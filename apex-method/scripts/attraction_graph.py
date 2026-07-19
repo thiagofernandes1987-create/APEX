@@ -136,11 +136,20 @@ def expand(seeds, depth=2, budget=12, decay=DECAY, path=GRAPH_PATH):
     return out
 
 
-def equip_for(need, k_seed=2, depth=2, budget=10, path=GRAPH_PATH):
+def equip_for(need, k_seed=2, depth=2, budget=10, path=GRAPH_PATH, bias=""):
     """Competency text -> seed bodies (strongest task pull, via gravity) -> expanded
-    constellation. The Tech-Leader flow: search the FIRST skill; the rest attracts."""
+    constellation. The Tech-Leader flow: search the FIRST skill; the rest attracts.
+
+    AUDIT FIX (v1.52.0, USER-A "personas erradas"): the SEED query is the concrete TASK
+    ONLY. A persona's generic domain vocabulary is ambiguous and pollutes the pull — e.g.
+    'system_design'/'architecture' gravitationally attract VISUAL *design* skills
+    (extract-design-system, canvas-design, shadcn, ui-ux-pro-max), so a code-audit
+    architect was equipped with frontend UI skills. `bias` (domains) is therefore NOT
+    seeded; it only lightly re-ranks the expanded members, and only kicks in when the task
+    text is too short to seed on its own."""
     import gravity
-    con = gravity.constellation(need, budget=max(k_seed, 2))
+    seed_text = need if len((need or "").split()) >= 4 else f"{need} {bias}".strip()
+    con = gravity.constellation(seed_text, budget=max(k_seed, 2))
     seeds = [o["id"] for o in con["constellation"][:k_seed]]
     exp = expand(seeds, depth=depth, budget=budget, path=path)
     exp["need"] = need

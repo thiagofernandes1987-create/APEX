@@ -176,7 +176,11 @@ def spawn(agent_id, task, mode="DEEP", stance="neutral", budget=10, shared=None)
     equipment = {"by_type": {}, "members": []}
     try:
         import attraction_graph
-        equipment = attraction_graph.equip_for(f"{task} {' '.join(domains)}", budget=budget)
+        # AUDIT FIX (v1.52.0, USER-A): seed equipment from the TASK, not task+domains.
+        # The persona's generic domain words ('system_design', 'architecture', 'quality')
+        # are ambiguous and pulled unrelated VISUAL-design skills onto code-audit agents.
+        # Domains pass as `bias` (light re-rank / short-task fallback only), never as seed.
+        equipment = attraction_graph.equip_for(task, budget=budget, bias=" ".join(domains))
     except Exception:
         pass
     grants = _equipped_grants(agent_id)

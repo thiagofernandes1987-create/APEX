@@ -63,6 +63,23 @@ def fetch_text(url: str, timeout: int = 10, max_bytes: int = 2_000_000) -> str:
         return raw.decode("utf-8", errors="replace")
 
 
+def _write_open_mode(n):
+    """True if this is a builtin open()/Path.open() in write/append/create mode.
+    Audit fix (v1.52.0, SEC-004): plain `open('x','w')` needs no import, so it bypassed the
+    import/attr checks and let staged skill code write arbitrary files with safe=True."""
+    if not (isinstance(n, ast.Call) and (
+            (isinstance(n.func, ast.Name) and n.func.id == "open")
+            or (isinstance(n.func, ast.Attribute) and n.func.attr == "open"))):
+        return False
+    mode = None
+    if len(n.args) >= 2 and isinstance(n.args[1], ast.Constant):
+        mode = n.args[1].value
+    for kw in n.keywords:
+        if kw.arg == "mode" and isinstance(kw.value, ast.Constant):
+            mode = kw.value.value
+    return isinstance(mode, str) and any(c in mode for c in ("w", "a", "x", "+"))
+
+
 def ast_security_scan(code: str) -> dict:
     """Two-tier static scan. 'reject' = RCE vectors (block). 'review' = often-benign
     (list.remove, dataclass vars, subprocess wrappers) — inspect with context.
@@ -73,6 +90,12 @@ def ast_security_scan(code: str) -> dict:
     except SyntaxError as e:
         return {"safe": False, "reject": [f"syntax error: {e}"], "review": [], "reasons": [f"syntax error: {e}"]}
     for node in ast.walk(tree):
+        if _write_open_mode(node):   # SEC-004: builtin open(...,'w') writes files, no import
+            reject.append(f"filesystem write via open(...,'w'/'a'/'x'/'+') (line {node.lineno})")
+        if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and node.func.attr in ("write_text", "write_bytes", "unlink", "rmdir",
+                                       "replace", "rename", "symlink_to", "touch")):
+            review.append(f".{node.func.attr}() (line {node.lineno})")
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
             if node.func.id in REJECT_BUILTINS:
                 reject.append(f"dangerous builtin {node.func.id}() (line {node.lineno})")

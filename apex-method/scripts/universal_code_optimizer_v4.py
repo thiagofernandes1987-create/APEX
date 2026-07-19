@@ -2483,7 +2483,11 @@ class HamiltonianScorer:
         if previous_h is None:
             K = 1.0
         else:
-            K = math.exp(-self.lambda_smoothing * abs(H - previous_h))
+            # Audit fix (v1.52.0, FUNC-001): the old `abs(H - previous_h)` was SYMMETRIC, so a
+            # large IMPROVEMENT (H 12.79 -> 6.54) drove K -> ~0 and _status() flagged the better
+            # code CRITICAL, exactly like a regression. Penalize only REGRESSIONS: a drop in H
+            # (improvement) leaves K = 1.0; K measures "how much worse", not "how much changed".
+            K = math.exp(-self.lambda_smoothing * max(0.0, H - previous_h))
             if metrics.infinite_loop_risk > 0.6 and H >= previous_h:
                 K *= 0.35
 
