@@ -250,6 +250,137 @@ def import_pack(pack, approved=False):
     return out
 
 
+# ── TRANSPORTE: a rotina de publicação staging/ -> commit (e o caminho de volta) ─────────────
+def publish_pack(pack=None, repo_dir=None, commit=True, name="knowledge-pack"):
+    """A ROTINA DE PUBLICAÇÃO: exporta (ou recebe) um pacote, grava no tier `staging/` da
+    árvore de swap (nome canônico versionado — a fila do que está validado e pronto), copia
+    para `apex-method/federation/packs/` no repositório local e faz o COMMIT (git presente e
+    repo detectado; senão devolve as instruções exatas). O git é o DISCO da hierarquia
+    RAM→SWAP→DISCO: publicar = commitar. Nunca silencioso — retorna um `log` legível."""
+    import shutil
+    import subprocess
+    pack = pack or export_pack(name)
+    v = verify_pack(pack)
+    if not v["ok"]:
+        return {"status": "REFUSED", "reason": f"pacote não verifica: {v['reason']}"}
+    raw = json.dumps({k: val for k, val in pack.items() if not k.startswith("_")},
+                     ensure_ascii=False, indent=1)
+    # 1) staging/ — a fila validada da árvore de swap
+    import swap_store as ss
+    root = ss.default_root()
+    ss.materialize(root)
+    sdir = os.path.join(root, "staging")
+    staged = ss.write_versioned(sdir, "fedpack", raw)["filename"]
+    # 2) repositório local -> federation/packs/ (nome estável por device+sha: idempotente)
+    if repo_dir is None:
+        try:
+            import repo_bridge
+            repo_dir = repo_bridge._local_root()
+        except Exception:
+            repo_dir = None
+    out = {"status": "STAGED", "staging_file": os.path.join(sdir, staged),
+           "device": pack.get("device", "")[:8], "sha": pack.get("sha256", "")[:12]}
+    if not repo_dir:
+        out["log"] = (f"[PUBLISH] staged {staged} | sem clone local do repo — copie o arquivo "
+                      f"para apex-method/federation/packs/ e commite para publicar")
+        return out
+    packs_dir = os.path.join(repo_dir, "apex-method", "federation", "packs")
+    os.makedirs(packs_dir, exist_ok=True)
+    # endereçado pelo hash do CONHECIMENTO (validated), não do envelope: republicar sem
+    # aprendizado novo é ALREADY_PUBLISHED (o exported_at volátil não prolifera arquivos)
+    ksha = _sha(json.dumps(pack.get("validated", {}), sort_keys=True, ensure_ascii=False))[:12]
+    fname = f"{name}-{pack.get('device','')[:8]}-{ksha}.fed.json"
+    dest = os.path.join(packs_dir, fname)
+    already = os.path.exists(dest)
+    if not already:
+        with open(dest, "w", encoding="utf-8") as f:
+            f.write(raw)
+    out["repo_file"] = os.path.relpath(dest, repo_dir).replace(os.sep, "/")
+    if commit and not already and shutil.which("git"):
+        try:
+            subprocess.run(["git", "add", out["repo_file"]], cwd=repo_dir, check=True,
+                           capture_output=True, text=True)
+            msg = (f"federation: publish {name} from device {pack.get('device','')[:8]} "
+                   f"(sha {pack.get('sha256','')[:12]})")
+            r = subprocess.run(["git", "commit", "-m", msg], cwd=repo_dir,
+                               capture_output=True, text=True)
+            if r.returncode == 0:
+                out["status"] = "PUBLISHED"
+                out["commit"] = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
+                                               cwd=repo_dir, capture_output=True,
+                                               text=True).stdout.strip()
+            else:
+                out["status"] = "STAGED"
+                out["commit_error"] = (r.stderr or r.stdout)[:120]
+        except Exception as e:
+            out["commit_error"] = str(e)[:120]
+    elif already:
+        out["status"] = "ALREADY_PUBLISHED"
+    out["log"] = (f"[PUBLISH] {out['status']} {fname} | staging={staged}"
+                  + (f" | commit={out.get('commit')}" if out.get("commit") else "")
+                  + " | push/PR = ação do usuário (o repositório remoto é seu)")
+    return out
+
+
+def list_published(repo_dir=None):
+    """Os pacotes publicados no repositório (o outro lado do transporte): cada um verificado."""
+    if repo_dir is None:
+        try:
+            import repo_bridge
+            repo_dir = repo_bridge._local_root()
+        except Exception:
+            return []
+    packs_dir = os.path.join(repo_dir or "", "apex-method", "federation", "packs")
+    if not repo_dir or not os.path.isdir(packs_dir):
+        return []
+    out = []
+    for f in sorted(os.listdir(packs_dir)):
+        if not f.endswith(".fed.json"):
+            continue
+        try:
+            pack = json.load(open(os.path.join(packs_dir, f), encoding="utf-8"))
+            v = verify_pack(pack)
+            cnt = {k: len(pack.get("validated", {}).get(k, [])) for k in
+                   ("learning", "vaccines", "routines", "grants")}
+            out.append({"file": f, "device": pack.get("device", "")[:8],
+                        "verified": v["ok"], "reason": v.get("reason"), "counts": cnt})
+        except Exception as e:
+            out.append({"file": f, "verified": False, "reason": str(e)[:80]})
+    return out
+
+
+def import_from_repo(approved=False, repo_dir=None):
+    """Máquina B após o `git pull`: importa TODOS os pacotes publicados que verificam —
+    cada um ainda atrás do gate H5 (approved=True) e da fusão local-vence idempotente."""
+    results = []
+    if repo_dir is None:
+        try:
+            import repo_bridge
+            repo_dir = repo_bridge._local_root()
+        except Exception:
+            repo_dir = None
+    packs_dir = os.path.join(repo_dir or "", "apex-method", "federation", "packs")
+    if not repo_dir or not os.path.isdir(packs_dir):
+        return {"status": "EMPTY", "reason": "sem packs publicados no clone local", "results": []}
+    for f in sorted(os.listdir(packs_dir)):
+        if not f.endswith(".fed.json"):
+            continue
+        try:
+            pack = json.load(open(os.path.join(packs_dir, f), encoding="utf-8"))
+            r = import_pack(pack, approved=approved)
+            results.append({"file": f, **{k: r[k] for k in ("status",) },
+                            **({k: r[k] for k in ("learning", "vaccines", "routines", "grants")}
+                               if r.get("status") == "INSTALLED" else
+                               {"reason": r.get("reason", "")[:80]})})
+        except Exception as e:
+            results.append({"file": f, "status": "ERROR", "reason": str(e)[:80]})
+    installed = sum(1 for r in results if r["status"] == "INSTALLED")
+    return {"status": "OK" if results else "EMPTY", "installed": installed,
+            "blocked": sum(1 for r in results if r["status"] == "BLOCKED"),
+            "rejected": sum(1 for r in results if r["status"] == "REJECTED"),
+            "results": results}
+
+
 if __name__ == "__main__":
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -268,4 +399,12 @@ if __name__ == "__main__":
     elif cmd == "import" and len(sys.argv) > 2:
         print(json.dumps(import_pack(json.load(open(sys.argv[2], encoding="utf-8")),
                                      approved="--approved" in sys.argv),
+                         ensure_ascii=False, indent=1))
+    elif cmd == "publish":
+        r = publish_pack(commit="--no-commit" not in sys.argv)
+        print(r.get("log", json.dumps(r, ensure_ascii=False)))
+    elif cmd == "list-remote":
+        print(json.dumps(list_published(), ensure_ascii=False, indent=1))
+    elif cmd == "import-repo":
+        print(json.dumps(import_from_repo(approved="--approved" in sys.argv),
                          ensure_ascii=False, indent=1))

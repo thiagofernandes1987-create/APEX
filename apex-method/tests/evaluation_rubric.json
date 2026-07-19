@@ -7,7 +7,7 @@
    "name": "Benchmark passes (correctness)",
    "weight": 3,
    "score": 1.0,
-   "evidence": "benchmark 63/63"
+   "evidence": "benchmark 64/64"
   },
   {
    "name": "Runs without heavy deps (robustness)",

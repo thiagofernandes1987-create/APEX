@@ -1208,6 +1208,59 @@ def t_federation():
             importlib.reload(m)
 
 
+def t_federation_publish():
+    # v1.51: o TRANSPORTE — staging/ -> commit no repo (publicação) e o caminho de volta
+    # (list -> H5 -> import). Republicar sem conhecimento novo não prolifera arquivos.
+    import tempfile, os, importlib, subprocess
+    import config as cfg, agent_registry as ar, learning as lrn, memory as mem_mod
+    import code_genetics as cg, routine_composer as rc, federation as fed, swap_store as ss
+    mods = (cfg, ar, lrn, mem_mod, cg, rc, fed, ss)
+    _old = os.environ.get("APEX_METHOD_HOME")
+    repo = tempfile.mkdtemp()
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    subprocess.run(["git", "config", "user.email", "t@t"], cwd=repo)
+    subprocess.run(["git", "config", "user.name", "t"], cwd=repo)
+    try:
+        os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()      # instância A
+        for m in mods:
+            importlib.reload(m)
+        for _ in range(3):
+            lrn.record_outcome("persona", "architect", "engineering", True)
+        mem_mod.MemoryStore().record_event("persona_promoted", "architect@eng", "promote")
+        r = fed.publish_pack(repo_dir=repo)
+        assert r["status"] == "PUBLISHED" and r.get("commit"), r
+        assert os.path.isfile(r["staging_file"]), "staging/ recebe a cópia validada"
+        log = subprocess.run(["git", "log", "--oneline"], cwd=repo,
+                             capture_output=True, text=True).stdout
+        assert "federation: publish" in log, log
+        r2 = fed.publish_pack(repo_dir=repo)
+        assert r2["status"] == "ALREADY_PUBLISHED", f"sem conhecimento novo = sem arquivo novo: {r2}"
+        # instância B: pull -> list -> H5 -> import
+        os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+        for m in mods:
+            importlib.reload(m)
+        mem_mod.MemoryStore().record_event("rule", "R-B", "promote")
+        lst = fed.list_published(repo_dir=repo)
+        assert len(lst) == 1 and lst[0]["verified"], lst
+        blocked = fed.import_from_repo(repo_dir=repo)
+        assert blocked["blocked"] == 1 and blocked["installed"] == 0, blocked
+        ok = fed.import_from_repo(approved=True, repo_dir=repo)
+        assert ok["installed"] == 1, ok
+        assert lrn.score("persona", "architect", "engineering")["status"] == "PROMOTED"
+        vb = mem_mod.MemoryStore().verify_ledger()
+        assert vb["ok"] and vb["devices"] == 2, vb
+        again = fed.import_from_repo(approved=True, repo_dir=repo)
+        assert again["results"][0].get("learning", 0) == 0, "reimport idempotente"
+        return "A publish->commit (1 arquivo, republish=ALREADY) -> B list->H5->import; 2 cadeias"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        for m in mods:
+            importlib.reload(m)
+
+
 def t_capability_map():
     # v1.45 (author's item 2): the runtime LEARNS to work with installed capabilities —
     # commands mapped (never executed), environment probed, how_to answers PT/EN, and
@@ -1683,6 +1736,7 @@ TESTS = [
     ("solid_state_index", t_solid_state_index),
     ("index_repo_wide", t_index_repo_wide), ("ledger_multidevice", t_ledger_multidevice),
     ("prefix_and_dim", t_prefix_and_dim), ("federation", t_federation),
+    ("federation_publish", t_federation_publish),
 ]
 
 

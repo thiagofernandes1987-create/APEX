@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.50.0
+version: 1.51.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -252,6 +252,13 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   `import_pack(pack, approved=True)` requires the H5 human gate, merges LOCAL-WINS
   (idempotent re-import), and appends the sender's intact chain to the local ledger.
   Successful experience from one instance becomes evolution input for all — with governance.
+  **TRANSPORT (v1.51):** `publish_pack()` is the publication routine — pack -> `staging/` tier
+  (canonical versioned name) -> `apex-method/federation/packs/` in the local repo clone ->
+  git COMMIT (the DISK of the RAM->SWAP->DISK hierarchy; push/PR stays a user action).
+  Content-addressed by knowledge hash: republishing without new learning = ALREADY_PUBLISHED.
+  The return path after `git pull`: `list_published()` (each pack verified) ->
+  `import_from_repo(approved=True)` (H5 per pack, local-wins, idempotent).
+  CLI: `python scripts/federation.py publish | list-remote | import-repo --approved`.
 - **`scripts/token_tracker.py`** — REAL token measurement per round/step (OPP-99, v1.47):
   every FULL_PIPELINE run records the payload each kernel step produced (chars/4 proxy,
   declared); with >=3 samples the MEASURED average replaces the [APPROX] estimate in
