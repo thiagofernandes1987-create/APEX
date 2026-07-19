@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.51.0
+version: 1.52.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -112,7 +112,10 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   COMPLETE. Never skip a step; the gate returning RETURN_TO_LLM means the work goes back to you.
 
 - **`scripts/pot.py`** — Program-of-Thought: `run_chain([{name,code}])` runs each step
-  in an isolated subprocess and chains outputs. `run_parallel()` only for slow steps.
+  in a separate subprocess and chains outputs. `run_parallel()` only for slow steps.
+  Hardened v1.52.0: scrubbed env (no parent-secret inheritance), disposable working dir,
+  output capped, process-tree killed on timeout. This is crash/leak CONTAINMENT, **not a
+  security sandbox** for hostile code — real isolation still needs an OS container.
 - **`scripts/numeric.py`** — `rk4(deriv,s0,dt,steps)` / `euler(...)` for multidimensional
   ODE systems. Prefer RK4 (orders of magnitude more accurate). `solve_ode(...,method="auto")` uses
   **scipy's adaptive solver when importable** (higher accuracy), else the stdlib RK4 — acceleration
@@ -456,13 +459,14 @@ deltas, integrity-checked link by link); **`resume_due()`** is persist_due's sym
 ## § 2.12 · Execution routing contract + 3-persona entry (`scripts/execution_policy.py`)
 
 The one rule that keeps the "cognitive runtime" honest: **discovery/research must never run in the
-sealed sandbox.** `route(subtask)` classifies every micro-task onto a SURFACE — `subprocess`
+compute subprocess** (a separate process with crash/leak containment, NOT a security sandbox — see
+`pot.py`). `route(subtask)` classifies every micro-task onto a SURFACE — `subprocess`
 (deterministic compute, NO internet), `agent` (LLM reasoning), or `agent+internet` (discovery:
 skills.sh, repos, papers, MCPs — a subagent WITH web tools) — and emits `needs_internet` +
 `provider_of_tools: "llm-orchestrator"`. **HARD RULE (enforced in code):** `needs_internet=True` is
 never routed to `subprocess`. The LLM orchestrator ALWAYS provides the tools — it discovers, vets
-(AST-scan + H5 approval), and hands each instance its concrete skill/persona; the sandbox only runs
-already-provided code. This is a machine-checkable manifest, deliberately **not a DSL** (less to
+(AST-scan + H5 approval), and hands each instance its concrete skill/persona; the compute subprocess
+only runs already-provided code. This is a machine-checkable manifest, deliberately **not a DSL** (less to
 misread). `dissect_entry(task, mode)` is the formalized ENTRY: it raises the **3 dissect personas**
 (architect → decompose macro→micro; analyst → SWOT + governance + resolve tools native→skills.sh→
 create; critic → challenge persona/tool/template), and for each micro returns SWOT, the needed

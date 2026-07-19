@@ -66,15 +66,35 @@ def _check_path(path):
     return p
 
 
+def _resolved_within(root, rel):
+    """SEC-005 fix (v1.52.0): reject a candidate whose REAL path escapes the root — a
+    symlink named `evil` -> /etc/secret passed the '..'-only check and `open()` followed
+    it. Compare realpaths so a symlink/junction cannot read outside the allowed root."""
+    root_r = os.path.realpath(root)
+    cand_r = os.path.realpath(os.path.join(root, rel))
+    try:
+        return os.path.commonpath([root_r, cand_r]) == root_r
+    except ValueError:                      # different drives on Windows
+        return False
+
+
 def fetch(path, timeout=15, max_bytes=2_000_000):
     """Read one repo file: local clone if available, else GitHub raw (allowlisted, size-capped)."""
     p = _check_path(path)
     root = _local_root()
     if root:
         fp = os.path.join(root, p)
+        if not _resolved_within(root, p):    # SEC-005: symlink/junction escape
+            return {"status": "REFUSED_ESCAPE", "source": "local", "path": p}
         if os.path.isfile(fp):
             with open(fp, encoding="utf-8", errors="replace") as f:
-                return {"status": "OK", "source": "local", "path": p, "text": f.read(max_bytes)}
+                # SEC-007: read ONE past the cap so an oversize file is refused, not
+                # silently truncated to a benign-looking prefix.
+                data = f.read(max_bytes + 1)
+                if len(data) > max_bytes:
+                    return {"status": "REFUSED_OVERSIZE", "source": "local", "path": p,
+                            "limit": max_bytes}
+                return {"status": "OK", "source": "local", "path": p, "text": data}
         return {"status": "NOT_FOUND", "source": "local", "path": p}
     url = f"{RAW_BASE}{REPO}/{_ref}/{p}"
     if not url.startswith(f"{RAW_BASE}{REPO}/"):
@@ -82,10 +102,16 @@ def fetch(path, timeout=15, max_bytes=2_000_000):
     try:
         with urllib.request.urlopen(url, timeout=timeout) as r:
             final = r.geturl()
-            if not final.startswith(RAW_BASE):
+            # SEC-006 fix (v1.52.0): a redirect that stays on raw.githubusercontent.com but
+            # changes owner/repo (…/attacker/evil/…) passed the host-only check. Require the
+            # final URL to stay under THIS repo's prefix, not merely the raw host.
+            if not final.startswith(f"{RAW_BASE}{REPO}/"):
                 return {"status": "REFUSED_REDIRECT", "path": p, "final_url": final}
+            raw = r.read(max_bytes + 1)      # SEC-007: overflow detection on the remote path too
+            if len(raw) > max_bytes:
+                return {"status": "REFUSED_OVERSIZE", "path": p, "limit": max_bytes}
             return {"status": "OK", "source": f"raw@{_ref}", "path": p,
-                    "text": r.read(max_bytes).decode("utf-8", errors="replace")}
+                    "text": raw.decode("utf-8", errors="replace")}
     except Exception as e:
         return {"status": "OFFLINE", "path": p, "reason": str(e)[:120]}
 

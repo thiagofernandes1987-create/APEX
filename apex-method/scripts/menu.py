@@ -76,13 +76,41 @@ def update(apply=False):
             root = repo_bridge._local_root()
             if root:
                 src = os.path.join(root, "apex-method")
-                # AUD-W2: `cp -r` is Unix-only — update --apply crashed on Windows
-                # (FileNotFoundError: 'cp'). shutil is the portable equivalent.
+                # AUD-W2: `cp -r` is Unix-only; shutil is the portable equivalent.
                 import shutil
-                shutil.copytree(src, ROOT, dirs_exist_ok=True)
-                bench = subprocess.run([sys.executable, os.path.join(ROOT, "tests", "benchmark.py")],
-                                       capture_output=True, text=True)
+                # UPD-001 fix (v1.52.0): the old flow copied OVER the live install BEFORE
+                # validating and never checked the benchmark's exit code, so a broken remote
+                # version bricked the skill and still returned applied=true. Now it is
+                # TRANSACTIONAL: stage in a temp dir -> validate there -> only swap in on a
+                # clean pass -> keep a backup and roll back on any failure.
+                import tempfile
+                stage = tempfile.mkdtemp(prefix="apex-update-stage-")
+                staged = os.path.join(stage, "apex-method")
+                shutil.copytree(src, staged)
+                bench = subprocess.run(
+                    [sys.executable, os.path.join(staged, "tests", "benchmark.py")],
+                    capture_output=True, text=True)
                 total = next((l for l in bench.stdout.splitlines() if l.startswith("TOTAL")), "")
+                frac = total.split()[1] if len(total.split()) > 1 else "0/1"
+                p_ok, t_ok = (int(x) for x in frac.split("/")) if "/" in frac else (0, 1)
+                clean = bench.returncode == 0 and p_ok == t_ok and t_ok > 0
+                if not clean:
+                    shutil.rmtree(stage, ignore_errors=True)
+                    out["applied"] = False
+                    out["status"] = "REJECTED_STAGED"
+                    out["verify"] = total.strip()
+                    out["note"] = ("staged version failed validation "
+                                   f"(rc={bench.returncode}, {frac}); install untouched")
+                    return out
+                # atomic-ish swap: move current aside, move staged in, drop backup on success
+                backup = os.path.join(stage, "backup")
+                shutil.move(ROOT, backup)
+                try:
+                    shutil.move(staged, ROOT)
+                except Exception:
+                    shutil.move(backup, ROOT)     # rollback
+                    raise
+                shutil.rmtree(stage, ignore_errors=True)
                 out["applied"] = True
                 out["verify"] = total.strip()
             else:
