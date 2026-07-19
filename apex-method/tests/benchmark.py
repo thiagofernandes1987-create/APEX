@@ -176,7 +176,29 @@ def t_gravity():
     r = gravity.plan("audit code security and scan dependencies for vulnerabilities")
     con = r["constellation"]
     assert "agent" in con, con
-    return f"security constellation: {len(con.get('agent',[]))} agents"
+    # v1.59 catalog cache: _load caches by (mtime,size) and MUST invalidate on a catalog edit —
+    # a mis-invalidated cache reintroduces stale data / non-determinism.
+    import os, json, tempfile, time
+    gravity._LOAD_CACHE.clear()
+    first = gravity._load("scripts_lib.json")
+    assert first, "scripts_lib must load"
+    assert gravity._load("scripts_lib.json") is first, "cache HIT must return the same object"
+    # write a tiny catalog into a throwaway CAT and prove edits invalidate by (mtime,size)
+    d = tempfile.mkdtemp(); _oldcat = gravity.CAT
+    try:
+        gravity.CAT = d; gravity._LOAD_CACHE.clear()
+        p = os.path.join(d, "x.json")
+        json.dump([{"id": "a"}], open(p, "w"))
+        v1 = gravity._load("x.json"); assert v1 == [{"id": "a"}], v1
+        assert gravity._load("x.json") is v1, "unchanged file -> cache hit"
+        time.sleep(0.01)
+        json.dump([{"id": "a"}, {"id": "b"}], open(p, "w"))   # size changes -> must re-read
+        v2 = gravity._load("x.json")
+        assert v2 == [{"id": "a"}, {"id": "b"}], f"edit must invalidate cache, got {v2}"
+        assert gravity._load("missing.json") == [], "missing file -> [] (honest)"
+    finally:
+        gravity.CAT = _oldcat; gravity._LOAD_CACHE.clear()
+    return f"security constellation: {len(con.get('agent',[]))} agents; _load cache mtime-invalidated"
 
 def t_bayes():
     import bayes

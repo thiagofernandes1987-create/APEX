@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.58.0
+version: 1.59.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -157,6 +157,8 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   as bodies with mass, computes attraction, and MERGES the most synergistic ones into a
   cross-type constellation. `constellation(task)`; `plan(task)` adds gap-detection + a
   skills.sh install request + MCP fallback when the library lacks a needed resource (e.g. SA/HMC).
+  v1.59: `_load` caches parsed catalogs keyed by (mtime,size) — no more re-parsing the same
+  JSONs per call — invalidated on any catalog edit so it never serves stale data.
 - **`scripts/universal_code_optimizer_v4.py`** — the nativized UCO engine (author's own);
   `uco_gate.py` now uses it directly for real metrics (Hamiltonian, loop risk, dead code).
 - **`scripts/repo_bridge.py`** — FULL APEX repo integration: load any of the **3,784 native
