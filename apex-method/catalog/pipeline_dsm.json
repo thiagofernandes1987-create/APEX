@@ -1,6 +1,6 @@
 {
  "_meta": {
-  "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimization is context_budget(mode): experience injection sized per mode, zero on EXPRESS."
+  "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimizations are context_budget(mode) — experience injection sized per mode, zero on EXPRESS — and its twin output_budget(mode): generation compressed on cheap paths, full verbosity kept on DEEP+ where the reasoning chain is the product."
  },
  "module_dsm": {
   "modules": 51,
@@ -356,6 +356,11 @@
    "tokens_est": 60,
    "savings_vs_naive": 5160,
    "context_budget_chars": 0,
+   "output_budget": {
+    "soft_max_tokens": 120,
+    "compress": true,
+    "style": "Answer directly. No preamble, no hedging, no restating the question. Fragments over sentences. Preserve code/commands/paths/numbers verbatim."
+   },
    "note": "trivial path: triage answers directly (token economy)"
   },
   "STANDARD": {
@@ -378,7 +383,12 @@
    ],
    "tokens_est": 1420,
    "savings_vs_naive": 3800,
-   "context_budget_chars": 500
+   "context_budget_chars": 500,
+   "output_budget": {
+    "soft_max_tokens": 500,
+    "compress": true,
+    "style": "Concise. Drop filler and hedging ('I'd recommend', 'it seems'). Lead with the result. Preserve code/commands/paths/numbers verbatim."
+   }
   },
   "FOGGY": {
    "plan": [
@@ -399,7 +409,12 @@
    "skipped": [],
    "tokens_est": 5220,
    "savings_vs_naive": 0,
-   "context_budget_chars": 900
+   "context_budget_chars": 900,
+   "output_budget": {
+    "soft_max_tokens": 900,
+    "compress": false,
+    "style": "Normal prose — ambiguity must be explained. Trim filler only; keep the reasoning about what is uncertain and why. Technical content verbatim."
+   }
   },
   "DEEP": {
    "plan": [
@@ -420,7 +435,12 @@
    "skipped": [],
    "tokens_est": 5220,
    "savings_vs_naive": 0,
-   "context_budget_chars": 1300
+   "context_budget_chars": 1300,
+   "output_budget": {
+    "soft_max_tokens": 1600,
+    "compress": false,
+    "style": "Full verbosity — the explicit chain of reasoning IS the product. Do not compress derivations, trade-offs, or verification steps."
+   }
   },
   "SCIENTIFIC": {
    "plan": [
@@ -441,7 +461,12 @@
    "skipped": [],
    "tokens_est": 5220,
    "savings_vs_naive": 0,
-   "context_budget_chars": 1600
+   "context_budget_chars": 1600,
+   "output_budget": {
+    "soft_max_tokens": 2600,
+    "compress": false,
+    "style": "Full verbosity — show derivations, assumptions, numeric method and verification. Compressing here destroys the value of the mode."
+   }
   },
   "RESEARCH": {
    "plan": [
@@ -462,7 +487,12 @@
    "skipped": [],
    "tokens_est": 5220,
    "savings_vs_naive": 0,
-   "context_budget_chars": 2000
+   "context_budget_chars": 2000,
+   "output_budget": {
+    "soft_max_tokens": 3200,
+    "compress": false,
+    "style": "Full verbosity — cite sources, show the search/synthesis path and counter-evidence. Never truncate the argument."
+   }
   }
  },
  "context_budget_chars": {
@@ -472,5 +502,37 @@
   "DEEP": 1300,
   "SCIENTIFIC": 1600,
   "RESEARCH": 2000
+ },
+ "output_budget": {
+  "EXPRESS": {
+   "soft_max_tokens": 120,
+   "compress": true,
+   "style": "Answer directly. No preamble, no hedging, no restating the question. Fragments over sentences. Preserve code/commands/paths/numbers verbatim."
+  },
+  "STANDARD": {
+   "soft_max_tokens": 500,
+   "compress": true,
+   "style": "Concise. Drop filler and hedging ('I'd recommend', 'it seems'). Lead with the result. Preserve code/commands/paths/numbers verbatim."
+  },
+  "FOGGY": {
+   "soft_max_tokens": 900,
+   "compress": false,
+   "style": "Normal prose — ambiguity must be explained. Trim filler only; keep the reasoning about what is uncertain and why. Technical content verbatim."
+  },
+  "DEEP": {
+   "soft_max_tokens": 1600,
+   "compress": false,
+   "style": "Full verbosity — the explicit chain of reasoning IS the product. Do not compress derivations, trade-offs, or verification steps."
+  },
+  "SCIENTIFIC": {
+   "soft_max_tokens": 2600,
+   "compress": false,
+   "style": "Full verbosity — show derivations, assumptions, numeric method and verification. Compressing here destroys the value of the mode."
+  },
+  "RESEARCH": {
+   "soft_max_tokens": 3200,
+   "compress": false,
+   "style": "Full verbosity — cite sources, show the search/synthesis path and counter-evidence. Never truncate the argument."
+  }
  }
 }

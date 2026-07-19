@@ -68,6 +68,15 @@ def express_check(task):
     return None
 
 
+def _output_budget(mode):
+    """Safe wrapper around pipeline_dsm.output_budget — never raises if the module is absent."""
+    try:
+        import pipeline_dsm
+        return pipeline_dsm.output_budget(mode)
+    except Exception:
+        return None
+
+
 # ── 2. DISSECT BY DISCIPLINE ──────────────────────────────────────────────────
 # Bilingual (EN + PT) keywords: the old EN-only map silently mislabelled Portuguese
 # tasks (e.g. "reserva de caixa / burn / runway" classified only as engineering).
@@ -309,12 +318,12 @@ def _run(task, candidates=None, snapshot=None):
     if tri is not None and tri.get("skip_pipeline"):
         exp = tri.get("express") or express_check(task) or {"mode": "EXPRESS", "answer": None,
                                                              "reason": "trivial"}
-        return {"path": "EXPRESS", **exp,
+        return {"path": "EXPRESS", **exp, "output_budget": _output_budget("EXPRESS"),
                 "triage": {"mode": tri["mode"], "reason": tri.get("reason")}}
     if tri is None:                                    # execution_policy missing -> original gate
         ex = express_check(task)
         if ex:
-            return {"path": "EXPRESS", **ex}
+            return {"path": "EXPRESS", **ex, "output_budget": _output_budget("EXPRESS")}
     disciplines = dissect(task)
     specialists = assign_specialists(task, disciplines)
     auto_mode = "SCIENTIFIC" if any(d in disciplines for d in ("science", "math")) else \
@@ -340,6 +349,12 @@ def _run(task, candidates=None, snapshot=None):
     result = {"path": "FULL_PIPELINE", "mode": mode, "disciplines": disciplines,
               "specialists": specialists, "phase_plan": phase_plan,
               "escalate_discovery": escalate_discovery}
+    # v1.58: the output-side twin of context_budget — tell the LLM how terse/verbose the ANSWER
+    # for this mode should be. Compresses cheap paths (output tokens cost ~5x input), keeps DEEP+
+    # fully verbose because the reasoning chain is the deliverable. Never raises.
+    ob = _output_budget(mode)
+    if ob is not None:
+        result["output_budget"] = ob
     # ── RT-22: the kernel checklist — code-owned steps are DONE here with evidence; llm-owned
     # steps carry the exact next call (passagem de bastão). gate() blocks completion until all True.
     ck = new_checklist()

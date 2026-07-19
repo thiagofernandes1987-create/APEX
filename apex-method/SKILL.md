@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.57.0
+version: 1.59.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -157,6 +157,8 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   as bodies with mass, computes attraction, and MERGES the most synergistic ones into a
   cross-type constellation. `constellation(task)`; `plan(task)` adds gap-detection + a
   skills.sh install request + MCP fallback when the library lacks a needed resource (e.g. SA/HMC).
+  v1.59: `_load` caches parsed catalogs keyed by (mtime,size) — no more re-parsing the same
+  JSONs per call — invalidated on any catalog edit so it never serves stale data.
 - **`scripts/universal_code_optimizer_v4.py`** — the nativized UCO engine (author's own);
   `uco_gate.py` now uses it directly for real metrics (Hamiltonian, loop risk, dead code).
 - **`scripts/repo_bridge.py`** — FULL APEX repo integration: load any of the **3,784 native
@@ -288,8 +290,13 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
 - **`scripts/pipeline_dsm.py`** — the DSM turned on the runtime itself (v1.45): EXACT module
   import matrix (parallel load levels, cycles, load-bearing core) + per-mode step flow ordered
   by geodesic ΔH/token (run/skip + [APPROX] savings: EXPRESS ~5.1k tokens saved, STANDARD ~3.8k).
-  The APPLIED optimization: `context_budget(mode)` sizes the context_pack injection per mode
-  (0 on EXPRESS → 2000 chars on RESEARCH) — orchestrator and agent_spawn consume it on every call.
+  Two APPLIED optimizations, one per token direction: `context_budget(mode)` sizes the
+  context_pack injection (what ENTERS — 0 on EXPRESS → 2000 chars on RESEARCH), and its v1.58
+  twin `output_budget(mode)` sizes the ANSWER (what LEAVES — output tokens cost ~5x input on
+  Opus 4.8). output_budget compresses generation on cheap paths (`compress:True` + a terse
+  directive on EXPRESS/STANDARD) and keeps full verbosity on DEEP+ where the reasoning chain is
+  the deliverable — the caveman output-compression idea applied only where it is safe, with code/
+  commands/paths/numbers always preserved verbatim. orchestrator.run emits both on every call.
 - **`scripts/federation.py`** — FEDERATION (v1.50, unblocked by the per-device ledger):
   `export_pack()` builds a SIGNED knowledge pack carrying ONLY gate-validated learning
   (PROMOTED personas/routines, promotable vaccines, approved grants) + the exporting device's

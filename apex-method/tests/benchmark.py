@@ -176,7 +176,29 @@ def t_gravity():
     r = gravity.plan("audit code security and scan dependencies for vulnerabilities")
     con = r["constellation"]
     assert "agent" in con, con
-    return f"security constellation: {len(con.get('agent',[]))} agents"
+    # v1.59 catalog cache: _load caches by (mtime,size) and MUST invalidate on a catalog edit —
+    # a mis-invalidated cache reintroduces stale data / non-determinism.
+    import os, json, tempfile, time
+    gravity._LOAD_CACHE.clear()
+    first = gravity._load("scripts_lib.json")
+    assert first, "scripts_lib must load"
+    assert gravity._load("scripts_lib.json") is first, "cache HIT must return the same object"
+    # write a tiny catalog into a throwaway CAT and prove edits invalidate by (mtime,size)
+    d = tempfile.mkdtemp(); _oldcat = gravity.CAT
+    try:
+        gravity.CAT = d; gravity._LOAD_CACHE.clear()
+        p = os.path.join(d, "x.json")
+        json.dump([{"id": "a"}], open(p, "w"))
+        v1 = gravity._load("x.json"); assert v1 == [{"id": "a"}], v1
+        assert gravity._load("x.json") is v1, "unchanged file -> cache hit"
+        time.sleep(0.01)
+        json.dump([{"id": "a"}, {"id": "b"}], open(p, "w"))   # size changes -> must re-read
+        v2 = gravity._load("x.json")
+        assert v2 == [{"id": "a"}, {"id": "b"}], f"edit must invalidate cache, got {v2}"
+        assert gravity._load("missing.json") == [], "missing file -> [] (honest)"
+    finally:
+        gravity.CAT = _oldcat; gravity._LOAD_CACHE.clear()
+    return f"security constellation: {len(con.get('agent',[]))} agents; _load cache mtime-invalidated"
 
 def t_bayes():
     import bayes
@@ -1384,12 +1406,27 @@ def t_pipeline_dsm():
     assert len(flow["STANDARD"]["skipped"]) >= 2, flow["STANDARD"]
     assert flow["RESEARCH"]["context_budget_chars"] > flow["STANDARD"]["context_budget_chars"]
     assert pd.context_budget("EXPRESS") == 0, "EXPRESS must inject zero context (waste cut)"
+    # v1.58 (caveman-inspired): output_budget is the twin of context_budget. Cheap paths COMPRESS
+    # the answer; DEEP+ keep full verbosity because the reasoning chain is the deliverable.
+    assert pd.output_budget("EXPRESS")["compress"] is True, "EXPRESS output must be terse"
+    assert pd.output_budget("STANDARD")["compress"] is True, "STANDARD output must be concise"
+    for m in ("DEEP", "SCIENTIFIC", "RESEARCH"):
+        assert pd.output_budget(m)["compress"] is False, f"{m} must keep full verbosity"
+    # monotonic ceiling: verbose modes allow a larger answer than cheap ones
+    assert (pd.output_budget("EXPRESS")["soft_max_tokens"]
+            < pd.output_budget("SCIENTIFIC")["soft_max_tokens"])
+    assert "output_budget" in doc and doc["mode_flow"]["EXPRESS"]["output_budget"]["compress"]
+    # wired end-to-end: orchestrator emits output_budget on BOTH paths
+    import orchestrator as orc
+    assert orc.run("2+2?")["output_budget"]["compress"] is True, "EXPRESS path must carry budget"
+    rfull = orc.run("prove RK4 stability for a stiff ODE and compare to Euler")
+    assert rfull["output_budget"]["compress"] is False, "SCIENTIFIC path must keep verbosity"
     # wired: a STANDARD-mode spawn uses the smaller budget
     import agent_spawn as sp
     spec = sp.spawn("engineer", "refactor the api handler", mode="STANDARD")
     assert spec["context"]["chars"] <= pd.context_budget("STANDARD"), spec["context"]["chars"]
     return (f"{r['modules']} modules, {r['levels']} levels, {len(dsm['cycles'])} lazy cycles; "
-            f"EXPRESS saves ~{flow['EXPRESS']['savings_vs_naive']}tk; ctx budget wired")
+            f"EXPRESS saves ~{flow['EXPRESS']['savings_vs_naive']}tk; ctx+output budgets wired")
 
 
 def t_plug_and_play():

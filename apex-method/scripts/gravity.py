@@ -44,11 +44,32 @@ RELAXED_RADIUS = 0.06      # fallback radius
 NEIGHBOR_COLOAD = 0.7      # co-load neighbors with score > 0.7 * max_score
 
 
+# catalog cache (v1.59): _load re-parsed the same JSONs on every load_resources() call — and
+# load_resources feeds build(), attraction_graph and any direct caller. Cache the parsed doc
+# keyed by path, INVALIDATED by (mtime, size): a catalog edit at build time is always re-read,
+# so the cache can never serve stale data or reintroduce non-determinism. Same-second edits that
+# slip past coarse mtime are caught by the size delta. Cached docs are treated read-only by all
+# callers (they build fresh dicts from the data), so sharing the object is safe.
+_LOAD_CACHE = {}
+
+
 def _load(name):
+    path = os.path.join(CAT, name)
     try:
-        return json.load(open(os.path.join(CAT, name), encoding="utf-8"))
+        st = os.stat(path)
+    except OSError:
+        return []
+    key = (st.st_mtime, st.st_size)
+    hit = _LOAD_CACHE.get(path)
+    if hit is not None and hit[0] == key:
+        return hit[1]
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
     except Exception:
         return []
+    _LOAD_CACHE[path] = (key, data)
+    return data
 
 
 def _parse_installs(v):
