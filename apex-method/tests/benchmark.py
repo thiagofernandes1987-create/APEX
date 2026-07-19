@@ -1384,12 +1384,27 @@ def t_pipeline_dsm():
     assert len(flow["STANDARD"]["skipped"]) >= 2, flow["STANDARD"]
     assert flow["RESEARCH"]["context_budget_chars"] > flow["STANDARD"]["context_budget_chars"]
     assert pd.context_budget("EXPRESS") == 0, "EXPRESS must inject zero context (waste cut)"
+    # v1.58 (caveman-inspired): output_budget is the twin of context_budget. Cheap paths COMPRESS
+    # the answer; DEEP+ keep full verbosity because the reasoning chain is the deliverable.
+    assert pd.output_budget("EXPRESS")["compress"] is True, "EXPRESS output must be terse"
+    assert pd.output_budget("STANDARD")["compress"] is True, "STANDARD output must be concise"
+    for m in ("DEEP", "SCIENTIFIC", "RESEARCH"):
+        assert pd.output_budget(m)["compress"] is False, f"{m} must keep full verbosity"
+    # monotonic ceiling: verbose modes allow a larger answer than cheap ones
+    assert (pd.output_budget("EXPRESS")["soft_max_tokens"]
+            < pd.output_budget("SCIENTIFIC")["soft_max_tokens"])
+    assert "output_budget" in doc and doc["mode_flow"]["EXPRESS"]["output_budget"]["compress"]
+    # wired end-to-end: orchestrator emits output_budget on BOTH paths
+    import orchestrator as orc
+    assert orc.run("2+2?")["output_budget"]["compress"] is True, "EXPRESS path must carry budget"
+    rfull = orc.run("prove RK4 stability for a stiff ODE and compare to Euler")
+    assert rfull["output_budget"]["compress"] is False, "SCIENTIFIC path must keep verbosity"
     # wired: a STANDARD-mode spawn uses the smaller budget
     import agent_spawn as sp
     spec = sp.spawn("engineer", "refactor the api handler", mode="STANDARD")
     assert spec["context"]["chars"] <= pd.context_budget("STANDARD"), spec["context"]["chars"]
     return (f"{r['modules']} modules, {r['levels']} levels, {len(dsm['cycles'])} lazy cycles; "
-            f"EXPRESS saves ~{flow['EXPRESS']['savings_vs_naive']}tk; ctx budget wired")
+            f"EXPRESS saves ~{flow['EXPRESS']['savings_vs_naive']}tk; ctx+output budgets wired")
 
 
 def t_plug_and_play():

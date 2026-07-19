@@ -13,9 +13,13 @@ WHY THIS EXISTS:
         geodesic_scheduler (max ΔH/token) -> which steps each mode should RUN vs SKIP, and the
         estimated savings vs running everything. Step costs are calibrated estimates, not
         measurements — they are labeled as such.
-  The one optimization APPLIED in code (not just reported): context_budget(mode) — the
-  context_pack injection is sized per mode (EXPRESS gets zero, RESEARCH gets the most), so
-  experience enrichment never becomes token waste on cheap paths.
+  Two optimizations are APPLIED in code (not just reported), one per token direction:
+    - context_budget(mode) sizes what ENTERS the model — the context_pack injection is sized per
+      mode (EXPRESS gets zero, RESEARCH gets the most), so experience enrichment never becomes
+      token waste on cheap paths.
+    - output_budget(mode) sizes what LEAVES it — generation is compressed (terse directive) on
+      cheap/trivial paths and kept fully verbose on DEEP+ where the reasoning chain is the
+      product. Output tokens cost ~5x input on Opus 4.8, so this is the more expensive axis.
 
 WHEN TO USE:
   build() after structural changes (new modules / new kernel steps); context_budget(mode) is
@@ -41,6 +45,34 @@ DSM_PATH = os.path.join(ROOT, "catalog", "pipeline_dsm.json")
 CONTEXT_BUDGET_CHARS = {"EXPRESS": 0, "STANDARD": 500, "FOGGY": 900,
                         "DEEP": 1300, "SCIENTIFIC": 1600, "RESEARCH": 2000}
 
+# per-mode OUTPUT budget — the symmetric twin of context_budget. context_budget sizes what
+# ENTERS the model; this sizes what LEAVES it (output tokens cost ~5x input on Opus 4.8).
+# The principle (borrowed from the "caveman" output-compression skill, applied SAFELY): squeeze
+# generation ONLY on cheap/trivial paths, and KEEP full verbosity where the explicit chain of
+# reasoning is itself the product (DEEP+). `compress` gates the directive; `soft_max_tokens` is
+# an [APPROX] guidance ceiling, not enforced. The lossless invariant holds in every mode: code,
+# commands, paths and numbers are always preserved verbatim — only filler/hedging is cut.
+OUTPUT_BUDGET = {
+    "EXPRESS":    {"soft_max_tokens": 120,  "compress": True,
+                   "style": "Answer directly. No preamble, no hedging, no restating the question. "
+                            "Fragments over sentences. Preserve code/commands/paths/numbers verbatim."},
+    "STANDARD":   {"soft_max_tokens": 500,  "compress": True,
+                   "style": "Concise. Drop filler and hedging ('I'd recommend', 'it seems'). Lead "
+                            "with the result. Preserve code/commands/paths/numbers verbatim."},
+    "FOGGY":      {"soft_max_tokens": 900,  "compress": False,
+                   "style": "Normal prose — ambiguity must be explained. Trim filler only; keep the "
+                            "reasoning about what is uncertain and why. Technical content verbatim."},
+    "DEEP":       {"soft_max_tokens": 1600, "compress": False,
+                   "style": "Full verbosity — the explicit chain of reasoning IS the product. Do not "
+                            "compress derivations, trade-offs, or verification steps."},
+    "SCIENTIFIC": {"soft_max_tokens": 2600, "compress": False,
+                   "style": "Full verbosity — show derivations, assumptions, numeric method and "
+                            "verification. Compressing here destroys the value of the mode."},
+    "RESEARCH":   {"soft_max_tokens": 3200, "compress": False,
+                   "style": "Full verbosity — cite sources, show the search/synthesis path and "
+                            "counter-evidence. Never truncate the argument."},
+}
+
 # mode token budgets (SKILL.md §1.1) and [APPROX] per-step costs/values for the geodesic pass
 MODE_TOKENS = {"EXPRESS": 400, "STANDARD": 2000, "FOGGY": 5500,
                "DEEP": 8000, "SCIENTIFIC": 12000, "RESEARCH": 16000}
@@ -56,6 +88,14 @@ STEP_EST = [  # (kernel step, delta_h [APPROX], tokens [APPROX])
 def context_budget(mode):
     """Chars of validated-experience context a mode may inject (0 for EXPRESS — applied waste cut)."""
     return CONTEXT_BUDGET_CHARS.get((mode or "STANDARD").upper(), 900)
+
+
+def output_budget(mode):
+    """The output-side twin of context_budget: {soft_max_tokens, compress, style} for a mode.
+    Cheap modes get `compress:True` + a terse-output directive (the caveman idea, applied only
+    where it's safe); DEEP+ keep `compress:False` because the reasoning chain is the deliverable.
+    Consumed by orchestrator.run to emit `output_budget` so the LLM sizes its ANSWER per mode."""
+    return OUTPUT_BUDGET.get((mode or "STANDARD").upper(), OUTPUT_BUDGET["STANDARD"])
 
 
 def import_graph():
@@ -139,6 +179,7 @@ def mode_flow():
             flows[mode] = {"plan": ["TRIAGE"], "skipped": [s["id"] for s in steps[1:]],
                            "tokens_est": 60, "savings_vs_naive": naive_cost - 60,
                            "context_budget_chars": context_budget(mode),
+                           "output_budget": output_budget(mode),
                            "note": "trivial path: triage answers directly (token economy)"}
             continue
         try:
@@ -151,6 +192,7 @@ def mode_flow():
                            "tokens_est": naive_cost, "savings_vs_naive": 0,
                            "note": "geodesic unavailable — fixed order fallback"}
         flows[mode]["context_budget_chars"] = context_budget(mode)
+        flows[mode]["output_budget"] = output_budget(mode)
     return flows
 
 
@@ -158,10 +200,13 @@ def build(path=DSM_PATH):
     doc = {"_meta": {"note": ("DSM of the runtime: (a) EXACT module-import matrix -> parallel "
                               "load levels, cycles, load-bearing core; (b) [APPROX] per-mode "
                               "step flow via geodesic ΔH/token -> run/skip + savings. The "
-                              "applied optimization is context_budget(mode): experience "
-                              "injection sized per mode, zero on EXPRESS.")},
+                              "applied optimizations are context_budget(mode) — experience "
+                              "injection sized per mode, zero on EXPRESS — and its twin "
+                              "output_budget(mode): generation compressed on cheap paths, full "
+                              "verbosity kept on DEEP+ where the reasoning chain is the product.")},
            "module_dsm": module_dsm(), "mode_flow": mode_flow(),
-           "context_budget_chars": CONTEXT_BUDGET_CHARS}
+           "context_budget_chars": CONTEXT_BUDGET_CHARS,
+           "output_budget": OUTPUT_BUDGET}
     with open(path, "w", encoding="utf-8") as f:
         json.dump(doc, f, ensure_ascii=False, indent=1)
     d = doc["module_dsm"]
@@ -179,5 +224,7 @@ if __name__ == "__main__":
     for mode, f in doc["mode_flow"].items():
         if mode.startswith("_"):
             continue
+        ob = f.get("output_budget", {})
         print(f"  {mode:10} ctx={f['context_budget_chars']:>4}ch  run={len(f['plan'])} "
-              f"skip={len(f['skipped'])} est={f['tokens_est']}tk save~{f['savings_vs_naive']}tk")
+              f"skip={len(f['skipped'])} est={f['tokens_est']}tk save~{f['savings_vs_naive']}tk"
+              f"  out<={ob.get('soft_max_tokens','?')}tk compress={ob.get('compress','?')}")
