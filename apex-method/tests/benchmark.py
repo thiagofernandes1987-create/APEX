@@ -724,6 +724,15 @@ def t_agent_spawn():
     # unknown persona -> checklist catches it (the contract forbids spawning it)
     ghost = sp.spawn("agent-that-does-not-exist", "x")
     assert ghost["spawn_ready"] is False and not ghost["spawn_checklist"]["persona_loaded"], ghost["spawn_checklist"]
+    # O-2 (v1.53): the soft-gate now carries an explicit status; the misleading "REAL instance"
+    # claim is gone for an unresolved agent.
+    assert ghost["status"] == "BLOCKED_UNKNOWN_AGENT" and ghost["synthesized"] is False, ghost["status"]
+    assert "UNRESOLVED" in ghost["instruction"] and "REAL specialized instance" not in ghost["instruction"]
+    # O-2: synthesize=True fabricates a generic persona from the task taxonomy so a generic agent
+    # can become spawn_ready — and it is HONEST about being synthesized (no false authority).
+    syn = sp.spawn("no-such-agent", "dimensione uma viga no estado limite ultimo", synthesize=True)
+    assert syn["synthesized"] is True and syn["persona"] and "SYNTHESIZED" in syn["instruction"]
+    assert syn["status"] in ("SYNTHESIZED", "READY")
     # equip -> durable grant visible on reload; unequip -> revoked
     sp.equip("react-specialist", {"id": "x/design-taste", "source": "https://x/SKILL.md"})
     assert "x/design-taste" in sp._equipped_grants("react-specialist")
@@ -742,6 +751,66 @@ def t_agent_spawn():
     ctxs = {e["spec"]["context"]["rendered"] for e in man["spawn"] if e.get("spec")}
     assert len(ctxs) <= 1, "contexto deve ser compartilhado no fan-out"
     return f"spec executable + ghost blocked + equip/unequip durable + manifest carries shared specs"
+
+
+def t_agent_lifecycle():
+    # O-2 full flow (v1.53): the CLOSED loop dissect->matrix->find-or-create->equip/discover->spec,
+    # then finalize() evolves the library ONLY on a validated success.
+    import agent_lifecycle as al
+    # 1+2: competence matrix — disciplines + canonical facets, JSON-serializable (facets not a set)
+    mx = al.competence_matrix("optimize a react frontend for accessibility and performance")
+    import json as _j; _j.dumps(mx)                       # must not raise (facets normalized)
+    assert isinstance(mx["disciplines"], list) and "specialties" in mx
+    # 4: a task WITH a real roster agent picks it (postgres-pro ~0.095, above the 0.05 bar)
+    a_real = al.resolve_agent("design a distributed database sharding strategy for postgres")
+    assert a_real["synthesize"] is False and a_real["source"] in ("roster", "repo"), a_real
+    # 4: a task with NO roster match synthesizes a generic agent (empty match -> synthesize)
+    a_syn = al.resolve_agent("dimensione uma viga de concreto no estado limite ultimo")
+    assert a_syn["synthesize"] is True and a_syn["agent_id"].startswith("generic-"), a_syn
+    # full run -> executable spec + equipment plan with the discovery cascade (native/skills.sh)
+    plan = al.run("build an ETL data pipeline with airflow")
+    assert plan["spec"]["instruction"] and "cascade" in plan["equipment"]
+    assert "native" in plan["equipment"]["cascade"], plan["equipment"]["cascade"]
+    # 6-8 gate: an UNVALIDATED result must NOT evolve the library (no reputation poisoning)
+    assert al.finalize("t", "generic-x", validated=False)["status"] == "SKIPPED"
+    # a VALIDATED result evolves: learning recorded + durable grant + memory anchor
+    ev = al.finalize("design sharding", "postgres-pro", matrix=a_real["matrix"], validated=True,
+                     equipped_skills=["skill:x/db-tune"])
+    assert ev["status"] == "EVOLVED" and ev["grants"] >= 1 and ev["anchor"], ev
+    # v1.54 LEARN FROM FAILURE: an unvalidated run WITH a diagnosis records a demotion + vaccine
+    fl = al.finalize("bad run", "generic-y", validated=False,
+                     error="used E=210GPa for concrete", why="concrete uses E_cs=alpha_e*5600*sqrt(fck)")
+    assert fl["status"] == "SKIPPED_EVOLUTION_LEARNED_FAILURE" and fl["vaccine"] == "SAVED", fl
+    return (f"matrix+resolve(real={a_real['agent_id']},syn={a_syn['agent_id']}) + cascade + "
+            f"finalize gate (skip@unvalidated, evolve@validated, learn@failure)")
+
+
+def t_agent_materializer():
+    # v1.54: a VALIDATED generic agent is crystallized into a STANDARDIZED specialist and becomes
+    # discoverable next session — the auto-evolutive library closes the cross-session loop.
+    import agent_lifecycle as al, agent_registry as ar, agent_materializer as am
+    TASK = "dimensione uma viga de concreto no estado limite ultimo"
+    # SESSION 1: no roster match -> synthesize -> validate -> materialize
+    d1 = al.resolve_agent(TASK)
+    assert d1["synthesize"] is True, d1
+    fin = al.finalize(TASK, d1["agent_id"], matrix=d1["matrix"], validated=True,
+                      equipped_skills=["forge/els-check"], success_evidence="ULS ok")
+    assert fin["materialized"] and fin["materialized"]["status"] == "MATERIALIZED", fin["materialized"]
+    # the standardized AGENT.md exists with the canonical frontmatter fields
+    ap = os.path.join(ar._library_dir(), "agents", d1["agent_id"], "AGENT.md")
+    txt = open(ap, encoding="utf-8").read()
+    for field in ("agent_id:", "anchors:", "capabilities:", "input_schema:", "output_schema:",
+                  "what_if_fails:", "security:", "origin: grown_from_generic_spawn"):
+        assert field in txt, f"AGENT.md missing {field}"
+    # the specialist is now in the durable roster overlay (merged into load_ext_roster)
+    assert d1["agent_id"] in {a["id"] for a in ar.load_grown_roster()}
+    # SESSION 2 (same durable home): resolve now FINDS the specialist — no re-synthesis
+    d2 = al.resolve_agent(TASK)
+    assert d2["synthesize"] is False and d2["agent_id"] == d1["agent_id"], d2
+    # render helpers produce standardized SKILL.md too
+    smd = am.render_skill_md("engineering.els-check", "engineering", "ULS/SLS check", anchors=["ELU"])
+    assert "skill_id:" in smd and "domain_path:" in smd and "llm_compat:" in smd
+    return f"grow->materialize(AGENT.md)->register; session2 finds {d2['agent_id']} (no re-synth)"
 
 
 def t_kernel_gate():
@@ -1436,7 +1505,31 @@ def t_taxonomy():
     # wiring: a task with no discipline keyword is routed by facets, not dumped into engineering
     assert "math" in orchestrator.dissect("calcule a moda e a mediana da amostra"), \
         orchestrator.dissect("calcule a moda e a mediana da amostra")
-    return f"facets classify + cross-language attraction ({s_real} > {s_stub}); dissect wired"
+    # v1.55: engineering domain — a structural task classifies correctly (was legal/calculus)
+    eng = taxonomy.classify("dimensione uma viga de concreto no estado limite ultimo com NBR 6118")
+    assert eng["domain"] == "engineering" and eng["subdomain"] == "structural", eng
+    # v1.55: SELF-EVOLVING — an unknown term is learned from a validated run and then classifies,
+    # and the durable overlay is written (loads next session via load_evolved at import).
+    import tempfile, os as _os
+    _old = _os.environ.get("APEX_METHOD_HOME")
+    _os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp(prefix="apex-tax-")
+    try:
+        import importlib
+        importlib.reload(taxonomy)                       # fresh session: empty overlay
+        assert taxonomy.classify("projete um vertedouro de barragem CCR")["domain"] is None
+        ev = taxonomy.evolve("projete um vertedouro de barragem CCR",
+                             domain="engineering", subdomain="structural")
+        assert ev["status"] == "EVOLVED" and ev["added_terms"] >= 1, ev
+        assert taxonomy.classify("vertedouro de barragem CCR")["domain"] == "engineering"
+        assert _os.path.isfile(taxonomy._evolved_path()), "durable overlay must persist"
+    finally:
+        if _old is not None:
+            _os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            _os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(taxonomy)
+    return (f"facets classify + cross-language attraction ({s_real} > {s_stub}); dissect wired; "
+            f"engineering/structural; self-evolving overlay (learn->classify)")
 
 
 def t_learning():
@@ -1781,7 +1874,9 @@ TESTS = [
     ("memory", t_memory), ("llm_adapter", t_llm_adapter), ("swap_store", t_swap_store),
     ("learning", t_learning), ("execution_policy", t_execution_policy),
     ("taxonomy", t_taxonomy), ("attraction_graph", t_attraction_graph),
-    ("agent_spawn", t_agent_spawn), ("kernel_gate", t_kernel_gate), ("rag_index", t_rag_index),
+    ("agent_spawn", t_agent_spawn), ("agent_lifecycle", t_agent_lifecycle),
+    ("agent_materializer", t_agent_materializer),
+    ("kernel_gate", t_kernel_gate), ("rag_index", t_rag_index),
     ("plug_and_play", t_plug_and_play), ("agent_bundle_context", t_agent_bundle_and_context),
     ("capability_map", t_capability_map), ("pipeline_dsm", t_pipeline_dsm),
     ("routine_composer", t_routine_composer), ("routine_run_loop", t_routine_run_loop),
