@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.49.0
+version: 1.50.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,7 +47,7 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 48 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 49 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
@@ -202,6 +202,13 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   wins). **`overview()` is the crystallized memory: a DETERMINISTIC macro map (no timestamps —
   same content = same prompt prefix = provider prompt-cache hit). LOAD IT FIRST in every new
   session instead of remapping the repository.** Full `build()` refreshes the global IDF.
+  **v1.50 (closes item 3):** `search(..., dim="mathematics/simulation")` filters by the
+  taxonomic matrix (prefix match on discipline/specialization/mode — the TagRAG idea via the
+  dims every node already carries). **`solid_prefix()` is the STABLE-PREFIX CONVENTION:**
+  provider KV/prompt caches match prefixes token-by-token, so EVERY session/spawn prompt must
+  open with this deterministic block (overview + stable environment + governance constants),
+  put semi-stable task context next, and the volatile question LAST — identical content =
+  cache hit = cheaper prefill. Never edit inside the prefix mid-session.
   **v1.48 — REPO-WIDE + SEMANTIC DRIFT:** the index now covers the 111 BOOT PAGES (registry
   purpose + YAML head; `boot:<module>` nodes) and `reference-docs/` with per-chapter sections
   (`refdoc:` nodes, local clone). `sync()` also detects SEMANTIC DRIFT (the author's spec):
@@ -237,6 +244,14 @@ standardized snapshot (`scripts/snapshot.py`) and re-read it when a session resu
   by geodesic ΔH/token (run/skip + [APPROX] savings: EXPRESS ~5.1k tokens saved, STANDARD ~3.8k).
   The APPLIED optimization: `context_budget(mode)` sizes the context_pack injection per mode
   (0 on EXPRESS → 2000 chars on RESEARCH) — orchestrator and agent_spawn consume it on every call.
+- **`scripts/federation.py`** — FEDERATION (v1.50, unblocked by the per-device ledger):
+  `export_pack()` builds a SIGNED knowledge pack carrying ONLY gate-validated learning
+  (PROMOTED personas/routines, promotable vaccines, approved grants) + the exporting device's
+  ledger chain as verifiable PROVENANCE (SHA-256; HMAC when both sides set APEX_FED_KEY).
+  `verify_pack()` fails closed (schema, signature, chain re-verified link by link);
+  `import_pack(pack, approved=True)` requires the H5 human gate, merges LOCAL-WINS
+  (idempotent re-import), and appends the sender's intact chain to the local ledger.
+  Successful experience from one instance becomes evolution input for all — with governance.
 - **`scripts/token_tracker.py`** — REAL token measurement per round/step (OPP-99, v1.47):
   every FULL_PIPELINE run records the payload each kernel step produced (chars/4 proxy,
   declared); with >=3 samples the MEASURED average replaces the [APPROX] estimate in

@@ -436,10 +436,15 @@ def _enrich(node):
     return out
 
 
-def search(query, k=5, node_type=None, path=INDEX_PATH, macro=True):
+def search(query, k=5, node_type=None, path=INDEX_PATH, macro=True, dim=None):
     """Busca por aproximação (PT/EN) sobre o estado sólido. Cada hit volta com a visão macro:
     dimensão, quem afeta (imports reversos), o que atrai, e o pai (para seções). Aliases
-    resolvem: buscar pelo nome antigo encontra o nó renomeado."""
+    resolvem: buscar pelo nome antigo encontra o nó renomeado.
+
+    v1.50 (fecha o item 3): `dim` filtra pela MATRIZ TAXONÔMICA — dim="mathematics" restringe
+    à disciplina; dim="mathematics/simulation" desce à especialização (match por prefixo do
+    caminho disciplina/especialização/modo). É o TagRAG do autor sem custo extra: as tags são
+    as dimensões que cada nó já carrega."""
     doc = load(path)
     idf = doc["_meta"].get("idf", {})
     from collections import Counter
@@ -451,6 +456,8 @@ def search(query, k=5, node_type=None, path=INDEX_PATH, macro=True):
     scored = []
     for n in doc["nodes"]:
         if node_type and n["type"] != node_type:
+            continue
+        if dim and not n.get("dim", "geral").startswith(dim):
             continue
         s = sum(w * qv.get(g, 0.0) for g, w in n["terms"].items())
         if s > 0:
@@ -504,11 +511,39 @@ def overview(path=INDEX_PATH):
     return "\n".join(lines)
 
 
+def solid_prefix(path=INDEX_PATH):
+    """A CONVENÇÃO DE PREFIXO ESTÁVEL (v1.50 — alinha o runtime ao prompt caching do provedor):
+    o KV-cache real vive no provedor e opera por correspondência EXATA de prefixo, token a
+    token. Este helper monta o bloco cristalizado que deve abrir TODO prompt de sessão/spawn,
+    SEMPRE na mesma ordem canônica e SEM nada volátil (zero timestamps, zero aleatoriedade):
+      1. overview() — o mapa macro determinístico do sistema;
+      2. o ambiente estável da máquina (linguagens/libs presentes — muda só quando o ambiente muda);
+      3. as constantes de governança (H5, gate, honestidade).
+    Conteúdo idêntico ⇒ prefixo idêntico ⇒ prefill em cache ⇒ economia de tokens/latência.
+    REGRA DE MONTAGEM: [solid_prefix] + [contexto da tarefa (semi-estável)] + [pergunta volátil
+    POR ÚLTIMO]. Qualquer edição no meio do prefixo invalida o cache dali em diante."""
+    parts = [overview(path)]
+    try:
+        import capability_map
+        env = capability_map.load()["environment"]
+        tools = ",".join(sorted(t for t, ok in env["tools"].items() if ok))
+        libs = ",".join(sorted(l for l, ok in env["libraries"].items() if ok))
+        parts.append(f"ambiente estável: {env.get('python','?')} | tools: {tools} | libs: {libs}")
+    except Exception:
+        pass
+    parts.append("governança: H5 (nada instala/executa sem aprovação humana) · gate do kernel "
+                 "(nenhum passo pulado) · honestidade ([APPROX]/[CONJECTURA_FORMAL] sempre)")
+    return "\n".join(parts)
+
+
 if __name__ == "__main__":
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
         pass
+    if len(sys.argv) > 1 and sys.argv[1] == "prefix":
+        print(solid_prefix())
+        sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "build":
         print(json.dumps(build(), indent=1))
     elif len(sys.argv) > 1 and sys.argv[1] == "sync":

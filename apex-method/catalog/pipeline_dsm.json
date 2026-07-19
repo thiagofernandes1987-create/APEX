@@ -1,10 +1,10 @@
 {
  "_meta": {
   "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimization is context_budget(mode): experience injection sized per mode, zero on EXPRESS.",
-  "built_at": "2026-07-18 21:33:42"
+  "built_at": "2026-07-19 09:22:40"
  },
  "module_dsm": {
-  "modules": 48,
+  "modules": 49,
   "deps": {
    "_tfidf": [],
    "agent_registry": [
@@ -76,6 +76,13 @@
     "llm_adapter",
     "orchestrator",
     "repo_bridge"
+   ],
+   "federation": [
+    "agent_registry",
+    "code_genetics",
+    "learning",
+    "memory",
+    "routine_composer"
    ],
    "fractal_compression": [],
    "geodesic_scheduler": [],
@@ -227,6 +234,7 @@
     "agent_spawn",
     "concurrent_executor",
     "execution_policy",
+    "federation",
     "swap_store"
    ],
    [
@@ -254,11 +262,11 @@
   ],
   "load_bearing": [
    {
-    "module": "_tfidf",
-    "fan_in": 7
+    "module": "learning",
+    "fan_in": 8
    },
    {
-    "module": "learning",
+    "module": "_tfidf",
     "fan_in": 7
    },
    {
@@ -271,15 +279,15 @@
    },
    {
     "module": "memory",
+    "fan_in": 6
+   },
+   {
+    "module": "agent_registry",
     "fan_in": 5
    },
    {
     "module": "pipeline_dsm",
     "fan_in": 5
-   },
-   {
-    "module": "agent_registry",
-    "fan_in": 4
    },
    {
     "module": "bayes",
