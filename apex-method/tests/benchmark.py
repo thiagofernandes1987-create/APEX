@@ -1118,6 +1118,96 @@ def t_ledger_multidevice():
         importlib.reload(cfg); importlib.reload(mem_mod)
 
 
+def t_prefix_and_dim():
+    # v1.50 (fecha o item 3): prefixo estável determinístico (prompt-cache alignment) +
+    # filtro pela matriz taxonômica na busca (o TagRAG do autor via dims existentes).
+    import rag_index as ri
+    p1, p2 = ri.solid_prefix(), ri.solid_prefix()
+    assert p1 == p2 and "SOLID-STATE" in p1 and "governança" in p1, "prefixo determinístico"
+    assert len(p1) < 3000, "prefixo deve ser compacto"
+    import re as _re
+    assert not _re.search(r"\d{4}-\d{2}-\d{2}", p1), "nada volátil (datas) no prefixo"
+    hits = ri.search("simulação com distribuições", dim="mathematics", k=5)
+    assert hits and all(h["dim"].startswith("mathematics") for h in hits), hits
+    deep = ri.search("simulação", dim="mathematics/simulation", k=3)
+    assert deep and all(h["dim"].startswith("mathematics/simulation") for h in deep), deep
+    none = ri.search("simulação", dim="healthcare/impossivel-xyz", k=3)
+    assert none == [], "dim sem match devolve vazio honesto"
+    return f"prefixo estável {len(p1)}ch (~{len(p1)//4}tk); dim filtra disciplina e especialização"
+
+
+def t_federation():
+    # v1.50: pacotes federados — só conhecimento VALIDADO viaja, assinado, com procedência
+    # verificável; H5 obrigatório; adulterado rejeitado; fusão local-vence idempotente.
+    import tempfile, os, importlib, copy
+    import config as cfg, agent_registry as ar, learning as lrn, memory as mem_mod
+    import code_genetics as cg, routine_composer as rc, federation as fed, swap_store as ss
+    _old = os.environ.get("APEX_METHOD_HOME")
+    _oldkey = os.environ.pop("APEX_FED_KEY", None)
+    mods = (cfg, ar, lrn, mem_mod, cg, rc, fed, ss)
+    try:
+        os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()   # instância A
+        for m in mods:
+            importlib.reload(m)
+        for _ in range(3):
+            lrn.record_outcome("persona", "architect", "engineering", True)   # PROMOTED
+        for _ in range(3):
+            lrn.record_outcome("persona", "poet", "engineering", False)       # DEMOTED
+        v = cg.durable_store()
+        v.save_vaccine("timeout no deploy", "timeout=30s")
+        for ok in (True, True, True):
+            v.record_outcome("timeout no deploy", ok)                         # promovável
+        v.save_vaccine("vacina fraca", "x")                                   # NÃO promovável
+        ar.save_grant("x/design-taste", "react-specialist", approved=True, ext=True)
+        r = rc.compose("landing page", agent_id="ui-designer"); rc.save_routine(r)
+        for _ in range(3):
+            rc.record_routine_outcome(r["id"], True)                          # PROMOTED
+        mem_mod.MemoryStore().record_event("persona_promoted", "architect@eng", "promote")
+        pack = fed.export_pack("pack-A")
+        assert fed.verify_pack(pack)["ok"], fed.verify_pack(pack)
+        subs = {x["subject"] for x in pack["validated"]["learning"]}
+        assert "architect" in subs and "poet" not in subs, "só o VALIDADO viaja"
+        assert all(x["sig"] != cg.signature("vacina fraca")
+                   for x in pack["validated"]["vaccines"]), "vacina não-promovável fora"
+        # instância B: gates + fusão + procedência
+        os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp()
+        for m in mods:
+            importlib.reload(m)
+        mem_mod.MemoryStore().record_event("rule", "R-B", "promote")          # cadeia própria de B
+        assert fed.import_pack(pack)["status"] == "BLOCKED", "H5 obrigatório"
+        tam = copy.deepcopy(pack)
+        tam["validated"]["learning"].append({"sha": "evil", "kind": "persona", "subject": "hacker",
+                                             "domain": "x", "successes": 9, "trials": 9,
+                                             "status": "PROMOTED", "mean": 1.0, "updated": 0})
+        assert fed.import_pack(tam, approved=True)["status"] == "REJECTED", "adulterado rejeitado"
+        inst = fed.import_pack(pack, approved=True)
+        assert inst["status"] == "INSTALLED" and inst["learning"] >= 1 and inst["vaccines"] == 1 \
+            and inst["ledger_ok_after"], inst
+        assert lrn.score("persona", "architect", "engineering")["status"] == "PROMOTED"
+        vb = mem_mod.MemoryStore().verify_ledger()
+        assert vb["ok"] and vb["devices"] == 2, vb
+        re2 = fed.import_pack(pack, approved=True)
+        assert all(re2[k] == 0 for k in ("learning", "vaccines", "routines", "grants", "provenance")), \
+            f"reimport deve ser idempotente: {re2}"
+        # HMAC: mesmo segredo verifica; segredo diferente rejeita
+        os.environ["APEX_FED_KEY"] = "segredo"
+        p2 = fed.export_pack("pack-hmac")
+        assert fed.verify_pack(p2)["ok"] and fed.verify_pack(p2)["signed"]
+        os.environ["APEX_FED_KEY"] = "outro"
+        assert not fed.verify_pack(p2)["ok"], "HMAC com chave errada rejeita"
+        return "só-validado viaja; H5+integridade+HMAC; fusão local-vence idempotente; 2 cadeias íntegras"
+    finally:
+        os.environ.pop("APEX_FED_KEY", None)
+        if _oldkey is not None:
+            os.environ["APEX_FED_KEY"] = _oldkey
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        for m in mods:
+            importlib.reload(m)
+
+
 def t_capability_map():
     # v1.45 (author's item 2): the runtime LEARNS to work with installed capabilities —
     # commands mapped (never executed), environment probed, how_to answers PT/EN, and
@@ -1592,6 +1682,7 @@ TESTS = [
     ("capability_cache", t_capability_cache), ("token_tracker", t_token_tracker),
     ("solid_state_index", t_solid_state_index),
     ("index_repo_wide", t_index_repo_wide), ("ledger_multidevice", t_ledger_multidevice),
+    ("prefix_and_dim", t_prefix_and_dim), ("federation", t_federation),
 ]
 
 

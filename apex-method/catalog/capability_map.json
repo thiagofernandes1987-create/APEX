@@ -1,8 +1,8 @@
 {
  "_meta": {
   "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
-  "built_at": "2026-07-18 21:33:42",
-  "count": 54
+  "built_at": "2026-07-19 09:22:40",
+  "count": 55
  },
  "environment": {
   "python": "python 3.14.3",
@@ -287,6 +287,22 @@
     "send": "ver docstring/CLI",
     "receive": "ver docstring",
     "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:federation",
+   "kind": "runtime-tool",
+   "name": "federation",
+   "path": "scripts/federation.py",
+   "description": "federation.py — o protótipo de FEDERAÇÃO: pacotes de conhecimento VALIDADO, assinados, circulando entre instâncias (o efeito de rede da visão do autor, desbloqueado pelo ledger multi-dispositivo). WHY THIS EXISTS: Cada instância do APEX apr",
+   "triggers": "",
+   "commands": [
+    "python scripts/federation.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "- export_pack(): ao fim de um ciclo com aprendizado validado — gera o pacote para publicar"
    }
   },
   {
