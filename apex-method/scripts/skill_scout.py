@@ -23,6 +23,7 @@ WHAT IF IT FAILS:
 """
 import ast, json, sys, re
 import urllib.request
+from _ast_helpers import open_mode_risk, deserializer_rce_reason
 
 ALLOWLIST_HOSTS = ("raw.githubusercontent.com",)  # raw only: github.com/blob returns HTML
 IMPORT_WHITELIST = {
@@ -63,23 +64,6 @@ def fetch_text(url: str, timeout: int = 10, max_bytes: int = 2_000_000) -> str:
         return raw.decode("utf-8", errors="replace")
 
 
-def _write_open_mode(n):
-    """True if this is a builtin open()/Path.open() in write/append/create mode.
-    Audit fix (v1.52.0, SEC-004): plain `open('x','w')` needs no import, so it bypassed the
-    import/attr checks and let staged skill code write arbitrary files with safe=True."""
-    if not (isinstance(n, ast.Call) and (
-            (isinstance(n.func, ast.Name) and n.func.id == "open")
-            or (isinstance(n.func, ast.Attribute) and n.func.attr == "open"))):
-        return False
-    mode = None
-    if len(n.args) >= 2 and isinstance(n.args[1], ast.Constant):
-        mode = n.args[1].value
-    for kw in n.keywords:
-        if kw.arg == "mode" and isinstance(kw.value, ast.Constant):
-            mode = kw.value.value
-    return isinstance(mode, str) and any(c in mode for c in ("w", "a", "x", "+"))
-
-
 def ast_security_scan(code: str) -> dict:
     """Two-tier static scan. 'reject' = RCE vectors (block). 'review' = often-benign
     (list.remove, dataclass vars, subprocess wrappers) — inspect with context.
@@ -90,8 +74,14 @@ def ast_security_scan(code: str) -> dict:
     except SyntaxError as e:
         return {"safe": False, "reject": [f"syntax error: {e}"], "review": [], "reasons": [f"syntax error: {e}"]}
     for node in ast.walk(tree):
-        if _write_open_mode(node):   # SEC-004: builtin open(...,'w') writes files, no import
+        _omr = open_mode_risk(node)  # SEC-004: builtin open(...,'w') writes files, no import
+        if _omr == "write":
             reject.append(f"filesystem write via open(...,'w'/'a'/'x'/'+') (line {node.lineno})")
+        elif _omr == "unknown":      # C-04: non-literal mode can't be proven read-only
+            review.append(f"open() with non-literal mode (line {node.lineno})")
+        _rce = deserializer_rce_reason(node)  # C-04: pandas.read_pickle / numpy.load(allow_pickle)
+        if _rce:
+            reject.append(_rce)
         if (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
                 and node.func.attr in ("write_text", "write_bytes", "unlink", "rmdir",
                                        "replace", "rename", "symlink_to", "touch")):
@@ -121,7 +111,11 @@ def ast_security_scan(code: str) -> dict:
     # that `import subprocess` or `import os` (getattr-obfuscated os.system) returned safe=True.
     # Honour the documented contract: a non-whitelisted import also makes it NOT auto-safe.
     non_whitelisted_imports = [r for r in review if r.startswith("import outside whitelist")]
-    return {"safe": not reject and not non_whitelisted_imports,
+    # C-04: an open() whose mode is not a literal cannot be proven read-only. safe=True means
+    # "no human review needed", so an unprovable file operation must NOT auto-pass — block auto-safe
+    # (it stays in `review`, not `reject`, so a human still sees the context at the H5 gate).
+    unprovable_writes = [r for r in review if r.startswith("open() with non-literal mode")]
+    return {"safe": not reject and not non_whitelisted_imports and not unprovable_writes,
             "reject": sorted(set(reject)), "review": sorted(set(review)),
             "reasons": sorted(set(reject))}  # 'reasons' kept for back-compat
 
