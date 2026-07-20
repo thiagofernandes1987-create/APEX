@@ -32,6 +32,27 @@ sys.path.insert(0, HERE)
 import config as _config
 
 
+def _scrubbed_env():
+    """C-05: a scrubbed environment for executing the STAGED (not-yet-trusted) benchmark. The forge
+    gate is the wrong tool for whole trusted modules — the skill's own scripts legitimately use
+    subprocess/urllib/open('w'), so a static scan would reject every real update. The honest
+    containment is to run the unverified validation step WITHOUT inheriting parent-process secrets
+    (API keys, tokens, APEX_* internals), mirroring pot._safe_env. Blast radius of a tampered
+    benchmark.py is bounded; the transactional stage->validate->swap with rollback does the rest."""
+    try:
+        import pot
+        return pot._safe_env()
+    except Exception:
+        allow = ("SYSTEMROOT", "WINDIR", "PATH", "PATHEXT", "TEMP", "TMP", "TMPDIR", "LANG",
+                 "LC_ALL", "LC_CTYPE", "TZ", "SYSTEMDRIVE", "HOMEDRIVE", "COMSPEC", "LD_LIBRARY_PATH")
+        env = {k: os.environ[k] for k in allow if k in os.environ}
+        env["PYTHONIOENCODING"] = "utf-8"
+        # keep the test-isolation hook so the staged benchmark still runs against an isolated home
+        if os.environ.get("APEX_METHOD_HOME"):
+            env["APEX_METHOD_HOME"] = os.environ["APEX_METHOD_HOME"]
+        return env
+
+
 def _installed_version():
     try:
         txt = open(os.path.join(ROOT, "SKILL.md"), encoding="utf-8").read()
@@ -87,12 +108,19 @@ def update(apply=False):
                 stage = tempfile.mkdtemp(prefix="apex-update-stage-")
                 staged = os.path.join(stage, "apex-method")
                 shutil.copytree(src, staged)
+                # C-05: the staged tree is about to be EXECUTED (benchmark.py) before being swapped
+                # in. Run that unverified validation under a scrubbed env so it cannot read the
+                # parent process's secrets, bounding the blast radius of a tampered clone.
                 bench = subprocess.run(
                     [sys.executable, os.path.join(staged, "tests", "benchmark.py")],
-                    capture_output=True, text=True)
+                    capture_output=True, text=True, env=_scrubbed_env())
                 total = next((l for l in bench.stdout.splitlines() if l.startswith("TOTAL")), "")
-                frac = total.split()[1] if len(total.split()) > 1 else "0/1"
-                p_ok, t_ok = (int(x) for x in frac.split("/")) if "/" in frac else (0, 1)
+                # C-08: extract the pass/total fraction by pattern, not fragile positional split —
+                # any TOTAL-line format change degrades safely to 0/1 (=> REJECTED_STAGED) instead
+                # of an IndexError/ValueError.
+                _m = re.search(r"(\d+)\s*/\s*(\d+)", total)
+                p_ok, t_ok = (int(_m.group(1)), int(_m.group(2))) if _m else (0, 1)
+                frac = f"{p_ok}/{t_ok}"
                 clean = bench.returncode == 0 and p_ok == t_ok and t_ok > 0
                 if not clean:
                     shutil.rmtree(stage, ignore_errors=True)
