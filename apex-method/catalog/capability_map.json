@@ -1,7 +1,7 @@
 {
  "_meta": {
   "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
-  "count": 66
+  "count": 69
  },
  "environment": {
   "python": "python 3.11.15",
@@ -399,6 +399,22 @@
    }
   },
   {
+   "id": "tool:github_skills",
+   "kind": "runtime-tool",
+   "name": "github_skills",
+   "path": "scripts/github_skills.py",
+   "description": "github_skills.py — GitHub-native skill discovery (trusted vendors + stars + semantic search). WHY THIS EXISTS: skills.sh is a convenient index (\"already filtered to what IS a skill\"), but it is a single network dependency that a locked-down",
+   "triggers": "",
+   "commands": [
+    "python scripts/github_skills.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "As the marketplace tier of the discovery cascade when skills.sh is blocked/undesired, or to"
+   }
+  },
+  {
    "id": "tool:gravity",
    "kind": "runtime-tool",
    "name": "gravity",
@@ -476,6 +492,22 @@
     "send": "ver docstring/CLI",
     "receive": "ver docstring",
     "apply_when": "At the start of a run on a NON-reference model, or whenever you need to know if a Level-B"
+   }
+  },
+  {
+   "id": "tool:local_discovery",
+   "kind": "runtime-tool",
+   "name": "local_discovery",
+   "path": "scripts/local_discovery.py",
+   "description": "local_discovery.py — LOCAL-first skill & MCP discovery (what is ALREADY installed here). WHY THIS EXISTS: The marketplace tiers (skills.sh, GitHub) look OUTWARD for skills to install. But the runtime usually ALREADY has skills on disk (`~/.",
+   "triggers": "",
+   "commands": [
+    "python scripts/local_discovery.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "As tier 0 of discovery (before native index / skills.sh / GitHub). An installed skill that matches"
    }
   },
   {
@@ -701,6 +733,22 @@
     "send": "ver docstring/CLI",
     "receive": "ver docstring",
     "apply_when": ""
+   }
+  },
+  {
+   "id": "tool:skill_ledger",
+   "kind": "runtime-tool",
+   "name": "skill_ledger",
+   "path": "scripts/skill_ledger.py",
+   "description": "skill_ledger.py — remember MY choices: the provenance of every skill/tool decision. WHY THIS EXISTS: The runtime discovers skills, equips agents, and solves problems — but without a durable record of WHAT it chose and WHETHER it worked, eve",
+   "triggers": "",
+   "commands": [
+    "python scripts/skill_ledger.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "Right after a skill/agent is used on a real problem (success OR failure). Call `record(...)`. At the"
    }
   },
   {

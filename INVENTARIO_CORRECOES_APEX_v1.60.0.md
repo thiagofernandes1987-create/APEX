@@ -372,4 +372,26 @@ Economia prevista: **~30% num run caro isolado; ~75–80% em cargas recorrentes*
 
 ---
 
-*Inventário produzido após execução e debug completos de todos os módulos. Pronto para a fase de correção (aguardando aprovação para implementar, começando por C-07 → C-01/C-04).*
+### Ciclo 16 — Stress-test por modos (2+2 → auditar a própria Skill): 2 ocorrências, corrigidas
+
+Novo ciclo de stress em tempo real (Dev+QA+Tech Lead) sobre a **última versão**, focado no código novo do Ciclo 15, com problemas reais do trivial (`2+2`→EXPRESS exato) ao complexo (auditar a própria Skill; arquitetura distribuída CQRS/saga). Harnesses: `stress3` (fluxo ponta-a-ponta + resolution-cache + memoização + poda + descoberta + skill_ledger cross-session + RAG-PT + adversarial + throughput), `stress4` (crescimento/isolamento de cache, **fronteira do resolution_check sob histórico pesado**, determinismo do DSM, monotonicidade do fan-out, gating de config), `stress5` (varredura da cascata, edges do DSM, gating de descoberta). Duas ocorrências **reais** encontradas e corrigidas:
+
+- **O-16-1 — `skill_ledger.worked_for`/`recall`: skill provado *soterrado* sob histórico acumulado** (arquivo `scripts/skill_ledger.py`, linhas ~100 e ~124).
+  - **O quê:** `record()` também grava nós de projeção do grafo (`relate_text` → `"problem: …"`/`"skill: …"`, **meta vazio**) que são quase-duplicatas da query e **superam** o registro `SKILL_CHOICE` etiquetado. `worked_for`/`recall` puxavam uma janela minúscula (`k*3`, mín. 12/10) do `memory.recall()` e **só depois** filtravam por `_is_choice` — filtro-após-truncar.
+  - **Como achado:** `stress4` seção B — inundando o ledger com 30 escolhas resolvidas não-relacionadas, a tarefa provada exata caiu para **rank 31 de 62**; o top-15 ficou 100% nós não-escolha → `worked_for` devolvia `[]` → `resolution_check` **parava de curto-circuitar** exatamente no regime recorrente que a otimização mira (degradação segura, mas mata a economia de tokens).
+  - **Impacto:** o resolution-cache (Ciclo 15 #1) e a atração por gravidade silenciosamente deixavam de disparar conforme a sessão acumulava histórico. Nunca reuso errado — só reuso perdido.
+  - **Correção:** super-amostrar o pool de candidatos (`k=max(k*40, 200)`) e filtrar por `_is_choice` **antes** de truncar a k. `memory.recall()` já pontua todas as linhas independentemente de k, então o pool maior é de graça. Validado: sob a mesma inundação, `worked_for` volta a trazer o skill provado (prior 0.66) e `resolution_check` volta a `RESOLUTION_CACHE`; não-relacionado continua `None` (sem falso-positivo). **Teste de regressão** adicionado ao `t_skill_ledger` (flood de 30 + assertiva de que o skill provado sobrevive).
+
+- **O-16-2 — `uco_gate.gate`: chave de cache incompleta** (arquivo `scripts/uco_gate.py`, linha ~60).
+  - **O quê:** a memoização (Ciclo 15 #2) chaveava só por `sha256(code)`, mas o veredito também depende de `uco_path` (qual engine UCO resolve). Dois `uco_path` diferentes para o mesmo código no mesmo processo devolveriam o veredito do primeiro.
+  - **Como achado:** revisão de completude de chave da mesma família do O-16-1 (filtro/estado incompleto).
+  - **Impacto:** veredito de segurança potencialmente stale ao alternar engine no mesmo processo (latente; `uco_path` costuma ser fixo).
+  - **Correção:** chave passa a `sha256(uco_path\x00code)`. `verify.verify_identity` foi auditado no mesmo ciclo e está **correto** (chave completa lhs\x00rhs; não cacheia os casos sympy-ausente/exceção, então um sympy disponível depois não é mascarado).
+
+**Varredura de irmãos:** só existiam 2 sítios de filtro-após-truncar (ambos corrigidos); `orchestrator.py:320` e `recall_graph` não filtram escolhas. Falsos-achados do `stress5` (`deep_research.resolve`, `local_discovery.search` retornar lista) eram **bugs do harness**, não da Skill — APIs reais (`research()`, `search()`→dict documentado) confirmadas sem crash.
+
+Regressão final do ciclo: **72/72 · 13/13 (100%) · CLEAN**; `stress3`/`stress4`/`stress5` → **0 ocorrências reais**. Ponto fixo atingido: novas rodadas por modos não produzem mais achados.
+
+---
+
+*Inventário produzido após execução e debug completos de todos os módulos. Ciclos 7–16 implementados, testados (Dev+QA+Tech Lead) e validados.*

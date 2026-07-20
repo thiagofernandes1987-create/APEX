@@ -93,7 +93,11 @@ def recall(problem, k=5, memory_db=None):
     most relevant first, annotated with the skill's current learning status."""
     import memory
     store = memory.MemoryStore(memory_db) if memory_db else memory.MemoryStore()
-    hits = [h for h in store.recall(problem, k=max(k * 3, 10)) if _is_choice(h)]
+    # Oversample: record() also writes empty-meta graph-projection nodes ("problem: …")
+    # that are near-duplicates of the query and outrank the tagged choice record, so a
+    # small window would be flooded by non-choices. recall() scores every row regardless
+    # of k, so a large pool is free; we filter to choice records BEFORE truncating to k.
+    hits = [h for h in store.recall(problem, k=max(k * 40, 200)) if _is_choice(h)]
     try:
         import learning
         ls = learning.LearningStore()
@@ -115,7 +119,9 @@ def worked_for(task, domain="general", k=5, memory_db=None):
     Feed into gravity/discovery so a proven skill is pulled first next time."""
     import memory
     store = memory.MemoryStore(memory_db) if memory_db else memory.MemoryStore()
-    hits = [h for h in store.recall(task, k=max(k * 3, 12)) if _is_choice(h)]
+    # see recall(): oversample so accumulated graph-projection nodes can't bury the
+    # proven choice record (filter-before-truncate); recall scores all rows anyway.
+    hits = [h for h in store.recall(task, k=max(k * 40, 200)) if _is_choice(h)]
     agg = {}
     for h in hits:
         m = h["meta"]

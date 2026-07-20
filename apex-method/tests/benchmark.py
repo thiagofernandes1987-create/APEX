@@ -2104,6 +2104,15 @@ def t_skill_ledger():
         assert any(w["skill"] == "pdf" and w["success_rate"] == 1.0 for w in prov), prov
         # a FAILED choice must NOT surface as an attraction prior
         assert not any(w["skill"] == "frontend" for w in prov), prov
+        # O-16-1 regression: record() also writes empty-meta graph-projection nodes that
+        # outrank the tagged choice record; a small recall window would bury the proven
+        # skill under accumulated history. Flood with unrelated solved choices, then the
+        # exact proven skill MUST still surface (filter-before-truncate / oversample).
+        for i in range(30):
+            sl.record(f"unrelated task {i} about topic {i}", f"sk{i}", agent="x",
+                      solved=True, repo="a/b", memory_db=db)
+        buried = sl.worked_for("work with pdf files", memory_db=db)
+        assert any(w["skill"] == "pdf" for w in buried), ("pdf buried under history", buried)
     finally:
         if _old is not None:
             os.environ["APEX_METHOD_HOME"] = _old

@@ -57,7 +57,10 @@ def gate(code, uco_path=None):
     PoT snippets — the thing SR_33 actually gates before subprocess exec. Whole modules
     legitimately exceed it, so do NOT use gate() as a module-quality signal; run the UCO
     engine directly (universal_code_optimizer_v4) with size-aware expectations for that."""
-    _key = hashlib.sha256((code or "").encode("utf-8")).hexdigest()
+    # Key on code AND uco_path: a different engine path can yield a different verdict for
+    # the same snippet, so uco_path must be part of the cache identity (else the first
+    # path's verdict would be returned for a later, different path).
+    _key = hashlib.sha256(f"{uco_path or ''}\x00{code or ''}".encode("utf-8")).hexdigest()
     if _key in _GATE_CACHE:                      # Opt #2: identical snippet -> cached verdict
         return dict(_GATE_CACHE[_key], cached=True)
     try:
