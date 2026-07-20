@@ -74,6 +74,14 @@ CURATED_SKILLS = [
     "vercel-labs/agent-skills/main/skills/writing-guidelines/SKILL.md",
 ]
 TRUSTED_VENDORS = skill_scout.OFFICIAL_OWNERS
+
+# Trusted-vendor GitHub orgs to SCAN owner-wide (the `npx skills find --owner` mechanism): list each
+# org's repos via the API and collect every SKILL.md. Existence != has skills — the API walk finds
+# whatever real SKILL.md exist. Degrades to [] where the API is blocked (curated/hub covers that).
+VENDOR_OWNERS = ("anthropics", "vercel-labs", "microsoft", "openai", "cloudflare",
+                 "modelcontextprotocol", "huggingface", "langchain-ai", "stripe",
+                 "supabase", "awslabs", "google", "googleapis", "github")
+
 GH_API = "https://api.github.com"
 RAW = "https://raw.githubusercontent.com"
 
@@ -159,6 +167,13 @@ def _candidates(hubs, owners=None):
     for owner in (owners or []):
         urls.extend(find_by_owner(owner))
     return list(dict.fromkeys(urls))          # de-dup, keep order
+
+
+def deep_scan(query, k=8, max_fetch=120):
+    """DEEP vendor-directory scan: SKILL_HUBS (git-tree) + EVERY trusted VENDOR_OWNERS org
+    (owner-wide API enumeration) + curated baseline, ranked semantically. Where the GitHub API is
+    reachable this walks each vendor's repos for SKILL.md; where blocked it degrades to hubs+curated."""
+    return search(query, owners=VENDOR_OWNERS, k=k, max_fetch=max_fetch)
 
 
 def search(query, hubs=None, owners=None, min_stars=0, k=5, max_fetch=40):

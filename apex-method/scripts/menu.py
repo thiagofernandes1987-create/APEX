@@ -195,6 +195,7 @@ def show():
                           f"set persist_backend drive-swap|git|zip|local (now: {cfg.get('persist_backend')})"),
             "4_research": "menu.py research \"<question>\" --source native|search|both — goal-like deep research",
             "5_persist": "menu.py persist [session_id] [backend] — page the session's memory out to the swap store (Drive/git/zip/local)",
+            "6_scan": "menu.py scan \"<query>\" — DEEP scan of trusted-vendor GitHub orgs/hubs for matching skills (git-tree where the API permits, hubs/curated where not)",
         },
         "preferences": cfg,
     }
@@ -211,6 +212,15 @@ def main():
         print(json.dumps(set_modes(a[1]), indent=1))
     elif cmd == "set" and len(a) >= 3:
         print(json.dumps(set_option(a[1], a[2]), indent=1))
+    elif cmd == "scan" and len(a) >= 2:
+        # DEEP vendor-directory scan: walk trusted-vendor orgs/hubs for skills matching the query.
+        import github_skills
+        q = " ".join(x for x in a[1:] if not x.startswith("--"))
+        out = github_skills.deep_scan(q, k=8)
+        print(f"VENDOR SCAN | status {out['status']} | {out.get('candidates_scanned',0)} candidates")
+        for r in out.get("results", []):
+            print(f"  [{r['semantic']:.3f}] {r['owner']}/{r['repo']} :: {r['name']} "
+                  f"(★{r.get('stars')}, {r['trust_tier']}) — npx skills add {r['owner']}/{r['repo']}")
     elif cmd == "research" and len(a) >= 2:
         src = next((x.split("=", 1)[1] for x in a if x.startswith("--source=")), None)
         if src is None and "--source" in a:

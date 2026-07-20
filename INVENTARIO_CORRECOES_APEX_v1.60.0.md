@@ -332,6 +332,19 @@ Novo tier final: quando **nada existe** (sem PROVEN, sem LOCAL, native não acho
 
 **Cascata final completa:** `PROVEN (0.98) → LOCAL (0.95) → native → skills.sh → GitHub (0.7) → FORGE (0.4, LLM cria — último recurso)`. Regressão **70/70 · 13/13 (100%) · 7/7 CLEAN**.
 
+### Ciclo 13 — Varredura profunda de diretórios de fornecedores confiáveis
+
+Enumeração mais a fundo dos repos dos vendors (via git-tree onde a API permite; hubs/curated onde não).
+
+- **`VENDOR_OWNERS`** (14 orgs confiáveis: anthropics, vercel-labs, microsoft, openai, cloudflare, modelcontextprotocol, huggingface, langchain-ai, stripe, supabase, awslabs, google, googleapis, github) — **sondadas ao vivo** (existência ≠ ter SKILL.md).
+- **`deep_scan(query)`** no `github_skills`: SKILL_HUBS (git-tree, todos os SKILL.md) + **enumeração por-owner** de cada `VENDOR_OWNERS` (`find_by_owner`, o mecanismo `npx skills find --owner`) + baseline curado, ranqueados semanticamente.
+- **`menu.py scan "<query>"`** — comando de usuário para a varredura (o menu agora tem 6 ações).
+- **Por que fora do loop da cascata:** a varredura por-owner faz ~14 chamadas de API (~20s); é uma operação **explícita/periódica**, não por-disciplina. O tier github da cascata continua rápido (`search`, hubs+curated).
+- **Degradação:** onde a API do GitHub está bloqueada (este sandbox), `find_by_owner` → 0 e a varredura cai para o baseline curado; onde a API/token permite, walk completo de git-tree + repos das orgs.
+- **Validado ao vivo:** `menu.py scan "build pdf reports and edit spreadsheets"` → xlsx #1, pdf #2, com `npx skills add ...`. Teste `t_github_skills` estendido (deep_scan, hermético).
+
+Regressão **70/70 · 13/13 (100%) · 7/7 CLEAN**.
+
 ---
 
 *Inventário produzido após execução e debug completos de todos os módulos. Pronto para a fase de correção (aguardando aprovação para implementar, começando por C-07 → C-01/C-04).*

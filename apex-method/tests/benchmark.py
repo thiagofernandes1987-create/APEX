@@ -2077,6 +2077,11 @@ def t_github_skills():
         # different query re-ranks
         r2 = gh.search("edit powerpoint slide deck", hubs=hub, k=3)
         assert r2["results"][0]["name"] == "pptx", [x["name"] for x in r2["results"]]
+        # DEEP vendor scan: walks VENDOR_OWNERS (owner-wide) — with API mocked off, degrades to
+        # hubs+curated but still ranks the right skill and stays OK (never crashes on 14 orgs).
+        assert len(gh.VENDOR_OWNERS) >= 8 and "anthropics" in gh.VENDOR_OWNERS, gh.VENDOR_OWNERS
+        ds = gh.deep_scan("edit powerpoint slides", k=3)
+        assert ds["status"] == "OK" and ds["results"], ds
         # graceful degradation: when NOTHING is fetchable (curated baseline included), status=OFFLINE
         def _all_fail(u, timeout=10, max_bytes=2_000_000):
             raise ValueError("offline")
