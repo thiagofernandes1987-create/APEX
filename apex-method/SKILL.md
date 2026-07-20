@@ -79,6 +79,14 @@ SCIENTIFIC when there is real math/dynamics; drop to EXPRESS for trivial asks. I
 complexity signal appears mid-answer, escalate and say so. Full step lists in
 `references/pipeline.md`.
 
+> **Conservative escalation (triage floor).** "Default STANDARD" applies to tasks whose
+> difficulty class `execution_policy.triage` *recognizes* (via `competence_matrix.estimate_difficulty`).
+> A task the estimator does **not** recognize (`uncertain=True`) is escalated to **DEEP** on
+> purpose — the 3 dissect personas establish the real difficulty before proceeding, rather than
+> silently under-rating a novel task. So an unfamiliar phrasing may run DEEP even when it looks
+> simple; a *recognized* low/medium-difficulty task stays STANDARD. Trivial arithmetic still takes
+> the EXPRESS skip.
+
 ## 1.2 Thinking Patterns
 
 - **Decompose then compute.** Any sub-problem with >2 numeric steps goes to
