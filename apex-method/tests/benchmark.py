@@ -497,6 +497,17 @@ def t_deep_research():
         finally:
             deep_research._resolve_local = _ol
             config.set_option("discovery_local", False)
+        # LAST RESORT: forge fires ONLY when no strong hit exists (all tiers empty, mocked = hermetic)
+        _om = deep_research._resolve_marketplace
+        deep_research._resolve_marketplace = lambda need, mi: []
+        try:
+            config.set_option("discovery_github", False)
+            fr = deep_research.research("totally novel xyzzy need with no skill", source="search", max_rounds=1)
+            got_f = any(s.get("via") == "forge" and s.get("action") == "LLM_CREATE_SKILL"
+                        for s in fr.get("staged_installs", []))
+            assert got_f, "forge last-resort tier did not fire when discovery found nothing"
+        finally:
+            deep_research._resolve_marketplace = _om
     finally:
         config.save(config.DEFAULTS)
     return f"deep_research {out['stop_reason']} in {out['rounds_run']} rounds; github tier wired"

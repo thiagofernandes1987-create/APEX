@@ -46,6 +46,23 @@ def _agents_for(discipline_task):
         return []
 
 
+def _resolve_forge(need, domain="general"):
+    """LAST RESORT (skill_forge): when NOTHING exists anywhere — no proven choice, nothing installed,
+    the native index missed, the marketplace failed and GitHub failed — propose that the LLM CREATE
+    a skill. Returns a STAGED creation proposal (name + description + command); writes no files.
+    Adoption is the LLM's job behind H5; this only surfaces the honest 'build it yourself' signal."""
+    try:
+        import skill_forge
+        name = skill_forge.kebab(" ".join(need.split()[:6]))
+    except Exception:
+        name = "-".join(need.lower().split()[:4]) or "new-skill"
+    desc = (f"Skill for: {need}. Use when the task matches this need and no existing skill covers it. "
+            "Created as last resort because discovery found nothing.")
+    return {"id": name, "via": "forge", "action": "LLM_CREATE_SKILL", "domain": domain,
+            "command": f'python scripts/skill_forge.py create --name "{name}" --description "{desc[:180]}"',
+            "note": "no PROVEN/LOCAL/native/marketplace/GitHub skill exists — the LLM creates one (H5 to adopt)"}
+
+
 def _resolve_proven(need, k=3):
     """Tier -1 (PROVEN): skills that ALREADY solved a similar problem in a past session, recovered
     from skill_ledger (swap-persisted memory). The strongest signal — we remember this worked.
@@ -124,6 +141,8 @@ def _hit_quality(hit):
         return 0.9
     if hit.get("via") == "github":                          # trusted-vendor GitHub skill, staged for H5
         return 0.7 if hit.get("trusted") else 0.6
+    if hit.get("via") == "forge":                           # last-resort: a skill to be CREATED (unbuilt)
+        return 0.4
     return 0.55   # STAGED discovery command (offline / not yet installed)
 
 
@@ -189,6 +208,14 @@ def research(question, source=None, mode=None, max_rounds=4, p_target=0.9):
                         hits.append(g)
                         staged.append({"gap": need, "skill": g["id"], "via": "github",
                                        "trust_tier": g["trust_tier"], "install_command": g["command"]})
+            # LAST RESORT — only when NO STRONG hit exists (>=0.6: proven/local/native/installed/github).
+            # A weak offline marketplace stub (0.55) counts as "marketplace failed", so the honest
+            # signal is: nothing real was found -> propose the LLM CREATE a skill.
+            if cfg.get("discovery_forge", True) and not any(_hit_quality(h) >= 0.6 for h in hits):
+                f = _resolve_forge(need, d)
+                hits.append(f)
+                staged.append({"gap": need, "skill": f["id"], "via": "forge",
+                               "action": f["action"], "create_command": f["command"], "note": f["note"]})
             resolved[d] = {"agents": [a[0] for a in agents], "skills": hits[:3]}
         rel = _round_reliability(disciplines, resolved)
         reliabilities.append(rel)

@@ -322,6 +322,16 @@ Status: **NOVO** (achado nesta auditoria) · **CONHECIDO** (documentado antes) �
 
 **Portão de regressão para cada correção:** `benchmark.py` deve seguir **68/68**, `evaluate.py` **13/13**, `scenario.py` **7/7 CLEAN**, e os PoCs de C-01/C-04 devem passar a falhar (comportamento seguro). Nenhuma correção pode tocar os dados reais em `~/.apex-method` (usar `APEX_METHOD_HOME` isolado, como as suítes já fazem desde v1.42).
 
+### Ciclo 12 — Último recurso da cascata: o LLM CRIA skills (skill_forge)
+
+Novo tier final: quando **nada existe** (sem PROVEN, sem LOCAL, native não achou, marketplace falhou, GitHub falhou), o runtime propõe que o **LLM crie a skill** via `skill_forge`.
+
+- `_resolve_forge(need, domain)` no `deep_research`: **proposta STAGED** (`action: LLM_CREATE_SKILL` + nome kebab + descrição + comando `skill_forge.py create ...`) — **não escreve arquivo**; adoção é do LLM atrás do H5.
+- **Gatilho preciso:** dispara só quando **não há hit forte (≥0.6)** — um stub offline do marketplace (0.55) conta como "marketplace falhou". `_hit_quality` forge = **0.4**. Flag `discovery_forge` (default True).
+- **Validado ao vivo:** necessidade inédita + tiers vazios → forge dispara; com hit forte (local acha pdf) → forge **não** dispara. Teste `t_deep_research` estendido (hermético).
+
+**Cascata final completa:** `PROVEN (0.98) → LOCAL (0.95) → native → skills.sh → GitHub (0.7) → FORGE (0.4, LLM cria — último recurso)`. Regressão **70/70 · 13/13 (100%) · 7/7 CLEAN**.
+
 ---
 
 *Inventário produzido após execução e debug completos de todos os módulos. Pronto para a fase de correção (aguardando aprovação para implementar, começando por C-07 → C-01/C-04).*
