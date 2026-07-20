@@ -39,7 +39,34 @@ Nenhuma dessas observações quebrou execução; são precondições/qualidade q
 
 ---
 
-## Parte C — Inventário de correções (priorizado)
+## Parte C-STATUS — Execução das correções (ciclos 1–3) ✅
+
+> Ciclo aplicado conforme solicitado: **Corrigir → testar (Dev+QA+Tech Lead, todos os módulos + fluxo da SKILL.md) → identificar novas ocorrências → atualizar inventário → corrigir → repetir**. Portão de regressão a cada ciclo: `benchmark 68/68 · evaluate 13/13 (100%) · scenario 7/7 CLEAN`.
+
+| ID | Ciclo | Status | Evidência de fechamento |
+|---|---|---|---|
+| **C-07** | 1 | ✅ RESOLVIDO | `_ast_helpers.py` compartilhado; duplicação eliminada |
+| **C-01** | 1 | ✅ RESOLVIDO | `make_filename` sanitiza + guard `commonpath` em `write_versioned`; PoC de traversal agora **contido** no swap dir |
+| **C-04** | 1 | ✅ RESOLVIDO | `numpy.load(allow_pickle)`, `pandas.read_pickle`, `open()` modo não-literal → **safe=False / REJECTED** nos 2 gates; controles preservados |
+| **C-02** | 2 | ✅ RESOLVIDO | HMAC exigido quando `APEX_FED_KEY` setada; bundle forjado (sha recomputado) → **REJECTED**; sem chave = retrocompat |
+| **C-03** | 2 | ✅ RESOLVIDO | `import_pack` expõe `UNSIGNED/SIGNED` proeminente no gate H5 |
+| **C-06** | 2 | ✅ RESOLVIDO | `import_bundle` retorna `warnings[]` por-arquivo em vez de swallow silencioso |
+| **C-05** | 3 | ✅ RESOLVIDO (revisado) | benchmark staged roda com **ambiente scrubbed** (não herda segredos). *Abordagem de scan com forge gate descartada: reprovava 43/52 scripts legítimos* |
+| **C-08** | 3 | ✅ RESOLVIDO | parse do resultado via regex `\d+/\d+` (degrada seguro) |
+| **C-09** | 3 | ✅ RESOLVIDO | `skill_forge` sem subcomando → help + rc=0 (self-tests 50/51 → **52/52**) |
+
+### Novas ocorrências encontradas DURANTE os ciclos (loop de descoberta)
+
+| ID | Ciclo | Severidade | Ocorrência | Correção | Status |
+|---|---|---|---|---|---|
+| **N-01** | 1 | 🟡 Médio | `_ast_helpers.py` novo não registrado em `catalog/scripts_lib.json` (quebrou consistência 1:1 — padrão F-08) | Entrada `script:_ast_helpers` adicionada ao catálogo | ✅ RESOLVIDO |
+| **N-02** | 2 | 🟠 Alto (teste) | **Testes flaky** `agent_lifecycle`/`agent_materializer` (evaluate 66/68 intermitente): não-hermético — o especialista materializado persistia no overlay de roster e quebrava o precondition `no roster match → synthesize` em home reusado | `_wipe_grown_roster()` no início dos 2 testes | ✅ RESOLVIDO (fresh=determinístico; reuse agora 68/68) |
+
+**Estado final do loop:** após 3 ciclos, o portão de regressão é atingido de forma **estável e determinística** (evaluate deixou de oscilar). Nenhuma nova ocorrência aberta ao fim do ciclo 3. Matriz de módulos pós-correção: **52/52 importam · 52/52 self-tests rc=0**.
+
+---
+
+## Parte C — Inventário de correções (priorizado) — *referência original*
 
 Severidade: 🔴 crítico · 🟠 alto · 🟡 médio · 🔵 baixo · 🟢 informativo.
 Status: **NOVO** (achado nesta auditoria) · **CONHECIDO** (documentado antes) · **PoC** (comprovado por execução).
