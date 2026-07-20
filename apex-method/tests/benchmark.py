@@ -2000,6 +2000,40 @@ def t_autopsy_v152():
     return "SEC-001/002/003/004/005/006/007 + FUNC-001 + USER-A locked"
 
 
+def t_skill_ledger():
+    # remember MY choices: record the 7-field provenance, then RECOVER it in a fresh session (swap).
+    import skill_ledger as sl, memory, swap_store as ss, os, tempfile, importlib
+    _old = os.environ.get("APEX_METHOD_HOME")
+    homeA = tempfile.mkdtemp(prefix="sl-A-"); os.environ["APEX_METHOD_HOME"] = homeA
+    try:
+        importlib.reload(memory); importlib.reload(ss)
+        p = sl.record("extract text from a pdf report", "pdf", agent="doc-specialist", solved=True,
+                      repo="anthropics/skills",
+                      commands=[{"cmd": "npx skills add anthropics/skills", "does": "install"}])
+        assert p["skill"] == "pdf" and p["memory_sha"], p
+        sl.record("build a react ui", "frontend", agent="fe", solved=False, repo="x/y")
+        m = memory.MemoryStore()
+        po = ss.page_out("s1", memory_db=m.db_path, snapshot={"objective": "choices"})
+        # fresh session (another machine): page-in must restore the choices
+        homeB = tempfile.mkdtemp(prefix="sl-B-"); os.environ["APEX_METHOD_HOME"] = homeB
+        importlib.reload(memory); importlib.reload(ss)
+        db = os.path.join(homeB, "m.db")
+        ss.page_in_session(po["session_dir"], memory_db=db)
+        got = sl.recall("work with pdf files", k=3, memory_db=db)
+        assert any(c["skill"] == "pdf" and c["solved"] and c["commands"] for c in got), got
+        prov = sl.worked_for("pdf document", memory_db=db)
+        assert any(w["skill"] == "pdf" and w["success_rate"] == 1.0 for w in prov), prov
+        # a FAILED choice must NOT surface as an attraction prior
+        assert not any(w["skill"] == "frontend" for w in prov), prov
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(memory); importlib.reload(ss)
+    return "skill choices recorded (7 fields) + recovered cross-session; worked_for prior excludes failures"
+
+
 def t_github_skills():
     # N-05: GitHub-native discovery — trusted-vendor + semantic ranking, offline-safe (fetch mocked).
     import github_skills as gh, skill_scout
@@ -2045,6 +2079,7 @@ def t_github_skills():
 
 
 TESTS = [
+    ("skill_ledger", t_skill_ledger),
     ("github_skills", t_github_skills),
     ("autopsy_v152", t_autopsy_v152),
     ("runtime_autopsy", t_runtime_autopsy),

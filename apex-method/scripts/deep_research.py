@@ -46,6 +46,19 @@ def _agents_for(discipline_task):
         return []
 
 
+def _resolve_proven(need, k=3):
+    """Tier -1 (PROVEN): skills that ALREADY solved a similar problem in a past session, recovered
+    from skill_ledger (swap-persisted memory). The strongest signal — we remember this worked.
+    Returns [] when there is no history yet."""
+    try:
+        import skill_ledger
+        return [{"id": w["skill"], "via": "proven", "repo": w.get("repo"),
+                 "success_rate": w.get("success_rate"), "prior": w.get("prior")}
+                for w in skill_ledger.worked_for(need, k=k)]
+    except Exception:
+        return []
+
+
 def _resolve_local(need, k=3):
     """LOCAL-first tier: skills ALREADY installed here (~/.claude, /mnt/skills) — ready to use,
     no install, no H5. Returns [] on any failure. The strongest tier: an installed match beats a
@@ -101,8 +114,10 @@ def _resolve_github(need, k=3):
 def _hit_quality(hit):
     """Honest per-hit strength: a native hit is scored by its search score (capped),
     a marketplace hit with real install data is strong, an offline STAGED command is weak."""
+    if hit.get("via") == "proven":
+        return 0.98   # we REMEMBER this skill solved a similar problem before — strongest signal
     if hit.get("via") == "local":
-        return 0.95   # already installed & ready — strongest tier (no install, no H5)
+        return 0.95   # already installed & ready (no install, no H5)
     if hit.get("via") == "native":
         return min(1.0, (hit.get("score", 0) or 0) / 6.0)   # native scores ~0..12
     if hit.get("installs"):
@@ -152,8 +167,10 @@ def research(question, source=None, mode=None, max_rounds=4, p_target=0.9):
             need = f"{question} {d}"
             agents = _agents_for(need)
             hits = []
-            # TIER 0 — LOCAL-first: skills already installed here beat anything that needs installing.
+            # TIER -1 — PROVEN: skills we REMEMBER solving a similar problem (swap-persisted choices).
+            # TIER 0  — LOCAL-first: skills already installed here beat anything that needs installing.
             if cfg.get("discovery_local", True):
+                hits += _resolve_proven(need)
                 hits += _resolve_local(need)
             if source in ("native", "both"):
                 hits += _resolve_native(need)

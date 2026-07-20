@@ -198,6 +198,26 @@ Novo `scripts/local_discovery.py` — mapeia o que **já está instalado** no am
 
 **Cascata final:** `LOCAL (instaladas + MCPs) → native (índice) → skills.sh (marketplace) → github (fornecedores confiáveis)`. Regressão **69/69 · 13/13 (100%) · 7/7 CLEAN**.
 
+### Ciclo 10 — Memória das ESCOLHAS (proveniência) recuperável entre sessões
+
+Antes de expandir mais a cascata: o runtime precisa **lembrar das próprias escolhas**. Novo `scripts/skill_ledger.py` grava a proveniência de cada decisão (os 7 campos) e a recupera em outras sessões via swap.
+
+**Os 7 campos:** problema/necessidade · skill usada · agente que usou · resolveu? · foi promovida? · repositório · comandos (+ o que cada um faz).
+
+**Como persiste (sem nova encanação — reusa os stores que o swap já captura):**
+- `memory.remember` (semântica + meta) → `recall(problema)` acha a escolha [swap: memory]
+- aresta de KG `problema --resolved_by/attempted--> skill` [swap: knowledge_graph]
+- evento no ledger de governança SHA-256 (tamper-evident) [swap: ledger]
+- `learning.record_outcome` → promove/rebaixa a skill por taxa de sucesso [swap: stores.learning]
+
+**APIs:** `record(...)` grava; `recall(problema)` devolve escolhas passadas (7 campos + status de learning); `worked_for(task)` = **prior de atração** (skills que já resolveram problema similar — exclui falhas).
+
+**Prova ao vivo (cross-session):** Sessão 1 grava 3 escolhas → page-out → **home NOVO** → page-in → Sessão 2 recupera problema/skill/resolveu/promoção/repo **e os comandos + o que cada um faz**; `worked_for('document editing')` → docx (1.0) e pdf (1.0).
+
+**Fiação na atração/cascata:** novo **tier -1 PROVEN** no `deep_research` (`_resolve_proven` via `skill_ledger.worked_for`), qualidade **0.98** — "eu lembro que essa skill resolveu isso" é o sinal mais forte, acima de LOCAL (0.95). Gated por `discovery_local` (hermético nos testes).
+
+**Cascata agora:** `PROVEN (lembrado) → LOCAL (instaladas + MCPs) → native → skills.sh → github`. Teste `t_skill_ledger` (hermético): grava 7 campos + recupera cross-session + prior exclui falhas. Registrado em `scripts_lib.json`. Regressão **70/70 · 13/13 (100%) · 7/7 CLEAN**.
+
 ---
 
 ## Parte C — Inventário de correções (priorizado) — *referência original*

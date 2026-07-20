@@ -32,6 +32,14 @@
   "path": "scripts/local_discovery.py"
  },
  {
+  "id": "script:skill_ledger",
+  "type": "script",
+  "domain": "memory",
+  "capabilities": "provenance,skill-choice,cross-session,attraction-prior,worked-for,swap-recall",
+  "mass": 150,
+  "path": "scripts/skill_ledger.py"
+ },
+ {
   "id": "script:agent_lifecycle",
   "type": "script",
   "domain": "meta",
