@@ -183,13 +183,18 @@ def import_pack(pack, approved=False):
     v = verify_pack(pack)
     if not v["ok"]:
         return {"status": "REJECTED", "reason": v["reason"]}
+    # C-03: make the authentication state IMPOSSIBLE to miss at the H5 gate. Without APEX_FED_KEY on
+    # both ends the pack is UNSIGNED — integrity is only a plain checksum (anyone can recompute it),
+    # so the human approving is the sole trust boundary and must be told so explicitly.
+    signed = bool(v.get("signed"))
+    trust = "SIGNED (HMAC verificado)" if signed else "UNSIGNED (só checksum — origem NÃO autenticada)"
     if not approved:
-        return {"status": "BLOCKED",
-                "reason": "importar conhecimento federado equipa habilidades e muda comportamento "
-                          "futuro — exige aprovação humana (H5)"}
+        return {"status": "BLOCKED", "signed": signed, "trust": trust,
+                "reason": f"[{trust}] importar conhecimento federado equipa habilidades e muda "
+                          "comportamento futuro — exige aprovação humana (H5)"}
     val = pack.get("validated", {})
-    out = {"status": "INSTALLED", "from_device": pack.get("device", "")[:8],
-           "learning": 0, "vaccines": 0, "routines": 0, "grants": 0, "provenance": 0}
+    out = {"status": "INSTALLED", "from_device": pack.get("device", "")[:8], "signed": signed,
+           "trust": trust, "learning": 0, "vaccines": 0, "routines": 0, "grants": 0, "provenance": 0}
     try:                                    # learning: só (kind,subject,domain) ausente localmente
         import learning, sqlite3
         s = learning.LearningStore()
