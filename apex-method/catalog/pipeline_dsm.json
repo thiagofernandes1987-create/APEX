@@ -3,7 +3,7 @@
   "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimizations are context_budget(mode) — experience injection sized per mode, zero on EXPRESS — and its twin output_budget(mode): generation compressed on cheap paths, full verbosity kept on DEEP+ where the reasoning chain is the product."
  },
  "module_dsm": {
-  "modules": 52,
+  "modules": 55,
   "deps": {
    "_ast_helpers": [],
    "_tfidf": [],
@@ -67,6 +67,7 @@
     "code_genetics",
     "competence_matrix",
     "config",
+    "execution_policy",
     "learning",
     "mental_interpreter",
     "orchestrator",
@@ -82,8 +83,12 @@
     "apex_st_metric",
     "bayes",
     "config",
+    "github_skills",
+    "local_discovery",
     "orchestrator",
     "repo_bridge",
+    "skill_forge",
+    "skill_ledger",
     "skills_sh",
     "snapshot"
    ],
@@ -108,6 +113,10 @@
    "fractal_compression": [],
    "geodesic_scheduler": [],
    "geometry_estimator": [],
+   "github_skills": [
+    "_tfidf",
+    "skill_scout"
+   ],
    "gravity": [
     "_tfidf",
     "repo_bridge",
@@ -122,6 +131,10 @@
     "memory"
    ],
    "llm_adapter": [],
+   "local_discovery": [
+    "_tfidf",
+    "skill_scout"
+   ],
    "memory": [
     "_tfidf",
     "hypothesis_dag"
@@ -130,6 +143,7 @@
    "menu": [
     "config",
     "deep_research",
+    "github_skills",
     "memory",
     "pot",
     "repo_bridge",
@@ -147,6 +161,7 @@
     "mental_interpreter",
     "monte_carlo",
     "pipeline_dsm",
+    "skill_ledger",
     "snapshot",
     "swap_store",
     "taxonomy",
@@ -182,6 +197,10 @@
     "memory"
    ],
    "skill_forge": [],
+   "skill_ledger": [
+    "learning",
+    "memory"
+   ],
    "skill_scout": [
     "_ast_helpers"
    ],
@@ -250,8 +269,9 @@
    [
     "agent_materializer",
     "attraction_graph",
-    "deep_research",
+    "github_skills",
     "learning",
+    "local_discovery",
     "taxonomy"
    ],
    [
@@ -259,11 +279,13 @@
     "capability_map",
     "competence_matrix",
     "rag_index",
-    "routine_composer"
+    "routine_composer",
+    "skill_ledger"
    ],
    [
     "agent_spawn",
     "concurrent_executor",
+    "deep_research",
     "execution_policy",
     "swap_store"
    ],
@@ -291,22 +313,57 @@
     "token_tracker"
    ]
   ],
+  "cycles_classified": [
+   {
+    "pair": [
+     "agent_spawn",
+     "orchestrator"
+    ],
+    "kind": "lazy",
+    "risk": "deferred (lazy) — safe coupling smell"
+   },
+   {
+    "pair": [
+     "capability_map",
+     "rag_index"
+    ],
+    "kind": "lazy",
+    "risk": "deferred (lazy) — safe coupling smell"
+   },
+   {
+    "pair": [
+     "execution_policy",
+     "orchestrator"
+    ],
+    "kind": "lazy",
+    "risk": "deferred (lazy) — safe coupling smell"
+   },
+   {
+    "pair": [
+     "pipeline_dsm",
+     "token_tracker"
+    ],
+    "kind": "lazy",
+    "risk": "deferred (lazy) — safe coupling smell"
+   }
+  ],
+  "real_cycles": [],
   "load_bearing": [
    {
     "module": "learning",
+    "fan_in": 10
+   },
+   {
+    "module": "_tfidf",
+    "fan_in": 9
+   },
+   {
+    "module": "memory",
     "fan_in": 9
    },
    {
     "module": "repo_bridge",
     "fan_in": 9
-   },
-   {
-    "module": "memory",
-    "fan_in": 8
-   },
-   {
-    "module": "_tfidf",
-    "fan_in": 7
    },
    {
     "module": "agent_registry",
@@ -361,7 +418,7 @@
     "PAGE_OUT"
    ],
    "tokens_est": 60,
-   "savings_vs_naive": 4734,
+   "savings_vs_naive": 4709,
    "context_budget_chars": 0,
    "output_budget": {
     "soft_max_tokens": 120,
@@ -388,7 +445,7 @@
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
-   "tokens_est": 1594,
+   "tokens_est": 1569,
    "savings_vs_naive": 3200,
    "context_budget_chars": 500,
    "output_budget": {
@@ -414,7 +471,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4794,
+   "tokens_est": 4769,
    "savings_vs_naive": 0,
    "context_budget_chars": 900,
    "output_budget": {
@@ -440,7 +497,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4794,
+   "tokens_est": 4769,
    "savings_vs_naive": 0,
    "context_budget_chars": 1300,
    "output_budget": {
@@ -466,7 +523,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4794,
+   "tokens_est": 4769,
    "savings_vs_naive": 0,
    "context_budget_chars": 1600,
    "output_budget": {
@@ -492,7 +549,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4794,
+   "tokens_est": 4769,
    "savings_vs_naive": 0,
    "context_budget_chars": 2000,
    "output_budget": {

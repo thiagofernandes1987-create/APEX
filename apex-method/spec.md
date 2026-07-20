@@ -14,7 +14,7 @@ O **apex-method** é um **runtime cognitivo**: um sistema operacional fino em vo
 O LLM é a **VM cognitiva** (inferência, síntese, julgamento); a skill é o **SO** que agenda
 trabalho determinístico em código real, guarda memória durável, governa segurança e força
 disciplina de raciocínio. Não é um prompt que "reprograma" o modelo — é um kernel
-(`SKILL.md`) + 46 syscalls (`scripts/*.py`) + catálogos + contratos verificáveis.
+(`SKILL.md`) + 55 syscalls (`scripts/*.py`) + catálogos + contratos verificáveis.
 
 **Objetivo:** transformar raciocínio de LLM em engenharia auditável — respostas **computadas
 e verificadas** (PoT, RK4, Bayes, gates), com custo controlado por modo, memória que
@@ -53,12 +53,13 @@ governança.
 | Camada | Arquivo(s) | Papel |
 |---|---|---|
 | Kernel / método | `SKILL.md` | disciplina + orçamentos por modo que o LLM segue |
-| Syscalls | 46 `scripts/*.py` | trabalho determinístico fora da cabeça do LLM |
+| Syscalls | 55 `scripts/*.py` | trabalho determinístico fora da cabeça do LLM |
 | Entrada | `orchestrator.run` + `execution_policy.triage` | triage → dissect → resolve → modo → **checklist/gate** |
 | Roteamento | `taxonomy` → `router`/`gravity` → **`attraction_graph`** | facetas canônicas → atração lexical → grafo pré-computado |
 | Agentes | `agent_registry` + **`agent_spawn`** + `concurrent_executor` | roster enxuto → spec executável no spawn → fan-out A/B |
-| Memória | `memory` (SQLite+KG+ledger) + `swap_store` + `learning` + `code_genetics` + `project_ledger` | episódica/semântica; page-out PLUG-AND-PLAY (todos os stores, delta+gzip, resume_due); promote/demote; vacinas duráveis; inventário vivo |
-| Segurança | `skill_scout` + `guards` + `repo_bridge` + `skills_sh` | allowlists, AST 2 níveis, injection-scan, H5 |
+| Memória | `memory` (SQLite+KG+ledger) + `swap_store` + `learning` + `skill_ledger` + `code_genetics` + `project_ledger` | episódica/semântica; page-out PLUG-AND-PLAY (todos os stores, delta+gzip, resume_due; backends drive/local/zip/git); promote/demote; **proveniência das escolhas recuperável cross-session**; vacinas duráveis; inventário vivo |
+| Descoberta | `local_discovery` + `skills_sh` + `github_skills` (via `deep_research`) | cascata PROVEN→LOCAL→native→skills.sh→github; instaladas + MCPs primeiro; fornecedores confiáveis + estrelas + semântica |
+| Segurança | `skill_scout` + `_ast_helpers` + `guards` + `repo_bridge` | allowlists, AST 2 níveis (sinks de libs whitelistadas cobertos), injection-scan, H5 |
 | Numérico | `pot`, `numeric`, `verify`, `monte_carlo`, `geometry_estimator` | computa em subprocesso; prova ou marca conjectura |
 | Bayes/decisão | `bayes`, `verification_gate`, `fractal_compression`, `hypothesis_dag` | posterior, Ω, R_acum, poda, DAG acíclico |
 | Meta | `competence_matrix`, `apex_st_metric`, `mental_interpreter`, `geodesic_scheduler`, `chaos_operators` | dificuldade, estagnação, n_final, ordem ΔH/token, exploração |
@@ -85,8 +86,8 @@ tarefa → triage (código)      trivial? → EXPRESS e fim
 ### Entrada e orquestração
 | Módulo | O que faz | Entrega → para quem |
 |---|---|---|
-| `orchestrator` | ponto de entrada `run()`; nunca levanta exceção; **kernel checklist + gate (RT-22)** | plano executado parcial + `llm_actions` + gate → **LLM host** |
-| `execution_policy` | triage (skip/escala), piso de modo, superfícies (subprocess/agent/agent+internet), 3 personas de dissect, loop_guard | roteamento por micro + governança regional → orchestrator/LLM |
+| `orchestrator` | ponto de entrada `run()`; nunca levanta exceção; **kernel checklist + gate (RT-22)**; **`resolution_check` = curto-circuito por solução lembrada (prior≥0.6) + re-verificação** | plano executado parcial + `llm_actions` + gate → **LLM host** |
+| `execution_policy` | triage (skip/escala), piso de modo, superfícies (subprocess/agent/agent+internet), 3 personas de dissect, loop_guard; **`fanout_plan` = poda geodésica ao quórum quando prior≥target** | roteamento por micro + governança regional → orchestrator/LLM |
 | `mental_interpreter` | fórmula `n_final`, fases SPECULATION→PRODUCTION, entropy merge | tamanho de bloco + plano de fases → orchestrator |
 | `menu` / `config` | update portátil (shutil), modos preferidos, min_mode, persist | preferências persistidas → todos os módulos |
 
@@ -105,6 +106,10 @@ tarefa → triage (código)      trivial? → EXPRESS e fim
 | `agent_registry` | 11 personas núcleo + roster 213; match por tarefa; **grants persistem por default e são revogáveis (RT-26b)**; `load()` auto-merge | competência durável → spawn/roteamento |
 | **`agent_spawn`** | **contrato de spawn (RT-19/27)**: persona real + skills/diffs/scripts atraídos + grants + histórico + governança + template + checklist; `equip`/`unequip`; **`context_pack(task)`** (experiência validada → contexto injetado em todo spawn e no run()); **`export_agent`/`import_agent`** (agente treinado portátil, SHA-256 + H5) | AgentSpec executável + briefing + agent bundle → **host LLM (Agent tool)** |
 | `concurrent_executor` | Level A (subprocessos paralelos, barrier, merge, PMI, restart); manifesto Level-B **com specs completas**; diretores com laudos SHA-256 | rodada adjudicada ou RESTART → LLM |
+| `agent_lifecycle` | loop fechado dissect→matrix→resolve→equip→spec→`finalize` (só sucesso validado promove/evolui/materializa; aprende de falha via vacina) | ciclo de vida do agente → roster crescido |
+| `agent_materializer` | cristaliza um agente genérico validado num especialista padronizado (`AGENT.md`) descobrível na sessão seguinte | biblioteca auto-evolutiva → resolve_agent |
+| `federation` | pacotes de conhecimento entre instâncias (só o validado viaja; procedência = cadeia de ledger; HMAC opcional; import só com H5) | conhecimento portátil entre máquinas |
+| `routine_composer` | rotinas multi-passo encadeadas (handoffs aprendidos, auto-PROMOTE@3, reuso) que viajam no swap | fluxos reutilizáveis → orchestrator |
 | `chaos_operators` / `competence_matrix` / `learning` | Lévy/mutação/genius; heat-map + diagnóstico PERSONA_SWAP/INJECT_SKILL/HARD_PROBLEM; promote/demote beta-binomial com ledger | exploração + metacognição + memória de desempenho → painel/spawn |
 
 ### Memória e persistência
@@ -114,13 +119,16 @@ tarefa → triage (código)      trivial? → EXPRESS e fim
 | `swap_store` | hierarquia RAM→SWAP→DISCO; nomes versionados (colisão impossível, RT-09/09b); bundle com hash total fail-closed; gate de promoção | page-out/page-in íntegros → sessões futuras/Drive/git |
 | `project_ledger` | inventário vivo MACRO+micros, DSM (caminho crítico + lotes paralelos), gate de conclusão, abandono justificado | retomada exata de projetos → sessões futuras |
 | `snapshot` | estado padronizado com proveniência WHAT/WHERE/HOW/confiança | bloco re-emitível → contexto do LLM |
+| `token_tracker` | custo de tokens medido vs estimado por passo (≥3 amostras → substitui a estimativa); alimenta o `mode_flow`/orçamentos | calibração real do orçamento → pipeline_dsm |
+| `pipeline_dsm` | Design Structure Matrix dos módulos; **`classify_cycles` rotula cada ciclo de import `lazy` (seguro) vs `top_level` (risco real)**; `real_cycles`; caminho crítico/lotes | ordem/risco de dependência honesto → project_ledger/otimização |
 
 ### Segurança
 | Módulo | O que faz | Entrega → para quem |
 |---|---|---|
-| `skill_scout` | fetch allowlist + redirect na URL final + recusa truncado; AST 2 níveis (reject RCE / review); descobre e escaneia scripts referenciados; injection-scan do corpo; trust tier | STAGED/REJECTED + entrada de snapshot → gate H5 |
+| `skill_scout` | fetch allowlist + redirect na URL final + recusa truncado; AST 2 níveis (reject RCE / review); descobre e escaneia scripts referenciados (só path-qualified, N-04); injection-scan do corpo; trust tier | STAGED/REJECTED + entrada de snapshot → gate H5 |
+| `_ast_helpers` | primitivas de scan compartilhadas (open-mode, deserializer RCE sink) usadas por `skill_scout` + `guards` (fim da duplicação, C-07) | classificação de risco → os dois gates |
 | `guards` | SR_36..40 executáveis (crystallization, forge gate estrito, ordem do crítico, runtime guard, zero-ambiguidade) | PASS/REJECT → forja/pipeline |
-| `uco_gate` / `universal_code_optimizer_v4` | juiz objetivo de código gerado (Hamiltoniano, loop risk, dead code) | gate SR_33 → antes de todo subprocesso |
+| `uco_gate` / `universal_code_optimizer_v4` | juiz objetivo de código gerado (Hamiltoniano, loop risk, dead code); **memoização por `sha256(uco_path\x00code)`** (veredito determinístico cacheado, O-16-2) | gate SR_33 → antes de todo subprocesso |
 
 ### Numérico e decisão
 | Módulo | O que faz | Entrega → para quem |
@@ -133,9 +141,12 @@ tarefa → triage (código)      trivial? → EXPRESS e fim
 | Módulo | O que faz | Entrega → para quem |
 |---|---|---|
 | **`rag_index`** | índice vetorial **por nós** (92+) com IDF global char-n-gram; `search()` PT/EN | nó certo (path+resumo) em ms → LLM/deep_research |
-| `deep_research` | loop RESEARCH iterativo: dissect → agentes → resolver conhecimento (nativo/marketplace) → estagnação/R_acum | pesquisa objetivo-dirigida → usuário |
+| `deep_research` | loop RESEARCH iterativo: dissect → agentes → **cascata de descoberta PROVEN(0.98)→LOCAL(0.95)→native→skills.sh→GitHub(0.7)→FORGE(0.4)** (LLM cria skill só em último recurso) → estagnação/R_acum | pesquisa objetivo-dirigida → usuário |
+| `local_discovery` | tier LOCAL-first: skills JÁ instaladas (`~/.claude/skills`, `/mnt/skills`, container-dirs da CLI) + MCPs vivos (`mcpServers`) — custo zero, sem H5 | inventário instalado + `mcp__server__*` → cascata/agentes |
+| `github_skills` | descoberta GitHub-nativa: fornecedores confiáveis + estrelas + busca semântica; git-tree API onde disponível, README/curated onde não | candidatos STAGED (H5) → `skill_scout.evaluate` |
+| `skill_ledger` | **memória das ESCOLHAS** (7 campos: problema/skill/agente/resolveu?/promovida?/repo/comandos); grava em memory+KG+ledger+learning; `worked_for()`=prior de atração (super-amostra o pool antes de filtrar → skill provado nunca soterrado sob histórico, O-16-1) | escolhas recuperáveis via swap → tier PROVEN + resolution-cache |
 | `llm_adapter` | contrato HAL: check/fits/degrade/limits por provedor | plano de degradação anunciado → orchestrator |
-| `_tfidf` | TF-IDF puro + char-n-gram + hook sentence-transformers | fallback sempre-disponível → router/gravity/memory |
+| `_tfidf` | TF-IDF puro + char-n-gram + hook sentence-transformers; **`_fold` NFKD dobra acentos (RAG-PT: PT não fragmenta em acento e alinha com cognatos EN)** + memoização de verificação | fallback sempre-disponível → router/gravity/memory |
 
 ## 6. Comportamentos esperados (contratos verificáveis)
 
@@ -152,8 +163,13 @@ tarefa → triage (código)      trivial? → EXPRESS e fim
 8. Sem sympy ⇒ `CONJECTURA_FORMAL`; sem sklearn ⇒ `_tfidf`; sem subagentes ⇒ Level A —
    sempre anunciado, nunca silencioso.
 9. Loop guard: máx. 8 iterações, 3 restarts, early-exit R_acum<0.30, estagnação 2 rodadas.
-10. Suites (`benchmark` 46+/46+, `evaluate` 13/13, `scenario` 7/7) verdes em Windows/Linux,
+10. Suites (`benchmark` 72/72, `evaluate` 13/13, `scenario` 7/7 CLEAN) verdes em Windows/Linux,
     Python ≥3.10, com ou sem aceleradores.
+11. **Economia de tokens sem afrouxar o rigor (v1.61):** o resolution-cache só curto-circuita
+    com solução **validada** lembrada (prior≥0.6) e **sempre re-verifica**; solução que falhou
+    nunca curto-circuita; memoização é byte-exata (chave completa: gate inclui `uco_path`,
+    verify não cacheia sympy-ausente/exceção); a poda de fan-out nunca vai abaixo do quórum (3)
+    e só ocorre com o prior ≥ target. Todos os curto-circuitos são desligáveis por config.
 
 ## 7. Comportamento planejado (roadmap honesto)
 

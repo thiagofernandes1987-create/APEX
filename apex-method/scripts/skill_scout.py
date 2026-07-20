@@ -159,17 +159,27 @@ def scan_injection(md_body: str) -> list:
 
 def extract_code_refs(md: str, base_url: str) -> list:
     """RT-13: discover the Python scripts a SKILL.md references so they get scanned automatically,
-    instead of trusting the caller to pass every code_url by hand. Resolves relative paths against
-    the SKILL.md's raw-URL directory; keeps only allowlisted raw.githubusercontent URLs."""
+    instead of trusting the caller to pass every code_url by hand. Resolves PATH-QUALIFIED relative
+    refs against the SKILL.md's raw-URL directory; keeps only allowlisted raw.githubusercontent URLs.
+
+    N-04: a BARE filename mentioned in prose (e.g. "the pot.py runner") is NOT a reliable code
+    reference — resolving it against the SKILL.md's directory mis-points (…/pot.py instead of the
+    real …/scripts/pot.py), and the phantom 404 makes evaluate() fail-closed and REJECT an otherwise
+    clean, official skill. Only PATH-QUALIFIED refs (containing a '/', e.g. `scripts/danger.py`) and
+    full raw URLs are followed; bare prose filenames are ignored. Genuinely shipped code is still
+    covered via path-qualified refs or the caller's explicit code_urls."""
     base_dir = base_url.rsplit("/", 1)[0] + "/" if "/" in base_url else base_url
     refs = set()
     for u in re.findall(r"https://raw\.githubusercontent\.com/[A-Za-z0-9_./-]+\.py", md or ""):
         refs.add(u)
-    # relative paths / bare filenames ending in .py, but not the tail of a URL we already caught
+    # path-qualified relative refs ending in .py, but not the tail of a URL we already caught
     for p in re.findall(r"(?<![:/\w])([A-Za-z0-9_][A-Za-z0-9_./-]*\.py)\b", md or ""):
         if "raw.githubusercontent" in p:
             continue
-        refs.add(base_dir + p.lstrip("./"))
+        rel = p.lstrip("./")
+        if "/" not in rel:            # N-04: skip bare prose filenames (no directory) — not real refs
+            continue
+        refs.add(base_dir + rel)
     return sorted(r for r in refs if _host_ok(r))
 
 
@@ -236,8 +246,12 @@ def evaluate(skill_md_url: str, code_urls: list = None) -> dict:
 
 
 # owners the find-skills convention treats as first-party / pre-trusted (still AST-scanned).
+# N-05: broadened to the vendors that publish Claude/agent skills on GitHub — trust tier is a
+# RANKING signal only, never a substitute for the AST scan + H5 approval gate.
 OFFICIAL_OWNERS = ("anthropics", "anthropic-ai", "vercel-labs", "vercel", "openai",
-                   "modelcontextprotocol", "thiagofernandes1987-create")
+                   "modelcontextprotocol", "thiagofernandes1987-create",
+                   "microsoft", "supabase", "huggingface", "langchain-ai", "google",
+                   "googleapis", "cloudflare", "stripe", "github")
 
 
 def trust_tier(url: str) -> str:

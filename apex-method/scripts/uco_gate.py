@@ -17,7 +17,17 @@ WHAT IF IT FAILS:
   Returns status REJECTED with reasons; caller should auto-fix and re-gate, or
   fall back to inline reasoning with a lowered confidence cap.
 """
-import ast, sys, json
+import ast, sys, json, hashlib
+
+# Opt #2 (token economy): memoize the gate by code hash. The gate is DETERMINISTIC (AST/UCO
+# analysis of the code text — no execution, no I/O), so an identical snippet across iterative
+# rounds returns the cached verdict instead of re-analysing (and re-spending the LLM tokens that
+# would interpret the repeated output). Byte-identical code == identical result, by construction.
+_GATE_CACHE = {}
+
+
+def clear_cache():
+    _GATE_CACHE.clear()
 
 def _fallback_scan(code):
     reasons = []
@@ -47,21 +57,31 @@ def gate(code, uco_path=None):
     PoT snippets — the thing SR_33 actually gates before subprocess exec. Whole modules
     legitimately exceed it, so do NOT use gate() as a module-quality signal; run the UCO
     engine directly (universal_code_optimizer_v4) with size-aware expectations for that."""
+    # Key on code AND uco_path: a different engine path can yield a different verdict for
+    # the same snippet, so uco_path must be part of the cache identity (else the first
+    # path's verdict would be returned for a later, different path).
+    _key = hashlib.sha256(f"{uco_path or ''}\x00{code or ''}".encode("utf-8")).hexdigest()
+    if _key in _GATE_CACHE:                      # Opt #2: identical snippet -> cached verdict
+        return dict(_GATE_CACHE[_key], cached=True)
     try:
         if uco_path:
             sys.path.insert(0, uco_path)
         from universal_code_optimizer_v4 import UniversalCodeOptimizer
         m = UniversalCodeOptimizer(seed=42).analyze(code, language_hint="python").metrics
         risky = m.infinite_loop_risk > 0.3 or m.syntactic_dead_code > 0 or m.hamiltonian > 5.5
-        return {"status": "REJECTED" if risky else "PASS",
-                "metrics": {"hamiltonian": round(m.hamiltonian, 2),
-                            "loop_risk": round(m.infinite_loop_risk, 2),
-                            "cyclomatic": m.cyclomatic_complexity,
-                            "dead_code": m.syntactic_dead_code},
-                "reasons": [] if not risky else ["UCO flagged structural risk"],
-                "engine": "UCO"}
+        result = {"status": "REJECTED" if risky else "PASS",
+                  "metrics": {"hamiltonian": round(m.hamiltonian, 2),
+                              "loop_risk": round(m.infinite_loop_risk, 2),
+                              "cyclomatic": m.cyclomatic_complexity,
+                              "dead_code": m.syntactic_dead_code},
+                  "reasons": [] if not risky else ["UCO flagged structural risk"],
+                  "engine": "UCO"}
+        _GATE_CACHE[_key] = result
+        return result
     except Exception:
-        return _fallback_scan(code)
+        result = _fallback_scan(code)
+        _GATE_CACHE[_key] = result
+        return result
 
 if __name__ == "__main__":
     code = sys.stdin.read() if not sys.stdin.isatty() else "def f(n):\n while True:\n  n+=1"

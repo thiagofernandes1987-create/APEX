@@ -16,13 +16,23 @@ WHAT IF IT FAILS: it is stdlib-only; the only failure mode is empty input, which
 """
 import math
 import re
+import unicodedata
 from collections import Counter
 
 _TOKEN = re.compile(r"[a-z0-9]+")
 
 
+def _fold(text: str) -> str:
+    """RAG-PT fix: strip accents/diacritics via NFKD so Portuguese terms (a) stop fragmenting at
+    accents under the [a-z0-9]+ tokenizer ('análise' was split into 'an'+'lise') and (b) align with
+    their unaccented forms AND their English cognates in char-n-gram space ('memória'↔'memory',
+    'vetorial'↔'vector', 'sessões'↔'sessions'). ASCII text is unchanged, so English ranking is
+    identical. Pure stdlib (unicodedata), no new dependency."""
+    return "".join(c for c in unicodedata.normalize("NFKD", text or "") if not unicodedata.combining(c))
+
+
 def _ngrams(text, nrange=(1, 2)):
-    toks = _TOKEN.findall(text.lower())
+    toks = _TOKEN.findall(_fold(text).lower())
     out = list(toks) if nrange[0] == 1 else []
     if nrange[1] >= 2:
         out += [f"{a} {b}" for a, b in zip(toks, toks[1:])]
@@ -75,7 +85,7 @@ _CHAR = re.compile(r"\w")
 def _char_ngrams(text, n=(3, 4)):
     """Character n-grams: language-robust (a PT word and its EN cognate share substrings),
     and immune to the word-boundary misses that pure word TF-IDF suffers across languages."""
-    s = " " + " ".join(text.lower().split()) + " "
+    s = " " + " ".join(_fold(text).lower().split()) + " "
     out = []
     for k in range(n[0], n[1] + 1):
         out += [s[i:i + k] for i in range(len(s) - k + 1)]

@@ -46,6 +46,52 @@ def _agents_for(discipline_task):
         return []
 
 
+def _resolve_forge(need, domain="general"):
+    """LAST RESORT (skill_forge): when NOTHING exists anywhere — no proven choice, nothing installed,
+    the native index missed, the marketplace failed and GitHub failed — propose that the LLM CREATE
+    a skill. Returns a STAGED creation proposal (name + description + command); writes no files.
+    Adoption is the LLM's job behind H5; this only surfaces the honest 'build it yourself' signal."""
+    try:
+        import skill_forge
+        name = skill_forge.kebab(" ".join(need.split()[:6]))
+    except Exception:
+        name = "-".join(need.lower().split()[:4]) or "new-skill"
+    desc = (f"Skill for: {need}. Use when the task matches this need and no existing skill covers it. "
+            "Created as last resort because discovery found nothing.")
+    return {"id": name, "via": "forge", "action": "LLM_CREATE_SKILL", "domain": domain,
+            "command": f'python scripts/skill_forge.py create --name "{name}" --description "{desc[:180]}"',
+            "note": "no PROVEN/LOCAL/native/marketplace/GitHub skill exists — the LLM creates one (H5 to adopt)"}
+
+
+def _resolve_proven(need, k=3):
+    """Tier -1 (PROVEN): skills that ALREADY solved a similar problem in a past session, recovered
+    from skill_ledger (swap-persisted memory). The strongest signal — we remember this worked.
+    Returns [] when there is no history yet."""
+    try:
+        import skill_ledger
+        return [{"id": w["skill"], "via": "proven", "repo": w.get("repo"),
+                 "success_rate": w.get("success_rate"), "prior": w.get("prior")}
+                for w in skill_ledger.worked_for(need, k=k)]
+    except Exception:
+        return []
+
+
+def _resolve_local(need, k=3):
+    """LOCAL-first tier: skills ALREADY installed here (~/.claude, /mnt/skills) — ready to use,
+    no install, no H5. Returns [] on any failure. The strongest tier: an installed match beats a
+    marketplace candidate that still needs approval."""
+    try:
+        import local_discovery
+        r = local_discovery.search(need, k=k)
+        if r.get("status") != "OK":
+            return []
+        return [{"id": x["name"], "via": "local", "path": x.get("path"),
+                 "semantic": x.get("semantic"), "mcp_servers": r.get("mcp_servers", [])}
+                for x in r.get("results", [])]
+    except Exception:
+        return []
+
+
 def _resolve_native(need, k=3):
     try:
         import repo_bridge
@@ -64,13 +110,39 @@ def _resolve_marketplace(need, min_installs):
         return []
 
 
+def _resolve_github(need, k=3):
+    """GitHub-native discovery tier: trusted-vendor skills ranked semantically (github_skills).
+    Works when skills.sh is blocked; returns [] on any failure. Each hit is a STAGED pointer
+    (npx skills add owner/repo) — still gated by skill_scout.evaluate + H5, never auto-installed."""
+    try:
+        import github_skills
+        r = github_skills.search(need, k=k)
+        if r.get("status") != "OK":
+            return []
+        return [{"id": x["name"], "via": "github", "source": x["source"],
+                 "trust_tier": x.get("trust_tier"), "trusted": x.get("trusted"),
+                 "semantic": x.get("semantic"),
+                 "command": f"npx skills add {x['owner']}/{x['repo']}"}
+                for x in r.get("results", [])]
+    except Exception:
+        return []
+
+
 def _hit_quality(hit):
     """Honest per-hit strength: a native hit is scored by its search score (capped),
     a marketplace hit with real install data is strong, an offline STAGED command is weak."""
+    if hit.get("via") == "proven":
+        return 0.98   # we REMEMBER this skill solved a similar problem before — strongest signal
+    if hit.get("via") == "local":
+        return 0.95   # already installed & ready (no install, no H5)
     if hit.get("via") == "native":
         return min(1.0, (hit.get("score", 0) or 0) / 6.0)   # native scores ~0..12
     if hit.get("installs"):
         return 0.9
+    if hit.get("via") == "github":                          # trusted-vendor GitHub skill, staged for H5
+        return 0.7 if hit.get("trusted") else 0.6
+    if hit.get("via") == "forge":                           # last-resort: a skill to be CREATED (unbuilt)
+        return 0.4
     return 0.55   # STAGED discovery command (offline / not yet installed)
 
 
@@ -114,6 +186,11 @@ def research(question, source=None, mode=None, max_rounds=4, p_target=0.9):
             need = f"{question} {d}"
             agents = _agents_for(need)
             hits = []
+            # TIER -1 — PROVEN: skills we REMEMBER solving a similar problem (swap-persisted choices).
+            # TIER 0  — LOCAL-first: skills already installed here beat anything that needs installing.
+            if cfg.get("discovery_local", True):
+                hits += _resolve_proven(need)
+                hits += _resolve_local(need)
             if source in ("native", "both"):
                 hits += _resolve_native(need)
             if source in ("search", "both") and (source == "search" or not hits):
@@ -122,6 +199,23 @@ def research(question, source=None, mode=None, max_rounds=4, p_target=0.9):
                 hits += [{"id": r.get("skill") or r.get("gap"), "via": "marketplace",
                           "installs": r.get("installs"), "command": r.get("install_command")}
                          for r in mkt]
+            # GitHub-native tier (trusted vendors + semantic) — fills gaps when skills.sh is
+            # blocked/thin; opt-out via config discovery_github=False (tests keep it off = hermetic).
+            if source in ("search", "both") and cfg.get("discovery_github", True):
+                have = {h.get("id") for h in hits}
+                for g in _resolve_github(need):
+                    if g["id"] not in have:
+                        hits.append(g)
+                        staged.append({"gap": need, "skill": g["id"], "via": "github",
+                                       "trust_tier": g["trust_tier"], "install_command": g["command"]})
+            # LAST RESORT — only when NO STRONG hit exists (>=0.6: proven/local/native/installed/github).
+            # A weak offline marketplace stub (0.55) counts as "marketplace failed", so the honest
+            # signal is: nothing real was found -> propose the LLM CREATE a skill.
+            if cfg.get("discovery_forge", True) and not any(_hit_quality(h) >= 0.6 for h in hits):
+                f = _resolve_forge(need, d)
+                hits.append(f)
+                staged.append({"gap": need, "skill": f["id"], "via": "forge",
+                               "action": f["action"], "create_command": f["command"], "note": f["note"]})
             resolved[d] = {"agents": [a[0] for a in agents], "skills": hits[:3]}
         rel = _round_reliability(disciplines, resolved)
         reliabilities.append(rel)

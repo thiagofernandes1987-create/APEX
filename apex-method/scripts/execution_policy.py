@@ -107,6 +107,24 @@ R_REPLAN = 0.50            # MCFE reliability below this -> replan/escalate to d
 R_EARLY_EXIT = 0.30        # below this -> early-exit/abort candidate
 HARD_DIFF = 0.85           # BehavioralDifficultyEstimator: hard problem -> escalate
 SIMPLE_DIFF = 0.35         # low difficulty -> stay light, save tokens
+FANOUT_QUORUM = 3          # min stances kept when pruning — still a real cross-check, not a single voice
+
+
+def fanout_plan(mode, prior_reliability=None, p_target=0.72, full_cap=8):
+    """Adaptive fan-out (Opt #3, geodesic pruning). The expensive modes fan out to the FULL mode
+    budget of stances every time. When a PRIOR reliability estimate already clears the target — a
+    familiar/converged problem (e.g. the resolution-cache prior, or a first cheap round) — a NARROWER
+    quorum suffices, so cut the fan-out instead of paying for the full budget. Returns
+    {cap, full_cap, pruned, saved, reason}. Never drops below FANOUT_QUORUM (keeps a real cross-check).
+    HONEST: prunes ONLY when reliability >= target; below target it runs the full budget unchanged."""
+    full = int(full_cap) if full_cap else 8
+    if prior_reliability is not None and prior_reliability >= p_target and full > FANOUT_QUORUM:
+        cap = max(FANOUT_QUORUM, full // 2)
+        return {"cap": cap, "full_cap": full, "pruned": cap < full, "saved": full - cap,
+                "reason": f"prior reliability {round(prior_reliability,3)} >= target {p_target} — "
+                          f"pruned fan-out {full}->{cap} (quorum keeps the cross-check)"}
+    return {"cap": full, "full_cap": full, "pruned": False, "saved": 0,
+            "reason": "no convergence prior — full fan-out"}
 MODE_LADDER = ["EXPRESS", "STANDARD", "FOGGY", "DEEP", "SCIENTIFIC", "RESEARCH"]
 
 

@@ -86,9 +86,14 @@ def t_verify():
 
 def t_uco_gate():
     import uco_gate
-    r = uco_gate.gate("def f(n):\n while True:\n  n+=1")
+    uco_gate.clear_cache()
+    code = "def f(n):\n while True:\n  n+=1"
+    r = uco_gate.gate(code)
     assert r["status"] == "REJECTED", r
-    return f"loop REJECTED ({r['engine']})"
+    # Opt #2: identical code re-gated returns the memoized verdict (same result, cached flag)
+    r2 = uco_gate.gate(code)
+    assert r2["status"] == r["status"] and r2.get("cached") is True, r2
+    return f"loop REJECTED ({r['engine']}); identical re-gate memoized"
 
 def t_uco_v4():
     import universal_code_optimizer_v4 as u
@@ -331,6 +336,8 @@ def t_repo_bridge():
 
 def t_tfidf_fallback():
     import _tfidf
+    # RAG-PT: accents are folded so PT words don't fragment at diacritics ('análise' stays whole)
+    assert _tfidf._TOKEN.findall(_tfidf._fold("análise semântica").lower()) == ["analise", "semantica"]
     sims = _tfidf.rank("frontend ui component", ["react frontend ui", "backtest a portfolio"])
     assert sims[0] > sims[1] > -1, sims
     M = _tfidf.pairwise(["a b c", "a b c", "x y z"])
@@ -376,11 +383,13 @@ def t_regressions():
     assert [i for i in items if i["installs"] >= 1000] == [items[0]], items
     # offline discovery degrades to ready-to-run commands (never crashes)
     assert skills_sh.install_requests("x")["requests"][0]["status"] == "STAGED_needs_approval"
-    # char-ngram semantic backend beats word TF-IDF on a cross-language cognate miss
+    # RAG-PT fix: the accent-fold makes BOTH backends rank the cross-language cognate first —
+    # 'otimização de portfólio' folds to shared ASCII stems so word TF-IDF now catches 'portfolio'
+    # (it used to miss, max(w)==0), and char-ngram keeps ranking the cognate first.
     import _tfidf
     w,_ = _tfidf.semantic_rank("otimização de portfólio", ["portfolio optimization", "web design"], backend="word")
     c,_ = _tfidf.semantic_rank("otimização de portfólio", ["portfolio optimization", "web design"], backend="char")
-    assert max(w) == 0 and c.index(max(c)) == 0, (w, c)
+    assert w.index(max(w)) == 0 and max(w) > 0 and c.index(max(c)) == 0, (w, c)
     # dissect must classify Portuguese tasks, not dump them into engineering by default
     assert "finance" in orchestrator.dissect("dimensionar a reserva de caixa e o runway com burn"), \
         orchestrator.dissect("dimensionar a reserva de caixa e o runway com burn")
@@ -461,15 +470,56 @@ def t_menu():
 def t_deep_research():
     import deep_research, config
     try:
+        config.set_option("discovery_github", False)   # hermetic: no live GitHub fetches in the suite
+        config.set_option("discovery_local", False)     # hermetic: don't scan the real ~/.claude filesystem
         out = deep_research.research("audit and optimize the APEX agents", source="native", max_rounds=3)
         assert out["mode"] in ("RESEARCH", "SCIENTIFIC") and out["rounds_run"] >= 1, out
         assert out["stop_reason"] in ("TARGET_REACHED", "STAGNATION", "MAX_ROUNDS")
         # search source offline must still stage install requests (H5), never crash
         s = deep_research.research("obscure niche topic xyz", source="search", max_rounds=2)
         assert s["stop_reason"] in ("STAGNATION", "MAX_ROUNDS", "TARGET_REACHED")
+        # cascade wiring: the github tier is reachable and returns hits shaped for the loop (mocked, hermetic)
+        _og = deep_research._resolve_github
+        deep_research._resolve_github = lambda need, k=3: [
+            {"id": "pdf", "via": "github", "source": "x", "trust_tier": "OFFICIAL",
+             "trusted": True, "semantic": 0.3, "command": "npx skills add anthropics/skills"}]
+        try:
+            config.set_option("discovery_github", True)
+            g = deep_research.research("work with pdf files", source="search", max_rounds=1)
+            got = any(h.get("via") == "github"
+                      for r in g["rounds"] for d in r["resolved"].values()
+                      for h in (d.get("skills") or []))
+            assert got, "github tier not wired into the research cascade"
+        finally:
+            deep_research._resolve_github = _og
+        # cascade wiring: LOCAL-first tier reachable and shaped for the loop (mocked, hermetic)
+        _ol = deep_research._resolve_local
+        deep_research._resolve_local = lambda need, k=3: [
+            {"id": "docx", "via": "local", "path": "/x/docx/SKILL.md", "semantic": 0.4, "mcp_servers": []}]
+        try:
+            config.set_option("discovery_local", True)
+            l = deep_research.research("edit a word document", source="native", max_rounds=1)
+            got_l = any(h.get("via") == "local"
+                        for r in l["rounds"] for d in r["resolved"].values()
+                        for h in (d.get("skills") or []))
+            assert got_l, "LOCAL-first tier not wired into the research cascade"
+        finally:
+            deep_research._resolve_local = _ol
+            config.set_option("discovery_local", False)
+        # LAST RESORT: forge fires ONLY when no strong hit exists (all tiers empty, mocked = hermetic)
+        _om = deep_research._resolve_marketplace
+        deep_research._resolve_marketplace = lambda need, mi: []
+        try:
+            config.set_option("discovery_github", False)
+            fr = deep_research.research("totally novel xyzzy need with no skill", source="search", max_rounds=1)
+            got_f = any(s.get("via") == "forge" and s.get("action") == "LLM_CREATE_SKILL"
+                        for s in fr.get("staged_installs", []))
+            assert got_f, "forge last-resort tier did not fire when discovery found nothing"
+        finally:
+            deep_research._resolve_marketplace = _om
     finally:
         config.save(config.DEFAULTS)
-    return f"deep_research {out['stop_reason']} in {out['rounds_run']} rounds"
+    return f"deep_research {out['stop_reason']} in {out['rounds_run']} rounds; github tier wired"
 
 
 def t_concurrent_executor():
@@ -713,6 +763,13 @@ def t_execution_policy():
     forced2 = ep.triage("what is 2+2?")
     config.set_option("min_mode", "none")
     assert not forced2["skip_pipeline"] and forced2["mode"] == "DEEP", forced2
+    # Opt #3 geodesic pruning: a high prior reliability narrows the fan-out to a quorum; a low prior
+    # keeps the full mode budget (never drops below FANOUT_QUORUM).
+    fp_hi = ep.fanout_plan("DEEP", 0.9, full_cap=8)
+    fp_lo = ep.fanout_plan("DEEP", 0.5, full_cap=8)
+    assert fp_hi["pruned"] and fp_hi["cap"] == 4 and fp_hi["saved"] == 4, fp_hi
+    assert not fp_lo["pruned"] and fp_lo["cap"] == 8, fp_lo
+    assert fp_hi["cap"] >= ep.FANOUT_QUORUM, fp_hi
     return (f"route+HARD-RULE; 3-persona entry {len(plan['micros'])} micros; "
             f"floor(audit/security)+uncertain+min_mode force the pipeline")
 
@@ -1437,9 +1494,13 @@ def t_pipeline_dsm():
     doc = json.load(open(pd.DSM_PATH, encoding="utf-8"))
     dsm = doc["module_dsm"]
     assert any(m["module"] == "_tfidf" for m in dsm["load_bearing"]), dsm["load_bearing"]
-    # the 3 known lazy cycles are surfaced (documented coupling, not load-time cycles)
+    # the known lazy cycles are surfaced (documented coupling, not load-time cycles)
     flat = {tuple(sorted(c)) for c in dsm["cycles"]}
     assert ("agent_spawn", "orchestrator") in flat, dsm["cycles"]
+    # Opt #4: the DSM CLASSIFIES each cycle — all current ones are lazy (safe), zero real top-level
+    # circular-import risks. A future top-level-both cycle would show up in real_cycles to fix.
+    assert dsm["real_cycles"] == [], dsm["real_cycles"]
+    assert all(c["kind"] == "lazy" for c in dsm["cycles_classified"]), dsm["cycles_classified"]
     flow = doc["mode_flow"]
     assert flow["EXPRESS"]["plan"] == ["TRIAGE"] and flow["EXPRESS"]["savings_vs_naive"] > 4000
     assert len(flow["STANDARD"]["skipped"]) >= 2, flow["STANDARD"]
@@ -1970,7 +2031,155 @@ def t_autopsy_v152():
     return "SEC-001/002/003/004/005/006/007 + FUNC-001 + USER-A locked"
 
 
+def t_docs_current():
+    # DOC CURRENCY GUARD: the declared script count in SKILL.md/spec.md MUST match reality, and
+    # every script must be catalogued — so documentation can NEVER silently drift out of date.
+    import glob, re
+    root = os.path.join(HERE, "..")
+    real = {os.path.basename(p)[:-3] for p in glob.glob(os.path.join(SCRIPTS, "*.py"))}
+    n = len(real)
+    for doc in ("SKILL.md", "spec.md"):
+        txt = open(os.path.join(root, doc), encoding="utf-8").read()
+        nums = set(re.findall(r"(\d+)\s*(?:syscalls|scripts|`scripts)", txt))
+        assert str(n) in nums, f"{doc}: declared script count {sorted(nums)} != real {n} (docs stale)"
+    lib = {s["id"].split(":")[1] for s in json.load(
+        open(os.path.join(root, "catalog", "scripts_lib.json"), encoding="utf-8"))}
+    assert real == lib, f"scripts vs scripts_lib symdiff (uncatalogued): {sorted(real ^ lib)}"
+    # every new script must also be named in at least one of the human docs (spec/documentacao)
+    docs_blob = "".join(open(os.path.join(root, d), encoding="utf-8").read()
+                        for d in ("spec.md", "documentacao.md"))
+    undocumented = sorted(s for s in real if s not in docs_blob)
+    assert not undocumented, f"scripts absent from spec.md/documentacao.md: {undocumented}"
+    return f"docs current: {n} scripts, counts match SKILL.md+spec.md, all catalogued + documented"
+
+
+def t_resolution_cache():
+    # Opt #1: a REMEMBERED validated solution short-circuits the expensive pipeline (apply+re-verify).
+    import orchestrator as o, skill_ledger as sl, memory, importlib, tempfile
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp(prefix="rescache-")
+    try:
+        importlib.reload(memory)
+        TASK = "projete uma API de pagamentos segura tolerante a falhas"
+        r0 = o.run(TASK)                              # no history -> full pipeline (expensive)
+        assert r0["path"] == "FULL_PIPELINE", r0["path"]
+        for _ in range(3):                            # remember a validated solution
+            sl.record(TASK, "payment-api-designer", agent="be", solved=True, repo="x/y")
+        r1 = o.run(TASK)                              # now short-circuits with re-verify required
+        assert r1["path"] == "RESOLUTION_CACHE" and r1["reverify_required"] is True, r1
+        assert r1["reused"]["skill"] == "payment-api-designer", r1["reused"]
+        # a DIFFERENT unseen problem still runs the full pipeline (no false short-circuit)
+        assert o.run("otimize um kernel de convolução em cuda")["path"] == "FULL_PIPELINE"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(memory)
+    return "resolution-cache: remembered solution short-circuits pipeline (apply+re-verify); unseen -> full"
+
+
+def t_skill_ledger():
+    # remember MY choices: record the 7-field provenance, then RECOVER it in a fresh session (swap).
+    import skill_ledger as sl, memory, swap_store as ss, os, tempfile, importlib
+    _old = os.environ.get("APEX_METHOD_HOME")
+    homeA = tempfile.mkdtemp(prefix="sl-A-"); os.environ["APEX_METHOD_HOME"] = homeA
+    try:
+        importlib.reload(memory); importlib.reload(ss)
+        p = sl.record("extract text from a pdf report", "pdf", agent="doc-specialist", solved=True,
+                      repo="anthropics/skills",
+                      commands=[{"cmd": "npx skills add anthropics/skills", "does": "install"}])
+        assert p["skill"] == "pdf" and p["memory_sha"], p
+        sl.record("build a react ui", "frontend", agent="fe", solved=False, repo="x/y")
+        m = memory.MemoryStore()
+        po = ss.page_out("s1", memory_db=m.db_path, snapshot={"objective": "choices"})
+        # fresh session (another machine): page-in must restore the choices
+        homeB = tempfile.mkdtemp(prefix="sl-B-"); os.environ["APEX_METHOD_HOME"] = homeB
+        importlib.reload(memory); importlib.reload(ss)
+        db = os.path.join(homeB, "m.db")
+        ss.page_in_session(po["session_dir"], memory_db=db)
+        got = sl.recall("work with pdf files", k=3, memory_db=db)
+        assert any(c["skill"] == "pdf" and c["solved"] and c["commands"] for c in got), got
+        prov = sl.worked_for("pdf document", memory_db=db)
+        assert any(w["skill"] == "pdf" and w["success_rate"] == 1.0 for w in prov), prov
+        # a FAILED choice must NOT surface as an attraction prior
+        assert not any(w["skill"] == "frontend" for w in prov), prov
+        # O-16-1 regression: record() also writes empty-meta graph-projection nodes that
+        # outrank the tagged choice record; a small recall window would bury the proven
+        # skill under accumulated history. Flood with unrelated solved choices, then the
+        # exact proven skill MUST still surface (filter-before-truncate / oversample).
+        for i in range(30):
+            sl.record(f"unrelated task {i} about topic {i}", f"sk{i}", agent="x",
+                      solved=True, repo="a/b", memory_db=db)
+        buried = sl.worked_for("work with pdf files", memory_db=db)
+        assert any(w["skill"] == "pdf" for w in buried), ("pdf buried under history", buried)
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(memory); importlib.reload(ss)
+    return "skill choices recorded (7 fields) + recovered cross-session; worked_for prior excludes failures"
+
+
+def t_github_skills():
+    # N-05: GitHub-native discovery — trusted-vendor + semantic ranking, offline-safe (fetch mocked).
+    import github_skills as gh, skill_scout
+    README = ("# vendor skills\n"
+              "- [pdf](./skills/pdf)\n- [pptx](./skills/pptx)\n- [xlsx](./skills/xlsx)\n")
+    SKILLS = {
+        "skills/pdf/SKILL.md":  "---\nname: pdf\ndescription: extract text and tables from pdf files, fill pdf forms\n---\n# When to use\npdf\n",
+        "skills/pptx/SKILL.md": "---\nname: pptx\ndescription: create and edit powerpoint presentations and slides\n---\n# When to use\npptx\n",
+        "skills/xlsx/SKILL.md": "---\nname: xlsx\ndescription: build spreadsheets with formulas and charts\n---\n# When to use\nxlsx\n",
+    }
+    def fake_fetch(u, timeout=10, max_bytes=2_000_000):
+        if u.endswith("README.md"):
+            return README
+        for k, v in SKILLS.items():
+            if u.endswith(k):
+                return v
+        raise ValueError("404")
+    _orig = skill_scout.fetch_text
+    skill_scout.fetch_text = fake_fetch
+    _orig_api = gh._api_get
+    gh._api_get = lambda *a, **k: None          # hermetic: no network (forces README path, None stars)
+    gh.clear_cache()                            # isolate from any cached fetch/enum in this process
+    try:
+        hub = [{"owner": "anthropics", "repo": "skills", "ref": "main", "prefix": "skills/"}]
+        r = gh.search("extract text and fill pdf forms", hubs=hub, k=3)
+        assert r["status"] == "OK" and r["results"], r
+        # semantic ranking must put the pdf skill on top for a pdf query
+        assert r["results"][0]["name"] == "pdf", [x["name"] for x in r["results"]]
+        # trusted-vendor tier resolved
+        assert r["results"][0]["trust_tier"] == "OFFICIAL" and r["results"][0]["trusted"], r["results"][0]
+        # different query re-ranks
+        r2 = gh.search("edit powerpoint slide deck", hubs=hub, k=3)
+        assert r2["results"][0]["name"] == "pptx", [x["name"] for x in r2["results"]]
+        # DEEP vendor scan: walks VENDOR_OWNERS (owner-wide) — with API mocked off, degrades to
+        # hubs+curated but still ranks the right skill and stays OK (never crashes on 14 orgs).
+        assert len(gh.VENDOR_OWNERS) >= 8 and "anthropics" in gh.VENDOR_OWNERS, gh.VENDOR_OWNERS
+        ds = gh.deep_scan("edit powerpoint slides", k=3)
+        assert ds["status"] == "OK" and ds["results"], ds
+        # graceful degradation: when NOTHING is fetchable (curated baseline included), status=OFFLINE.
+        # clear the cache first — a real run would keep the cached hits (correct), the test isolates it.
+        gh.clear_cache()
+        def _all_fail(u, timeout=10, max_bytes=2_000_000):
+            raise ValueError("offline")
+        skill_scout.fetch_text = _all_fail
+        r3 = gh.search("x", hubs=[{"owner": "none", "repo": "none", "ref": "main", "prefix": ""}])
+        assert r3["status"] == "OFFLINE", r3
+    finally:
+        skill_scout.fetch_text = _orig
+        gh._api_get = _orig_api
+        gh.clear_cache()
+    return f"github discovery: pdf/pptx queries rank correct skill; trusted-vendor tier; OFFLINE degrade"
+
+
 TESTS = [
+    ("docs_current", t_docs_current),
+    ("resolution_cache", t_resolution_cache),
+    ("skill_ledger", t_skill_ledger),
+    ("github_skills", t_github_skills),
     ("autopsy_v152", t_autopsy_v152),
     ("runtime_autopsy", t_runtime_autopsy),
     ("pot", t_pot), ("numeric", t_numeric), ("verify", t_verify), ("uco_gate", t_uco_gate),

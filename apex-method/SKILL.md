@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.60.0
+version: 1.61.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,7 +47,7 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 51 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 55 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG, discovery cascade (PROVEN→LOCAL→native→skills.sh→github) + `skill_ledger` choice-provenance (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
@@ -78,6 +78,14 @@ Default **STANDARD**. Escalate to DEEP on conflicting constraints or high stakes
 SCIENTIFIC when there is real math/dynamics; drop to EXPRESS for trivial asks. If a
 complexity signal appears mid-answer, escalate and say so. Full step lists in
 `references/pipeline.md`.
+
+> **Conservative escalation (triage floor).** "Default STANDARD" applies to tasks whose
+> difficulty class `execution_policy.triage` *recognizes* (via `competence_matrix.estimate_difficulty`).
+> A task the estimator does **not** recognize (`uncertain=True`) is escalated to **DEEP** on
+> purpose — the 3 dissect personas establish the real difficulty before proceeding, rather than
+> silently under-rating a novel task. So an unfamiliar phrasing may run DEEP even when it looks
+> simple; a *recognized* low/medium-difficulty task stays STANDARD. Trivial arithmetic still takes
+> the EXPRESS skip.
 
 ## 1.2 Thinking Patterns
 
@@ -556,6 +564,18 @@ runs the pipeline. This is what stops the LLM from choosing EXPRESS when it shou
 + builds a `drive_manifest`), then **upload the manifest to `APEX/swap/<session>/` on Drive** (the
 `drive-swap` backend) and print the returned `log` so the user sees it happened. `menu.py persist
 [session] [backend]` is the explicit on-demand trigger. Nothing is silent — the page-out is always logged.
+
+## § 2.13 · Token economy — remember, memoize, prune (v1.61)
+
+Four layers that cut tokens **without loosening rigor** — every reuse is re-verified, memoization is byte-exact, pruning fires only after reliability crosses target.
+
+- **Resolution-cache short-circuit (`orchestrator.resolution_check`, biggest lever).** Before the fan-out, ask `skill_ledger.worked_for(task)`: if a **validated** solution for this problem class is remembered (attraction `prior ≥ 0.6`), skip DISSECT→RESOLVE→PMI→SPAWN→BARRIER, apply the crystallized solution, and **re-verify** (`reverify_required=True`). No history → FULL_PIPELINE; unseen problem → FULL_PIPELINE; a **failed** past attempt never short-circuits (only `solved` ones). Gated by config `resolution_cache` (default on). ~67–79% on recurring workloads.
+  - *Robustness (O-16-1):* `worked_for`/`recall` oversample the candidate pool (`k*40`, min 200) and filter to tagged `SKILL_CHOICE` records **before** truncating — so the graph-projection nodes `record()` also writes can never bury a proven skill under accumulated history.
+- **Validation memoization (`uco_gate.gate`, `verify.verify_identity`).** Validation is deterministic, so identical code / identical claim returns the cached verdict (`cached=True`) instead of recomputing. Gate keys on `sha256(uco_path\x00code)` (the engine path is part of the verdict identity, O-16-2); verify keys on `lhs\x00rhs` and deliberately does **not** cache the sympy-absent / exception cases. `clear_cache()` on both. ~15–30% in iterative sessions.
+- **Geodesic fan-out pruning (`execution_policy.fanout_plan`).** When the reliability prior ≥ target, the fan-out is pruned to the **quorum** (`FANOUT_QUORUM=3`, e.g. DEEP 8→4) while keeping the cross-check; `concurrent_executor.run_stances(prior_reliability=…)` consumes it. Below target → full fan-out; `None` prior → full. Cap is monotonically non-increasing in the prior. ~20% on convergent fan-out.
+- **Honest DSM (`pipeline_dsm.classify_cycles`).** Each import cycle is tagged `lazy` (safe, deferred import) or `top_level` (real circular-import risk). `module_dsm()` returns `cycles_classified` + `real_cycles`. Today all cycles are lazy on both sides (`real_cycles = []`) — 0 risk, 0 tokens spent chasing phantom cycles; the value is flagging a future top-level cycle before it bites.
+
+Predicted savings: **~30% on an isolated expensive run; ~75–80% on recurring workloads.** RAG-PT retrieval was also hardened (`_tfidf._fold`, NFKD accent-fold) so PT queries stop fragmenting at accents and align with EN cognates.
 
 ## § 3 · Finding and Using an External Skill (safe flow)
 

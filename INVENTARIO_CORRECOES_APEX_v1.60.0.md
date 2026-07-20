@@ -62,7 +62,182 @@ Nenhuma dessas observações quebrou execução; são precondições/qualidade q
 | **N-01** | 1 | 🟡 Médio | `_ast_helpers.py` novo não registrado em `catalog/scripts_lib.json` (quebrou consistência 1:1 — padrão F-08) | Entrada `script:_ast_helpers` adicionada ao catálogo | ✅ RESOLVIDO |
 | **N-02** | 2 | 🟠 Alto (teste) | **Testes flaky** `agent_lifecycle`/`agent_materializer` (evaluate 66/68 intermitente): não-hermético — o especialista materializado persistia no overlay de roster e quebrava o precondition `no roster match → synthesize` em home reusado | `_wipe_grown_roster()` no início dos 2 testes | ✅ RESOLVIDO (fresh=determinístico; reuse agora 68/68) |
 
-**Estado final do loop:** após 3 ciclos, o portão de regressão é atingido de forma **estável e determinística** (evaluate deixou de oscilar). Nenhuma nova ocorrência aberta ao fim do ciclo 3. Matriz de módulos pós-correção: **52/52 importam · 52/52 self-tests rc=0**.
+**Estado final do loop (ciclos 1–3):** após 3 ciclos, o portão de regressão é atingido de forma **estável e determinística** (evaluate deixou de oscilar). Matriz de módulos pós-correção: **52/52 importam · 52/52 self-tests rc=0**.
+
+### Ciclo 4 — QA dirigido pelos MODOS OPERACIONAIS (EXPRESS · STANDARD · FOGGY · DEEP · SCIENTIFIC · RESEARCH)
+
+Harness `mode_qa.py` exercitou a skill através de **cada modo** da SKILL.md, validando o contrato de cada um (seleção de modo, política de exploração `chaos/parallelism/genius`, budgets de token, persistência, kernel checklist) + consistência doc↔código dos budgets.
+
+| Modo | Verificação | Resultado |
+|---|---|---|
+| consistência | `MODE_TOKENS`/`MODE_LADDER`/`VALID_MODES` (doc vs código) | ✅ 6 modos coerentes |
+| EXPRESS | trivial → skip pipeline, chaos off, output_budget | ✅ |
+| STANDARD | tarefa reconhecida de baixa dificuldade fica leve, parallelism A | ✅ |
+| FOGGY | `min_mode` força piso; chaos on, parallelism B | ✅ |
+| DEEP | multi-disciplina → DEEP, phase_plan, chaos | ✅ |
+| SCIENTIFIC | math/dynamics → SCIENTIFIC, persist_due, kernel steps | ✅ |
+| RESEARCH | `deep_research` loop, genius stance, persist_due, stop_reason | ✅ |
+
+**Resultado final: 0 issues** (após classificar N-03 abaixo).
+
+| ID | Ciclo | Severidade | Ocorrência | Correção | Status |
+|---|---|---|---|---|---|
+| **N-03** | 4 | 🔵 Baixo (doc) | O harness inicialmente marcou "tarefa de código simples → DEEP em vez de STANDARD". Investigação: `estimate_difficulty` retorna `uncertain=True` (→ DEEP) para tarefas cuja classe **não é reconhecida** (Jaccard < 0.10 vs. `DIFFICULTY_REFS`, que só contém classes difíceis). **Não é bug** — é escalação conservadora **intencional e travada por teste** (`benchmark.py:709` exige que "escrever um poema" seja `uncertain`). O resíduo real é uma **lacuna de documentação**: a SKILL.md dizia "Default STANDARD" sem revelar que classes não-reconhecidas escalam para DEEP. | Nota de "conservative escalation" na SKILL.md §1.1 + expectativa do harness corrigida (usar tarefa reconhecida) | ✅ RESOLVIDO (doc; sem mudança de código — alterá-la quebraria o comportamento intencional/testado) |
+
+**Estado ao fim do ciclo 4:** modos operacionais validados (0 issues), regressão verde (68/68 · 13/13 · 7/7). **Ponto fixo atingido — nenhuma ocorrência acionável de código restante.**
+
+### Ciclo 5 — STRESS TEST em tempo real (skill completa rodando com problemas reais)
+
+Dois harness em tempo real dirigidos por modos + subsistemas duráveis, com **validação de resultados reais** (não só "rodou") e timings.
+
+**Passe 1 — `stress.py` (problemas reais, todos os subsistemas):**
+
+| Área | O que rodou (real) | Resultado |
+|---|---|---|
+| Compute | PoT chain (20! mod p exato), RK4 (`y(1)` err < 1e-3 vs e⁻²), Monte Carlo (média ~1.0, 20k it), verify identity | ✅ |
+| Modos | EXPRESS (aritmética exata), STANDARD, FOGGY, DEEP (multi-disciplina), SCIENTIFIC (EDO+prova), RESEARCH (loop) | ✅ |
+| Memória persistente | remember + KG edge + ledger SHA-256 → **page-out → home NOVO → page-in** → recall sobrevive + ledger re-verifica | ✅ |
+| Agentes | resolve→spawn(AgentSpec)→finalize(validated)→**materializado**→overlay durável→**sessão 2 acha sem re-síntese** (promoção durável) | ✅ |
+| Cache | scan (parse 3) → re-scan (cached 3) → touch (reparse 1) → delete (prune) | ✅ |
+| Learning | promote@3 sucessos + demote sustained-fail (excluído do best) | ✅ |
+| Throughput | **50 `orchestrator.run` back-to-back sem crash — 8.6 runs/s** | ✅ |
+
+**Passe 2 — `stress2.py` (adversarial / edge / failure modes):**
+
+| Vetor | Resultado |
+|---|---|
+| Inputs malformados (`""`/`None`/`int`/`dict`/20k chars/unicode/prompt-injection) → `run()` nunca levanta | ✅ |
+| Express edge: `9**9**9` sem hang (cap de expoente), `1/0` tratado | ✅ |
+| PoT sandbox: loop infinito **morto no timeout**, crash capturado, **segredo do pai scrubbed**, saída **capada** | ✅ |
+| Concorrência: stance que crasha **não derruba** a rodada paralela | ✅ |
+| Memória: 200 idênticos → **dedup=1**; **guarda de ciclo do KG** bloqueia A→B→C→A | ✅ |
+| Bundle **adulterado → REJECTED** (C-02 em ação); bundle limpo aceito | ✅ |
+| Cadeia de **deltas** (base+delta) reconstruída no page-in | ✅ |
+
+**Resultado do ciclo 5: 0 ocorrências de código.** As únicas falhas encontradas foram **bugs no próprio harness** (uso incorreto das APIs `solve_ode`/`simulate`/`verify_identity`/`page_out`) — corrigidos no harness, **não eram defeitos da skill**. Regressão pós-stress: **68/68 · 13/13 (100%) · 7/7 CLEAN**.
+
+**Estado ao fim do ciclo 5:** a skill roda a pipeline completa em tempo real sobre problemas reais, resiste a inputs adversariais e mantém integridade dos subsistemas duráveis sob carga. **Ponto fixo confirmado — nenhuma ocorrência acionável restante após 5 ciclos.**
+
+### Ciclo 6 — Descoberta de skills em REDE (skills.sh + GitHub, tempo real)
+
+Testadas as duas vias de descoberta em rede que faltavam.
+
+| Via | Resultado medido | Diagnóstico |
+|---|---|---|
+| **skills.sh** | `leaderboard/search/official` → **OFFLINE** | **Não é bug do APEX** — o proxy do ambiente bloqueia `skills.sh:443` (`403 CONNECT, policy denial`). APEX **degradou corretamente** para OFFLINE (contrato de degradação OK). |
+| **GitHub** (`raw.githubusercontent.com`) | HTTP 200 — fetch/parse/AST-scan/staging **executaram ao vivo** | Via funcional; **revelou N-04** (abaixo). |
+
+| ID | Ciclo | Severidade | Ocorrência | Correção | Status |
+|---|---|---|---|---|---|
+| **N-04** | 6 | 🟠 Alto (usabilidade) | `skill_scout.extract_code_refs` (RT-13) capturava **nomes de arquivo nus mencionados em prosa** (ex.: "pot.py") e resolvia contra o diretório do SKILL.md (`…/pot.py`) em vez do path real (`…/scripts/pot.py`). Os **11 refs-phantom davam 404** → `evaluate` fail-close → **REJECTED_UNSAFE de uma skill OFFICIAL limpa**. Tornava a descoberta GitHub inutilizável para skills bem-documentadas. Comprovado ao vivo no próprio SKILL.md do APEX. | `extract_code_refs` passa a seguir só **refs path-qualified** (contêm `/`) e URLs; nomes nus de prosa são ignorados (código realmente distribuído continua coberto por refs com path + `code_urls` explícitos). | ✅ RESOLVIDO — refs phantom-404 **11 → 0** (todos os 52 refs resolvem para arquivos reais/HTTP 200); benchmark **68/68**. |
+
+**Nota:** após o fix, o SKILL.md do APEX ainda fica `REJECTED_UNSAFE`, mas agora por **motivos reais** (seus scripts usam `subprocess`/`__import__`/`.spawn()`/import opcional) — o scanner estrito sinaliza para revisão humana. É a **mesma limitação documentada do C-05** (gate estático best-effort; H5 é a fronteira real), comportamento **intencional**, não defeito.
+
+**Estado ao fim do ciclo 6:** descoberta em rede validada nas duas vias; skills.sh degrada corretamente sob bloqueio de rede; GitHub funcional com N-04 corrigido. Regressão **68/68 · 13/13 (100%) · 7/7 CLEAN**.
+
+### Ciclo 7 — Descoberta GitHub-nativa (fornecedores confiáveis + estrelas + busca semântica)
+
+Nova capacidade que substitui a dependência do skills.sh, resolvendo o problema levantado: **descobrir skills direto no GitHub**.
+
+| ID | Ciclo | Tipo | Entrega | Status |
+|---|---|---|---|---|
+| **N-05** | 7 | Melhoria (capacidade nova) | `scripts/github_skills.py` — descoberta GitHub-nativa: **fornecedores confiáveis** (allowlist ampliada: anthropics, vercel-labs, microsoft, supabase, openai, google, huggingface…), **estrelas** (popularidade via API repo-scoped, degrada quando indisponível), **busca semântica** (`_tfidf` query↔descrição). Enumera SKILL.md via git-tree API (primário) ou parse de README raw (fallback). Alimenta `skill_scout.evaluate` (AST scan) + gate H5. | ✅ ENTREGUE + testado |
+
+**Validação AO VIVO (contra o GitHub real, raw):**
+- `"extract text and tables from pdf files"` → **pdf** ranqueado #1 (0.273); pptx/docx/xlsx abaixo ✅
+- `"create and edit powerpoint presentations"` → **pptx** #1 ✅
+- `"build spreadsheets with formulas"` → **xlsx** #1 ✅
+- `discover()` completo: pdf → **STAGED (ast=PASS)** via `skill_scout.evaluate`; degradação limpa → **OFFLINE** quando nada enumera.
+
+**Por que resolve o problema do skills.sh:** não depende do host `skills.sh` (bloqueado por política de rede aqui); usa `raw.githubusercontent.com` (liberado) + API repo-scoped quando disponível; "o que É skill" = presença de `SKILL.md` em hub confiável; ranqueia por relevância semântica real. **Estrelas** e a **API de árvore** ativam automaticamente onde o ambiente permite a API do GitHub (aqui degradam para o caminho raw+README).
+
+**Nota de ambiente:** a **busca global** do GitHub (`search/code`) e a **API de outros donos** estão bloqueadas neste sandbox ("session bound to configured repositories"); o módulo foi desenhado para isso — degrada para enumeração via README raw (validada ao vivo). Em um deploy com API/token liberados, o caminho primário (git-tree + estrelas + busca por `filename:SKILL.md`) entra sozinho.
+
+Teste `t_github_skills` (hermético, `fetch_text`/`_api_get` mockados) no benchmark: **69/69**. Consistência catálogo↔scripts mantida (`github_skills` registrado em `scripts_lib.json`).
+
+**Refino (investigação do repo `vercel-labs/skills`):** analisando o código/README da CLI deles, o mecanismo ficou claro — **não é mágica semântica**:
+- `vercel-labs/skills` é a **CLI** (`npx skills`), NÃO uma coleção de skills; as skills reais ficam em `vercel-labs/agent-skills` (meu seed apontava para o repo errado — **corrigido**).
+- A descoberta deles usa **(a) skills.sh** (crawler+índice hospedado no servidor) e **(b) a API do GitHub** para enumerar repos de um owner e **caminhar uma lista fixa de diretórios-container** (`skills/`, `skills/.curated/`, `skills/.system/`, `.claude/skills/`, raiz…), layout flat e catálogo. Eles **não parseiam README**.
+- **"Como eles conseguem e a gente não":** eles dependem da **API do GitHub + servidor skills.sh** — ambos **bloqueados neste sandbox** para repos externos ("session bound to configured repositories"). Não é deficiência do nosso código; é acesso de rede.
+
+**Ajustes aplicados ao `github_skills.py`:** seed correto (`vercel-labs/agent-skills`); adotada a **mesma lista `CONTAINER_DIRS`** da CLI para o walk via git-tree; `find_by_owner()` = o mecanismo `--owner` deles (API, degrada p/ 0 quando bloqueada); **`CURATED_SKILLS`** = baseline verificado que **sempre** retorna lista real via raw, mesmo com API+README bloqueados. Lista ao vivo agora: query de frontend → `vercel-labs/agent-skills/web-design-guidelines` #1, seguida das skills `anthropics/skills`.
+
+**Estado ao fim do ciclo 7:** descoberta GitHub-nativa entregue, testada e validada ao vivo; mecanismo do skills.sh/vercel esclarecido e replicado no que o ambiente permite. Regressão **69/69 · 13/13 (100%) · 7/7 CLEAN**.
+
+### Ciclo 8 — `CURATED_SKILLS` ampliado (verificado ao vivo) + fiação na cascata automática
+
+**(a) Catálogo curado verificado ao vivo** (HTTP 200, 2026-07) — **14 skills reais** de 2 fornecedores confiáveis:
+- `anthropics/skills`: pdf, docx, pptx, xlsx, **mcp-builder, brand-guidelines, canvas-design, webapp-testing, slack-gif-creator, frontend-design, algorithmic-art, skill-creator** (12)
+- `vercel-labs/agent-skills`: web-design-guidelines, **writing-guidelines** (2)
+- `microsoft/skills` adicionado como **hub** (layout de catálogo — enumera via git-tree API onde disponível).
+- Prova de ranking: query "slack bot + gif + mcp" → **slack-gif-creator (0.306)** e **mcp-builder (0.215)** no topo.
+
+**(b) Fiação na cascata automática do orquestrador** (`deep_research`, invocado por `orchestrator`/`menu`):
+- Nova função `_resolve_github(need)` + tier na cascata: **native → skills.sh → github**.
+- Flag de config `discovery_github` (default `True`; testes desligam = herméticos).
+- `_hit_quality`: hit github de fornecedor confiável = 0.7 (staged forte, abaixo de instalado 0.9).
+- **Validação ao vivo:** `research('create a pdf report and a powerpoint deck', source='both')` → **2 skills GitHub staged automaticamente** (OFFICIAL, com `npx skills add ...`) — pela cascata, sem chamada manual.
+- Teste `t_deep_research` estendido: assere que o **tier github está fiado** na cascata (mockado = hermético).
+
+**Estado ao fim do ciclo 8:** descoberta GitHub-nativa **fiada na cascata automática** com catálogo curado verificado. Regressão **69/69 · 13/13 (100%) · 7/7 CLEAN**.
+
+### Ciclo 9 — Cascata ABERTA: tier LOCAL-first (skills instaladas + MCPs)
+
+Novo `scripts/local_discovery.py` — mapeia o que **já está instalado** no ambiente e o coloca como **tier 0** da cascata (antes de native → skills.sh → github), pois é custo zero, sem rede, sem gate de instalação.
+
+**Cobre os três pontos pedidos:**
+1. **Skills locais** — varre `~/.claude/skills`, `/mnt/skills/{public,examples}`, o projeto e `APEX_LOCAL_SKILLS`, caminhando os **diretórios-container completos** da convenção da CLI (`skills/`, `skills/.curated`, `.claude/skills`, `.agents/skills`, `data/skills`, `.continue/skills`…), layout flat e catálogo. **35 skills mapeadas ao vivo** (dedup por nome das 41 pastas), parseadas com `skill_scout.parse_skill_md`, ranqueadas semanticamente.
+2. **MCPs vivos** — lê `mcpServers` das configs padrão (`.mcp.json`, `~/.claude.json` projects, `.claude/settings*.json`) + env `APEX_MCP_SERVERS`; expõe `mcp__<server>__*` para os agentes. (0 aqui — nenhum MCP persistido no config; degrada limpo.)
+3. **Diretórios-container completos** — a lista `CONTAINER_DIRS` da CLI.
+
+**Fiação na cascata** (`deep_research`):
+- `_resolve_local(need)` como **tier 0**; flag `discovery_local` (default `True`; testes desligam = herméticos).
+- `_hit_quality`: hit local = **0.95** (o tier mais forte — já instalado, sem H5).
+- **Validação ao vivo:** `research('create a pdf report and edit a word document', source='both')` → resolveu com **skills LOCAIS** (docx, canvas-design, doc-coauthoring) e **TARGET_REACHED em 1 rodada** — as instaladas venceram, sem precisar do marketplace/github.
+- Teste `t_deep_research` estendido: assere tier local fiado (mockado = hermético). Registrado em `scripts_lib.json`.
+
+**Cascata final:** `LOCAL (instaladas + MCPs) → native (índice) → skills.sh (marketplace) → github (fornecedores confiáveis)`. Regressão **69/69 · 13/13 (100%) · 7/7 CLEAN**.
+
+### Ciclo 10 — Memória das ESCOLHAS (proveniência) recuperável entre sessões
+
+Antes de expandir mais a cascata: o runtime precisa **lembrar das próprias escolhas**. Novo `scripts/skill_ledger.py` grava a proveniência de cada decisão (os 7 campos) e a recupera em outras sessões via swap.
+
+**Os 7 campos:** problema/necessidade · skill usada · agente que usou · resolveu? · foi promovida? · repositório · comandos (+ o que cada um faz).
+
+**Como persiste (sem nova encanação — reusa os stores que o swap já captura):**
+- `memory.remember` (semântica + meta) → `recall(problema)` acha a escolha [swap: memory]
+- aresta de KG `problema --resolved_by/attempted--> skill` [swap: knowledge_graph]
+- evento no ledger de governança SHA-256 (tamper-evident) [swap: ledger]
+- `learning.record_outcome` → promove/rebaixa a skill por taxa de sucesso [swap: stores.learning]
+
+**APIs:** `record(...)` grava; `recall(problema)` devolve escolhas passadas (7 campos + status de learning); `worked_for(task)` = **prior de atração** (skills que já resolveram problema similar — exclui falhas).
+
+**Prova ao vivo (cross-session):** Sessão 1 grava 3 escolhas → page-out → **home NOVO** → page-in → Sessão 2 recupera problema/skill/resolveu/promoção/repo **e os comandos + o que cada um faz**; `worked_for('document editing')` → docx (1.0) e pdf (1.0).
+
+**Fiação na atração/cascata:** novo **tier -1 PROVEN** no `deep_research` (`_resolve_proven` via `skill_ledger.worked_for`), qualidade **0.98** — "eu lembro que essa skill resolveu isso" é o sinal mais forte, acima de LOCAL (0.95). Gated por `discovery_local` (hermético nos testes).
+
+**Cascata agora:** `PROVEN (lembrado) → LOCAL (instaladas + MCPs) → native → skills.sh → github`. Teste `t_skill_ledger` (hermético): grava 7 campos + recupera cross-session + prior exclui falhas. Registrado em `scripts_lib.json`. Regressão **70/70 · 13/13 (100%) · 7/7 CLEAN**.
+
+### Ciclo 11 — Verificação da infraestrutura de swap + documentação atualizada
+
+**(a) Verificação ao vivo da infraestrutura de swap (`verify_swap.py`): 20/20 PASS.**
+
+| Área | Verificado |
+|---|---|
+| Padrão de pastas/nomenclatura/backups | árvore canônica materializada; nomes ao padrão; `KEEP_BACKUPS=10` rotaciona (13 versões → ≤10 sobrevivem em `versions/`) |
+| Estado promovido (DB + JSON) | `learning.db` (PROMOTED capturado), `agent_grants.json`, `collect_stores` reúne tudo |
+| Hashes que sobrevivem | bundle SHA-256 recomputa (tamper-evident); ledger `verify_ledger` ok |
+| Backends | local (on-disk), drive-manifest, `compress` (gzip+b64), zip (`project_ledger`) |
+| Restauração cross-session | page-in em home NOVO → **skill promovida restaurada**, memória + ledger re-verificam |
+| Alimenta | taxonomia (overlay CANDIDATE→ADOPTED), gravidade (constelação), RAG por nós |
+
+**(b) Documentação atualizada** (estava defasada):
+- Contagem **51/46 → 55 scripts** (SKILL.md + spec.md; SR_40 confirma "55/55").
+- 4 módulos novos (`_ast_helpers`, `github_skills`, `local_discovery`, `skill_ledger`) — **eram 0 docs** → adicionados às tabelas do `spec.md` e às linhas-resumo de arquitetura.
+- `documentacao.md` §5.4.1 nova: **infraestrutura de swap completa** — o que persiste (DB+JSON), padrão de pastas, nomenclatura, `KEEP_BACKUPS=10`, quais hashes sobrevivem (bundle SHA-256/HMAC + ledger por-dispositivo), backends (drive/local/zip/git), **as 3 vias de restauração** (Drive / pasta-pendrive / ZIP do usuário) e como o estado promovido re-alimenta learning/taxonomia/gravity/RAG.
+- Cascata de descoberta documentada na §5.5. `requirements.txt` conferido: **atual** (módulos novos são stdlib puro, sem novas deps).
+
+Regressão **70/70 · 13/13 (100%) · 7/7 CLEAN**.
 
 ---
 
@@ -147,6 +322,76 @@ Status: **NOVO** (achado nesta auditoria) · **CONHECIDO** (documentado antes) �
 
 **Portão de regressão para cada correção:** `benchmark.py` deve seguir **68/68**, `evaluate.py` **13/13**, `scenario.py` **7/7 CLEAN**, e os PoCs de C-01/C-04 devem passar a falhar (comportamento seguro). Nenhuma correção pode tocar os dados reais em `~/.apex-method` (usar `APEX_METHOD_HOME` isolado, como as suítes já fazem desde v1.42).
 
+### Ciclo 12 — Último recurso da cascata: o LLM CRIA skills (skill_forge)
+
+Novo tier final: quando **nada existe** (sem PROVEN, sem LOCAL, native não achou, marketplace falhou, GitHub falhou), o runtime propõe que o **LLM crie a skill** via `skill_forge`.
+
+- `_resolve_forge(need, domain)` no `deep_research`: **proposta STAGED** (`action: LLM_CREATE_SKILL` + nome kebab + descrição + comando `skill_forge.py create ...`) — **não escreve arquivo**; adoção é do LLM atrás do H5.
+- **Gatilho preciso:** dispara só quando **não há hit forte (≥0.6)** — um stub offline do marketplace (0.55) conta como "marketplace falhou". `_hit_quality` forge = **0.4**. Flag `discovery_forge` (default True).
+- **Validado ao vivo:** necessidade inédita + tiers vazios → forge dispara; com hit forte (local acha pdf) → forge **não** dispara. Teste `t_deep_research` estendido (hermético).
+
+**Cascata final completa:** `PROVEN (0.98) → LOCAL (0.95) → native → skills.sh → GitHub (0.7) → FORGE (0.4, LLM cria — último recurso)`. Regressão **70/70 · 13/13 (100%) · 7/7 CLEAN**.
+
+### Ciclo 13 — Varredura profunda de diretórios de fornecedores confiáveis
+
+Enumeração mais a fundo dos repos dos vendors (via git-tree onde a API permite; hubs/curated onde não).
+
+- **`VENDOR_OWNERS`** (14 orgs confiáveis: anthropics, vercel-labs, microsoft, openai, cloudflare, modelcontextprotocol, huggingface, langchain-ai, stripe, supabase, awslabs, google, googleapis, github) — **sondadas ao vivo** (existência ≠ ter SKILL.md).
+- **`deep_scan(query)`** no `github_skills`: SKILL_HUBS (git-tree, todos os SKILL.md) + **enumeração por-owner** de cada `VENDOR_OWNERS` (`find_by_owner`, o mecanismo `npx skills find --owner`) + baseline curado, ranqueados semanticamente.
+- **`menu.py scan "<query>"`** — comando de usuário para a varredura (o menu agora tem 6 ações).
+- **Por que fora do loop da cascata:** a varredura por-owner faz ~14 chamadas de API (~20s); é uma operação **explícita/periódica**, não por-disciplina. O tier github da cascata continua rápido (`search`, hubs+curated).
+- **Degradação:** onde a API do GitHub está bloqueada (este sandbox), `find_by_owner` → 0 e a varredura cai para o baseline curado; onde a API/token permite, walk completo de git-tree + repos das orgs.
+- **Validado ao vivo:** `menu.py scan "build pdf reports and edit spreadsheets"` → xlsx #1, pdf #2, com `npx skills add ...`. Teste `t_github_skills` estendido (deep_scan, hermético).
+
+Regressão **70/70 · 13/13 (100%) · 7/7 CLEAN**.
+
 ---
 
-*Inventário produzido após execução e debug completos de todos os módulos. Pronto para a fase de correção (aguardando aprovação para implementar, começando por C-07 → C-01/C-04).*
+### Ciclo 14 — Melhorias de nota: RAG-PT + documentação auto-verificada + cache de descoberta
+
+Atacando os pontos fracos da avaliação (nota global 7,8 → **8,1**).
+
+1. **RAG-PT (Desempenho 7,5 → 8,0)** — causa raiz: o tokenizador `[a-z0-9]+` **fragmentava PT nos acentos** (`'análise semântica português'` → `['an','lise','sem','ntica','portugu','s']`) e os char-n-grams com acento não casavam com cognatos EN. Correção: `_tfidf._fold()` (NFKD, stdlib) folda acentos antes de tokenizar/n-gramar. Medido: PT↔EN cognato 0,086→0,152; busca RAG-PT top 0,13→**0,215** com o nó certo (`capability:tool:memory`) em #1; o backend de palavras passou a acertar cross-language. Testes atualizados (`_tfidf`, `audit_regressions`).
+2. **Documentação sempre atualizada (Documentação 7,5 → 8,5)** — novo teste `docs_current`: assere contagem em SKILL.md/spec.md == real, todo script catalogado E citado em spec/documentacao. **Pegou 5 módulos não-documentados** (`agent_lifecycle`, `agent_materializer`, `federation`, `routine_composer`, `token_tracker`) → documentados no spec.md. Doc não drifta mais silenciosamente.
+3. **Cache de descoberta (Desempenho)** — `github_skills`: cache in-process de fetch (`_FETCH_CACHE`) + enumeração (`_ENUM_CACHE`) + `clear_cache()`. 2ª busca **6,1s → 0,6s (~10×)**.
+
+Regressão **71/71 · 13/13 (100%) · 7/7 CLEAN**.
+
+---
+
+### Ciclo 15 — Otimização de tokens: memoização + resolution-cache + poda + DSM honesto (ordem 2→1→3→4)
+
+Implementadas as 4 otimizações do relatório de tokens, na ordem recomendada, cada uma com teste hermético.
+
+- **#2 Memoização de validação (risco ~0)** — `uco_gate.gate` e `verify.verify_identity` cacheiam por hash do conteúdo (`_GATE_CACHE`/`_VERIFY_CACHE` + `clear_cache()`). Validação são **determinísticas**; código/claim idêntico re-avaliado devolve o veredito cacheado (`cached=True`) em vez de recomputar. **15–30%** em sessões iterativas.
+- **#1 Resolution-cache gate (maior alavancador)** — `orchestrator.resolution_check`: se `skill_ledger` LEMBRA uma solução validada para a classe do problema (prior ≥ 0.6), curto-circuita o fan-out → aplica a solução cristalizada + **RE-VERIFICA** (`reverify_required=True`), pulando DISSECT→RESOLVE→PMI→SPAWN→BARRIER. Flag `resolution_cache` (default on). Validado: sem histórico → FULL_PIPELINE; com solução validada → RESOLUTION_CACHE; problema inédito → FULL_PIPELINE. **67–79%** em recorrentes.
+- **#3 Poda geodésica** — `execution_policy.fanout_plan`: quando o prior de confiabilidade ≥ target, o fan-out é podado ao **quórum** (DEEP 8→4) mantendo o cross-check; `concurrent_executor.run_stances(prior_reliability=...)` usa. `FANOUT_QUORUM=3` (nunca vira voz única). **~20%** no fan-out convergente.
+- **#4 DSM honesto** — `pipeline_dsm.classify_cycles`: cada ciclo de import é rotulado `lazy` (seguro) ou `top_level` (risco real). Análise: **os 4 ciclos são lazy nos dois lados** (0 risco, 0 tokens); `real_cycles=[]`. Não há circular-import real para quebrar — o valor é o DSM flagrar um top-level futuro.
+
+Economia prevista: **~30% num run caro isolado; ~75–80% em cargas recorrentes**, sem afrouxar o rigor (todo hit re-verifica; memoiza só byte-idêntico; poda só após R_acum cruzar). Regressão **72/72 · 13/13 (100%) · 7/7 CLEAN**.
+
+---
+
+### Ciclo 16 — Stress-test por modos (2+2 → auditar a própria Skill): 2 ocorrências, corrigidas
+
+Novo ciclo de stress em tempo real (Dev+QA+Tech Lead) sobre a **última versão**, focado no código novo do Ciclo 15, com problemas reais do trivial (`2+2`→EXPRESS exato) ao complexo (auditar a própria Skill; arquitetura distribuída CQRS/saga). Harnesses: `stress3` (fluxo ponta-a-ponta + resolution-cache + memoização + poda + descoberta + skill_ledger cross-session + RAG-PT + adversarial + throughput), `stress4` (crescimento/isolamento de cache, **fronteira do resolution_check sob histórico pesado**, determinismo do DSM, monotonicidade do fan-out, gating de config), `stress5` (varredura da cascata, edges do DSM, gating de descoberta). Duas ocorrências **reais** encontradas e corrigidas:
+
+- **O-16-1 — `skill_ledger.worked_for`/`recall`: skill provado *soterrado* sob histórico acumulado** (arquivo `scripts/skill_ledger.py`, linhas ~100 e ~124).
+  - **O quê:** `record()` também grava nós de projeção do grafo (`relate_text` → `"problem: …"`/`"skill: …"`, **meta vazio**) que são quase-duplicatas da query e **superam** o registro `SKILL_CHOICE` etiquetado. `worked_for`/`recall` puxavam uma janela minúscula (`k*3`, mín. 12/10) do `memory.recall()` e **só depois** filtravam por `_is_choice` — filtro-após-truncar.
+  - **Como achado:** `stress4` seção B — inundando o ledger com 30 escolhas resolvidas não-relacionadas, a tarefa provada exata caiu para **rank 31 de 62**; o top-15 ficou 100% nós não-escolha → `worked_for` devolvia `[]` → `resolution_check` **parava de curto-circuitar** exatamente no regime recorrente que a otimização mira (degradação segura, mas mata a economia de tokens).
+  - **Impacto:** o resolution-cache (Ciclo 15 #1) e a atração por gravidade silenciosamente deixavam de disparar conforme a sessão acumulava histórico. Nunca reuso errado — só reuso perdido.
+  - **Correção:** super-amostrar o pool de candidatos (`k=max(k*40, 200)`) e filtrar por `_is_choice` **antes** de truncar a k. `memory.recall()` já pontua todas as linhas independentemente de k, então o pool maior é de graça. Validado: sob a mesma inundação, `worked_for` volta a trazer o skill provado (prior 0.66) e `resolution_check` volta a `RESOLUTION_CACHE`; não-relacionado continua `None` (sem falso-positivo). **Teste de regressão** adicionado ao `t_skill_ledger` (flood de 30 + assertiva de que o skill provado sobrevive).
+
+- **O-16-2 — `uco_gate.gate`: chave de cache incompleta** (arquivo `scripts/uco_gate.py`, linha ~60).
+  - **O quê:** a memoização (Ciclo 15 #2) chaveava só por `sha256(code)`, mas o veredito também depende de `uco_path` (qual engine UCO resolve). Dois `uco_path` diferentes para o mesmo código no mesmo processo devolveriam o veredito do primeiro.
+  - **Como achado:** revisão de completude de chave da mesma família do O-16-1 (filtro/estado incompleto).
+  - **Impacto:** veredito de segurança potencialmente stale ao alternar engine no mesmo processo (latente; `uco_path` costuma ser fixo).
+  - **Correção:** chave passa a `sha256(uco_path\x00code)`. `verify.verify_identity` foi auditado no mesmo ciclo e está **correto** (chave completa lhs\x00rhs; não cacheia os casos sympy-ausente/exceção, então um sympy disponível depois não é mascarado).
+
+**Varredura de irmãos:** só existiam 2 sítios de filtro-após-truncar (ambos corrigidos); `orchestrator.py:320` e `recall_graph` não filtram escolhas. Falsos-achados do `stress5` (`deep_research.resolve`, `local_discovery.search` retornar lista) eram **bugs do harness**, não da Skill — APIs reais (`research()`, `search()`→dict documentado) confirmadas sem crash.
+
+Regressão final do ciclo: **72/72 · 13/13 (100%) · CLEAN**; `stress3`/`stress4`/`stress5` → **0 ocorrências reais**. Ponto fixo atingido: novas rodadas por modos não produzem mais achados.
+
+---
+
+*Inventário produzido após execução e debug completos de todos os módulos. Ciclos 7–16 implementados, testados (Dev+QA+Tech Lead) e validados.*

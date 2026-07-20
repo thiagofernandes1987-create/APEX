@@ -16,6 +16,30 @@
   "path": "scripts/_tfidf.py"
  },
  {
+  "id": "script:github_skills",
+  "type": "script",
+  "domain": "discovery",
+  "capabilities": "github,skill-discovery,trusted-vendor,stars,semantic-search,staging",
+  "mass": 150,
+  "path": "scripts/github_skills.py"
+ },
+ {
+  "id": "script:local_discovery",
+  "type": "script",
+  "domain": "discovery",
+  "capabilities": "local-first,installed-skills,mcp-mapping,container-dirs,semantic-search",
+  "mass": 150,
+  "path": "scripts/local_discovery.py"
+ },
+ {
+  "id": "script:skill_ledger",
+  "type": "script",
+  "domain": "memory",
+  "capabilities": "provenance,skill-choice,cross-session,attraction-prior,worked-for,swap-recall",
+  "mass": 150,
+  "path": "scripts/skill_ledger.py"
+ },
+ {
   "id": "script:agent_lifecycle",
   "type": "script",
   "domain": "meta",

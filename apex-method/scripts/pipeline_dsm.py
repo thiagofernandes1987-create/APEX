@@ -131,6 +131,41 @@ def _cycles(deps):
     return cycles
 
 
+def _top_level_deps():
+    """Which local imports are at MODULE TOP-LEVEL (col 0) vs inside a function (lazy). A cycle that
+    is top-level on BOTH sides is a real circular-import risk; a lazy cycle is a safe coupling smell."""
+    sdir = os.path.join(ROOT, "scripts")
+    mods = {f[:-3] for f in os.listdir(sdir) if f.endswith(".py")}
+    top = {}
+    for m in sorted(mods):
+        s = set()
+        try:
+            tree = ast.parse(open(os.path.join(sdir, m + ".py"), encoding="utf-8", errors="replace").read())
+        except Exception:
+            top[m] = s; continue
+        for n in ast.iter_child_nodes(tree):     # DIRECT children only = module top level
+            if isinstance(n, ast.Import):
+                s |= {a.name.split(".")[0] for a in n.names}
+            elif isinstance(n, ast.ImportFrom) and n.module:
+                s.add(n.module.split(".")[0])
+        top[m] = (s & mods) - {m}
+    return top
+
+
+def classify_cycles(cycles):
+    """Tag each import cycle 'top_level' (both sides import at module level — REAL circular-import
+    risk to fix) or 'lazy' (>=1 side imports inside a function — safe, deferred at runtime). Opt #4:
+    the DSM must be HONEST about which coupling smells actually matter."""
+    top = _top_level_deps()
+    out = []
+    for a, b in cycles:
+        kind = "top_level" if (b in top.get(a, set()) and a in top.get(b, set())) else "lazy"
+        out.append({"pair": [a, b], "kind": kind,
+                    "risk": "circular-import at load — FIX" if kind == "top_level"
+                            else "deferred (lazy) — safe coupling smell"})
+    return out
+
+
 def module_dsm():
     """Topological levels (parallel batches), cycles, and the load-bearing core (fan-in)."""
     deps = import_graph()
@@ -151,7 +186,10 @@ def module_dsm():
         levels.append(ready)
         remaining -= set(ready)
     core = sorted(fan_in.items(), key=lambda kv: -kv[1])[:8]
+    classified = classify_cycles(cyc)
     return {"modules": len(deps), "deps": deps, "levels": levels, "cycles": cyc,
+            "cycles_classified": classified,
+            "real_cycles": [c["pair"] for c in classified if c["kind"] == "top_level"],
             "load_bearing": [{"module": m, "fan_in": n} for m, n in core if n > 0]}
 
 
