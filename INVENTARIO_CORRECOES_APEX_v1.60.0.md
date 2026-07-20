@@ -359,4 +359,17 @@ Regressão **71/71 · 13/13 (100%) · 7/7 CLEAN**.
 
 ---
 
+### Ciclo 15 — Otimização de tokens: memoização + resolution-cache + poda + DSM honesto (ordem 2→1→3→4)
+
+Implementadas as 4 otimizações do relatório de tokens, na ordem recomendada, cada uma com teste hermético.
+
+- **#2 Memoização de validação (risco ~0)** — `uco_gate.gate` e `verify.verify_identity` cacheiam por hash do conteúdo (`_GATE_CACHE`/`_VERIFY_CACHE` + `clear_cache()`). Validação são **determinísticas**; código/claim idêntico re-avaliado devolve o veredito cacheado (`cached=True`) em vez de recomputar. **15–30%** em sessões iterativas.
+- **#1 Resolution-cache gate (maior alavancador)** — `orchestrator.resolution_check`: se `skill_ledger` LEMBRA uma solução validada para a classe do problema (prior ≥ 0.6), curto-circuita o fan-out → aplica a solução cristalizada + **RE-VERIFICA** (`reverify_required=True`), pulando DISSECT→RESOLVE→PMI→SPAWN→BARRIER. Flag `resolution_cache` (default on). Validado: sem histórico → FULL_PIPELINE; com solução validada → RESOLUTION_CACHE; problema inédito → FULL_PIPELINE. **67–79%** em recorrentes.
+- **#3 Poda geodésica** — `execution_policy.fanout_plan`: quando o prior de confiabilidade ≥ target, o fan-out é podado ao **quórum** (DEEP 8→4) mantendo o cross-check; `concurrent_executor.run_stances(prior_reliability=...)` usa. `FANOUT_QUORUM=3` (nunca vira voz única). **~20%** no fan-out convergente.
+- **#4 DSM honesto** — `pipeline_dsm.classify_cycles`: cada ciclo de import é rotulado `lazy` (seguro) ou `top_level` (risco real). Análise: **os 4 ciclos são lazy nos dois lados** (0 risco, 0 tokens); `real_cycles=[]`. Não há circular-import real para quebrar — o valor é o DSM flagrar um top-level futuro.
+
+Economia prevista: **~30% num run caro isolado; ~75–80% em cargas recorrentes**, sem afrouxar o rigor (todo hit re-verifica; memoiza só byte-idêntico; poda só após R_acum cruzar). Regressão **72/72 · 13/13 (100%) · 7/7 CLEAN**.
+
+---
+
 *Inventário produzido após execução e debug completos de todos os módulos. Pronto para a fase de correção (aguardando aprovação para implementar, começando por C-07 → C-01/C-04).*

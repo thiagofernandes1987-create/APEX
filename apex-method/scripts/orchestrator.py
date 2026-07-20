@@ -292,6 +292,42 @@ def gate(checklist):
 
 
 # ── FULL FLOW ─────────────────────────────────────────────────────────────────
+def resolution_check(task, min_prior=0.6):
+    """RESOLUTION-CACHE gate (Opt #1). If skill_ledger REMEMBERS a validated solution for a similar
+    problem class (a skill that already solved it, strong enough prior), return a short-circuit
+    result: apply the crystallized solution (agent/skills/repo/commands) + RE-VERIFY, skipping the
+    full DISSECT→RESOLVE→PMI→SPAWN→BARRIER fan-out. Returns None to fall through to the pipeline.
+
+    HONEST/SAFE: the returned result REQUIRES re-verification (reverify_required=True) — it reuses,
+    it does not trust blindly; a failed re-verify means the LLM re-runs the full pipeline. Gated by
+    config.resolution_cache (default on); needs real history, so a fresh install always falls through."""
+    try:
+        import config
+        if not config.load().get("resolution_cache", True):
+            return None
+    except Exception:
+        pass
+    try:
+        import skill_ledger
+        prior = skill_ledger.worked_for(task, k=3)
+    except Exception:
+        return None
+    top = prior[0] if prior else None
+    if not top or top.get("prior", 0.0) < min_prior:
+        return None
+    provenance = []
+    try:
+        provenance = skill_ledger.recall(task, k=1)
+    except Exception:
+        pass
+    return {"path": "RESOLUTION_CACHE", "mode": "RESOLUTION_CACHE", "reused": top,
+            "provenance": provenance[:1], "reverify_required": True,
+            "output_budget": _output_budget("STANDARD"),
+            "reason": (f"remembered a validated solution (skill '{top['skill']}', "
+                       f"success {top.get('success_rate')}, prior {top.get('prior')}) — APPLY it and "
+                       "RE-VERIFY; skip the full pipeline (token economy). Re-verify fail -> full run.")}
+
+
 def run(task, candidates=None, snapshot=None):
     """Public entry — NEVER raises. On any unexpected failure it returns a degraded result so the
     LLM gets a safe fallback instead of a crash (error handling contract)."""
@@ -324,6 +360,12 @@ def _run(task, candidates=None, snapshot=None):
         ex = express_check(task)
         if ex:
             return {"path": "EXPRESS", **ex, "output_budget": _output_budget("EXPRESS")}
+    # RESOLUTION-CACHE gate (token economy, Opt #1): if we REMEMBER a validated solution for a
+    # similar problem class, short-circuit the expensive fan-out — recall the crystallized solution
+    # and RE-VERIFY it instead of re-deriving. A failed re-verify falls back to the full pipeline.
+    rc = resolution_check(task)
+    if rc is not None:
+        return rc
     disciplines = dissect(task)
     specialists = assign_specialists(task, disciplines)
     auto_mode = "SCIENTIFIC" if any(d in disciplines for d in ("science", "math")) else \

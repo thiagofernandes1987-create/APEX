@@ -14,19 +14,33 @@ RETURNS: [FORMAL_VERIFIED] / [FORMAL_REFUTED] / [CONJECTURA_FORMAL].
 
 WHAT IF IT FAILS: Out-of-scope claims return [CONJECTURA_FORMAL] rather than inventing certainty.
 """
-import sys, json
+import sys, json, hashlib
 try:
     import sympy as sp
 except ImportError:      # audit fix v1.17.0: degrade to CONJECTURE instead of crashing
     sp = None
 
+# Opt #2 (token economy): memoize by (lhs, rhs). verify_identity is DETERMINISTIC (symbolic), so an
+# identical claim re-checked across rounds returns the cached verdict instead of re-proving.
+_VERIFY_CACHE = {}
+
+
+def clear_cache():
+    _VERIFY_CACHE.clear()
+
+
 def verify_identity(lhs: str, rhs: str) -> dict:
+    _key = hashlib.sha256(f"{lhs}\x00{rhs}".encode("utf-8")).hexdigest()
+    if _key in _VERIFY_CACHE:
+        return dict(_VERIFY_CACHE[_key], cached=True)
     if sp is None:
         return {"tag": "CONJECTURA_FORMAL", "residual": "sympy not installed — cannot verify"}
     try:
         r = sp.simplify(sp.sympify(lhs) - sp.sympify(rhs))
         tag = "FORMAL_VERIFIED" if r == 0 else "FORMAL_REFUTED"
-        return {"tag": tag, "residual": str(r)}
+        result = {"tag": tag, "residual": str(r)}
+        _VERIFY_CACHE[_key] = result
+        return result
     except Exception as e:
         return {"tag": "CONJECTURA_FORMAL", "residual": f"out of scope: {str(e)[:80]}"}
 

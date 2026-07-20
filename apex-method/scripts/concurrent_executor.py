@@ -113,13 +113,24 @@ def _run_stance(item, session_id, timeout, task=""):
 
 
 def run_stances(task, stances, mode="DEEP", p_target=0.72, timeout=20, session_id=None,
-                abort_below=ABORT_CONFIDENCE, agent_states=None):
+                abort_below=ABORT_CONFIDENCE, agent_states=None, prior_reliability=None):
     """Execute stances concurrently, barrier-merge, PMI-report. The number of stances is
     capped by the MODE's agent count (kernel budget). A stance under `abort_below` confidence
-    is QUIT and a vaccine recorded (code_genetics)."""
+    is QUIT and a vaccine recorded (code_genetics).
+
+    Opt #3 (geodesic pruning): pass `prior_reliability` (e.g. the resolution-cache prior) — when it
+    already clears p_target, the fan-out is pruned to a quorum (token economy) instead of the full
+    mode budget, while still keeping a real cross-check."""
     session_id = session_id or hashlib.sha256(f"{task}{time.time()}".encode()).hexdigest()[:12]
-    cap = MODE_AGENT_CAP.get(mode.upper(), 8)
-    stances = stances[:cap]                       # budget = mode agent count
+    full_cap = MODE_AGENT_CAP.get(mode.upper(), 8)
+    fanout = None
+    try:
+        import execution_policy as _ep
+        fanout = _ep.fanout_plan(mode.upper(), prior_reliability, p_target, full_cap=full_cap)
+        cap = fanout["cap"]
+    except Exception:
+        cap = full_cap
+    stances = stances[:cap]                       # budget = mode agent count (pruned if converged)
     total = len(stances)
     t0 = time.time()
     with ThreadPoolExecutor(max_workers=min(cap, max(1, total))) as ex:

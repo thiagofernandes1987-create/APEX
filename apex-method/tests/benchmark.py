@@ -86,9 +86,14 @@ def t_verify():
 
 def t_uco_gate():
     import uco_gate
-    r = uco_gate.gate("def f(n):\n while True:\n  n+=1")
+    uco_gate.clear_cache()
+    code = "def f(n):\n while True:\n  n+=1"
+    r = uco_gate.gate(code)
     assert r["status"] == "REJECTED", r
-    return f"loop REJECTED ({r['engine']})"
+    # Opt #2: identical code re-gated returns the memoized verdict (same result, cached flag)
+    r2 = uco_gate.gate(code)
+    assert r2["status"] == r["status"] and r2.get("cached") is True, r2
+    return f"loop REJECTED ({r['engine']}); identical re-gate memoized"
 
 def t_uco_v4():
     import universal_code_optimizer_v4 as u
@@ -758,6 +763,13 @@ def t_execution_policy():
     forced2 = ep.triage("what is 2+2?")
     config.set_option("min_mode", "none")
     assert not forced2["skip_pipeline"] and forced2["mode"] == "DEEP", forced2
+    # Opt #3 geodesic pruning: a high prior reliability narrows the fan-out to a quorum; a low prior
+    # keeps the full mode budget (never drops below FANOUT_QUORUM).
+    fp_hi = ep.fanout_plan("DEEP", 0.9, full_cap=8)
+    fp_lo = ep.fanout_plan("DEEP", 0.5, full_cap=8)
+    assert fp_hi["pruned"] and fp_hi["cap"] == 4 and fp_hi["saved"] == 4, fp_hi
+    assert not fp_lo["pruned"] and fp_lo["cap"] == 8, fp_lo
+    assert fp_hi["cap"] >= ep.FANOUT_QUORUM, fp_hi
     return (f"route+HARD-RULE; 3-persona entry {len(plan['micros'])} micros; "
             f"floor(audit/security)+uncertain+min_mode force the pipeline")
 
@@ -1482,9 +1494,13 @@ def t_pipeline_dsm():
     doc = json.load(open(pd.DSM_PATH, encoding="utf-8"))
     dsm = doc["module_dsm"]
     assert any(m["module"] == "_tfidf" for m in dsm["load_bearing"]), dsm["load_bearing"]
-    # the 3 known lazy cycles are surfaced (documented coupling, not load-time cycles)
+    # the known lazy cycles are surfaced (documented coupling, not load-time cycles)
     flat = {tuple(sorted(c)) for c in dsm["cycles"]}
     assert ("agent_spawn", "orchestrator") in flat, dsm["cycles"]
+    # Opt #4: the DSM CLASSIFIES each cycle — all current ones are lazy (safe), zero real top-level
+    # circular-import risks. A future top-level-both cycle would show up in real_cycles to fix.
+    assert dsm["real_cycles"] == [], dsm["real_cycles"]
+    assert all(c["kind"] == "lazy" for c in dsm["cycles_classified"]), dsm["cycles_classified"]
     flow = doc["mode_flow"]
     assert flow["EXPRESS"]["plan"] == ["TRIAGE"] and flow["EXPRESS"]["savings_vs_naive"] > 4000
     assert len(flow["STANDARD"]["skipped"]) >= 2, flow["STANDARD"]
@@ -2037,6 +2053,32 @@ def t_docs_current():
     return f"docs current: {n} scripts, counts match SKILL.md+spec.md, all catalogued + documented"
 
 
+def t_resolution_cache():
+    # Opt #1: a REMEMBERED validated solution short-circuits the expensive pipeline (apply+re-verify).
+    import orchestrator as o, skill_ledger as sl, memory, importlib, tempfile
+    _old = os.environ.get("APEX_METHOD_HOME")
+    os.environ["APEX_METHOD_HOME"] = tempfile.mkdtemp(prefix="rescache-")
+    try:
+        importlib.reload(memory)
+        TASK = "projete uma API de pagamentos segura tolerante a falhas"
+        r0 = o.run(TASK)                              # no history -> full pipeline (expensive)
+        assert r0["path"] == "FULL_PIPELINE", r0["path"]
+        for _ in range(3):                            # remember a validated solution
+            sl.record(TASK, "payment-api-designer", agent="be", solved=True, repo="x/y")
+        r1 = o.run(TASK)                              # now short-circuits with re-verify required
+        assert r1["path"] == "RESOLUTION_CACHE" and r1["reverify_required"] is True, r1
+        assert r1["reused"]["skill"] == "payment-api-designer", r1["reused"]
+        # a DIFFERENT unseen problem still runs the full pipeline (no false short-circuit)
+        assert o.run("otimize um kernel de convolução em cuda")["path"] == "FULL_PIPELINE"
+    finally:
+        if _old is not None:
+            os.environ["APEX_METHOD_HOME"] = _old
+        else:
+            os.environ.pop("APEX_METHOD_HOME", None)
+        importlib.reload(memory)
+    return "resolution-cache: remembered solution short-circuits pipeline (apply+re-verify); unseen -> full"
+
+
 def t_skill_ledger():
     # remember MY choices: record the 7-field provenance, then RECOVER it in a fresh session (swap).
     import skill_ledger as sl, memory, swap_store as ss, os, tempfile, importlib
@@ -2126,6 +2168,7 @@ def t_github_skills():
 
 TESTS = [
     ("docs_current", t_docs_current),
+    ("resolution_cache", t_resolution_cache),
     ("skill_ledger", t_skill_ledger),
     ("github_skills", t_github_skills),
     ("autopsy_v152", t_autopsy_v152),
