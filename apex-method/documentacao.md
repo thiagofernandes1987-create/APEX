@@ -245,10 +245,12 @@ best-effort, não sandbox.
 **Cascata de descoberta (ordem, cada tier com sua qualidade):**
 `PROVEN (skill_ledger, 0.98 — lembro que resolveu)` → `LOCAL (local_discovery, 0.95 — já
 instalada, sem H5)` → `native (índice 3.784)` → `skills.sh (marketplace, H5)` → `github
-(github_skills — fornecedores confiáveis + estrelas + semântica, H5)`. Flags `discovery_local`
-/ `discovery_github` (default True). Nada instala sozinho: cada candidato externo passa por
-`skill_scout.evaluate` (AST scan) + **H5**. As skills LOCAIS e PROVEN já são confiáveis (não
-precisam de instalação/gate).
+(github_skills — fornecedores confiáveis + estrelas + semântica, H5)` → `FORGE (skill_forge,
+0.4 — o LLM cria a skill por conta própria, **só em último recurso**, quando nenhum tier
+retornou qualidade ≥0.6)`. Flags `discovery_local` / `discovery_github` / `discovery_forge`
+(default True). Nada instala sozinho: cada candidato externo passa por `skill_scout.evaluate`
+(AST scan) + **H5**. As skills LOCAIS e PROVEN já são confiáveis (não precisam de
+instalação/gate).
 
 ### 5.6 Mapa e auto-conhecimento
 
@@ -259,7 +261,33 @@ re-ler 16k arquivos. *Esperado:* ~145 nós (módulos, catálogos, referências, 
 **`pipeline_dsm`** — *idealizado (pedido do autor, item 3):* virar o DSM do APEX para dentro
 dele mesmo. *Esperado:* matriz de imports EXATA (níveis paralelos, ciclos, núcleo de
 sustentação) + fluxo por modo `[APPROX]` via geodésico (rodar/pular/economia) + a otimização
-APLICADA: `context_budget(mode)` — 0 chars no EXPRESS até 2000 no RESEARCH.
+APLICADA: `context_budget(mode)` — 0 chars no EXPRESS até 2000 no RESEARCH. `classify_cycles`
+rotula cada ciclo de import `lazy` (import adiado, seguro) vs `top_level` (circular real) —
+hoje `real_cycles = []` (os 4 ciclos são lazy nos dois lados: 0 risco, 0 tokens); o valor é
+flagrar um ciclo top-level futuro antes que ele quebre um import.
+
+### 5.7 Economia de tokens — lembrar, memoizar, podar (v1.61)
+
+Quatro camadas que cortam tokens **sem afrouxar o rigor**:
+
+- **Resolution-cache (`orchestrator.resolution_check`, maior alavancador).** Antes do fan-out,
+  pergunta ao `skill_ledger.worked_for(task)`: se lembra uma solução **validada** para a classe
+  do problema (prior de atração ≥ 0.6), curto-circuita DISSECT→RESOLVE→PMI→SPAWN→BARRIER, aplica
+  a solução cristalizada e **re-verifica** (`reverify_required=True`). Sem histórico → pipeline
+  cheio; solução que **falhou** nunca curto-circuita. Flag `resolution_cache`. ~67–79% em cargas
+  recorrentes. O `worked_for`/`recall` super-amostram o pool e filtram as escolhas etiquetadas
+  **antes** de truncar, então um skill provado nunca fica soterrado sob histórico acumulado.
+- **Memoização de validação (`uco_gate.gate`, `verify.verify_identity`).** Validação é
+  determinística: código/afirmação idêntica devolve o veredito cacheado (`cached=True`). A chave
+  do gate inclui `uco_path` (o engine faz parte da identidade do veredito); o verify não cacheia
+  os casos sympy-ausente/exceção. ~15–30% em sessões iterativas.
+- **Poda geodésica (`execution_policy.fanout_plan`).** Com o prior ≥ target, o fan-out é podado
+  ao **quórum** (`FANOUT_QUORUM=3`, ex. DEEP 8→4) mantendo o cross-check; nunca vira voz única.
+- **RAG-PT (`_tfidf._fold`).** Dobra acentos (NFKD) antes de tokenizar → PT não fragmenta em
+  acento e alinha com cognatos EN; a recuperação em português volta a trazer o nó certo em #1.
+
+Economia prevista: **~30% num run caro isolado; ~75–80% em cargas recorrentes.** Todos os
+curto-circuitos são desligáveis por config.
 
 ## 6. O que o DSM revelou (execução real, 2026-07-18)
 
