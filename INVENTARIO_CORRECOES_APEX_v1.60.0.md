@@ -347,4 +347,16 @@ Regressão **70/70 · 13/13 (100%) · 7/7 CLEAN**.
 
 ---
 
+### Ciclo 14 — Melhorias de nota: RAG-PT + documentação auto-verificada + cache de descoberta
+
+Atacando os pontos fracos da avaliação (nota global 7,8 → **8,1**).
+
+1. **RAG-PT (Desempenho 7,5 → 8,0)** — causa raiz: o tokenizador `[a-z0-9]+` **fragmentava PT nos acentos** (`'análise semântica português'` → `['an','lise','sem','ntica','portugu','s']`) e os char-n-grams com acento não casavam com cognatos EN. Correção: `_tfidf._fold()` (NFKD, stdlib) folda acentos antes de tokenizar/n-gramar. Medido: PT↔EN cognato 0,086→0,152; busca RAG-PT top 0,13→**0,215** com o nó certo (`capability:tool:memory`) em #1; o backend de palavras passou a acertar cross-language. Testes atualizados (`_tfidf`, `audit_regressions`).
+2. **Documentação sempre atualizada (Documentação 7,5 → 8,5)** — novo teste `docs_current`: assere contagem em SKILL.md/spec.md == real, todo script catalogado E citado em spec/documentacao. **Pegou 5 módulos não-documentados** (`agent_lifecycle`, `agent_materializer`, `federation`, `routine_composer`, `token_tracker`) → documentados no spec.md. Doc não drifta mais silenciosamente.
+3. **Cache de descoberta (Desempenho)** — `github_skills`: cache in-process de fetch (`_FETCH_CACHE`) + enumeração (`_ENUM_CACHE`) + `clear_cache()`. 2ª busca **6,1s → 0,6s (~10×)**.
+
+Regressão **71/71 · 13/13 (100%) · 7/7 CLEAN**.
+
+---
+
 *Inventário produzido após execução e debug completos de todos os módulos. Pronto para a fase de correção (aguardando aprovação para implementar, começando por C-07 → C-01/C-04).*

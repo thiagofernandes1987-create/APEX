@@ -85,6 +85,21 @@ VENDOR_OWNERS = ("anthropics", "vercel-labs", "microsoft", "openai", "cloudflare
 GH_API = "https://api.github.com"
 RAW = "https://raw.githubusercontent.com"
 
+# PERF: per-process cache of fetched+parsed SKILL.md (value dict) or False (unfetchable). The curated
+# baseline is re-scanned on every search(); without this each call re-fetched ~14 URLs over the wire.
+_FETCH_CACHE = {}
+
+
+def _fetch_cache_get(url):
+    return _FETCH_CACHE.get(url)
+
+
+def clear_cache():
+    """Drop the fetch + enumeration caches (e.g. to pick up a vendor's newly published skill within
+    a session, or to isolate tests that toggle network behavior)."""
+    _FETCH_CACHE.clear()
+    _ENUM_CACHE.clear()
+
 
 def _api_get(path, timeout=15):
     """GitHub API GET with graceful degradation. Returns parsed JSON or None (blocked/offline)."""
@@ -155,15 +170,28 @@ def find_by_owner(owner, ref="main", timeout=15):
     return urls
 
 
+_ENUM_CACHE = {}
+
+
+def _enumerate_hub(hub):
+    """SKILL.md URLs for one hub (API tree -> README fallback), cached per (owner/repo/ref) so the
+    enumeration network cost (README fetch + tree API) is paid once per process, not per search()."""
+    key = (hub["owner"], hub["repo"], hub.get("ref", "main"), hub.get("prefix", ""))
+    if key in _ENUM_CACHE:
+        return _ENUM_CACHE[key]
+    got = _skillmd_urls_via_api(hub)
+    if got is None:                           # API blocked -> raw README enumeration (best-effort)
+        got = _skillmd_urls_via_readme(hub)
+    _ENUM_CACHE[key] = got or []
+    return _ENUM_CACHE[key]
+
+
 def _candidates(hubs, owners=None):
-    """All candidate SKILL.md raw URLs: curated (always) + hub enumeration (API tree -> README
-    fallback) + optional owner-wide enumeration (API). De-duplicated, order-stable."""
+    """All candidate SKILL.md raw URLs: curated (always) + hub enumeration (cached) + optional
+    owner-wide enumeration (API). De-duplicated, order-stable."""
     urls = [f"{RAW}/{p}" for p in CURATED_SKILLS]          # always-available baseline
     for hub in hubs:
-        got = _skillmd_urls_via_api(hub)
-        if got is None:                       # API blocked -> raw README enumeration (best-effort)
-            got = _skillmd_urls_via_readme(hub)
-        urls.extend(got or [])
+        urls.extend(_enumerate_hub(hub))
     for owner in (owners or []):
         urls.extend(find_by_owner(owner))
     return list(dict.fromkeys(urls))          # de-dup, keep order
@@ -190,17 +218,25 @@ def search(query, hubs=None, owners=None, min_stars=0, k=5, max_fetch=40):
                 "reason": "no candidates (GitHub API blocked and README enumeration offline)"}
     parsed = []
     for u in urls:
-        try:
-            meta = skill_scout.parse_skill_md(skill_scout.fetch_text(u))
-        except Exception:
+        rec = _fetch_cache_get(u)               # PERF: avoid re-fetching the same SKILL.md every search
+        if rec is None:
+            try:
+                meta = skill_scout.parse_skill_md(skill_scout.fetch_text(u))
+            except Exception:
+                _FETCH_CACHE[u] = False          # negative-cache a failed URL for this process
+                continue
+            if meta.get("name") in (None, "?") and not meta.get("description"):
+                _FETCH_CACHE[u] = False
+                continue
+            m = re.match(r"https://raw\.githubusercontent\.com/([^/]+)/([^/]+)/", u)
+            owner, repo = (m.group(1), m.group(2)) if m else ("?", "?")
+            rec = {"source": u, "owner": owner, "repo": repo,
+                   "name": meta.get("name"), "description": meta.get("description", ""),
+                   "trust_tier": skill_scout.trust_tier(u)}
+            _FETCH_CACHE[u] = rec
+        elif rec is False:
             continue
-        if meta.get("name") in (None, "?") and not meta.get("description"):
-            continue
-        m = re.match(r"https://raw\.githubusercontent\.com/([^/]+)/([^/]+)/", u)
-        owner, repo = (m.group(1), m.group(2)) if m else ("?", "?")
-        parsed.append({"source": u, "owner": owner, "repo": repo,
-                       "name": meta.get("name"), "description": meta.get("description", ""),
-                       "trust_tier": skill_scout.trust_tier(u)})
+        parsed.append(dict(rec))
     if not parsed:
         return {"status": "OFFLINE", "query": query, "results": [],
                 "reason": "candidates found but none fetchable/parseable"}

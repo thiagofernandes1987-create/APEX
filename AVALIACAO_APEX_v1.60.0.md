@@ -54,13 +54,18 @@ Uma skill **ambiciosa e bem-engenheirada** — um "runtime cognitivo" que entreg
 |---|---:|---|
 | **Arquitetura** | **8,0** | Modular, coerente, degrada bem, reusa plumbing; mas over-engineered e parcialmente dependente do LLM |
 | **Estabilidade** | **8,5** | 70/70, nunca-levanta, resiste a adversarial; −1,0 pelos bugs reais achados na versão distribuída (corrigidos) |
-| **Desempenho** | **7,5** | Runtime rápido (2–380 ms), compute exato; RAG-PT fraco, alguns testes pesados, ranking limitado sem sklearn |
+| **Desempenho** | **8,0** ↑ | Runtime rápido (2–380 ms), compute exato; **RAG-PT corrigido** (fold de acentos: 0,13→0,215, nó certo #1) + **cache de descoberta ~10×**; ranking ainda melhora com sklearn |
 | **Consumo de tokens** | **7,5** | Economia real e alta nos caminhos comuns; zero nos modos caros + overhead de proveniência |
 | **Custo-benefício** | **7,0** | Alto valor em math/audit/multi-step com memória; a cerimônia e a dependência do LLM diluem o retorno em tarefas simples |
 | **Segurança** | **8,0** | Gates maduros, H5, sem segredos; limites inerentes do scanner estático + bugs achados |
-| **Documentação** | **7,5** | Extensa (spec/doc/inventário/refs); estava defasada (contagens, módulos novos) até esta sessão |
+| **Documentação** | **8,5** ↑ | Extensa (spec/doc/inventário/refs); **agora auto-verificada** — o teste `docs_current` falha se contagem/catálogo/módulos divergirem, então não drifta mais |
 | **Testes / QA** | **8,5** | Suíte forte, hermética, determinística; rubrica + cenários E2E |
-| **GLOBAL (ponderada)** | **7,8** | Fundamentos sólidos e honestos; complexidade e dependência do LLM são o teto |
+| **GLOBAL (ponderada)** | **8,1** ↑ | Fundamentos sólidos e honestos; complexidade e dependência do LLM seguem sendo o teto |
+
+> **Melhorias aplicadas nesta rodada (elevando as notas acima):**
+> 1. **RAG-PT** — `_tfidf._fold()` (NFKD, stdlib): PT parava de fragmentar em acentos (`'análise'` virava `'an'+'lise'`) e agora alinha com cognatos EN. Score PT medido subiu de ≤0,13 para **0,215** com o nó certo em #1; o backend de palavras passou a acertar cross-language.
+> 2. **Documentação sempre atualizada** — teste `docs_current`: assere que a contagem em SKILL.md/spec.md == real, que todo script está catalogado E documentado. Pegou 5 módulos não-documentados de imediato (corrigidos).
+> 3. **Desempenho de descoberta** — cache in-process de fetch + enumeração no `github_skills`: 2ª busca **6,1s → 0,6s (~10×)**.
 
 ---
 

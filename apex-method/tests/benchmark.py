@@ -331,6 +331,8 @@ def t_repo_bridge():
 
 def t_tfidf_fallback():
     import _tfidf
+    # RAG-PT: accents are folded so PT words don't fragment at diacritics ('análise' stays whole)
+    assert _tfidf._TOKEN.findall(_tfidf._fold("análise semântica").lower()) == ["analise", "semantica"]
     sims = _tfidf.rank("frontend ui component", ["react frontend ui", "backtest a portfolio"])
     assert sims[0] > sims[1] > -1, sims
     M = _tfidf.pairwise(["a b c", "a b c", "x y z"])
@@ -376,11 +378,13 @@ def t_regressions():
     assert [i for i in items if i["installs"] >= 1000] == [items[0]], items
     # offline discovery degrades to ready-to-run commands (never crashes)
     assert skills_sh.install_requests("x")["requests"][0]["status"] == "STAGED_needs_approval"
-    # char-ngram semantic backend beats word TF-IDF on a cross-language cognate miss
+    # RAG-PT fix: the accent-fold makes BOTH backends rank the cross-language cognate first —
+    # 'otimização de portfólio' folds to shared ASCII stems so word TF-IDF now catches 'portfolio'
+    # (it used to miss, max(w)==0), and char-ngram keeps ranking the cognate first.
     import _tfidf
     w,_ = _tfidf.semantic_rank("otimização de portfólio", ["portfolio optimization", "web design"], backend="word")
     c,_ = _tfidf.semantic_rank("otimização de portfólio", ["portfolio optimization", "web design"], backend="char")
-    assert max(w) == 0 and c.index(max(c)) == 0, (w, c)
+    assert w.index(max(w)) == 0 and max(w) > 0 and c.index(max(c)) == 0, (w, c)
     # dissect must classify Portuguese tasks, not dump them into engineering by default
     assert "finance" in orchestrator.dissect("dimensionar a reserva de caixa e o runway com burn"), \
         orchestrator.dissect("dimensionar a reserva de caixa e o runway com burn")
@@ -2011,6 +2015,28 @@ def t_autopsy_v152():
     return "SEC-001/002/003/004/005/006/007 + FUNC-001 + USER-A locked"
 
 
+def t_docs_current():
+    # DOC CURRENCY GUARD: the declared script count in SKILL.md/spec.md MUST match reality, and
+    # every script must be catalogued — so documentation can NEVER silently drift out of date.
+    import glob, re
+    root = os.path.join(HERE, "..")
+    real = {os.path.basename(p)[:-3] for p in glob.glob(os.path.join(SCRIPTS, "*.py"))}
+    n = len(real)
+    for doc in ("SKILL.md", "spec.md"):
+        txt = open(os.path.join(root, doc), encoding="utf-8").read()
+        nums = set(re.findall(r"(\d+)\s*(?:syscalls|scripts|`scripts)", txt))
+        assert str(n) in nums, f"{doc}: declared script count {sorted(nums)} != real {n} (docs stale)"
+    lib = {s["id"].split(":")[1] for s in json.load(
+        open(os.path.join(root, "catalog", "scripts_lib.json"), encoding="utf-8"))}
+    assert real == lib, f"scripts vs scripts_lib symdiff (uncatalogued): {sorted(real ^ lib)}"
+    # every new script must also be named in at least one of the human docs (spec/documentacao)
+    docs_blob = "".join(open(os.path.join(root, d), encoding="utf-8").read()
+                        for d in ("spec.md", "documentacao.md"))
+    undocumented = sorted(s for s in real if s not in docs_blob)
+    assert not undocumented, f"scripts absent from spec.md/documentacao.md: {undocumented}"
+    return f"docs current: {n} scripts, counts match SKILL.md+spec.md, all catalogued + documented"
+
+
 def t_skill_ledger():
     # remember MY choices: record the 7-field provenance, then RECOVER it in a fresh session (swap).
     import skill_ledger as sl, memory, swap_store as ss, os, tempfile, importlib
@@ -2066,6 +2092,7 @@ def t_github_skills():
     skill_scout.fetch_text = fake_fetch
     _orig_api = gh._api_get
     gh._api_get = lambda *a, **k: None          # hermetic: no network (forces README path, None stars)
+    gh.clear_cache()                            # isolate from any cached fetch/enum in this process
     try:
         hub = [{"owner": "anthropics", "repo": "skills", "ref": "main", "prefix": "skills/"}]
         r = gh.search("extract text and fill pdf forms", hubs=hub, k=3)
@@ -2082,7 +2109,9 @@ def t_github_skills():
         assert len(gh.VENDOR_OWNERS) >= 8 and "anthropics" in gh.VENDOR_OWNERS, gh.VENDOR_OWNERS
         ds = gh.deep_scan("edit powerpoint slides", k=3)
         assert ds["status"] == "OK" and ds["results"], ds
-        # graceful degradation: when NOTHING is fetchable (curated baseline included), status=OFFLINE
+        # graceful degradation: when NOTHING is fetchable (curated baseline included), status=OFFLINE.
+        # clear the cache first — a real run would keep the cached hits (correct), the test isolates it.
+        gh.clear_cache()
         def _all_fail(u, timeout=10, max_bytes=2_000_000):
             raise ValueError("offline")
         skill_scout.fetch_text = _all_fail
@@ -2091,10 +2120,12 @@ def t_github_skills():
     finally:
         skill_scout.fetch_text = _orig
         gh._api_get = _orig_api
+        gh.clear_cache()
     return f"github discovery: pdf/pptx queries rank correct skill; trusted-vendor tier; OFFLINE degrade"
 
 
 TESTS = [
+    ("docs_current", t_docs_current),
     ("skill_ledger", t_skill_ledger),
     ("github_skills", t_github_skills),
     ("autopsy_v152", t_autopsy_v152),

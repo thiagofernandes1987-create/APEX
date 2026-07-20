@@ -106,6 +106,10 @@ tarefa → triage (código)      trivial? → EXPRESS e fim
 | `agent_registry` | 11 personas núcleo + roster 213; match por tarefa; **grants persistem por default e são revogáveis (RT-26b)**; `load()` auto-merge | competência durável → spawn/roteamento |
 | **`agent_spawn`** | **contrato de spawn (RT-19/27)**: persona real + skills/diffs/scripts atraídos + grants + histórico + governança + template + checklist; `equip`/`unequip`; **`context_pack(task)`** (experiência validada → contexto injetado em todo spawn e no run()); **`export_agent`/`import_agent`** (agente treinado portátil, SHA-256 + H5) | AgentSpec executável + briefing + agent bundle → **host LLM (Agent tool)** |
 | `concurrent_executor` | Level A (subprocessos paralelos, barrier, merge, PMI, restart); manifesto Level-B **com specs completas**; diretores com laudos SHA-256 | rodada adjudicada ou RESTART → LLM |
+| `agent_lifecycle` | loop fechado dissect→matrix→resolve→equip→spec→`finalize` (só sucesso validado promove/evolui/materializa; aprende de falha via vacina) | ciclo de vida do agente → roster crescido |
+| `agent_materializer` | cristaliza um agente genérico validado num especialista padronizado (`AGENT.md`) descobrível na sessão seguinte | biblioteca auto-evolutiva → resolve_agent |
+| `federation` | pacotes de conhecimento entre instâncias (só o validado viaja; procedência = cadeia de ledger; HMAC opcional; import só com H5) | conhecimento portátil entre máquinas |
+| `routine_composer` | rotinas multi-passo encadeadas (handoffs aprendidos, auto-PROMOTE@3, reuso) que viajam no swap | fluxos reutilizáveis → orchestrator |
 | `chaos_operators` / `competence_matrix` / `learning` | Lévy/mutação/genius; heat-map + diagnóstico PERSONA_SWAP/INJECT_SKILL/HARD_PROBLEM; promote/demote beta-binomial com ledger | exploração + metacognição + memória de desempenho → painel/spawn |
 
 ### Memória e persistência
@@ -115,6 +119,7 @@ tarefa → triage (código)      trivial? → EXPRESS e fim
 | `swap_store` | hierarquia RAM→SWAP→DISCO; nomes versionados (colisão impossível, RT-09/09b); bundle com hash total fail-closed; gate de promoção | page-out/page-in íntegros → sessões futuras/Drive/git |
 | `project_ledger` | inventário vivo MACRO+micros, DSM (caminho crítico + lotes paralelos), gate de conclusão, abandono justificado | retomada exata de projetos → sessões futuras |
 | `snapshot` | estado padronizado com proveniência WHAT/WHERE/HOW/confiança | bloco re-emitível → contexto do LLM |
+| `token_tracker` | custo de tokens medido vs estimado por passo (≥3 amostras → substitui a estimativa); alimenta o `mode_flow`/orçamentos | calibração real do orçamento → pipeline_dsm |
 
 ### Segurança
 | Módulo | O que faz | Entrega → para quem |
