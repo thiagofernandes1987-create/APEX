@@ -218,6 +218,27 @@ Antes de expandir mais a cascata: o runtime precisa **lembrar das próprias esco
 
 **Cascata agora:** `PROVEN (lembrado) → LOCAL (instaladas + MCPs) → native → skills.sh → github`. Teste `t_skill_ledger` (hermético): grava 7 campos + recupera cross-session + prior exclui falhas. Registrado em `scripts_lib.json`. Regressão **70/70 · 13/13 (100%) · 7/7 CLEAN**.
 
+### Ciclo 11 — Verificação da infraestrutura de swap + documentação atualizada
+
+**(a) Verificação ao vivo da infraestrutura de swap (`verify_swap.py`): 20/20 PASS.**
+
+| Área | Verificado |
+|---|---|
+| Padrão de pastas/nomenclatura/backups | árvore canônica materializada; nomes ao padrão; `KEEP_BACKUPS=10` rotaciona (13 versões → ≤10 sobrevivem em `versions/`) |
+| Estado promovido (DB + JSON) | `learning.db` (PROMOTED capturado), `agent_grants.json`, `collect_stores` reúne tudo |
+| Hashes que sobrevivem | bundle SHA-256 recomputa (tamper-evident); ledger `verify_ledger` ok |
+| Backends | local (on-disk), drive-manifest, `compress` (gzip+b64), zip (`project_ledger`) |
+| Restauração cross-session | page-in em home NOVO → **skill promovida restaurada**, memória + ledger re-verificam |
+| Alimenta | taxonomia (overlay CANDIDATE→ADOPTED), gravidade (constelação), RAG por nós |
+
+**(b) Documentação atualizada** (estava defasada):
+- Contagem **51/46 → 55 scripts** (SKILL.md + spec.md; SR_40 confirma "55/55").
+- 4 módulos novos (`_ast_helpers`, `github_skills`, `local_discovery`, `skill_ledger`) — **eram 0 docs** → adicionados às tabelas do `spec.md` e às linhas-resumo de arquitetura.
+- `documentacao.md` §5.4.1 nova: **infraestrutura de swap completa** — o que persiste (DB+JSON), padrão de pastas, nomenclatura, `KEEP_BACKUPS=10`, quais hashes sobrevivem (bundle SHA-256/HMAC + ledger por-dispositivo), backends (drive/local/zip/git), **as 3 vias de restauração** (Drive / pasta-pendrive / ZIP do usuário) e como o estado promovido re-alimenta learning/taxonomia/gravity/RAG.
+- Cascata de descoberta documentada na §5.5. `requirements.txt` conferido: **atual** (módulos novos são stdlib puro, sem novas deps).
+
+Regressão **70/70 · 13/13 (100%) · 7/7 CLEAN**.
+
 ---
 
 ## Parte C — Inventário de correções (priorizado) — *referência original*

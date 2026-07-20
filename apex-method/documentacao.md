@@ -173,13 +173,82 @@ validado consultado no início de cada tarefa; inventário vivo com DSM de micro
 crítico + lotes paralelos) e gate de conclusão; snapshot com proveniência; estagnação
 detectada (2× FLAT → meta-aprendizado).
 
+### 5.4.1 Infraestrutura da memória swap (padrão canônico — verificado 20/20)
+
+O que é salvo, onde, com que nomes, quais hashes sobrevivem e como se restaura. **Um único
+padrão**, idêntico em pasta local, pendrive e Drive.
+
+**O que persiste (o "estado promovido" — DB + JSON):**
+- **DB SQLite:** `memory.db` (episódica/semântica + **Knowledge Graph** + **ledger** SHA-256),
+  `learning.db` (promovido/rebaixado por Bayes beta-binomial), `competence.db`, `vaccines.db`,
+  overlay de `taxonomy` (CANDIDATE→ADOPTED), roster crescido (`grown_agents.json`).
+- **JSON:** `agent_grants.json` (quem equipou qual skill/script), `config.json` (hábitos/modos),
+  persona/preferences (tier `user`). `collect_stores()` reúne TODOS num bundle.
+- Um **bundle** (JSON) por page-out carrega tudo isso + a memória em NDJSON; `page_out(delta=True)`
+  exporta só o novo (cadeia `delta_of`), `compress=True` = gzip+b64 (~10× menor no trânsito).
+
+**Padrão de pastas** (`materialize()` cria idêntico em qualquer backend):
+```
+APEX/
+  user/            persona, preferences, config            (+ user/versions/)
+  memory/          memory.ndjson, knowledge_graph, ledger  (+ memory/versions/)
+  swap/<sessão>/   session-*.json (cabeçalho) + bundle-*.json (+ versions/)
+  archive/         páginas de swap superadas
+```
+Regra: a **pasta MAIN** sempre tem o LATEST; versões antigas vão para `versions/`.
+
+**Nomenclatura de arquivos** (colisão impossível — RT-09/09b):
+`<name>-<function>-<YYYYMMDDHHMMSS+micros>-R<NN>.<ext>` (UTC, ordenável, microssegundos).
+`name`/`function`/`ext` são sanitizados ao charset canônico → **sem path traversal** (C-01).
+
+**Backups / rotação:** `KEEP_BACKUPS = 10` — os **10 mais novos** de cada tipo sobrevivem em
+`versions/`; os mais antigos são coletados (no Drive, que é append-only, são **listados** para GC,
+pois não há API de delete).
+
+**Quais hashes sobrevivem (integridade):**
+- **bundle:** SHA-256 sobre o payload inteiro; `import_bundle` recomputa e **FALHA FECHADO** se não
+  bater (adulterado → REJECTED antes de qualquer escrita). Com `APEX_FED_KEY` setada, exige **HMAC**
+  (C-02 — hash puro é anti-corrupção, não anti-tamper).
+- **ledger:** cadeia SHA-256 **por dispositivo**; fundir bundles de N máquinas intercala N cadeias
+  íntegras; editar qualquer coluna quebra a cadeia (`verify_ledger` detecta).
+- **memória/vacinas:** content-addressing SHA-256 (dedup).
+
+**Backends de durabilidade (`config.persist_backend`):**
+- `drive-swap` — o runtime (Claude) sobe o `drive_manifest` via as ferramentas de Drive (append-only).
+- `local` — a cópia em `<APEX_HOME>/swap/...` já é o artefato durável (pasta local ou pendrive
+  `APEX_HOME=E:\APEX`).
+- `git` — consolidação por commit no repo. `zip` — export `.zip` (via `project_ledger`).
+
+**As três vias de restauração** (todas passam por `import_bundle`, mesmo fail-closed):
+1. **Drive** — baixa os arquivos de `APEX/swap/<sessão>/` e aplica a cadeia.
+2. **Pasta local / pendrive** — o usuário copia a pasta `APEX/` para onde for e o sistema lê dela.
+3. **Usuário envia ZIP** — `page_in_session` aplica base+deltas do conteúdo enviado.
+`resume_due()` avisa NA ENTRADA da sessão que há swap mais novo que o estado local.
+
+**Como alimenta o resto:** o estado promovido restaurado volta ao `learning` (promovido/rebaixado),
+ao overlay do `taxonomy` (facetas ADOPTED), ao roster/grants (agentes), e o `rag_index`/`gravity`
+re-sincronizam (`rebuild()`), seguindo o **padrão de dados que o agente compreende** (nó com
+path+resumo, corpo do skill/diff sob demanda). `skill_ledger` grava a **proveniência das escolhas**
+(problema→skill→agente→resolveu?→promovida?→repo→comandos) nesses mesmos stores, então ela viaja no
+swap e vira o **tier PROVEN** da cascata na sessão seguinte.
+
 ### 5.5 Segurança (comportamento esperado em uma linha cada)
 
 `skill_scout`: allowlist raw.githubusercontent, redirect final checado, truncado recusado,
-AST 2 níveis (RCE rejeita; import fora da whitelist ≠ safe), scripts referenciados
-descobertos e escaneados, prompt-injection sinalizado. `guards`: SR_36–40 executáveis;
-`getattr` dinâmico rejeitado. `uco_gate`: juiz determinístico antes de todo subprocesso.
-Fronteira real: **H5 — aprovação humana**; o scanner é gate estático best-effort, não sandbox.
+AST 2 níveis (RCE rejeita; import fora da whitelist ≠ safe; `numpy.load(allow_pickle)`/
+`pandas.read_pickle`/`open` de modo não-literal rejeitados — C-04), scripts referenciados
+descobertos e escaneados (só path-qualified — N-04), prompt-injection sinalizado. `guards`:
+SR_36–40 executáveis; `getattr` dinâmico rejeitado. `uco_gate`: juiz determinístico antes de
+todo subprocesso. Fronteira real: **H5 — aprovação humana**; o scanner é gate estático
+best-effort, não sandbox.
+
+**Cascata de descoberta (ordem, cada tier com sua qualidade):**
+`PROVEN (skill_ledger, 0.98 — lembro que resolveu)` → `LOCAL (local_discovery, 0.95 — já
+instalada, sem H5)` → `native (índice 3.784)` → `skills.sh (marketplace, H5)` → `github
+(github_skills — fornecedores confiáveis + estrelas + semântica, H5)`. Flags `discovery_local`
+/ `discovery_github` (default True). Nada instala sozinho: cada candidato externo passa por
+`skill_scout.evaluate` (AST scan) + **H5**. As skills LOCAIS e PROVEN já são confiáveis (não
+precisam de instalação/gate).
 
 ### 5.6 Mapa e auto-conhecimento
 
