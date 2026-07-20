@@ -34,6 +34,7 @@ WHAT IF IT FAILS:
   memory.py degrades to an empty bundle. Never raises on normal use.
 """
 import hashlib
+import hmac as _hmac
 import json
 import os
 import re
@@ -91,9 +92,20 @@ def default_root():
 
 
 # ── the file-naming standard ─────────────────────────────────────────────────────────────────
+def _safe_component(s, default="x"):
+    """C-01: coerce a name/function/ext to the canonical charset [A-Za-z0-9_] so it can NEVER
+    contain a path separator or `..`. A crafted bundle key like '../../tmp/x' (attacker-controlled
+    via import_bundle's stores.user keys) used to flow straight into the filename and escape the
+    swap dir (PoC: normpath -> /home/tmp/...). Any out-of-charset char becomes '_'; empty -> default."""
+    cleaned = re.sub(r"[^A-Za-z0-9_]", "_", str(s))
+    return cleaned or default
+
+
 def make_filename(name, ext=None, function=None, rev=None, ts=None):
     """Canonical name `<name>-<function>-<YYYYMMDDHHMMSS>-R<NN>.<ext>`. function/ext default from
-    FILE_SPEC; rev defaults to the file-type's current validated revision; ts defaults to now (UTC)."""
+    FILE_SPEC; rev defaults to the file-type's current validated revision; ts defaults to now (UTC).
+    C-01: name/function/ext are sanitised to the canonical charset — the output always matches
+    _NAME_RE and can never carry a directory traversal."""
     fn, fext, _folder = FILE_SPEC.get(name, (function or "User", ext or "json", None))
     function = function or fn
     ext = ext or fext
@@ -105,7 +117,7 @@ def make_filename(name, ext=None, function=None, rev=None, ts=None):
     if ts is None:
         t = time.time()
         ts = time.strftime(NAME_TS_FMT, time.gmtime(t)) + f"{int((t % 1) * 1_000_000):06d}"
-    return f"{name}-{function}-{ts}-R{int(rev):02d}.{ext}"
+    return f"{_safe_component(name)}-{_safe_component(function, 'User')}-{ts}-R{int(rev):02d}.{_safe_component(ext, 'json')}"
 
 
 def parse_filename(fn):
@@ -156,6 +168,11 @@ def write_versioned(folder, name, content, keep=KEEP_BACKUPS, ts=None):
     os.makedirs(vdir, exist_ok=True)
     fn = make_filename(name, ts=ts)
     path = os.path.join(folder, fn)
+    # C-01 (defense-in-depth): make_filename already sanitises the name, but assert the resolved
+    # path stays under `folder` before any write — mirrors repo_bridge's SEC-005 containment guard.
+    _root = os.path.realpath(folder)
+    if os.path.commonpath([_root, os.path.realpath(path)]) != _root:
+        raise ValueError(f"refusing path escape outside swap folder: {name!r}")
     # RT-09b (GPT audit, validated on v1.42): the DEFAULT ts is already microsecond-unique, but a
     # caller-supplied EXPLICIT ts could collide with an existing file (same second/params) and
     # silently OVERWRITE it — breaking "every write is a new version". On collision, extend the
@@ -406,12 +423,34 @@ def export_bundle(session_id, memory_db=None, snapshot=None, working=None, proje
     # RT-08: hash EVERY field (except the signature itself) so project_ledger, competence,
     # schema_version, ts and filename are all covered — not just the old 5-field subset.
     payload["sha256"] = _bundle_sha(payload)
+    # C-02: SHA-256 alone is a CHECKSUM (anti-corruption), NOT authentication — a malicious author
+    # simply recomputes it. When APEX_FED_KEY is set, bind the bundle with an HMAC so a tampered
+    # or forged bundle cannot pass import_bundle (which combined with C-01 closed the traversal path).
+    _h = _bundle_hmac(payload)
+    if _h:
+        payload["hmac"] = _h
     return payload
 
 
+def _fed_key():
+    """Shared HMAC key (opt-in). Same env var as federation.py so a paired setup authenticates
+    swap bundles too. Empty => no authentication (backward-compatible checksum-only behaviour)."""
+    return os.environ.get("APEX_FED_KEY", "")
+
+
+def _bundle_hmac(bundle):
+    """HMAC-SHA256 over the bundle's sha256 using APEX_FED_KEY, or None when no key is set."""
+    key = _fed_key()
+    if not key or not bundle.get("sha256"):
+        return None
+    return _hmac.new(key.encode(), bundle["sha256"].encode(), hashlib.sha256).hexdigest()
+
+
 def _bundle_sha(bundle):
-    """SHA-256 over the whole bundle except its own `sha256` field (canonical, sorted JSON)."""
-    unsigned = {k: v for k, v in bundle.items() if k != "sha256"}
+    """SHA-256 over the whole bundle except its own `sha256`/`hmac` fields (canonical, sorted JSON).
+    `hmac` is derived from `sha256`, so excluding it keeps the digest stable whether or not the
+    bundle is authenticated — old checksum-only bundles verify unchanged."""
+    unsigned = {k: v for k, v in bundle.items() if k not in ("sha256", "hmac")}
     return _sha(json.dumps(unsigned, sort_keys=True, ensure_ascii=False))
 
 
@@ -520,6 +559,17 @@ def import_bundle(bundle, memory_db=None, quarantine_dir=None, restore_stores=Tr
         ok = (bundle.get("sha256") is not None and _bundle_sha(bundle) == bundle["sha256"])
     except Exception:
         ok = False
+    # C-02: when APEX_FED_KEY is set, the checksum is no longer enough — require a valid HMAC so a
+    # forged bundle (attacker recomputes sha256) is rejected. No key => checksum-only (unchanged),
+    # with authenticated=None so callers can tell "unauthenticated" apart from "verified".
+    authenticated = None
+    _reason = "bundle hash mismatch — refusing to hydrate tampered state"
+    if _fed_key():
+        want = _bundle_hmac(bundle) if bundle.get("sha256") else None
+        authenticated = bool(want and _hmac.compare_digest(want, bundle.get("hmac", "")))
+        if ok and not authenticated:
+            _reason = "APEX_FED_KEY set but bundle HMAC missing/invalid — refusing unauthenticated bundle"
+        ok = ok and authenticated
     sv = bundle.get("schema_version")
     if sv is not None and sv != SCHEMA_VERSION:
         return {"integrity_ok": ok, "status": "REJECTED_SCHEMA", "memory_stats": {},
@@ -534,7 +584,7 @@ def import_bundle(bundle, memory_db=None, quarantine_dir=None, restore_stores=Tr
             except Exception:
                 pass
         return {"integrity_ok": False, "status": "REJECTED", "memory_stats": {},
-                "reason": "bundle hash mismatch — refusing to hydrate tampered state"}
+                "authenticated": authenticated, "reason": _reason}
     mem_stats = {}
     try:
         import memory
@@ -544,20 +594,22 @@ def import_bundle(bundle, memory_db=None, quarantine_dir=None, restore_stores=Tr
         mem_stats = {"_error": str(e)[:80]}
     stores_restored = _restore_stores(bundle.get("stores")) if restore_stores else None
     # user tier files (persona/preferences) are re-materialized into the swap tree when known
+    warnings = []                                  # C-06: surface partial-restore failures, not silence
     if restore_stores and root and (bundle.get("stores") or {}).get("user"):
-        try:
-            udir = os.path.join(root, "user")
-            for name, content in bundle["stores"]["user"].items():
+        udir = os.path.join(root, "user")
+        for name, content in bundle["stores"]["user"].items():
+            try:
                 write_versioned(udir, name, json.dumps(content, ensure_ascii=False, indent=1))
-        except Exception:
-            pass
+            except Exception as e:                 # per-file: one bad key must not drop the rest
+                warnings.append(f"user store {name!r} not restored: {str(e)[:80]}")
     try:                                           # resume_due marker: this bundle is now local
         with open(_marker_path(), "w", encoding="utf-8") as f:
             json.dump({"bundle_sha": bundle["sha256"], "filename": bundle.get("filename"),
                        "session_id": bundle.get("session_id"), "ts": time.time()}, f)
-    except Exception:
-        pass
+    except Exception as e:
+        warnings.append(f"resume_due marker not written: {str(e)[:80]}")
     return {"integrity_ok": True, "status": "OK", "session_id": bundle.get("session_id"),
+            "authenticated": authenticated, "warnings": warnings,
             "session": bundle.get("session", {}), "snapshot": bundle.get("snapshot", {}),
             "working": bundle.get("working", []), "project_ledger": bundle.get("project_ledger", {}),
             "competence": bundle.get("competence", []), "memory_stats": mem_stats,

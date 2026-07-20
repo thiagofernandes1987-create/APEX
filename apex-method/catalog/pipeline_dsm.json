@@ -3,8 +3,9 @@
   "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimizations are context_budget(mode) — experience injection sized per mode, zero on EXPRESS — and its twin output_budget(mode): generation compressed on cheap paths, full verbosity kept on DEEP+ where the reasoning chain is the product."
  },
  "module_dsm": {
-  "modules": 51,
+  "modules": 52,
   "deps": {
+   "_ast_helpers": [],
    "_tfidf": [],
    "agent_lifecycle": [
     "agent_materializer",
@@ -112,7 +113,9 @@
     "repo_bridge",
     "skills_sh"
    ],
-   "guards": [],
+   "guards": [
+    "_ast_helpers"
+   ],
    "hypothesis_dag": [],
    "learning": [
     "bayes",
@@ -128,6 +131,7 @@
     "config",
     "deep_research",
     "memory",
+    "pot",
     "repo_bridge",
     "swap_store"
    ],
@@ -178,7 +182,9 @@
     "memory"
    ],
    "skill_forge": [],
-   "skill_scout": [],
+   "skill_scout": [
+    "_ast_helpers"
+   ],
    "skills_sh": [],
    "snapshot": [],
    "swap_store": [
@@ -203,6 +209,7 @@
   },
   "levels": [
    [
+    "_ast_helpers",
     "_tfidf",
     "apex_st_metric",
     "asset_manager",
@@ -214,7 +221,6 @@
     "fractal_compression",
     "geodesic_scheduler",
     "geometry_estimator",
-    "guards",
     "hypothesis_dag",
     "llm_adapter",
     "mental_interpreter",
@@ -223,7 +229,6 @@
     "pot",
     "repo_bridge",
     "skill_forge",
-    "skill_scout",
     "skills_sh",
     "snapshot",
     "token_tracker",
@@ -234,10 +239,12 @@
    [
     "agent_registry",
     "gravity",
+    "guards",
     "memory",
     "pipeline_dsm",
     "project_ledger",
     "router",
+    "skill_scout",
     "uco_gate"
    ],
    [
@@ -321,12 +328,12 @@
  },
  "mode_flow": {
   "_calibration": {
-   "TRIAGE": "estimated",
-   "DISSECT": "estimated",
-   "RESOLVE_SPECIALISTS": "estimated",
+   "TRIAGE": "measured",
+   "DISSECT": "measured",
+   "RESOLVE_SPECIALISTS": "measured",
    "MODE": "estimated",
-   "PHASE_PLAN": "estimated",
-   "CONTEXT_PACK": "estimated",
+   "PHASE_PLAN": "measured",
+   "CONTEXT_PACK": "measured",
    "SPAWN_AGENTS": "estimated",
    "RUN_STANCES": "estimated",
    "BARRIER_MERGE": "estimated",
@@ -354,7 +361,7 @@
     "PAGE_OUT"
    ],
    "tokens_est": 60,
-   "savings_vs_naive": 5160,
+   "savings_vs_naive": 4734,
    "context_budget_chars": 0,
    "output_budget": {
     "soft_max_tokens": 120,
@@ -365,24 +372,24 @@
   },
   "STANDARD": {
    "plan": [
-    "MODE",
-    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "PMI_CONVERGE",
+    "MODE",
+    "TRIAGE",
+    "CONTEXT_PACK",
     "RESOLVE_SPECIALISTS",
+    "PMI_CONVERGE",
     "PAGE_OUT",
     "SNAPSHOT",
-    "CONTEXT_PACK"
+    "BARRIER_MERGE"
    ],
    "skipped": [
-    "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
-   "tokens_est": 1420,
-   "savings_vs_naive": 3800,
+   "tokens_est": 1594,
+   "savings_vs_naive": 3200,
    "context_budget_chars": 500,
    "output_budget": {
     "soft_max_tokens": 500,
@@ -392,22 +399,22 @@
   },
   "FOGGY": {
    "plan": [
-    "MODE",
-    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "PMI_CONVERGE",
+    "MODE",
+    "TRIAGE",
+    "CONTEXT_PACK",
     "RESOLVE_SPECIALISTS",
+    "PMI_CONVERGE",
     "PAGE_OUT",
     "SNAPSHOT",
-    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 5220,
+   "tokens_est": 4794,
    "savings_vs_naive": 0,
    "context_budget_chars": 900,
    "output_budget": {
@@ -418,22 +425,22 @@
   },
   "DEEP": {
    "plan": [
-    "MODE",
-    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "PMI_CONVERGE",
+    "MODE",
+    "TRIAGE",
+    "CONTEXT_PACK",
     "RESOLVE_SPECIALISTS",
+    "PMI_CONVERGE",
     "PAGE_OUT",
     "SNAPSHOT",
-    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 5220,
+   "tokens_est": 4794,
    "savings_vs_naive": 0,
    "context_budget_chars": 1300,
    "output_budget": {
@@ -444,22 +451,22 @@
   },
   "SCIENTIFIC": {
    "plan": [
-    "MODE",
-    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "PMI_CONVERGE",
+    "MODE",
+    "TRIAGE",
+    "CONTEXT_PACK",
     "RESOLVE_SPECIALISTS",
+    "PMI_CONVERGE",
     "PAGE_OUT",
     "SNAPSHOT",
-    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 5220,
+   "tokens_est": 4794,
    "savings_vs_naive": 0,
    "context_budget_chars": 1600,
    "output_budget": {
@@ -470,22 +477,22 @@
   },
   "RESEARCH": {
    "plan": [
-    "MODE",
-    "TRIAGE",
     "DISSECT",
     "PHASE_PLAN",
-    "PMI_CONVERGE",
+    "MODE",
+    "TRIAGE",
+    "CONTEXT_PACK",
     "RESOLVE_SPECIALISTS",
+    "PMI_CONVERGE",
     "PAGE_OUT",
     "SNAPSHOT",
-    "CONTEXT_PACK",
     "BARRIER_MERGE",
     "VERIFY",
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 5220,
+   "tokens_est": 4794,
    "savings_vs_naive": 0,
    "context_budget_chars": 2000,
    "output_budget": {

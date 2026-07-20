@@ -1,5 +1,13 @@
 [
  {
+  "id": "script:_ast_helpers",
+  "type": "script",
+  "domain": "security",
+  "capabilities": "ast,open-mode,deserializer,rce-sink,shared-gate,static-scan",
+  "mass": 120,
+  "path": "scripts/_ast_helpers.py"
+ },
+ {
   "id": "script:_tfidf",
   "type": "script",
   "domain": "meta",

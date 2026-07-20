@@ -7,6 +7,7 @@ PASS/REJECT verdict (not LLM_BEHAVIOR hand-waving). Where a guard is purely abou
 LLM judgment, the check enforces the structural part and says so.
 """
 import ast, os, re
+from _ast_helpers import open_mode_risk, deserializer_rce_reason
 
 # ── SR_36 [JIT_CRYSTALLIZATION_GUARD] ────────────────────────────────────────
 # Per-class ΔH thresholds; a single threshold for all classes is a violation.
@@ -45,23 +46,6 @@ FORGE_IMPORT_WHITELIST = {
 FORGE_ALLOWLIST = ("https://raw.githubusercontent.com/", "https://github.com/")
 
 
-def _write_open_mode(n):
-    """True if this is a builtin open()/Path.open() in a write/append/create mode.
-    Audit fix (v1.52.0, SEC-004): the gates modelled dangerous imports/attrs but NOT the
-    builtin `open`, so `open('x','w').write(...)` wrote arbitrary files and passed clean."""
-    if not (isinstance(n, ast.Call) and (
-            (isinstance(n.func, ast.Name) and n.func.id == "open")
-            or (isinstance(n.func, ast.Attribute) and n.func.attr == "open"))):
-        return False
-    mode = None
-    if len(n.args) >= 2 and isinstance(n.args[1], ast.Constant):
-        mode = n.args[1].value
-    for kw in n.keywords:
-        if kw.arg == "mode" and isinstance(kw.value, ast.Constant):
-            mode = kw.value.value
-    return isinstance(mode, str) and any(c in mode for c in ("w", "a", "x", "+"))
-
-
 def forge_load_gate(code, url=None):
     """SR_37: mandatory AST security scan before exec/importlib. REJECT on any violation."""
     reasons = []
@@ -72,8 +56,14 @@ def forge_load_gate(code, url=None):
     except SyntaxError as e:
         return {"verdict": "REJECTED", "reasons": [f"syntax: {e}"]}
     for n in ast.walk(tree):
-        if _write_open_mode(n):
+        _omr = open_mode_risk(n)
+        if _omr == "write":
             reasons.append(f"filesystem write via open(...,'w'/'a'/'x'/'+') line {n.lineno}")
+        elif _omr == "unknown":   # C-04: strict forge rejects an open() whose mode isn't a literal
+            reasons.append(f"open() with non-literal mode (cannot prove read-only) line {n.lineno}")
+        _rce = deserializer_rce_reason(n)  # C-04: pandas.read_pickle / numpy.load(allow_pickle)
+        if _rce:
+            reasons.append(_rce)
         # builtin file-mutating helpers that need no import (os.* is import-caught already)
         if (isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
                 and n.func.attr in ("write_text", "write_bytes", "unlink", "mkdir", "rmdir",

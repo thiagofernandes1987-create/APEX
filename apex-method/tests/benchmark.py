@@ -775,9 +775,25 @@ def t_agent_spawn():
     return f"spec executable + ghost blocked + equip/unequip durable + manifest carries shared specs"
 
 
+def _wipe_grown_roster():
+    """N-02 hermeticity: t_agent_materializer durably materialises a specialist for the concrete-beam
+    task into the grown-roster overlay under APEX_METHOD_HOME. That overlay PERSISTS, so on a REUSED
+    home (a 2nd benchmark run, or evaluate.py's inherited home) resolve_agent() FINDS it and the
+    'no roster match -> synthesize=True' precondition of t_agent_lifecycle / t_agent_materializer
+    breaks (flaky 66/68). Wiping the grown overlay makes both tests hermetic on any home."""
+    import agent_registry as ar, shutil
+    lib = ar._library_dir()
+    shutil.rmtree(os.path.join(lib, "agents"), ignore_errors=True)
+    try:
+        os.remove(ar._grown_roster_path())
+    except OSError:
+        pass
+
+
 def t_agent_lifecycle():
     # O-2 full flow (v1.53): the CLOSED loop dissect->matrix->find-or-create->equip/discover->spec,
     # then finalize() evolves the library ONLY on a validated success.
+    _wipe_grown_roster()   # N-02: start from a clean grown roster (no leftover materialized specialist)
     import agent_lifecycle as al
     # 1+2: competence matrix — disciplines + canonical facets, JSON-serializable (facets not a set)
     mx = al.competence_matrix("optimize a react frontend for accessibility and performance")
@@ -811,6 +827,7 @@ def t_agent_materializer():
     # v1.54: a VALIDATED generic agent is crystallized into a STANDARDIZED specialist and becomes
     # discoverable next session — the auto-evolutive library closes the cross-session loop.
     import agent_lifecycle as al, agent_registry as ar, agent_materializer as am
+    _wipe_grown_roster()   # N-02: hermetic start — no specialist left over from a prior run
     TASK = "dimensione uma viga de concreto no estado limite ultimo"
     # SESSION 1: no roster match -> synthesize -> validate -> materialize
     d1 = al.resolve_agent(TASK)

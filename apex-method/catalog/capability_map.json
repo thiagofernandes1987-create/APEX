@@ -1,7 +1,7 @@
 {
  "_meta": {
   "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
-  "count": 65
+  "count": 66
  },
  "environment": {
   "python": "python 3.11.15",
@@ -34,6 +34,20 @@
   "platform": "linux"
  },
  "capabilities": [
+  {
+   "id": "tool:_ast_helpers",
+   "kind": "runtime-tool",
+   "name": "_ast_helpers",
+   "path": "scripts/_ast_helpers.py",
+   "description": "_ast_helpers.py — shared AST-scan primitives for the security gates. WHY THIS EXISTS: `skill_scout.ast_security_scan` and `guards.forge_load_gate` both need the same low-level checks (dangerous `open()` modes, deserializer RCE sinks). Befor",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": "From any static gate that walks a `ast` tree of untrusted code before staging/exec."
+   }
+  },
   {
    "id": "tool:_tfidf",
    "kind": "runtime-tool",
@@ -853,7 +867,7 @@
    "id": "skill:apex-method",
    "kind": "installed-skill",
    "name": "apex-method",
-   "path": "/home/user/APEX/apex-method/SKILL.md",
+   "path": "/home/user/APEX/apex-method/tests/../SKILL.md",
    "description": "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill ro",
    "triggers": "APEX, PoT, program of thought, pipeline, scientific mode, modo científico, RK4, token",
    "commands": [

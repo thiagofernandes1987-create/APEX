@@ -108,7 +108,9 @@ def promote(args):
 
 def main():
     ap = argparse.ArgumentParser(description="Native APEX skill generator (neoformat).")
-    sub = ap.add_subparsers(dest="cmd", required=True)
+    # C-09: a bare `skill_forge.py` should print help and exit 0 (like the other modules' self-tests),
+    # not argparse's exit-2 usage error. Subcommand stays mandatory for actual work.
+    sub = ap.add_subparsers(dest="cmd")
     c = sub.add_parser("create")
     c.add_argument("--name", required=True)
     c.add_argument("--kind", default="workflow")
@@ -122,6 +124,9 @@ def main():
     p.add_argument("--path", required=True)
     p.set_defaults(fn=promote)
     args = ap.parse_args()
+    if not getattr(args, "cmd", None):
+        ap.print_help()
+        return
     args.fn(args)
 
 
