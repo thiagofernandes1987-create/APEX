@@ -86,6 +86,38 @@ Harness `mode_qa.py` exercitou a skill através de **cada modo** da SKILL.md, va
 
 **Estado ao fim do ciclo 4:** modos operacionais validados (0 issues), regressão verde (68/68 · 13/13 · 7/7). **Ponto fixo atingido — nenhuma ocorrência acionável de código restante.**
 
+### Ciclo 5 — STRESS TEST em tempo real (skill completa rodando com problemas reais)
+
+Dois harness em tempo real dirigidos por modos + subsistemas duráveis, com **validação de resultados reais** (não só "rodou") e timings.
+
+**Passe 1 — `stress.py` (problemas reais, todos os subsistemas):**
+
+| Área | O que rodou (real) | Resultado |
+|---|---|---|
+| Compute | PoT chain (20! mod p exato), RK4 (`y(1)` err < 1e-3 vs e⁻²), Monte Carlo (média ~1.0, 20k it), verify identity | ✅ |
+| Modos | EXPRESS (aritmética exata), STANDARD, FOGGY, DEEP (multi-disciplina), SCIENTIFIC (EDO+prova), RESEARCH (loop) | ✅ |
+| Memória persistente | remember + KG edge + ledger SHA-256 → **page-out → home NOVO → page-in** → recall sobrevive + ledger re-verifica | ✅ |
+| Agentes | resolve→spawn(AgentSpec)→finalize(validated)→**materializado**→overlay durável→**sessão 2 acha sem re-síntese** (promoção durável) | ✅ |
+| Cache | scan (parse 3) → re-scan (cached 3) → touch (reparse 1) → delete (prune) | ✅ |
+| Learning | promote@3 sucessos + demote sustained-fail (excluído do best) | ✅ |
+| Throughput | **50 `orchestrator.run` back-to-back sem crash — 8.6 runs/s** | ✅ |
+
+**Passe 2 — `stress2.py` (adversarial / edge / failure modes):**
+
+| Vetor | Resultado |
+|---|---|
+| Inputs malformados (`""`/`None`/`int`/`dict`/20k chars/unicode/prompt-injection) → `run()` nunca levanta | ✅ |
+| Express edge: `9**9**9` sem hang (cap de expoente), `1/0` tratado | ✅ |
+| PoT sandbox: loop infinito **morto no timeout**, crash capturado, **segredo do pai scrubbed**, saída **capada** | ✅ |
+| Concorrência: stance que crasha **não derruba** a rodada paralela | ✅ |
+| Memória: 200 idênticos → **dedup=1**; **guarda de ciclo do KG** bloqueia A→B→C→A | ✅ |
+| Bundle **adulterado → REJECTED** (C-02 em ação); bundle limpo aceito | ✅ |
+| Cadeia de **deltas** (base+delta) reconstruída no page-in | ✅ |
+
+**Resultado do ciclo 5: 0 ocorrências de código.** As únicas falhas encontradas foram **bugs no próprio harness** (uso incorreto das APIs `solve_ode`/`simulate`/`verify_identity`/`page_out`) — corrigidos no harness, **não eram defeitos da skill**. Regressão pós-stress: **68/68 · 13/13 (100%) · 7/7 CLEAN**.
+
+**Estado ao fim do ciclo 5:** a skill roda a pipeline completa em tempo real sobre problemas reais, resiste a inputs adversariais e mantém integridade dos subsistemas duráveis sob carga. **Ponto fixo confirmado — nenhuma ocorrência acionável restante após 5 ciclos.**
+
 ---
 
 ## Parte C — Inventário de correções (priorizado) — *referência original*
