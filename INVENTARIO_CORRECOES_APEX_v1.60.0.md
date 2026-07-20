@@ -181,6 +181,23 @@ Teste `t_github_skills` (hermético, `fetch_text`/`_api_get` mockados) no benchm
 
 **Estado ao fim do ciclo 8:** descoberta GitHub-nativa **fiada na cascata automática** com catálogo curado verificado. Regressão **69/69 · 13/13 (100%) · 7/7 CLEAN**.
 
+### Ciclo 9 — Cascata ABERTA: tier LOCAL-first (skills instaladas + MCPs)
+
+Novo `scripts/local_discovery.py` — mapeia o que **já está instalado** no ambiente e o coloca como **tier 0** da cascata (antes de native → skills.sh → github), pois é custo zero, sem rede, sem gate de instalação.
+
+**Cobre os três pontos pedidos:**
+1. **Skills locais** — varre `~/.claude/skills`, `/mnt/skills/{public,examples}`, o projeto e `APEX_LOCAL_SKILLS`, caminhando os **diretórios-container completos** da convenção da CLI (`skills/`, `skills/.curated`, `.claude/skills`, `.agents/skills`, `data/skills`, `.continue/skills`…), layout flat e catálogo. **35 skills mapeadas ao vivo** (dedup por nome das 41 pastas), parseadas com `skill_scout.parse_skill_md`, ranqueadas semanticamente.
+2. **MCPs vivos** — lê `mcpServers` das configs padrão (`.mcp.json`, `~/.claude.json` projects, `.claude/settings*.json`) + env `APEX_MCP_SERVERS`; expõe `mcp__<server>__*` para os agentes. (0 aqui — nenhum MCP persistido no config; degrada limpo.)
+3. **Diretórios-container completos** — a lista `CONTAINER_DIRS` da CLI.
+
+**Fiação na cascata** (`deep_research`):
+- `_resolve_local(need)` como **tier 0**; flag `discovery_local` (default `True`; testes desligam = herméticos).
+- `_hit_quality`: hit local = **0.95** (o tier mais forte — já instalado, sem H5).
+- **Validação ao vivo:** `research('create a pdf report and edit a word document', source='both')` → resolveu com **skills LOCAIS** (docx, canvas-design, doc-coauthoring) e **TARGET_REACHED em 1 rodada** — as instaladas venceram, sem precisar do marketplace/github.
+- Teste `t_deep_research` estendido: assere tier local fiado (mockado = hermético). Registrado em `scripts_lib.json`.
+
+**Cascata final:** `LOCAL (instaladas + MCPs) → native (índice) → skills.sh (marketplace) → github (fornecedores confiáveis)`. Regressão **69/69 · 13/13 (100%) · 7/7 CLEAN**.
+
 ---
 
 ## Parte C — Inventário de correções (priorizado) — *referência original*

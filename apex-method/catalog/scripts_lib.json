@@ -24,6 +24,14 @@
   "path": "scripts/github_skills.py"
  },
  {
+  "id": "script:local_discovery",
+  "type": "script",
+  "domain": "discovery",
+  "capabilities": "local-first,installed-skills,mcp-mapping,container-dirs,semantic-search",
+  "mass": 150,
+  "path": "scripts/local_discovery.py"
+ },
+ {
   "id": "script:agent_lifecycle",
   "type": "script",
   "domain": "meta",

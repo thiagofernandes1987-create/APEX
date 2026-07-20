@@ -46,6 +46,22 @@ def _agents_for(discipline_task):
         return []
 
 
+def _resolve_local(need, k=3):
+    """LOCAL-first tier: skills ALREADY installed here (~/.claude, /mnt/skills) — ready to use,
+    no install, no H5. Returns [] on any failure. The strongest tier: an installed match beats a
+    marketplace candidate that still needs approval."""
+    try:
+        import local_discovery
+        r = local_discovery.search(need, k=k)
+        if r.get("status") != "OK":
+            return []
+        return [{"id": x["name"], "via": "local", "path": x.get("path"),
+                 "semantic": x.get("semantic"), "mcp_servers": r.get("mcp_servers", [])}
+                for x in r.get("results", [])]
+    except Exception:
+        return []
+
+
 def _resolve_native(need, k=3):
     try:
         import repo_bridge
@@ -85,6 +101,8 @@ def _resolve_github(need, k=3):
 def _hit_quality(hit):
     """Honest per-hit strength: a native hit is scored by its search score (capped),
     a marketplace hit with real install data is strong, an offline STAGED command is weak."""
+    if hit.get("via") == "local":
+        return 0.95   # already installed & ready — strongest tier (no install, no H5)
     if hit.get("via") == "native":
         return min(1.0, (hit.get("score", 0) or 0) / 6.0)   # native scores ~0..12
     if hit.get("installs"):
@@ -134,6 +152,9 @@ def research(question, source=None, mode=None, max_rounds=4, p_target=0.9):
             need = f"{question} {d}"
             agents = _agents_for(need)
             hits = []
+            # TIER 0 — LOCAL-first: skills already installed here beat anything that needs installing.
+            if cfg.get("discovery_local", True):
+                hits += _resolve_local(need)
             if source in ("native", "both"):
                 hits += _resolve_native(need)
             if source in ("search", "both") and (source == "search" or not hits):

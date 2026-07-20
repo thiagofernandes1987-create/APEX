@@ -462,6 +462,7 @@ def t_deep_research():
     import deep_research, config
     try:
         config.set_option("discovery_github", False)   # hermetic: no live GitHub fetches in the suite
+        config.set_option("discovery_local", False)     # hermetic: don't scan the real ~/.claude filesystem
         out = deep_research.research("audit and optimize the APEX agents", source="native", max_rounds=3)
         assert out["mode"] in ("RESEARCH", "SCIENTIFIC") and out["rounds_run"] >= 1, out
         assert out["stop_reason"] in ("TARGET_REACHED", "STAGNATION", "MAX_ROUNDS")
@@ -482,6 +483,20 @@ def t_deep_research():
             assert got, "github tier not wired into the research cascade"
         finally:
             deep_research._resolve_github = _og
+        # cascade wiring: LOCAL-first tier reachable and shaped for the loop (mocked, hermetic)
+        _ol = deep_research._resolve_local
+        deep_research._resolve_local = lambda need, k=3: [
+            {"id": "docx", "via": "local", "path": "/x/docx/SKILL.md", "semantic": 0.4, "mcp_servers": []}]
+        try:
+            config.set_option("discovery_local", True)
+            l = deep_research.research("edit a word document", source="native", max_rounds=1)
+            got_l = any(h.get("via") == "local"
+                        for r in l["rounds"] for d in r["resolved"].values()
+                        for h in (d.get("skills") or []))
+            assert got_l, "LOCAL-first tier not wired into the research cascade"
+        finally:
+            deep_research._resolve_local = _ol
+            config.set_option("discovery_local", False)
     finally:
         config.save(config.DEFAULTS)
     return f"deep_research {out['stop_reason']} in {out['rounds_run']} rounds; github tier wired"
