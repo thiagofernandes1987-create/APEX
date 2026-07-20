@@ -1970,7 +1970,49 @@ def t_autopsy_v152():
     return "SEC-001/002/003/004/005/006/007 + FUNC-001 + USER-A locked"
 
 
+def t_github_skills():
+    # N-05: GitHub-native discovery — trusted-vendor + semantic ranking, offline-safe (fetch mocked).
+    import github_skills as gh, skill_scout
+    README = ("# vendor skills\n"
+              "- [pdf](./skills/pdf)\n- [pptx](./skills/pptx)\n- [xlsx](./skills/xlsx)\n")
+    SKILLS = {
+        "skills/pdf/SKILL.md":  "---\nname: pdf\ndescription: extract text and tables from pdf files, fill pdf forms\n---\n# When to use\npdf\n",
+        "skills/pptx/SKILL.md": "---\nname: pptx\ndescription: create and edit powerpoint presentations and slides\n---\n# When to use\npptx\n",
+        "skills/xlsx/SKILL.md": "---\nname: xlsx\ndescription: build spreadsheets with formulas and charts\n---\n# When to use\nxlsx\n",
+    }
+    def fake_fetch(u, timeout=10, max_bytes=2_000_000):
+        if u.endswith("README.md"):
+            return README
+        for k, v in SKILLS.items():
+            if u.endswith(k):
+                return v
+        raise ValueError("404")
+    _orig = skill_scout.fetch_text
+    skill_scout.fetch_text = fake_fetch
+    _orig_api = gh._api_get
+    gh._api_get = lambda *a, **k: None          # hermetic: no network (forces README path, None stars)
+    try:
+        hub = [{"owner": "anthropics", "repo": "skills", "ref": "main", "prefix": "skills/"}]
+        r = gh.search("extract text and fill pdf forms", hubs=hub, k=3)
+        assert r["status"] == "OK" and r["results"], r
+        # semantic ranking must put the pdf skill on top for a pdf query
+        assert r["results"][0]["name"] == "pdf", [x["name"] for x in r["results"]]
+        # trusted-vendor tier resolved
+        assert r["results"][0]["trust_tier"] == "OFFICIAL" and r["results"][0]["trusted"], r["results"][0]
+        # different query re-ranks
+        r2 = gh.search("edit powerpoint slide deck", hubs=hub, k=3)
+        assert r2["results"][0]["name"] == "pptx", [x["name"] for x in r2["results"]]
+        # graceful degradation when nothing enumerates
+        r3 = gh.search("x", hubs=[{"owner": "none", "repo": "none", "ref": "main", "prefix": ""}])
+        assert r3["status"] == "OFFLINE", r3
+    finally:
+        skill_scout.fetch_text = _orig
+        gh._api_get = _orig_api
+    return f"github discovery: pdf/pptx queries rank correct skill; trusted-vendor tier; OFFLINE degrade"
+
+
 TESTS = [
+    ("github_skills", t_github_skills),
     ("autopsy_v152", t_autopsy_v152),
     ("runtime_autopsy", t_runtime_autopsy),
     ("pot", t_pot), ("numeric", t_numeric), ("verify", t_verify), ("uco_gate", t_uco_gate),

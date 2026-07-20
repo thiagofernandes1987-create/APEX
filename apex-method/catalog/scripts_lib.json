@@ -16,6 +16,14 @@
   "path": "scripts/_tfidf.py"
  },
  {
+  "id": "script:github_skills",
+  "type": "script",
+  "domain": "discovery",
+  "capabilities": "github,skill-discovery,trusted-vendor,stars,semantic-search,staging",
+  "mass": 150,
+  "path": "scripts/github_skills.py"
+ },
+ {
   "id": "script:agent_lifecycle",
   "type": "script",
   "domain": "meta",

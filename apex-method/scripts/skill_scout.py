@@ -246,8 +246,12 @@ def evaluate(skill_md_url: str, code_urls: list = None) -> dict:
 
 
 # owners the find-skills convention treats as first-party / pre-trusted (still AST-scanned).
+# N-05: broadened to the vendors that publish Claude/agent skills on GitHub — trust tier is a
+# RANKING signal only, never a substitute for the AST scan + H5 approval gate.
 OFFICIAL_OWNERS = ("anthropics", "anthropic-ai", "vercel-labs", "vercel", "openai",
-                   "modelcontextprotocol", "thiagofernandes1987-create")
+                   "modelcontextprotocol", "thiagofernandes1987-create",
+                   "microsoft", "supabase", "huggingface", "langchain-ai", "google",
+                   "googleapis", "cloudflare", "stripe", "github")
 
 
 def trust_tier(url: str) -> str:

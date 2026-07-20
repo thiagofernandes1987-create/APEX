@@ -135,6 +135,28 @@ Testadas as duas vias de descoberta em rede que faltavam.
 
 **Estado ao fim do ciclo 6:** descoberta em rede validada nas duas vias; skills.sh degrada corretamente sob bloqueio de rede; GitHub funcional com N-04 corrigido. Regressão **68/68 · 13/13 (100%) · 7/7 CLEAN**.
 
+### Ciclo 7 — Descoberta GitHub-nativa (fornecedores confiáveis + estrelas + busca semântica)
+
+Nova capacidade que substitui a dependência do skills.sh, resolvendo o problema levantado: **descobrir skills direto no GitHub**.
+
+| ID | Ciclo | Tipo | Entrega | Status |
+|---|---|---|---|---|
+| **N-05** | 7 | Melhoria (capacidade nova) | `scripts/github_skills.py` — descoberta GitHub-nativa: **fornecedores confiáveis** (allowlist ampliada: anthropics, vercel-labs, microsoft, supabase, openai, google, huggingface…), **estrelas** (popularidade via API repo-scoped, degrada quando indisponível), **busca semântica** (`_tfidf` query↔descrição). Enumera SKILL.md via git-tree API (primário) ou parse de README raw (fallback). Alimenta `skill_scout.evaluate` (AST scan) + gate H5. | ✅ ENTREGUE + testado |
+
+**Validação AO VIVO (contra o GitHub real, raw):**
+- `"extract text and tables from pdf files"` → **pdf** ranqueado #1 (0.273); pptx/docx/xlsx abaixo ✅
+- `"create and edit powerpoint presentations"` → **pptx** #1 ✅
+- `"build spreadsheets with formulas"` → **xlsx** #1 ✅
+- `discover()` completo: pdf → **STAGED (ast=PASS)** via `skill_scout.evaluate`; degradação limpa → **OFFLINE** quando nada enumera.
+
+**Por que resolve o problema do skills.sh:** não depende do host `skills.sh` (bloqueado por política de rede aqui); usa `raw.githubusercontent.com` (liberado) + API repo-scoped quando disponível; "o que É skill" = presença de `SKILL.md` em hub confiável; ranqueia por relevância semântica real. **Estrelas** e a **API de árvore** ativam automaticamente onde o ambiente permite a API do GitHub (aqui degradam para o caminho raw+README).
+
+**Nota de ambiente:** a **busca global** do GitHub (`search/code`) e a **API de outros donos** estão bloqueadas neste sandbox ("session bound to configured repositories"); o módulo foi desenhado para isso — degrada para enumeração via README raw (validada ao vivo). Em um deploy com API/token liberados, o caminho primário (git-tree + estrelas + busca por `filename:SKILL.md`) entra sozinho.
+
+Teste `t_github_skills` (hermético, `fetch_text`/`_api_get` mockados) no benchmark: **69/69**. Consistência catálogo↔scripts mantida (`github_skills` registrado em `scripts_lib.json`).
+
+**Estado ao fim do ciclo 7:** descoberta GitHub-nativa entregue, testada e validada ao vivo. Regressão **69/69 · 13/13 (100%) · 7/7 CLEAN**.
+
 ---
 
 ## Parte C — Inventário de correções (priorizado) — *referência original*
