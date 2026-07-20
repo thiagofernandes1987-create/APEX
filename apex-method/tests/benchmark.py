@@ -461,15 +461,30 @@ def t_menu():
 def t_deep_research():
     import deep_research, config
     try:
+        config.set_option("discovery_github", False)   # hermetic: no live GitHub fetches in the suite
         out = deep_research.research("audit and optimize the APEX agents", source="native", max_rounds=3)
         assert out["mode"] in ("RESEARCH", "SCIENTIFIC") and out["rounds_run"] >= 1, out
         assert out["stop_reason"] in ("TARGET_REACHED", "STAGNATION", "MAX_ROUNDS")
         # search source offline must still stage install requests (H5), never crash
         s = deep_research.research("obscure niche topic xyz", source="search", max_rounds=2)
         assert s["stop_reason"] in ("STAGNATION", "MAX_ROUNDS", "TARGET_REACHED")
+        # cascade wiring: the github tier is reachable and returns hits shaped for the loop (mocked, hermetic)
+        _og = deep_research._resolve_github
+        deep_research._resolve_github = lambda need, k=3: [
+            {"id": "pdf", "via": "github", "source": "x", "trust_tier": "OFFICIAL",
+             "trusted": True, "semantic": 0.3, "command": "npx skills add anthropics/skills"}]
+        try:
+            config.set_option("discovery_github", True)
+            g = deep_research.research("work with pdf files", source="search", max_rounds=1)
+            got = any(h.get("via") == "github"
+                      for r in g["rounds"] for d in r["resolved"].values()
+                      for h in (d.get("skills") or []))
+            assert got, "github tier not wired into the research cascade"
+        finally:
+            deep_research._resolve_github = _og
     finally:
         config.save(config.DEFAULTS)
-    return f"deep_research {out['stop_reason']} in {out['rounds_run']} rounds"
+    return f"deep_research {out['stop_reason']} in {out['rounds_run']} rounds; github tier wired"
 
 
 def t_concurrent_executor():

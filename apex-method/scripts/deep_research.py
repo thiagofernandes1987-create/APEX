@@ -64,6 +64,24 @@ def _resolve_marketplace(need, min_installs):
         return []
 
 
+def _resolve_github(need, k=3):
+    """GitHub-native discovery tier: trusted-vendor skills ranked semantically (github_skills).
+    Works when skills.sh is blocked; returns [] on any failure. Each hit is a STAGED pointer
+    (npx skills add owner/repo) — still gated by skill_scout.evaluate + H5, never auto-installed."""
+    try:
+        import github_skills
+        r = github_skills.search(need, k=k)
+        if r.get("status") != "OK":
+            return []
+        return [{"id": x["name"], "via": "github", "source": x["source"],
+                 "trust_tier": x.get("trust_tier"), "trusted": x.get("trusted"),
+                 "semantic": x.get("semantic"),
+                 "command": f"npx skills add {x['owner']}/{x['repo']}"}
+                for x in r.get("results", [])]
+    except Exception:
+        return []
+
+
 def _hit_quality(hit):
     """Honest per-hit strength: a native hit is scored by its search score (capped),
     a marketplace hit with real install data is strong, an offline STAGED command is weak."""
@@ -71,6 +89,8 @@ def _hit_quality(hit):
         return min(1.0, (hit.get("score", 0) or 0) / 6.0)   # native scores ~0..12
     if hit.get("installs"):
         return 0.9
+    if hit.get("via") == "github":                          # trusted-vendor GitHub skill, staged for H5
+        return 0.7 if hit.get("trusted") else 0.6
     return 0.55   # STAGED discovery command (offline / not yet installed)
 
 
@@ -122,6 +142,15 @@ def research(question, source=None, mode=None, max_rounds=4, p_target=0.9):
                 hits += [{"id": r.get("skill") or r.get("gap"), "via": "marketplace",
                           "installs": r.get("installs"), "command": r.get("install_command")}
                          for r in mkt]
+            # GitHub-native tier (trusted vendors + semantic) — fills gaps when skills.sh is
+            # blocked/thin; opt-out via config discovery_github=False (tests keep it off = hermetic).
+            if source in ("search", "both") and cfg.get("discovery_github", True):
+                have = {h.get("id") for h in hits}
+                for g in _resolve_github(need):
+                    if g["id"] not in have:
+                        hits.append(g)
+                        staged.append({"gap": need, "skill": g["id"], "via": "github",
+                                       "trust_tier": g["trust_tier"], "install_command": g["command"]})
             resolved[d] = {"agents": [a[0] for a in agents], "skills": hits[:3]}
         rel = _round_reliability(disciplines, resolved)
         reliabilities.append(rel)

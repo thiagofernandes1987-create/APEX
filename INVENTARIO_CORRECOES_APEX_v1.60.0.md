@@ -164,6 +164,23 @@ Teste `t_github_skills` (hermético, `fetch_text`/`_api_get` mockados) no benchm
 
 **Estado ao fim do ciclo 7:** descoberta GitHub-nativa entregue, testada e validada ao vivo; mecanismo do skills.sh/vercel esclarecido e replicado no que o ambiente permite. Regressão **69/69 · 13/13 (100%) · 7/7 CLEAN**.
 
+### Ciclo 8 — `CURATED_SKILLS` ampliado (verificado ao vivo) + fiação na cascata automática
+
+**(a) Catálogo curado verificado ao vivo** (HTTP 200, 2026-07) — **14 skills reais** de 2 fornecedores confiáveis:
+- `anthropics/skills`: pdf, docx, pptx, xlsx, **mcp-builder, brand-guidelines, canvas-design, webapp-testing, slack-gif-creator, frontend-design, algorithmic-art, skill-creator** (12)
+- `vercel-labs/agent-skills`: web-design-guidelines, **writing-guidelines** (2)
+- `microsoft/skills` adicionado como **hub** (layout de catálogo — enumera via git-tree API onde disponível).
+- Prova de ranking: query "slack bot + gif + mcp" → **slack-gif-creator (0.306)** e **mcp-builder (0.215)** no topo.
+
+**(b) Fiação na cascata automática do orquestrador** (`deep_research`, invocado por `orchestrator`/`menu`):
+- Nova função `_resolve_github(need)` + tier na cascata: **native → skills.sh → github**.
+- Flag de config `discovery_github` (default `True`; testes desligam = herméticos).
+- `_hit_quality`: hit github de fornecedor confiável = 0.7 (staged forte, abaixo de instalado 0.9).
+- **Validação ao vivo:** `research('create a pdf report and a powerpoint deck', source='both')` → **2 skills GitHub staged automaticamente** (OFFICIAL, com `npx skills add ...`) — pela cascata, sem chamada manual.
+- Teste `t_deep_research` estendido: assere que o **tier github está fiado** na cascata (mockado = hermético).
+
+**Estado ao fim do ciclo 8:** descoberta GitHub-nativa **fiada na cascata automática** com catálogo curado verificado. Regressão **69/69 · 13/13 (100%) · 7/7 CLEAN**.
+
 ---
 
 ## Parte C — Inventário de correções (priorizado) — *referência original*

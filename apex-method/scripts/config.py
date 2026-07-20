@@ -36,6 +36,7 @@ DEFAULTS = {
     "default_mode": None,           # force a mode, or None = let the pipeline decide
     "router_backend": "word",       # word | char (language-robust) | st (sentence-transformers)
     "discovery_source": "both",     # native | search | both
+    "discovery_github": True,       # GitHub-native tier (trusted vendors + semantic) in the cascade
     "min_installs": 1000,           # skills.sh quality bar
     "auto_escalate": True,          # escalate mode on conflict signals
     "min_mode": None,               # HARD floor: force the pipeline at >= this mode for EVERY task

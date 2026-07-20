@@ -44,6 +44,7 @@ import _tfidf
 SKILL_HUBS = [
     {"owner": "anthropics", "repo": "skills", "ref": "main", "prefix": "skills/"},
     {"owner": "vercel-labs", "repo": "agent-skills", "ref": "main", "prefix": "skills/"},
+    {"owner": "microsoft", "repo": "skills", "ref": "main", "prefix": "skills/"},  # catalog layout: needs tree API
 ]
 
 # The exact skill-container directories the `npx skills` CLI walks (from vercel-labs/skills README,
@@ -55,11 +56,22 @@ CONTAINER_DIRS = ("", "skills/", "skills/.curated/", "skills/.experimental/", "s
 # Verified individual skills (raw-fetchable) — the always-available fallback so discovery returns a
 # real list even when the GitHub API AND README enumeration are both blocked (as in a locked sandbox).
 CURATED_SKILLS = [
+    # anthropics/skills — verified live (HTTP 200), 2026-07
     "anthropics/skills/main/skills/pdf/SKILL.md",
     "anthropics/skills/main/skills/docx/SKILL.md",
     "anthropics/skills/main/skills/pptx/SKILL.md",
     "anthropics/skills/main/skills/xlsx/SKILL.md",
+    "anthropics/skills/main/skills/mcp-builder/SKILL.md",
+    "anthropics/skills/main/skills/brand-guidelines/SKILL.md",
+    "anthropics/skills/main/skills/canvas-design/SKILL.md",
+    "anthropics/skills/main/skills/webapp-testing/SKILL.md",
+    "anthropics/skills/main/skills/slack-gif-creator/SKILL.md",
+    "anthropics/skills/main/skills/frontend-design/SKILL.md",
+    "anthropics/skills/main/skills/algorithmic-art/SKILL.md",
+    "anthropics/skills/main/skills/skill-creator/SKILL.md",
+    # vercel-labs/agent-skills — verified live (HTTP 200)
     "vercel-labs/agent-skills/main/skills/web-design-guidelines/SKILL.md",
+    "vercel-labs/agent-skills/main/skills/writing-guidelines/SKILL.md",
 ]
 TRUSTED_VENDORS = skill_scout.OFFICIAL_OWNERS
 GH_API = "https://api.github.com"
