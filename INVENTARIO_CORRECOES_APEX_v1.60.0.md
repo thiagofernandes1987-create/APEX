@@ -155,7 +155,14 @@ Nova capacidade que substitui a dependência do skills.sh, resolvendo o problema
 
 Teste `t_github_skills` (hermético, `fetch_text`/`_api_get` mockados) no benchmark: **69/69**. Consistência catálogo↔scripts mantida (`github_skills` registrado em `scripts_lib.json`).
 
-**Estado ao fim do ciclo 7:** descoberta GitHub-nativa entregue, testada e validada ao vivo. Regressão **69/69 · 13/13 (100%) · 7/7 CLEAN**.
+**Refino (investigação do repo `vercel-labs/skills`):** analisando o código/README da CLI deles, o mecanismo ficou claro — **não é mágica semântica**:
+- `vercel-labs/skills` é a **CLI** (`npx skills`), NÃO uma coleção de skills; as skills reais ficam em `vercel-labs/agent-skills` (meu seed apontava para o repo errado — **corrigido**).
+- A descoberta deles usa **(a) skills.sh** (crawler+índice hospedado no servidor) e **(b) a API do GitHub** para enumerar repos de um owner e **caminhar uma lista fixa de diretórios-container** (`skills/`, `skills/.curated/`, `skills/.system/`, `.claude/skills/`, raiz…), layout flat e catálogo. Eles **não parseiam README**.
+- **"Como eles conseguem e a gente não":** eles dependem da **API do GitHub + servidor skills.sh** — ambos **bloqueados neste sandbox** para repos externos ("session bound to configured repositories"). Não é deficiência do nosso código; é acesso de rede.
+
+**Ajustes aplicados ao `github_skills.py`:** seed correto (`vercel-labs/agent-skills`); adotada a **mesma lista `CONTAINER_DIRS`** da CLI para o walk via git-tree; `find_by_owner()` = o mecanismo `--owner` deles (API, degrada p/ 0 quando bloqueada); **`CURATED_SKILLS`** = baseline verificado que **sempre** retorna lista real via raw, mesmo com API+README bloqueados. Lista ao vivo agora: query de frontend → `vercel-labs/agent-skills/web-design-guidelines` #1, seguida das skills `anthropics/skills`.
+
+**Estado ao fim do ciclo 7:** descoberta GitHub-nativa entregue, testada e validada ao vivo; mecanismo do skills.sh/vercel esclarecido e replicado no que o ambiente permite. Regressão **69/69 · 13/13 (100%) · 7/7 CLEAN**.
 
 ---
 

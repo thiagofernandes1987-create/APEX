@@ -2002,7 +2002,10 @@ def t_github_skills():
         # different query re-ranks
         r2 = gh.search("edit powerpoint slide deck", hubs=hub, k=3)
         assert r2["results"][0]["name"] == "pptx", [x["name"] for x in r2["results"]]
-        # graceful degradation when nothing enumerates
+        # graceful degradation: when NOTHING is fetchable (curated baseline included), status=OFFLINE
+        def _all_fail(u, timeout=10, max_bytes=2_000_000):
+            raise ValueError("offline")
+        skill_scout.fetch_text = _all_fail
         r3 = gh.search("x", hubs=[{"owner": "none", "repo": "none", "ref": "main", "prefix": ""}])
         assert r3["status"] == "OFFLINE", r3
     finally:

@@ -39,11 +39,27 @@ sys.path.insert(0, os.path.dirname(__file__))
 import skill_scout
 import _tfidf
 
-# Trusted skill-hub repos per vendor (curated seed; "what IS a skill" == has SKILL.md).
-# repo, default ref, and the sub-path under which skills live (for README-link resolution).
+# Trusted skill-hub repos (curated seed; "what IS a skill" == has SKILL.md). NOTE: vercel-labs/skills
+# is the CLI (`npx skills`), NOT a skill collection — the actual skills live in vercel-labs/agent-skills.
 SKILL_HUBS = [
     {"owner": "anthropics", "repo": "skills", "ref": "main", "prefix": "skills/"},
-    {"owner": "vercel-labs", "repo": "skills", "ref": "main", "prefix": ""},
+    {"owner": "vercel-labs", "repo": "agent-skills", "ref": "main", "prefix": "skills/"},
+]
+
+# The exact skill-container directories the `npx skills` CLI walks (from vercel-labs/skills README,
+# "Skill Discovery"). We adopt the SAME list so the git-tree walk finds skills wherever the ecosystem
+# convention puts them — flat `skills/<name>/SKILL.md` and catalog `skills/<cat>/<name>/SKILL.md`.
+CONTAINER_DIRS = ("", "skills/", "skills/.curated/", "skills/.experimental/", "skills/.system/",
+                  ".claude/skills/", ".agents/skills/", "data/skills/")
+
+# Verified individual skills (raw-fetchable) — the always-available fallback so discovery returns a
+# real list even when the GitHub API AND README enumeration are both blocked (as in a locked sandbox).
+CURATED_SKILLS = [
+    "anthropics/skills/main/skills/pdf/SKILL.md",
+    "anthropics/skills/main/skills/docx/SKILL.md",
+    "anthropics/skills/main/skills/pptx/SKILL.md",
+    "anthropics/skills/main/skills/xlsx/SKILL.md",
+    "vercel-labs/agent-skills/main/skills/web-design-guidelines/SKILL.md",
 ]
 TRUSTED_VENDORS = skill_scout.OFFICIAL_OWNERS
 GH_API = "https://api.github.com"
@@ -102,25 +118,46 @@ def _skillmd_urls_via_readme(hub):
     return [f"{RAW}/{hub['owner']}/{hub['repo']}/{hub['ref']}/{d}/SKILL.md" for d in sorted(dirs)]
 
 
-def _candidates(hubs):
-    """Enumerated SKILL.md raw URLs across the trusted hubs (API tree -> README fallback)."""
+def find_by_owner(owner, ref="main", timeout=15):
+    """The CLI's `--owner` mechanism: enumerate an org/user's repos via the GitHub API and collect
+    every SKILL.md across them. Returns a list of raw SKILL.md URLs, or [] when the API is blocked
+    (this sandbox blocks external-owner API access — the curated/hub tiers cover that case)."""
+    repos = _api_get(f"/users/{owner}/repos?per_page=100&sort=updated")
+    if not isinstance(repos, list):
+        return []
     urls = []
+    for r in repos:
+        name = r.get("name")
+        if not name:
+            continue
+        urls.extend(_skillmd_urls_via_api({"owner": owner, "repo": name,
+                                           "ref": r.get("default_branch") or ref, "prefix": ""}) or [])
+    return urls
+
+
+def _candidates(hubs, owners=None):
+    """All candidate SKILL.md raw URLs: curated (always) + hub enumeration (API tree -> README
+    fallback) + optional owner-wide enumeration (API). De-duplicated, order-stable."""
+    urls = [f"{RAW}/{p}" for p in CURATED_SKILLS]          # always-available baseline
     for hub in hubs:
         got = _skillmd_urls_via_api(hub)
-        if got is None:                       # API blocked -> raw README enumeration
+        if got is None:                       # API blocked -> raw README enumeration (best-effort)
             got = _skillmd_urls_via_readme(hub)
         urls.extend(got or [])
+    for owner in (owners or []):
+        urls.extend(find_by_owner(owner))
     return list(dict.fromkeys(urls))          # de-dup, keep order
 
 
-def search(query, hubs=None, min_stars=0, k=5, max_fetch=40):
+def search(query, hubs=None, owners=None, min_stars=0, k=5, max_fetch=40):
     """Discover trusted-vendor skills on GitHub, ranked by SEMANTIC match + stars + trust tier.
+    `owners` (list of GitHub orgs/users) triggers the CLI-style owner-wide enumeration via the API.
 
     Returns {"status": "OK"|"OFFLINE", "query", "results": [ranked staged candidates]}.
     Never installs or executes anything — each result is a staged pointer for skill_scout.evaluate
     + the H5 approval gate."""
     hubs = hubs or SKILL_HUBS
-    urls = _candidates(hubs)[:max_fetch]
+    urls = _candidates(hubs, owners=owners)[:max_fetch]
     if not urls:
         return {"status": "OFFLINE", "query": query, "results": [],
                 "reason": "no candidates (GitHub API blocked and README enumeration offline)"}
