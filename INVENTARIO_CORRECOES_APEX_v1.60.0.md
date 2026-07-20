@@ -118,6 +118,23 @@ Dois harness em tempo real dirigidos por modos + subsistemas duráveis, com **va
 
 **Estado ao fim do ciclo 5:** a skill roda a pipeline completa em tempo real sobre problemas reais, resiste a inputs adversariais e mantém integridade dos subsistemas duráveis sob carga. **Ponto fixo confirmado — nenhuma ocorrência acionável restante após 5 ciclos.**
 
+### Ciclo 6 — Descoberta de skills em REDE (skills.sh + GitHub, tempo real)
+
+Testadas as duas vias de descoberta em rede que faltavam.
+
+| Via | Resultado medido | Diagnóstico |
+|---|---|---|
+| **skills.sh** | `leaderboard/search/official` → **OFFLINE** | **Não é bug do APEX** — o proxy do ambiente bloqueia `skills.sh:443` (`403 CONNECT, policy denial`). APEX **degradou corretamente** para OFFLINE (contrato de degradação OK). |
+| **GitHub** (`raw.githubusercontent.com`) | HTTP 200 — fetch/parse/AST-scan/staging **executaram ao vivo** | Via funcional; **revelou N-04** (abaixo). |
+
+| ID | Ciclo | Severidade | Ocorrência | Correção | Status |
+|---|---|---|---|---|---|
+| **N-04** | 6 | 🟠 Alto (usabilidade) | `skill_scout.extract_code_refs` (RT-13) capturava **nomes de arquivo nus mencionados em prosa** (ex.: "pot.py") e resolvia contra o diretório do SKILL.md (`…/pot.py`) em vez do path real (`…/scripts/pot.py`). Os **11 refs-phantom davam 404** → `evaluate` fail-close → **REJECTED_UNSAFE de uma skill OFFICIAL limpa**. Tornava a descoberta GitHub inutilizável para skills bem-documentadas. Comprovado ao vivo no próprio SKILL.md do APEX. | `extract_code_refs` passa a seguir só **refs path-qualified** (contêm `/`) e URLs; nomes nus de prosa são ignorados (código realmente distribuído continua coberto por refs com path + `code_urls` explícitos). | ✅ RESOLVIDO — refs phantom-404 **11 → 0** (todos os 52 refs resolvem para arquivos reais/HTTP 200); benchmark **68/68**. |
+
+**Nota:** após o fix, o SKILL.md do APEX ainda fica `REJECTED_UNSAFE`, mas agora por **motivos reais** (seus scripts usam `subprocess`/`__import__`/`.spawn()`/import opcional) — o scanner estrito sinaliza para revisão humana. É a **mesma limitação documentada do C-05** (gate estático best-effort; H5 é a fronteira real), comportamento **intencional**, não defeito.
+
+**Estado ao fim do ciclo 6:** descoberta em rede validada nas duas vias; skills.sh degrada corretamente sob bloqueio de rede; GitHub funcional com N-04 corrigido. Regressão **68/68 · 13/13 (100%) · 7/7 CLEAN**.
+
 ---
 
 ## Parte C — Inventário de correções (priorizado) — *referência original*
