@@ -1,7 +1,7 @@
 {
  "_meta": {
   "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
-  "count": 69
+  "count": 79
  },
  "environment": {
   "python": "python 3.11.15",
@@ -928,13 +928,29 @@
    }
   },
   {
+   "id": "skill:canvas-design",
+   "kind": "installed-skill",
+   "name": "canvas-design",
+   "path": "/root/.claude/skills/canvas-design/SKILL.md",
+   "description": "Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying exis",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a pos"
+   }
+  },
+  {
    "id": "skill:apex-method",
    "kind": "installed-skill",
    "name": "apex-method",
    "path": "/root/.claude/skills/apex-method/SKILL.md",
    "description": "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill ro",
    "triggers": "APEX, PoT, program of thought, pipeline, scientific mode, modo científico, RK4, token",
-   "commands": [],
+   "commands": [
+    "git COMMIT (the DISK of the RAM->SWAP->DISK hierarchy; push/PR stays a user action)."
+   ],
    "io": {
     "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
     "receive": "orientação/artefato conforme a seção de uso da skill",
@@ -958,6 +974,53 @@
    }
   },
   {
+   "id": "skill:slack-gif-creator",
+   "kind": "installed-skill",
+   "name": "slack-gif-creator",
+   "path": "/root/.claude/skills/slack-gif-creator/SKILL.md",
+   "description": "Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like \"make me a GIF of X doing Y for Slack.",
+   "triggers": "",
+   "commands": [
+    "pip install pillow imageio numpy"
+   ],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "users request animated GIFs for Slack like \"make me a GIF of X doing Y for Slack.\""
+   }
+  },
+  {
+   "id": "skill:web-artifacts-builder",
+   "kind": "installed-skill",
+   "name": "web-artifacts-builder",
+   "path": "/root/.claude/skills/web-artifacts-builder/SKILL.md",
+   "description": "Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components ",
+   "triggers": "",
+   "commands": [
+    "bash scripts/init-artifact.sh <project-name>",
+    "bash scripts/bundle-artifact.sh"
+   ],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS,"
+   }
+  },
+  {
+   "id": "skill:mcp-builder",
+   "kind": "installed-skill",
+   "name": "mcp-builder",
+   "path": "/root/.claude/skills/mcp-builder/SKILL.md",
+   "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (F",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK)."
+   }
+  },
+  {
    "id": "skill:skill-creator",
    "kind": "installed-skill",
    "name": "skill-creator",
@@ -976,6 +1039,20 @@
    }
   },
   {
+   "id": "skill:algorithmic-art",
+   "kind": "installed-skill",
+   "name": "algorithmic-art",
+   "path": "/root/.claude/skills/algorithmic-art/SKILL.md",
+   "description": "Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or particle systems. Create original algor",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art "
+   }
+  },
+  {
    "id": "skill:morning",
    "kind": "installed-skill",
    "name": "morning",
@@ -990,6 +1067,34 @@
     "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
     "receive": "orientação/artefato conforme a seção de uso da skill",
     "apply_when": "Render the user's morning brief as a styled HTML artifact, or set it up as a recurring weekday task. Use only when the user explicitly asks "
+   }
+  },
+  {
+   "id": "skill:internal-comms",
+   "kind": "installed-skill",
+   "name": "internal-comms",
+   "path": "/root/.claude/skills/internal-comms/SKILL.md",
+   "description": "A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal communications (status reports, leadership ",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use "
+   }
+  },
+  {
+   "id": "skill:brand-guidelines",
+   "kind": "installed-skill",
+   "name": "brand-guidelines",
+   "path": "/root/.claude/skills/brand-guidelines/SKILL.md",
+   "description": "Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use"
    }
   },
   {
@@ -1014,6 +1119,34 @@
    }
   },
   {
+   "id": "skill:theme-factory",
+   "kind": "installed-skill",
+   "name": "theme-factory",
+   "path": "/root/.claude/skills/theme-factory/SKILL.md",
+   "description": "Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set t"
+   }
+  },
+  {
+   "id": "skill:learn",
+   "kind": "installed-skill",
+   "name": "learn",
+   "path": "/root/.claude/skills/learn/SKILL.md",
+   "description": "|",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "|"
+   }
+  },
+  {
    "id": "skill:xlsx",
    "kind": "installed-skill",
    "name": "xlsx",
@@ -1027,6 +1160,20 @@
     "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
     "receive": "orientação/artefato conforme a seção de uso da skill",
     "apply_when": "Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, read, edit, or"
+   }
+  },
+  {
+   "id": "skill:doc-coauthoring",
+   "kind": "installed-skill",
+   "name": "doc-coauthoring",
+   "path": "/root/.claude/skills/doc-coauthoring/SKILL.md",
+   "description": "Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer c",
+   "triggers": "",
+   "commands": [],
+   "io": {
+    "send": "a tarefa/artefato descrito nos triggers do SKILL.md",
+    "receive": "orientação/artefato conforme a seção de uso da skill",
+    "apply_when": "user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users effic"
    }
   },
   {
