@@ -86,7 +86,9 @@ DISCIPLINE_KEYWORDS = {
     "frontend": ["ui", "ux", "frontend", "react", "component", "design",
                  "interface", "componente", "front-end", "usuário", "usuario"],
     "security": ["security", "vulnerability", "audit", "threat", "taint", "cve", "exploit",
-                 "segurança", "seguranca", "vulnerabilidade", "auditoria", "ameaça", "ameaca"],
+                 "segurança", "seguranca", "vulnerabilidade", "auditoria", "ameaça", "ameaca",
+                 "pentest", "pentesting", "sast", "dast", "owasp", "malware", "hardening",
+                 "invasão", "invasao", "forense", "forensic"],
     "data-ai": ["model", "ml", "data", "train", "embedding", "recommender", "pipeline",
                 "modelo", "dados", "treinar", "aprendizado", "recomendação", "recomendacao"],
     "finance": ["valuation", "portfolio", "trading", "risk", "cash flow", "option", "backtest",
@@ -124,10 +126,21 @@ def dissect(task, semantic_floor=0.06):
     """Split a task into the disciplines it touches (multi-discipline = hard problem).
     Keyword pass first (bilingual); if it finds nothing, a char-n-gram semantic pass
     (language-robust) picks the closest discipline instead of defaulting to engineering."""
+    # v1.63 translate-before-dissect: run the keyword pass on BOTH the original and a PT->EN
+    # gloss (additive — only ADDS recall, never removes the bilingual behavior). No-op for EN.
     tl = task.lower()
+    tl_en = tl
+    try:
+        import translation
+        g = translation.normalize_for_routing(task)
+        if g != task:
+            tl_en = g.lower()
+    except Exception:
+        pass
     def has(kw):
         # word-boundary match so short keywords (ui, ml, ux) don't match inside words (b-ui-ld)
-        return re.search(r"\b" + re.escape(kw) + r"\b", tl) is not None
+        return (re.search(r"\b" + re.escape(kw) + r"\b", tl) is not None or
+                (tl_en is not tl and re.search(r"\b" + re.escape(kw) + r"\b", tl_en) is not None))
     hits = [d for d, kws in DISCIPLINE_KEYWORDS.items() if any(has(k) for k in kws)]
     if hits:
         return hits
@@ -136,7 +149,8 @@ def dissect(task, semantic_floor=0.06):
     # SAME canonical English facets, so it runs before the char-n-gram similarity pass.
     try:
         import taxonomy
-        _FACET2DISC = {"software": "engineering", "mathematics": "math", "security": "security",
+        _FACET2DISC = {"software": "engineering", "engineering": "engineering",
+                       "mathematics": "math", "security": "security",
                        "finance": "finance", "data-ai": "data-ai", "legal": "legal",
                        "healthcare": "healthcare", "science": "science"}
         c = taxonomy.classify(task)

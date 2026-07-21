@@ -148,8 +148,52 @@ def t_r5_debug_hardening():
           fin and "gate_pass" in fin[-1]["data"], fin[-1]["data"] if fin else "sem run_finished")
 
 
+def t_r6_v163():
+    """v1.63 — corpus taxonomy + translate-before-dissect + B5 (engineering unmapped em dissect)."""
+    import taxonomy, orchestrator, translation
+    print("R6 — corpus + tradução + dissect engineering")
+    # corpus seed: healthcare e marketing agora reconhecidos (antes None)
+    check("healthcare reconhecido (corpus)",
+          taxonomy.classify("protocolo de ensaio clínico FHIR para paciente")["domain"] == "healthcare")
+    check("marketing reconhecido (corpus)",
+          taxonomy.classify("campanha de marketing e geração de leads")["domain"] == "marketing")
+    # controle negativo intacto após o corpus seed
+    check("controle negativo intacto (bolo de cenoura -> None)",
+          taxonomy.classify("receita de bolo de cenoura com chocolate")["domain"] is None)
+    # translate: PT glossa, EN é no-op
+    g, ch = translation.to_english("dimensionar viga de concreto e verificar flexão")
+    check("gloss PT->EN traduz termos técnicos", ch and "beam" in g and "bending" in g, g)
+    g2, ch2 = translation.to_english("build a landing page with animations")
+    check("gloss é no-op para inglês", not ch2, g2)
+    # B5: dissect mapeia domínio 'engineering' (era omitido em _FACET2DISC -> caía em legal)
+    check("dissect(viga de concreto) -> engineering (não legal)",
+          "engineering" in orchestrator.dissect("dimensionar viga de concreto biapoiada"),
+          orchestrator.dissect("dimensionar viga de concreto biapoiada"))
+    check("dissect(pentest SAST) -> security",
+          "security" in orchestrator.dissect("pentest e SAST no backend"),
+          orchestrator.dissect("pentest e SAST no backend"))
+
+
+def t_r7_knowledge_base():
+    """v1.63 — base de conhecimento compartilhada (popularidade real + ranking + load-state)."""
+    import knowledge_base as kb
+    print("R7 — knowledge base compartilhada")
+    pop = kb.popularity_by_discipline()
+    check("popularidade por disciplina não-vazia (cobertura real)",
+          isinstance(pop.get("skills_per_discipline"), dict) and len(pop["skills_per_discipline"]) >= 10,
+          len(pop.get("skills_per_discipline", {})))
+    check("taxa de reconhecimento >= 85% (após refresh do índice)",
+          (pop.get("recognition_rate") or 0) >= 0.85, pop.get("recognition_rate"))
+    rk = kb.success_ranking("security", k=5)
+    check("ranking de sucesso consultável", "ranking" in rk, rk.get("source"))
+    ld = kb.load_state()
+    check("load_state hidrata estados sem quebrar", isinstance(ld, dict) and "loaded" in ld, ld)
+    s = kb.summary()
+    check("summary agrega popularidade+vacinas", "popularity" in s and "vaccines" in s, list(s))
+
+
 if __name__ == "__main__":
-    for t in (t_r1_taxonomy, t_r2_hybrid_cache, t_r3_triage, t_r4_event_bus, t_r5_debug_hardening):
+    for t in (t_r1_taxonomy, t_r2_hybrid_cache, t_r3_triage, t_r4_event_bus, t_r5_debug_hardening, t_r6_v163, t_r7_knowledge_base):
         t()
     print(f"\n{'FAIL: ' + ', '.join(FAILURES) if FAILURES else 'REGRESSÕES v1.62: TODAS PASS'}")
     sys.exit(1 if FAILURES else 0)

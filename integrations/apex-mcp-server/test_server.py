@@ -70,7 +70,25 @@ def main():
         r = rpc(proc, {"jsonrpc": "2.0", "id": 7, "method": "tools/call",
                        "params": {"name": "apex_trace_evaluate", "arguments": {}}})
         print("apex_trace_eval   OK", str(tool_result(r))[:60])
-        print("\nSMOKE TEST: 7/7 PASS")
+
+        # KB compartilhada (v1.63)
+        r = rpc(proc, {"jsonrpc": "2.0", "id": 8, "method": "tools/call",
+                       "params": {"name": "apex_kb_popularity", "arguments": {}}})
+        pop = tool_result(r)
+        assert "skills_per_discipline" in pop and pop["skills_per_discipline"], pop
+        print("apex_kb_popularity OK", list(pop["skills_per_discipline"])[:4])
+
+        r = rpc(proc, {"jsonrpc": "2.0", "id": 9, "method": "tools/call",
+                       "params": {"name": "apex_kb_ranking", "arguments": {"discipline": "security"}}})
+        assert "ranking" in tool_result(r), tool_result(r)
+        print("apex_kb_ranking   OK")
+
+        r = rpc(proc, {"jsonrpc": "2.0", "id": 10, "method": "tools/call",
+                       "params": {"name": "apex_kb_load_state", "arguments": {}}})
+        assert tool_result(r).get("status") == "BLOCKED", tool_result(r)
+        print("apex_kb_load_state OK — BLOCKED sem approved=true")
+
+        print("\nSMOKE TEST: 10/10 PASS")
         return 0
     finally:
         proc.terminate()

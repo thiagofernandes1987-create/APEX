@@ -83,6 +83,31 @@ TOOLS = [
                                                       "solved": {"type": "boolean"},
                                                       "approved": {"type": "boolean", "default": False}},
                      "required": ["problem", "skill", "solved"]}},
+    # ── Knowledge Base compartilhada (v1.63): a base que qualquer instância do APEX consulta ──
+    {"name": "apex_kb_summary",
+     "description": "Resumo da base de conhecimento compartilhada: popularidade por disciplina (cobertura real), taxa de reconhecimento, órfãs, agentes por domínio, vacinas.",
+     "inputSchema": {"type": "object", "properties": {}, "required": []}},
+    {"name": "apex_kb_popularity",
+     "description": "Popularidade/classificação de skills e agentes por disciplina (distribuição de cobertura real, determinística).",
+     "inputSchema": {"type": "object", "properties": {}, "required": []}},
+    {"name": "apex_kb_ranking",
+     "description": "Ranking histórico de SUCESSO por disciplina (learning beta-binomial validado). PROMOTED/DEMOTED/KEEP.",
+     "inputSchema": {"type": "object", "properties": {"discipline": {"type": "string", "default": "general"},
+                                                      "kind": {"type": "string", "default": "skill"},
+                                                      "k": {"type": "integer", "default": 10}},
+                     "required": []}},
+    {"name": "apex_kb_agent_status",
+     "description": "Status consolidado de um agente: promoções/rebaixamentos por domínio + grants (skills equipadas).",
+     "inputSchema": {"type": "object", "properties": {"agent_id": {"type": "string"}},
+                     "required": ["agent_id"]}},
+    {"name": "apex_kb_vaccines",
+     "description": "Vacinas duráveis (padrões erro→fix cristalizados) disponíveis para consulta.",
+     "inputSchema": {"type": "object", "properties": {"k": {"type": "integer", "default": 50}},
+                     "required": []}},
+    {"name": "apex_kb_load_state",
+     "description": "Carrega os ESTADOS DE SUCESSO da base compartilhada para a instância local (hidrata o learning com rankings validados herdados). MUTAÇÃO: exige approved=true.",
+     "inputSchema": {"type": "object", "properties": {"approved": {"type": "boolean", "default": False}},
+                     "required": []}},
 ]
 
 
@@ -137,6 +162,27 @@ def call_tool(name, args):
         import skill_ledger
         return {"recorded": skill_ledger.record(args["problem"], args["skill"],
                                                 solved=bool(args["solved"]))}
+    if name == "apex_kb_summary":
+        import knowledge_base
+        return knowledge_base.summary()
+    if name == "apex_kb_popularity":
+        import knowledge_base
+        return knowledge_base.popularity_by_discipline()
+    if name == "apex_kb_ranking":
+        import knowledge_base
+        return knowledge_base.success_ranking(args.get("discipline", "general"),
+                                              k=int(args.get("k", 10)), kind=args.get("kind", "skill"))
+    if name == "apex_kb_agent_status":
+        import knowledge_base
+        return knowledge_base.agent_status(args["agent_id"])
+    if name == "apex_kb_vaccines":
+        import knowledge_base
+        return {"vaccines": knowledge_base.vaccines(k=int(args.get("k", 50)))}
+    if name == "apex_kb_load_state":
+        if not args.get("approved"):
+            return _blocked("load_state")
+        import knowledge_base
+        return knowledge_base.load_state()
     raise ValueError(f"unknown tool: {name}")
 
 

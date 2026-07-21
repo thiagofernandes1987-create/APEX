@@ -338,7 +338,15 @@ def match_task_to_ext_agents(task, k=5):
     if not roster:
         return []
     texts = [" ".join([a["id"], a.get("category", "")] + a.get("domains", [])) for a in roster]
-    sims = _rank_texts(task, texts)
+    # v1.63 translate-before-route: gloss a PT task to EN first so the EN-biased lexical pass
+    # matches (low cost, high ROI). No-op for EN input. This runs BEFORE char-n-gram so a precise
+    # lexical hit on the glossed text wins over fuzzy similarity.
+    try:
+        import translation
+        routed = translation.normalize_for_routing(task)
+    except Exception:
+        routed = task
+    sims = _rank_texts(routed, texts)
     order = sorted(range(len(sims)), key=lambda i: -sims[i])[:k]
     hits = [(roster[i]["id"], roster[i].get("category", ""), round(float(sims[i]), 3))
             for i in order if sims[i] > 0]

@@ -1,0 +1,609 @@
+{
+ "skills_swept": 3784,
+ "domain_recognized": 3347,
+ "recognition_rate": 0.8845,
+ "orphans_count": 437,
+ "orphans_sample": [
+  {
+   "id": "hosted-agents",
+   "category": "ai-ml",
+   "desc": "Build background agents in sandboxed environments. Use for hosted coding agents,"
+  },
+  {
+   "id": "computer-vision-expert",
+   "category": "ai-ml",
+   "desc": "Designing high-performance real-time detection systems (YOLO26)."
+  },
+  {
+   "id": "spline-3d-integration",
+   "category": "ai-ml",
+   "desc": "You need to embed an interactive Spline scene into a web project."
+  },
+  {
+   "id": "andrej-karpathy",
+   "category": "ai-ml",
+   "desc": "When the user mentions 'karpathy' or related topics"
+  },
+  {
+   "id": "hugging-face-cli",
+   "category": "ai-ml",
+   "desc": "`hf download REPO_ID` — Download files from the Hub. `[--type CHOICE --revision "
+  },
+  {
+   "id": "appdeploy",
+   "category": "ai-ml",
+   "desc": "Use when planning or building apps and web apps"
+  },
+  {
+   "id": "fp-ts-pragmatic",
+   "category": "ai-ml",
+   "desc": "When starting with fp-ts and need practical guidance"
+  },
+  {
+   "id": "docx",
+   "category": "anthropic-official",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "pptx",
+   "category": "anthropic-official",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "xlsx",
+   "category": "anthropic-official",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "cowork-plugin-customizer",
+   "category": "apex_internals",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "create-cowork-plugin",
+   "category": "apex_internals",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "create-cowork-plugin",
+   "category": "apex_internals",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "startup-business-analyst-business-case",
+   "category": "business",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "startup-business-analyst-financial-projections",
+   "category": "business",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "startup-business-analyst-market-opportunity",
+   "category": "business",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "board-prep",
+   "category": "business",
+   "desc": "Manage — /em -board-prep — Board Meeting Preparation"
+  },
+  {
+   "id": "challenge",
+   "category": "business",
+   "desc": "Manage — /em -challenge — Pre-Mortem Plan Analysis"
+  },
+  {
+   "id": "product-discovery",
+   "category": "business",
+   "desc": "Manage — Use when validating product opportunities, mapping assumptions, plannin"
+  },
+  {
+   "id": "product-strategist",
+   "category": "business",
+   "desc": "Manage — Strategic product leadership toolkit for Head of Product covering OKR c"
+  },
+  {
+   "id": "market-sizing-analysis",
+   "category": "business",
+   "desc": "Use when established market research exists"
+  },
+  {
+   "id": "startup-financial-modeling",
+   "category": "business",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "startup-metrics-framework",
+   "category": "business",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "team-composition-analysis",
+   "category": "business",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "twitter-algorithm-optimizer",
+   "category": "business_content",
+   "desc": "Analyze and optimize tweets for maximum reach using Twitter's open-source algori"
+  },
+  {
+   "id": "wiki-page-writer",
+   "category": "business_content",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "report",
+   "category": "business_productivity",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "00-andruia-consultant",
+   "category": "community",
+   "desc": "**Idioma Mandatorio:** TODA la comunicación y la generación de archivos (tareas."
+  },
+  {
+   "id": "10-andruia-skill-smith",
+   "category": "community",
+   "desc": "**Idioma Mandatorio:** Todas las habilidades creadas deben tener sus instruccion"
+  },
+  {
+   "id": "android-jetpack-compose-expert",
+   "category": "community",
+   "desc": "Use when starting a new Android project with Jetpack Compose."
+  },
+  {
+   "id": "auth-implementation-patterns",
+   "category": "community",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "awareness-stage-mapper",
+   "category": "community",
+   "desc": "Use when you need to identify how aware an audience already is before writing me"
+  },
+  {
+   "id": "billing-automation",
+   "category": "community",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "binary-analysis-patterns",
+   "category": "community",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "blueprint",
+   "category": "community",
+   "desc": "Use when the task requires multiple PRs or sessions"
+  },
+  {
+   "id": "changelog-automation",
+   "category": "community",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "chrome-extension-developer",
+   "category": "community",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "cirq",
+   "category": "community",
+   "desc": "You are designing, simulating, or executing quantum circuits with the Cirq ecosy"
+  },
+  {
+   "id": "code-refactoring-context-restore",
+   "category": "community",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  },
+  {
+   "id": "code-refactoring-refactor-clean",
+   "category": "community",
+   "desc": "condition: Recurso ou ferramenta necessária indisponível"
+  }
+ ],
+ "skills_per_discipline": {
+  "agent-infra": 975,
+  "data-ai": 776,
+  "software": 465,
+  "marketing": 330,
+  "finance": 219,
+  "security": 128,
+  "business": 103,
+  "frontend": 79,
+  "legal": 61,
+  "engineering": 44,
+  "automation": 27,
+  "science": 27,
+  "healthcare": 26,
+  "devops": 17,
+  "mathematics": 17,
+  "backend": 14,
+  "observability": 13,
+  "electrical": 8,
+  "appsec": 8,
+  "statistics": 5,
+  "modeling": 3,
+  "product": 1,
+  "docs": 1
+ },
+ "agents_total": 213,
+ "agent_domain_distribution": {
+  "engineering": 97,
+  "ai": 46,
+  "code": 41,
+  "backend": 40,
+  "frontend": 40,
+  "devops": 31,
+  "product": 29,
+  "analysis": 28,
+  "performance": 25,
+  "api": 24,
+  "cloud": 23,
+  "security": 21,
+  "testing": 21,
+  "data": 21,
+  "marketing": 18,
+  "debugging": 17,
+  "database": 17,
+  "business": 17,
+  "documentation": 16,
+  "code_review": 15,
+  "quality": 15,
+  "specialized": 15,
+  "deployment": 15,
+  "infrastructure": 15,
+  "operations": 15,
+  "orchestration": 14,
+  "analytics": 14,
+  "dx": 14,
+  "tooling": 14,
+  "workflow": 13,
+  "llm": 13,
+  "ml": 13,
+  "domain_expert": 12,
+  "coordination": 11,
+  "fullstack": 11,
+  "legal": 11,
+  "sales": 11,
+  "multi_agent": 10,
+  "research": 10,
+  "risk": 9,
+  "competitive": 8,
+  "intelligence": 8,
+  "mobile": 7,
+  "refactoring": 6,
+  "finance": 5,
+  "monitoring": 3,
+  "hypothesis": 3,
+  "first_principles": 2,
+  "planning": 2,
+  "reliability": 2,
+  "anchor_destroyer": 1,
+  "context_recovery": 1,
+  "FOGGY": 1,
+  "fragmented_context": 1,
+  "cognitive_reset": 1,
+  "architecture": 1,
+  "system_design": 1,
+  "ADR": 1,
+  "trade_offs": 1,
+  "coupling": 1,
+  "cohesion": 1,
+  "bayesian": 1,
+  "probability": 1,
+  "prior": 1,
+  "posterior": 1,
+  "likelihood": 1,
+  "evidence_synthesis": 1,
+  "strategy": 1,
+  "growth": 1,
+  "compliance": 1,
+  "design": 1,
+  "validation": 1,
+  "adversarial": 1,
+  "pre_mortem": 1,
+  "falsification": 1,
+  "critique": 1,
+  "quality_gate": 1,
+  "automation": 1,
+  "diff": 1,
+  "version_control": 1,
+  "OPP": 1,
+  "approval": 1,
+  "governance": 1,
+  "FMEA": 1,
+  "implementation": 1,
+  "algorithm": 1,
+  "event_bus": 1,
+  "anomaly": 1,
+  "decoherence": 1,
+  "pipeline_health": 1,
+  "meta_learning": 1,
+  "pattern_recognition": 1,
+  "evolution": 1,
+  "diff_proposal": 1,
+  "bayesian_update": 1,
+  "fitness_tracking": 1,
+  "meta_reasoning": 1,
+  "R_acum": 1,
+  "pipeline_monitor": 1,
+  "epistemic_regulator": 1,
+  "EARLY_EXIT": 1,
+  "pmi": 1,
+  "pmbok": 1,
+  "scope": 1,
+  "wbs": 1,
+  "stakeholder": 1,
+  "programme_management": 1,
+  "delivery": 1,
+  "scope_governance": 1,
+  "dependency_management": 1,
+  "stakeholder_alignment": 1,
+  "evidence": 1,
+  "knowledge_gap": 1,
+  "literature": 1,
+  "sources": 1,
+  "scientific_method": 1,
+  "simulation": 1,
+  "monte_carlo": 1,
+  "fractal_cognitive": 1,
+  "symbolic_execution": 1,
+  "theory": 1,
+  "model": 1,
+  "abstraction": 1,
+  "causal_reasoning": 1
+ },
+ "category_to_domain_top": {
+  "ai-ml": {
+   "data-ai": 253,
+   "software": 9,
+   "agent-infra": 7
+  },
+  "ai_ml_agents": {
+   "data-ai": 21,
+   "software": 3,
+   "agent-infra": 2
+  },
+  "ai_ml_llm": {
+   "data-ai": 9,
+   "software": 2,
+   "marketing": 1
+  },
+  "ai_ml_ml": {
+   "data-ai": 12,
+   "marketing": 2,
+   "finance": 1
+  },
+  "anthropic-official": {
+   "agent-infra": 14,
+   "data-ai": 9,
+   "software": 4
+  },
+  "anthropic-skills": {
+   "data-ai": 13,
+   "agent-infra": 8,
+   "software": 7
+  },
+  "apex_internals": {
+   "data-ai": 2,
+   "mathematics": 1,
+   "software": 1
+  },
+  "awesome_claude": {
+   "agent-infra": 11,
+   "data-ai": 2,
+   "automation": 1
+  },
+  "business": {
+   "marketing": 42,
+   "business": 29,
+   "software": 23
+  },
+  "business_content": {
+   "marketing": 2,
+   "business": 1,
+   "data-ai": 1
+  },
+  "business_human_resources": {
+   "marketing": 2,
+   "agent-infra": 1,
+   "finance": 1
+  },
+  "business_productivity": {
+   "agent-infra": 4,
+   "appsec": 1,
+   "security": 1
+  },
+  "business_sales": {
+   "business": 2,
+   "agent-infra": 2
+  },
+  "claude_skills_m": {
+   "marketing": 7,
+   "agent-infra": 2
+  },
+  "community": {
+   "agent-infra": 84,
+   "software": 52,
+   "marketing": 40
+  },
+  "community_general": {
+   "agent-infra": 9,
+   "software": 5,
+   "data-ai": 3
+  },
+  "customer-support": {
+   "agent-infra": 4,
+   "legal": 2
+  },
+  "data": {
+   "data-ai": 21,
+   "software": 2,
+   "backend": 1
+  },
+  "data-science": {
+   "data-ai": 7,
+   "software": 1,
+   "frontend": 1
+  },
+  "design": {
+   "frontend": 29,
+   "software": 14,
+   "business": 13
+  },
+  "engineering": {
+   "software": 133,
+   "data-ai": 101,
+   "agent-infra": 23
+  },
+  "engineering_agentops": {
+   "software": 10,
+   "engineering": 6,
+   "finance": 2
+  },
+  "engineering_api": {
+   "software": 12,
+   "backend": 1
+  },
+  "engineering_backend": {
+   "software": 6,
+   "data-ai": 1,
+   "agent-infra": 1
+  },
+  "engineering_cli": {
+   "engineering": 2,
+   "software": 1
+  },
+  "engineering_cloud_aws": {
+   "engineering": 2,
+   "frontend": 1,
+   "agent-infra": 1
+  },
+  "engineering_cloud_azure": {
+   "data-ai": 114,
+   "software": 41,
+   "security": 6
+  },
+  "engineering_cloud_gcp": {
+   "data-ai": 1,
+   "frontend": 1
+  },
+  "engineering_database": {
+   "engineering": 6,
+   "data-ai": 3,
+   "backend": 2
+  },
+  "engineering_devops": {
+   "software": 17,
+   "data-ai": 7,
+   "security": 2
+  },
+  "engineering_frontend": {
+   "software": 15
+  },
+  "engineering_git": {
+   "software": 2,
+   "agent-infra": 1,
+   "data-ai": 1
+  },
+  "engineering_mobile": {
+   "software": 2,
+   "engineering": 1
+  },
+  "engineering_security": {
+   "security": 23,
+   "software": 4,
+   "finance": 1
+  },
+  "engineering_testing": {
+   "engineering": 11,
+   "software": 2,
+   "business": 1
+  },
+  "finance": {
+   "finance": 130,
+   "agent-infra": 30,
+   "data-ai": 21
+  },
+  "healthcare": {
+   "healthcare": 10,
+   "security": 1,
+   "legal": 1
+  },
+  "human-resources": {
+   "data-ai": 3,
+   "business": 2,
+   "finance": 1
+  },
+  "integrations": {
+   "agent-infra": 691,
+   "data-ai": 70,
+   "software": 31
+  },
+  "knowledge-management": {
+   "agent-infra": 4,
+   "software": 3,
+   "business": 1
+  },
+  "knowledge-work": {
+   "marketing": 46,
+   "agent-infra": 36,
+   "data-ai": 30
+  },
+  "legal": {
+   "legal": 22,
+   "data-ai": 2,
+   "software": 1
+  },
+  "marketing": {
+   "marketing": 123,
+   "software": 10,
+   "agent-infra": 1
+  },
+  "mathematics": {
+   "mathematics": 2
+  },
+  "operations": {
+   "business": 2,
+   "automation": 2,
+   "legal": 2
+  },
+  "product-management": {
+   "agent-infra": 3,
+   "frontend": 2,
+   "finance": 2
+  },
+  "productivity": {
+   "agent-infra": 10,
+   "data-ai": 3,
+   "software": 2
+  },
+  "sales": {
+   "marketing": 9,
+   "agent-infra": 3,
+   "software": 2
+  },
+  "science": {
+   "science": 12,
+   "data-ai": 8,
+   "healthcare": 3
+  },
+  "science_research": {
+   "agent-infra": 1
+  },
+  "security": {
+   "security": 45,
+   "software": 11,
+   "agent-infra": 1
+  },
+  "web3": {
+   "agent-infra": 7,
+   "software": 4,
+   "healthcare": 1
+  }
+ }
+}

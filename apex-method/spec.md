@@ -14,7 +14,7 @@ O **apex-method** é um **runtime cognitivo**: um sistema operacional fino em vo
 O LLM é a **VM cognitiva** (inferência, síntese, julgamento); a skill é o **SO** que agenda
 trabalho determinístico em código real, guarda memória durável, governa segurança e força
 disciplina de raciocínio. Não é um prompt que "reprograma" o modelo — é um kernel
-(`SKILL.md`) + 56 syscalls (`scripts/*.py`) + catálogos + contratos verificáveis.
+(`SKILL.md`) + 58 syscalls (`scripts/*.py`) + catálogos + contratos verificáveis.
 
 **Objetivo:** transformar raciocínio de LLM em engenharia auditável — respostas **computadas
 e verificadas** (PoT, RK4, Bayes, gates), com custo controlado por modo, memória que
@@ -53,7 +53,7 @@ governança.
 | Camada | Arquivo(s) | Papel |
 |---|---|---|
 | Kernel / método | `SKILL.md` | disciplina + orçamentos por modo que o LLM segue |
-| Syscalls | 56 `scripts/*.py` | trabalho determinístico fora da cabeça do LLM |
+| Syscalls | 58 `scripts/*.py` | trabalho determinístico fora da cabeça do LLM |
 | Entrada | `orchestrator.run` + `execution_policy.triage` | triage → dissect → resolve → modo → **checklist/gate** |
 | Roteamento | `taxonomy` → `router`/`gravity` → **`attraction_graph`** | facetas canônicas → atração lexical → grafo pré-computado |
 | Agentes | `agent_registry` + **`agent_spawn`** + `concurrent_executor` | roster enxuto → spec executável no spawn → fan-out A/B |
@@ -94,7 +94,9 @@ tarefa → triage (código)      trivial? → EXPRESS e fim
 ### Roteamento e composição
 | Módulo | O que faz | Entrega → para quem |
 |---|---|---|
-| `taxonomy` | facetas canônicas EN com triggers PT/EN; `facet_score` independente de idioma | classificação por significado → dissect/router |
+| `taxonomy` | facetas canônicas EN com triggers PT/EN; `facet_score` independente de idioma; **v1.63 seed do corpus real (3.784 skills + 213 agentes)** | classificação por significado → dissect/router |
+| `translation` | **v1.63 translate-before-dissect**: gloss PT→EN determinístico (stdlib, idempotente p/ EN) da entrada ANTES de classificar/rotear — baixo custo, alto ROI cross-language | entrada normalizada → dissect/router/match de agentes |
+| `knowledge_base` | **v1.63 base compartilhada**: popularidade por disciplina (cobertura real), ranking de sucesso (learning), vacinas, promoções, `load_state()` (hidrata estados de sucesso); servida pelo MCP | base consultável/carregável → qualquer instância do APEX + MCP |
 | `router` | ranking lexical de skills + demote de stubs + piso de confiança | skill certa ou NO_RELIABLE_SKILL → resolução de skills |
 | `gravity` | massa×proximidade; constelação por tarefa; `plan()` com gaps → cascata de descoberta | constelação + pedidos STAGED (H5) → assign_specialists |
 | **`attraction_graph`** | **JSON de roteamento pré-computado**: arestas gravitacionais top-K por corpo; `expand()` = atração em cadeia; `equip_for()` | super-estrutura sem re-descoberta → **agent_spawn**/LLM; `rebuild()` a cada inclusão |

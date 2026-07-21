@@ -3,7 +3,7 @@
   "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimizations are context_budget(mode) — experience injection sized per mode, zero on EXPRESS — and its twin output_budget(mode): generation compressed on cheap paths, full verbosity kept on DEEP+ where the reasoning chain is the product."
  },
  "module_dsm": {
-  "modules": 56,
+  "modules": 58,
   "deps": {
    "_ast_helpers": [],
    "_tfidf": [],
@@ -26,7 +26,8 @@
     "agent_registry"
    ],
    "agent_registry": [
-    "_tfidf"
+    "_tfidf",
+    "translation"
    ],
    "agent_spawn": [
     "agent_registry",
@@ -128,6 +129,12 @@
     "_ast_helpers"
    ],
    "hypothesis_dag": [],
+   "knowledge_base": [
+    "agent_spawn",
+    "code_genetics",
+    "learning",
+    "memory"
+   ],
    "learning": [
     "bayes",
     "memory"
@@ -168,7 +175,8 @@
     "snapshot",
     "swap_store",
     "taxonomy",
-    "token_tracker"
+    "token_tracker",
+    "translation"
    ],
    "pipeline_dsm": [
     "geodesic_scheduler",
@@ -222,6 +230,7 @@
    "token_tracker": [
     "pipeline_dsm"
    ],
+   "translation": [],
    "uco_gate": [
     "universal_code_optimizer_v4"
    ],
@@ -255,6 +264,7 @@
     "skills_sh",
     "snapshot",
     "token_tracker",
+    "translation",
     "universal_code_optimizer_v4",
     "verification_gate",
     "verify"
@@ -282,6 +292,7 @@
     "agent_lifecycle",
     "capability_map",
     "competence_matrix",
+    "knowledge_base",
     "rag_index",
     "routine_composer",
     "skill_ledger"
@@ -355,14 +366,14 @@
   "load_bearing": [
    {
     "module": "learning",
+    "fan_in": 11
+   },
+   {
+    "module": "memory",
     "fan_in": 10
    },
    {
     "module": "_tfidf",
-    "fan_in": 9
-   },
-   {
-    "module": "memory",
     "fan_in": 9
    },
    {
@@ -374,12 +385,12 @@
     "fan_in": 7
    },
    {
-    "module": "config",
+    "module": "code_genetics",
     "fan_in": 6
    },
    {
-    "module": "code_genetics",
-    "fan_in": 5
+    "module": "config",
+    "fan_in": 6
    },
    {
     "module": "orchestrator",

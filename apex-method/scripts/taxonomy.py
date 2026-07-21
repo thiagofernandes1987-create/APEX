@@ -131,17 +131,20 @@ def _merge_extra_seed():
     changes nothing (base tables remain the behavior of v1.61)."""
     import json as _json
     import os as _os
-    seed_path = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
-                              "catalog", "taxonomy_extra_seed.json")
-    try:
-        with open(seed_path, encoding="utf-8") as f:
-            seed = _json.load(f)
-    except Exception:
-        return
-    for axis, table in AXES.items():
-        for facet, terms in (seed.get(axis) or {}).items():
-            if isinstance(terms, list):
-                table.setdefault(facet, set()).update(t for t in terms if isinstance(t, str))
+    cat = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), "catalog")
+    # two seeds, merged in order: curated+OpenClaw (extra) then the real-corpus mining (corpus).
+    # v1.63: the corpus seed is the durable "memory" — vocabulary mined from the 3.784 skills +
+    # 213 agents already labeled by domain. Both are optional; a missing/corrupt seed is a no-op.
+    for name in ("taxonomy_extra_seed.json", "taxonomy_corpus_seed.json"):
+        try:
+            with open(_os.path.join(cat, name), encoding="utf-8") as f:
+                seed = _json.load(f)
+        except Exception:
+            continue
+        for axis, table in AXES.items():
+            for facet, terms in (seed.get(axis) or {}).items():
+                if isinstance(terms, list):
+                    table.setdefault(facet, set()).update(t for t in terms if isinstance(t, str))
 
 
 _merge_extra_seed()

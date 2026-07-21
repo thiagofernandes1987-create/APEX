@@ -150,6 +150,52 @@ especialista certo a surfar um agente errado.
 
 Regressões permanentes: `tests/test_regressions_v162.py` passou de 19 → **28 checks**.
 
+## 2.10 Ciclo v1.63 — corpus, tradução, cobertura e base compartilhada (2026-07-21)
+
+Continuação do loop QA+Dev+TechLead, agora com os dados alimentando taxonomy/gravity/MCP.
+
+**Enriquecimento da taxonomy pela "memória" real (corpus).** O swap efêmero da sessão anterior
+morreu com o container; a memória durável de verdade é o corpus rotulado. `mine_corpus_taxonomy.py`
+(novo) minera vocabulário de **3.784 skills (category+desc+triggers) + 213 agentes (domains)**,
+com fold de acento (NFKD) e filtros anti-ruído (DF entre facets, morfologia, denylist) →
+`catalog/taxonomy_corpus_seed.json` (~520 termos). Precisão de classificação: **10/10** em 8
+domínios + 2 controles negativos. Novos domínios reconhecidos: healthcare (FHIR/clínico),
+marketing (campanha/leads).
+
+**Translate-before-dissect (pedido do autor, baixo custo/alto ROI).** `translation.py` (novo):
+gloss PT→EN determinístico e offline (stdlib), idempotente para inglês, aplicado ANTES de
+classificar/rotear. Wired em `dissect` (aditivo) e em `match_task_to_ext_agents`. Fecha a fraqueza
+cross-language que a §12 documentava.
+
+**Coverage sweep — "um problema por skill", feito honestamente.** Spawnar 3.784 subagentes LLM é
+inviável; `coverage_sweep.py` (novo) exercita o CAMINHO de roteamento determinístico para CADA
+skill (problema-proxy da descrição) e mede reachability, órfãs e distribuição por disciplina.
+
+| Métrica | Antes | Depois |
+|---|---|---|
+| Reconhecimento de domínio (3.784 skills) | 67,3% | **88,4%** |
+| Skills órfãs (invisíveis ao roteamento) | 1.236 | **437** |
+
+Causa raiz das órfãs: o índice `apex_native_skills_index.json` estava **stale** — ainda com as
+descrições destruídas na importação, embora o skill_standardizer já as tivesse corrigido nos
+SKILL.md. `refresh_skills_index.py` (novo) re-sincroniza do SKILL.md e sintetiza descrição
+roteável de labels reais (id+category+anchors) quando o SKILL.md também é lixo (~900 skills, 24%,
+têm banner de versão no lugar de descrição — problema de qualidade de dados honesto).
+
+**MCP como base de conhecimento compartilhada.** `knowledge_base.py` (novo) + 6 tools MCP novas
+(`apex_kb_summary/popularity/ranking/agent_status/vaccines/load_state`). Distinção honesta:
+**popularidade = cobertura real medida**; **ranking de sucesso = learning (beta-binomial), cresce
+com runs validados**. `catalog/knowledge_base_seed.json` é a base que viaja no repo;
+`load_state()` hidrata uma instância nova com os estados de sucesso herdados (gate H5 no MCP).
+
+**Bug novo corrigido (B5).** `orchestrator.dissect` mapeava `software→engineering` mas a taxonomy
+retorna `domain="engineering"` (v1.56) para tarefas estruturais — "engineering" faltava em
+`_FACET2DISC`, então caíam no fallback semântico e viravam "legal". Corrigido + keywords de
+security (pentest/sast/owasp) adicionadas. Travado em R6.
+
+MCP: 11 → **17 tools** (7→10 smoke checks). Regressões: 28 → **40 checks**. Benchmark **72/72**.
+Syscalls: 56 → **58** (translation, knowledge_base).
+
 ## 3. FALTA IMPLEMENTAR (backlog priorizado)
 
 | # | Item | Por quê | Esforço |

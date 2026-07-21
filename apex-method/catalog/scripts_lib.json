@@ -224,6 +224,14 @@
   "path": "scripts/hypothesis_dag.py"
  },
  {
+  "id": "script:knowledge_base",
+  "type": "script",
+  "domain": "engineering",
+  "capabilities": "shared-kb,popularity,success-ranking,vaccines,load-state,coverage",
+  "mass": 125,
+  "path": "scripts/knowledge_base.py"
+ },
+ {
   "id": "script:learning",
   "type": "script",
   "domain": "meta",
@@ -414,6 +422,14 @@
   "capabilities": "token-measurement,rounds,per-step,calibration,opp-99,chars4-proxy,report",
   "mass": 137,
   "path": "scripts/token_tracker.py"
+ },
+ {
+  "id": "script:translation",
+  "type": "script",
+  "domain": "engineering",
+  "capabilities": "gloss,pt-en,cross-language,routing-normalize,stdlib",
+  "mass": 110,
+  "path": "scripts/translation.py"
  },
  {
   "id": "script:uco_gate",

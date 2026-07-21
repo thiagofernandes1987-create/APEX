@@ -1,7 +1,7 @@
 {
  "_meta": {
   "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
-  "count": 80
+  "count": 82
  },
  "environment": {
   "python": "python 3.11.15",
@@ -479,6 +479,22 @@
    }
   },
   {
+   "id": "tool:knowledge_base",
+   "kind": "runtime-tool",
+   "name": "knowledge_base",
+   "path": "scripts/knowledge_base.py",
+   "description": "knowledge_base.py — a base de conhecimento COMPARTILHADA do APEX (v1.63). O que o autor pediu: uma base que qualquer um que use o APEX consulta e da qual CARREGA estados de sucesso — ranking histórico de sucesso + popularidade de agentes/sk",
+   "triggers": "",
+   "commands": [
+    "python scripts/knowledge_base.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
+   }
+  },
+  {
    "id": "tool:learning",
    "kind": "runtime-tool",
    "name": "learning",
@@ -861,6 +877,22 @@
     "send": "ver docstring/CLI",
     "receive": "ver docstring",
     "apply_when": "- o orchestrator grava automaticamente (start_round/record/end_round em todo run FULL_PIPELINE);"
+   }
+  },
+  {
+   "id": "tool:translation",
+   "kind": "runtime-tool",
+   "name": "translation",
+   "path": "scripts/translation.py",
+   "description": "translation.py — gloss PT→EN determinístico (v1.63): traduzir a ENTRADA antes do dissect. POR QUE (pedido do autor, baixo custo / alto ROI): o router (TF-IDF) e o match de agentes são LÉXICOS e enviesados a inglês — uma tarefa em PT some (a",
+   "triggers": "",
+   "commands": [
+    "python scripts/translation.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
    }
   },
   {
