@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.hosted_agents_v2_py
 name: hosted-agents-v2-py
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   agents in Azure AI Foundry.'''
 version: v00.33.0
 status: ADOPTED

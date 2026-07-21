@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.makepad_event_action
 name: makepad-event-action
-description: "Use — |"
+description: "You need to handle input, lifecycle, or UI interaction events in Makepad."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/makepad-event-action

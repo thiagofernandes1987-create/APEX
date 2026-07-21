@@ -1,7 +1,7 @@
 ---
 skill_id: product_management.product_manager_toolkit
 name: product-manager-toolkit
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: product-management/product-manager-toolkit

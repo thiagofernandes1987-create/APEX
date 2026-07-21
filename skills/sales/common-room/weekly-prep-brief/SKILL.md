@@ -1,7 +1,7 @@
 ---
 skill_id: sales.common_room.weekly_prep_brief
 name: weekly-prep-brief
-description: "Track — "
+description: "condition: CRM ou enrichment tool indisponível"
   brief'', ''prepare my week'', ''what calls do I have this week'', ''Monday prep'', or any weekly '
 version: v00.33.0
 status: ADOPTED

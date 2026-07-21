@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.3d_games
 name: 3d-games
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/3d-games

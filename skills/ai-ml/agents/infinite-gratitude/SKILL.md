@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.infinite_gratitude
 name: infinite-gratitude
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/agents/infinite-gratitude

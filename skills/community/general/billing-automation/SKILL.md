@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.billing_automation
 name: billing-automation
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   and tax calculation.'''
 version: v00.33.0
 status: ADOPTED

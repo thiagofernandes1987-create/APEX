@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.embeddings.draw
 name: draw
-description: "Apply — "
+description: "Creating vector graphics and diagrams in ODG format"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/embeddings/draw

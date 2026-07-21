@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.makepad_widgets
 name: makepad-widgets
-description: "Use — "
+description: "You need to work with core or advanced widgets in Makepad."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/makepad-widgets

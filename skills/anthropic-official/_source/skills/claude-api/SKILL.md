@@ -1,4 +1,6 @@
 ---
+name: claude-api
+description: "User asks for 'latest' or 'current' information"
 executor: LLM_BEHAVIOR
 skill_id: anthropic-official._source.skills.claude-api
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.hig_inputs
 name: hig-inputs
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   not already covered.'''
 version: v00.33.0
 status: ADOPTED

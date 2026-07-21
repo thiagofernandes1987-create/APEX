@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.pydantic_ai
 name: pydantic-ai
-description: "Use — "
+description: "Use when building Python AI agents that call tools and return structured data"
   and multi-model support.'''
 version: v00.33.0
 status: ADOPTED

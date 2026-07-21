@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.app_store_optimization
 name: app-store-optimization
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   on Apple App Store and Google Play Store'''
 version: v00.33.0
 status: ADOPTED

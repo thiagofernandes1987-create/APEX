@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.viboscope
 name: viboscope
-description: "Use — "
+description: "Use when looking for a cofounder or project collaborator"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/viboscope

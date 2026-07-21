@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.architecture
 name: architecture
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   when making architecture decisions or analyzing system design.'''
 version: v00.33.0
 status: ADOPTED

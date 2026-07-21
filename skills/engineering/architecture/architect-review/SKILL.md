@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.architect_review
 name: architect-review
-description: "Implement — "
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/architecture/architect-review

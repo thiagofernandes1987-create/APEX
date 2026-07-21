@@ -1,4 +1,6 @@
 ---
+name: dd-meeting-prep
+description: "Use this skill when the task requires dd meeting prep capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.dd_meeting_prep_3
 status: ADOPTED

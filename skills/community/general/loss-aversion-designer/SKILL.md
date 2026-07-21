@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.loss_aversion_designer
 name: loss-aversion-designer
-description: "Use — "
+description: "Use when an offer or message should emphasize what the audience risks losing by doing nothing."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/loss-aversion-designer

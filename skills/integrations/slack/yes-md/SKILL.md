@@ -1,7 +1,7 @@
 ---
 skill_id: integrations.slack.yes_md
 name: '''yes-md'''
-description: "Automate — "
+description: "Use when AI modifies files, configs, databases, or deployments"
   hooks. Makes AI safe, thorough, and honest.'''
 version: v00.33.0
 status: ADOPTED

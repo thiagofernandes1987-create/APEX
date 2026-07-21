@@ -1,7 +1,7 @@
 ---
 skill_id: legal.compliance.accessibility_compliance_accessibility_audit
 name: accessibility-compliance-accessibility-audit
-description: "Review — "
+description: "condition: Legislação atualizada além do knowledge cutoff"
   compatibility. Conduct audits, identify barriers, and provide remediation guidance.'''
 version: v00.33.0
 status: ADOPTED

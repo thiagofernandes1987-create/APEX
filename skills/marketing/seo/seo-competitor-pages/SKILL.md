@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_competitor_pages
 name: seo-competitor-pages
-description: "Create — >"
+description: "Use when creating `X vs Y` comparison pages or alternatives pages."
 version: v00.33.0
 status: ADOPTED
 domain_path: marketing/seo/seo-competitor-pages

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.skill_router
 name: skill-router
-description: "Use — "
+description: "The user says 'I don't know where to start' or 'which skill should I use'"
   and recommends the best skill(s) from the installed library for their goal.'''
 version: v00.33.0
 status: ADOPTED

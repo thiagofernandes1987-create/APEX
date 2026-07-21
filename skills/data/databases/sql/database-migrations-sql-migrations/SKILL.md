@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.database_migrations_sql_migrations
 name: database-migrations-sql-migrations
-description: "Analyze — "
+description: "Use when working on SQL database migration strategy and implementation tasks."
   integrity and rollback plans.'''
 version: v00.33.0
 status: ADOPTED

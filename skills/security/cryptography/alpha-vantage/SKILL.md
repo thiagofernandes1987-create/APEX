@@ -1,7 +1,7 @@
 ---
 skill_id: security.cryptography.alpha_vantage
 name: alpha-vantage
-description: "Audit — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   and 50+ technical indicators.'''
 version: v00.33.0
 status: ADOPTED

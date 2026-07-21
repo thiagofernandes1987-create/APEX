@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.statsmodels
 name: statsmodels
-description: "Implement — "
+description: "Fitting regression models (OLS, WLS, GLS, quantile regression)"
   and diagnostics across a wide range of statistical methods.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.20_andruia_niche_intelligence
 name: 20-andruia-niche-intelligence
-description: "Deploy — "
+description: "**Foco en el Vertical:** Debo ignorar generalidades y centrarme en lo que hace único al nicho actual (ej. Fintech, EdTech, HealthTech, E-commerce, etc.)."
   conocimientos, regulaciones y estándares únicos del sector. Actívalo tras definir el nicho.'''
 version: v00.33.0
 status: ADOPTED

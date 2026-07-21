@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.agent_manager_skill
 name: agent-manager-skill
-description: "Apply — "
+description: "run multiple local CLI agents in parallel (separate tmux sessions)"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/agents/agent-manager-skill

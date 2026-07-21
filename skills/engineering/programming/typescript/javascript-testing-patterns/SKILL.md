@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.typescript.javascript_testing_patterns
 name: javascript-testing-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   modern testing frameworks and best practices.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.behavioral_modes
 name: behavioral-modes
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   based on task type.'''
 version: v00.33.0
 status: ADOPTED

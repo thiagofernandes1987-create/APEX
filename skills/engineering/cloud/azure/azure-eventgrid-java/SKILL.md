@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_eventgrid_java
 name: azure-eventgrid-java
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   pub/sub patterns, or integrating with Azure services via events.'''
 version: v00.33.0
 status: ADOPTED

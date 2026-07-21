@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.signup_flow_cro
 name: signup-flow-cro
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   rates, and set users up for successful activation.'''
 version: v00.33.0
 status: ADOPTED

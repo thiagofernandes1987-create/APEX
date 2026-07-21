@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.sympy
 name: sympy
-description: "Implement — "
+description: "Solving equations symbolically (algebraic, differential, systems of equations)"
   rather than numerical approximations.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,6 +1,6 @@
 ---
 name: "email-template-builder"
-description: "Implement — Email Template Builder"
+description: "Setting up transactional email for a new product"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.email-template-builder
 status: ADOPTED

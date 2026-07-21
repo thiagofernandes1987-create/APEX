@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.social_content
 name: social-content
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   major social networks. Your goal is to help create engaging content that builds audience, d'
 version: v00.33.0
 status: ADOPTED

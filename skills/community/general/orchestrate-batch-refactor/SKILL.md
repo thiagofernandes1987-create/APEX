@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.orchestrate_batch_refactor
 name: '''orchestrate-batch-refactor'''
-description: "Use — "
+description: "When a refactor spans many files or subsystems and needs clear work partitioning."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/orchestrate-batch-refactor

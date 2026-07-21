@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.python_pptx_generator
 name: python-pptx-generator
-description: "Implement — "
+description: "Use when the user wants a Python script that generates a `.pptx` file automatically"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/python/python-pptx-generator

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.makepad_reference
 name: makepad-reference
-description: "Use — "
+description: "You need quick-reference material for common Makepad errors, debugging, or API lookups."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/makepad-reference

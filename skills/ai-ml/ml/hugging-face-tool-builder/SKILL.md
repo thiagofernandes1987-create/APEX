@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.ml.hugging_face_tool_builder
 name: hugging-face-tool-builder
-description: "Apply — "
+description: "You need reusable CLI scripts around the Hugging Face API or `hf` command line tool."
   allowing chaining, piping and intermediate processing where helpful. You can access the AP'
 version: v00.33.0
 status: ADOPTED

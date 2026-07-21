@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.growth_engine
 name: growth-engine
-description: "Create — "
+description: "When you need specialized assistance with this domain"
   referral programs e aquisicao organica.'''
 version: v00.33.0
 status: ADOPTED

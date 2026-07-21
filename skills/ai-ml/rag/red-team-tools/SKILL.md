@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.red_team_tools
 name: red-team-tools
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   vulnerability discovery, and bug bounty hunting. Automate common tasks while maintaining '
 version: v00.33.0
 status: ADOPTED

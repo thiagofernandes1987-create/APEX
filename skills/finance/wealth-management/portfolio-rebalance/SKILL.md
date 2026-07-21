@@ -1,7 +1,7 @@
 ---
 skill_id: finance.wealth_management.portfolio_rebalance
 name: portfolio-rebalance
-description: "Analyze — "
+description: "condition: Dados financeiros desatualizados ou ausentes"
 version: v00.33.0
 status: ADOPTED
 domain_path: finance/wealth-management/portfolio-rebalance

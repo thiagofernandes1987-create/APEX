@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.content_strategy
 name: content-strategy
-description: "Use — "
+description: "Use when deciding what content to create, in what order, and for which audience."
   generation. Use when deciding what to publish, what topics to prioritize, or how to struct'
 version: v00.33.0
 status: ADOPTED

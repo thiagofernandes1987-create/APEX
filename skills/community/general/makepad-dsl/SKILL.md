@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.makepad_dsl
 name: makepad-dsl
-description: "Use — |"
+description: "You need help with Makepad `live_design!` syntax, object definitions, or inheritance patterns."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/makepad-dsl

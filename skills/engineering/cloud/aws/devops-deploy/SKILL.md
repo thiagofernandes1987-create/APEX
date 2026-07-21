@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.aws.devops_deploy
 name: devops-deploy
-description: "Implement — "
+description: "When you need specialized assistance with this domain"
   como codigo e monitoramento.'''
 version: v00.33.0
 status: ADOPTED

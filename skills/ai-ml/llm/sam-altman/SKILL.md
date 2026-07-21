@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.sam_altman
 name: sam-altman
-description: "Apply — "
+description: "When the user mentions 'sam altman' or related topics"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/llm/sam-altman

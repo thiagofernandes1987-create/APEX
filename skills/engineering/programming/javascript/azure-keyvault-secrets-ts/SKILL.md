@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.javascript.azure_keyvault_secrets_ts
 name: azure-keyvault-secrets-ts
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   and retrieving application secrets or configuration values.'''
 version: v00.33.0
 status: ADOPTED

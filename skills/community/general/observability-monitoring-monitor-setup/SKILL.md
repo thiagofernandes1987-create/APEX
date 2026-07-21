@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.observability_monitoring_monitor_setup
 name: observability-monitoring-monitor-setup
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   Set up metrics collection, distributed tracing, log aggregation, and create insightful d'
 version: v00.33.0
 status: ADOPTED

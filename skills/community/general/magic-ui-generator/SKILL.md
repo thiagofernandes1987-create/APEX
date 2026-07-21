@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.magic_ui_generator
 name: magic-ui-generator
-description: "Use — "
+description: "A new UI component is requested (e.g., pricing tables, contact forms, hero sections)."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/magic-ui-generator

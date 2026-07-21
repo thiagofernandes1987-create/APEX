@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_messaging_webpubsub_java
 name: azure-messaging-webpubsub-java
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   messaging, live updates, chat applications, or server-to-client push notifications.'''
 version: v00.33.0
 status: ADOPTED

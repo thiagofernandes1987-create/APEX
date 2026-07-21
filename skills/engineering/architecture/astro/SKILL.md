@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.astro
 name: astro
-description: "Implement — "
+description: "Use when building a blog, documentation site, marketing page, or portfolio"
   and Markdown/MDX support.'''
 version: v00.33.0
 status: ADOPTED

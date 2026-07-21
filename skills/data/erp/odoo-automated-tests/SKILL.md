@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_automated_tests
 name: odoo-automated-tests
-description: "Analyze — "
+description: "Writing unit tests for a custom model's business logic."
   setup, mocking, and CI integration.'''
 version: v00.33.0
 status: ADOPTED

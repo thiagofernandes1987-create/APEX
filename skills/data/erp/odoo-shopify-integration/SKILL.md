@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_shopify_integration
 name: odoo-shopify-integration
-description: "Analyze — "
+description: "Selling on Shopify while managing inventory in Odoo."
   external API or connector modules.'''
 version: v00.33.0
 status: ADOPTED

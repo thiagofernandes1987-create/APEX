@@ -1,7 +1,7 @@
 ---
 skill_id: business.analysis.startup_business_analyst_business_case
 name: startup-business-analyst-business-case
-description: "Manage — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: business/analysis/startup-business-analyst-business-case

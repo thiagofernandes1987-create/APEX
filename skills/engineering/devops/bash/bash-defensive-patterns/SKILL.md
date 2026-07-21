@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.bash.bash_defensive_patterns
 name: bash-defensive-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   CI/CD pipelines, or system utilities requiring fault tolerance and safety.'''
 version: v00.33.0
 status: ADOPTED

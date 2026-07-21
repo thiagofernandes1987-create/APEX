@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.event_store_design
 name: event-store-design
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   choosing event store technologies, or implementing event persistence patterns.'''
 version: v00.33.0
 status: ADOPTED

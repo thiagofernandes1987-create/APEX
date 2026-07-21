@@ -1,7 +1,7 @@
 ---
 skill_id: finance.private_equity.ai_readiness
 name: ai-readiness
-description: "Analyze — "
+description: "condition: Dados financeiros desatualizados ou ausentes"
 version: v00.33.0
 status: ADOPTED
 domain_path: finance/private-equity/ai-readiness

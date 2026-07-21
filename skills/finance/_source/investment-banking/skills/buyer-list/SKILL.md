@@ -1,4 +1,6 @@
 ---
+name: buyer-list
+description: "Use this skill when preparing for a sell-side mandate, building a buyer universe, or evaluating potential partners"
 executor: LLM_BEHAVIOR
 skill_id: finance.investment_banking.buyer_list_3
 status: ADOPTED

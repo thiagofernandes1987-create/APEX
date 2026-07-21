@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.uxui_principles
 name: uxui-principles
-description: "Use — "
+description: "Auditing an existing interface for UX issues"
   into AI coding sessions.'''
 version: v00.33.0
 status: ADOPTED

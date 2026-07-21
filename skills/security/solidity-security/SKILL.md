@@ -1,7 +1,7 @@
 ---
 skill_id: security.solidity_security
 name: solidity-security
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
 version: v00.33.0
 status: ADOPTED
 domain_path: security/solidity-security

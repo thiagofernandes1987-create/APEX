@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.claude_code_guide
 name: claude-code-guide
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   full potential. This skill synthesizes best practices, configuration templates, and advance'
 version: v00.33.0
 status: ADOPTED

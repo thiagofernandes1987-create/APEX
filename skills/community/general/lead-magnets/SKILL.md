@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.lead_magnets
 name: lead-magnets
-description: "Use — "
+description: "Use when planning downloadable offers or gated resources for email capture."
   templates, downloadable resources, or other offers that convert visitors into subsc'
 version: v00.33.0
 status: ADOPTED

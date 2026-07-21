@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.server_management
 name: server-management
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   Teaches thinking, not commands.'''
 version: v00.33.0
 status: ADOPTED

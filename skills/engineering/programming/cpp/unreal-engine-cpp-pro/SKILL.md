@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.cpp.unreal_engine_cpp_pro
 name: unreal-engine-cpp-pro
-description: "Implement — "
+description: "Developing C++ code for Unreal Engine 5.x projects"
   practices.'''
 version: v00.33.0
 status: ADOPTED

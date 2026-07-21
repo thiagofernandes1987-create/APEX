@@ -1,4 +1,6 @@
 ---
+name: merger-model
+description: "Use this skill when valuating a potential acquisition, preparing merger consequences analysis for a pitch, or advising on deal terms"
 executor: LLM_BEHAVIOR
 skill_id: finance.investment_banking.merger_model_3
 status: ADOPTED

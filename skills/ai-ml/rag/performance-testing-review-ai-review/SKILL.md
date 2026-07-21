@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.performance_testing_review_ai_review
 name: performance-testing-review-ai-review
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   recognition, and modern DevOps practices. Leverage AI tools (GitHub Copilot, Qodo, GPT-5, '
 version: v00.33.0
 status: ADOPTED

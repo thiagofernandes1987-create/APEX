@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.skill_improver
 name: skill-improver
-description: "Apply — "
+description: "Improving a skill with multiple quality issues"
   when improving a skill with multiple quality issues, iterating on a new skill until it mee'
 version: v00.33.0
 status: ADOPTED

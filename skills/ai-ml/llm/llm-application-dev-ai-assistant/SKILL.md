@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.llm_application_dev_ai_assistant
 name: llm-application-dev-ai-assistant
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   chatbots, and AI-powered applications. Design comprehensive AI assistant solutions with natu'
 version: v00.33.0
 status: ADOPTED

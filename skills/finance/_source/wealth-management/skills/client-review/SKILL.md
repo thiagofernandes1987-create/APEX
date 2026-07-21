@@ -1,4 +1,6 @@
 ---
+name: client-review
+description: "Use this skill when the task requires client review capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.wealth_management.client_review_3
 status: ADOPTED

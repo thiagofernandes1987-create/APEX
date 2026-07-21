@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_aeo_meta_description_generator
 name: seo-aeo-meta-description-generator
-description: "Create — "
+description: "Use when a page needs a title tag and meta description written or optimised"
   Card tags. Activate when the user wants to write meta tags, title tags, or social sharing '
 version: v00.33.0
 status: ADOPTED

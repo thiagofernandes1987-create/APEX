@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.linux.linux_privilege_escalation
 name: linux-privilege-escalation
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   vulnerable services, and security weaknesses that allow elevation from low-privilege us'
 version: v00.33.0
 status: ADOPTED

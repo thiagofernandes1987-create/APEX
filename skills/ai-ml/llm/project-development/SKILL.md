@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.project_development
 name: project-development
-description: "Apply — "
+description: "Starting a new project that might benefit from LLM processing"
   architectures, and iterating rapidly using agent-assisted development.'''
 version: v00.33.0
 status: ADOPTED

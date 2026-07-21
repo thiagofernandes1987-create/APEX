@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.matematico_tao
 name: matematico-tao
-description: "Use — "
+description: "When the user mentions 'matematico' or related topics"
   profunda: teoria da informação, teoria dos grafos, complexidade computacional, álgeb'
 version: v00.33.0
 status: ADOPTED

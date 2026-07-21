@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.tdd_workflows_tdd_red
 name: tdd-workflows-tdd-red
-description: "Deploy — "
+description: "condition: Rede blockchain congestionada ou indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: web3/defi/tdd-workflows-tdd-red

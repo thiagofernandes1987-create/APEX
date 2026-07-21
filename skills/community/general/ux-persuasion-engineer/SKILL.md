@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ux_persuasion_engineer
 name: ux-persuasion-engineer
-description: "Use — "
+description: "Use when a product or page UX should guide decisions more clearly through layout, sequencing, and cues."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/ux-persuasion-engineer

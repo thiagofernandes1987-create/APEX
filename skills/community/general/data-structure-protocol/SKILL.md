@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.data_structure_protocol
 name: data-structure-protocol
-description: "Use — "
+description: "The project has a `.dsp/` directory (DSP is already set up)"
   why connections exist without re-reading the whole repo.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.csharp.dotnet_backend
 name: dotnet-backend
-description: "Implement — "
+description: "Build or refactor ASP.NET Core APIs (controller-based or Minimal APIs)"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/csharp/dotnet-backend

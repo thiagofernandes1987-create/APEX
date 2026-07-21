@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.paywall_upgrade_cro
 name: paywall-upgrade-cro
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   users to higher tiers, at moments when they''ve experienced enough value to justify the c'
 version: v00.33.0
 status: ADOPTED

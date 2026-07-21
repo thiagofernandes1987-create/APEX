@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.makepad_shaders
 name: makepad-shaders
-description: "Use — |"
+description: "You need to write or debug Makepad shader code, custom drawing, or SDF-based visuals."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/makepad-shaders

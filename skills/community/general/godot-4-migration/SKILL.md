@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.godot_4_migration
 name: godot-4-migration
-description: "Use — "
+description: "Use when porting a Godot 3 project to Godot 4."
   and exports.'''
 version: v00.33.0
 status: ADOPTED

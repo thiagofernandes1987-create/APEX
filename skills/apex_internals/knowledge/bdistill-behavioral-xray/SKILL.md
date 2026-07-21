@@ -1,7 +1,7 @@
 ---
 skill_id: apex_internals.knowledge.bdistill_behavioral_xray
 name: bdistill-behavioral-xray
-description: "Use — "
+description: "Use when you want to understand how your AI model actually behaves (not how it claims to)"
   formatting defaults. No API key needed.'''
 version: v00.33.0
 status: ADOPTED

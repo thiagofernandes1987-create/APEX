@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.projection_patterns
 name: projection-patterns
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   views, or optimizing query performance in event-sourced systems.'''
 version: v00.33.0
 status: ADOPTED

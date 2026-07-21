@@ -1,7 +1,7 @@
 ---
 skill_id: finance.market_data.funding_digest
 name: funding-digest
-description: "Analyze — "
+description: "'Give me a deal flow digest for this week'"
   capital markets activity across a user''s watched sectors or companies. Use this skill wh'
 version: v00.33.0
 status: ADOPTED

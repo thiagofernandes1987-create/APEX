@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.oss_hunter
 name: oss-hunter
-description: "Use — "
+description: "Use when the user asks to find open source issues to work on."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/oss-hunter

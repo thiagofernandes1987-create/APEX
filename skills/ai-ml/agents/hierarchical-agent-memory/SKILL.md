@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.hierarchical_agent_memory
 name: hierarchical-agent-memory
-description: "Apply — "
+description: "Use when you want to reduce input token costs across Claude Code sessions"
   savings via dashboard, and routes agents to the right sub-context.'''
 version: v00.33.0
 status: ADOPTED

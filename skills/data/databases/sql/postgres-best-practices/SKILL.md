@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.postgres_best_practices
 name: postgres-best-practices
-description: "Analyze — "
+description: "Writing SQL queries or designing schemas"
   or optimizing Postgres queries, schema designs, or database configurations.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: sales.apollo.skills
 name: sequence-load
-description: "Track — "
+description: "condition: CRM ou enrichment tool indisponível"
   creation, deduplication, and enrollment in one flow.'''
 version: v00.33.0
 status: ADOPTED

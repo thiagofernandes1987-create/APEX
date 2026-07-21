@@ -1,6 +1,6 @@
 ---
 name: "agent-workflow-designer"
-description: "Implement — Agent Workflow Designer"
+description: "A single prompt is insufficient for task complexity"
 executor: HYBRID
 skill_id: engineering.cs-engineering.agent-workflow-designer
 status: ADOPTED

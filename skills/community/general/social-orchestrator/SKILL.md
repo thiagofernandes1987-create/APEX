@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.social_orchestrator
 name: social-orchestrator
-description: "Use — "
+description: "When you need specialized assistance with this domain"
   Publicacao cross-channel, metricas unificadas, reutilizacao de conteudo por formato, '
 version: v00.33.0
 status: ADOPTED

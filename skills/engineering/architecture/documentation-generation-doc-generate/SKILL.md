@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.documentation_generation_doc_generate
 name: documentation-generation-doc-generate
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Generate API docs, architecture diagrams, user guides, and technical references using AI-p'
 version: v00.33.0
 status: ADOPTED

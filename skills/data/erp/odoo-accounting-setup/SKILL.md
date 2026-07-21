@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_accounting_setup
 name: odoo-accounting-setup
-description: "Analyze — "
+description: "Setting up a new Odoo instance for a company for the first time."
   terms, and bank reconciliation.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: finance.financial_analysis.comps_analysis
 name: comps-analysis
-description: "Analyze — |"
+description: "condition: Dados financeiros desatualizados ou ausentes"
 version: v00.33.0
 status: ADOPTED
 domain_path: finance/financial-analysis/comps-analysis

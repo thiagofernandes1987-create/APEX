@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.makepad_platform
 name: makepad-platform
-description: "Use — |"
+description: "You need to understand or target specific platforms and graphics backends in Makepad."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/makepad-platform

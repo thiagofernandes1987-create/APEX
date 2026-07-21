@@ -1,7 +1,7 @@
 ---
 skill_id: growth_engine.full_funnel_optimizer
 name: full-funnel-optimizer
-description: >
+description: "Lançando uma nova campanha de aquisição, retenção ou referral"
   Orquestra otimização do funil completo de crescimento: pesquisa competitiva →
   segmentação com dados → criação de campanha → execução multi-canal → análise A/B →
   iteração baseada em evidência. Resolve o gap entre marketing (estratégia), sales

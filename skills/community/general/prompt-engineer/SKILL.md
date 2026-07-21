@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.prompt_engineer
 name: prompt-engineer
-description: "Use — "
+description: "User provides a vague or generic prompt (e.g., 'help me code Python')"
   of Density, RACE, RISE, STAR, SOAP, CLEAR, GROW)'''
 version: v00.33.0
 status: ADOPTED

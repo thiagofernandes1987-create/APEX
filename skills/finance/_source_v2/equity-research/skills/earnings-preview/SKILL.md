@@ -1,4 +1,6 @@
 ---
+name: earnings-preview
+description: "Use this skill when the task requires earnings preview capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.equity_research.earnings_preview_2
 status: ADOPTED

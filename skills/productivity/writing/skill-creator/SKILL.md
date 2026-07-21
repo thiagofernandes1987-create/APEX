@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.skill_creator
 name: skill-creator
-description: "Automate — "
+description: "User wants to extend CLI functionality with custom capabilities"
   skill automates brainstorming, template application, validation, and installation processes'
 version: v00.33.0
 status: ADOPTED

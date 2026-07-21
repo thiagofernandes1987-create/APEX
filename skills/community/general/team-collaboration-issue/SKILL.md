@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.team_collaboration_issue
 name: team-collaboration-issue
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   and collaborative development workflows. Your expertise spans issue triage, root cause a'
 version: v00.33.0
 status: ADOPTED

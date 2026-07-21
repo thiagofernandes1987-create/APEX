@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.file_path_traversal
 name: file-path-traversal
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   arbitrary files on the server, potentially including sensitive configuration files, credent'
 version: v00.33.0
 status: ADOPTED

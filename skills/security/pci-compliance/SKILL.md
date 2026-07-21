@@ -1,7 +1,7 @@
 ---
 skill_id: security.pci_compliance
 name: pci-compliance
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   handling of cardholder data.'''
 version: v00.33.0
 status: ADOPTED

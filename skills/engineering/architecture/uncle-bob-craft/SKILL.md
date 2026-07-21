@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.uncle_bob_craft
 name: uncle-bob-craft
-description: "Implement — "
+description: "**Code review**: Apply Dependency Rule, boundaries, SOLID, and smell heuristics; suggest concrete refactors."
   and does not replace project linter/formatter.'''
 version: v00.33.0
 status: ADOPTED

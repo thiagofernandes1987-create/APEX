@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.clarvia_aeo_check
 name: clarvia-aeo-check
-description: "Apply — "
+description: "Use when evaluating a new MCP server before adding it to your config"
   15,400+ indexed tools before adding them to your workflow.'''
 version: v00.33.0
 status: ADOPTED

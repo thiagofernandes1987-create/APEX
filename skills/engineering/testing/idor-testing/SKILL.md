@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.idor_testing
 name: idor-testing
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   in web applications.'''
 version: v00.33.0
 status: ADOPTED

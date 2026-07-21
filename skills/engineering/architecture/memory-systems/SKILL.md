@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.memory_systems
 name: memory-systems
-description: "Implement — "
+description: "Building agents that must persist across sessions"
   across sessions, needing to maintain entity consistency across conversations, or impleme'
 version: v00.33.0
 status: ADOPTED

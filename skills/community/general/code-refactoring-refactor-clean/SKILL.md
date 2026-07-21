@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.code_refactoring_refactor_clean
 name: code-refactoring-refactor-clean
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   software engineering best practices. Analyze and refactor the provided code to improve its q'
 version: v00.33.0
 status: ADOPTED

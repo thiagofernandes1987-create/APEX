@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_inventory_optimizer
 name: odoo-inventory-optimizer
-description: "Analyze — "
+description: "Choosing and configuring FIFO vs AVCO stock valuation."
   and multi-warehouse configuration.'''
 version: v00.33.0
 status: ADOPTED

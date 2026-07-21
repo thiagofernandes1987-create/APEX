@@ -1,7 +1,7 @@
 ---
 skill_id: anthropic_official.pptx
 name: pptx
-description: "Apply — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   slide decks, pitch decks, or presentations; reading, parsing, or extracting text from '
 version: v00.33.0
 status: ADOPTED

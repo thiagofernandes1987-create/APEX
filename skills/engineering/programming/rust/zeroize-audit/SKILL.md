@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.zeroize_audit
 name: zeroize-audit
-description: "Implement — "
+description: "Auditing cryptographic implementations (keys, seeds, nonces, secrets)"
   optimizations, with assembly-level analysis, and control-flow verification. Use for auditin'
 version: v00.33.0
 status: ADOPTED

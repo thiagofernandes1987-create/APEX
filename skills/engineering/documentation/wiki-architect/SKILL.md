@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.documentation.wiki_architect
 name: wiki-architect
-description: "Implement — "
+description: "User asks to 'create a wiki', 'document this repo', 'generate docs'"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/documentation/wiki-architect

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.cqrs_implementation
 name: cqrs-implementation
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   write models, optimizing query performance, or building event-sourced systems.'''
 version: v00.33.0
 status: ADOPTED

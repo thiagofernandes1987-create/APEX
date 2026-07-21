@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.parallel_agents
 name: parallel-agents
-description: "Apply — "
+description: "Complex tasks requiring multiple expertise domains"
   or when comprehensive analysis requires multiple perspectives.'''
 version: v00.33.0
 status: ADOPTED

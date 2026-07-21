@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.fastapi.fastapi_router_py
 name: fastapi-router-py
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   status codes.'''
 version: v00.33.0
 status: ADOPTED

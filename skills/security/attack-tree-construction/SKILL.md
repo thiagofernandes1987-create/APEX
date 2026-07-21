@@ -1,7 +1,7 @@
 ---
 skill_id: security.attack_tree_construction
 name: attack-tree-construction
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   defense gaps, or communicating security risks to stakeholders.'''
 version: v00.33.0
 status: ADOPTED

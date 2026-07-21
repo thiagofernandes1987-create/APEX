@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.debugging_strategies
 name: debugging-strategies
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   tools, and methodical approaches.'''
 version: v00.33.0
 status: ADOPTED

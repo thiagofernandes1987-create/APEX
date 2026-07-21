@@ -1,7 +1,7 @@
 ---
 skill_id: sales.linkedin_cli
 name: linkedin-cli
-description: "Track — "
+description: "Building outreach, research, or recruiting workflows that rely on LinkedIn data and messaging."
   create posts, and Sales Navigator.'''
 version: v00.33.0
 status: ADOPTED

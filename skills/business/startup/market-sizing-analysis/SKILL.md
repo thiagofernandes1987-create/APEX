@@ -1,7 +1,7 @@
 ---
 skill_id: business.startup.market_sizing_analysis
 name: market-sizing-analysis
-description: "Manage — "
+description: "Use when established market research exists"
   Market (SAM), and Serviceable Obtainable Market (SOM) for startup opportunities.'''
 version: v00.33.0
 status: ADOPTED

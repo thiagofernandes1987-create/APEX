@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.html_injection_testing
 name: html-injection-testing
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   into web applications. This vulnerability enables attackers to modify page appearance, create'
 version: v00.33.0
 status: ADOPTED

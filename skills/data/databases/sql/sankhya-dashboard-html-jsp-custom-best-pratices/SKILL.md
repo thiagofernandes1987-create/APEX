@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.sankhya_dashboard_html_jsp_custom_best_pratices
 name: sankhya-dashboard-html-jsp-custom-best-pratices
-description: "Analyze — "
+description: "The user asks about 'boas praticas do sankhya' or 'Sankhya best practices'."
   dashboards using HTML, JSP, Java, and SQL.'''
 version: v00.33.0
 status: ADOPTED

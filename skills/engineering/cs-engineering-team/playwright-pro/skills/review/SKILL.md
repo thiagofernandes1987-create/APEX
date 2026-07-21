@@ -1,6 +1,6 @@
 ---
 name: "review"
-description: >-
+description: "Use this skill when user says 'review tests',"
   Review Playwright tests for quality. Use when user says "review tests",
   "check test quality", "audit tests", "improve tests", "test code review",
   or "playwright best practices check".

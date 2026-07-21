@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.terraform.terraform_skill
 name: terraform-skill
-description: "Implement — "
+description: "Creating new Terraform or OpenTofu configurations or modules"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/devops/terraform/terraform-skill

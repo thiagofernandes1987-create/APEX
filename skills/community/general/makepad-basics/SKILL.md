@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.makepad_basics
 name: makepad-basics
-description: "Use — |"
+description: "You need to get started with Makepad or understand basic app structure and boilerplate."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/makepad-basics

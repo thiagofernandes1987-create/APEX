@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.office_productivity
 name: office-productivity
-description: "Automate — "
+description: "Creating office documents programmatically"
   and integration with LibreOffice and Microsoft Office formats.'''
 version: v00.33.0
 status: ADOPTED

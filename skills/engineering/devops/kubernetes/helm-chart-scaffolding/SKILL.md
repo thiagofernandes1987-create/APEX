@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.kubernetes.helm_chart_scaffolding
 name: helm-chart-scaffolding
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   applications.'''
 version: v00.33.0
 status: ADOPTED

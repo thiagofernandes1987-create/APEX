@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.multi_agent_brainstorming
 name: multi-agent-brainstorming
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   assumptions, and identify failure modes before implementation.'''
 version: v00.33.0
 status: ADOPTED

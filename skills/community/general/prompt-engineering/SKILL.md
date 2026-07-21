@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.prompt_engineering
 name: prompt-engineering
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   to improve prompts, learn prompting strategies, or debug agent behavior.'''
 version: v00.33.0
 status: ADOPTED

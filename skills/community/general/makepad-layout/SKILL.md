@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.makepad_layout
 name: makepad-layout
-description: "Use — |"
+description: "You need to size, align, or position widgets in a Makepad UI."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/makepad-layout

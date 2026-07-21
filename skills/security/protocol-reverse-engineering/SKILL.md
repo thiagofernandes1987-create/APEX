@@ -1,7 +1,7 @@
 ---
 skill_id: security.protocol_reverse_engineering
 name: protocol-reverse-engineering
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   interoperability, and debugging.'''
 version: v00.33.0
 status: ADOPTED

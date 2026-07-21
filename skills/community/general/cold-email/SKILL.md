@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.cold_email
 name: cold-email
-description: "Use — "
+description: "Use when writing outbound prospecting emails or cold follow-up sequences."
   SDR outreach, personalized opening lines, subject lines, CTAs, and multi-touch follow-u'
 version: v00.33.0
 status: ADOPTED

@@ -1,4 +1,6 @@
 ---
+name: financial-plan
+description: "Use this skill when the task requires financial plan capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.wealth_management.financial_plan_2
 status: ADOPTED

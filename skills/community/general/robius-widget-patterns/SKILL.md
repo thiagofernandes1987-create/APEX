@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.robius_widget_patterns
 name: robius-widget-patterns
-description: "Use — |"
+description: "Creating reusable Makepad widgets"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/robius-widget-patterns

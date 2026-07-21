@@ -1,6 +1,6 @@
 ---
 name: "skill-tester"
-description: "Implement — Skill Tester"
+description: "Use this skill when the task requires skill tester capabilities."
 executor: HYBRID
 skill_id: engineering.cs-engineering.skill-tester
 status: ADOPTED

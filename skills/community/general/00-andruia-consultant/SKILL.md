@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.00_andruia_consultant
 name: 00-andruia-consultant
-description: "Use — "
+description: "**Idioma Mandatorio:** TODA la comunicación y la generación de archivos (tareas.md, plan_implementacion.md) DEBEN ser en **ESPAÑOL**."
   óptima para proyectos de IA en español.'''
 version: v00.33.0
 status: ADOPTED

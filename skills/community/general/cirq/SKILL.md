@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.cirq
 name: cirq
-description: "Use — "
+description: "You are designing, simulating, or executing quantum circuits with the Cirq ecosystem."
   on quantum computers and simulators.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.slo_implementation
 name: slo-implementation
-description: "Deploy — "
+description: "condition: Rede blockchain congestionada ou indisponível"
   and error budgets.'''
 version: v00.33.0
 status: ADOPTED

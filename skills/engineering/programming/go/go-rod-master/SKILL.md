@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.go.go_rod_master
 name: go-rod-master
-description: "Implement — "
+description: "Use when the user asks to **scrape**, **automate**, or **test** a website using Go."
   stealth anti-bot-detection patterns.'''
 version: v00.33.0
 status: ADOPTED

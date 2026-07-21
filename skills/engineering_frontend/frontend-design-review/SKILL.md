@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_frontend.frontend_design_review
 name: frontend-design-review
-description: "Use — >"
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/frontend

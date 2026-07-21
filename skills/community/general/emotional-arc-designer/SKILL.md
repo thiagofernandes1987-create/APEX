@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.emotional_arc_designer
 name: emotional-arc-designer
-description: "Use — "
+description: "Use when a landing page, ad, or narrative needs a deliberate emotional progression from tension to action."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/emotional-arc-designer

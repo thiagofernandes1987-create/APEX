@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.llm_evaluation
 name: llm-evaluation
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   and A/B testing.'''
 version: v00.33.0
 status: ADOPTED

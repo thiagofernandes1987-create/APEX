@@ -1,7 +1,7 @@
 ---
 skill_id: security.cicd_automation_workflow_automate
 name: cicd-automation-workflow-automate
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   and automated development processes. Design and implement automation that reduces ma'
 version: v00.33.0
 status: ADOPTED

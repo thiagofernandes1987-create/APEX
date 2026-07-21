@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.multi_advisor
 name: multi-advisor
-description: "Use — "
+description: "When you need specialized assistance with this domain"
   de qualquer topico. Ativa personas, especialistas e agentes tecnicos simultaneamente, '
 version: v00.33.0
 status: ADOPTED

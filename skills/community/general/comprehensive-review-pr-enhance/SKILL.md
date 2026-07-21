@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.comprehensive_review_pr_enhance
 name: comprehensive-review-pr-enhance
-description: "Use — >"
+description: "You need to turn a git diff into a reviewer-friendly pull request description."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/comprehensive-review-pr-enhance

@@ -1,7 +1,7 @@
 ---
 skill_id: finance.private_equity.dd_meeting_prep
 name: dd-meeting-prep
-description: "Analyze — "
+description: "condition: Dados financeiros desatualizados ou ausentes"
 version: v00.33.0
 status: ADOPTED
 domain_path: finance/private-equity/dd-meeting-prep

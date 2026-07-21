@@ -1,7 +1,7 @@
 ---
 skill_id: design.monorepo_navigator
 name: monorepo-navigator
-description: "Design — Monorepo Navigator"
+description: "Multiple packages/apps share code (UI components, utils, types, API clients)"
 version: v00.33.0
 status: ADOPTED
 domain_path: design

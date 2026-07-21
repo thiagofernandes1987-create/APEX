@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.content_creator
 name: content-creator
-description: "Create — "
+description: "Review brand personality archetypes in `references/brand_guidelines.md`"
 version: v00.33.0
 status: ADOPTED
 domain_path: marketing/seo/content-creator

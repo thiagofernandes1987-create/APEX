@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.simplify_code
 name: simplify-code
-description: "Use — "
+description: "When the user asks to simplify, clean up, refactor, or review changed code."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/simplify-code

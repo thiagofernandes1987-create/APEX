@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.defi_protocol_templates
 name: defi-protocol-templates
-description: "Deploy — "
+description: "condition: Rede blockchain congestionada ou indisponível"
   Use when building decentralized finance applications or smart contract protocols.'''
 version: v00.33.0
 status: ADOPTED

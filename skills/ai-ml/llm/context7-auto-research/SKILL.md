@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.context7_auto_research
 name: context7-auto-research
-description: "Apply — "
+description: "When you need up-to-date documentation for libraries and frameworks"
   need up-to-date documentation for libraries and frameworks or asking about React, Next.js, Pr'
 version: v00.33.0
 status: ADOPTED

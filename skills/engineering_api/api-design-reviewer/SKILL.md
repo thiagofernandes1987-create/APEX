@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_api.api_design_reviewer
 name: api-design-reviewer
-description: "Review — API Design Reviewer"
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/api

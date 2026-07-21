@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.multi_agent_task_orchestrator
 name: multi-agent-task-orchestrator
-description: "Apply — "
+description: "Use when you have 3+ specialized agents that need to coordinate on complex tasks"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/agents/multi-agent-task-orchestrator

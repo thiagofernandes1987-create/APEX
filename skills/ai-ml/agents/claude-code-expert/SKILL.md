@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.claude_code_expert
 name: claude-code-expert
-description: "Apply — "
+description: "When you need specialized assistance with this domain"
   configuracoes avancadas, workflows, CLAUDE.md, memoria, sub-agentes, permissoes e integracao '
 version: v00.33.0
 status: ADOPTED

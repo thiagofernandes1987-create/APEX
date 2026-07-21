@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.monorepo_management
 name: monorepo-management
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   multiple packages and applications.'''
 version: v00.33.0
 status: ADOPTED

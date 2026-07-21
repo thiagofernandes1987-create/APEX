@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.popup_cro
 name: popup-cro
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   user experience or brand trust.'''
 version: v00.33.0
 status: ADOPTED

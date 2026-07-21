@@ -1,7 +1,7 @@
 ---
 skill_id: legal.lex
 name: lex
-description: "Review — "
+description: "Use when you need to cross-reference or compare legal requirements between different territories, such as verifying the compliance gap between an **EU SARL** and a **US LLC**."
 version: v00.33.0
 status: ADOPTED
 domain_path: legal/lex

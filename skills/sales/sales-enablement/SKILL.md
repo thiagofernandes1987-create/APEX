@@ -1,7 +1,7 @@
 ---
 skill_id: sales.sales_enablement
 name: sales-enablement
-description: "Track — "
+description: "Use when building decks, one-pagers, objection handling docs, or demo scripts."
   Use when a sales team needs assets that help reps move deals forward and close.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.seek_and_analyze_video
 name: seek-and-analyze-video
-description: "Use — "
+description: "Use when analyzing or asking questions about a video from a URL"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/seek-and-analyze-video

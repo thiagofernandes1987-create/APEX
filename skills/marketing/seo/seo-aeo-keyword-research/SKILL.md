@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_aeo_keyword_research
 name: seo-aeo-keyword-research
-description: "Create — "
+description: "Use when you need to build a keyword strategy for a new topic or niche"
   and a content map. Activate when the user wants to find keywords, research search terms, o'
 version: v00.33.0
 status: ADOPTED

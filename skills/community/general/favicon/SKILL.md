@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.favicon
 name: favicon
-description: Generate favicons from a source image
+description: "You need to generate a complete favicon set from a single source image."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/favicon

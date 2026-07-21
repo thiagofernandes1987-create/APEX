@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.git_pr_workflows_onboard
 name: git-pr-workflows-onboard
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   organizations, technical team integration, and accelerated learning methodologies. Yo'
 version: v00.33.0
 status: ADOPTED

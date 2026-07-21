@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.google_calendar_automation
 name: google-calendar-automation
-description: "Apply — "
+description: "You need to list, create, inspect, or update Google Calendar events from local scripts."
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/mcp/google-calendar-automation

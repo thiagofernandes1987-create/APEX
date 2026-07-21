@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.odoo_rpc_api
 name: odoo-rpc-api
-description: "Implement — "
+description: "Connecting an external app (e.g., Django, Node.js, a mobile app) to Odoo."
   real-world integration examples in Python, JavaScript, and curl.'''
 version: v00.33.0
 status: ADOPTED

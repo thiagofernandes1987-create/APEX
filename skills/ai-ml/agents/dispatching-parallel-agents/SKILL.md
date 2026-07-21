@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.dispatching_parallel_agents
 name: dispatching-parallel-agents
-description: "Apply — "
+description: "3+ test files failing with different root causes"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/agents/dispatching-parallel-agents

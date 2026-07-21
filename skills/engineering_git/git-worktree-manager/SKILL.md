@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_git.git_worktree_manager
 name: git-worktree-manager
-description: "Use — Git Worktree Manager"
+description: "You need 2+ concurrent branches open locally"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/git

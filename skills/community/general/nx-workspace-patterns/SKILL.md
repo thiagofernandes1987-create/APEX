@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.nx_workspace_patterns
 name: nx-workspace-patterns
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   build caching, or implementing affected commands.'''
 version: v00.33.0
 status: ADOPTED

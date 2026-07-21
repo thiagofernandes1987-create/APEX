@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.react_native_architecture
 name: react-native-architecture
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   native modules, and offline-first architecture.'''
 version: v00.33.0
 status: ADOPTED

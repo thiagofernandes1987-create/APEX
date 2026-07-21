@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.apify_ecommerce
 name: apify-ecommerce
-description: "Use — "
+description: "You need product, pricing, review, stock, or seller data from e-commerce sites."
   E-commerce Scraping Tool.'''
 version: v00.33.0
 status: ADOPTED

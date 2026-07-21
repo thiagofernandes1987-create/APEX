@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.graphql.api_patterns
 name: api-patterns
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   pagination.'''
 version: v00.33.0
 status: ADOPTED

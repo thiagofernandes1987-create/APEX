@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_hreflang
 name: seo-hreflang
-description: "Create — >"
+description: "Use when validating or generating hreflang for multilingual or multiregional sites."
 version: v00.33.0
 status: ADOPTED
 domain_path: marketing/seo/seo-hreflang

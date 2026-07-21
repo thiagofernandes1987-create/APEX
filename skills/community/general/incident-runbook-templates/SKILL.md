@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.incident_runbook_templates
 name: incident-runbook-templates
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   and communication.'''
 version: v00.33.0
 status: ADOPTED

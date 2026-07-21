@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.go.grpc_golang
 name: grpc-golang
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   contracts with Buf or implementing secure service-to-service transport.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.magic_animator
 name: magic-animator
-description: "Use — "
+description: "Adding life to a static logo or brand mark to make it memorable."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/magic-animator

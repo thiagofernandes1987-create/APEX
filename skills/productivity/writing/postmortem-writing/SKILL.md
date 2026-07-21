@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.postmortem_writing
 name: postmortem-writing
-description: "Automate — "
+description: "condition: Arquivo de tasks ou memória não encontrado"
   incident recurrence.'''
 version: v00.33.0
 status: ADOPTED

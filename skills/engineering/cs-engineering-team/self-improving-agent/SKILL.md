@@ -1,6 +1,6 @@
 ---
 name: "self-improving-agent"
-description: "Implement — Curate Claude Code"
+description: "Use this skill when the task requires self improving agent capabilities."
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.self-improving-agent
 status: ADOPTED

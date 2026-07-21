@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.domain_driven_design
 name: domain-driven-design
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   patterns.'''
 version: v00.33.0
 status: ADOPTED

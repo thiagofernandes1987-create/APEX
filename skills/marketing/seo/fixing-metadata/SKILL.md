@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.fixing_metadata
 name: fixing-metadata
-description: "Create — "
+description: "adding or changing page titles, descriptions, canonical, robots"
   cards, favicons, JSON-LD structured data, and robots directives. Use when adding or revi'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.embeddings.azure_search_documents_ts
 name: azure-search-documents-ts
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/embeddings/azure-search-documents-ts

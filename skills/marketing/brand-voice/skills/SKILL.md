@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.brand_voice.skills
 name: guideline-generation
-description: "Create — >"
+description: "condition: Brand guidelines não disponíveis"
 version: v00.33.0
 status: ADOPTED
 domain_path: marketing/brand-voice/skills

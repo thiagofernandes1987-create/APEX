@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.clarity_gate
 name: clarity-gate
-description: "Use — >"
+description: "Before ingesting documents into RAG systems"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/clarity-gate

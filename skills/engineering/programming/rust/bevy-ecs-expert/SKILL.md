@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.bevy_ecs_expert
 name: bevy-ecs-expert
-description: "Implement — "
+description: "Use when developing games with the Bevy engine in Rust."
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/rust/bevy-ecs-expert

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.aws.xss_html_injection
 name: xss-html-injection
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   and HTML injection flaws, demonstrate exploitation techniques for session hijacking and crede'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.cc_skill_frontend_patterns
 name: cc-skill-frontend-patterns
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   practices.'''
 version: v00.33.0
 status: ADOPTED

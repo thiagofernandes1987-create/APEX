@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_resource_manager_playwright_dotnet
 name: azure-resource-manager-playwright-dotnet
-description: "Use — |"
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cloud/azure

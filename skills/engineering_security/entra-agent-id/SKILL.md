@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_security.entra_agent_id
 name: entra-agent-id
-description: "Use — |"
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/security

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.vizcom
 name: vizcom
-description: "Use — "
+description: "Designing physical products (furniture, electronics, transportation, consumer goods)."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/vizcom

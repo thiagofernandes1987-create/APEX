@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.bash.tmux
 name: tmux
-description: "Implement — "
+description: "Use when setting up or managing persistent terminal sessions on remote servers"
   shell scripting automation.'''
 version: v00.33.0
 status: ADOPTED

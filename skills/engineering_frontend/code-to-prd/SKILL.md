@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_frontend.code_to_prd
 name: code-to-prd
-description: "Use — |"
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/frontend

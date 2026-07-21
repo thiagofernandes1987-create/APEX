@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.nodejs.cc_skill_backend_patterns
 name: cc-skill-backend-patterns
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   Express, and Next.js API routes.'''
 version: v00.33.0
 status: ADOPTED

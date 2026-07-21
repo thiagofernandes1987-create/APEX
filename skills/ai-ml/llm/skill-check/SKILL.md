@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.skill_check
 name: skill-check
-description: "Apply — "
+description: "Use when user says 'check skill', 'skillcheck', or 'validate SKILL.md'"
   issues before users do.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.microsoft_teams_automation
 name: microsoft-teams-automation
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   chats, and search messages. Always search tools first for current schemas.'''
 version: v00.33.0
 status: ADOPTED

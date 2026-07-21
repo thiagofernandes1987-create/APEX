@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.python_performance_optimization
 name: python-performance-optimization
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   debugging slow Python code, optimizing bottlenecks, or improving application performance.'''
 version: v00.33.0
 status: ADOPTED

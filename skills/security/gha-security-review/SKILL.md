@@ -1,7 +1,7 @@
 ---
 skill_id: security.gha_security_review
 name: gha-security-review
-description: "Audit — "
+description: "You are reviewing GitHub Actions workflows for exploitable security issues."
   scenario — if you can''t build the attack, don''t report it.'''
 version: v00.33.0
 status: ADOPTED

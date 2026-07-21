@@ -1,4 +1,6 @@
 ---
+name: portfolio-monitoring
+description: "Use this skill when reviewing portfolio company financials, preparing board materials, or monitoring covenant compliance"
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.portfolio_monitoring_2
 status: ADOPTED

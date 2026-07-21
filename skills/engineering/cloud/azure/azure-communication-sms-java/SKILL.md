@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_communication_sms_java
 name: azure-communication-sms-java
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   alerts, OTP delivery, bulk messaging, or delivery reports.'''
 version: v00.33.0
 status: ADOPTED

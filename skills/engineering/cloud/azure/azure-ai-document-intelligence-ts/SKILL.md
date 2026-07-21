@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_ai_document_intelligence_ts
 name: azure-ai-document-intelligence-ts
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-document-intelligence-ts

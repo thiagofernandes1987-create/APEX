@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.unsplash_integration
 name: unsplash-integration
-description: "Use — "
+description: "Creating hero sections, editorial layouts, or product galleries that demand stunning visual impact."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/unsplash-integration

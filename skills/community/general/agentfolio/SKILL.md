@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.agentfolio
 name: agentfolio
-description: "Use — "
+description: "At the start of a new agent or workflow project."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/agentfolio

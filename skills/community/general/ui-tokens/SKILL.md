@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ui_tokens
 name: ui-tokens
-description: "Use — "
+description: "Use when you need to inspect the current token set"
   in sync.'''
 version: v00.33.0
 status: ADOPTED

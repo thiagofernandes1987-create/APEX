@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.privacy_by_design
 name: privacy-by-design
-description: "Use — "
+description: "Use when building apps that collect personal data (names, emails, locations, preferences)"
   minimization, consent, encryption.'''
 version: v00.33.0
 status: ADOPTED

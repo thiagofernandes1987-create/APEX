@@ -1,7 +1,7 @@
 ---
 skill_id: security.security_scanning_security_dependencies
 name: security-scanning-security-dependencies
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   security. Scan project dependencies across multiple ecosystems to identify vulnerabiliti'
 version: v00.33.0
 status: ADOPTED

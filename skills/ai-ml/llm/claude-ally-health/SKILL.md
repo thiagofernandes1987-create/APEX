@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.claude_ally_health
 name: claude-ally-health
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/llm/claude-ally-health

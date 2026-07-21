@@ -1,7 +1,7 @@
 ---
 skill_id: legal.contracts.ai_native_cli
 name: ai-native-cli
-description: "Review — "
+description: "Use when building a new CLI tool that AI agents will invoke"
   error handling, input contracts, safety guardrails, exit codes, and agent self-descripti'
 version: v00.33.0
 status: ADOPTED

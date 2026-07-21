@@ -1,7 +1,7 @@
 ---
 skill_id: security.service_mesh_expert
 name: service-mesh-expert
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   traffic management, security policies, observability integration, and multi-cluster mesh co'
 version: v00.33.0
 status: ADOPTED

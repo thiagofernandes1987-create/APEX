@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.evolution
 name: evolution
-description: "Use — "
+description: "You are maintaining `makepad-skills` and want the skill library to improve itself during development."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/evolution

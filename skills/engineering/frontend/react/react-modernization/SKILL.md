@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.react_modernization
 name: react-modernization
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   transformation.'''
 version: v00.33.0
 status: ADOPTED

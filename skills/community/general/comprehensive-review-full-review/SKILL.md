@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.comprehensive_review_full_review
 name: comprehensive-review-full-review
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/comprehensive-review-full-review

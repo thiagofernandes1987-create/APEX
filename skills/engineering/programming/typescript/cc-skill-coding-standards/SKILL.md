@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.typescript.cc_skill_coding_standards
 name: cc-skill-coding-standards
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/typescript/cc-skill-coding-standards

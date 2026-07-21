@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.error_diagnostics_smart_debug
 name: error-diagnostics-smart-debug
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/error-diagnostics-smart-debug

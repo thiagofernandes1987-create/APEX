@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.lint_and_validate
 name: lint-and-validate
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   error-free.'''
 version: v00.33.0
 status: ADOPTED

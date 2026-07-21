@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.python_patterns
 name: python-patterns
-description: "Implement — "
+description: "ASK user for framework preference when unclear"
   structure. Teaches thinking, not copying.'''
 version: v00.33.0
 status: ADOPTED

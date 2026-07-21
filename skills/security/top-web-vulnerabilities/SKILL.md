@@ -1,7 +1,7 @@
 ---
 skill_id: security.top_web_vulnerabilities
 name: top-web-vulnerabilities
-description: "Audit — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   by category. This skill enables systematic vulnerability identification, impact asses'
 version: v00.33.0
 status: ADOPTED

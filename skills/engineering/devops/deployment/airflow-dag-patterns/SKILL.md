@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.deployment.airflow_dag_patterns
 name: airflow-dag-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Use when creating data pipelines, orchestrating workflows, or scheduling batch jobs.'''
 version: v00.33.0
 status: ADOPTED

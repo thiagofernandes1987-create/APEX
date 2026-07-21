@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.avoid_ai_writing
 name: avoid-ai-writing
-description: "Automate — "
+description: "When asked to 'remove AI-isms,' 'clean up AI writing,' or 'make this sound less like AI'"
 version: v00.33.0
 status: ADOPTED
 domain_path: productivity/writing/avoid-ai-writing

@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.ddd_context_mapping
 name: ddd-context-mapping
-description: "Deploy — "
+description: "condition: Rede blockchain congestionada ou indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: web3/defi/ddd-context-mapping

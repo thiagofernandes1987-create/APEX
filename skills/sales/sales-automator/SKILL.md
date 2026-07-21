@@ -1,7 +1,7 @@
 ---
 skill_id: sales.sales_automator
 name: sales-automator
-description: "Track — "
+description: "condition: CRM ou enrichment tool indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: sales/sales-automator

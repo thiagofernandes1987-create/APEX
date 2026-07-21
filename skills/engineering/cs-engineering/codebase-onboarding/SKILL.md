@@ -1,6 +1,6 @@
 ---
 name: "codebase-onboarding"
-description: "Implement — Codebase Onboarding"
+description: "Onboarding a new team member or contractor"
 executor: HYBRID
 skill_id: engineering.cs-engineering.codebase-onboarding
 status: ADOPTED

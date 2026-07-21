@@ -1,7 +1,7 @@
 ---
 skill_id: security.security_requirement_extraction
 name: security-requirement-extraction
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   requirements, creating security user stories, or building security test cases.'''
 version: v00.33.0
 status: ADOPTED

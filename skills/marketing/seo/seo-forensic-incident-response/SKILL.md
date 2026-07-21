@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_forensic_incident_response
 name: seo-forensic-incident-response
-description: "Create — "
+description: "You need to understand and resolve a sudden, significant drop in organic traffic or rankings."
   with triage, root-cause analysis and recovery plan.'''
 version: v00.33.0
 status: ADOPTED

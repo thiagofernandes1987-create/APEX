@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.azure_data_tables_java
 name: azure-data-tables-java
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   and Cosmos DB Table API.'''
 version: v00.33.0
 status: ADOPTED

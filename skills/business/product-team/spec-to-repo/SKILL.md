@@ -1,6 +1,6 @@
 ---
 name: spec-to-repo
-description: "Manage — Use when the user says"
+description: "User provides a text description of an app and wants code"
 executor: HYBRID
 skill_id: business.product-team.spec-to-repo
 status: ADOPTED

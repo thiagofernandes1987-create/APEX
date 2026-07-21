@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_sitemap
 name: seo-sitemap
-description: "Create — >"
+description: "Use when analyzing an existing XML sitemap or generating a new one."
 version: v00.33.0
 status: ADOPTED
 domain_path: marketing/seo/seo-sitemap

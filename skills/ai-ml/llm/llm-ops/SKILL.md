@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.llm_ops
 name: llm-ops
-description: "Apply — "
+description: "When you need specialized assistance with this domain"
   evals de qualidade e arquiteturas de IA para producao.'''
 version: v00.33.0
 status: ADOPTED

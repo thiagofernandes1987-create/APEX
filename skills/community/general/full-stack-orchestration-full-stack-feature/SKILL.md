@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.full_stack_orchestration_full_stack_feature
 name: full-stack-orchestration-full-stack-feature
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/full-stack-orchestration-full-stack-feature

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_backend.m365_agents_ts
 name: m365-agents-ts
-description: "Use — |"
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/backend

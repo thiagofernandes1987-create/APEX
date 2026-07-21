@@ -1,7 +1,7 @@
 ---
 skill_id: security.burp_suite_testing
 name: burp-suite-testing
-description: "Audit — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   traffic interception and modification, request analysis and replay, automated vulnerabilit'
 version: v00.33.0
 status: ADOPTED

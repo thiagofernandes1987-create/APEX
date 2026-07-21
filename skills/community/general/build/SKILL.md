@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.build
 name: build
-description: build
+description: "You need a structured workflow for building a major feature across research, planning, implementation, and tracking."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/build

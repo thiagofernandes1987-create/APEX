@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.onboarding_psychologist
 name: onboarding-psychologist
-description: "Use — "
+description: "Use when onboarding needs to reduce friction, uncertainty, and early drop-off."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/onboarding-psychologist

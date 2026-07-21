@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ui_component
 name: ui-component
-description: "Use — "
+description: "Use when you need a new UI primitive or composed component inside a StyleSeed-based project"
   and component ergonomics.'''
 version: v00.33.0
 status: ADOPTED

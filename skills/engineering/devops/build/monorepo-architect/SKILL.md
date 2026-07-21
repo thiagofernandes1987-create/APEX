@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.build.monorepo_architect
 name: monorepo-architect
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Bazel, and Lerna for efficient multi-project development. Use PROACTIVELY for monorepo setup'
 version: v00.33.0
 status: ADOPTED

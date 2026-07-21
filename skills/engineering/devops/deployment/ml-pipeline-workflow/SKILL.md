@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.deployment.ml_pipeline_workflow
 name: ml-pipeline-workflow
-description: "Implement — "
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/devops/deployment/ml-pipeline-workflow

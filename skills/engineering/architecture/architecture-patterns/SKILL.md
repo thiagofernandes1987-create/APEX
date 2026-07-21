@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.architecture_patterns
 name: architecture-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Design to build maintainable, testable, and scalable systems.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.convex
 name: convex
-description: "Apply — "
+description: "Use when building a new project with Convex as the backend"
   scheduling, and deployment.'''
 version: v00.33.0
 status: ADOPTED

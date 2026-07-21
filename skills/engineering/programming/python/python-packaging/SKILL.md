@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.python_packaging
 name: python-packaging
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   pyproject.toml, and publishing to PyPI.'''
 version: v00.33.0
 status: ADOPTED

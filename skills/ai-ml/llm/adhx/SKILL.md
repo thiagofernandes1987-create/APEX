@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.adhx
 name: adhx
-description: "Apply — "
+description: "Use when a user shares an X/Twitter link and wants to read, analyze, or summarize the post"
   data with full article content, author info, and engagement metrics. No scraping or'
 version: v00.33.0
 status: ADOPTED

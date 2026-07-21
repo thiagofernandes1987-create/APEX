@@ -1,4 +1,6 @@
 ---
+name: tax-loss-harvesting
+description: "Use this skill when the task requires tax loss harvesting capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.wealth_management.tax_loss_harvesting_2
 status: ADOPTED

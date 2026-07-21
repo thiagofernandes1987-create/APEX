@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.nodejs.nodejs_backend_patterns
 name: nodejs-backend-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   with modern frameworks, architectural patterns, and best practices.'''
 version: v00.33.0
 status: ADOPTED

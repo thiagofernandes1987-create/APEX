@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.competitive_landscape
 name: competitive-landscape
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   winning market positioning strategies.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.nextjs_app_router_patterns
 name: nextjs-app-router-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   development.'''
 version: v00.33.0
 status: ADOPTED

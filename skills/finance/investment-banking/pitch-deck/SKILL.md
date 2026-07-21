@@ -1,7 +1,7 @@
 ---
 skill_id: finance.investment_banking.pitch_deck
 name: pitch-deck
-description: "Analyze — "
+description: "condition: Dados financeiros desatualizados ou ausentes"
   template to fill in, user has source data (Excel/CSV) to populate into slides, user'
 version: v00.33.0
 status: ADOPTED

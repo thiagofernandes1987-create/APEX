@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.robius_app_architecture
 name: robius-app-architecture
-description: "Implement — |"
+description: "Building a Makepad application with async backend integration"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/architecture/robius-app-architecture

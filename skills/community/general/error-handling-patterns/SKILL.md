@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.error_handling_patterns
 name: error-handling-patterns
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   excellent debugging experiences.'''
 version: v00.33.0
 status: ADOPTED

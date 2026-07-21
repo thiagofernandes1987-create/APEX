@@ -1,7 +1,7 @@
 ---
 skill_id: product_management.product_manager
 name: product-manager
-description: "Use — "
+description: "You need product management help across strategy, discovery, prioritization, execution, or metrics."
   Pure Markdown, zero scripts.'''
 version: v00.33.0
 status: ADOPTED

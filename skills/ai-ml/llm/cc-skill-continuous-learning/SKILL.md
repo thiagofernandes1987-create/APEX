@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.cc_skill_continuous_learning
 name: cc-skill-continuous-learning
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/llm/cc-skill-continuous-learning

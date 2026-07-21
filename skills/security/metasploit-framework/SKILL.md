@@ -1,7 +1,7 @@
 ---
 skill_id: security.metasploit_framework
 name: metasploit-framework
-description: "Audit — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   You must have explicit, written permission from the system owner before using this tool. > M'
 version: v00.33.0
 status: ADOPTED

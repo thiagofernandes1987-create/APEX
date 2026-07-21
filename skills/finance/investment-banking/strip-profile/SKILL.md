@@ -1,7 +1,7 @@
 ---
 skill_id: finance.investment_banking.strip_profile
 name: fsi-strip-profile
-description: "Analyze — |"
+description: "condition: Dados financeiros desatualizados ou ausentes"
 version: v00.33.0
 status: ADOPTED
 domain_path: finance/investment-banking/strip-profile

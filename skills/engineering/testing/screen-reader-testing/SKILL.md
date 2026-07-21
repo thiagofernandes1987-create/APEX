@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.screen_reader_testing
 name: screen-reader-testing
-description: "Implement — "
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/testing/screen-reader-testing

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_agentops.full_dev_cycle
 name: full-dev-cycle
-description: >
+description: "Receber qualquer feature request, bug fix ou refactoring task (vago ou detalhado)"
   Orquestra o ciclo completo de desenvolvimento de software: brainstorming →
   design aprovado → plano de implementação → execução com subagentes → TDD →
   verificação com evidência → finishing branch → code review. Pipeline

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.robius_event_action
 name: robius-event-action
-description: "Use — |"
+description: "Implementing custom actions in Makepad"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/robius-event-action

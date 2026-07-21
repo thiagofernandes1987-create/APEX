@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.odoo_performance_tuner
 name: odoo-performance-tuner
-description: "Analyze — "
+description: "Odoo is slow in production (slow page loads, timeouts)."
   limits, PostgreSQL tuning, and profiling tools.'''
 version: v00.33.0
 status: ADOPTED

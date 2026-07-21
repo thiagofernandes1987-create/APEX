@@ -1,7 +1,7 @@
 ---
 skill_id: business.startup.startup_financial_modeling
 name: startup-financial-modeling
-description: "Manage — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   and scenario planning for early-stage startups.'''
 version: v00.33.0
 status: ADOPTED

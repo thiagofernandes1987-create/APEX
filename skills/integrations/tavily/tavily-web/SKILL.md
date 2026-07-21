@@ -1,7 +1,7 @@
 ---
 skill_id: integrations.tavily.tavily_web
 name: tavily-web
-description: "Automate — "
+description: "When you need to search the web for current information"
   search the web for current information, extracting content from URLs, or crawling websites.'''
 version: v00.33.0
 status: ADOPTED

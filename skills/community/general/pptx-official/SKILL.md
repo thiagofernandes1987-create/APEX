@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.pptx_official
 name: pptx-official
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   ZIP archive containing XML files and other resources that you can read or edit. You have dif'
 version: v00.33.0
 status: ADOPTED

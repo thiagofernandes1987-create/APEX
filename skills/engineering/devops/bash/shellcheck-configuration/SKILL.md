@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.bash.shellcheck_configuration
 name: shellcheck-configuration
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   infrastructure, fixing code issues, or ensuring script portability.'''
 version: v00.33.0
 status: ADOPTED

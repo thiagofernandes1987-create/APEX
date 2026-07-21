@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.go.temporal_golang_pro
 name: temporal-golang-pro
-description: "Implement — "
+description: "**Designing Distributed Systems**: When building microservices that require durable state and reliable orchestration."
   worker configs, and advanced patterns.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.nerdzao_elite_gemini_high
 name: nerdzao-elite-gemini-high
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   com foco em qualidade máxima e eficiência de tokens.'''
 version: v00.33.0
 status: ADOPTED

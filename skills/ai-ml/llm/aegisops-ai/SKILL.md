@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.aegisops_ai
 name: aegisops-ai
-description: "Apply — "
+description: "**Kernel Patch Review:** Auditing raw C-based Git diffs for memory safety."
   cost drifts, and K8s compliance.'''
 version: v00.33.0
 status: ADOPTED

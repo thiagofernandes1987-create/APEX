@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.steve_jobs
 name: steve-jobs
-description: "Use — "
+description: "When you need specialized assistance with this domain"
   tecnologicos da historia e o mais influente apresentador de produtos do mundo.'''
 version: v00.33.0
 status: ADOPTED

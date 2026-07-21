@@ -1,7 +1,7 @@
 ---
 skill_id: business_productivity.report
 name: report
-description: "Use — >-"
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: business/productivity

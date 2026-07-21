@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.typescript.frontend_mobile_development_component_scaffold
 name: frontend-mobile-development-component-scaffold
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   performant components. Generate complete component implementations with TypeScript, tests, '
 version: v00.33.0
 status: ADOPTED

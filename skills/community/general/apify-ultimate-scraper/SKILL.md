@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.apify_ultimate_scraper
 name: apify-ultimate-scraper
-description: "Use — "
+description: "The user needs web data extraction but has not yet chosen a specific Apify Actor."
   best Actor for your task.'''
 version: v00.33.0
 status: ADOPTED

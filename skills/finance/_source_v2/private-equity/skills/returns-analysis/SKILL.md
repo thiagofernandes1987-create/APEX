@@ -1,4 +1,6 @@
 ---
+name: returns-analysis
+description: "Use this skill when sizing up a deal, stress-testing assumptions, or preparing IC returns exhibits"
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.returns_analysis_2
 status: ADOPTED

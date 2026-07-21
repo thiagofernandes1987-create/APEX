@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.biopython
 name: biopython
-description: "Implement — "
+description: "Working with biological sequences (DNA, RNA, or protein)"
   functionality for sequence manipulation, file I/O, database access, structural bioinformatics'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.sql_optimization_patterns
 name: sql-optimization-patterns
-description: "Analyze — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   and query plan analysis.'''
 version: v00.33.0
 status: ADOPTED

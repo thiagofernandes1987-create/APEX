@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.keyword_extractor
 name: keyword-extractor
-description: "Use — >"
+description: "Extracting keywords or tags for any given text or paragraph"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/keyword-extractor

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.bash.bash_linux
 name: bash-linux
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   or Linux systems.'''
 version: v00.33.0
 status: ADOPTED

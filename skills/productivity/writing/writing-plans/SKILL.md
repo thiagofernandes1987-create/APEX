@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.writing_plans
 name: writing-plans
-description: "Automate — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: productivity/writing/writing-plans

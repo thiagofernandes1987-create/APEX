@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_authority_builder
 name: seo-authority-builder
-description: "Create — "
+description: "condition: Brand guidelines não disponíveis"
 version: v00.33.0
 status: ADOPTED
 domain_path: marketing/seo/seo-authority-builder

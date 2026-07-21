@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_aeo_schema_generator
 name: seo-aeo-schema-generator
-description: "Create — "
+description: "Use when adding structured data to a new landing page or blog post"
   script blocks. Activate when the user wants to generate schema markup, JSO'
 version: v00.33.0
 status: ADOPTED

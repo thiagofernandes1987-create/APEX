@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.documentation.openapi_spec_generation
 name: openapi-spec-generation
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   when creating API documentation, generating SDKs, or ensuring API contract compliance.'''
 version: v00.33.0
 status: ADOPTED

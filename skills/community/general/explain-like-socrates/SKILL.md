@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.explain_like_socrates
 name: explain-like-socrates
-description: "Use — >"
+description: "explain a concept"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/explain-like-socrates

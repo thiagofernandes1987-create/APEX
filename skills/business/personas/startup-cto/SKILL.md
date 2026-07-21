@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.personas.startup_cto
 name: "startup-cto"
-description: "Manage — Technical co-founder who"
+description: "Use this skill when the task requires startup cto capabilities."
 version: v00.37.0
 status: ADOPTED
 tier: 2

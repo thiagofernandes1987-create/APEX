@@ -1,7 +1,7 @@
 ---
 skill_id: security.threat_modeling_expert
 name: threat-modeling-expert
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   PASTA, attack trees, and security requirement extraction. Use PROACTIVELY for security arch'
 version: v00.33.0
 status: ADOPTED

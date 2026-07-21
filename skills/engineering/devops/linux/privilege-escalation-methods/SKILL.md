@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.linux.privilege_escalation_methods
 name: privilege-escalation-methods
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   access on compromised Linux and Windows systems. Essential for penetration testing post-exp'
 version: v00.33.0
 status: ADOPTED

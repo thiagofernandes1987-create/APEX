@@ -1,6 +1,6 @@
 ---
 name: "git-worktree-manager"
-description: "Implement — Git Worktree Manager"
+description: "You need 2+ concurrent branches open locally"
 executor: HYBRID
 skill_id: engineering.cs-engineering.git-worktree-manager
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.broken_authentication
 name: broken-authentication
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   consistently ranks in the OWASP Top 10 and can lead to account takeover, identity'
 version: v00.33.0
 status: ADOPTED

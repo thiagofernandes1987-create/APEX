@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.scarcity_urgency_psychologist
 name: scarcity-urgency-psychologist
-description: "Use — "
+description: "Use when you need urgency or scarcity messaging that feels credible instead of manipulative."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/scarcity-urgency-psychologist

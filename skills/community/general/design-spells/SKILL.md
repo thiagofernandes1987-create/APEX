@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.design_spells
 name: design-spells
-description: "Use — "
+description: "Polishing a finished feature to actively add a 'wow' factor."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/design-spells

@@ -1,0 +1,391 @@
+{
+ "total": 3784,
+ "by_status": {
+  "DESC_SHORT": 94,
+  "OK": 3690
+ },
+ "applied": false,
+ "fixed": {
+  "description": 0,
+  "name": 0,
+  "files": 0
+ },
+ "non_ok": [
+  {
+   "path": "skills/ai-ml/agents/agent-memory-systems/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/ai-ml/agents/ai-agent-development/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/ai-ml/agents/autonomous-agent-patterns/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/ai-ml/llm/ai-ml/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/ai-ml/llm/github-workflow-automation/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/ai-ml/llm/linear-claude-skill/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/ai-ml/llm/llm-app-patterns/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/ai-ml/llm/notebooklm/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/ai-ml/llm/skill-developer/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/ai-ml/mcp/mcp-builder-ms/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/ai-ml/rag/rag-implementation/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/ai-ml/rag/using-neon/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/claude_skills_m/business_content/changelog-generator/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/base/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/bug-hunter/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/calc/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/cc-skill-project-guidelines-example/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/deep-research/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/design-md/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/explain-like-socrates/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/faf-wizard/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/file-organizer/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/food-database-query/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/game-development/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/gdb-cli/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/internal-comms-anthropic/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/internal-comms-community/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/internal-comms/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/kaizen/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/moyu/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/performance-optimizer/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/prompt-library/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/rehabilitation-analyzer/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/robius-event-action/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/robius-matrix-integration/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/robius-state-management/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/robius-widget-patterns/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/subagent-driven-development/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/systematic-debugging/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/tool-design/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/twilio-communications/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/upgrading-expo/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/community/general/writer/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/data/databases/sql/database/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/data/databases/sql/postgresql-optimization/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/data/erp/odoo-upgrade-advisor/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/design/ux/ui-ux-pro-max/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/architecture/documentation/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/backend/graphql/api-security-testing/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/backend/nodejs/nodejs-best-practices/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/cloud/aws/aws-compliance-checker/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/cloud/aws/aws-cost-cleanup/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/cloud/aws/aws-iam-best-practices/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/cloud/aws/aws-secrets-rotation/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/cloud/aws/aws-security-audit/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/cloud/aws/cloud-devops/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/cloud/aws/web-security-testing/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/cms/wordpress/wordpress-theme-development/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/cms/wordpress/wordpress-woocommerce-development/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/cs-engineering/changelog-generator/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/cs-engineering/ci-cd-pipeline-builder/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/devops/bash/bash-scripting/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/devops/bash/os-scripting/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/devops/deployment/expo-deployment/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/devops/kubernetes/kubernetes-deployment/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/devops/linux/linux-troubleshooting/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/devops/terraform/terraform-infrastructure/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/documentation/api-documentation-generator/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/documentation/api-documentation/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/frontend/angular/angular-best-practices/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/frontend/development/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/frontend/frontend-dev-guidelines/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/programming/go/dbos-golang/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/programming/javascript/javascript-mastery/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/programming/php/wordpress-plugin-development/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/programming/php/wordpress/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/programming/python/dbos-python/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/programming/python/python-fastapi-development/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/programming/rust/akf-trust-metadata/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/programming/typescript/bun-development/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/programming/typescript/dbos-typescript/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/programming/typescript/react-nextjs-development/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/testing/e2e-testing/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/testing/test-driven-development/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering/testing/testing-qa/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering_cloud_azure/azure-monitor-opentelemetry-exporter-py/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/engineering_devops/ci-cd-pipeline-builder/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/healthcare/sexual-health-analyzer/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/healthcare/wellness/weightloss-analyzer/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/productivity/writing/plan-writing/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/productivity/writing/writing-skills/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/security/api-security-best-practices/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/security/code-review-checklist/SKILL.md",
+   "status": "DESC_SHORT"
+  },
+  {
+   "path": "skills/web3/defi/wiki-qa/SKILL.md",
+   "status": "DESC_SHORT"
+  }
+ ]
+}

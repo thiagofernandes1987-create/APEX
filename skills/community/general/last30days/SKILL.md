@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.last30days
 name: last30days
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   for the user''s target tool.'''
 version: v00.33.0
 status: ADOPTED

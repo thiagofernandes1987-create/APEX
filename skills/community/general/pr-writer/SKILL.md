@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.pr_writer
 name: pr-writer
-description: "Use — "
+description: "You are ready to open a pull request and need a structured description based on the committed branch diff."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/pr-writer

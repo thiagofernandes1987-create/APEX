@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.dbt_transformation_patterns
 name: dbt-transformation-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   and incremental processing.'''
 version: v00.33.0
 status: ADOPTED

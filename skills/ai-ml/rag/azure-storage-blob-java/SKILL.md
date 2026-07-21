@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.azure_storage_blob_java
 name: azure-storage-blob-java
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/rag/azure-storage-blob-java

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.observability_monitoring_slo_implement
 name: observability-monitoring-slo-implement
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   budget-based engineering practices. Design comprehensive SLO frameworks, establish meaning'
 version: v00.33.0
 status: ADOPTED

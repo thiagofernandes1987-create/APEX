@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.apify_brand_reputation_monitoring
 name: apify-brand-reputation-monitoring
-description: "Use — "
+description: "You need to monitor reviews, ratings, or brand mentions across social, travel, or map platforms."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/apify-brand-reputation-monitoring

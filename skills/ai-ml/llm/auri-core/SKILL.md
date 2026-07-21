@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.auri_core
 name: auri-core
-description: "Apply — "
+description: "When you need specialized assistance with this domain"
   Neural, stack AWS, modelo Free/Pro/Business/Enterprise, roadmap 4 fases, GTM, north star'
 version: v00.33.0
 status: ADOPTED

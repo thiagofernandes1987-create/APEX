@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.podcast_generation
 name: podcast-generation
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/llm/podcast-generation

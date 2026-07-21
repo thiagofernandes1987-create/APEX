@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.graphql.api_design_principles
 name: api-design-principles
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   developers and stand the test of time.'''
 version: v00.33.0
 status: ADOPTED

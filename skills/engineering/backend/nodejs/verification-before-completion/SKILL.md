@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.nodejs.verification_before_completion
 name: verification-before-completion
-description: "Implement — "
+description: "ANY variation of success/completion claims"
   claims, ANY expression of satisfaction, or ANY positive statement about work'
 version: v00.33.0
 status: ADOPTED

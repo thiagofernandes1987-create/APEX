@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.rust_async_patterns
 name: rust-async-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   building async Rust applications, implementing concurrent systems, or debugging async code.'''
 version: v00.33.0
 status: ADOPTED

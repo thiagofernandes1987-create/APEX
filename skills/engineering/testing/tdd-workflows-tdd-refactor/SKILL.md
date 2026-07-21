@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.tdd_workflows_tdd_refactor
 name: tdd-workflows-tdd-refactor
-description: "Implement — "
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/testing/tdd-workflows-tdd-refactor

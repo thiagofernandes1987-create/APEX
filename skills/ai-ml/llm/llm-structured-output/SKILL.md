@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.llm_structured_output
 name: llm-structured-output
-description: "Apply — >"
+description: "The user needs to extract structured data (JSON objects, arrays, enums) from an LLM response"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/llm/llm-structured-output

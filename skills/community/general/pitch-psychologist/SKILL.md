@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.pitch_psychologist
 name: pitch-psychologist
-description: "Use — "
+description: "Use when a sales, investor, or product pitch needs stronger belief progression and audience alignment."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/pitch-psychologist

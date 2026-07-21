@@ -1,7 +1,7 @@
 ---
 skill_id: design.testrail
 name: testrail
-description: "Design — >-"
+description: "condition: Assets visuais não disponíveis para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: design

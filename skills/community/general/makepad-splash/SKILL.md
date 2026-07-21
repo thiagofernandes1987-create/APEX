@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.makepad_splash
 name: makepad-splash
-description: "Use — |"
+description: "You need dynamic scripting inside Makepad using Splash."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/makepad-splash

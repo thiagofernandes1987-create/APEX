@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_ai_anomalydetector_java
 name: azure-ai-anomalydetector-java
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   anomaly detection, time-series analysis, or AI-powered monitoring.'''
 version: v00.33.0
 status: ADOPTED

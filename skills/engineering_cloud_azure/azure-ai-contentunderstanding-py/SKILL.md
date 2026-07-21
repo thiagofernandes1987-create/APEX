@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_ai_contentunderstanding_py
 name: azure-ai-contentunderstanding-py
-description: "Use — |"
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cloud/azure

@@ -1,7 +1,7 @@
 ---
 skill_id: legal.compliance.fda_food_safety_auditor
 name: fda-food-safety-auditor
-description: "Review — "
+description: "Use when auditing a Food Safety Plan for a manufacturing or processing facility."
   preventive controls.'''
 version: v00.33.0
 status: ADOPTED

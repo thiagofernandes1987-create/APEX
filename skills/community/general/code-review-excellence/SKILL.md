@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.code_review_excellence
 name: code-review-excellence
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   and collaborative improvement.'''
 version: v00.33.0
 status: ADOPTED

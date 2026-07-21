@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.context_compression
 name: context-compression
-description: "Use — "
+description: "Agent sessions exceed context window limits"
   naive approach is aggressive compression to minimize tokens per request.'''
 version: v00.33.0
 status: ADOPTED

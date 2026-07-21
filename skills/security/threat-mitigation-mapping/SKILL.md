@@ -1,7 +1,7 @@
 ---
 skill_id: security.threat_mitigation_mapping
 name: threat-mitigation-mapping
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   creating remediation plans, or validating control effectiveness.'''
 version: v00.33.0
 status: ADOPTED

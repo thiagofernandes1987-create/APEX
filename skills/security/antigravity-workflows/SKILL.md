@@ -1,7 +1,7 @@
 ---
 skill_id: security.antigravity_workflows
 name: antigravity-workflows
-description: "Audit — "
+description: "The user wants to combine several skills without manually selecting each one."
   agent builds, and browser QA.'''
 version: v00.33.0
 status: ADOPTED

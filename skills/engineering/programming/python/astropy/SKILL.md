@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.astropy
 name: astropy
-description: "Implement — "
+description: "Converting between celestial coordinate systems (ICRS, Galactic, FK5, AltAz, etc.)"
   and data analysis.'''
 version: v00.33.0
 status: ADOPTED

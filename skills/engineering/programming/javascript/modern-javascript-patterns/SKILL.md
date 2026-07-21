@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.javascript.modern_javascript_patterns
 name: modern-javascript-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   best practices for writing clean, maintainable, and performant code.'''
 version: v00.33.0
 status: ADOPTED

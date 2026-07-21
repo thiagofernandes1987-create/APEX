@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.agentflow
 name: agentflow
-description: "Apply — "
+description: "Use when you need to orchestrate multiple Claude Code workers across a full development lifecycle (build, review, test, integrate)"
   Manages multi-worker Claude Code dispatch, deterministic quality gates, adversarial review,'
 version: v00.33.0
 status: ADOPTED

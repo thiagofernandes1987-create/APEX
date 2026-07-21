@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.playwright_java
 name: playwright-java
-description: "Use — "
+description: "Use when scaffolding a new Playwright Java project from scratch"
   JUnit 5, Allure reporting, and parallel execution.'''
 version: v00.33.0
 status: ADOPTED

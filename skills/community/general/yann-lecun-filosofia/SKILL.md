@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.yann_lecun_filosofia
 name: yann-lecun-filosofia
-description: "Use — "
+description: "When you need specialized assistance with this domain"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/yann-lecun-filosofia

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.nextjs.nextjs_best_practices
 name: nextjs-best-practices
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/frontend/nextjs/nextjs-best-practices

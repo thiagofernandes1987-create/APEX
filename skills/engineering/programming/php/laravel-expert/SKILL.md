@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.php.laravel_expert
 name: laravel-expert
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   on clean architecture, security, performance, and modern standards (Laravel 10/11+).'''
 version: v00.33.0
 status: ADOPTED

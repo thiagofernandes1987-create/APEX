@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.ai_seo
 name: ai-seo
-description: "Apply — "
+description: "Use when optimizing content to be cited by LLMs and AI search systems."
   and similar systems. Use when improving AI visibility, answer engine optimization, or citati'
 version: v00.33.0
 status: ADOPTED

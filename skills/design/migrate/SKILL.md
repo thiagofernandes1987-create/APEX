@@ -1,7 +1,7 @@
 ---
 skill_id: design.migrate
 name: migrate
-description: "Design — >-"
+description: "condition: Assets visuais não disponíveis para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: design

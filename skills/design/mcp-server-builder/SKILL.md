@@ -1,7 +1,7 @@
 ---
 skill_id: design.mcp_server_builder
 name: mcp-server-builder
-description: "Design — MCP Server Builder"
+description: "You need to expose an internal/external REST API to an LLM agent"
 version: v00.33.0
 status: ADOPTED
 domain_path: design

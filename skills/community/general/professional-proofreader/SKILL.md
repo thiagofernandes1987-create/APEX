@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.professional_proofreader
 name: professional-proofreader
-description: "Use — >"
+description: "Use when user asks to 'proofread', 'review and correct', 'fix grammar', 'polish this text', 'improve readability while keeping my voice'."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/professional-proofreader

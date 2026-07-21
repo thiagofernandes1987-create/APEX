@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.nodejs.hybrid_cloud_networking
 name: hybrid-cloud-networking
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Connect, and ExpressRoute.'''
 version: v00.33.0
 status: ADOPTED

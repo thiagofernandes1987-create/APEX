@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.data_storytelling
 name: data-storytelling
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/data-storytelling

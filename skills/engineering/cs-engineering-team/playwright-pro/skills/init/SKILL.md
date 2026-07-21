@@ -1,6 +1,6 @@
 ---
 name: "init"
-description: >-
+description: "Use this skill when user says 'set up playwright',"
   Set up Playwright in a project. Use when user says "set up playwright",
   "add e2e tests", "configure playwright", "testing setup", "init playwright",
   or "add test infrastructure".

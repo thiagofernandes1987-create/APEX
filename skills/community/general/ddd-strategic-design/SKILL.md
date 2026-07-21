@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ddd_strategic_design
 name: ddd-strategic-design
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   business domains.'''
 version: v00.33.0
 status: ADOPTED

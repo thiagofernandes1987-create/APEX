@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.frontend_ui_dark_ts
 name: frontend-ui-dark-ts
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   panels, and data-rich applications with glassmorphism effects and tasteful animations.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,4 +1,6 @@
 ---
+name: deal-sourcing
+description: "Use this skill when sourcing new deals, prospectin"
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.deal_sourcing_2
 status: ADOPTED

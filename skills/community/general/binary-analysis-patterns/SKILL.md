@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.binary_analysis_patterns
 name: binary-analysis-patterns
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   program logic.'''
 version: v00.33.0
 status: ADOPTED

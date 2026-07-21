@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.blueprint
 name: blueprint
-description: "Use — "
+description: "Use when the task requires multiple PRs or sessions"
   has a self-contained context brief — a fresh agent in a new session can pick up any step w'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.amazon_alexa
 name: amazon-alexa
-description: "Apply — "
+description: "When you need specialized assistance with this domain"
   com Claude como cerebro (projeto Auri) e integrar com AWS ecosystem (Lambda, DynamoDB, Poll'
 version: v00.33.0
 status: ADOPTED

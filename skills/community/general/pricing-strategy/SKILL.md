@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.pricing_strategy
 name: pricing-strategy
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   objectives.'''
 version: v00.33.0
 status: ADOPTED

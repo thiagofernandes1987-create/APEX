@@ -1,7 +1,7 @@
 ---
 skill_id: security.smtp_penetration_testing
 name: smtp-penetration-testing
-description: "Audit — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   including open relays, user enumeration, weak authentication, and misconfigurati'
 version: v00.33.0
 status: ADOPTED

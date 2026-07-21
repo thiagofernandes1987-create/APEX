@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.typescript.typescript_advanced_types
 name: typescript-advanced-types
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   mapped types, template literal types, and utility types for building robust, type-safe ap'
 version: v00.33.0
 status: ADOPTED

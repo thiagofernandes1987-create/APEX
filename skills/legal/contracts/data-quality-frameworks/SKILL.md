@@ -1,7 +1,7 @@
 ---
 skill_id: legal.contracts.data_quality_frameworks
 name: data-quality-frameworks
-description: "Review — "
+description: "condition: Legislação atualizada além do knowledge cutoff"
   data quality pipelines, implementing validation rules, or establishing data contracts.'''
 version: v00.33.0
 status: ADOPTED

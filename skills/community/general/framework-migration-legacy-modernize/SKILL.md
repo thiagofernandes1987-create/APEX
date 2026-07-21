@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.framework_migration_legacy_modernize
 name: framework-migration-legacy-modernize
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   replacement of outdated components while maintaining continuous business operations through e'
 version: v00.33.0
 status: ADOPTED

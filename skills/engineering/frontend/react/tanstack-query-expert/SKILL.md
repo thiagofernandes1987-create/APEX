@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.tanstack_query_expert
 name: tanstack-query-expert
-description: "Implement — "
+description: "Use when setting up or refactoring data fetching logic (replacing `useEffect` + `useState`)"
   mutations, optimistic updates, and Next.js App Router (SSR) integration.'''
 version: v00.33.0
 status: ADOPTED

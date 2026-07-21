@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.documentation.readme
 name: readme
-description: "Implement — "
+description: "User wants to create or update a README.md file"
   that is absurdly thorough—the kind of documentation you wish every project had.'''
 version: v00.33.0
 status: ADOPTED

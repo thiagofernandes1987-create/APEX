@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.error_debugging_error_analysis
 name: error-debugging-error-analysis
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   production incidents, and implementing comprehensive observability solutions.'''
 version: v00.33.0
 status: ADOPTED

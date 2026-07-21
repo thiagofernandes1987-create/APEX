@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ui_a11y
 name: ui-a11y
-description: "Use — "
+description: "Use when reviewing a page or component for accessibility regressions"
   the code makes them safe.'''
 version: v00.33.0
 status: ADOPTED

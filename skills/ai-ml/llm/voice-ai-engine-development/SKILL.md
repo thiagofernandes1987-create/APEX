@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.voice_ai_engine_development
 name: voice-ai-engine-development
-description: "Apply — "
+description: "Building real-time voice conversation systems"
   agents, and TTS synthesis with interrupt handling and multi-provider support'''
 version: v00.33.0
 status: ADOPTED

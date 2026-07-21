@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.testing_patterns
 name: testing-patterns
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   creating test factories, or following TDD red-green-refactor cycle.'''
 version: v00.33.0
 status: ADOPTED

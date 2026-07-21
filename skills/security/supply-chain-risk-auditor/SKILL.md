@@ -1,7 +1,7 @@
 ---
 skill_id: security.supply_chain_risk_auditor
 name: supply-chain-risk-auditor
-description: "Audit — "
+description: "Assessing dependency risk before a security audit"
   surface, evaluating dependency health, or scoping security engagements.'''
 version: v00.33.0
 status: ADOPTED

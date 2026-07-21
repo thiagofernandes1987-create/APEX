@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.code_refactoring_context_restore
 name: code-refactoring-context-restore
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/code-refactoring-context-restore

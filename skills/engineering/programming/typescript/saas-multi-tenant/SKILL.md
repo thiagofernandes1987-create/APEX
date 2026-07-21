@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.typescript.saas_multi_tenant
 name: saas-multi-tenant
-description: "Implement — "
+description: "The user is building a SaaS application where multiple customers share the same database"
   isolation, and safe cross-tenant admin patterns in PostgreSQL and TypeScript.'''
 version: v00.33.0
 status: ADOPTED

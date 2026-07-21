@@ -1,6 +1,6 @@
 ---
 name: "performance-profiler"
-description: "Implement — Performance Profiler"
+description: "App is slow and you don't know where the bottleneck is"
 executor: HYBRID
 skill_id: engineering.cs-engineering.performance-profiler
 status: ADOPTED

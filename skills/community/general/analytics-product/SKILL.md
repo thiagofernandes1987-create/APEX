@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.analytics_product
 name: analytics-product
-description: "Use — "
+description: "When you need specialized assistance with this domain"
   de produto.'''
 version: v00.33.0
 status: ADOPTED

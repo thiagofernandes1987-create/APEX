@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_woocommerce_bridge
 name: odoo-woocommerce-bridge
-description: "Analyze — "
+description: "Running a WooCommerce store with Odoo for inventory and fulfillment."
   API.'''
 version: v00.33.0
 status: ADOPTED

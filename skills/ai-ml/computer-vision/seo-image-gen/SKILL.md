@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.computer_vision.seo_image_gen
 name: seo-image-gen
-description: "Apply — "
+description: "Use when generating OG images, hero images, schema visuals, infographics, or similar SEO assets."
   Use when image generation is part of an SEO workflow or content publishing task.'''
 version: v00.33.0
 status: ADOPTED

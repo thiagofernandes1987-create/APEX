@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_sales_crm_expert
 name: odoo-sales-crm-expert
-description: "Analyze — "
+description: "Designing CRM pipeline stages for your sales process."
   and forecasting.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.google_docs_automation
 name: google-docs-automation
-description: "Apply — "
+description: "You need to create, search, read, or edit Google Docs from local automation scripts."
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/mcp/google-docs-automation

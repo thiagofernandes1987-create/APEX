@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.shader_programming_glsl
 name: shader-programming-glsl
-description: "Apply — "
+description: "Use when creating custom visual effects in WebGL, Three.js, or game engines."
   uniforms, and common effects.'''
 version: v00.33.0
 status: ADOPTED

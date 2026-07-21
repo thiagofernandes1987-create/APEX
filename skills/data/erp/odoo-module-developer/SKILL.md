@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_module_developer
 name: odoo-module-developer
-description: "Analyze — "
+description: "Starting a new custom Odoo module from scratch."
   module structure best practices.'''
 version: v00.33.0
 status: ADOPTED

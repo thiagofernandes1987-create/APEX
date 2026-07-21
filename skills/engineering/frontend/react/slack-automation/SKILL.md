@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.slack_automation
 name: slack-automation
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   through Composio''s Slack toolkit.'''
 version: v00.33.0
 status: ADOPTED

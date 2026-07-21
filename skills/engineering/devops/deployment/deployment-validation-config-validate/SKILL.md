@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.deployment.deployment_validation_config_validate
 name: deployment-validation-config-validate
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   of application configurations. Create comprehensive validation schemas, implement configura'
 version: v00.33.0
 status: ADOPTED

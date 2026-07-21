@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.interview_coach
 name: interview-coach
-description: "Use — "
+description: "Use when starting a job search and need a structured system"
   negotiation. 23 commands, persistent state.'''
 version: v00.33.0
 status: ADOPTED

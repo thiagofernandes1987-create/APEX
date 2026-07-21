@@ -1,7 +1,7 @@
 ---
 skill_id: security.cryptography.emblemai_crypto_wallet
 name: emblemai-crypto-wallet
-description: "Audit — "
+description: "User wants to check crypto wallet balances"
   portfolio analysis, and transaction execution for Solana, Ethereum, Base, BSC, Polygon, Heder'
 version: v00.33.0
 status: ADOPTED

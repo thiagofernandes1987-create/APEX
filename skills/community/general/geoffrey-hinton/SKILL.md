@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.geoffrey_hinton
 name: geoffrey-hinton
-description: "Use — "
+description: "When the user mentions 'Geoffrey Hinton' or related topics"
   e das Deep Belief Networks.'''
 version: v00.33.0
 status: ADOPTED

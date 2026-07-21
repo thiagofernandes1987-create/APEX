@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.snowflake_development
 name: snowflake-development
-description: "Implement — "
+description: "When the user asks for help with Snowflake SQL, data pipelines, Cortex AI, or Snowpark Python."
   Streams, Tasks, Snowpipe), Cortex AI functions, Cortex Agents, Snowpark Python, dbt in'
 version: v00.33.0
 status: ADOPTED

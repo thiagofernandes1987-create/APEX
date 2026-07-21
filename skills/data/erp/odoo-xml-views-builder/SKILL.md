@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_xml_views_builder
 name: odoo-xml-views-builder
-description: "Analyze — "
+description: "Creating a new form or list view for a custom model."
   for Odoo 14-17 with proper visibility syntax.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_aeo_landing_page_writer
 name: seo-aeo-landing-page-writer
-description: "Create — "
+description: "Use when building a landing page for a new product or service"
   Activate when the user wants to write or generate a landing page for a product, service, or '
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: security.security_scanning_security_hardening
 name: security-scanning-security-hardening
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   controls.'''
 version: v00.33.0
 status: ADOPTED

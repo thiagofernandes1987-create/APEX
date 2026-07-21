@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.git_pr_workflows_git_workflow
 name: git-pr-workflows-git-workflow
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   for quality assurance, testing, and deployment readiness. This workflow implements modern '
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.technical_change_tracker
 name: technical-change-tracker
-description: "Use — "
+description: "Use when you need structured change tracking across AI coding sessions"
   continuity'''
 version: v00.33.0
 status: ADOPTED

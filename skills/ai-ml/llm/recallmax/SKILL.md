@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.recallmax
 name: recallmax
-description: "Apply — "
+description: "Use when your agent loses context in long conversations (50+ turns)"
   preservation, compresses 14-turn history into 800 tokens.'''
 version: v00.33.0
 status: ADOPTED

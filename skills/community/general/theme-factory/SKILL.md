@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.theme_factory
 name: theme-factory
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   selected color palettes and font pairings. Once a theme is chosen, it can be applied to any '
 version: v00.33.0
 status: ADOPTED

@@ -1,4 +1,6 @@
 ---
+name: catalyst-calendar
+description: "Use this skill when the task requires catalyst calendar capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.equity_research.catalyst_calendar_2
 status: ADOPTED

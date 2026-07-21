@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.doc_coauthoring
 name: doc-coauthoring
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   an active guide, walking users through three stages: Context Gathering, Refinement & Struct'
 version: v00.33.0
 status: ADOPTED

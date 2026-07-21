@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.molykit
 name: molykit
-description: "Use — |"
+description: "Building AI chat interfaces with Makepad"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/molykit

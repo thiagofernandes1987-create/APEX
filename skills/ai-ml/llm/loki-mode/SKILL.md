@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.loki_mode
 name: loki-mode
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   AWS Bedrock, Agent SDK, HN Production (2025)'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.yann_lecun_debate
 name: yann-lecun-debate
-description: "Apply — "
+description: "When you need specialized assistance with this domain"
   (LeCun vs Hinton, Sutskever, Russell, Yudkowsky, Bostrom), lista completa de rejei'
 version: v00.33.0
 status: ADOPTED

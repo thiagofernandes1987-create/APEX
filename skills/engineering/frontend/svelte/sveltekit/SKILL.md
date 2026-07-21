@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.svelte.sveltekit
 name: sveltekit
-description: "Implement — "
+description: "Use when building a new full-stack web application with Svelte"
   in one framework.'''
 version: v00.33.0
 status: ADOPTED

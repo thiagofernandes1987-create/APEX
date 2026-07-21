@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.activecampaign_automation
 name: activecampaign-automation
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   enrollment, and tasks. Always search tools first for current schemas.'''
 version: v00.33.0
 status: ADOPTED

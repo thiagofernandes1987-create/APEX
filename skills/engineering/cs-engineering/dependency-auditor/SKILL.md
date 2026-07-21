@@ -1,6 +1,6 @@
 ---
 name: "dependency-auditor"
-description: "Implement — Dependency Auditor"
+description: "Use this skill when the task requires dependency auditor capabilities."
 executor: HYBRID
 skill_id: engineering.cs-engineering.dependency-auditor
 status: ADOPTED

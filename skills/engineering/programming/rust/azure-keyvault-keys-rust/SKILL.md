@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.azure_keyvault_keys_rust
 name: azure-keyvault-keys-rust
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   keys rust'', ''KeyClient rust'', ''create key rust'', ''encrypt rust'', ''sign rust''.'''
 version: v00.33.0
 status: ADOPTED

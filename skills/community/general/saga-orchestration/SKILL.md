@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.saga_orchestration
 name: saga-orchestration
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/saga-orchestration

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.ml.yann_lecun_tecnico
 name: yann-lecun-tecnico
-description: "Apply — "
+description: "When you need specialized assistance with this domain"
   Machinery of Intelligence), Self-Supervised Learning (SimCLR, MAE, BYOL), Energy-Bas'
 version: v00.33.0
 status: ADOPTED

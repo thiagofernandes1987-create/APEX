@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.jobgpt
 name: jobgpt
-description: "Apply — "
+description: "You want to **search for jobs** with filters like titles, locations, salary, remote, and H1B sponsorship"
   outreach using the JobGPT MCP server.'''
 version: v00.33.0
 status: ADOPTED

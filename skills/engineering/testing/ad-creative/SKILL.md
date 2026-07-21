@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.ad_creative
 name: ad-creative
-description: "Implement — "
+description: "Use when generating or iterating paid ad copy at scale."
   Use when generating headlines, descriptions, primary text, or large sets of ad variations fo'
 version: v00.33.0
 status: ADOPTED

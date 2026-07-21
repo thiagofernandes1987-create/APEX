@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.nodejs.paypal_integration
 name: paypal-integration
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   workflows.'''
 version: v00.33.0
 status: ADOPTED

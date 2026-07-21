@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.robius_matrix_integration
 name: robius-matrix-integration
-description: "Use — |"
+description: "Integrating Matrix SDK with Makepad"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/robius-matrix-integration

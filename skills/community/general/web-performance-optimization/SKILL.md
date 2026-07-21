@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.web_performance_optimization
 name: web-performance-optimization
-description: "Use — "
+description: "Use when website or app is loading slowly"
   strategies, and runtime performance'''
 version: v00.33.0
 status: ADOPTED

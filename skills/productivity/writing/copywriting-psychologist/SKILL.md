@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.copywriting_psychologist
 name: copywriting-psychologist
-description: "Automate — "
+description: "Use when writing conversion copy that needs stronger psychological framing, motivation, and belief sequencing."
 version: v00.33.0
 status: ADOPTED
 domain_path: productivity/writing/copywriting-psychologist

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.computer_vision.fal_image_edit
 name: fal-image-edit
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/computer-vision/fal-image-edit

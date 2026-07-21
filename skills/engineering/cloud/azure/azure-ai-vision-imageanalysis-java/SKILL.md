@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_ai_vision_imageanalysis_java
 name: azure-ai-vision-imageanalysis-java
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   OCR text extraction, object detection, tagging, or smart cropping.'''
 version: v00.33.0
 status: ADOPTED

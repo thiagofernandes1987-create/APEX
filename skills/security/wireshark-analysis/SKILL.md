@@ -1,7 +1,7 @@
 ---
 skill_id: security.wireshark_analysis
 name: wireshark-analysis
-description: "Audit — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   for security investigations, performance optimization, and troubleshooting.'''
 version: v00.33.0
 status: ADOPTED

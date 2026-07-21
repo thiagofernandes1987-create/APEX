@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.antigravity_skill_orchestrator
 name: antigravity-skill-orchestrator
-description: "Apply — "
+description: "Use when tackling a complex, multi-step problem that likely requires multiple domains of expertise."
   skill combinations using agent-memory-mcp, and prevents skill overuse for simple tasks.'''
 version: v00.33.0
 status: ADOPTED

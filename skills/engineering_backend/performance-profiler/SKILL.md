@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_backend.performance_profiler
 name: performance-profiler
-description: "Use — Performance Profiler"
+description: "App is slow and you don't know where the bottleneck is"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/backend

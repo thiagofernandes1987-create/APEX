@@ -1,6 +1,6 @@
 ---
 name: "contract-and-proposal-writer"
-description: "Manage — Contract & Proposal Writer"
+description: "Starting a new client engagement and need a contract fast"
 executor: LLM_BEHAVIOR
 skill_id: business.business-growth.contract-and-proposal-writer
 status: ADOPTED

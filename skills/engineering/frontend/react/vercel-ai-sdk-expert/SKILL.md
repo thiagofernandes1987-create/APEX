@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.vercel_ai_sdk_expert
 name: vercel-ai-sdk-expert
-description: "Implement — "
+description: "Use when adding AI chat or text generation features to a React or Next.js app"
   tool calling, and streaming UI components with React and Next.js.'''
 version: v00.33.0
 status: ADOPTED

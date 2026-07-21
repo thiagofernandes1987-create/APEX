@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.playwright_skill
 name: playwright-skill
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   global, or project-specific). Before executing any commands, determine the skill d'
 version: v00.33.0
 status: ADOPTED

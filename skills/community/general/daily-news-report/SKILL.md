@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.daily_news_report
 name: daily-news-report
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   Markdown reports.'''
 version: v00.33.0
 status: ADOPTED

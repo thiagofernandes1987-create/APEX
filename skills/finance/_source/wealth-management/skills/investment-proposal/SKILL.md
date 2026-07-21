@@ -1,4 +1,6 @@
 ---
+name: investment-proposal
+description: "Use this skill when pitching new clients or presenting a new investment strategy"
 executor: LLM_BEHAVIOR
 skill_id: finance.wealth_management.investment_proposal_3
 status: ADOPTED

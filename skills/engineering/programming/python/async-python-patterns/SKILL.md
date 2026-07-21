@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.async_python_patterns
 name: async-python-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   patterns, and async/await for building high-performance, non-blocking systems.'''
 version: v00.33.0
 status: ADOPTED

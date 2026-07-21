@@ -1,7 +1,7 @@
 ---
 skill_id: business_intelligence.deal_due_diligence
 name: deal-due-diligence
-description: >
+description: "Avaliando aquisição, merger, investimento, parceria ou licenciamento"
   Orquestra due diligence completo para deals M&A, parcerias ou investimentos.
   Paraleliza análise financeira + análise jurídica + análise de risco operacional.
   Resolve o gap crítico entre finance e legal onde atualmente as skills existem mas

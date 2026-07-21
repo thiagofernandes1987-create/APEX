@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.landing_page_generator
 name: '''landing-page-generator'''
-description: "Implement — "
+description: "You need to generate a marketing landing page in Next.js or React."
   for optimized copy/components (Heroes, Features, Pricing). Focuses on Core Web Vitals/SEO.'''
 version: v00.33.0
 status: ADOPTED

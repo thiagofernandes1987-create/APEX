@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.latex_paper_conversion
 name: latex-paper-conversion
-description: "Use — "
+description: "Use when the user requests to port an existing LaTeX paper to a new journal's format."
   Springer, IPOL) to another format (e.g., MDPI, IEEE, Nature). It automates extraction, inject'
 version: v00.33.0
 status: ADOPTED

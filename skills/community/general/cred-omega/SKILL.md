@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.cred_omega
 name: cred-omega
-description: "Use — "
+description: "When you need specialized assistance with this domain"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/cred-omega

@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_migration_helper
 name: odoo-migration-helper
-description: "Analyze — "
+description: "Upgrading a custom module from Odoo 14/15/16 to a newer version."
   deprecated methods, and view migration.'''
 version: v00.33.0
 status: ADOPTED

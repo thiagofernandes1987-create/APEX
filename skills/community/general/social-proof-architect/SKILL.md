@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.social_proof_architect
 name: social-proof-architect
-description: "Use — "
+description: "Use when testimonials, logos, numbers, or case studies need to be structured for maximum trust impact."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/social-proof-architect

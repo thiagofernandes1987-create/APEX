@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.spark_optimization
 name: spark-optimization
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   Spark performance, debugging slow jobs, or scaling data processing pipelines.'''
 version: v00.33.0
 status: ADOPTED

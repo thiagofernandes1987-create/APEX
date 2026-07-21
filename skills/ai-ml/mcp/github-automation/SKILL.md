@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.github_automation
 name: github-automation
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   Manage code workflows, review PRs, search code, and handle deployments programmatically.'
 version: v00.33.0
 status: ADOPTED

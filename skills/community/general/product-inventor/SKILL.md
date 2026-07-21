@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.product_inventor
 name: product-inventor
-description: "Use — "
+description: "When you need specialized assistance with this domain"
   Psicologia Cognitiva, Storytelling e execucao impecavel nivel Jobs/Apple.'''
 version: v00.33.0
 status: ADOPTED

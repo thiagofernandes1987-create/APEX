@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.pdf_official
 name: pdf-official
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   features, JavaScript libraries, and detailed examples, see reference.md. If you need '
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.warren_buffett
 name: warren-buffett
-description: "Use — "
+description: "When you need specialized assistance with this domain"
   de Benjamin Graham e socio intelectual de Charlie Munger.'''
 version: v00.33.0
 status: ADOPTED

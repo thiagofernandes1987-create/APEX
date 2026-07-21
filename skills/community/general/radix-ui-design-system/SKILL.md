@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.radix_ui_design_system
 name: radix-ui-design-system
-description: "Use — "
+description: "Creating a custom design system from scratch"
   and compound component patterns for production-grade UI libraries.'''
 version: v00.33.0
 status: ADOPTED

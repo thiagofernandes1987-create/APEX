@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.security_gate_injector
 name: security-gate-injector
-description: >
+description: "Configurando um novo pipeline CI/CD e quer security gates desde o início"
   Injeta gates de segurança verificáveis em pipelines CI/CD existentes. Conecta
   security.codebase-audit-pre-push ao pipeline de CD de forma declarativa, garantindo
   que cada deploy passe por security scan antes de chegar ao ambiente alvo. Resolve

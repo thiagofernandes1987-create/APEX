@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.andrej_karpathy
 name: andrej-karpathy
-description: "Apply — "
+description: "When the user mentions 'karpathy' or related topics"
   Labs, e o maior educador de deep learning do mundo.'''
 version: v00.33.0
 status: ADOPTED

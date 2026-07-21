@@ -1,7 +1,7 @@
 ---
 skill_id: finance.wealth_management.financial_plan
 name: financial-plan
-description: "Analyze — "
+description: "condition: Dados financeiros desatualizados ou ausentes"
 version: v00.33.0
 status: ADOPTED
 domain_path: finance/wealth-management/financial-plan

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.google_slides_automation
 name: google-slides-automation
-description: "Apply — "
+description: "You need to create, inspect, or modify Google Slides presentations from local automation."
   access.'''
 version: v00.33.0
 status: ADOPTED

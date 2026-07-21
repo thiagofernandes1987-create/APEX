@@ -1,4 +1,6 @@
 ---
+name: process-letter
+description: "Use this skill when the task requires process letter capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.investment_banking.process_letter_3
 status: ADOPTED

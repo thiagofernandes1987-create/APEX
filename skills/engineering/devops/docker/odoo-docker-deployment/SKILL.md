@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.docker.odoo_docker_deployment
 name: odoo-docker-deployment
-description: "Implement — "
+description: "Spinning up a local Odoo development environment with Docker."
   configuration, and Nginx reverse proxy.'''
 version: v00.33.0
 status: ADOPTED

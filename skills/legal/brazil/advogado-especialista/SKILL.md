@@ -1,7 +1,7 @@
 ---
 skill_id: legal.brazil.advogado_especialista
 name: advogado-especialista
-description: "Review — "
+description: "When the user mentions 'advogado' or related topics"
   consumidor, imobiliario, empresarial, civil e constitucional.'''
 version: v00.33.0
 status: ADOPTED

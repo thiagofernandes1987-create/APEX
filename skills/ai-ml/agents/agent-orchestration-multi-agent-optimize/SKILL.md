@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.agent_orchestration_multi_agent_optimize
 name: agent-orchestration-multi-agent-optimize
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   Use when improving agent performance, throughput, or reliability.'''
 version: v00.33.0
 status: ADOPTED

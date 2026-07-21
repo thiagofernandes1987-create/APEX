@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.github
 name: github
-description: "Use — "
+description: "When the user asks about GitHub issues, pull requests, workflow runs, or CI failures."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/github

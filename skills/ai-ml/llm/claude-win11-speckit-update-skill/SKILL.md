@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.claude_win11_speckit_update_skill
 name: claude-win11-speckit-update-skill
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/llm/claude-win11-speckit-update-skill

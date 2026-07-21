@@ -1,7 +1,7 @@
 ---
 skill_id: sales.apollo.enrich_lead
 name: enrich-lead
-description: "Track — "
+description: "condition: CRM ou enrichment tool indisponível"
   phone, title, company intel, and next actions.'''
 version: v00.33.0
 status: ADOPTED

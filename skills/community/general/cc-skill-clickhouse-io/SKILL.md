@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.cc_skill_clickhouse_io
 name: cc-skill-clickhouse-io
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   analytical workloads.'''
 version: v00.33.0
 status: ADOPTED

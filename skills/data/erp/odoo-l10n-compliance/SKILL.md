@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_l10n_compliance
 name: odoo-l10n-compliance
-description: "Analyze — "
+description: "Setting up Odoo for a company in a specific country (Mexico, Italy, Spain, US, etc.)."
   and country chart of accounts setup.'''
 version: v00.33.0
 status: ADOPTED

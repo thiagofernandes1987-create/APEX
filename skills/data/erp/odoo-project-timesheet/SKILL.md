@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_project_timesheet
 name: odoo-project-timesheet
-description: "Analyze — "
+description: "Setting up a new project with tasks, deadlines, and team assignments."
   alerts, and invoicing from timesheets.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ddd_tactical_patterns
 name: ddd-tactical-patterns
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   with explicit invariants.'''
 version: v00.33.0
 status: ADOPTED

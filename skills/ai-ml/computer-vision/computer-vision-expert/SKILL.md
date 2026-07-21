@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.computer_vision.computer_vision_expert
 name: computer-vision-expert
-description: "Apply — "
+description: "Designing high-performance real-time detection systems (YOLO26)."
   and real-time spatial analysis.'''
 version: v00.33.0
 status: ADOPTED

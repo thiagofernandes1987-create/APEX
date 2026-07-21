@@ -1,7 +1,7 @@
 ---
 skill_id: healthcare.fda_medtech_compliance_auditor
 name: fda-medtech-compliance-auditor
-description: "Analyze — "
+description: "Use when reviewing Software Validation Protocols for Medical Devices."
   files, and software validation.'''
 version: v00.33.0
 status: ADOPTED

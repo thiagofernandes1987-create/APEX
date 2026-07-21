@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.e2e_testing_patterns
 name: e2e-testing-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   and catch regressions before users do.'''
 version: v00.33.0
 status: ADOPTED

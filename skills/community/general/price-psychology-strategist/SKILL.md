@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.price_psychology_strategist
 name: price-psychology-strategist
-description: "Use — "
+description: "Use when pricing, packaging, or offer framing needs better perception of value and fairness."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/price-psychology-strategist

@@ -1,7 +1,7 @@
 ---
 skill_id: security.api_endpoint_builder
 name: api-endpoint-builder
-description: "Audit — "
+description: "User asks to 'create an API endpoint' or 'build a REST API'"
   Follows best practices for security and scalability.'''
 version: v00.33.0
 status: ADOPTED

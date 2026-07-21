@@ -1,7 +1,7 @@
 ---
 skill_id: apex_internals.knowledge.bdistill_knowledge_extraction
 name: bdistill-knowledge-extraction
-description: "Use — "
+description: "Use when you need structured reference data on any domain (medical, legal, finance, cybersecurity)"
   No API key needed.'''
 version: v00.33.0
 status: ADOPTED

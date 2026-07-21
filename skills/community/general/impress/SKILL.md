@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.impress
 name: impress
-description: "Use — "
+description: "Creating new presentations in ODP format"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/impress

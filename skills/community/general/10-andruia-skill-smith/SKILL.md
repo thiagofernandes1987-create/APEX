@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.10_andruia_skill_smith
 name: 10-andruia-skill-smith
-description: "Use — "
+description: "**Idioma Mandatorio:** Todas las habilidades creadas deben tener sus instrucciones y documentación en **ESPAÑOL**."
   siguiendo el Estándar de Diamante.'''
 version: v00.33.0
 status: ADOPTED

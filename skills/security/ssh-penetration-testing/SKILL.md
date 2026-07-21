@@ -1,7 +1,7 @@
 ---
 skill_id: security.ssh_penetration_testing
 name: ssh-penetration-testing
-description: "Audit — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   tunneling techniques, and post-exploitation activities. This skill covers the com'
 version: v00.33.0
 status: ADOPTED

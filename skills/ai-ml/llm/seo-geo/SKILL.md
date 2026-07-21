@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.seo_geo
 name: seo-geo
-description: "Apply — "
+description: "Use when improving visibility in AI Overviews, ChatGPT, Perplexity, or similar AI search systems."
   AI citations, llms.txt readiness, crawler accessibility, and passage-level citability.'''
 version: v00.33.0
 status: ADOPTED

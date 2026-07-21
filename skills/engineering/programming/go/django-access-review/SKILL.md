@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.go.django_access_review
 name: django-access-review
-description: "Implement — django-access-review"
+description: "You need to review Django or DRF code for access control gaps, IDOR risk, or object-level authorization failures."
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/go/django-access-review

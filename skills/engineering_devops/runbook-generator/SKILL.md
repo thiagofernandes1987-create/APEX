@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.runbook_generator
 name: runbook-generator
-description: "Use — Runbook Generator"
+description: "A service has no runbook and needs a baseline immediately"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/devops

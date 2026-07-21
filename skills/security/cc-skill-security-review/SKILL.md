@@ -1,7 +1,7 @@
 ---
 skill_id: security.cc_skill_security_review
 name: cc-skill-security-review
-description: "Audit — "
+description: "Implementing authentication or authorization"
   when implementing authentication or authorization, handling user input or file uploads, or cr'
 version: v00.33.0
 status: ADOPTED

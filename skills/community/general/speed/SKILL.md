@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.speed
 name: speed
-description: "Use — Launch RSVP speed reader for text"
+description: "You want to launch the RSVP speed reader for text in the current session."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/speed

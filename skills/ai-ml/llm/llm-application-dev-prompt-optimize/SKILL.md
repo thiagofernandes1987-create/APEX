@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.llm_application_dev_prompt_optimize
 name: llm-application-dev-prompt-optimize
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   including constitutional AI, chain-of-thought reasoning, and model-specific optimizat'
 version: v00.33.0
 status: ADOPTED

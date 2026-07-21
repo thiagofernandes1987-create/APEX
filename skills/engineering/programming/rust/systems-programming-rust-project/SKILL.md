@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.systems_programming_rust_project
 name: systems-programming-rust-project
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Generate complete project structures with cargo tooling, proper module organization, testing'
 version: v00.33.0
 status: ADOPTED

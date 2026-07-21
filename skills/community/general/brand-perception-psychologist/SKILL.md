@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.brand_perception_psychologist
 name: brand-perception-psychologist
-description: "Use — "
+description: "Use when you need to diagnose how a market currently perceives a brand and how to reposition it."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/brand-perception-psychologist

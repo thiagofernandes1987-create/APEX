@@ -1,4 +1,6 @@
 ---
+name: cim-builder
+description: "Use this skill when the task requires cim builder capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.investment_banking.cim_builder_2
 status: ADOPTED

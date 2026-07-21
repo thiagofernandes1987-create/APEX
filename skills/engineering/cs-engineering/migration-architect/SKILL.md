@@ -1,6 +1,6 @@
 ---
 name: "migration-architect"
-description: "Implement — Migration Architect"
+description: "Use this skill when the task requires migration architect capabilities."
 executor: HYBRID
 skill_id: engineering.cs-engineering.migration-architect
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.intelligent_agent_factory
 name: intelligent-agent-factory
-description: >
+description: "Precisar criar um novo agente LLM de qualquer domínio do zero"
   Projeta, implementa e valida agentes LLM de ponta a ponta. Orquestra: design do
   agente → definição de skills → implementação com TDD → avaliação de performance →
   deployment com monitoramento. Cobre o gap entre ai_ml_agents (design) e

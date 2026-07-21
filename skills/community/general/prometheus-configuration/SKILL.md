@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.prometheus_configuration
 name: prometheus-configuration
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/prometheus-configuration

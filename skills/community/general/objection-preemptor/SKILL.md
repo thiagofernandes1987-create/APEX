@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.objection_preemptor
 name: objection-preemptor
-description: "Use — "
+description: "Use when a funnel, sales page, or pitch keeps failing on the same doubts or hesitations."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/objection-preemptor

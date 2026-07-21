@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.competitor_alternatives
 name: competitor-alternatives
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   rank for competitive search terms, provide genuine value to evaluators, and position your p'
 version: v00.33.0
 status: ADOPTED

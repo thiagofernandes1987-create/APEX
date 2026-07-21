@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.deployment.backend_development_feature_development
 name: backend-development-feature-development
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   multi-phase feature delivery across teams and services.'''
 version: v00.33.0
 status: ADOPTED

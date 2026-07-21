@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.migration_architect
 name: migration-architect
-description: "Use — Migration Architect"
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general

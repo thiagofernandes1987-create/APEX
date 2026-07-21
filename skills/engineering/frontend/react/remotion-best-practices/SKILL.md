@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.remotion_best_practices
 name: remotion-best-practices
-description: "Implement — "
+description: "[rules/3d.md](rules/3d.md) - 3D content in Remotion using Three.js and React Three Fiber"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/frontend/react/remotion-best-practices

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.moyu
 name: moyu
-description: "Use — >"
+description: "If one line solves it, write one line"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/moyu

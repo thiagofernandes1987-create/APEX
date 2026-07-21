@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.google_drive_automation
 name: google-drive-automation
-description: "Apply — "
+description: "You need to search, list, upload, download, move, or organize Google Drive files and folders."
   access.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_devops.env_secrets_manager
 name: env-secrets-manager
-description: "Use — Env & Secrets Manager"
+description: "Before pushing commits that touched env/config files"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/devops

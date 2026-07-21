@@ -1,6 +1,6 @@
 ---
 name: "incident-commander"
-description: "Implement — Incident Commander Skill"
+description: "Use this skill when the task requires incident commander capabilities."
 executor: HYBRID
 skill_id: engineering.cs-engineering-team.incident-commander
 status: ADOPTED

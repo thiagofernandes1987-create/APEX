@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.c.customer_psychographic_profiler
 name: customer-psychographic-profiler
-description: "Implement — "
+description: "Use when you need a deep psychographic profile before positioning, copy, or funnel design."
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/c/customer-psychographic-profiler

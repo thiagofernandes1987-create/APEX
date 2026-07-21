@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.image_studio
 name: image-studio
-description: "Use — "
+description: "When you need specialized assistance with this domain"
   e stability-ai (arte/ ilustracao/edicao). Detecta o tipo de imagem solicitada e e'
 version: v00.33.0
 status: ADOPTED

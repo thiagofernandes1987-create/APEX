@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.launch_strategy
 name: launch-strategy
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   that build momentum, capture attention, and convert interest into users.'''
 version: v00.33.0
 status: ADOPTED

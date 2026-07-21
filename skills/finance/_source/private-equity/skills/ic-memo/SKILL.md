@@ -1,4 +1,6 @@
 ---
+name: ic-memo
+description: "Use this skill when the task requires ic memo capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.ic_memo_3
 status: ADOPTED

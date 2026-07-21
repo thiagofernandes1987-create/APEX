@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_security_keyvault_secrets_java
 name: azure-security-keyvault-secrets-java
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   API keys, connection strings, or other sensitive configuration data.'''
 version: v00.33.0
 status: ADOPTED

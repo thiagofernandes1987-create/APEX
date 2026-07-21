@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.x_twitter_scraper
 name: x-twitter-scraper
-description: "Apply — "
+description: "User needs to search X/Twitter for tweets by keyword, hashtag, or user"
   draws, monitoring, webhooks, 19 extraction tools, MCP server.'''
 version: v00.33.0
 status: ADOPTED

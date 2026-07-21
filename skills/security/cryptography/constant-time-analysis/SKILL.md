@@ -1,7 +1,7 @@
 ---
 skill_id: security.cryptography.constant_time_analysis
 name: constant-time-analysis
-description: "Audit — "
+description: "User implements signature, encryption, or key derivation"
 version: v00.33.0
 status: ADOPTED
 domain_path: security/cryptography/constant-time-analysis

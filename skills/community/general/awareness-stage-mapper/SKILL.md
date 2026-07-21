@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.awareness_stage_mapper
 name: awareness-stage-mapper
-description: "Use — "
+description: "Use when you need to identify how aware an audience already is before writing messaging or offers."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/awareness-stage-mapper

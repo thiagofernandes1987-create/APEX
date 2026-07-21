@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.evaluation
 name: evaluation
-description: "Implement — "
+description: "Testing agent performance systematically"
   context engineering choices, or measuring improvements over time.'''
 version: v00.33.0
 status: ADOPTED

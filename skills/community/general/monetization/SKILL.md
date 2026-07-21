@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.monetization
 name: monetization
-description: "Use — "
+description: "When you need specialized assistance with this domain"
   freemium, upgrade flows, churn prevention, revenue optimization e modelos de negocio Saa'
 version: v00.33.0
 status: ADOPTED

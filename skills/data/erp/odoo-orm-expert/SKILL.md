@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_orm_expert
 name: odoo-orm-expert
-description: "Analyze — "
+description: "Writing `search()`, `browse()`, `create()`, `write()`, or `unlink()` calls."
   query techniques.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.context_fundamentals
 name: context-fundamentals
-description: "Deploy — "
+description: "Designing new agent systems or modifying existing architectures"
   model can attend to when generating responses: system instructions, tool definitions, retriev'
 version: v00.33.0
 status: ADOPTED

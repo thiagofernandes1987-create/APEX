@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.global_chat_agent_discovery
 name: global-chat-agent-discovery
-description: "Apply — "
+description: "Use when you need to find an MCP server for a specific capability (e.g., database access, file conversion, API integration)"
   directory and MCP server.'''
 version: v00.33.0
 status: ADOPTED

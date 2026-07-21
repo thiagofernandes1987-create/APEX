@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.bash.jq
 name: jq
-description: "Implement — "
+description: "Use when parsing JSON output from APIs, CLI tools (AWS, GitHub, kubectl, docker), or log files"
   for real shell workflows.'''
 version: v00.33.0
 status: ADOPTED

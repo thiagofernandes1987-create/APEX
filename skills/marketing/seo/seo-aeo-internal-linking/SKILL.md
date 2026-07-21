@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_aeo_internal_linking
 name: seo-aeo-internal-linking
-description: "Create — "
+description: "Use when building internal links between a new pillar page and its cluster articles"
   and cannibalization checks. Activate when the user wants to build an internal linking s'
 version: v00.33.0
 status: ADOPTED

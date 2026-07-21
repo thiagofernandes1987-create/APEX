@@ -1,7 +1,7 @@
 ---
 skill_id: security.network_101
 name: network-101
-description: "Audit — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   Enable hands-on practice with service enumeration, log analysis, and security testing aga'
 version: v00.33.0
 status: ADOPTED

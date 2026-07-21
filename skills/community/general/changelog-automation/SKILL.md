@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.changelog_automation
 name: changelog-automation
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   setting up release workflows, generating release notes, or standardizing commit conventions.'''
 version: v00.33.0
 status: ADOPTED

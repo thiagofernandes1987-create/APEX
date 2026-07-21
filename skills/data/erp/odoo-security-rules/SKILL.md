@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_security_rules
 name: odoo-security-rules
-description: "Analyze — "
+description: "Setting up access rights for a new custom module."
   patterns.'''
 version: v00.33.0
 status: ADOPTED

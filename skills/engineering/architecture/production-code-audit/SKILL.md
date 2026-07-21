@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.production_code_audit
 name: production-code-audit
-description: "Implement — "
+description: "Use when user says 'make this production-ready'"
   transform it to production-grade, corporate-level professional quality with optimization'
 version: v00.33.0
 status: ADOPTED

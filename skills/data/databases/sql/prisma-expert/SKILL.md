@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.prisma_expert
 name: prisma-expert
-description: "Analyze — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   modeling, and database operations across PostgreSQL, MySQL, and SQLite.'''
 version: v00.33.0
 status: ADOPTED

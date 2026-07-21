@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.cache.debug_buttercup
 name: debug-buttercup
-description: "Analyze — "
+description: "Pods in the `crs` namespace are in CrashLoopBackOff, OOMKilled, or restarting"
   multiple services restart simultaneously (cascade failure), or redis is unresponsi'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.context_optimization
 name: context-optimization
-description: "Use — "
+description: "Context limits constrain task complexity"
   masking, caching, and partitioning. The goal is not to magically increase context windows'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.context_management_context_save
 name: context-management-context-save
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/context-management-context-save

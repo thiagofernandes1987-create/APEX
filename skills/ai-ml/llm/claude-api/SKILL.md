@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.claude_api
 name: claude-api
-description: "Apply — "
+description: "Use when building with the Claude API, Anthropic SDKs, or the Agent SDK."
   or user asks to use Claude API, Anthropic SDKs, or Agent SDK. DO NOT TR'
 version: v00.33.0
 status: ADOPTED

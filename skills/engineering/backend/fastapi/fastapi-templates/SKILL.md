@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.fastapi.fastapi_templates
 name: fastapi-templates
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   handling. Use when building new FastAPI applications or setting up backend API projects.'''
 version: v00.33.0
 status: ADOPTED

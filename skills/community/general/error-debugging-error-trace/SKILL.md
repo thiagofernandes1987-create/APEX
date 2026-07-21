@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.error_debugging_error_trace
 name: error-debugging-error-trace
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   solutions. Set up error tracking systems, configure alerts, implement structured logging'
 version: v00.33.0
 status: ADOPTED

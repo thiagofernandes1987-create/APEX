@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.subject_line_psychologist
 name: subject-line-psychologist
-description: "Use — "
+description: "Use when email subject lines need stronger open-rate psychology without losing clarity."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/subject-line-psychologist

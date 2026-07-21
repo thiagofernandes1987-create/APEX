@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.context_management_context_restore
 name: context-management-context-restore
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/context-management-context-restore

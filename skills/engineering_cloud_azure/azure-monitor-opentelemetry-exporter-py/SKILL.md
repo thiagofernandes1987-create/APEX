@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_monitor_opentelemetry_exporter_py
 name: azure-monitor-opentelemetry-exporter-py
-description: "Use — |"
+description: "**v00.33.0**: Ingested from skills-main"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cloud/azure

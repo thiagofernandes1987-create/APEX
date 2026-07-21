@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.dart.awt_e2e_testing
 name: awt-e2e-testing
-description: "Implement — "
+description: "You need AI-assisted end-to-end testing through a real browser with declarative YAML scenarios."
   visual matching (OpenCV + OCR), platform auto-detection (Flutter/React/Vue), learnin'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community_general.stripe_integration_expert
 name: stripe-integration-expert
-description: "Use — Stripe Integration Expert"
+description: "Adding subscription billing to any web app"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general

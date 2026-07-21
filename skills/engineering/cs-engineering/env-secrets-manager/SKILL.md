@@ -1,6 +1,6 @@
 ---
 name: "env-secrets-manager"
-description: "Implement — Env & Secrets Manager"
+description: "Before pushing commits that touched env/config files"
 executor: HYBRID
 skill_id: engineering.cs-engineering.env-secrets-manager
 status: ADOPTED

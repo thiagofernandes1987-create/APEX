@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.build.bazel_build_optimization
 name: bazel-build-optimization
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   or optimizing build performance for enterprise codebases.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.templates
 name: templates
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   12 templates for various tech stacks.'''
 version: v00.33.0
 status: ADOPTED

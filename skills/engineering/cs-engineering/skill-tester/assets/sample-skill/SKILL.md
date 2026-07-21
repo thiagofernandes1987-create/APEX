@@ -1,4 +1,6 @@
 ---
+name: sample-skill
+description: "Use this skill when the task requires sample skill capabilities."
 executor: HYBRID
 skill_id: engineering.cs-engineering.skill-tester.assets
 status: ADOPTED

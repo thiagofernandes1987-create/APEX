@@ -1,6 +1,6 @@
 ---
 name: "report"
-description: >-
+description: "Use this skill when user says 'test report', 'results summary',"
   Generate test report. Use when user says "test report", "results summary",
   "test status", "show results", "test dashboard", or "how did tests go".
 executor: LLM_BEHAVIOR

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.ai_md
 name: ai-md
-description: "Apply — "
+description: "Use when your CLAUDE.md is long but AI still ignores your rules"
   rules, fewer tokens, higher compliance.'''
 version: v00.33.0
 status: ADOPTED

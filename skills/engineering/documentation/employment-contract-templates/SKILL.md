@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.documentation.employment_contract_templates
 name: employment-contract-templates
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   and HR policies.'''
 version: v00.33.0
 status: ADOPTED

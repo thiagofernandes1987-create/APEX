@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.m365_agents_dotnet
 name: m365-agents-dotnet
-description: "Use — |"
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cloud/azure

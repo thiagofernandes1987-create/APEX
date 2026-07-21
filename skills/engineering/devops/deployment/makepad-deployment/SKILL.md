@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.deployment.makepad_deployment
 name: makepad-deployment
-description: "Implement — |"
+description: "You need to package, distribute, or automate deployment of a Makepad application."
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/devops/deployment/makepad-deployment

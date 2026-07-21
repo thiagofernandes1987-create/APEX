@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.visual_emotion_engineer
 name: visual-emotion-engineer
-description: "Use — "
+description: "Use when visuals need to reinforce a specific emotional response or brand feeling."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/visual-emotion-engineer

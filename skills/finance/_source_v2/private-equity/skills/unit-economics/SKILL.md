@@ -1,4 +1,6 @@
 ---
+name: unit-economics
+description: "Use this skill when valuating revenue quality, building a cohort analysis, or assessing customer economics"
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.unit_economics_2
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.php.laravel_security_audit
 name: laravel-security-audit
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   practices using OWASP standards and Laravel security best practices.'''
 version: v00.33.0
 status: ADOPTED

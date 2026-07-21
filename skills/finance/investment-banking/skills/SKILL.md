@@ -1,7 +1,7 @@
 ---
 skill_id: finance.investment_banking.skills
 name: skills
-description: "Analyze — "
+description: "condition: Dados financeiros desatualizados ou ausentes"
 version: v00.33.0
 status: ADOPTED
 domain_path: finance/investment-banking/skills

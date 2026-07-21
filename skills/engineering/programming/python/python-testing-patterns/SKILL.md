@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.python_testing_patterns
 name: python-testing-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   when writing Python tests, setting up test suites, or implementing testing best practices.'''
 version: v00.33.0
 status: ADOPTED

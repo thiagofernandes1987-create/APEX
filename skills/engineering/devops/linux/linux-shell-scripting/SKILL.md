@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.linux.linux_shell_scripting
 name: linux-shell-scripting
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   monitoring, user management, log analysis, and automation. These scripts serve as build'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.blog_writing_guide
 name: blog-writing-guide
-description: "Automate — "
+description: "You need to draft or edit a Sentry blog post."
   write their first blog post or a marketer draft a product announcement.'''
 version: v00.33.0
 status: ADOPTED

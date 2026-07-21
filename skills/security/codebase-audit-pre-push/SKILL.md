@@ -1,7 +1,7 @@
 ---
 skill_id: security.codebase_audit_pre_push
 name: codebase-audit-pre-push
-description: "Audit — "
+description: "User requests 'audit the codebase' or 'review before push'"
   every file line-by-line for production readiness.'''
 version: v00.33.0
 status: ADOPTED

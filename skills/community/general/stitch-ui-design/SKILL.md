@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.stitch_ui_design
 name: stitch-ui-design
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   This skill helps create precise, actionable prompts that generate high-quality UI design'
 version: v00.33.0
 status: ADOPTED

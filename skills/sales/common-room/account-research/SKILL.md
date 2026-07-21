@@ -1,7 +1,7 @@
 ---
 skill_id: sales.common_room.account_research
 name: account-research
-description: "Track — "
+description: "condition: CRM ou enrichment tool indisponível"
   ''pull up signals for [account]'', ''what''s going on with [company]'', or any account-level question'
 version: v00.33.0
 status: ADOPTED

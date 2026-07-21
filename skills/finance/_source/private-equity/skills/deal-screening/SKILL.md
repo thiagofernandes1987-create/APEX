@@ -1,4 +1,6 @@
 ---
+name: deal-screening
+description: "Use this skill when the task requires deal screening capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.deal_screening_3
 status: ADOPTED

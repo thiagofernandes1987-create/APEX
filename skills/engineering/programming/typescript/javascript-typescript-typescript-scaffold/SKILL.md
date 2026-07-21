@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.typescript.javascript_typescript_typescript_scaffold
 name: javascript-typescript-typescript-scaffold
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   frontend applications. Generate complete project structures with modern tooling (pnpm, Vite, '
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.godot_gdscript_patterns
 name: godot-gdscript-patterns
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   Godot games, implementing game systems, or learning GDScript best practices.'''
 version: v00.33.0
 status: ADOPTED

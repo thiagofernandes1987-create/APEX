@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.ml.hugging_face_cli
 name: hugging-face-cli
-description: "Apply — "
+description: "`hf download REPO_ID` — Download files from the Hub. `[--type CHOICE --revision TEXT --include TEXT --exclude TEXT --cache-dir TEXT --local-dir TEXT --force-download --dry-run --quiet --max-workers INTEGER]`"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/ml/hugging-face-cli

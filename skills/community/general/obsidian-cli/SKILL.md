@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.obsidian_cli
 name: obsidian-cli
-description: "Use — "
+description: "Use when managing vault content through the Obsidian CLI."
   and themes from the command line.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.performance_profiling
 name: performance-profiling
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/performance-profiling

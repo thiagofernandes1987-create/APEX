@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.database_migrations_migration_observability
 name: database-migrations-migration-observability
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/database-migrations-migration-observability

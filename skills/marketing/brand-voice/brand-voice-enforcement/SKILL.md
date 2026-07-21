@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.brand_voice.brand_voice_enforcement
 name: brand-voice-enforcement
-description: "Create — >"
+description: "condition: Brand guidelines não disponíveis"
 version: v00.33.0
 status: ADOPTED
 domain_path: marketing/brand-voice/brand-voice-enforcement

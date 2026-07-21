@@ -1,6 +1,6 @@
 ---
 name: "merge"
-description: "Implement — Merge the winning agent"
+description: "Use this skill when the task requires merge capabilities."
 command: /hub:merge
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs_engineering.agenthub.merge

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.earllm_build
 name: earllm-build
-description: "Apply — "
+description: "When the user mentions 'earllm' or related topics"
   earbuds to an LLM via voice pipeline.'''
 version: v00.33.0
 status: ADOPTED

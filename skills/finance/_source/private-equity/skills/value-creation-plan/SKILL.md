@@ -1,4 +1,6 @@
 ---
+name: value-creation-plan
+description: "Use this skill when the task requires value creation plan capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.value_creation_plan_3
 status: ADOPTED

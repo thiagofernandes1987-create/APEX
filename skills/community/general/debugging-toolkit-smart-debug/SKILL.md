@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.debugging_toolkit_smart_debug
 name: debugging-toolkit-smart-debug
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/debugging-toolkit-smart-debug

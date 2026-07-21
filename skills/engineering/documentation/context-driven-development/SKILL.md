@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.documentation.context_driven_development
 name: context-driven-development
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   interactions and team alignment through structured project documentation.'''
 version: v00.33.0
 status: ADOPTED

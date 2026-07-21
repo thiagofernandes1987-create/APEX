@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.address_github_comments
 name: address-github-comments
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/address-github-comments

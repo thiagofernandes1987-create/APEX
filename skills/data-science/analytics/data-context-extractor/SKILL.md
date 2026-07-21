@@ -1,7 +1,7 @@
 ---
 skill_id: data_science.analytics.data_context_extractor
 name: data-context-extractor
-description: "Use — >"
+description: "condition: Dataset não disponível ou muito grande para contexto"
 version: v00.33.0
 status: ADOPTED
 domain_path: data-science/analytics/data-context-extractor

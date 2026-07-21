@@ -1,7 +1,7 @@
 ---
 skill_id: anthropic_official.docx
 name: docx
-description: "Apply — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   Triggers include: any mention of ''Word doc'', ''word document'', ''.docx'', or requests to produce'
 version: v00.33.0
 status: ADOPTED

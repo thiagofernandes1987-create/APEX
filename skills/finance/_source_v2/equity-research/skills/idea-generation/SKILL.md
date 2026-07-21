@@ -1,4 +1,6 @@
 ---
+name: idea-generation
+description: "Use this skill when the task requires idea generation capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.equity_research.idea_generation_2
 status: ADOPTED

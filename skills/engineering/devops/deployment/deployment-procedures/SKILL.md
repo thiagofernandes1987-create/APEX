@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.deployment.deployment_procedures
 name: deployment-procedures
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   verification. Teaches thinking, not scripts.'''
 version: v00.33.0
 status: ADOPTED

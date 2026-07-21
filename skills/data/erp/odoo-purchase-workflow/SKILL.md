@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_purchase_workflow
 name: odoo-purchase-workflow
-description: "Analyze — "
+description: "Setting up the purchase flow for a new Odoo instance."
   lists, and 3-way matching.'''
 version: v00.33.0
 status: ADOPTED

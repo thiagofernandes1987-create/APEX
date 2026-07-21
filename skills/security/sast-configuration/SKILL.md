@@ -1,7 +1,7 @@
 ---
 skill_id: security.sast_configuration
 name: sast-configuration
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   security scanning across multiple programming languages.'''
 version: v00.33.0
 status: ADOPTED

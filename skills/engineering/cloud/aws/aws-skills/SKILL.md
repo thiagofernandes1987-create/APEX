@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.aws.aws_skills
 name: aws-skills
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cloud/aws/aws-skills

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.distributed_debugging_debug_trace
 name: distributed-debugging-debug-trace
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   and diagnostic tools. Configure debugging workflows, implement tracing solutions, and '
 version: v00.33.0
 status: ADOPTED

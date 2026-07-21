@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.cdk_patterns
 name: cdk-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Use when designing reusable CDK stacks and L3 constructs.'''
 version: v00.33.0
 status: ADOPTED

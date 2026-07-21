@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ux_copy
 name: ux-copy
-description: "Use — "
+description: "Use when you need button labels, helper text, toasts, empty states, or error messages"
   and form guidance.'''
 version: v00.33.0
 status: ADOPTED

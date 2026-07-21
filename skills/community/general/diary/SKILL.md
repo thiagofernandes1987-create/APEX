@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.diary
 name: diary
-description: "Use — "
+description: "**Action 0 (Identify)**: Call the terminal `pwd` (Linux/Mac) or `(Get-Item .).Name` (Windows) to confirm the current folder name."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/diary

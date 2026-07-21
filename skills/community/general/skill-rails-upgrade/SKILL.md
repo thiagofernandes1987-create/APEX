@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.skill_rails_upgrade
 name: skill-rails-upgrade
-description: "Use — "
+description: "`Gemfile` (must exist and contain 'rails')"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/skill-rails-upgrade

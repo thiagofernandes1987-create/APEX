@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.docker.apify_actorization
 name: apify-actorization
-description: "Implement — "
+description: "Converting an existing project to run on Apify platform"
   Actors are programs packaged as Docker images that accept well-defined JSON input, pe'
 version: v00.33.0
 status: ADOPTED

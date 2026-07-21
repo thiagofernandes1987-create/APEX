@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.team_collaboration_standup_notes
 name: team-collaboration-standup-notes
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   generation from commit history, and effective remote team coordination patterns.'''
 version: v00.33.0
 status: ADOPTED

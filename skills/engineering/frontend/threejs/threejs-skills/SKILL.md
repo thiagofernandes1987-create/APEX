@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.threejs.threejs_skills
 name: threejs-skills
-description: "Implement — "
+description: "Requests 3D visualizations or graphics ('create a 3D model', 'show in 3D')"
   WebGL experiences, 3D visualizations, animations, or interactive 3D elements.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_content
 name: seo-content
-description: "Create — >"
+description: "Use when auditing content quality, readability, thin content risk, or E-E-A-T signals."
 version: v00.33.0
 status: ADOPTED
 domain_path: marketing/seo/seo-content

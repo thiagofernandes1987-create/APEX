@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.electron_development
 name: electron-development
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   architecture, electron-builder packaging, code signing, and auto-update.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_aeo_content_cluster
 name: seo-aeo-content-cluster
-description: "Create — "
+description: "Use when building topical authority around a new subject"
   map, and content gap analysis. Activate when the user wants to build a content cluster, t'
 version: v00.33.0
 status: ADOPTED

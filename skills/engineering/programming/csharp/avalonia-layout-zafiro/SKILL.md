@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.csharp.avalonia_layout_zafiro
 name: avalonia-layout-zafiro
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   and avoiding XAML redundancy.'''
 version: v00.33.0
 status: ADOPTED

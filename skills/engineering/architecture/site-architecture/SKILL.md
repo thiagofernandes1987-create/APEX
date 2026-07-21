@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.site_architecture
 name: site-architecture
-description: "Implement — "
+description: "Use when planning or restructuring page hierarchy, navigation, and URL structure."
   mapping pages, sections, and site structure, but not for XML sitemap auditing or schema ma'
 version: v00.33.0
 status: ADOPTED

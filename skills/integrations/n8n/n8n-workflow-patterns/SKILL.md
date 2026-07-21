@@ -1,7 +1,7 @@
 ---
 skill_id: integrations.n8n.n8n_workflow_patterns
 name: n8n-workflow-patterns
-description: "Automate — "
+description: "You need to choose an architectural pattern for an n8n workflow before building it."
 version: v00.33.0
 status: ADOPTED
 domain_path: integrations/n8n/n8n-workflow-patterns

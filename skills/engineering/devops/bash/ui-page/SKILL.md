@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.bash.ui_page
 name: ui-page
-description: "Implement — "
+description: "Use when you need a new page in a Toss-seed app"
   components.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.unit_testing_test_generate
 name: unit-testing-test-generate
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/rag/unit-testing-test-generate

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.fp_ts_pragmatic
 name: fp-ts-pragmatic
-description: "Apply — "
+description: "When starting with fp-ts and need practical guidance"
   the academic overhead. Use when writing TypeScript with fp-ts library.'''
 version: v00.33.0
 status: ADOPTED

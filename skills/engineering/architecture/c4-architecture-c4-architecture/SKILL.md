@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.c4_architecture_c4_architecture
 name: c4-architecture-c4-architecture
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   analysis approach.'''
 version: v00.33.0
 status: ADOPTED

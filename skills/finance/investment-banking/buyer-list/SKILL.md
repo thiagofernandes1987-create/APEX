@@ -1,7 +1,7 @@
 ---
 skill_id: finance.investment_banking.buyer_list
 name: buyer-list
-description: "Analyze — "
+description: "condition: Dados financeiros desatualizados ou ausentes"
 version: v00.33.0
 status: ADOPTED
 domain_path: finance/investment-banking/buyer-list

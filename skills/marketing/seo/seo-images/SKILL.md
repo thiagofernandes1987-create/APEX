@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_images
 name: seo-images
-description: "Create — >"
+description: "Use when auditing image SEO, alt text, file sizes, formats, or lazy loading."
 version: v00.33.0
 status: ADOPTED
 domain_path: marketing/seo/seo-images

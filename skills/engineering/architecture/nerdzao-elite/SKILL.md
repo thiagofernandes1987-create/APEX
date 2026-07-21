@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.nerdzao_elite
 name: nerdzao-elite
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   TDD, clean code, and pixel-perfect UX validation.'''
 version: v00.33.0
 status: ADOPTED

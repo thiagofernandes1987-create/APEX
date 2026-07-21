@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.aws.terraform_aws_modules
 name: terraform-aws-modules
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   or reviewing Terraform AWS infrastructure.'''
 version: v00.33.0
 status: ADOPTED

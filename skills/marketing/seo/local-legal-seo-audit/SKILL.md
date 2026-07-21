@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.local_legal_seo_audit
 name: local-legal-seo-audit
-description: "Create — "
+description: "You need to audit or improve local SEO for a law firm, attorney, forensic expert, or similar legal/professional services website."
   with local presence, focusing on GBP, directories, E-E-A-T and practice/location pages.'''
 version: v00.33.0
 status: ADOPTED

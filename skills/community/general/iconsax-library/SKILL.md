@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.iconsax_library
 name: iconsax-library
-description: "Use — "
+description: "Designing or building highly crafted navigation menus, toolbars, and action buttons."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/iconsax-library

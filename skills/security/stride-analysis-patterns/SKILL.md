@@ -1,7 +1,7 @@
 ---
 skill_id: security.stride_analysis_patterns
 name: stride-analysis-patterns
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   threat modeling sessions, or creating security documentation.'''
 version: v00.33.0
 status: ADOPTED

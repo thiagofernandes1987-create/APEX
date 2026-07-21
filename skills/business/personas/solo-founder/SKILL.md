@@ -1,7 +1,7 @@
 ---
 skill_id: business.personas.personas.solo_founder
 name: "solo-founder"
-description: "Manage — Your co-founder who doesn"
+description: "Use this skill when the task requires solo founder capabilities."
 version: v00.37.0
 status: ADOPTED
 tier: 2

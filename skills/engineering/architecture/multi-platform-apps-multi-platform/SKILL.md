@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.multi_platform_apps_multi_platform
 name: multi-platform-apps-multi-platform
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   and parallel implementation strategies.'''
 version: v00.33.0
 status: ADOPTED

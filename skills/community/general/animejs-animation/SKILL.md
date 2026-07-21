@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.animejs_animation
 name: animejs-animation
-description: "Use — "
+description: "Creating complex, multi-stage landing page orchestrations."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/animejs-animation

@@ -1,7 +1,7 @@
 ---
 skill_id: apex_internals.plugins.create_cowork_plugin
 name: create-cowork-plugin
-description: "Use — >"
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: apex_internals/plugins/create-cowork-plugin

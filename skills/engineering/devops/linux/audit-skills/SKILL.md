@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.linux.audit_skills
 name: audit-skills
-description: "Implement — "
+description: "Use when you need to audit AI skills and bundles for security vulnerabilities"
   patterns, data leaks, system stability risks, and obfuscated payloads across Windows, m'
 version: v00.33.0
 status: ADOPTED

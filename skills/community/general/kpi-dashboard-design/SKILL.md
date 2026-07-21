@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.kpi_dashboard_design
 name: kpi-dashboard-design
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   decisions.'''
 version: v00.33.0
 status: ADOPTED

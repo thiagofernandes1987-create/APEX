@@ -1,6 +1,6 @@
 ---
 name: "mcp-server-builder"
-description: "Implement — MCP Server Builder"
+description: "You need to expose an internal/external REST API to an LLM agent"
 executor: HYBRID
 skill_id: engineering.cs-engineering.mcp-server-builder
 status: ADOPTED

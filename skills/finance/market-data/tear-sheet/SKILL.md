@@ -1,7 +1,7 @@
 ---
 skill_id: finance.market_data.tear_sheet
 name: tear-sheet
-description: "Analyze — "
+description: "condition: Dados financeiros desatualizados ou ausentes"
   Use this skill whenever the user asks for a tear sheet, company one-pager, company profile'
 version: v00.33.0
 status: ADOPTED

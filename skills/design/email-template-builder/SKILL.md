@@ -1,7 +1,7 @@
 ---
 skill_id: design.email_template_builder
 name: email-template-builder
-description: "Design — Email Template Builder"
+description: "Setting up transactional email for a new product"
 version: v00.33.0
 status: ADOPTED
 domain_path: design

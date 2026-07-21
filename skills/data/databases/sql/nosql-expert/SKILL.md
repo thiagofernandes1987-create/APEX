@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.nosql_expert
 name: nosql-expert
-description: "Analyze — "
+description: "**Designing for Scale**: Moving beyond simple single-node databases to distributed clusters."
   modeling, single-table design, and avoiding hot partitions in high-scale systems.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,6 +1,6 @@
 ---
 name: "coverage"
-description: >-
+description: "Use this skill when user says 'test coverage',"
   Analyze test coverage gaps. Use when user says "test coverage",
   "what's not tested", "coverage gaps", "missing tests", "coverage report",
   or "what needs testing".

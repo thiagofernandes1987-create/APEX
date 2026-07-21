@@ -1,7 +1,7 @@
 ---
 skill_id: sales.common_room.call_prep
 name: call-prep
-description: "Track — "
+description: "condition: CRM ou enrichment tool indisponível"
   [company]'', ''prepare for a meeting with [company]'', ''what should I know before talking to [com'
 version: v00.33.0
 status: ADOPTED

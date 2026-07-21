@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.odoo_ecommerce_configurator
 name: odoo-ecommerce-configurator
-description: "Apply — "
+description: "Launching an Odoo eCommerce store for the first time."
   order-to-fulfillment workflow.'''
 version: v00.33.0
 status: ADOPTED

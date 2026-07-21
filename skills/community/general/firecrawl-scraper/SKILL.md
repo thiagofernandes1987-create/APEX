@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.firecrawl_scraper
 name: firecrawl-scraper
-description: "Use — "
+description: "When you need deep content extraction from web pages"
   content extraction from web pages, page interaction is required (clicking, scrolling, etc'
 version: v00.33.0
 status: ADOPTED

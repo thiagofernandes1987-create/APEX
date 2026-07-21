@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.brevo_automation
 name: brevo-automation
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   MCP.'''
 version: v00.33.0
 status: ADOPTED

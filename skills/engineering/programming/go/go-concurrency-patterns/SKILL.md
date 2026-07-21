@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.go.go_concurrency_patterns
 name: go-concurrency-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Go applications, implementing worker pools, or debugging race conditions.'''
 version: v00.33.0
 status: ADOPTED

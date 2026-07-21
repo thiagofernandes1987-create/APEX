@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.kubernetes.gitops_workflow
 name: gitops-workflow
-description: "Implement — "
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/devops/kubernetes/gitops-workflow

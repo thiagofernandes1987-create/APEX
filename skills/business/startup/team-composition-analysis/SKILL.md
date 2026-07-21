@@ -1,7 +1,7 @@
 ---
 skill_id: business.startup.team_composition_analysis
 name: team-composition-analysis
-description: "Manage — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   startups from pre-seed through Series A.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.agentic_actions_auditor
 name: agentic-actions-auditor
-description: "Apply — >"
+description: "Auditing a repository's GitHub Actions workflows for AI agent security"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/agents/agentic-actions-auditor

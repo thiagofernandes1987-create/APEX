@@ -1,7 +1,7 @@
 ---
 skill_id: web3.defi.seo_aeo_blog_writer
 name: seo-aeo-blog-writer
-description: "Deploy — "
+description: "Use when writing a cluster article from a content cluster map"
   SEO ranking and AEO citation. Activate when the user wants to write a blog post, article, o'
 version: v00.33.0
 status: ADOPTED

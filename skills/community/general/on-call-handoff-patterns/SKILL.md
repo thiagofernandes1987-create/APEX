@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.on_call_handoff_patterns
 name: on-call-handoff-patterns
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   response across shifts.'''
 version: v00.33.0
 status: ADOPTED

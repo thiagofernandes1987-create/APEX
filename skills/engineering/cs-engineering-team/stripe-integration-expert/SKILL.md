@@ -1,6 +1,6 @@
 ---
 name: "stripe-integration-expert"
-description: "Implement — Stripe Integration Expert"
+description: "Adding subscription billing to any web app"
 executor: LLM_BEHAVIOR
 skill_id: engineering.cs-engineering-team.stripe-integration-expert
 status: ADOPTED

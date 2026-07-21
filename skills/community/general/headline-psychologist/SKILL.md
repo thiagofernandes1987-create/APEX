@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.headline_psychologist
 name: headline-psychologist
-description: "Use — "
+description: "Use when headlines need stronger stopping power, curiosity, and relevance without becoming vague clickbait."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/headline-psychologist

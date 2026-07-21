@@ -1,7 +1,7 @@
 ---
 skill_id: sales.apollo.prospect
 name: prospect
-description: "Track — "
+description: "condition: CRM ou enrichment tool indisponível"
   decision-maker leads with emails and phone numbers.'''
 version: v00.33.0
 status: ADOPTED

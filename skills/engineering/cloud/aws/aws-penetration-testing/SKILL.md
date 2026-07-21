@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.aws.aws_penetration_testing
 name: aws-penetration-testing
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   escalation, SSRF to metadata endpoint, S3 bucket exploitation, Lambda code extractio'
 version: v00.33.0
 status: ADOPTED

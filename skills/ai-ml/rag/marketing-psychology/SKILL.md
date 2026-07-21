@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.marketing_psychology
 name: marketing-psychology
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   and feasibility scoring system.'''
 version: v00.33.0
 status: ADOPTED

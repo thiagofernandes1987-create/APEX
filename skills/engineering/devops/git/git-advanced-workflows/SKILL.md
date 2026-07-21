@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.git.git_advanced_workflows
 name: git-advanced-workflows
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   with confidence.'''
 version: v00.33.0
 status: ADOPTED

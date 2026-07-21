@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.javascript.seo_technical
 name: seo-technical
-description: "Implement — "
+description: "Use when the user wants a technical SEO review focused on crawlability, indexability, performance, or rendering."
   data, JavaScript rendering, and related platform signals like robots.txt and AI crawler acce'
 version: v00.33.0
 status: ADOPTED

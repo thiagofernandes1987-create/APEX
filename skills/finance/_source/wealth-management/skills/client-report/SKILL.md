@@ -1,4 +1,6 @@
 ---
+name: client-report
+description: "Use this skill when the task requires client report capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.wealth_management.client_report_3
 status: ADOPTED

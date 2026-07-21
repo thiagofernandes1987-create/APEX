@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.mtls_configuration
 name: mtls-configuration
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   networking, certificate management, or securing internal service communication.'''
 version: v00.33.0
 status: ADOPTED

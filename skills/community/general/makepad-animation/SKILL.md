@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.makepad_animation
 name: makepad-animation
-description: "Use — |"
+description: "You need to build or debug animations, transitions, hover states, or animator timelines in Makepad."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/makepad-animation

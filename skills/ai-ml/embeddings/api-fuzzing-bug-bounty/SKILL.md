@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.embeddings.api_fuzzing_bug_bounty
 name: api-fuzzing-bug-bounty
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   testing engagements. Covers vulnerability discovery, authentication bypass, IDOR ex'
 version: v00.33.0
 status: ADOPTED

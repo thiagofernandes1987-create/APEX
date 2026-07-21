@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_hr_payroll_setup
 name: odoo-hr-payroll-setup
-description: "Analyze — "
+description: "Creating a salary structure with gross pay, deductions, and net pay."
   and payroll journal entries.'''
 version: v00.33.0
 status: ADOPTED

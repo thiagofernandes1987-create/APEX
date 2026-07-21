@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_monitor_opentelemetry_ts
 name: azure-monitor-opentelemetry-ts
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cloud/azure/azure-monitor-opentelemetry-ts

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.similarity_search_patterns
 name: similarity-search-patterns
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   nearest neighbor queries, or optimizing retrieval performance.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: security.security_compliance_compliance_check
 name: security-compliance-compliance-check
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   SOC2, PCI-DSS, and other industry standards. Perform comprehensive compliance audits an'
 version: v00.33.0
 status: ADOPTED

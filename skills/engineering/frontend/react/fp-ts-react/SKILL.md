@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.fp_ts_react
 name: fp-ts-react
-description: "Implement — "
+description: "When building React apps with fp-ts for type-safe state management"
   apps with functional programming patterns. Works with React 18/19, Next.js 14/15.'''
 version: v00.33.0
 status: ADOPTED

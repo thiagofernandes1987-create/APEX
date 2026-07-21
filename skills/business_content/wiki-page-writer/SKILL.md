@@ -1,7 +1,7 @@
 ---
 skill_id: business_content.wiki_page_writer
 name: wiki-page-writer
-description: "Use — One-line description"
+description: "condition: Recurso ou ferramenta necessária indisponível"
   depth. Use when writing documentation, generating wiki pages, creating technic
 version: v00.33.0
 status: ADOPTED

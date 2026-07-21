@@ -1,7 +1,7 @@
 ---
 skill_id: sales.common_room.prospect
 name: prospect
-description: "Track — "
+description: "condition: CRM ou enrichment tool indisponível"
   match [criteria]'', ''build a prospect list'', ''find contacts at [type of company]'', ''show me com'
 version: v00.33.0
 status: ADOPTED

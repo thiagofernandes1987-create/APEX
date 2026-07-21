@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.audio_transcriber
 name: audio-transcriber
-description: "Apply — "
+description: "User needs to transcribe audio/video files to text"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/llm/audio-transcriber

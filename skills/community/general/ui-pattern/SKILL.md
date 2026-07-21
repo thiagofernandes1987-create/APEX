@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ui_pattern
 name: ui-pattern
-description: "Use — "
+description: "Use when you need a reusable layout pattern rather than a one-off page section"
   Toss primitives.'''
 version: v00.33.0
 status: ADOPTED

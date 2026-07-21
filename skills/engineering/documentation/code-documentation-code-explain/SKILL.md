@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.documentation.code_documentation_code_explain
 name: code-documentation-code-explain
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   and step-by-step breakdowns. Transform difficult concepts into understandable explan'
 version: v00.33.0
 status: ADOPTED

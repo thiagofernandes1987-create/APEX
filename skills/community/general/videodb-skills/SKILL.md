@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.videodb_skills
 name: videodb-skills
-description: "Use — "
+description: "User wants to upload and process videos from YouTube, URLs, or local files"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/videodb-skills

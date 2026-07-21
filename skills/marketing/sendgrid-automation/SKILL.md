@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.sendgrid_automation
 name: sendgrid-automation
-description: "Create — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   management, sender identity setup, and email analytics through Composio''s SendGrid toolkit.'''
 version: v00.33.0
 status: ADOPTED

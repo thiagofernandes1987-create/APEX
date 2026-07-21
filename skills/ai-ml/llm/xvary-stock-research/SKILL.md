@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.xvary_stock_research
 name: xvary-stock-research
-description: "Apply — "
+description: "Use when you need a **verdict-style equity memo** (constructive / neutral / cautious) grounded in **public** filings and quotes."
   with bundled Python tools (Claude Code, Cursor, Codex).'''
 version: v00.33.0
 status: ADOPTED

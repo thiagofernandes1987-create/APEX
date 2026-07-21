@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.apify_lead_generation
 name: apify-lead-generation
-description: "Use — "
+description: "You need business, creator, or contact leads from maps, search, social, or video platforms."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/apify-lead-generation

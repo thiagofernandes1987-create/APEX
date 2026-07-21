@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.ilya_sutskever
 name: ilya-sutskever
-description: "Apply — "
+description: "When the user mentions 'ilya sutskever' or related topics"
   quiser perspectivas sobre: AGI safety-first, consciência de IA, scaling laws, deep learning p'
 version: v00.33.0
 status: ADOPTED

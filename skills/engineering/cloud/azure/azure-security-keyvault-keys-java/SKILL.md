@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_security_keyvault_keys_java
 name: azure-security-keyvault-keys-java
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   keys, performing encrypt/decrypt/sign/verify operations, or working with HSM-backed keys.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.uv_package_manager
 name: uv-package-manager
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   for modern Python project management and dependency workflows.'''
 version: v00.33.0
 status: ADOPTED

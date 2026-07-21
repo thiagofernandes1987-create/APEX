@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.coda_automation
 name: coda-automation
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   publishing. Always search tools first for current schemas.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.api_testing_observability_api_mock
 name: api-testing-observability-api-mock
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Design mocks that simulate real API behavior and enable parallel development.'''
 version: v00.33.0
 status: ADOPTED

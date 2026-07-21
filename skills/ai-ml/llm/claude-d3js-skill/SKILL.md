@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.claude_d3js_skill
 name: claude-d3js-skill
-description: "Apply — "
+description: "Custom visualisations requiring unique visual encodings or layouts"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/llm/claude-d3js-skill

@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_programmatic
 name: seo-programmatic
-description: "Create — "
+description: "Use when the user wants programmatic SEO planning or review."
   URL systems, internal linking, quality gates, and index-bloat safeguards for pages at scal'
 version: v00.33.0
 status: ADOPTED

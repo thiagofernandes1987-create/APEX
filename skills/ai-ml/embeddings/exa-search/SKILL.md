@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.embeddings.exa_search
 name: exa-search
-description: "Apply — "
+description: "When you need semantic/embeddings-based search"
   search, finding similar content, or searching by category (company, peop'
 version: v00.33.0
 status: ADOPTED

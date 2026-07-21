@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_dataforseo
 name: seo-dataforseo
-description: "Create — "
+description: "Use when the user needs live SEO data instead of static best-practice guidance."
   data. Trigger when the user needs real SEO data rather than static guidance.'''
 version: v00.33.0
 status: ADOPTED

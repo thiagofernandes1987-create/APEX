@@ -1,7 +1,7 @@
 ---
 skill_id: security_engineering.secure_delivery_pipeline
 name: secure-delivery-pipeline
-description: >
+description: "Preparando um deploy para `production` (obrigatório) ou `staging` (recomendado)"
   Injeta camadas de segurança em todo pipeline de entrega de software. Orquestra:
   audit de dependências → análise de código → pen testing → ISMS compliance →
   incident response plan. Garante que nenhum código chegue a produção sem passar

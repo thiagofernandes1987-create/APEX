@@ -1,7 +1,7 @@
 ---
 skill_id: security.security_bluebook_builder
 name: security-bluebook-builder
-description: "Audit — "
+description: "You need a concise but enforceable security policy for an app handling sensitive data."
   using MUST/SHOULD/CAN language, with explicit assumptions, scope, and security gates.'''
 version: v00.33.0
 status: ADOPTED

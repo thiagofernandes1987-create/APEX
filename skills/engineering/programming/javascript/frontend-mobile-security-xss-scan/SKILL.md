@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.javascript.frontend_mobile_security_xss_scan
 name: frontend-mobile-security-xss-scan
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   prevention. Analyze React, Vue, Angular, and vanilla JavaScript code to identify injection po'
 version: v00.33.0
 status: ADOPTED

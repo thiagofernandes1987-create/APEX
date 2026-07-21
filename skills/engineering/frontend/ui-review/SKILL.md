@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.ui_review
 name: ui-review
-description: "Implement — "
+description: "Use when a component or page should follow the StyleSeed Toss design language"
   and implementation quality.'''
 version: v00.33.0
 status: ADOPTED

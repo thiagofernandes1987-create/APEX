@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.hybrid_search_implementation
 name: hybrid-search-implementation
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   engines, or when neither approach alone provides sufficient recall.'''
 version: v00.33.0
 status: ADOPTED

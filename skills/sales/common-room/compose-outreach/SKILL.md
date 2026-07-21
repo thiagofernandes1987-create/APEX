@@ -1,7 +1,7 @@
 ---
 skill_id: sales.common_room.compose_outreach
 name: compose-outreach
-description: "Track — "
+description: "condition: CRM ou enrichment tool indisponível"
   ''write an email to [name]'', ''compose a message for [contact]'', or any outreach drafting re'
 version: v00.33.0
 status: ADOPTED

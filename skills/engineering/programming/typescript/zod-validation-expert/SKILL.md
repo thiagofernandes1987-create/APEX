@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.typescript.zod_validation_expert
 name: zod-validation-expert
-description: "Implement — "
+description: "Use when defining TypeScript validation schemas for API inputs or forms"
   and integration with React Hook Form, Next.js, and tRPC.'''
 version: v00.33.0
 status: ADOPTED

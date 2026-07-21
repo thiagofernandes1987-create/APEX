@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.risk_metrics_calculation
 name: risk-metrics-calculation
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   portfolio risk, implementing risk limits, or building risk monitoring systems.'''
 version: v00.33.0
 status: ADOPTED

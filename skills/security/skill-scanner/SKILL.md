@@ -1,7 +1,7 @@
 ---
 skill_id: security.skill_scanner
 name: skill-scanner
-description: "Audit — "
+description: "You need to evaluate a skill for prompt injection, malicious code, over-broad permissions, or supply-chain risk before adopting it."
   permissions, secret exposure, and supply chain risks.'''
 version: v00.33.0
 status: ADOPTED

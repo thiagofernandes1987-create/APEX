@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.identity_mirror
 name: identity-mirror
-description: "Use — "
+description: "Use when messaging needs to reflect the audience's self-image, aspirations, or in-group identity."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/identity-mirror

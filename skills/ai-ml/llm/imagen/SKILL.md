@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.imagen
 name: imagen
-description: "Apply — "
+description: "User requests image generation (e.g., 'generate an image of...', 'create a picture...')"
   documentation, and design assets.'''
 version: v00.33.0
 status: ADOPTED

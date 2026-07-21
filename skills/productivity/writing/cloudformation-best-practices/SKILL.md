@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.cloudformation_best_practices
 name: cloudformation-best-practices
-description: "Automate — "
+description: "condition: Arquivo de tasks ou memória não encontrado"
   writing or reviewing CF templates.'''
 version: v00.33.0
 status: ADOPTED

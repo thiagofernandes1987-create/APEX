@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.architecture_decision_records
 name: architecture-decision-records
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   the context and rationale behind significant technical decisions.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.codex_review
 name: codex-review
-description: "Use — "
+description: "When you want professional code review before commits"
   code review before commits, you need automatic CHANGELOG generation, or reviewing lar'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.nodejs.hono
 name: hono
-description: "Implement — "
+description: "Use when building a REST or RPC API for edge deployment (Cloudflare Workers, Deno Deploy)"
   and any WinterCG-compatible runtime.'''
 version: v00.33.0
 status: ADOPTED

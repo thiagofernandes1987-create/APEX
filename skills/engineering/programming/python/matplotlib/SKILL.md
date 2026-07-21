@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.matplotlib
 name: matplotlib
-description: "Implement — "
+description: "Creating any type of plot or chart (line, scatter, bar, histogram, heatmap, contour, etc.)"
   plots.'''
 version: v00.33.0
 status: ADOPTED

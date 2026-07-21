@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_ai_projects_py
 name: azure-ai-projects-py
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cloud/azure/azure-ai-projects-py

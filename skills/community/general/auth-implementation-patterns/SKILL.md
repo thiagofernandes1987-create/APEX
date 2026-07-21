@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.auth_implementation_patterns
 name: auth-implementation-patterns
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   best practices.'''
 version: v00.33.0
 status: ADOPTED

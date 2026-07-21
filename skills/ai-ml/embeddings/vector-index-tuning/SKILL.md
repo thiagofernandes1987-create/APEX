@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.embeddings.vector_index_tuning
 name: vector-index-tuning
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   quantization strategies, or scaling vector search infrastructure.'''
 version: v00.33.0
 status: ADOPTED

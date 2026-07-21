@@ -1,4 +1,6 @@
 ---
+name: portfolio-rebalance
+description: "Use this skill when the task requires portfolio rebalance capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.wealth_management.portfolio_rebalance_2
 status: ADOPTED

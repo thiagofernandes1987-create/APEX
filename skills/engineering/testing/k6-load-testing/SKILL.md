@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.k6_load_testing
 name: k6-load-testing
-description: "Implement — "
+description: "Use when you need to load test HTTP APIs, WebSocket endpoints, or browser scenarios"
   analyze results, and integrate with CI/CD.'''
 version: v00.33.0
 status: ADOPTED

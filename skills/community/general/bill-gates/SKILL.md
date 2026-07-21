@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.bill_gates
 name: bill-gates
-description: "Use — "
+description: "When you need specialized assistance with this domain"
   tecnologico global, investidor sistemico e filantropo baseado em dados.'''
 version: v00.33.0
 status: ADOPTED

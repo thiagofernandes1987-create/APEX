@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.dotnet_backend_patterns
 name: dotnet-backend-patterns
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   best practices (2024/2025).'''
 version: v00.33.0
 status: ADOPTED

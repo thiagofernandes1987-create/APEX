@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_page
 name: seo-page
-description: "Create — >"
+description: "Use when the user provides a single URL for detailed on-page SEO review."
 version: v00.33.0
 status: ADOPTED
 domain_path: marketing/seo/seo-page

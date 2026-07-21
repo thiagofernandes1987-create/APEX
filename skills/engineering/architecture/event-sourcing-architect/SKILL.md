@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.event_sourcing_architect
 name: event-sourcing-architect
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   building, saga orchestration, and eventual consistency patterns. Use PROACTIVELY for eve'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.task_intelligence
 name: task-intelligence
-description: "Use — "
+description: "When the user mentions 'pre-task briefing' or related topics"
   qualquer tarefa solicitada pelo usuário.'''
 version: v00.33.0
 status: ADOPTED

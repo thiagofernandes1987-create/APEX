@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.documentation.wiki_page_writer
 name: wiki-page-writer
-description: "Implement — "
+description: "User asks to document a specific component, system, or feature"
   depth.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.kubernetes.k8s_manifest_generator
 name: k8s-manifest-generator
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   ConfigMaps, Secrets, and PersistentVolumeClaims.'''
 version: v00.33.0
 status: ADOPTED

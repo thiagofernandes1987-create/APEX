@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.webapp_testing
 name: webapp-testing
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/python/webapp-testing

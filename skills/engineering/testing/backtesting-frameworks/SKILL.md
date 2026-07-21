@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.backtesting_frameworks
 name: backtesting-frameworks
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   performance estimates.'''
 version: v00.33.0
 status: ADOPTED

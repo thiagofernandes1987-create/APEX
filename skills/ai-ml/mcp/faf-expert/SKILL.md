@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.faf_expert
 name: faf-expert
-description: "Apply — "
+description: "**Gold Tier (95%+)**: Production-ready AI context"
   scoring, bi-directional sync.'''
 version: v00.33.0
 status: ADOPTED

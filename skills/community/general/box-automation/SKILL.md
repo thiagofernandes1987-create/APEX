@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.box_automation
 name: box-automation
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   metadata queries, and sign requests through Composio''s Box toolkit.'''
 version: v00.33.0
 status: ADOPTED

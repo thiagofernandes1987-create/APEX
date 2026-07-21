@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.chrome_extension_developer
 name: chrome-extension-developer
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   scripts, and cross-context communication.'''
 version: v00.33.0
 status: ADOPTED

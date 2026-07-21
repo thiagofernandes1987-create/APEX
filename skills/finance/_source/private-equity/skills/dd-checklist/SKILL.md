@@ -1,4 +1,6 @@
 ---
+name: dd-checklist
+description: "Use this skill when kicking off diligence, organizing a data room review, or tracking outstanding items"
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.dd_checklist_3
 status: ADOPTED

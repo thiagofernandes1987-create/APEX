@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.openclaw_github_repo_commander
 name: openclaw-github-repo-commander
-description: "Use — "
+description: "Use when you need to audit a repository for secrets, junk files, or low-quality content"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/openclaw-github-repo-commander

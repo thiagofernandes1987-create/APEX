@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.incident_response_smart_fix
 name: incident-response-smart-fix
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   AI-assisted debugging tools and observability platforms to systematically diagnose and re'
 version: v00.33.0
 status: ADOPTED

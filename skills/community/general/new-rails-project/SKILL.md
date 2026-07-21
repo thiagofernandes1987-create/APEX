@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.new_rails_project
 name: new-rails-project
-description: Create a new Rails project
+description: "You need to bootstrap a new Rails project with the opinionated stack defined in this skill."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/new-rails-project

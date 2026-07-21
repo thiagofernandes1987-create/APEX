@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.typescript.drizzle_orm_expert
 name: drizzle-orm-expert
-description: "Implement — "
+description: "Use when the user asks to set up Drizzle ORM in a new or existing project"
   integration. Use when building type-safe database layers with Drizzle.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.react_flow_architect
 name: react-flow-architect
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   advanced state management.'''
 version: v00.33.0
 status: ADOPTED

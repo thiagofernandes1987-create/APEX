@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_aeo_content_quality_auditor
 name: seo-aeo-content-quality-auditor
-description: "Create — "
+description: "Use when auditing a landing page or blog post before publishing"
   after fixes. Activate when the user wants to audit, review, or score content for SEO or'
 version: v00.33.0
 status: ADOPTED

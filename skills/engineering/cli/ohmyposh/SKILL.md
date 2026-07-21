@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cli.ohmyposh
 name: ohmyposh
-description: "Implement — "
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cli

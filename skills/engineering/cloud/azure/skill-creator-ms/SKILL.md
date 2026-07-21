@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.skill_creator_ms
 name: skill-creator-ms
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   Use when creating new skills or updating existing skills.'''
 version: v00.33.0
 status: ADOPTED

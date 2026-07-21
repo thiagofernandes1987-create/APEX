@@ -1,7 +1,7 @@
 ---
 skill_id: security.ethical_hacking_methodology
 name: ethical-hacking-methodology
-description: "Audit — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   the five stages of ethical hacking methodology, essential tools, attack techniques, and prof'
 version: v00.33.0
 status: ADOPTED

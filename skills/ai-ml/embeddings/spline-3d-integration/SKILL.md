@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.embeddings.spline_3d_integration
 name: spline-3d-integration
-description: "Apply — "
+description: "You need to embed an interactive Spline scene into a web project."
   control API.'''
 version: v00.33.0
 status: ADOPTED

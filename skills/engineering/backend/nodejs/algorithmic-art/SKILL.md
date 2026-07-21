@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.nodejs.algorithmic_art
 name: algorithmic-art
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   .md files (philosophy), .html files (interactive viewer), and .js files (generative algorit'
 version: v00.33.0
 status: ADOPTED

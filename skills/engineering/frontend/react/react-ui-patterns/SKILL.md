@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.react_ui_patterns
 name: react-ui-patterns
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   handling async data, or managing UI states.'''
 version: v00.33.0
 status: ADOPTED

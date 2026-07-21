@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_security.skill_tester
 name: skill-tester
-description: "Use — Skill Tester"
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/security

@@ -1,7 +1,7 @@
 ---
 skill_id: healthcare.wellally_tech
 name: wellally-tech
-description: "Analyze — "
+description: "You need to import or normalize health data from sources like Apple Health, Fitbit, Oura, or CSV/JSON exports."
   base, providing data import and knowledge reference for personal health management sys'
 version: v00.33.0
 status: ADOPTED

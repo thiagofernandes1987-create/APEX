@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_communication_callingserver_java
 name: azure-communication-callingserver-java
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   instead. This skill is for maintaining legacy code only.'''
 version: v00.33.0
 status: ADOPTED

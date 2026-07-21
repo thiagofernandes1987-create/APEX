@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.kubernetes.k8s_security_policies
 name: k8s-security-policies
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Kubernetes.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ux_feedback
 name: ux-feedback
-description: "Use — "
+description: "Use when a component or page fetches, mutates, or depends on async data"
   rules.'''
 version: v00.33.0
 status: ADOPTED

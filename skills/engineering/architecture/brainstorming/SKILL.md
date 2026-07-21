@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.brainstorming
 name: brainstorming
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   designs through disciplined reasoning and collaboration.'''
 version: v00.33.0
 status: ADOPTED

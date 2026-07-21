@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.sentry_automation
 name: sentry-automation
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   projects and teams. Always search tools first for current schemas.'''
 version: v00.33.0
 status: ADOPTED

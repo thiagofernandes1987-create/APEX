@@ -1,7 +1,7 @@
 ---
 skill_id: security.differential_review
 name: differential-review
-description: "Audit — "
+description: "You need a security-focused review of a PR, commit range, or diff rather than a general code review."
 version: v00.33.0
 status: ADOPTED
 domain_path: security/differential-review

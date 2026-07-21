@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.wcag_audit_patterns
 name: wcag-audit-patterns
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/wcag-audit-patterns

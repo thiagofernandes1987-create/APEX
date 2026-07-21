@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_edi_connector
 name: odoo-edi-connector
-description: "Analyze — "
+description: "A retail partner requires EDI 850 (Purchase Orders) to do business with you."
   onboarding, and automated order processing.'''
 version: v00.33.0
 status: ADOPTED

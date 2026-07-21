@@ -1,7 +1,7 @@
 ---
 skill_id: finance.equity_research.thesis_tracker
 name: thesis-tracker
-description: "Analyze — "
+description: "condition: Dados financeiros desatualizados ou ausentes"
 version: v00.33.0
 status: ADOPTED
 domain_path: finance/equity-research/thesis-tracker

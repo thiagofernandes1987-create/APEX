@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.incident_response_incident_response
 name: incident-response-incident-response
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/incident-response-incident-response

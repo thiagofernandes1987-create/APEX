@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ux_audit
 name: ux-audit
-description: "Use — "
+description: "Use when a screen feels awkward even though the code and styling seem correct"
   as the implementation context.'''
 version: v00.33.0
 status: ADOPTED

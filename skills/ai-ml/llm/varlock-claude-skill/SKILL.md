@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.varlock_claude_skill
 name: varlock-claude-skill
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   or git commits'''
 version: v00.33.0
 status: ADOPTED

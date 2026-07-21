@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.saas_mvp_launcher
 name: saas-mvp-launcher
-description: "Implement — "
+description: "Use when starting a new SaaS product from scratch"
   architecture, auth, payments, and launch checklist.'''
 version: v00.33.0
 status: ADOPTED

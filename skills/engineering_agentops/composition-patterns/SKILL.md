@@ -1,6 +1,6 @@
 ---
 name: vercel-composition-patterns
-description:
+description: "Use this skill when working with `composition-patterns` tasks in the `engineering_agentops` domain."
   React composition patterns that scale. Use when refactoring components with
   boolean prop proliferation, building flexible component libraries, or
   designing reusable APIs. Triggers on tasks involving compound components,

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.environment_setup_guide
 name: environment-setup-guide
-description: "Use — "
+description: "Use when starting a new project and need to set up the development environment"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/environment-setup-guide

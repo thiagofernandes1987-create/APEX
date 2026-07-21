@@ -1,7 +1,7 @@
 ---
 skill_id: finance.payments.churn_prevention
 name: churn-prevention
-description: "Analyze — "
+description: "Use when churn is rising or cancellation behavior needs intervention."
   strategy. Use when users are cancelling, failed payments are rising, or subscription re'
 version: v00.33.0
 status: ADOPTED

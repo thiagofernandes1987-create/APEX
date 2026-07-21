@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.phase_gated_debugging
 name: phase-gated-debugging
-description: "Use — "
+description: "a bug keeps getting 'fixed' without resolving the underlying issue"
   Prevents premature fix attempts.'''
 version: v00.33.0
 status: ADOPTED

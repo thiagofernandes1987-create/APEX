@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.angular.angular_migration
 name: angular-migration
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   and routing migration.'''
 version: v00.33.0
 status: ADOPTED

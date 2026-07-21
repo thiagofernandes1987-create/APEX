@@ -1,4 +1,6 @@
 ---
+name: ai-readiness
+description: "Use this skill when the task requires ai readiness capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.private_equity.ai_readiness_3
 status: ADOPTED

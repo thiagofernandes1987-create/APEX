@@ -1,7 +1,7 @@
 ---
 skill_id: web3.nft.nft_standards
 name: nft-standards
-description: "Deploy — "
+description: "condition: Rede blockchain congestionada ou indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: web3/nft/nft-standards

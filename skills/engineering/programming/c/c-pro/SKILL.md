@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.c.c_pro
 name: c-pro
-description: "Implement — "
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/c/c-pro

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.moodle_external_api_development
 name: moodle-external-api-development
-description: "Use — "
+description: "Creating custom web services for Moodle plugins"
   external API framework and coding standards.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.aws.cloud_penetration_testing
 name: cloud-penetration-testing
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   (AWS), and Google Cloud Platform (GCP).'''
 version: v00.33.0
 status: ADOPTED

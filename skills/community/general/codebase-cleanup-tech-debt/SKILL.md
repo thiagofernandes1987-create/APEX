@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.codebase_cleanup_tech_debt
 name: codebase-cleanup-tech-debt
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   in software projects. Analyze the codebase to uncover debt, assess its impact, and create act'
 version: v00.33.0
 status: ADOPTED

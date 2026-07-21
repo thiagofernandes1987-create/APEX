@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.android_jetpack_compose_expert
 name: android-jetpack-compose-expert
-description: "Use — "
+description: "Use when starting a new Android project with Jetpack Compose."
   performance, and Material Design 3.'''
 version: v00.33.0
 status: ADOPTED

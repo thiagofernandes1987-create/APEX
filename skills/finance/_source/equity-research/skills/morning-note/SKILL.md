@@ -1,4 +1,6 @@
 ---
+name: morning-note
+description: "Use this skill when the task requires morning note capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.equity_research.morning_note_3
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: finance.payments.stripe_integration
 name: stripe-integration
-description: "Analyze — "
+description: "condition: Dados financeiros desatualizados ou ausentes"
   webhooks, and refunds.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.llm_application_dev_langchain_agent
 name: llm-application-dev-langchain-agent
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   and LangGraph.'''
 version: v00.33.0
 status: ADOPTED

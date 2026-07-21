@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.progressive_web_app
 name: progressive-web-app
-description: "Use — "
+description: "Use when the user wants their web app to work offline or on unreliable networks."
   the user mentions PWA, service workers, web app manifests, Workbox, ''add to home scree'
 version: v00.33.0
 status: ADOPTED

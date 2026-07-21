@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.langchain_architecture
 name: langchain-architecture
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   tool integration.'''
 version: v00.33.0
 status: ADOPTED

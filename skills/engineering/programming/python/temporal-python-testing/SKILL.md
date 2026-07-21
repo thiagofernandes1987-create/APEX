@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.temporal_python_testing
 name: temporal-python-testing
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   specific testing scenarios.'''
 version: v00.33.0
 status: ADOPTED

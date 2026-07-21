@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.kotlin.kotlin_coroutines_expert
 name: kotlin-coroutines-expert
-description: "Implement — "
+description: "Use when implementing asynchronous operations in Kotlin."
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/kotlin/kotlin-coroutines-expert

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.render_automation
 name: render-automation
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   for current schemas.'''
 version: v00.33.0
 status: ADOPTED

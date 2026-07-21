@@ -1,7 +1,7 @@
 ---
 skill_id: finance.payments.pakistan_payments_stack
 name: pakistan-payments-stack
-description: "Analyze — "
+description: "Building PKR-first SaaS/B2B billing for Pakistan."
   optional Raast) for SaaS with PKR billing, webhook reliability, and reconciliation.'''
 version: v00.33.0
 status: ADOPTED

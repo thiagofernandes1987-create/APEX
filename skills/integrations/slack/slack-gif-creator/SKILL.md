@@ -1,7 +1,7 @@
 ---
 skill_id: integrations.slack.slack_gif_creator
 name: slack-gif-creator
-description: "Automate — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: integrations/slack/slack-gif-creator

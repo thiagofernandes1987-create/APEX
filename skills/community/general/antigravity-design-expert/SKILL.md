@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.antigravity_design_expert
 name: antigravity-design-expert
-description: "Use — "
+description: "You are building a highly interactive web interface with spatial depth, glassmorphism, and motion-heavy UI."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/antigravity-design-expert

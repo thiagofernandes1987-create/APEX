@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.product_design
 name: product-design
-description: "Use — "
+description: "When you need specialized assistance with this domain"
   design tokens, prototipagem e handoff. Cobre Figma, design systems, tipografia, cor, espacam'
 version: v00.33.0
 status: ADOPTED

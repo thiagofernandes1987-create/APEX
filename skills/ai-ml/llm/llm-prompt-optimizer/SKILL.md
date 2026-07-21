@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.llm_prompt_optimizer
 name: llm-prompt-optimizer
-description: "Apply — "
+description: "Use when a prompt returns inconsistent, vague, or hallucinated results"
   reduce hallucinations, and cut token usage.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.data_engineering_data_pipeline
 name: data-engineering-data-pipeline
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   for batch and streaming data processing.'''
 version: v00.33.0
 status: ADOPTED

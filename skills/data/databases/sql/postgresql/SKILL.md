@@ -1,7 +1,7 @@
 ---
 skill_id: data.databases.sql.postgresql
 name: postgresql
-description: "Analyze — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   patterns, and advanced features'''
 version: v00.33.0
 status: ADOPTED

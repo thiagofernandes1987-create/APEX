@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.shodan_reconnaissance
 name: shodan-reconnaissance
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   engagements.'''
 version: v00.33.0
 status: ADOPTED

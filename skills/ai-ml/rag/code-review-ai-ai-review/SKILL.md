@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.code_review_ai_ai_review
 name: code-review-ai-ai-review
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   recognition, and modern DevOps practices. Leverage AI tools (GitHub Copilot, Qodo, GPT-5, '
 version: v00.33.0
 status: ADOPTED

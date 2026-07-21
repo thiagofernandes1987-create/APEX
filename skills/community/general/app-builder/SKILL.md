@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.app_builder
 name: app-builder
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   project type, selects tech stack, coordinates agents.'''
 version: v00.33.0
 status: ADOPTED

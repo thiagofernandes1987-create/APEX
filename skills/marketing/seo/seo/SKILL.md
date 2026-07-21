@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo
 name: seo
-description: "Create — "
+description: "Use when the user asks for a full SEO audit or broad SEO strategy."
   and GEO. Use as the umbrella skill when the user asks for a full SEO analysis or strat'
 version: v00.33.0
 status: ADOPTED

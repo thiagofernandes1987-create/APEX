@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.application_performance_performance_optimization
 name: application-performance-performance-optimization
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   when coordinating performance optimization across the stack.'''
 version: v00.33.0
 status: ADOPTED

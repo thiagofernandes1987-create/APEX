@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.manifest
 name: manifest
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   API keys, or troubleshooting the plugin.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.yann_lecun
 name: yann-lecun
-description: "Use — "
+description: "When the user mentions 'yann lecun' or related topics"
   Turing 2018.'''
 version: v00.33.0
 status: ADOPTED

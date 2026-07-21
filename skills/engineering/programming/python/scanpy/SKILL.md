@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.scanpy
 name: scanpy
-description: "Implement — "
+description: "Analyzing single-cell RNA-seq data (.h5ad, 10X, CSV formats)"
   for complete single-cell workflows including quality control, normalization, dimensional'
 version: v00.33.0
 status: ADOPTED

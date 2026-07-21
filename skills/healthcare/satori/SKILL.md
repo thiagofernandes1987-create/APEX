@@ -1,7 +1,7 @@
 ---
 skill_id: healthcare.satori
 name: satori
-description: "Analyze — "
+description: "When seeking a structured philosophical or psychological conversation partner"
 version: v00.33.0
 status: ADOPTED
 domain_path: healthcare/satori

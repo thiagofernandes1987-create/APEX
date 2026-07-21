@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.agent_orchestration_improve_agent
 name: agent-orchestration-improve-agent
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   iteration.'''
 version: v00.33.0
 status: ADOPTED

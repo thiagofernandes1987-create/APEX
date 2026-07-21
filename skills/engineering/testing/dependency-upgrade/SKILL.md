@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.dependency_upgrade
 name: dependency-upgrade
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   testing approaches.'''
 version: v00.33.0
 status: ADOPTED

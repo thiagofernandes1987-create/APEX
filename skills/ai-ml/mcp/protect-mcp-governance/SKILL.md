@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.protect_mcp_governance
 name: protect-mcp-governance
-description: "Apply — "
+description: "Use when you need to control which MCP tools an agent can call and under what conditions"
   receipt verification.'''
 version: v00.33.0
 status: ADOPTED

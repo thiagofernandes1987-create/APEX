@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.react_best_practices
 name: react-best-practices
-description: "Implement — "
+description: "Writing new React components or Next.js pages"
   when writing new React components or Next.js pages, implementing data fetching (client or se'
 version: v00.33.0
 status: ADOPTED

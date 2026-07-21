@@ -1,7 +1,7 @@
 ---
 skill_id: legal.compliance.web_design_guidelines
 name: web-design-guidelines
-description: "Review — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: legal/compliance/web-design-guidelines

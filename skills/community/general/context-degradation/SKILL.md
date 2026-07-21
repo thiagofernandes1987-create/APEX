@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.context_degradation
 name: context-degradation
-description: "Use — "
+description: "Agent performance degrades unexpectedly during long conversations"
   patterns is essential for diagnosing failures and designing resilient systems.'''
 version: v00.33.0
 status: ADOPTED

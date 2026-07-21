@@ -1,4 +1,6 @@
 ---
+name: model-update
+description: "Use this skill when the task requires model update capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.equity_research.model_update_3
 status: ADOPTED

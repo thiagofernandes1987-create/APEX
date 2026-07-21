@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.nodejs.backend_dev_guidelines
 name: backend-dev-guidelines
-description: "Implement — "
+description: "Routes, controllers, services, repositories"
   constraints. Use when routes, controllers, services, repositories, express middleware,'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.workflow_orchestration_patterns
 name: workflow-orchestration-patterns
-description: "Implement — "
+description: "**Multi-step processes** spanning machines/services/databases"
   patterns, and best practices for building reliable distributed systems.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.robius_state_management
 name: robius-state-management
-description: "Use — |"
+description: "Designing application state structure"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/robius-state-management

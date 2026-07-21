@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.git_hooks_automation
 name: git-hooks-automation
-description: "Use — "
+description: "User asks to 'set up git hooks' or 'add pre-commit hooks'"
   gates, formatting, linting, and commit message enforcement before code reaches CI.'''
 version: v00.33.0
 status: ADOPTED

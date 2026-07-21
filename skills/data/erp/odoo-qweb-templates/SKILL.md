@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_qweb_templates
 name: odoo-qweb-templates
-description: "Analyze — "
+description: "Creating a custom PDF report (invoice, delivery slip, certificate)."
   t-field, and report actions.'''
 version: v00.33.0
 status: ADOPTED

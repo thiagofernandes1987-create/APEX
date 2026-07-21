@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.leiloeiro_juridico
 name: leiloeiro-juridico
-description: "Use — "
+description: "When the user mentions 'juridico leilao' or related topics"
   onus reais, embargos e jurisprudencia.'''
 version: v00.33.0
 status: ADOPTED

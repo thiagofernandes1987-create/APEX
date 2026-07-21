@@ -1,7 +1,7 @@
 ---
 skill_id: web3.web3_testing
 name: web3-testing
-description: "Deploy — "
+description: "condition: Rede blockchain congestionada ou indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: web3/web3-testing

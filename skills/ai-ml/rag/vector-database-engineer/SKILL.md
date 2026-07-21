@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.vector_database_engineer
 name: vector-database-engineer
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   Qdrant, Milvus, and pgvector for RAG applications, recommendation systems, and simila'
 version: v00.33.0
 status: ADOPTED

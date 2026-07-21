@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.fix_review
 name: fix-review
-description: "Use — "
+description: "Reviewing commits that address security audit findings"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/fix-review

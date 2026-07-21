@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.azure_keyvault_secrets_rust
 name: azure-keyvault-secrets-rust
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   ''keyvault secrets rust'', ''SecretClient rust'', ''get secret rust'', ''set secret rust''.'''
 version: v00.33.0
 status: ADOPTED

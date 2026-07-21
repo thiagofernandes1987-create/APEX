@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.seaborn
 name: seaborn
-description: "Implement — "
+description: "You need publication-quality statistical graphics directly from tabular datasets."
   skill for dataset-oriented plotting, multivariate analysis, automatic statistical estimation,'
 version: v00.33.0
 status: ADOPTED

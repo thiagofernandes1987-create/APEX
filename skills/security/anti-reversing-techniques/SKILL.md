@@ -1,7 +1,7 @@
 ---
 skill_id: security.anti_reversing_techniques
 name: anti-reversing-techniques
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   analysis: > 1.'''
 version: v00.33.0
 status: ADOPTED

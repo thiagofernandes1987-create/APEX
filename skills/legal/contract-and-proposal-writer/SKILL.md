@@ -1,7 +1,7 @@
 ---
 skill_id: legal.contract_and_proposal_writer
 name: contract-and-proposal-writer
-description: "Review — Contract & Proposal Writer"
+description: "Starting a new client engagement and need a contract fast"
 version: v00.33.0
 status: ADOPTED
 domain_path: legal

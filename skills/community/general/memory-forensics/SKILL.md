@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.memory_forensics
 name: memory-forensics
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   response and malware analysis.'''
 version: v00.33.0
 status: ADOPTED

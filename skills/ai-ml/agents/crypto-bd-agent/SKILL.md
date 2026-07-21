@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.crypto_bd_agent
 name: crypto-bd-agent
-description: "Apply — "
+description: "Building an AI agent for crypto/DeFi business development"
   listings for cryptocurrency exchanges.'''
 version: v00.33.0
 status: ADOPTED

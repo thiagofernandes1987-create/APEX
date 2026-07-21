@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ui_setup
 name: ui-setup
-description: "Use — "
+description: "Use when you are starting a new app with the StyleSeed Toss seed"
   screen scaffold.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: security.dependency_management_deps_audit
 name: dependency-management-deps-audit
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   chain security. Analyze project dependencies for known vulnerabilities, licensing issues, o'
 version: v00.33.0
 status: ADOPTED

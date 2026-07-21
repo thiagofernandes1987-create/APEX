@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.backend.nodejs.canvas_design
 name: canvas-design
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   Output only .md files, .pdf files, and .png files.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.conductor_status
 name: conductor-status
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/conductor-status

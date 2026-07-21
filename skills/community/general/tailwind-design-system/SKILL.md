@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.tailwind_design_system
 name: tailwind-design-system
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   patterns, and accessibility.'''
 version: v00.33.0
 status: ADOPTED

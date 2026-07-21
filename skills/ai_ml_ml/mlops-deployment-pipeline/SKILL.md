@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_mlops.model_deployment_pipeline
 name: mlops-deployment-pipeline
-description: >
+description: "Um modelo foi treinado (via `ai_ml_ml`) e precisa ser servido em produção"
   Bridge MLOps entre ai_ml_ml (treinamento de modelos) e engineering_devops (CI/CD).
   Orquestra: validação de modelo → containerização → deployment → drift monitoring →
   A/B testing de modelos em produção. Resolve o Gap-1: modelos treinados não têm

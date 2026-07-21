@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.framework_migration_code_migrate
 name: framework-migration-code-migrate
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   and platforms. Generate comprehensive migration plans, automated migration scripts, an'
 version: v00.33.0
 status: ADOPTED

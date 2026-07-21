@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.mcp_builder
 name: mcp-builder
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   tools. The quality of an MCP server is measured by how well it enables LLMs to ac'
 version: v00.33.0
 status: ADOPTED

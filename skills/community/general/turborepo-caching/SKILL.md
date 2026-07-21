@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.turborepo_caching
 name: turborepo-caching
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   optimizing build pipelines, or implementing distributed caching.'''
 version: v00.33.0
 status: ADOPTED

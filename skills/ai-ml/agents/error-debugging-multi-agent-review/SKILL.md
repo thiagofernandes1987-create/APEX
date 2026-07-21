@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.error_debugging_multi_agent_review
 name: error-debugging-multi-agent-review
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/agents/error-debugging-multi-agent-review

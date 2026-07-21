@@ -1,4 +1,6 @@
 ---
+name: teaser
+description: "Use this skill when the task requires teaser capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.investment_banking.teaser_2
 status: ADOPTED

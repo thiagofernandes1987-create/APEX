@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.php.php_pro
 name: php-pro
-description: "Implement — "
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/php/php-pro

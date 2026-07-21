@@ -1,7 +1,7 @@
 ---
 skill_id: healthcare.fhir_developer_skill
 name: fhir-developer-skill
-description: "Analyze — >"
+description: "condition: Informação clínica usada para decisão médica real"
 version: v00.33.0
 status: ADOPTED
 domain_path: healthcare/fhir-developer-skill

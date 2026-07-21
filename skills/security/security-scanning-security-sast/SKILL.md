@@ -1,7 +1,7 @@
 ---
 skill_id: security.security_scanning_security_sast
 name: security-scanning-security-sast
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
 version: v00.33.0
 status: ADOPTED
 domain_path: security/security-scanning-security-sast

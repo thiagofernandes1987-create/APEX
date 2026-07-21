@@ -1,4 +1,6 @@
 ---
+name: thesis-tracker
+description: "Use this skill when updating a thesis wit"
 executor: LLM_BEHAVIOR
 skill_id: finance.equity_research.thesis_tracker_2
 status: ADOPTED

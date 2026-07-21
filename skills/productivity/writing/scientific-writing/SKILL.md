@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.scientific_writing
 name: scientific-writing
-description: "Automate — "
+description: "Writing or revising any section of a scientific manuscript (abstract, introduction, methods, results, discussion)"
   written outputs. Every document produced is backed by comprehensive literature sear'
 version: v00.33.0
 status: ADOPTED

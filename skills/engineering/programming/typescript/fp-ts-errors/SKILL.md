@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.typescript.fp_ts_errors
 name: fp-ts-errors
-description: "Implement — "
+description: "When you want type-safe error handling in TypeScript"
   when implementing error handling patterns with fp-ts.'''
 version: v00.33.0
 status: ADOPTED

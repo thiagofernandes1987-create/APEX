@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_cosmos_db_py
 name: azure-cosmos-db-py
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   principles.'''
 version: v00.33.0
 status: ADOPTED

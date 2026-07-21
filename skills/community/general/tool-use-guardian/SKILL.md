@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.tool_use_guardian
 name: tool-use-guardian
-description: "Use — "
+description: "Use when tool calls return truncated or malformed JSON"
   Auto-recovers from truncated JSON, timeouts, rate limits, and mid-chain failures.'''
 version: v00.33.0
 status: ADOPTED

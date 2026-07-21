@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_resource_lookup
 name: azure-resource-lookup
-description: ''
+description: "**List resources** of any type (VMs, web apps, storage accounts, container apps, databases, etc.)"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cloud/azure

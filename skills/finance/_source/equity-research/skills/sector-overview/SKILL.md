@@ -1,4 +1,6 @@
 ---
+name: sector-overview
+description: "Use this skill when the task requires sector overview capabilities."
 executor: LLM_BEHAVIOR
 skill_id: finance.equity_research.sector_overview_3
 status: ADOPTED

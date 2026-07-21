@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.agents.pipecat_friday_agent
 name: pipecat-friday-agent
-description: "Apply — "
+description: "Use when you want to build a real-time, conversational voice agent."
   OpenAI.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.memory_safety_patterns
 name: memory-safety-patterns
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   management.'''
 version: v00.33.0
 status: ADOPTED

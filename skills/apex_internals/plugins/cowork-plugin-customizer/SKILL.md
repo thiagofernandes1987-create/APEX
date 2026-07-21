@@ -1,7 +1,7 @@
 ---
 skill_id: apex_internals.plugins.cowork_plugin_customizer
 name: cowork-plugin-customizer
-description: "Use — >"
+description: "condition: Recurso ou ferramenta necessária indisponível"
 version: v00.33.0
 status: ADOPTED
 domain_path: apex_internals/plugins/cowork-plugin-customizer

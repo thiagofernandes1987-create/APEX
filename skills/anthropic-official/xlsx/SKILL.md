@@ -1,7 +1,7 @@
 ---
 skill_id: anthropic_official.xlsx
 name: xlsx
-description: "Apply — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   wants to: open, read, edit, or fix an existing .xlsx, .xlsm, .csv, or .tsv file (e.g., ad'
 version: v00.33.0
 status: ADOPTED

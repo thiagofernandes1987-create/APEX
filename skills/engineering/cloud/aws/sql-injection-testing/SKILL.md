@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.aws.sql_injection_testing
 name: sql-injection-testing
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   flaws, demonstrate exploitation techniques, and validate input sanitization mechanisms.'
 version: v00.33.0
 status: ADOPTED

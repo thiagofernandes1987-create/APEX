@@ -1,7 +1,7 @@
 ---
 skill_id: marketing.seo.seo_plan
 name: seo-plan
-description: "Create — >"
+description: "Use when building an SEO strategy or roadmap for a new or existing site."
 version: v00.33.0
 status: ADOPTED
 domain_path: marketing/seo/seo-plan

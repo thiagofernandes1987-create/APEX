@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.aws.aws_cost_optimizer
 name: aws-cost-optimizer
-description: "Implement — "
+description: "Parse AWS Cost Explorer data for trends and anomalies"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cloud/aws/aws-cost-optimizer

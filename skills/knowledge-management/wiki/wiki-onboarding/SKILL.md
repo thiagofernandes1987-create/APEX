@@ -1,7 +1,7 @@
 ---
 skill_id: knowledge_management.wiki.wiki_onboarding
 name: wiki-onboarding
-description: "Use — "
+description: "User asks for onboarding docs or getting-started guides"
   — a complete understanding of a codebase. Use when user asks for onboarding docs or gettin'
 version: v00.33.0
 status: ADOPTED

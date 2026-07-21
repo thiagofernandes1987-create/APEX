@@ -1,7 +1,7 @@
 ---
 skill_id: security.scanning_tools
 name: scanning-tools
-description: "Audit — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   testing, wireless security, and compliance validation. This skill covers tool selection, conf'
 version: v00.33.0
 status: ADOPTED

@@ -1,6 +1,6 @@
 ---
 name: "monorepo-navigator"
-description: "Implement — Monorepo Navigator"
+description: "Multiple packages/apps share code (UI components, utils, types, API clients)"
 executor: HYBRID
 skill_id: engineering.cs-engineering.monorepo-navigator
 status: ADOPTED

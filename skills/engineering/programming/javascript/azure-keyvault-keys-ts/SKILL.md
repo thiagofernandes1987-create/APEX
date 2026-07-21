@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.javascript.azure_keyvault_keys_ts
 name: azure-keyvault-keys-ts
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   encrypting/decrypting, signing, or rotating keys.'''
 version: v00.33.0
 status: ADOPTED

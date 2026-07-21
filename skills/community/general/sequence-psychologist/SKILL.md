@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.sequence_psychologist
 name: sequence-psychologist
-description: "Use — "
+description: "Use when an email, onboarding, or sales sequence needs a better step-by-step persuasion arc."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/sequence-psychologist

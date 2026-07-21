@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.gemini_api_integration
 name: gemini-api-integration
-description: "Apply — "
+description: "Use when setting up Gemini API for the first time in a Node.js, Python, or browser project"
   function calling, and production best practices.'''
 version: v00.33.0
 status: ADOPTED

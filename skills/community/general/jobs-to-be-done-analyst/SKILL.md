@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.jobs_to_be_done_analyst
 name: jobs-to-be-done-analyst
-description: "Use — "
+description: "Use when you need to understand the real progress the customer is trying to make."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/jobs-to-be-done-analyst

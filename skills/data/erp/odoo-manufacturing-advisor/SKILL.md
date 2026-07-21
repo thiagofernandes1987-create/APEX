@@ -1,7 +1,7 @@
 ---
 skill_id: data.erp.odoo_manufacturing_advisor
 name: odoo-manufacturing-advisor
-description: "Analyze — "
+description: "Creating or structuring Bills of Materials for finished goods."
   order workflows.'''
 version: v00.33.0
 status: ADOPTED

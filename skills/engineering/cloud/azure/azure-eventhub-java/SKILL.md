@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_eventhub_java
 name: azure-eventhub-java
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   high-throughput data ingestion, or building event-driven architectures.'''
 version: v00.33.0
 status: ADOPTED

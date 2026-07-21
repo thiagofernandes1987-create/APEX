@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.deployment.database_migration
 name: database-migration
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   and zero-downtime deployments.'''
 version: v00.33.0
 status: ADOPTED

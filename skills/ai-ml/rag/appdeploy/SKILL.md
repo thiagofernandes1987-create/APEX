@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.appdeploy
 name: appdeploy
-description: "Apply — "
+description: "Use when planning or building apps and web apps"
   a website or web app and wants a public URL. Uses HTTP API via curl.'''
 version: v00.33.0
 status: ADOPTED

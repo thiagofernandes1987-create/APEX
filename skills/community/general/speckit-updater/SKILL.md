@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.speckit_updater
 name: speckit-updater
-description: "Use — SpecKit Safe Update"
+description: "You need to update or install SpecKit templates while preserving project customizations."
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/speckit-updater

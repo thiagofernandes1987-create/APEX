@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.odoo_backup_strategy
 name: odoo-backup-strategy
-description: "Apply — "
+description: "Setting up a backup strategy for a production Odoo instance."
   upload, and tested restore procedures.'''
 version: v00.33.0
 status: ADOPTED

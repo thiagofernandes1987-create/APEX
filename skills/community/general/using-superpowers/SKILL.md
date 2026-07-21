@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.using_superpowers
 name: using-superpowers
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   before ANY response including clarifying questions'''
 version: v00.33.0
 status: ADOPTED

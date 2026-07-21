@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml_agents.m365_agents_py
 name: m365-agents-py
-description: "Use — |"
+description: "condition: Modelo de ML indisponível ou não carregado"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/agents

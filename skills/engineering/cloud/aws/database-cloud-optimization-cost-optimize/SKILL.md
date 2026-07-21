@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.aws.database_cloud_optimization_cost_optimize
 name: database-cloud-optimization-cost-optimize
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   performance and reliability. Analyze cloud spending, identify savings opportunities, and im'
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.copilot_sdk
 name: copilot-sdk
-description: "Apply — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   providing session management, custom tools, hooks, MCP server integration, and strea'
 version: v00.33.0
 status: ADOPTED

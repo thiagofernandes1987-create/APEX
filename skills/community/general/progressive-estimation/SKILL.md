@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.progressive_estimation
 name: progressive-estimation
-description: "Use — "
+description: "Estimating development tasks where AI agents handle part of the work"
   feedback loops'''
 version: v00.33.0
 status: ADOPTED

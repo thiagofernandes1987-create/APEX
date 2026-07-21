@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.git_pr_workflows_pr_enhance
 name: git-pr-workflows-pr-enhance
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   code reviews. Generate comprehensive PR descriptions, automate review processes, and ens'
 version: v00.33.0
 status: ADOPTED

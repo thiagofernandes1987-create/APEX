@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.qiskit
 name: qiskit
-description: "Use — "
+description: "You are building or optimizing quantum circuits with Qiskit for simulators or real hardware."
   circuits, optimize for hardware, execute on simulators or real quantum computers, and ana'
 version: v00.33.0
 status: ADOPTED

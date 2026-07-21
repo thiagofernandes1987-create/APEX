@@ -1,4 +1,6 @@
 ---
+name: deal-tracker
+description: "Use this skill when managing a book of business, tracking process milestones, or preparing for weekly deal reviews"
 executor: LLM_BEHAVIOR
 skill_id: finance.investment_banking.deal_tracker_3
 status: ADOPTED

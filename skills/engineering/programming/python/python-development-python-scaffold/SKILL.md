@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.python_development_python_scaffold
 name: python-development-python-scaffold
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Generate complete project structures with modern tooling (uv, FastAPI, Django), type hin'
 version: v00.33.0
 status: ADOPTED

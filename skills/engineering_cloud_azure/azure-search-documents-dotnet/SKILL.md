@@ -1,7 +1,7 @@
 ---
 skill_id: engineering_cloud_azure.azure_search_documents_dotnet
 name: azure-search-documents-dotnet
-description: "Use — |"
+description: "condition: Código não disponível para análise"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/cloud/azure

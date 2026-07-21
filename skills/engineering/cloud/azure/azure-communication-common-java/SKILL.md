@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.azure_communication_common_java
 name: azure-communication-common-java
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   user identifiers, token refresh, or shared authentication across ACS services.'''
 version: v00.33.0
 status: ADOPTED

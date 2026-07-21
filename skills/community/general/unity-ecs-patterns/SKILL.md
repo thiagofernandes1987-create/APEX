@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.unity_ecs_patterns
 name: unity-ecs-patterns
-description: "Use — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   Job System, and Burst Compiler.'''
 version: v00.33.0
 status: ADOPTED

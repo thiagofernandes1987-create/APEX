@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.react_state_management
 name: react-state-management
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   up global state, managing server state, or choosing between state management solutions.'''
 version: v00.33.0
 status: ADOPTED

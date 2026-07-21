@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.rust.trust_calibrator
 name: trust-calibrator
-description: "Implement — "
+description: "Use when messaging needs the right level of certainty, proof, and claim strength for a skeptical audience."
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/rust/trust-calibrator

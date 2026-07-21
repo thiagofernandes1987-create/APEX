@@ -1,7 +1,7 @@
 ---
 skill_id: sales.common_room.contact_research
 name: contact-research
-description: "Track — "
+description: "condition: CRM ou enrichment tool indisponível"
   [contact]'', ''is [name] a warm lead'', or any contact-level question.'''
 version: v00.33.0
 status: ADOPTED

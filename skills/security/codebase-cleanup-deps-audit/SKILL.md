@@ -1,7 +1,7 @@
 ---
 skill_id: security.codebase_cleanup_deps_audit
 name: codebase-cleanup-deps-audit
-description: "Audit — "
+description: "condition: Análise de código malicioso potencial"
   chain security. Analyze project dependencies for known vulnerabilities, licensing issues, o'
 version: v00.33.0
 status: ADOPTED

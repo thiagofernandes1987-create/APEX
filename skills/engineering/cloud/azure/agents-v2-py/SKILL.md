@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.cloud.azure.agents_v2_py
 name: agents-v2-py
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   creating hosted agents with custom container images in Azure AI Foundry.'''
 version: v00.33.0
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.bash.bats_testing_patterns
 name: bats-testing-patterns
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   for shell scripts, CI/CD pipelines, or requiring test-driven development of shell utilities.'
 version: v00.33.0
 status: ADOPTED

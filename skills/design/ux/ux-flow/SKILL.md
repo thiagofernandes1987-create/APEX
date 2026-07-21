@@ -1,7 +1,7 @@
 ---
 skill_id: design.ux.ux_flow
 name: ux-flow
-description: "Design — "
+description: "Use when planning onboarding, checkout, account management, dashboards, or drill-down flows"
   navigation, and information pyramids.'''
 version: v00.33.0
 status: ADOPTED

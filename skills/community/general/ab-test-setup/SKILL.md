@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.ab_test_setup
 name: ab-test-setup
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
 version: v00.33.0
 status: ADOPTED
 domain_path: community/general/ab-test-setup

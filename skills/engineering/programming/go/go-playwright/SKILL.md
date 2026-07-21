@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.go.go_playwright
 name: go-playwright
-description: "Implement — "
+description: "Use when the user asks to 'scrape,' 'automate,' or 'test' a website using Go."
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/go/go-playwright

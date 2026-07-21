@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.paid_ads
 name: paid-ads
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   optimize, and scale paid advertising campaigns that drive efficient customer acquisitio'
 version: v00.33.0
 status: ADOPTED

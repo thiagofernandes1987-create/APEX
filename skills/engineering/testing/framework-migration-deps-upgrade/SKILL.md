@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.testing.framework_migration_deps_upgrade
 name: framework-migration-deps-upgrade
-description: "Implement — "
+description: "condition: Código não disponível para análise"
   Plan and execute dependency updates with minimal risk, proper testing, and clear migration p'
 version: v00.33.0
 status: ADOPTED

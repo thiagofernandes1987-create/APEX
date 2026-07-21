@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.prompt_engineering_patterns
 name: prompt-engineering-patterns
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/llm/prompt-engineering-patterns

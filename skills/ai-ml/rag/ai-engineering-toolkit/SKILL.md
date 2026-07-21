@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.ai_engineering_toolkit
 name: ai-engineering-toolkit
-description: "Apply — "
+description: "Use when evaluating or optimizing LLM system prompts before production deployment"
   RAG pipeline design, agent security audit (65-point checklist), eval harness building, a'
 version: v00.33.0
 status: ADOPTED

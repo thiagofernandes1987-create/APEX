@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.angular.angular_state_management
 name: angular-state-management
-description: "Implement — "
+description: "Setting up global state management in Angular"
   component stores, choosing between state solutions, or migrating from legacy patterns.'''
 version: v00.33.0
 status: ADOPTED

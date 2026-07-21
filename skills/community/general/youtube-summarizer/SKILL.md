@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.youtube_summarizer
 name: youtube-summarizer
-description: "Use — "
+description: "User provides a YouTube video URL and wants a detailed summary"
   frameworks'''
 version: v00.33.0
 status: ADOPTED

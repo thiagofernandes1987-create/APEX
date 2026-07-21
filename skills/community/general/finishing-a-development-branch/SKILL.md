@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.finishing_a_development_branch
 name: finishing-a-development-branch
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   completion of development work by presenting structured options for merge, PR, or cleanu'
 version: v00.33.0
 status: ADOPTED

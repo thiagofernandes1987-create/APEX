@@ -1,7 +1,7 @@
 ---
 skill_id: security.security_audit
 name: security-audit
-description: "Audit — "
+description: "Performing security audits on web applications"
   vulnerability scanning, and security hardening.'''
 version: v00.33.0
 status: ADOPTED

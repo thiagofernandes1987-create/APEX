@@ -1,7 +1,7 @@
 ---
 skill_id: business.startup.startup_metrics_framework
 name: startup-metrics-framework
-description: "Manage — "
+description: "condition: Recurso ou ferramenta necessária indisponível"
   business models from seed through Series A.'''
 version: v00.33.0
 status: ADOPTED

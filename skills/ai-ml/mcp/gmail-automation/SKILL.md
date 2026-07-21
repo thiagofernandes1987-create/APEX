@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.mcp.gmail_automation
 name: gmail-automation
-description: "Apply — "
+description: "You need to search, read, or send Gmail messages from the command line without an MCP server."
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/mcp/gmail-automation

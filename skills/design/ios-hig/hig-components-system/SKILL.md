@@ -1,7 +1,7 @@
 ---
 skill_id: design.ios_hig.hig_components_system
 name: hig-components-system
-description: "Design — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   home screen quick actions, top shelf, watch faces, app clips, and app shortcuts.'''
 version: v00.33.0
 status: ADOPTED

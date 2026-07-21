@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.devops.docker.docker_expert
 name: docker-expert
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   security hardening, multi-stage builds, orchestration patterns, and production de'
 version: v00.33.0
 status: ADOPTED

@@ -1,6 +1,6 @@
 ---
 name: "api-design-reviewer"
-description: "Implement — API Design Reviewer"
+description: "Use this skill when the task requires api design reviewer capabilities."
 executor: HYBRID
 skill_id: engineering.cs-engineering.api-design-reviewer
 status: ADOPTED

@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.architecture.nestjs_expert
 name: nestjs-expert
-description: "Implement — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   injection patterns, decorators, middleware, guards, interceptors, pipes, testing stra'
 version: v00.33.0
 status: ADOPTED

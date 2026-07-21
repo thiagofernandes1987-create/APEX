@@ -1,7 +1,7 @@
 ---
 skill_id: anthropic_official.claude_api
 name: claude-api
-description: "Apply — "
+description: "User asks for 'latest' or 'current' information"
 version: v00.33.0
 status: ADOPTED
 domain_path: anthropic-official/claude-api

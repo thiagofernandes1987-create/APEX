@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.llm.varlock
 name: varlock
-description: "Apply — "
+description: "You need to work with environment variables or secrets in a Claude Code session without exposing their values."
 version: v00.33.0
 status: ADOPTED
 domain_path: ai-ml/llm/varlock

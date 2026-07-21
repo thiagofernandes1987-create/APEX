@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.idea_darwin
 name: idea-darwin
-description: "Use — "
+description: "Use when you have many scattered ideas and need to systematically evaluate and develop them"
   and mutate through structured rounds to surface your strongest concepts.'''
 version: v00.33.0
 status: ADOPTED

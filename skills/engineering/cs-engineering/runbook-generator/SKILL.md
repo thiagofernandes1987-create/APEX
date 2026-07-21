@@ -1,6 +1,6 @@
 ---
 name: "runbook-generator"
-description: "Implement — Runbook Generator"
+description: "A service has no runbook and needs a baseline immediately"
 executor: HYBRID
 skill_id: engineering.cs-engineering.runbook-generator
 status: ADOPTED

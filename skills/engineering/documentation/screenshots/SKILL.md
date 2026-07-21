@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.documentation.screenshots
 name: screenshots
-description: "Implement — "
+description: "User wants to create screenshots for Product Hunt"
   for Product Hunt, social media, landing pages, or documentation.'''
 version: v00.33.0
 status: ADOPTED

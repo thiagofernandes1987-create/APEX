@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.frontend.react.trpc_fullstack
 name: trpc-fullstack
-description: "Implement — "
+description: "Use when building a TypeScript full-stack app (Next.js, Remix, Express + React) where the client and server share a single repo"
   integration patterns.'''
 version: v00.33.0
 status: ADOPTED

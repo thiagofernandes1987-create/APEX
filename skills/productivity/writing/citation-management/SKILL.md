@@ -1,7 +1,7 @@
 ---
 skill_id: productivity.writing.citation_management
 name: citation-management
-description: "Automate — "
+description: "Searching for specific papers on Google Scholar or PubMed"
 version: v00.33.0
 status: ADOPTED
 domain_path: productivity/writing/citation-management

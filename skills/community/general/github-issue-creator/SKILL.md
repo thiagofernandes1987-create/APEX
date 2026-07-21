@@ -1,7 +1,7 @@
 ---
 skill_id: community.general.github_issue_creator
 name: github-issue-creator
-description: "Use — "
+description: "**v00.33.0**: Ingested from antigravity-awesome-skills community repo"
   with repro steps, impact, and evidence.'''
 version: v00.33.0
 status: ADOPTED

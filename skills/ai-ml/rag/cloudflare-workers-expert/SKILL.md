@@ -1,7 +1,7 @@
 ---
 skill_id: ai_ml.rag.cloudflare_workers_expert
 name: cloudflare-workers-expert
-description: "Apply — "
+description: "condition: Modelo de ML indisponível ou não carregado"
   R2 storage.'''
 version: v00.33.0
 status: ADOPTED

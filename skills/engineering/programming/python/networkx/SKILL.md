@@ -1,7 +1,7 @@
 ---
 skill_id: engineering.programming.python.networkx
 name: networkx
-description: "Implement — "
+description: "**Creating graphs**: Building network structures from data, adding nodes and edges with attributes"
 version: v00.33.0
 status: ADOPTED
 domain_path: engineering/programming/python/networkx
