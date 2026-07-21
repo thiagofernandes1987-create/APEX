@@ -1,7 +1,7 @@
 # APEX Index — Hub de Navegação
 
-**Gerado automaticamente** por `tools/generate_index.py` — 2026-07-21 11:52 UTC
-**Versão APEX**: v1.62.0 | **Skills**: 3784 | **Domínios**: 52 | **Erros de parse**: 0
+**Gerado automaticamente** por `tools/generate_index.py` — 2026-07-21 13:30 UTC
+**Versão APEX**: v1.63.0 | **Skills**: 3784 | **Domínios**: 52 | **Erros de parse**: 0
 
 > Este arquivo é gerado automaticamente. Não editar manualmente.
 > Para atualizar: `python tools/generate_index.py` ou aguardar o GitHub Action.
@@ -8277,4 +8277,4 @@ domain_map:
 
 ---
 
-*Gerado por `tools/generate_index.py` — APEX v1.62.0 — 2026-07-21 11:52 UTC*
+*Gerado por `tools/generate_index.py` — APEX v1.63.0 — 2026-07-21 13:30 UTC*
