@@ -559,8 +559,9 @@ def _run(task, candidates=None, snapshot=None):
     # the gate is computed LAST so it reflects everything run() itself completed
     result["gate"] = gate(ck)
     if _eb:
+        _g = result.get("gate") if isinstance(result.get("gate"), dict) else {}
         _eb.emit("orchestrator", "run_finished", _tid, path="FULL_PIPELINE", mode=mode,
-                 gate=result["gate"].get("status") if isinstance(result.get("gate"), dict) else None)
+                 gate_pass=_g.get("pass"), gate_action=_g.get("action", "")[:40])
     return result
 
 

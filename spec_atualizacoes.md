@@ -117,6 +117,39 @@ maioria já existiam no código; da análise do GPT foi aproveitado o conceito d
 
 ---
 
+## 2.9 Ciclo de debug adversarial (QA+Dev+TechLead, 2026-07-21)
+
+Loop quebrar→corrigir→validar→repetir contra o kernel v1.62. 3 rounds de ataque
+(inputs hostis, memória/persistência/spawn, loop paramétrico multi-disciplina).
+**4 bugs reais encontrados e corrigidos**, 1 regressão introduzida por correção e
+imediatamente pega pelo benchmark e corrigida:
+
+| # | Bug | Causa | Correção | Trava |
+|---|---|---|---|---|
+| B1 | `taxonomy.classify(42)` → AttributeError | `_tokens` fazia `(text or "").lower()`, mas `42 or ""` = 42 | coerção defensiva a str | R5 |
+| B2 | event bus emitia `gate=None` sempre | emit lia `.get("status")`; o gate retorna `pass`/`action` | emite `gate_pass`/`gate_action` | R5 |
+| B3 | "sistema de EDOs com RK4" → software | vocabulário math só no subdomain; "sistema" vencia o eixo domain | termos numéricos elevados ao eixo DOMAIN (+ dedup de chave dupla no seed) | R5 |
+| B4 | resolução de agente retornava `[]` para TODA tarefa em português | `match_task_to_ext_agents` era lexical-only (TF-IDF), a fraqueza cross-language que a própria §12 documenta | fallback char-n-gram (`semantic_rank`) com piso de confiança 0.10 | R5 |
+| REG | correção de B4 surfou persona errada (startup_cto @0.053 para eng. estrutural) | fallback sem piso violava §10 (hit de baixa confiança) | piso 0.10 → abaixo disso `[]` e o lifecycle sintetiza o especialista | benchmark agent_lifecycle |
+
+**Resultados medidos no loop (o que o Manus simulou, feito de verdade):**
+- Reconhecimento de domínio: **6/6** (era 5/6 antes de B3).
+- Cache hit em variação paramétrica (mesmo problema, só mudando dt/steps/tolerância):
+  **5/5 = 100%** com o cache híbrido — o relatório do Manus alegava degradação a 7%.
+- `orchestrator.run` resistiu a 10 inputs hostis (None/int/dict/gigante/unicode/injeção)
+  sem levantar exceção (contrato ERROR_DEGRADED).
+- Ledger SHA-256 **detectou adulteração direta no SQLite** (`content hash mismatch`).
+- Promoção/demoção (beta-binomial), spawn contract (recusa nome pelado) e page_out
+  resistiram.
+
+**Achado honesto (não é bug):** o roster de 213 agentes é majoritariamente EN e
+enviesado a software/tech. Engenharia estrutural, jurídico e matemática pura **não têm
+persona forte** — corretamente caem no caminho de síntese (`agent_lifecycle` fabrica o
+especialista). O piso de confiança agora garante que o kernel prefira sintetizar o
+especialista certo a surfar um agente errado.
+
+Regressões permanentes: `tests/test_regressions_v162.py` passou de 19 → **28 checks**.
+
 ## 3. FALTA IMPLEMENTAR (backlog priorizado)
 
 | # | Item | Por quê | Esforço |

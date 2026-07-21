@@ -396,7 +396,12 @@ _EVOLVED = load_evolved()
 
 
 def _tokens(text):
-    return set(re.findall(r"[a-zà-ÿ0-9\-]{2,}", (text or "").lower()))
+    # defensive: classify() may be handed a non-string (int/dict/list) by upstream callers
+    # (orchestrator dissect fallback, MCP tool args). Coerce instead of raising (kernel contract:
+    # the recognition layer never crashes the pipeline).
+    if not isinstance(text, str):
+        text = "" if text is None else str(text)
+    return set(re.findall(r"[a-zà-ÿ0-9\-]{2,}", text.lower()))
 
 
 def _score_axis(tokens, table):

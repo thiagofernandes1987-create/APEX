@@ -56,6 +56,16 @@ TOO_GENERIC = {
 
 CURATED = {
     "domain": {
+        # gap provado (Round 3 debug v1.62): "integrar sistema de EDOs com RK4" caía em
+        # software porque "sistema" batia lá e nada batia mathematics no eixo DOMAIN — os
+        # termos numéricos existiam só no subdomain. Elevados ao domain para vencer o eixo.
+        "mathematics": [
+            "rk4", "runge-kutta", "runge", "kutta", "euler", "edo", "edos", "ode", "odes",
+            "oscilador", "oscillator", "harmônico", "harmonico", "harmonic", "integrador",
+            "convergência", "convergencia", "convergence", "numérico", "numerico", "numerical",
+            "equações", "equacoes", "diferenciais", "differential", "interpolação",
+            "interpolacao", "interpolation", "matriz", "matrix", "autovalor", "eigenvalue",
+        ],
         # gap provado: "criar landing page com glassmorphism" classificava domain=None
         "software": [
             "landing", "website", "webapp", "css", "html", "html5", "css3", "javascript",
@@ -64,12 +74,6 @@ CURATED = {
             "footer", "animação", "animacao", "animation", "animações", "animacoes",
             "framework", "biblioteca", "library", "git", "repositório", "repositorio",
             "repository", "readme", "documentação", "documentacao", "documentation",
-        ],
-        "mathematics": [
-            "rk4", "runge-kutta", "runge", "kutta", "euler", "edo", "oscilador",
-            "oscillator", "harmônico", "harmonico", "harmonic", "convergência",
-            "convergencia", "convergence", "interpolação", "interpolacao",
-            "interpolation", "matriz", "matrix", "autovalor", "eigenvalue",
         ],
     },
     "subdomain": {

@@ -117,9 +117,39 @@ def t_r4_event_bus():
     check("export_jsonl determinístico", ex.get("exported", 0) >= 4, ex)
 
 
+def t_r5_debug_hardening():
+    """v1.62 debug loop (QA+Dev+TechLead) — trava os 4 bugs encontrados atacando o kernel."""
+    import taxonomy, agent_registry, orchestrator, event_bus
+    print("R5 — endurecimento pós-debug (B1..B4)")
+    # B1: classify nunca quebra com input não-string (era AttributeError em int)
+    for bad in (42, {"x": 1}, [1, 2], 3.14):
+        try:
+            c = taxonomy.classify(bad)
+            check(f"classify({type(bad).__name__}) não quebra", isinstance(c, dict) and "domain" in c)
+        except Exception as e:
+            check(f"classify({type(bad).__name__}) não quebra", False, str(e))
+    # B3: vocabulário matemático no eixo DOMAIN vence "sistema" (era software)
+    c = taxonomy.classify("integrar sistema de EDOs com RK4 e verificar conservação de energia")
+    check("EDO/RK4 -> mathematics (não software)", c["domain"] == "mathematics", c["domain"])
+    # B4: resolução de agente cross-language — PT não pode retornar vazio quando há persona forte
+    pt = agent_registry.match_task_to_ext_agents("auditoria de segurança e teste de invasão pentest")
+    check("agente resolvido em PT (fallback char-ngram)", isinstance(pt, list) and len(pt) > 0,
+          pt[0][0] if pt else "[]")
+    # B4-guard: piso de confiança evita ruído — tarefa sem persona no roster retorna vazio
+    # (para o lifecycle SINTETIZAR), não um agente errado de baixa confiança
+    eng = agent_registry.match_task_to_ext_agents("dimensione uma viga de concreto no estado limite ultimo")
+    check("sem persona forte -> [] (deixa sintetizar, não surfa ruído)",
+          all(s >= 0.10 for _, _, s in eng), eng)
+    # B2: event bus emite gate_pass/gate_action (não a chave inexistente 'status')
+    r = orchestrator.run("auditoria de segurança do kernel")
+    tr = event_bus.trace(r.get("trace_id"))
+    fin = [e for e in tr if e["action"] == "run_finished"]
+    check("run_finished carrega gate_pass (não status None)",
+          fin and "gate_pass" in fin[-1]["data"], fin[-1]["data"] if fin else "sem run_finished")
+
+
 if __name__ == "__main__":
-    for t in (t_r1_taxonomy, t_r2_hybrid_cache, t_r3_triage, t_r4_event_bus):
+    for t in (t_r1_taxonomy, t_r2_hybrid_cache, t_r3_triage, t_r4_event_bus, t_r5_debug_hardening):
         t()
-    total = 19
     print(f"\n{'FAIL: ' + ', '.join(FAILURES) if FAILURES else 'REGRESSÕES v1.62: TODAS PASS'}")
     sys.exit(1 if FAILURES else 0)

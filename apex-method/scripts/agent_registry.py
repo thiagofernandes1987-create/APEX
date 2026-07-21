@@ -326,15 +326,40 @@ def load_ext_roster():
 
 
 def match_task_to_ext_agents(task, k=5):
-    """Route a task to the best of the 213 extended APEX agents by domain keywords."""
+    """Route a task to the best of the 213 extended APEX agents.
+
+    v1.62 (Round-3 debug fix): the raw TF-IDF pass is LEXICAL, so a Portuguese task scored
+    against the English-ish roster metadata returned ZERO agents (`_rank_texts` all-zero) — the
+    exact cross-language weakness §10/§12 warn about, and the whole reason taxonomy/facets exist.
+    Now: try lexical first; if it yields nothing (cross-language miss), FALL BACK to facet overlap
+    (`taxonomy.facet_score`, meaning-based, language-independent) so a PT task reaches its EN
+    specialist. Lexical wins when it works (precise); facets rescue when it doesn't."""
     roster = load_ext_roster()
     if not roster:
         return []
     texts = [" ".join([a["id"], a.get("category", "")] + a.get("domains", [])) for a in roster]
     sims = _rank_texts(task, texts)
     order = sorted(range(len(sims)), key=lambda i: -sims[i])[:k]
-    return [(roster[i]["id"], roster[i].get("category", ""), round(float(sims[i]), 3))
+    hits = [(roster[i]["id"], roster[i].get("category", ""), round(float(sims[i]), 3))
             for i in order if sims[i] > 0]
+    if hits:
+        return hits
+    # cross-language rescue: the char-n-gram semantic backend (the SKILL.md's documented fix for
+    # the lexical cross-language weakness — 'memória'↔'memory' align in char-n-gram space) ranks
+    # a PT task against the EN roster far better than facet overlap on sparse agent ids.
+    try:
+        import _tfidf
+        readable = [t.replace(".", " ").replace("_", " ").replace("-", " ") for t in texts]
+        sims2, _ = _tfidf.semantic_rank(task, readable, backend="char")
+        order2 = sorted(range(len(sims2)), key=lambda i: -sims2[i])[:k]
+        # CONFIDENCE FLOOR (§10 — never trust a low-confidence hit): 0.10 separates a real
+        # cross-language match (~0.12–0.17) from char-n-gram noise (~0.05). Below it, return
+        # nothing so agent_lifecycle SYNTHESIZES the right specialist instead of surfacing a
+        # wrong persona (e.g. startup_cto @0.053 for a structural-engineering task).
+        return [(roster[i]["id"], roster[i].get("category", ""), round(float(sims2[i]), 3))
+                for i in order2 if sims2[i] >= 0.10]
+    except Exception:
+        return []
 
 
 if __name__ == "__main__":
