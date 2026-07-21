@@ -1,421 +1,87 @@
 # APEX — Autonomous Polymorphic Engineering eXpert
 
-**APEX framework**: v00.39.1 (paged microkernel) | **uco-sensor**: v3.2.8 (Sprint D — AutoFix↔SAST expansion + landing) | **Skills**: 3,784 | **Domínios**: 52 | **Agentes**: 219 | [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+**Skill canônica**: [`apex-method/`](apex-method/) v1.62.0 | **Skills nativas**: 3.784 (52 domínios) | **Agentes**: 219 | **Licença**: MIT (skill) / CC BY-NC 4.0 (biblioteca)
 
-> Framework DSL que transforma qualquer LLM em um sistema multi-agente de engenharia cognitiva com governança, execução híbrida e trilha de auditoria.
-
----
-
-## O que é o APEX?
-
-**Problema**: LLMs são poderosos, mas caóticos. Alucinam APIs, simulam execução sem aviso, misturam raciocínio com fabricação e não mantêm estado entre turnos.
-
-**Solução APEX**: Um sistema de regras, schemas e agentes especializados que age como um *sistema operacional cognitivo* sobre o LLM — sem alterar o modelo, apenas orquestrando como ele pensa.
-
-```
-Sem APEX:  User → LLM → Resposta (black-box, sem auditoria)
-
-Com APEX:  User → [Boot STEP_0] → [Detecção de Runtime] → [Modo Cognitivo]
-                   → [Agentes Especializados] → [UCO Gate] → [Auditoria] → Resposta Verificada
-```
-
-**Para quem**: Engenheiros que precisam de outputs verificáveis (não apenas plausíveis), equipes usando múltiplos LLMs (Claude, GPT-4o, Gemini, DeepSeek) com comportamento consistente, projetos que exigem separação explícita entre execução real e simulação.
+> Workflow de raciocínio token-aware com ferramentas reais: escolhe um modo de operação para
+> controlar custo, roda um pipeline estruturado (decompose → validate → verify → snapshot) e dá
+> ao LLM Program-of-Thought, RK4/Euler, code gate, roteador de skills seguro, memória persistente
+> e um ciclo de aprendizado com governança (ledger SHA-256).
 
 ---
 
-## Quick Start
+## Comece aqui
 
-**Para Humanos**:
+**A fonte canônica do APEX é a skill [`apex-method/`](apex-method/)** — 55 scripts Python
+(stdlib-only, aceleradores opcionais), catálogos, testes e referências. Tudo o mais no
+repositório é biblioteca (skills/agentes minerados), material de referência ou histórico.
+
+### Para humanos
+
 ```bash
 git clone https://github.com/thiagofernandes1987-create/APEX.git
-# Leia APEX_CREATION_GUIDE.md para criar artefatos
-# Navegue skills/ — biblioteca com 3,784 skills em 52 domínios
-# Veja diffs/ para entender a evolução histórica (132 DIFFs)
+cd APEX/apex-method
+python3 tests/benchmark.py        # valida a instalação (72 testes por módulo)
+python3 scripts/menu.py --help    # menu: update, modos preferidos, deep research
 ```
 
-**Para LLMs** (cole no system prompt ou contexto inicial):
-1. Leia: `README.md` (você está aqui)
-2. Leia: `INDEX.md` (domain_map completo em YAML legível por máquina)
-3. Leia: `meta/llm_compat.yaml` (instruções específicas por LLM)
-4. Carregue: `apex_boot/apex_v00_37_0_master_full.txt` (system prompt completo — 20,173 linhas, 132 DIFFs)
-5. Verifique: `apex_state.yaml` (estado persistente — versão, OPP atual, métricas do repo)
-6. Qualquer skill: `skills/{dominio}/{skill}/SKILL.md` (≤3 passos via INDEX.md)
+Instalação como skill do Claude Code: copie `apex-method/` para `~/.claude/skills/apex-method/`
+(ou `npx skills add` quando publicado no marketplace).
 
----
+### Para LLMs (ordem de leitura)
 
-## Boot Verification (STEP_0) — novo em v00.37.0
+1. `apex-method/SKILL.md` — o método + as ferramentas (entry point: `scripts/orchestrator.py` → `run(task)`).
+2. `apex-method/references/` — detalhe por subsistema (pipeline, validação, agentes, Bayes…).
+3. `INDEX.md` — índice **gerado** dos 3.784 skills da biblioteca (`python3 tools/generate_index.py`).
+4. `apex-method/catalog/` — catálogos JSON (roster de agentes, attraction graph, RAG index, registro de módulos).
 
-O boot agora exige verificação explícita antes de liberar STEP_1:
-
-```
-[BOOT_VERIFIED: {hash_8chars} | lines: 20173 | version: v00.37.0]
-```
-
-- **Hash** = primeiros 8 chars do SHA-256 do boot file carregado
-- Se hash ausente no output de STEP_0: `boot_verified: false` → STEP_1 bloqueado
-- Estado rastreado em `apex_state.yaml` → campo `boot_verified`
-
----
-
-## Estrutura do Repositório
-
-```
-APEX/
-├── README.md                               ← Onboarding 5 minutos (você está aqui)
-├── INDEX.md                                ← Auto-gerado via tools/generate_index.py
-├── APEX_CREATION_GUIDE.md                  ← Guia canônico: schemas, templates, quality gates
-├── INTAKE_WORKFLOW.md                      ← Pipeline de ingestão de repositórios externos
-├── apex_state.yaml                         ← Estado persistente legível por máquina (OPP-160)
-│
-├── apex_boot/
-│   └── apex_v00_37_0_master_full.txt       ← System prompt completo (20,173 linhas)
-│
-├── agents/                                 ← 219 agentes especializados
-│   ├── architect/                          ← Decisões de arquitetura de sistema
-│   ├── engineer/                           ← Implementação e código
-│   ├── researcher/                         ← Análise e síntese de informação
-│   ├── scientist_agent/                    ← Descoberta científica e simulação
-│   ├── theorist/                           ← Raciocínio abstrato e formal
-│   ├── critic/                             ← Revisão crítica e anti-patterns
-│   ├── pmi_pm/                             ← Gestão de projetos (enforcement obrigatório v00.37.0)
-│   ├── programme_director/                 ← Coordenação de programas
-│   ├── diff_governance/                    ← Governança de OPPs e DIFFs
-│   ├── bayesian_curator/                   ← Curadoria probabilística
-│   ├── meta_learning_agent/                ← Meta-aprendizado
-│   ├── meta_reasoning/                     ← Raciocínio sobre raciocínio
-│   ├── event_observer/                     ← Observação de eventos de sistema
-│   ├── anchor_destroyer/                   ← Remoção de vieses de ancoragem
-│   ├── community-awesome/                  ← Agentes awesome-claude (OPP-153)
-│   ├── community-subagents/                ← 163 sub-agentes de comunidade (OPP-153/155)
-│   └── cs_cs_*/                            ← 41 agentes CS persona (OPP-154/156)
-│       ├── cs_cs_ceo_advisor/
-│       ├── cs_cs_cto_advisor/
-│       ├── cs_cs_product_manager/
-│       ├── cs_cs_engineering_lead/
-│       ├── cs_cs_content_strategist/
-│       ├── cs_cs_financial_analyst/
-│       └── ... (35 mais)
-│
-├── algorithms/                             ← 40+ implementações algorítmicas
-│   ├── uco/
-│   │   ├── universal_code_optimizer_v4.py  ← UCO v4: 4,152 linhas
-│   │   └── UCO_API_SURFACE.yaml            ← API canônica (4 métodos públicos)
-│   ├── uco-sensor/                         ← UCO-Sensor v3.2.8 (Sprint D)
-│   │   ├── sensor-api/                     ← REST API: 57 endpoints, 1393 testes, M1–M35 + LEAP 1-4 + Sprint A-D
-│   │   │   ├── api/server.py               ← HTTP server (stdlib-only) + landing HTML em GET /
-│   │   │   ├── apex_integration/           ← EventBus + Connector + 8 templates APEX
-│   │   │   ├── sensor_core/                ← UCO bridge + AutoFix engine (16 transforms + SAST↔AutoFix loop)
-│   │   │   │   └── autofix/                ← 7 transforms mapeados em SAST_TO_TRANSFORM (Sprint D)
-│   │   │   ├── sensor_storage/             ← SnapshotStore SQLite: snapshots + remediations + APS + predictor
-│   │   │   ├── governance/                 ← Compound alerts (Sprint A) + Repo meta-score (Sprint B)
-│   │   │   ├── metrics/                    ← Extended vectors v2 (9 dims) + Anti-Pattern Score (17 sinais)
-│   │   │   ├── monitor/                    ← Real-time FileWatcher + SSE stream (M8.0)
-│   │   │   ├── scan/                       ← RepoScanner + GitHistoryScanner
-│   │   │   ├── report/                     ← Relatório HTML standalone + badges SVG
-│   │   │   ├── lang_adapters/              ← Python (AST) + Tree-Sitter JS/TS/Java/Go (M9.0)
-│   │   │   ├── sast/                       ← 58 regras SAST, 5 linguagens
-│   │   │   ├── sca/                        ← 205 CVEs, 12 ecossistemas
-│   │   │   ├── iac/                        ← 102 regras IaC (Dockerfile/Compose/k8s/Terraform/Helm/Ansible/Pulumi/CDK)
-│   │   │   ├── tests/test_marco_m1..m35.py ← 1393 testes (M1 → Sprint D), 0 falhas
-│   │   │   ├── CHANGELOG.md                ← Histórico v0.6.0 → v3.2.8
-│   │   │   ├── Dockerfile                  ← Multi-stage Python 3.11-slim
-│   │   │   ├── docker-compose.yml          ← Stack dev/prod + perfil cron
-│   │   │   └── pyproject.toml              ← PEP 517/518, entry point: uco-sensor
-│   │   ├── UCO_SENSOR_ROADMAP.md           ← WBS + estado consolidado (atualizado por marco)
-│   │   └── frequency-engine/               ← FrequencyEngine: FFT + Hurst R/S + DBSCAN + DegradationPredictor
-│   ├── optimization/
-│   ├── anthropic-cli/
-│   ├── anthropic-sdk-ruby/
-│   ├── claude-agent-sdk/
-│   ├── claude-code-cli/
-│   ├── mcp-typescript-sdk/
-│   ├── mcp-dotnet-sdk/
-│   ├── github-mcp-server/
-│   ├── playwright-mcp/
-│   ├── awesome-claude-code/
-│   ├── awesome-claude-skills/
-│   ├── claude-cookbooks/
-│   └── ... (26+ mais)
-│
-├── skills/                                 ← 3,784 skills | 52 domínios | 3,778 adotadas
-│   ├── engineering/
-│   │   ├── engineering_frontend/
-│   │   ├── engineering_backend/
-│   │   ├── engineering_api/
-│   │   ├── engineering_devops/
-│   │   ├── engineering_database/
-│   │   ├── engineering_testing/
-│   │   ├── engineering_security/
-│   │   ├── engineering_cloud_aws/
-│   │   ├── engineering_cloud_gcp/
-│   │   ├── engineering_cloud_azure/
-│   │   ├── engineering_mobile/
-│   │   ├── engineering_git/
-│   │   ├── engineering_cli/
-│   │   └── engineering_agentops/
-│   ├── ai_ml/
-│   │   ├── ai_ml_agents/
-│   │   ├── ai_ml_llm/
-│   │   └── ai_ml_ml/
-│   ├── business/
-│   ├── data/data-science/
-│   ├── marketing/
-│   ├── legal/
-│   ├── finance/
-│   ├── mathematics/
-│   ├── design/
-│   ├── security/
-│   ├── science/science_research/
-│   ├── healthcare/
-│   ├── product-management/
-│   ├── knowledge-management/
-│   ├── customer-support/
-│   ├── anthropic-official/
-│   ├── anthropic-skills/
-│   ├── apex_internals/
-│   ├── web3/
-│   ├── integrations/
-│   └── ... (34+ mais domínios)
-│
-├── diffs/
-│   ├── v00_33_0/                           ← OPPs 1–92: base pública
-│   ├── v00_34_0/                           ← OPPs 93–110: normalização de schemas
-│   ├── v00_35_0/                           ← OPPs 111–119: quality gates + FMEA
-│   └── v00_36_0/                           ← OPPs 120–132: skill_normalizer + SR_42–SR_45
-│
-├── integrations/
-│   ├── mcp-servers/
-│   ├── mcp-reference-servers/
-│   ├── engineering-mcp/
-│   ├── legal-mcp/
-│   ├── marketing-mcp/
-│   ├── github-mcp-server/
-│   ├── playwright-mcp/
-│   ├── science-physics-mcp/
-│   ├── claude-commands/
-│   ├── plugins/ + connectors/ + external-plugins/
-│   └── ... (8+ mais)
-│
-├── meta/
-│   ├── llm_compat.yaml                     ← Compatibilidade LLM (Claude/GPT/Gemini/DeepSeek/Llama)
-│   ├── output_integrity_checker.yaml       ← Validador pós-output (OPP-134)
-│   └── anchors.yaml                        ← Taxonomia para attraction_engine
-│
-└── tools/
-    ├── generate_index.py                   ← Auto-gera INDEX.md
-    └── commands/
-```
-
----
-
-## Modos Cognitivos
-
-Selecionados automaticamente com base na complexidade detectada:
-
-| Modo | Agentes | Latência | Caso de Uso |
-|------|---------|----------|-------------|
-| EXPRESS | 1 | ~2s | Perguntas triviais |
-| FAST | 2–3 | ~5s | Veredictos rápidos |
-| CLARIFY | 3 | ~8s | Escopo ambíguo |
-| DEEP | 4–5 | ~15s | Análise estruturada |
-| RESEARCH | 6–8 | ~30s | Profundidade máxima |
-| SCIENTIFIC | 8 | ~60s | Descoberta/simulação |
-| FOGGY | 5 | ~20s | Contexto fragmentado |
-
----
-
-## Compatibilidade com LLMs
-
-| LLM | Nível | Python Sandbox | GitHub | ForgeSkills | Notas Críticas |
-|-----|-------|---------------|--------|-------------|----------------|
-| Claude Code | FULL | Bash nativo | MCP/git | git clone | Referência canônica |
-| GPT-4o | PARTIAL | Code Interpreter | raw URLs | urllib | sqlite3 indisponível |
-| Gemini | PARTIAL | tool_code | Grounding | urllib | sympy indisponível |
-| DeepSeek | PARTIAL | @Sandbox obrigatório | @Sandbox | urllib | Ver avisos críticos abaixo |
-| Llama/Local | MINIMAL | Indisponível | Indisponível | Paste manual | Apenas LLM_BEHAVIOR |
-
-**Avisos críticos DeepSeek** (falhas em produção documentadas):
-- Sempre prefixe com `@Sandbox` e `@Numpy`
-- `uco.gate()` **NÃO existe** (método alucinado); use `uco.analyze()` + threshold manual
-- Hashes SHA-256 gerados sem execução real são descritivos, não verificáveis
-- Ver `meta/llm_compat.yaml` → `deepseek` → `critical_warnings`
-
----
-
-## UCO — Universal Code Optimizer v4
-
-Analisa e otimiza código com métricas Halstead, CFG, complexidade ciclomática, detecção de código morto e duplicatas.
-
-**API Pública** — exatamente 4 métodos (nenhum outro existe):
+### Fluxo mínimo (o contrato do kernel)
 
 ```python
-uco = UniversalCodeOptimizer()
-
-result = uco.analyze(code)           # H, bugs, complexity, score, dead_code, duplicates
-result = uco.quick_optimize(code)    # optimized_code, score_before, score_after (sem numpy)
-result = uco.optimize_fast(code)     # optimized_code, improvement_pct (Simulated Annealing)
-result = uco.optimize(code)          # Full HMC — requer numpy
+# de dentro de apex-method/scripts/
+import orchestrator
+r = orchestrator.run("sua tarefa")           # triage → dissect → specialists → modo → checklist
+# r["kernel_checklist"]: passos DONE (código) + llm_actions (o que VOCÊ executa)
+# execute os passos, marque com complete_step(...), e feche com orchestrator.gate(checklist)
+# a run só está completa quando o gate diz COMPLETE.
 ```
 
-**Padrão correto de UCO gate** (NÃO use `uco.gate()` — não existe):
-
-```python
-result = uco.analyze(code)
-THRESHOLDS = {"EXPRESS": 40, "FAST": 55, "DEEP": 70, "SCIENTIFIC": 85}
-gate_pass = result['score'] >= THRESHOLDS[cognitive_mode] and result['bugs'] < 0.1
-```
-
-Ver: `algorithms/uco/UCO_API_SURFACE.yaml`
-
 ---
 
-## UCO-Sensor v0.5.0
+## Estrutura do repositório
 
-API REST de análise espectral de qualidade de código — sensor cognitivo nativo do APEX (M1–M8 completos).
+| Caminho | O que é | Status |
+|---|---|---|
+| `apex-method/` | **A skill canônica** — scripts, catálogos, testes, referências | ativo |
+| `skills/` | Biblioteca com 3.784 skills em 52 domínios (ver `INDEX.md`) | biblioteca |
+| `agents/` | 219 agentes/personas especializados | biblioteca |
+| `integrations/` | Integrações (MCP servers, pontes) — inclui `apex-mcp-server/` | ativo |
+| `tools/` | Utilitários do repo (`generate_index.py`, validadores, standardizer) | ativo |
+| `algorithms/` | Repositórios de terceiros vendorizados — ver [`algorithms/THIRD_PARTY.md`](algorithms/THIRD_PARTY.md) | referência |
+| `apex_boot/` | Sistema legado de boot por prompt (111 páginas, pré-skill) | legado |
+| `diffs/`, `meta/`, `references/`, `reference-docs/` | Histórico de evolução + material de referência | histórico |
+| `docs/reports/` | Relatórios de auditoria/avaliação por versão | histórico |
+| `Full Bundle/` | Bundle binário fatiado (legado; candidato a remoção) | legado |
 
-**9 Canais UCO monitorados**:
+## Documentos-chave
 
-| Canal | Símbolo | O que mede |
-|-------|---------|-----------|
-| Hamiltoniano UCO | **H** | Energia total — complexidade agregada |
-| Cyclomatic Complexity | **CC** | Branches e caminhos lógicos |
-| Infinite Loop Risk | **ILR** | While True, recursão sem base case |
-| DSM Density | **DSM** | Acoplamento entre módulos |
-| DSM Cyclic Ratio | **DSM_c** | Ciclos de dependência |
-| Dependency Instability | **DI** | Instabilidade da interface |
-| Syntactic Dead Code | **SDC** | Código nunca executado |
-| Duplicate Block Count | **DBC** | Blocos duplicados |
-| Halstead Bug Estimate | **HB** | Densidade de bugs estimada |
+- [`apex-method/SKILL.md`](apex-method/SKILL.md) — o método completo.
+- [`spec_atualizacoes.md`](spec_atualizacoes.md) — **estado atual: o que foi implementado, o que falta, decisões pendentes.**
+- [`APEX_CREATION_GUIDE.md`](APEX_CREATION_GUIDE.md) — schemas e templates para criar artefatos APEX.
+- [`INTAKE_WORKFLOW.md`](INTAKE_WORKFLOW.md) — pipeline de ingestão de repositórios externos.
+- [`docs/reports/`](docs/reports/) — auditorias e avaliações históricas.
+- [`docs/README_legacy_v00.39.md`](docs/README_legacy_v00.39.md) — README anterior (sistema de boot por prompt).
 
-**Loop cognitivo bidirecional APEX ↔ UCO-Sensor**:
-```
-1. UCO detecta AI_CODE_BOMB em auth.service
-2. Publica UCO_ANOMALY_DETECTED no APEX Event Bus
-3. APEX aciona agente engineer com apex_prompt contextualizado
-4. APEX envia APEX_FIX_REQUEST ao sensor via /apex/webhook
-5. UCO aplica transforms e devolve fixed_code + delta_h
-```
+## Qualidade
 
-```bash
-# Instalar e rodar
-cd algorithms/uco-sensor/sensor-api
-pip install -e ".[parsers,dev]"
-python cli.py serve --port 8080
+- `apex-method/tests/benchmark.py` — 1 teste real por módulo + regressões de auditoria.
+- `apex-method/tests/test_regressions_v162.py` — regressões empíricas v1.62 (cache híbrido, triage, taxonomy).
+- `tools/validate_skills.py` / `tools/skill_standardizer.py` — conformidade da biblioteca de skills.
+- Ledger de governança SHA-256 (`memory.record_event` / `verify_ledger`) — trilha auditável de
+  toda promoção/rebaixamento.
 
-# Ou via Docker
-docker compose up -d
-```
+## Princípios (invariantes)
 
-Ver: `algorithms/uco-sensor/sensor-api/README.md`
-
----
-
-## Skills: Schema Normalizado (OPP-133)
-
-Todas as 3,784 skills seguem schema uniforme com normalização automática:
-
-```yaml
-skill_id: dominio.subdomain.nome
-anchors: [keyword1, keyword2, ...]
-cross_domain_bridges:
-  - to: dominio_b.skill_x
-    strength: 0.85
-    reason: "por que se conectam"
-input_schema: [field1, field2]
-output_schema: [output1, output2]
-what_if_fails: "fallback explícito"
-synergy_map:
-  - type: agent|diff|skill
-    ref: artifact_name
-    benefit: "como potencializa"
-security:
-  - risk: "descrição do risco"
-    mitigation: "como mitigar"
-tier: ADAPTED               # CORE | ADAPTED | COMMUNITY | IMPORTED
-```
-
-**Navegar skills**: `INDEX.md` → `domain_map` → caminho direto para `SKILL.md`
-
----
-
-## Regras de Segurança Invioláveis
-
-| Regra | O que proíbe / exige |
-|-------|----------------------|
-| SR_37 | Scan AST obrigatório antes de qualquer import externo |
-| SR_38 | Isolamento de contexto entre agentes paralelos |
-| SR_39 | Outputs simulados devem ser marcados `[SIMULATED]` |
-| SR_40 | Compliance check em todos os artefatos |
-| SR_41 | Sem paths relativos em imports de skills |
-| SR_42 | Verificação SHA-256 em todos os ForgeSkills (OPP-125) |
-| SR_43 | Gate de aprovação por cognitive_mode antes de outputs irreversíveis |
-| SR_44 | FMEA completa em cada OPP antes de aprovação |
-| SR_45 | Ghost dependency blocker — sem imports de módulos não declarados |
-
----
-
-## Integridade de Output (OPP-134)
-
-O módulo `output_integrity_checker` verifica automaticamente padrões de alucinação:
-
-| Padrão Detectado | Ação se Sem Evidência |
-|------------------|----------------------|
-| `[UCO_GATE_PASS]` sem código Python | → `[UCO_GATE_PASS: UNVERIFIED]` |
-| `[SANDBOX_EXECUTED]` sem bloco executável | → `[SIMULATED: marcador incorreto]` |
-| `sha256:nome_descritivo` (< 64 hex chars) | → `[PLACEHOLDER_HASH]` |
-| `uco.gate()` ou método inexistente | → `[UCO_API_HALLUCINATION]` |
-| Path `frontend/` em vez de `engineering_frontend/` | → `[PATH_WARNING]` |
-
----
-
-## Criar Novos Artefatos
-
-Ver `APEX_CREATION_GUIDE.md`:
-- Templates copy-paste para skills, agentes, OPPs, algoritmos
-- Quality gates: SkillQualityBar (6 checks), AgentQualityBar (8 checks), OPPQualityBar (7 checks)
-- 20+ anti-patterns com exemplos
-- Padrões de segurança contra injection e ghost dependencies
-
----
-
-## Histórico de Versões
-
-| Versão | DIFFs | Skills | Agentes | Destaques |
-|--------|-------|--------|---------|-----------|
-| **v00.37.0** | **132** | **3,784** | **219** | community-subagents 163 (OPP-153/155), CS persona agents 41 (OPP-154/156), boot verification STEP_0 (OPP-157), pmi_pm enforcement gate (OPP-158), UCO runtime digest (OPP-159), apex_state.yaml machine-readable (OPP-160), UCO-Sensor v0.5.0 M1–M8 (156 testes) |
-| v00.36.0 | 127 | 2,624 | 19 | SR_42–SR_45, skill_normalizer automático (OPP-133), output_integrity_checker (OPP-134), UCO API surface canônica, perfil crítico DeepSeek |
-| v00.35.0 | 119 | — | 19 | APEX_CREATION_GUIDE.md, SkillQualityBar/AgentQualityBar/OPPQualityBar, FMEA obrigatório em OPPs |
-| v00.34.0 | 110 | — | 19 | Normalização de schemas, expansão de domínios, quality gates iniciais |
-| v00.33.0 | 92 | — | 19 | Base pública: 50 domínios, 19 agentes, intake workflow, SR_37–SR_41 |
-
----
-
-## Quick Links
-
-| Recurso | Arquivo |
-|---------|---------|
-| System prompt completo | `apex_boot/apex_v00_37_0_master_full.txt` |
-| Estado persistente (máquina) | `apex_state.yaml` |
-| Guia de criação de artefatos | `APEX_CREATION_GUIDE.md` |
-| Compatibilidade LLM | `meta/llm_compat.yaml` |
-| UCO API canônica (4 métodos) | `algorithms/uco/UCO_API_SURFACE.yaml` |
-| UCO-Sensor REST API (19 endpoints) | `algorithms/uco-sensor/sensor-api/README.md` |
-| Validador de integridade de output | `meta/output_integrity_checker.yaml` |
-| Índice de skills (gerado) | `INDEX.md` |
-| Workflow de ingestão | `INTAKE_WORKFLOW.md` |
-| Gerador de INDEX.md | `tools/generate_index.py` |
-
-**Repositório**: https://github.com/thiagofernandes1987-create/APEX  
-**Raw base**: https://raw.githubusercontent.com/thiagofernandes1987-create/APEX/main/  
-**Whitelist**: APEX incluído em `trusted_domains` desde v00.33.0 (OPP-104)
-
----
-
-## Licença
-
-**Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)**
-
-- Uso livre: pesquisa, educação, projetos pessoais, open source não-comercial
-- Uso comercial: requer permissão explícita do autor
-
-Ver `LICENSE` | [Texto completo CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/legalcode)
+1. **Nada roda sem gate** — código passa por `uco_gate`; instalação de skill externa exige aprovação humana (H5).
+2. **Verificar, não afirmar** — matemática via `verify.py` (sympy) ou marcada `CONJECTURE`; execução simulada é sempre rotulada.
+3. **Aprender só com validação** — promoção/rebaixamento (beta-binomial) apenas após resultado validado; tudo espelhado no ledger.
+4. **Token economy primeiro** — triage decide o modo mais leve que serve; cache de resolução pula o pipeline quando um problema já foi resolvido e validado.

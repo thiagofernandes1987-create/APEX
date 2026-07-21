@@ -35,7 +35,19 @@ SKILLS_DIR = REPO_ROOT / "skills"
 INDEX_PATH = REPO_ROOT / "INDEX.md"
 ERRORS_LOG = REPO_ROOT / "tools" / "index_generation_errors.log"
 
-APEX_VERSION = "v00.36.0"
+def _apex_version():
+    """Read the canonical version from apex-method/SKILL.md frontmatter (single source of truth)."""
+    try:
+        skill_md = REPO_ROOT / "apex-method" / "SKILL.md"
+        for line in skill_md.read_text(encoding="utf-8").splitlines()[:30]:
+            if line.startswith("version:"):
+                return "v" + line.split(":", 1)[1].strip()
+    except Exception:
+        pass
+    return "v?"
+
+
+APEX_VERSION = _apex_version()
 
 # Mapeamento de nomes de diretório para nomes legíveis
 DOMAIN_DISPLAY_NAMES = {
