@@ -1,6 +1,6 @@
 # APEX — Autonomous Polymorphic Engineering eXpert
 
-**Skill canônica**: [`apex-method/`](apex-method/) v1.62.0 | **Skills nativas**: 3.784 (52 domínios) | **Agentes**: 219 | **Licença**: MIT (skill) / CC BY-NC 4.0 (biblioteca)
+**Skill canônica**: [`apex-method/`](apex-method/) v1.63.0 | **Skills nativas**: 3.784 (52 domínios) | **Agentes**: 219 | **Licença**: MIT (skill) / CC BY-NC 4.0 (biblioteca)
 
 > Workflow de raciocínio token-aware com ferramentas reais: escolhe um modo de operação para
 > controlar custo, roda um pipeline estruturado (decompose → validate → verify → snapshot) e dá
