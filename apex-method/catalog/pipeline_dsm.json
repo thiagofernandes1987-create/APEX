@@ -3,7 +3,7 @@
   "note": "DSM of the runtime: (a) EXACT module-import matrix -> parallel load levels, cycles, load-bearing core; (b) [APPROX] per-mode step flow via geodesic ΔH/token -> run/skip + savings. The applied optimizations are context_budget(mode) — experience injection sized per mode, zero on EXPRESS — and its twin output_budget(mode): generation compressed on cheap paths, full verbosity kept on DEEP+ where the reasoning chain is the product."
  },
  "module_dsm": {
-  "modules": 55,
+  "modules": 56,
   "deps": {
    "_ast_helpers": [],
    "_tfidf": [],
@@ -92,6 +92,7 @@
     "skills_sh",
     "snapshot"
    ],
+   "event_bus": [],
    "execution_policy": [
     "competence_matrix",
     "config",
@@ -99,7 +100,8 @@
     "learning",
     "llm_adapter",
     "orchestrator",
-    "repo_bridge"
+    "repo_bridge",
+    "taxonomy"
    ],
    "federation": [
     "agent_registry",
@@ -156,6 +158,7 @@
     "agent_spawn",
     "bayes",
     "config",
+    "event_bus",
     "execution_policy",
     "gravity",
     "mental_interpreter",
@@ -237,6 +240,7 @@
     "code_genetics",
     "config",
     "curated",
+    "event_bus",
     "fractal_compression",
     "geodesic_scheduler",
     "geometry_estimator",
@@ -418,7 +422,7 @@
     "PAGE_OUT"
    ],
    "tokens_est": 60,
-   "savings_vs_naive": 4709,
+   "savings_vs_naive": 4713,
    "context_budget_chars": 0,
    "output_budget": {
     "soft_max_tokens": 120,
@@ -432,8 +436,8 @@
     "DISSECT",
     "PHASE_PLAN",
     "MODE",
-    "TRIAGE",
     "CONTEXT_PACK",
+    "TRIAGE",
     "RESOLVE_SPECIALISTS",
     "PMI_CONVERGE",
     "PAGE_OUT",
@@ -445,7 +449,7 @@
     "SPAWN_AGENTS",
     "RUN_STANCES"
    ],
-   "tokens_est": 1569,
+   "tokens_est": 1573,
    "savings_vs_naive": 3200,
    "context_budget_chars": 500,
    "output_budget": {
@@ -459,8 +463,8 @@
     "DISSECT",
     "PHASE_PLAN",
     "MODE",
-    "TRIAGE",
     "CONTEXT_PACK",
+    "TRIAGE",
     "RESOLVE_SPECIALISTS",
     "PMI_CONVERGE",
     "PAGE_OUT",
@@ -471,7 +475,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4769,
+   "tokens_est": 4773,
    "savings_vs_naive": 0,
    "context_budget_chars": 900,
    "output_budget": {
@@ -485,8 +489,8 @@
     "DISSECT",
     "PHASE_PLAN",
     "MODE",
-    "TRIAGE",
     "CONTEXT_PACK",
+    "TRIAGE",
     "RESOLVE_SPECIALISTS",
     "PMI_CONVERGE",
     "PAGE_OUT",
@@ -497,7 +501,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4769,
+   "tokens_est": 4773,
    "savings_vs_naive": 0,
    "context_budget_chars": 1300,
    "output_budget": {
@@ -511,8 +515,8 @@
     "DISSECT",
     "PHASE_PLAN",
     "MODE",
-    "TRIAGE",
     "CONTEXT_PACK",
+    "TRIAGE",
     "RESOLVE_SPECIALISTS",
     "PMI_CONVERGE",
     "PAGE_OUT",
@@ -523,7 +527,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4769,
+   "tokens_est": 4773,
    "savings_vs_naive": 0,
    "context_budget_chars": 1600,
    "output_budget": {
@@ -537,8 +541,8 @@
     "DISSECT",
     "PHASE_PLAN",
     "MODE",
-    "TRIAGE",
     "CONTEXT_PACK",
+    "TRIAGE",
     "RESOLVE_SPECIALISTS",
     "PMI_CONVERGE",
     "PAGE_OUT",
@@ -549,7 +553,7 @@
     "RUN_STANCES"
    ],
    "skipped": [],
-   "tokens_est": 4769,
+   "tokens_est": 4773,
    "savings_vs_naive": 0,
    "context_budget_chars": 2000,
    "output_budget": {

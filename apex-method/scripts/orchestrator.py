@@ -292,11 +292,20 @@ def gate(checklist):
 
 
 # ── FULL FLOW ─────────────────────────────────────────────────────────────────
-def resolution_check(task, min_prior=0.6):
+def resolution_check(task, min_prior=0.6, min_prior_facet=0.5):
     """RESOLUTION-CACHE gate (Opt #1). If skill_ledger REMEMBERS a validated solution for a similar
     problem class (a skill that already solved it, strong enough prior), return a short-circuit
     result: apply the crystallized solution (agent/skills/repo/commands) + RE-VERIFY, skipping the
     full DISSECT→RESOLVE→PMI→SPAWN→BARRIER fan-out. Returns None to fall through to the pipeline.
+
+    HYBRID GATE (v1.62, empirically calibrated by exp_final.py): the char-n-gram recall floor is
+    ~0.5 for ANY same-language text, so the plain threshold cannot separate a PARAPHRASE of a
+    solved problem (prior 0.56-0.59) from an unrelated task (0.51-0.57). Two tiers:
+      Tier 1 — prior >= min_prior (0.6): hit, as in v1.61.
+      Tier 2 — min_prior_facet (0.5) <= prior < min_prior AND the task's taxonomy facets AGREE
+               with the remembered problem (same non-None domain + facet_score >= 0.5): hit.
+               Facets discriminate meaning where raw similarity cannot ("adicionar seção na
+               landing page" agrees with the landing-page memory; "receita de bolo" does not).
 
     HONEST/SAFE: the returned result REQUIRES re-verification (reverify_required=True) — it reuses,
     it does not trust blindly; a failed re-verify means the LLM re-runs the full pipeline. Gated by
@@ -313,19 +322,37 @@ def resolution_check(task, min_prior=0.6):
     except Exception:
         return None
     top = prior[0] if prior else None
-    if not top or top.get("prior", 0.0) < min_prior:
+    if not top or top.get("prior", 0.0) < min_prior_facet:
         return None
+    tier = "prior"
+    if top.get("prior", 0.0) < min_prior:
+        # Tier 2: the facet gate must positively confirm the problem class
+        tier = "facet"
+        remembered = top.get("problem") or ""
+        if not remembered:
+            return None
+        try:
+            import taxonomy
+            t_dom = taxonomy.classify(task).get("domain")
+            p_dom = taxonomy.classify(remembered).get("domain")
+            if t_dom is None or t_dom != p_dom:
+                return None
+            if taxonomy.facet_score(task, remembered) < 0.5:
+                return None
+        except Exception:
+            return None
     provenance = []
     try:
         provenance = skill_ledger.recall(task, k=1)
     except Exception:
         pass
     return {"path": "RESOLUTION_CACHE", "mode": "RESOLUTION_CACHE", "reused": top,
-            "provenance": provenance[:1], "reverify_required": True,
+            "provenance": provenance[:1], "reverify_required": True, "tier": tier,
             "output_budget": _output_budget("STANDARD"),
             "reason": (f"remembered a validated solution (skill '{top['skill']}', "
-                       f"success {top.get('success_rate')}, prior {top.get('prior')}) — APPLY it and "
-                       "RE-VERIFY; skip the full pipeline (token economy). Re-verify fail -> full run.")}
+                       f"success {top.get('success_rate')}, prior {top.get('prior')}, tier {tier}) — "
+                       "APPLY it and RE-VERIFY; skip the full pipeline (token economy). "
+                       "Re-verify fail -> full run.")}
 
 
 def run(task, candidates=None, snapshot=None):
@@ -345,26 +372,51 @@ def _run(task, candidates=None, snapshot=None):
     # EXPRESS, token economy) and the escalation floor (hard problem or low MCFE reliability -> DEEP+),
     # so both happen automatically without a manual call. It wraps express_check internally; if
     # execution_policy is unavailable, we fall back to the original express_check gate.
+    # ── EVENT BUS (v1.62): every run opens a trace and self-instruments — the evaluation loop
+    # does NOT depend on the LLM remembering to emit. emit() is best-effort and never raises.
+    try:
+        import event_bus as _eb
+        _tid = _eb.new_trace()
+        _eb.emit("orchestrator", "run_started", _tid, task=str(task)[:200])
+    except Exception:
+        _eb, _tid = None, None
     tri, ep, escalate_discovery = None, None, False
     try:
         import execution_policy as ep
         tri = ep.triage(task)
     except Exception:
         ep = None
+    if _eb and tri is not None:
+        _eb.emit("execution_policy", "triage", _tid, mode=tri.get("mode"),
+                 skip=tri.get("skip_pipeline"), uncertain=tri.get("uncertain"),
+                 reasons=tri.get("reasons") or [tri.get("reason")])
     if tri is not None and tri.get("skip_pipeline"):
         exp = tri.get("express") or express_check(task) or {"mode": "EXPRESS", "answer": None,
                                                              "reason": "trivial"}
+        if _eb:
+            _eb.emit("orchestrator", "mode_decision", _tid, mode="EXPRESS", path="EXPRESS")
+            _eb.emit("orchestrator", "run_finished", _tid, path="EXPRESS")
         return {"path": "EXPRESS", **exp, "output_budget": _output_budget("EXPRESS"),
-                "triage": {"mode": tri["mode"], "reason": tri.get("reason")}}
+                "trace_id": _tid, "triage": {"mode": tri["mode"], "reason": tri.get("reason")}}
     if tri is None:                                    # execution_policy missing -> original gate
         ex = express_check(task)
         if ex:
-            return {"path": "EXPRESS", **ex, "output_budget": _output_budget("EXPRESS")}
+            return {"path": "EXPRESS", **ex, "output_budget": _output_budget("EXPRESS"),
+                    "trace_id": _tid}
     # RESOLUTION-CACHE gate (token economy, Opt #1): if we REMEMBER a validated solution for a
     # similar problem class, short-circuit the expensive fan-out — recall the crystallized solution
     # and RE-VERIFY it instead of re-deriving. A failed re-verify falls back to the full pipeline.
     rc = resolution_check(task)
+    if _eb:
+        if rc is not None:
+            _eb.emit("resolution_cache", "cache_hit", _tid, tier=rc.get("tier"),
+                     skill=(rc.get("reused") or {}).get("skill"),
+                     prior=(rc.get("reused") or {}).get("prior"))
+            _eb.emit("orchestrator", "run_finished", _tid, path="RESOLUTION_CACHE")
+        else:
+            _eb.emit("resolution_cache", "cache_miss", _tid)
     if rc is not None:
+        rc["trace_id"] = _tid
         return rc
     disciplines = dissect(task)
     specialists = assign_specialists(task, disciplines)
@@ -388,9 +440,12 @@ def _run(task, candidates=None, snapshot=None):
     # audit fix v1.17.0: wire mental_interpreter (was documented in the flow but never called)
     import mental_interpreter
     phase_plan = mental_interpreter.plan_phases(mode, fractal_depth=len(disciplines))
+    if _eb:
+        _eb.emit("orchestrator", "mode_decision", _tid, mode=mode, path="FULL_PIPELINE",
+                 disciplines=disciplines)
     result = {"path": "FULL_PIPELINE", "mode": mode, "disciplines": disciplines,
               "specialists": specialists, "phase_plan": phase_plan,
-              "escalate_discovery": escalate_discovery}
+              "trace_id": _tid, "escalate_discovery": escalate_discovery}
     # v1.58: the output-side twin of context_budget — tell the LLM how terse/verbose the ANSWER
     # for this mode should be. Compresses cheap paths (output tokens cost ~5x input), keeps DEEP+
     # fully verbose because the reasoning chain is the deliverable. Never raises.
@@ -503,6 +558,9 @@ def _run(task, candidates=None, snapshot=None):
         pass
     # the gate is computed LAST so it reflects everything run() itself completed
     result["gate"] = gate(ck)
+    if _eb:
+        _eb.emit("orchestrator", "run_finished", _tid, path="FULL_PIPELINE", mode=mode,
+                 gate=result["gate"].get("status") if isinstance(result.get("gate"), dict) else None)
     return result
 
 

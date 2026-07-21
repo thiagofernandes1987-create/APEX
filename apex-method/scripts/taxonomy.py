@@ -120,6 +120,32 @@ PLATFORM = {
 }
 AXES = {"domain": DOMAIN, "subdomain": SUBDOMAIN, "intent": INTENT, "platform": PLATFORM}
 
+
+def _merge_extra_seed():
+    """v1.62: merge catalog/taxonomy_extra_seed.json into the base tables at import time.
+
+    The seed carries (a) the curated PT+EN vocabulary for the gaps the v1.62 audit PROVED
+    empirically (frontend/web tasks classified domain=None; trivial edits unrecognized) and
+    (b) vocabulary mined from the OpenClaw maturity scorecard (agent-infra / automation /
+    observability / devops / docs). Deterministic, stdlib-only; a missing or corrupt seed
+    changes nothing (base tables remain the behavior of v1.61)."""
+    import json as _json
+    import os as _os
+    seed_path = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                              "catalog", "taxonomy_extra_seed.json")
+    try:
+        with open(seed_path, encoding="utf-8") as f:
+            seed = _json.load(f)
+    except Exception:
+        return
+    for axis, table in AXES.items():
+        for facet, terms in (seed.get(axis) or {}).items():
+            if isinstance(terms, list):
+                table.setdefault(facet, set()).update(t for t in terms if isinstance(t, str))
+
+
+_merge_extra_seed()
+
 # facet weights when scoring attraction (domain/subdomain matter most; platform least)
 AXIS_WEIGHT = {"domain": 3.0, "subdomain": 2.5, "intent": 1.5, "platform": 1.0}
 

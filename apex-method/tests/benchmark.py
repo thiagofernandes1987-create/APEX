@@ -994,8 +994,16 @@ def t_routine_composer():
         # chaining: each step's send carries the previous stage's handoff
         for a, b in zip(r["steps"], r["steps"][1:]):
             assert a["feeds_next"].split(":")[0] in b["send"], (a["feeds_next"], b["send"])
-        # honest gaps drive discovery (marketing/psychology isn't in the library)
-        assert any(g["stage"] == "marketing" for g in r["gaps"]), r["gaps"]
+        # honest gaps drive discovery — v1.62 env-robust: whether "marketing" is a gap depends on
+        # which skills the HOST has installed (capability_map scans ~/.claude/skills), so assert
+        # the INVARIANT instead: every canonical stage is either FILLED by a real capability or
+        # reported as an honest gap — nothing silently disappears.
+        covered = {s["stage"] for s in r["steps"]} | {g["stage"] for g in r["gaps"]}
+        expected = {st for st, _ in rc.STAGES}
+        assert expected <= covered, f"stages neither filled nor gapped: {sorted(expected - covered)}"
+        mkt_step = next((s for s in r["steps"] if s["stage"] == "marketing"), None)
+        assert mkt_step or any(g["stage"] == "marketing" for g in r["gaps"]), \
+            "marketing neither filled nor reported as gap"
         # meta runtime tools never occupy domain stages; the skill never picks itself
         for s in r["steps"]:
             if s["stage"] != "verify":

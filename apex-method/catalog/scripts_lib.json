@@ -16,30 +16,6 @@
   "path": "scripts/_tfidf.py"
  },
  {
-  "id": "script:github_skills",
-  "type": "script",
-  "domain": "discovery",
-  "capabilities": "github,skill-discovery,trusted-vendor,stars,semantic-search,staging",
-  "mass": 150,
-  "path": "scripts/github_skills.py"
- },
- {
-  "id": "script:local_discovery",
-  "type": "script",
-  "domain": "discovery",
-  "capabilities": "local-first,installed-skills,mcp-mapping,container-dirs,semantic-search",
-  "mass": 150,
-  "path": "scripts/local_discovery.py"
- },
- {
-  "id": "script:skill_ledger",
-  "type": "script",
-  "domain": "memory",
-  "capabilities": "provenance,skill-choice,cross-session,attraction-prior,worked-for,swap-recall",
-  "mass": 150,
-  "path": "scripts/skill_ledger.py"
- },
- {
   "id": "script:agent_lifecycle",
   "type": "script",
   "domain": "meta",
@@ -168,6 +144,14 @@
   "path": "scripts/deep_research.py"
  },
  {
+  "id": "script:event_bus",
+  "type": "script",
+  "domain": "observability",
+  "capabilities": "telemetry,trace,evaluation,cache-metrics,jsonl-export,sqlite",
+  "mass": 130,
+  "path": "scripts/event_bus.py"
+ },
+ {
   "id": "script:execution_policy",
   "type": "script",
   "domain": "meta",
@@ -208,6 +192,14 @@
   "path": "scripts/geometry_estimator.py"
  },
  {
+  "id": "script:github_skills",
+  "type": "script",
+  "domain": "discovery",
+  "capabilities": "github,skill-discovery,trusted-vendor,stars,semantic-search,staging",
+  "mass": 150,
+  "path": "scripts/github_skills.py"
+ },
+ {
   "id": "script:gravity",
   "type": "script",
   "domain": "meta",
@@ -246,6 +238,14 @@
   "capabilities": "llm-adapter,capabilities,degradation,provider,portability,HAL",
   "mass": 150,
   "path": "scripts/llm_adapter.py"
+ },
+ {
+  "id": "script:local_discovery",
+  "type": "script",
+  "domain": "discovery",
+  "capabilities": "local-first,installed-skills,mcp-mapping,container-dirs,semantic-search",
+  "mass": 150,
+  "path": "scripts/local_discovery.py"
  },
  {
   "id": "script:memory",
@@ -358,6 +358,14 @@
   "capabilities": "skill-creation,scaffold,neoformat",
   "mass": 129,
   "path": "scripts/skill_forge.py"
+ },
+ {
+  "id": "script:skill_ledger",
+  "type": "script",
+  "domain": "memory",
+  "capabilities": "provenance,skill-choice,cross-session,attraction-prior,worked-for,swap-recall",
+  "mass": 150,
+  "path": "scripts/skill_ledger.py"
  },
  {
   "id": "script:skill_scout",

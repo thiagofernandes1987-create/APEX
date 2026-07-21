@@ -1,7 +1,7 @@
 {
  "_meta": {
   "note": "Tool-use memory: every capability the runtime can wield — runtime tools (44 syscalls + CLI), installed skills (SKILL.md commands/triggers), design templates — plus the environment probe (languages/libraries actually present). Mapping documents commands; it NEVER executes them (gates/H5 still govern). record_use() feeds real outcomes into learning so promotion is earned. Rebuild after every install.",
-  "count": 79
+  "count": 80
  },
  "environment": {
   "python": "python 3.11.15",
@@ -316,6 +316,22 @@
     "send": "ver docstring/CLI",
     "receive": "ver docstring",
     "apply_when": "Multi-part, high-stakes, or exploratory questions where the user wants the pipeline to"
+   }
+  },
+  {
+   "id": "tool:event_bus",
+   "kind": "runtime-tool",
+   "name": "event_bus",
+   "path": "scripts/event_bus.py",
+   "description": "event_bus.py — barramento único de telemetria cognitiva (v1.62). A camada que as auditorias externas pediam como \"continuous evaluation + tracing\": em vez de três subsistemas sobrepostos, UM fluxo de eventos padronizados que qualquer consum",
+   "triggers": "",
+   "commands": [
+    "python scripts/event_bus.py"
+   ],
+   "io": {
+    "send": "ver docstring/CLI",
+    "receive": "ver docstring",
+    "apply_when": ""
    }
   },
   {

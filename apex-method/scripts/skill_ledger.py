@@ -128,10 +128,15 @@ def worked_for(task, domain="general", k=5, memory_db=None):
         if not m.get("skill"):
             continue
         a = agg.setdefault(m["skill"], {"skill": m["skill"], "repo": m.get("repo"),
-                                        "solved": 0, "tried": 0, "score": 0.0})
+                                        "solved": 0, "tried": 0, "score": 0.0,
+                                        "problem": m.get("problem")})
         a["tried"] += 1
         if m.get("solved"):
             a["solved"] += 1
+        if h.get("score", 0) > a["score"]:
+            # carry the best-matching remembered problem text — the hybrid facet gate
+            # (orchestrator.resolution_check v1.62) compares task facets against it
+            a["problem"] = m.get("problem") or a["problem"]
         a["score"] = max(a["score"], h.get("score", 0))
     ranked = [a for a in agg.values() if a["solved"] > 0]
     # blend recency/relevance (recall score) with proven success rate

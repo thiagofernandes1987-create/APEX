@@ -2,7 +2,7 @@
 name: apex-method
 display_name: APEX Method
 kind: workflow
-version: 1.61.0
+version: 1.62.0
 category: engineering
 description: "Token-aware reasoning workflow with real tools: picks an operating mode to control cost, runs a structured pipeline (decompose → validate → verify → snapshot), and gives Claude Program-of-Thought, RK4/Euler, a code gate, and a safe skill router. Use when: multi-step or high-stakes tasks, real math, precise computation, audits, or the user mentions APEX, PoT, pipeline, or scientific mode."
 license: MIT
@@ -47,7 +47,7 @@ marketing; it maps 1:1 to files you can run:
 | OS concept | What it is here |
 |---|---|
 | **Kernel / method** | this `SKILL.md` — the discipline + the mode budgets Claude follows |
-| **Syscalls** | the 55 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG, discovery cascade (PROVEN→LOCAL→native→skills.sh→github) + `skill_ledger` choice-provenance (deterministic work the LLM shouldn't do in its head) |
+| **Syscalls** | the 56 `scripts/*.py` — PoT, RK4, Bayes, gravity, guards, DAG, discovery cascade (PROVEN→LOCAL→native→skills.sh→github) + `skill_ledger` choice-provenance (deterministic work the LLM shouldn't do in its head) |
 | **Scheduler** | `geodesic_scheduler` (ΔH/token step ordering) + `project_ledger.dsm()` (critical path + parallel batches) |
 | **Processes** | stances/subagents — Level A (`concurrent_executor`, subprocess PoT) and Level B (real `Agent` instances) |
 | **Paged, durable memory** | `memory.py` (SQLite: episodic/semantic + **Knowledge Graph**) + `swap_store.py` (pages state out to a local folder or Google Drive) — survives session death |
@@ -570,12 +570,38 @@ runs the pipeline. This is what stops the LLM from choosing EXPRESS when it shou
 Four layers that cut tokens **without loosening rigor** — every reuse is re-verified, memoization is byte-exact, pruning fires only after reliability crosses target.
 
 - **Resolution-cache short-circuit (`orchestrator.resolution_check`, biggest lever).** Before the fan-out, ask `skill_ledger.worked_for(task)`: if a **validated** solution for this problem class is remembered (attraction `prior ≥ 0.6`), skip DISSECT→RESOLVE→PMI→SPAWN→BARRIER, apply the crystallized solution, and **re-verify** (`reverify_required=True`). No history → FULL_PIPELINE; unseen problem → FULL_PIPELINE; a **failed** past attempt never short-circuits (only `solved` ones). Gated by config `resolution_cache` (default on). ~67–79% on recurring workloads.
+  - **HYBRID FACET GATE (v1.62, empirically calibrated):** the char-n-gram floor is ~0.5 for any same-language text, so a plain threshold cannot tell a PARAPHRASE (prior 0.56–0.59) from an unrelated task (0.51–0.57). Tier 2 accepts `0.5 ≤ prior < 0.6` ONLY when the task's taxonomy facets AGREE with the remembered problem (same non-None domain + `facet_score ≥ 0.5`). Measured: recognition 3/7 → **7/7** with **0/5** false positives (`tests/test_regressions_v162.py`). The hit carries `tier: prior|facet`.
   - *Robustness (O-16-1):* `worked_for`/`recall` oversample the candidate pool (`k*40`, min 200) and filter to tagged `SKILL_CHOICE` records **before** truncating — so the graph-projection nodes `record()` also writes can never bury a proven skill under accumulated history.
 - **Validation memoization (`uco_gate.gate`, `verify.verify_identity`).** Validation is deterministic, so identical code / identical claim returns the cached verdict (`cached=True`) instead of recomputing. Gate keys on `sha256(uco_path\x00code)` (the engine path is part of the verdict identity, O-16-2); verify keys on `lhs\x00rhs` and deliberately does **not** cache the sympy-absent / exception cases. `clear_cache()` on both. ~15–30% in iterative sessions.
 - **Geodesic fan-out pruning (`execution_policy.fanout_plan`).** When the reliability prior ≥ target, the fan-out is pruned to the **quorum** (`FANOUT_QUORUM=3`, e.g. DEEP 8→4) while keeping the cross-check; `concurrent_executor.run_stances(prior_reliability=…)` consumes it. Below target → full fan-out; `None` prior → full. Cap is monotonically non-increasing in the prior. ~20% on convergent fan-out.
 - **Honest DSM (`pipeline_dsm.classify_cycles`).** Each import cycle is tagged `lazy` (safe, deferred import) or `top_level` (real circular-import risk). `module_dsm()` returns `cycles_classified` + `real_cycles`. Today all cycles are lazy on both sides (`real_cycles = []`) — 0 risk, 0 tokens spent chasing phantom cycles; the value is flagging a future top-level cycle before it bites.
 
 Predicted savings: **~30% on an isolated expensive run; ~75–80% on recurring workloads.** RAG-PT retrieval was also hardened (`_tfidf._fold`, NFKD accent-fold) so PT queries stop fragmenting at accents and align with EN cognates.
+
+## § 2.14 · v1.62 — recognition layer + event bus + MCP (audit-driven)
+
+The 2026-07-21 empirical audit proved ONE root cause under three symptoms (sparse recognition
+vocabulary): frontend tasks classified `domain=None`, paraphrases missed the resolution cache by
+0.03–0.04, and `UNKNOWN_CLASS` sent "corrigir typo no README" to DEEP (~8k tokens). v1.62 fixes:
+
+- **Taxonomy seed (`catalog/taxonomy_extra_seed.json`)** — ~390 curated PT+EN terms (frontend/web,
+  docs, devops, `fix_small`/`explain` intents) + vocabulary mined from the OpenClaw maturity
+  scorecard (agent-infra / automation / observability), merged into the base tables at import.
+  Regenerate: `tools/mine_taxonomy_vocab.py`.
+- **Taxonomy-informed triage (`execution_policy.triage`)** — when the difficulty estimator says
+  UNKNOWN, taxonomy is consulted BEFORE escalating: recognized small edit → STANDARD; recognized
+  domain+intent → STANDARD + dissect personas; truly unknown → DEEP (unchanged). Floors
+  (audit/security/min_mode) still win last.
+- **`scripts/event_bus.py`** — the single cognitive-telemetry bus (the external audits' three
+  proposals unified): `orchestrator.run` self-instruments every run (`run_started`/`triage`/
+  `cache_hit|miss`/`mode_decision`/`run_finished` + `trace_id` in the result). `evaluate(trace_id)`
+  is the per-execution evaluation record; `export_jsonl` feeds external exporters. Best-effort,
+  never raises, never depends on the LLM remembering to emit.
+- **MCP server (`integrations/apex-mcp-server/`)** — the kernel exposed as 11 MCP tools (stdio,
+  stdlib-only): classify/triage/resolution_check/recall/worked_for/route/learning/trace — and
+  equip/unequip/record_outcome as MUTATIONS that return BLOCKED without explicit `approved: true`
+  (H5 preserved at the boundary).
+- **Regression suite** — `tests/test_regressions_v162.py` (19 checks) locks every measured fix.
 
 ## § 3 · Finding and Using an External Skill (safe flow)
 

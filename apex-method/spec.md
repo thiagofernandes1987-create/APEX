@@ -14,7 +14,7 @@ O **apex-method** é um **runtime cognitivo**: um sistema operacional fino em vo
 O LLM é a **VM cognitiva** (inferência, síntese, julgamento); a skill é o **SO** que agenda
 trabalho determinístico em código real, guarda memória durável, governa segurança e força
 disciplina de raciocínio. Não é um prompt que "reprograma" o modelo — é um kernel
-(`SKILL.md`) + 55 syscalls (`scripts/*.py`) + catálogos + contratos verificáveis.
+(`SKILL.md`) + 56 syscalls (`scripts/*.py`) + catálogos + contratos verificáveis.
 
 **Objetivo:** transformar raciocínio de LLM em engenharia auditável — respostas **computadas
 e verificadas** (PoT, RK4, Bayes, gates), com custo controlado por modo, memória que
@@ -53,7 +53,7 @@ governança.
 | Camada | Arquivo(s) | Papel |
 |---|---|---|
 | Kernel / método | `SKILL.md` | disciplina + orçamentos por modo que o LLM segue |
-| Syscalls | 55 `scripts/*.py` | trabalho determinístico fora da cabeça do LLM |
+| Syscalls | 56 `scripts/*.py` | trabalho determinístico fora da cabeça do LLM |
 | Entrada | `orchestrator.run` + `execution_policy.triage` | triage → dissect → resolve → modo → **checklist/gate** |
 | Roteamento | `taxonomy` → `router`/`gravity` → **`attraction_graph`** | facetas canônicas → atração lexical → grafo pré-computado |
 | Agentes | `agent_registry` + **`agent_spawn`** + `concurrent_executor` | roster enxuto → spec executável no spawn → fan-out A/B |
@@ -120,6 +120,7 @@ tarefa → triage (código)      trivial? → EXPRESS e fim
 | `project_ledger` | inventário vivo MACRO+micros, DSM (caminho crítico + lotes paralelos), gate de conclusão, abandono justificado | retomada exata de projetos → sessões futuras |
 | `snapshot` | estado padronizado com proveniência WHAT/WHERE/HOW/confiança | bloco re-emitível → contexto do LLM |
 | `token_tracker` | custo de tokens medido vs estimado por passo (≥3 amostras → substitui a estimativa); alimenta o `mode_flow`/orçamentos | calibração real do orçamento → pipeline_dsm |
+| `event_bus` | **v1.62** — barramento único de telemetria cognitiva: `orchestrator.run` auto-instrumenta cada execução (`run_started`/`triage`/`cache_hit\|miss`/`mode_decision`/`run_finished`, SQLite + `trace_id` no resultado); `evaluate(trace_id)` é o registro de avaliação por execução; `export_jsonl` alimenta exporters externos (OTEL/LangSmith) | avaliação contínua + tracing → learning/MCP |
 | `pipeline_dsm` | Design Structure Matrix dos módulos; **`classify_cycles` rotula cada ciclo de import `lazy` (seguro) vs `top_level` (risco real)**; `real_cycles`; caminho crítico/lotes | ordem/risco de dependência honesto → project_ledger/otimização |
 
 ### Segurança

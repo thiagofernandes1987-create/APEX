@@ -203,12 +203,33 @@ def triage(task, reliability=None, mode="STANDARD"):
         pass
     diff, uncertain = dinfo.get("bde_score", 0.5), dinfo.get("uncertain", False)
     rec, escalate, reasons, need_personas = mode, False, [], False
-    # UNKNOWN problem class: do NOT stay light, do NOT skip — escalate and REQUIRE the 3 dissect
-    # personas to establish the real difficulty (the estimator admitted it doesn't know).
+    # UNKNOWN problem class (v1.62 — taxonomy-informed): the audit proved the estimator returns
+    # UNKNOWN_CLASS for everyday tasks ("corrigir typo no README" → DEEP, ~8k tokens). Before
+    # escalating blind, ask the ENRICHED taxonomy what the task is:
+    #   - a recognized SMALL INCREMENTAL EDIT (intent fix_small, no floor) stays STANDARD;
+    #   - a task taxonomy recognizes (domain + intent) runs STANDARD with the dissect personas;
+    #   - only a task NOBODY recognizes keeps the conservative DEEP escalation.
+    # mode_floor still wins last — audit/security/compliance can never be downgraded by this.
     if uncertain:
-        rec, escalate, need_personas = _bump(rec, "DEEP"), True, True
-        reasons.append("difficulty class UNKNOWN — escalate + the 3 dissect personas MUST establish "
-                       "the real difficulty before proceeding (no silent 0.5)")
+        tax = {}
+        try:
+            import taxonomy
+            tax = taxonomy.classify(task)
+        except Exception:
+            pass
+        if tax.get("intent") == "fix_small" and floor is None and tax.get("domain"):
+            rec, need_personas = _cap(rec, "STANDARD"), False
+            reasons.append(f"small incremental edit recognized by taxonomy "
+                           f"({tax.get('domain')}/{tax.get('subdomain')}) — stay light, save tokens")
+        elif tax.get("domain") and tax.get("intent"):
+            rec, need_personas = _bump(rec, "STANDARD"), True
+            reasons.append(f"difficulty class unknown to the estimator, but taxonomy recognizes "
+                           f"{tax.get('domain')}/{tax.get('subdomain')}/{tax.get('intent')} — "
+                           "STANDARD + dissect personas (escalate only on their signal)")
+        else:
+            rec, escalate, need_personas = _bump(rec, "DEEP"), True, True
+            reasons.append("difficulty class UNKNOWN — escalate + the 3 dissect personas MUST establish "
+                           "the real difficulty before proceeding (no silent 0.5)")
     if diff < SIMPLE_DIFF and floor is None and not uncertain:
         rec = _cap(rec, "STANDARD")
         reasons.append(f"low difficulty {diff} — light mode, save tokens")
