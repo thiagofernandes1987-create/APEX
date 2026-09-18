@@ -365,6 +365,11 @@ def neutral_controls(rows: List[dict], event_head: str, n: int = 2) -> List[Tupl
         event_i = len(rows) - 1
     candidates = []
     for i in range(1, len(rows)):
+        # Primary ablation is complete-case: Granger(max_lag=3) requires
+        # at least 9 snapshots (2*k+3). Do not create a control that makes
+        # the E arm unavailable merely because it sits too early in history.
+        if i < 8:
+            continue
         if abs(i - event_i) <= 5:
             continue
         if EVENT_WORDS.search(rows[i]["subject"] or ""):
@@ -388,8 +393,10 @@ def process_event(event: dict, history_window: int) -> List[dict]:
         init_repo(work, event["repo"], event["head_sha"], event["base_sha"],
                   depth=max(80, history_window * 3))
         rows = path_history(work, event["head_sha"], event["path"], history_window)
-        if len(rows) < 5:
-            return []
+        if len(rows) < 9:
+            raise RuntimeError(
+                f"insufficient path history for complete 5-arm ablation: {len(rows)} < 9"
+            )
 
         # Positive window ends at the labelled transition head.
         pos_hist = rows[-history_window:]
