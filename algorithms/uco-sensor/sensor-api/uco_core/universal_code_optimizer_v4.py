@@ -2807,7 +2807,10 @@ class HMCCodeObjective:
     def decode_policy(self, q: np.ndarray) -> Dict[str, Any]:
         s = sigmoid(q)
         ranked = sorted(range(len(self.transforms)), key=lambda i: s[i], reverse=True)
-        active = [i for i in ranked if s[i] > 0.35]
+        # 0.5 makes q=0 neutral: with q~N(0,0.25), each transform starts
+        # active with ~50% probability instead of ~99.3% under the old 0.35
+        # threshold. This removes the "almost everything active" initial bias.
+        active = [i for i in ranked if s[i] > 0.50]
         return {"sigmoid": s, "ranked": ranked, "active": active,
                 "aggression": float(np.mean(s))}
 
