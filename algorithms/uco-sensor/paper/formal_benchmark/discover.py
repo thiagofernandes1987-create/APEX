@@ -37,8 +37,10 @@ SUPPORTED_EXT = {
     ".sol", ".hcl", ".tf",
 }
 EXCLUDE_PARTS = (
-    "/test/", "/tests/", "/spec/", "/vendor/", "/node_modules/", "/generated/",
-    "/fixtures/", "/examples/", ".min.js", "_test.", "test_", ".lock",
+    "/test/", "/tests/", "/__tests__/", "/spec/", "/testing/",
+    "/functionaltest/", "/integrationtest/", "/unittest/", "/cypress/", "/e2e/",
+    "/testdata/", "/vendor/", "/node_modules/", "/generated/", "/fixtures/",
+    "/examples/", ".min.js", "_test.", "test_", ".test.", ".spec.", ".lock",
 )
 
 TIME_WINDOWS = (
@@ -133,6 +135,7 @@ query($ids: [ID!]!) {
       mergeCommit { oid }
       repository { nameWithOwner }
       files(first: 50) {
+        totalCount
         nodes {
           path
           changeType
@@ -158,26 +161,39 @@ def hydrate_prs(node_ids: Sequence[str]) -> List[dict]:
     return [x for x in data.get("data", {}).get("nodes", []) if x]
 
 
-def choose_source_file(files: List[dict]) -> Optional[str]:
+def choose_source_file(files: List[dict]) -> Optional[dict]:
     ranked = []
     for f in files:
         path = f.get("path", "")
         if str(f.get("changeType", "")).upper() != "MODIFIED":
             continue
         low = "/" + path.lower()
+        base = Path(path).name.lower()
         if any(part in low for part in EXCLUDE_PARTS):
+            continue
+        if base.endswith(("test.java", "tests.java", "spec.js", "spec.ts", "test.js", "test.ts")):
             continue
         ext = Path(path).suffix.lower()
         if ext not in SUPPORTED_EXT:
             continue
-        changes = int(f.get("additions", 0) or 0) + int(f.get("deletions", 0) or 0)
-        if changes <= 0 or changes > 1200:
+        additions = int(f.get("additions", 0) or 0)
+        deletions = int(f.get("deletions", 0) or 0)
+        changes = additions + deletions
+        if changes <= 0 or changes > 800:
             continue
-        ranked.append((changes, path))
+        ranked.append((changes, path, additions, deletions))
     if not ranked:
         return None
-    ranked.sort(key=lambda x: (abs(x[0] - 80), x[1]))
-    return ranked[0][1]
+    # Largest bounded production-source delta is the most defensible single
+    # representative of a multi-file PR. Controls are later matched on diff size.
+    ranked.sort(key=lambda x: (-x[0], x[1]))
+    changes, path, additions, deletions = ranked[0]
+    return {
+        "path": path,
+        "changes": changes,
+        "additions": additions,
+        "deletions": deletions,
+    }
 
 
 def build_event(pr: dict, event_type: str, tier: str) -> Optional[dict]:
@@ -189,14 +205,21 @@ def build_event(pr: dict, event_type: str, tier: str) -> Optional[dict]:
     number = pr.get("number")
     if not (repo_full and base_sha and head_sha and number):
         return None
-    files = (pr.get("files") or {}).get("nodes") or []
-    path = choose_source_file(files)
-    if not path:
+    file_conn = pr.get("files") or {}
+    if int(file_conn.get("totalCount", 0) or 0) > 50:
+        return None
+    files = file_conn.get("nodes") or []
+    chosen = choose_source_file(files)
+    if not chosen:
         return None
     return {
         "id": f"{event_type}:{repo_full}#{number}",
         "repo": repo_full,
-        "path": path,
+        "path": chosen["path"],
+        "file_changes": chosen["changes"],
+        "file_additions": chosen["additions"],
+        "file_deletions": chosen["deletions"],
+        "pr_files": int(file_conn.get("totalCount", 0) or 0),
         "event_type": event_type,
         "base_sha": base_sha,
         "head_sha": head_sha,
