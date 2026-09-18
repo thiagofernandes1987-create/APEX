@@ -1512,9 +1512,10 @@ def handle_repair_hmc(data: Dict) -> Tuple[int, Dict]:
         "timeout_s":     float — default 60.0 (wallclock cap)
       }
 
-    HMC Bayesian sampling over AST transforms with APS-preservation
-    constraint and proof of H minimality.  Falls back to GreedyOptimizer
-    when numpy unavailable.
+    Experimental HMC sampling over a latent AST-transform policy with
+    APS-preservation. Returns the best observed candidate; it does NOT
+    certify a global minimum. Falls back to GreedyOptimizer when numpy
+    is unavailable.
     """
     source = data.get("code", "")
     if not source or not source.strip():
