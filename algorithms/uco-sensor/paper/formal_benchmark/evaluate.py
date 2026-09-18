@@ -236,7 +236,7 @@ def to_markdown(report: dict) -> str:
     lines = [
         "# UCO-Sensor Formal Benchmark — ablation report",
         "",
-        f"Formal held-out result: **{'YES' if report['formal'] else 'NO — seed/dev plumbing only'}**",
+        f"Formal held-out result: **{'YES' if report['formal'] else 'NO — ' + report['formal_reason']}**",
         "",
         f"Rows: {report['n_rows']} | repositories: {report['n_repos']} | "
         f"seed-dev rows: {report['seed_dev_rows']}",
@@ -277,6 +277,28 @@ def to_markdown(report: dict) -> str:
                 f"p≈{d['p_two_sided_bootstrap']:.4f}, "
                 f"Holm reject={h.get('reject_h0', False)}"
             )
+    if report.get("matching"):
+        m = report["matching"]
+        lines += [
+            "",
+            "## Control matching diagnostics",
+            "",
+            f"- matched controls: {m.get('n_controls', 0)}",
+            f"- median control/event changed-line ratio: {m.get('median_size_ratio', 0):.3f}",
+            f"- median |log1p(size) distance|: {m.get('median_log_distance', 0):.3f}",
+        ]
+
+    if report.get("strata"):
+        lines += ["", "## Held-out AUPRC by event stratum", ""]
+        lines += ["| Stratum | " + " | ".join(ARMS.keys()) + " |"]
+        lines += ["|---|" + "|".join(["---:"] * len(ARMS)) + "|"]
+        for etype, arms in sorted(report["strata"].items()):
+            vals = []
+            for arm in ARMS:
+                v = arms.get(arm, {})
+                vals.append(f"{v['auprc']:.4f}" if "auprc" in v else "—")
+            lines.append("| " + etype + " | " + " | ".join(vals) + " |")
+
     loc = report["localization"]
     lines += [
         "",
@@ -303,6 +325,30 @@ def to_markdown(report: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def matching_diagnostics(rows: List[dict]) -> dict:
+    ratios = []
+    distances = []
+    for r in rows:
+        if int(r.get("label", 0)) != 0:
+            continue
+        m = r.get("matching") or {}
+        e = m.get("event_change_lines")
+        c = m.get("control_change_lines")
+        d = m.get("size_log_distance")
+        try:
+            if float(e) > 0 and float(c) > 0:
+                ratios.append(float(c) / float(e))
+            if d is not None:
+                distances.append(float(d))
+        except (TypeError, ValueError):
+            continue
+    return {
+        "n_controls": len(ratios),
+        "median_size_ratio": float(np.median(ratios)) if ratios else 0.0,
+        "median_log_distance": float(np.median(distances)) if distances else 0.0,
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", nargs="+", required=True, help="JSONL paths/globs")
@@ -327,11 +373,21 @@ def main() -> int:
         manifest = json.loads(Path(args.manifest).read_text())
         expected_events = len(manifest)
         expected_repos = len({e["repo"] for e in manifest})
+    has_seed = any(r.get("seed_dev") for r in rows)
     formal = (
         not args.include_seed
-        and not any(r.get("seed_dev") for r in rows)
+        and not has_seed
         and len(analyzed_repos) >= args.min_formal_repos
     )
+    if formal:
+        formal_reason = "formal corpus gate satisfied"
+    elif has_seed or args.include_seed:
+        formal_reason = "seed/dev corpus"
+    else:
+        formal_reason = (
+            f"below formal corpus gate "
+            f"({len(analyzed_repos)}/{args.min_formal_repos} analyzed repositories)"
+        )
 
     for r in rows:
         r["split"] = split_repo(r["repo"])
@@ -341,6 +397,7 @@ def main() -> int:
 
     report = {
         "formal": formal,
+        "formal_reason": formal_reason,
         "n_rows": len(rows),
         "n_repos": len({r["repo"] for r in rows}),
         "seed_dev_rows": seed_n,
@@ -369,6 +426,21 @@ def main() -> int:
         probs[arm] = np.asarray(fitted.pop("test_probs"), dtype=float)
         report["arms"][arm] = fitted
 
+    # Descriptive held-out metrics by preregistered event class. Thresholds are
+    # still selected globally on DEV; no stratum-specific tuning is performed.
+    strata = {}
+    event_types = sorted({r["event_type"] for r in test})
+    for etype in event_types:
+        idx = [i for i, r in enumerate(test) if r["event_type"] == etype]
+        y = np.asarray([int(test[i]["label"]) for i in idx], dtype=int)
+        strata[etype] = {}
+        for arm in ARMS:
+            threshold = float(report["arms"][arm]["test"].get("threshold", 0.5))
+            p = probs[arm][idx]
+            strata[etype][arm] = metric_block(y, p, threshold)
+    report["strata"] = strata
+
+    report["matching"] = matching_diagnostics(test)
     report["localization"] = localization(test)
     report["deltas"] = bootstrap_arm_deltas(test, probs, n_boot=args.bootstrap)
     report["holm"] = holm_bonferroni(report["deltas"])
