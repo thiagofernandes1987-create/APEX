@@ -1,5 +1,36 @@
 # UCO-Sensor — CHANGELOG
 
+## [3.97.0] — 2026-09-18 — Scientific Hardening
+
+### Corrigido
+- **Change-point:** removida a poda PELT incorreta; `_pelt` mantém o nome por
+  compatibilidade, mas agora usa programação dinâmica penalizada exata O(N²),
+  adequada às janelas curtas do UCO e verificável contra oráculo independente.
+- **Onset/RCA:** `commit_idx` passa a pertencer ao histórico original;
+  `signal_idx` preserva a coordenada da grade interpolada. Isso elimina
+  atribuição ao commit errado quando poucos commits são reamostrados.
+- **FrequencyEngine:** `sample_rate` representa amostras por commit; Welch,
+  STFT, coherence e CSD passam a emitir frequências em ciclos/commit,
+  invariantes à densidade de `n_interp`. Timestamps reais ficam como metadados.
+- **MetricSignal:** contrato explicitado: `data_raw` é o nome legado para o
+  sinal z-score sem janela; `data_unscaled` contém valores em unidades reais.
+- **Hurst R/S:** abaixo de 64 snapshots originais, H pode ser exibido como
+  diagnóstico, mas não amplifica risk tier, persistence scoring nem identity
+  overrides. Interpolação não conta como novas observações.
+- **Granger:** seleção de lag recebe correção Bonferroni; matriz 9×9 recebe
+  Benjamini-Hochberg FDR antes de expor arestas causais.
+- **HMC:** threshold latente 0.35→0.50 remove o viés que iniciava quase todos os
+  transforms ativos. Claims de prova de minimalidade/mínimo global foram
+  removidos; a API descreve corretamente o melhor candidato observado.
+- **Release engineering:** package/API/README alinhados em 3.97.0 e
+  `run_tests_all.py` passa a executar a suíte pytest completa.
+
+### Testes
+- Novo `test_marco_m105.py`: oráculo DP para change-point, projeção
+  grid→commit, invariância espectral a interpolação, gate Hurst, BH conhecido
+  e neutralidade da política HMC.
+
+
 Todas as mudanças notáveis são documentadas aqui.  
 Formato: [Semantic Versioning](https://semver.org/) | Convenção: [Keep a Changelog](https://keepachangelog.com/)
 
