@@ -87,7 +87,7 @@ def test_TH02_aps_trend_insufficient_below_four_samples():
 
 
 def test_TH03_aps_trend_persistent_requires_reliable_hurst():
-    # 6 samples: cannot be PERSISTENT (G.3 gate ≥ 8); should be plain DEGRADING.
+    # 6 samples: far below the Hurst reliability gate; cannot be PERSISTENT.
     s = SnapshotStore(":memory:")
     for i in range(6):
         s.insert(_mv(f"c{i}", float(i), h=100.0 - i * 10, deps=i * 3))
@@ -96,9 +96,11 @@ def test_TH03_aps_trend_persistent_requires_reliable_hurst():
     assert r["hurst_reliable"] is False
 
 
-def test_TH04_aps_trend_reliable_when_n_at_least_eight():
-    s = _populated_store(10)
-    r = gs.aps_trend(s, "m")
+def test_TH04_aps_trend_reliable_at_canonical_sample_gate():
+    from sensor_core.predictor import _MIN_SAMPLES_RELIABLE
+    s = _populated_store(_MIN_SAMPLES_RELIABLE)
+    r = gs.aps_trend(s, "m", window=max(100, _MIN_SAMPLES_RELIABLE))
+    assert r["n_samples"] >= _MIN_SAMPLES_RELIABLE
     assert r["hurst_reliable"] is True
 
 
