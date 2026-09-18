@@ -76,7 +76,15 @@ class FrequencyClassifier:
           4. Formatação de todos os outputs
         """
         # ── 1. Matching ──────────────────────────────────────────────────
-        matches = self.library.match(profiles, min_confidence=self.min_confidence, signal=signal)
+        matches = self.library.match(
+            profiles, min_confidence=self.min_confidence, signal=signal
+        )
+
+        # Structural evidence can be stronger than a short-window spectral
+        # template. In particular an isolated material ILR jump is the defining
+        # LOOP_RISK shape and does not require Hurst. Promote/add that candidate
+        # BEFORE onset detection so PELT runs on the correct primary channel.
+        matches = self._inject_direct_structural_candidates(matches, signal)
 
         if not matches:
             return self._unknown_result(signal, profiles)
@@ -209,14 +217,6 @@ class FrequencyClassifier:
         primary_movers = sorted(raw_std.items(), key=lambda x: -x[1])
         top_mover = primary_movers[0][0] if primary_movers else "H"
 
-        # ── Identidades estruturais que NÃO dependem de Hurst ────────────────
-        # Alguns padrões possuem evidência direta nas unidades originais. Em
-        # especial LOOP_RISK é uma mudança isolada de ILR; não precisamos de
-        # uma estimativa R/S curta para reconhecer esse shape.
-        primary, matches = self._apply_non_hurst_structural_overrides(
-            primary, matches, signal
-        )
-
         # ── Identidades físicas (overrides dependentes de Hurst) ──────────────
         # Os demais identity overrides foram calibrados usando Hurst. Se Hurst
         # está underpowered, manter o ranking rule/embedding em vez de fabricar
@@ -282,40 +282,74 @@ class FrequencyClassifier:
             classification_grade=grade,
         )
 
-    def _apply_non_hurst_structural_overrides(
+    def _inject_direct_structural_candidates(
         self,
-        primary: "SignatureMatch",
         matches: list,
         signal: "MetricSignal",
-    ):
-        """Promote identities supported directly by original metric units.
+    ) -> list:
+        """Inject/promote high-specificity candidates from original metric units.
 
-        This layer intentionally excludes Hurst/PCI heuristics.  It exists so
-        short histories can still recognize a high-signal structural event
-        without treating an underpowered R/S estimate as evidence.
+        This is intentionally narrow: LOOP_RISK requires a material ILR regime
+        change while dead-code and duplication remain quiet.  It does not use
+        Hurst, interpolation density, or a spectral-band threshold.
 
-        LOOP_RISK is promoted only when ILR makes a material jump while dead
-        code and duplication remain comparatively quiet.  AI_CODE_BOMB also
-        moves ILR, but simultaneously produces large dead/dup jumps and therefore
-        does not satisfy this isolation guard.
+        If the spectral matcher already emitted LOOP_RISK, we promote it.
+        Otherwise we construct the same public SignatureMatch from the canonical
+        signature metadata.  This prevents a generic ULF template (TECH_DEBT)
+        from winning solely because the history is too short for reliable Hurst.
         """
         data = getattr(signal, "data_unscaled", None)
         if data is None:
-            return primary, matches
+            return matches
         try:
             ilr_range = float(np.ptp(data[CHANNEL_IDX["ILR"]]))
             dead_range = float(np.ptp(data[CHANNEL_IDX["dead"]]))
             dups_range = float(np.ptp(data[CHANNEL_IDX["dups"]]))
         except Exception:
-            return primary, matches
+            return matches
 
-        if ilr_range >= 0.25 and dead_range <= 4.0 and dups_range <= 3.0:
-            for i, hyp in enumerate(matches):
-                if hyp.error_type == "LOOP_RISK_INTRODUCTION":
-                    if i != 0:
-                        matches[0], matches[i] = matches[i], matches[0]
-                    return matches[0], matches
-        return primary, matches
+        isolated_loop = (
+            ilr_range >= 0.25
+            and dead_range <= 4.0
+            and dups_range <= 3.0
+        )
+        if not isolated_loop:
+            return matches
+
+        for i, hyp in enumerate(matches):
+            if hyp.error_type == "LOOP_RISK_INTRODUCTION":
+                if i:
+                    matches[0], matches[i] = matches[i], matches[0]
+                return matches
+
+        sig = next(
+            (x for x in self.library.signatures
+             if x.error_type == "LOOP_RISK_INTRODUCTION"),
+            None,
+        )
+        if sig is None:
+            return matches
+
+        # Confidence is intentionally conservative: direct structural evidence
+        # clears the classifier threshold but does not claim spectral certainty.
+        confidence = min(0.75, max(self.min_confidence + 0.10, 0.40))
+        direct = SignatureMatch(
+            error_type=sig.error_type,
+            description=sig.description,
+            confidence=round(confidence, 4),
+            matched_band=sig.dominant_band,
+            matched_channels=list(sig.primary_channels),
+            temporal_pattern=sig.temporal_pattern,
+            severity_base=sig.severity_base,
+            evidence={
+                "direct_ilr_range": ilr_range,
+                "direct_dead_range": dead_range,
+                "direct_dups_range": dups_range,
+            },
+            recommended_action=sig.recommended_action,
+            apex_prompt_template=sig.apex_prompt_template,
+        )
+        return [direct] + matches
 
     def _apply_identity_overrides(
         self,
