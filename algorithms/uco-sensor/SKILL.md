@@ -3,12 +3,12 @@ skill_id: algorithms.uco-sensor.sensor
 name: "UCO-Sensor — Spectral Code Quality Analysis"
 description: >
   Analisador espectral de qualidade de código multi-linguagem (Python, JS/TS, Java, Go).
-  Detecta 8 padrões de degradação via pipeline FFT/Wavelet/PELT sobre 9 canais UCO:
+  Detecta padrões de degradação via análise espectral + change-point exato sobre 9 canais UCO:
   H (Hamiltoniano), CC, ILR, DSM_d, DSM_c, DI, dead, dups, bugs.
   Publica UCO_ANOMALY_DETECTED no APEX EventBus para classificações CRITICAL.
   Alternativa open-source ao SonarQube — sem LLM, billing por chamada de API.
-version: v00.37.0
-status: CANDIDATE
+version: v3.97.0
+status: BETA
 domain_path: algorithms/uco-sensor
 anchors:
   - uco
@@ -30,7 +30,7 @@ source_repo: uco-sensor
 risk: safe
 languages: [python]
 llm_compat: {claude: full, gpt4o: partial, gemini: partial, llama: minimal}
-apex_version: v00.37.0
+apex_version: v3.97.0
 apex_events:
   publishes:
     - event_type: UCO_ANOMALY_DETECTED
@@ -38,12 +38,10 @@ apex_events:
       fields: [primary_error, severity, uco_score, apex_prompt, change_point, spectral_evidence]
   consumes: []
 test_coverage:
-  frequency_engine: 88/88
-  marco1: 27/27
-  marco2: 30/30
-  marco3: 16/16
-  marco_c_real_code: 48/48
-  total: 209/209
+  baseline_full_suite: "2645 passed at v3.96.0"
+  scientific_hardening: "M105 added in v3.97.0"
+  canonical_runner: run_tests_all.py
+  ci: ".github/workflows/uco-sensor-ci.yml"
 entry_points:
   cli:    sensor-api/cli.py
   server: sensor-api/api/server.py
@@ -70,7 +68,10 @@ Analisa código-fonte em **Python, JavaScript/TypeScript, Java e Go** extraindo 
 | dups    | Blocos duplicados |
 | bugs    | Halstead bug density |
 
-O **FrequencyEngine** aplica FFT/Wavelet/PELT sobre séries temporais desses canais para detectar 8 padrões:
+O **FrequencyEngine** aplica Welch/STFT/Wavelet e change-point por programação
+dinâmica penalizada exata sobre séries temporais desses canais. Frequências são
+expressas em **ciclos por commit**; Hurst só participa de decisões com histórico
+amostral suficiente.
 
 - `AI_CODE_BOMB` — spike simultâneo em dead + dups + ILR
 - `TECH_DEBT_ACCUMULATION` — H crescendo em ULF/LF
@@ -78,7 +79,7 @@ O **FrequencyEngine** aplica FFT/Wavelet/PELT sobre séries temporais desses can
 - `COGNITIVE_COMPLEXITY_EXPLOSION` — CC burst agudo
 - `DEPENDENCY_CYCLE_INTRODUCTION` — DSM_c > 0.5
 - `LOOP_RISK_INTRODUCTION` — ILR isolado
-- `DEAD_CODE_DRIFT` — dead acumulando (Hurst ≈ 1.0, irreversível)
+- `DEAD_CODE_DRIFT` — dead acumulando; Hurst é evidência auxiliar, não prova de irreversibilidade
 - `REFACTORING_OPPORTUNITY` — correlação DSM_d + CC
 
 ## Integração APEX
