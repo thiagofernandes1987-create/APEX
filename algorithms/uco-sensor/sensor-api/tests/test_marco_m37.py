@@ -128,24 +128,26 @@ def _store_with_n_aps_samples(n: int) -> SnapshotStore:
 
 
 def test_TG10_below_reliable_threshold_never_persistent():
-    # 7 samples < 8 → cannot be DEGRADING_PERSISTENT, may still be DEGRADING.
+    # 7 samples are far below the conservative Hurst gate; never persistent.
     store = _store_with_n_aps_samples(7)
     trend = _aps_trend_from_store(store, "m", window=50)
     assert trend["verdict"] != "DEGRADING_PERSISTENT"
 
 
 def test_TG11_at_reliable_threshold_may_be_persistent():
-    # 10 samples ≥ 8 → eligible for the persistent verdict if Hurst > 0.55.
-    store = _store_with_n_aps_samples(10)
-    trend = _aps_trend_from_store(store, "m", window=50)
-    # We don't pin the exact verdict (depends on the series shape) — only that
-    # the gate is now eligible to fire on a long enough monotonic series.
+    # Exactly the canonical reliability threshold is eligible for Hurst use.
+    store = _store_with_n_aps_samples(_MIN_SAMPLES_RELIABLE)
+    trend = _aps_trend_from_store(
+        store, "m", window=max(100, _MIN_SAMPLES_RELIABLE)
+    )
+    # The window must not truncate the very history used to satisfy the gate.
     assert trend["n_samples"] >= _MIN_SAMPLES_RELIABLE
+    assert trend["hurst_reliable"] is True
 
 
-def test_TG12_min_samples_reliable_constant_remains_eight():
-    # If someone bumps this without updating callers, the gate logic breaks.
-    assert _MIN_SAMPLES_RELIABLE == 8
+def test_TG12_min_samples_reliable_constant_is_conservative():
+    # Short-sample R/S is biased; keep the decision gate conservative.
+    assert _MIN_SAMPLES_RELIABLE >= 64
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

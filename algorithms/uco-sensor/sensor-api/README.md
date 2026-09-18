@@ -2,15 +2,19 @@
 
 ![UCO Score](https://img.shields.io/badge/UCO%20Score-87%2F100-4c1?style=flat-square)
 ![Status](https://img.shields.io/badge/status-STABLE-4c1?style=flat-square)
-![Version](https://img.shields.io/badge/version-3.10.0-blue?style=flat-square)
-![Tests](https://img.shields.io/badge/tests-2185%2B%20passing-4c1?style=flat-square)
+![Version](https://img.shields.io/badge/version-3.97.0-blue?style=flat-square)
+![Tests](https://img.shields.io/badge/tests-2645%2B%20baseline%20%2B%20scientific%20invariants-4c1?style=flat-square)
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 
 > **Plataforma SaaS de análise espectral de qualidade de código** — powered by **UCO v4** + **FrequencyEngine**.  
 > Detecta degradação de código *antes* que vire dívida técnica irreversível, integrada nativamente ao **APEX Event Bus**.
 >
-> v3.10.0 entrega: **isolamento multi-tenant real**, billing atômico, 76+ endpoints REST, 13 transformações fechadas SAST↔Fix, 5 invariantes formais executáveis, paper POPL/PLDI skeleton.
+> **v3.97.0 — Scientific Hardening.** Além da plataforma SAST/SCA/IaC, reachability,
+> SBOM, EPSS/KEV, AutoFix e integração APEX, esta versão corrige invariantes do
+> núcleo de pesquisa: change-point exato, projeção grid→commit, escala espectral
+> em ciclos/commit, Hurst com gate amostral, Granger com controle de múltiplos
+> testes e claims HMC compatíveis com o que o algoritmo realmente demonstra.
 
 ---
 
@@ -305,12 +309,12 @@ sensor-api/
 ├── report/                 — html_report, badge SVG, SARIF 2.1.0
 ├── ci/                     — action_entrypoint (GitHub Action), uco-pr-check.yml
 ├── paper/                  — paper.tex (POPL/PLDI), experiments.md, reproducibility.py
-├── tests/                  — test_marco_m1..test_marco_m62 (2185+ tests)
+├── tests/                  — test_marco_m1..m105 + calibração (2645+ baseline + hardening)
 ├── cli.py                  — CLI completa
-├── pyproject.toml          — Packaging PEP 517/518 (v3.10.0)
+├── pyproject.toml          — Packaging PEP 517/518 (v3.97.0)
 ├── Dockerfile              — Multi-stage (Python 3.11-slim)
 ├── docker-compose.yml      — Stack dev/prod
-├── CHANGELOG.md            — Histórico v0.1.0 → v3.10.0
+├── CHANGELOG.md            — Histórico + release atual v3.97.0
 ├── ROADMAP.md              — Marcos M1–M62 + roadmap Sprint AC+
 └── inventario.md (./..)    — Tracking persistente entre sessões (APEX SCIENTIFIC)
 ```

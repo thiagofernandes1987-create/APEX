@@ -1,0 +1,39 @@
+name: UCO Sensor CI
+
+on:
+  pull_request:
+    paths:
+      - "algorithms/uco-sensor/**"
+      - ".github/workflows/uco-sensor-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scientific-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: |
+            algorithms/uco-sensor/sensor-api/requirements.txt
+            algorithms/uco-sensor/sensor-api/pyproject.toml
+
+      - name: Install dependencies
+        working-directory: algorithms/uco-sensor/sensor-api
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install -e ".[dev,parsers]"
+
+      - name: Canonical full regression
+        working-directory: algorithms/uco-sensor
+        run: python run_tests_all.py

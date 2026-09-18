@@ -27,7 +27,7 @@ from core.constants import (BAND_DESCRIPTIONS, BAND_NAMES, CHANNEL_IDX, CHANNEL_
     GOD_CLASS_DI_STD_MIN, GOD_CLASS_CC_STD_MIN, BURST_WINDOW_MAX,
     BURST_NEUTRAL, N_STABLE_LOW, N_STABLE_MODERATE, MIN_SNAPSHOTS_SPECTRAL,
     GRADE_CONFIRMED_MIN_CONF, GRADE_LIKELY_MIN_CONF, GRADE_UNCERTAIN_MAX_CONF,
-    HURST_MIN_LAG, HURST_N_POINTS)
+    HURST_MIN_LAG, HURST_N_POINTS, MIN_SAMPLES_HURST_RELIABLE)
 from receptor.error_signatures import ErrorSignatureLibrary
 from receptor.propagation_analyzer import PropagationAnalyzer
 from receptor.change_point_detector import ChangePointDetector
@@ -76,7 +76,15 @@ class FrequencyClassifier:
           4. Formatação de todos os outputs
         """
         # ── 1. Matching ──────────────────────────────────────────────────
-        matches = self.library.match(profiles, min_confidence=self.min_confidence, signal=signal)
+        matches = self.library.match(
+            profiles, min_confidence=self.min_confidence, signal=signal
+        )
+
+        # Structural evidence can be stronger than a short-window spectral
+        # template. In particular an isolated material ILR jump is the defining
+        # LOOP_RISK shape and does not require Hurst. Promote/add that candidate
+        # BEFORE onset detection so PELT runs on the correct primary channel.
+        matches = self._inject_direct_structural_candidates(matches, signal)
 
         if not matches:
             return self._unknown_result(signal, profiles)
@@ -126,14 +134,23 @@ class FrequencyClassifier:
                         break
 
         # ── 2c. Hurst + PCI + Self-Cure ──────────────────────────────────────
-        # Hurst sobre o canal H (índice 0) — raw data preservado em data_raw
-        hurst_H = self._compute_hurst(signal.data_raw[CHANNEL_IDX['H']])
-
-        # Late-window Hurst: computed over second half of signal
-        # More sensitive to persistent degradation when onset is early in long windows
-        # (early onset + long tail → full-window Hurst underestimates persistence)
-        n_half = max(10, len(signal.data_raw[CHANNEL_IDX['H']]) // 2)
-        hurst_H_late = self._compute_hurst(signal.data_raw[CHANNEL_IDX['H']][-n_half:])
+        # Hurst R/S só governa decisões quando o histórico ORIGINAL tem N
+        # suficiente. Interpolação não aumenta o tamanho amostral efetivo.
+        hurst_reliable = signal.n_original >= MIN_SAMPLES_HURST_RELIABLE
+        if hurst_reliable:
+            hurst_H = self._compute_hurst(signal.data_raw[CHANNEL_IDX['H']])
+            # Late-window Hurst só é calculado se a meia janela também tiver
+            # informação suficiente; caso contrário permanece neutro.
+            _h = signal.data_raw[CHANNEL_IDX['H']]
+            n_half = len(_h) // 2
+            hurst_H_late = (
+                self._compute_hurst(_h[-n_half:])
+                if signal.n_original // 2 >= MIN_SAMPLES_HURST_RELIABLE
+                else 0.5
+            )
+        else:
+            hurst_H = 0.5
+            hurst_H_late = 0.5
 
         # PCI entre CC (índice 1) e H (índice 0)
         pci_CC_H = self._compute_pci(signal.data_raw[CHANNEL_IDX['CC']], signal.data_raw[CHANNEL_IDX['H']])
@@ -200,11 +217,15 @@ class FrequencyClassifier:
         primary_movers = sorted(raw_std.items(), key=lambda x: -x[1])
         top_mover = primary_movers[0][0] if primary_movers else "H"
 
-        # ── Identidades físicas (overrides definitivos) ────────────────────
-        primary, matches = self._apply_identity_overrides(
-            primary, matches, signal,
-            hurst_H, hurst_H_late, pci_CC_H, burst_H, raw_std, di_leads_cc
-        )
+        # ── Identidades físicas (overrides dependentes de Hurst) ──────────────
+        # Os demais identity overrides foram calibrados usando Hurst. Se Hurst
+        # está underpowered, manter o ranking rule/embedding em vez de fabricar
+        # certeza a partir de H≈0.5 degenerado.
+        if hurst_reliable:
+            primary, matches = self._apply_identity_overrides(
+                primary, matches, signal,
+                hurst_H, hurst_H_late, pci_CC_H, burst_H, raw_std, di_leads_cc
+            )
 
                 # ── 3. Severidade composta ────────────────────────────────────────
         severity, severity_score = self._compute_severity(primary, signal, profiles)
@@ -260,6 +281,75 @@ class FrequencyClassifier:
             spectral_signal_quality=sig_quality,
             classification_grade=grade,
         )
+
+    def _inject_direct_structural_candidates(
+        self,
+        matches: list,
+        signal: "MetricSignal",
+    ) -> list:
+        """Inject/promote high-specificity candidates from original metric units.
+
+        This is intentionally narrow: LOOP_RISK requires a material ILR regime
+        change while dead-code and duplication remain quiet.  It does not use
+        Hurst, interpolation density, or a spectral-band threshold.
+
+        If the spectral matcher already emitted LOOP_RISK, we promote it.
+        Otherwise we construct the same public SignatureMatch from the canonical
+        signature metadata.  This prevents a generic ULF template (TECH_DEBT)
+        from winning solely because the history is too short for reliable Hurst.
+        """
+        data = getattr(signal, "data_unscaled", None)
+        if data is None:
+            return matches
+        try:
+            ilr_range = float(np.ptp(data[CHANNEL_IDX["ILR"]]))
+            dead_range = float(np.ptp(data[CHANNEL_IDX["dead"]]))
+            dups_range = float(np.ptp(data[CHANNEL_IDX["dups"]]))
+        except Exception:
+            return matches
+
+        isolated_loop = (
+            ilr_range >= 0.25
+            and dead_range <= 4.0
+            and dups_range <= 3.0
+        )
+        if not isolated_loop:
+            return matches
+
+        for i, hyp in enumerate(matches):
+            if hyp.error_type == "LOOP_RISK_INTRODUCTION":
+                if i:
+                    matches[0], matches[i] = matches[i], matches[0]
+                return matches
+
+        sig = next(
+            (x for x in self.library.signatures
+             if x.error_type == "LOOP_RISK_INTRODUCTION"),
+            None,
+        )
+        if sig is None:
+            return matches
+
+        # Confidence is intentionally conservative: direct structural evidence
+        # clears the classifier threshold but does not claim spectral certainty.
+        confidence = min(0.75, max(self.min_confidence + 0.10, 0.40))
+        direct = SignatureMatch(
+            error_type=sig.error_type,
+            description=sig.description,
+            confidence=round(confidence, 4),
+            matched_band=sig.dominant_band,
+            matched_channels=list(sig.primary_channels),
+            temporal_pattern=sig.temporal_pattern,
+            severity_base=sig.severity_base,
+            evidence={
+                "direct_ilr_range": ilr_range,
+                "direct_dead_range": dead_range,
+                "direct_dups_range": dups_range,
+            },
+            recommended_action=sig.recommended_action,
+            apex_prompt_template=sig.apex_prompt_template,
+        )
+        return [direct] + matches
 
     def _apply_identity_overrides(
         self,

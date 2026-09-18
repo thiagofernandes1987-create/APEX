@@ -80,9 +80,24 @@ class MetricSignal:
     - Amostras espaçadas uniformemente em [0,1]
     - Janelamento Hann aplicado para zero leakage espectral
     """
-    data: np.ndarray            # shape: (9, N)
-    data_raw: np.ndarray        # shape: (9, N) — antes do janelamento, após normalização
-    timestamps: np.ndarray      # shape: (N,) — commit-index normalizado [0,1]
+    data: np.ndarray            # shape: (9, N) — z-score + janela, uso espectral
+    # Nome legado: data_raw NÃO está em unidades originais. Ele contém o sinal
+    # interpolado + z-score, antes do janelamento. Mantido por compatibilidade.
+    data_raw: np.ndarray        # shape: (9, N) — z-score, sem janela
+    # Timestamps reais (epoch seconds) reamostrados na mesma grade de data.
+    timestamps: np.ndarray      # shape: (N,)
+    # Sinal interpolado em unidades originais das métricas, sem z-score/janela.
+    data_unscaled: Optional[np.ndarray] = None
+    # Metadados explícitos para não confundir índice de sinal com índice de commit.
+    source_timestamps: np.ndarray = field(
+        default_factory=lambda: np.array([], dtype=np.float64)
+    )
+    source_commit_positions: np.ndarray = field(
+        default_factory=lambda: np.array([], dtype=np.float64)
+    )
+    grid_commit_positions: np.ndarray = field(
+        default_factory=lambda: np.array([], dtype=np.float64)
+    )
 
     # GAP-D1: phase analysis via window_position
     cc_phase_delta:     float = 0.0   # CC late-median minus early-median (z-scored)
@@ -128,8 +143,16 @@ class MetricSignal:
         return self.data[idx]
 
     def get_channel_raw(self, name: str) -> np.ndarray:
+        """Retorna o canal z-score sem janela (nome legado por compatibilidade)."""
         idx = self.channel_names.index(name)
         return self.data_raw[idx]
+
+    def get_channel_unscaled(self, name: str) -> np.ndarray:
+        """Retorna o canal interpolado em unidades originais quando disponível."""
+        idx = self.channel_names.index(name)
+        if self.data_unscaled is None:
+            return self.data_raw[idx]
+        return self.data_unscaled[idx]
 
 
 # ─── Análise espectral de um canal ───────────────────────────────────────────
@@ -208,12 +231,13 @@ class SignatureMatch:
 
 @dataclass
 class ChangePoint:
-    """Ponto de mudança detectado pelo PELT."""
-    commit_idx: int                     # índice no vetor de commits
+    """Ponto de mudança detectado no sinal e projetado ao histórico original."""
+    commit_idx: int                     # índice no vetor ORIGINAL de commits
     commit_hash: Optional[str]
     confidence: float
-    magnitude: float                    # magnitude da mudança
+    magnitude: float                    # magnitude no sinal padronizado
     affected_channels: List[str]
+    signal_idx: Optional[int] = None    # índice na grade interpolada (diagnóstico)
 
 
 @dataclass

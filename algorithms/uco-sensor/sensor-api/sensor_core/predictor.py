@@ -41,8 +41,10 @@ _SLOPE_HIGH_PCT     = 10.0
 _SLOPE_MEDIUM_PCT   =  5.0
 _SLOPE_LOW_PCT      =  1.0
 
-_MIN_SAMPLES_FORECAST = 4    # minimum snapshots for any forecast
-_MIN_SAMPLES_RELIABLE = 8    # minimum for reliable Hurst estimate
+_MIN_SAMPLES_FORECAST = 4     # OLS forecast can be shown as exploratory
+# R/S Hurst is strongly upward-biased on short series. Below 64 snapshots the
+# raw estimate may be reported, but it MUST NOT amplify the risk tier.
+_MIN_SAMPLES_RELIABLE = 64
 
 
 # ── DegradationForecast ───────────────────────────────────────────────────────
@@ -347,8 +349,11 @@ class DegradationPredictor:
         confidence    = round(min(1.0, sample_factor * max(0.0, r2_val)), 4)
 
         # ── Classification ────────────────────────────────────────────────────
-        risk   = _classify_risk(slope_pct, hurst, insuf)
-        advice = _advice(risk, hurst, slope_pct, predicted_h)
+        # Never let a short-sample R/S estimate amplify risk. OLS remains active;
+        # Hurst becomes neutral until the reliability gate is met.
+        hurst_for_risk = hurst if n >= _MIN_SAMPLES_RELIABLE else 0.5
+        risk   = _classify_risk(slope_pct, hurst_for_risk, insuf)
+        advice = _advice(risk, hurst_for_risk, slope_pct, predicted_h)
 
         return DegradationForecast(
             module_id=mid,

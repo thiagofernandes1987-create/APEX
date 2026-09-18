@@ -27,7 +27,11 @@ For each lag ``k ∈ 1..max_lag`` and each ordered pair ``(X → Y)``:
     Lower p-value → stronger evidence that X Granger-causes Y at lag k.
 
 The best lag is the one that minimises p-value across ``1..max_lag``.
-The pair is **significant** when ``p_value < alpha`` (default 0.05).
+Because choosing the minimum p-value is itself multiple testing, the returned
+pair-level p-value is Bonferroni-corrected across the tested lags.
+
+For a full 9×9 matrix, off-diagonal pair p-values are then corrected with
+Benjamini-Hochberg FDR before ``granger_causes`` is exposed as a graph edge.
 
 Public API
 ----------
@@ -170,6 +174,7 @@ def granger_pair(
     best_p   = 1.0
     best_f   = 0.0
     best_lag = 0
+    n_lags_tested = 0
 
     for k in range(1, max_lag + 1):
         n_eff = len(y) - k
@@ -206,10 +211,15 @@ def granger_pair(
             F = ((rss_r - rss_u) / df1) / (rss_u / df2)
             p = _f_survival(F, df1, df2)
 
+        n_lags_tested += 1
         if p < best_p:
             best_p   = p
             best_f   = F
             best_lag = k
+
+    # Selecting the minimum p across lags inflates type-I error. Use a
+    # conservative Bonferroni correction before exposing pair significance.
+    best_p_corrected = min(1.0, best_p * max(1, n_lags_tested))
 
     # Clamp F-stat to a JSON-safe value when noiseless causation occurred.
     _F_SAT = 1.0e12
@@ -217,10 +227,30 @@ def granger_pair(
     return GrangerResult(
         from_channel="", to_channel="",
         best_lag=best_lag, f_statistic=round(safe_f, 4),
-        p_value=round(best_p, 6),
-        granger_causes=(best_p < alpha),
+        p_value=round(best_p_corrected, 6),
+        granger_causes=(best_p_corrected < alpha),
         n_samples=len(y), alpha=alpha,
     )
+
+
+# ─── Multiple-testing control ────────────────────────────────────────────────
+
+def _benjamini_hochberg(p_values: List[float]) -> List[float]:
+    """Return Benjamini-Hochberg adjusted q-values in original order."""
+    m = len(p_values)
+    if m == 0:
+        return []
+    order = sorted(range(m), key=lambda i: float(p_values[i]))
+    q = [1.0] * m
+    running = 1.0
+    for rank0 in range(m - 1, -1, -1):
+        idx = order[rank0]
+        rank = rank0 + 1
+        raw = min(1.0, max(0.0, float(p_values[idx])))
+        adj = min(running, raw * m / rank)
+        running = adj
+        q[idx] = adj
+    return q
 
 
 # ─── Store integration ───────────────────────────────────────────────────────
@@ -291,12 +321,30 @@ def granger_matrix(
             d["to"]   = ch_j
             matrix.append(d)
 
+    # Matrix-level multiplicity: 9 channels imply 72 directed off-diagonal
+    # hypotheses. Apply BH-FDR and make the corrected decision canonical.
+    offdiag_idx = [
+        i for i, entry in enumerate(matrix)
+        if entry["from"] != entry["to"]
+    ]
+    q_values = _benjamini_hochberg([matrix[i]["p_value"] for i in offdiag_idx])
+    for i, q in zip(offdiag_idx, q_values):
+        entry = matrix[i]
+        entry["granger_causes_raw"] = bool(entry["granger_causes"])
+        entry["q_value"] = round(float(q), 6)
+        entry["granger_causes"] = bool(q < alpha)
+    for entry in matrix:
+        if entry["from"] == entry["to"]:
+            entry["granger_causes_raw"] = False
+            entry["q_value"] = 1.0
+
     return {
         "module_id": module_id,
         "status":    "OK",
         "n_samples": n,
         "max_lag":   max_lag,
         "alpha":     alpha,
+        "multiple_testing": "lag-bonferroni + benjamini-hochberg-fdr",
         "channels":  list(_CHANNELS),
         "matrix":    matrix,
     }
@@ -310,7 +358,7 @@ def significant_pairs(
     window: int = 200,
     alpha: float = 0.05,
 ) -> Dict[str, Any]:
-    """Filter granger_matrix to keep only pairs with p_value < alpha."""
+    """Filter granger_matrix to keep only BH-FDR significant directed pairs."""
     full = granger_matrix(
         store, module_id,
         max_lag=max_lag, window=window, alpha=alpha,

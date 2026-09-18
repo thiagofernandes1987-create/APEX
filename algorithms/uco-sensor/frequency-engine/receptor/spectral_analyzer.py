@@ -95,11 +95,15 @@ class SpectralAnalyzer:
         x_raw = signal.data_raw[channel_idx]   # sem janela — para estatísticas
         name = signal.channel_names[channel_idx]
         N = len(x)
+        # sample_rate é amostras/commit. Como o builder pode interpolar para
+        # N>=32, fs=1.0 distorceria o eixo e faria a mesma dinâmica parecer
+        # mudar de frequência só por mudar n_interp.
+        fs = max(float(signal.sample_rate), 1e-12)
 
         # ── 1. PSD via Welch ──────────────────────────────────────────────
         nperseg = max(MIN_NPERSEG, N // self.welch_ratio)
         nperseg = min(nperseg, N // 2)
-        freqs, psd = welch(x, fs=1.0, nperseg=nperseg, window='hann',
+        freqs, psd = welch(x, fs=fs, nperseg=nperseg, window='hann',
                            noverlap=nperseg // 2, scaling='density')
 
         # Frequência dominante
@@ -122,7 +126,7 @@ class SpectralAnalyzer:
         #  Regra diagnóstica (transposta do CSL, ASTM D6760):
         #    fw_shift > 0.20  →  espectro perdeu componentes de alta frequência
         #    fw_shift > 0.40  →  degradação estrutural severa (equivalente a -6dB de energia)
-        fw_baseline = 0.25  # ponto médio do intervalo de Nyquist [0, 0.5]
+        fw_baseline = fs / 4.0  # ponto médio de Nyquist [0, fs/2], ciclos/commit
         fw_atual = float(np.sum(freqs * psd) / (np.sum(psd) + 1e-12))
         fw_shift_val = (fw_baseline - fw_atual) / (fw_baseline + 1e-12)
         fw_shift_val = float(np.clip(fw_shift_val, -2.0, 2.0))
@@ -141,7 +145,7 @@ class SpectralAnalyzer:
             self._compute_band_energies(freqs, psd)
 
         # ── 4. STFT — localização tempo-frequência ───────────────────────
-        stft_freqs, stft_times, stft_mag = self._compute_stft(x, N)
+        stft_freqs, stft_times, stft_mag = self._compute_stft(x, N, fs)
 
         # ── 5. Wavelet — energia multi-resolução ─────────────────────────
         if N >= MIN_SAMPLES_FOR_WAVELET:
@@ -212,13 +216,14 @@ class SpectralAnalyzer:
         nperseg = max(MIN_NPERSEG, N // self.welch_ratio)
         nperseg = min(nperseg, N // 2)
 
-        # Coerência espectral
-        freqs, coh = coherence(xa, xb, fs=1.0, nperseg=nperseg,
+        # Coerência espectral — frequência em ciclos/commit.
+        fs = max(float(signal.sample_rate), 1e-12)
+        freqs, coh = coherence(xa, xb, fs=fs, nperseg=nperseg,
                                window='hann', noverlap=nperseg // 2)
         coh = np.where(np.isfinite(coh), coh, 0.0)  # NaN → 0 (sinal constante = sem coerência)
 
         # Cross-spectral density → phase lag
-        _, pxy = csd(xa, xb, fs=1.0, nperseg=nperseg,
+        _, pxy = csd(xa, xb, fs=fs, nperseg=nperseg,
                      window='hann', noverlap=nperseg // 2)
 
         peak_idx = int(np.argmax(coh))
@@ -253,10 +258,10 @@ class SpectralAnalyzer:
         coh_entropy = float(np.clip(coh_entropy, 0.0, 1.0))
 
         # PSD dummy (usar PSD do canal A para o campo obrigatório)
-        _, psd_a = welch(xa, fs=1.0, nperseg=nperseg, window='hann',
+        _, psd_a = welch(xa, fs=fs, nperseg=nperseg, window='hann',
                          noverlap=nperseg // 2)
 
-        stft_f, stft_t, stft_mag = self._compute_stft(xa, N)
+        stft_f, stft_t, stft_mag = self._compute_stft(xa, N, fs)
 
         # Wavelet energies da média dos dois canais
         x_mean = (xa + xb) / 2.0
@@ -314,13 +319,13 @@ class SpectralAnalyzer:
         return band_e, band_e_rel, dominant
 
     def _compute_stft(
-        self, x: np.ndarray, N: int
+        self, x: np.ndarray, N: int, fs: float = 1.0
     ) -> tuple:
         """STFT com segmento adaptado ao tamanho do sinal."""
         nperseg_stft = max(4, N // self.stft_ratio)
         nperseg_stft = min(nperseg_stft, N // 2)
         try:
-            f, t, Zxx = scipy_stft(x, fs=1.0, nperseg=nperseg_stft,
+            f, t, Zxx = scipy_stft(x, fs=fs, nperseg=nperseg_stft,
                                     window='hann', noverlap=nperseg_stft // 2)
             return f, t, np.abs(Zxx)
         except Exception:

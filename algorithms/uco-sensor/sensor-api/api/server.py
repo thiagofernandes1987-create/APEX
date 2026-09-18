@@ -219,7 +219,7 @@ class SensorConfig:
     engine_mode:  str   = "fast"
     verbose:      bool  = False
     max_history:  int   = 100
-    version:      str   = "3.11.0"
+    version:      str   = "3.97.0"
     # BUG-05: auth was False by default — any unprotected server was open.
     # Now reads UCO_AUTH_ENABLED env var; set UCO_NO_AUTH=1 ONLY for dev/tests.
     auth_enabled: bool  = False   # overridden by env var below
@@ -1512,9 +1512,10 @@ def handle_repair_hmc(data: Dict) -> Tuple[int, Dict]:
         "timeout_s":     float — default 60.0 (wallclock cap)
       }
 
-    HMC Bayesian sampling over AST transforms with APS-preservation
-    constraint and proof of H minimality.  Falls back to GreedyOptimizer
-    when numpy unavailable.
+    Experimental HMC sampling over a latent AST-transform policy with
+    APS-preservation. Returns the best observed candidate; it does NOT
+    certify a global minimum. Falls back to GreedyOptimizer when numpy
+    is unavailable.
     """
     source = data.get("code", "")
     if not source or not source.strip():

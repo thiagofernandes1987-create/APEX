@@ -1,18 +1,20 @@
 """
 Sprint Q — HMC Closed-Loop Repair  (v3.4.4)
 =============================================
-Biggest scientific leap in the project. Uses **Hamiltonian Monte Carlo**
-(HMC, Bayesian sampling) to search the space of AST transforms with
-proof of MINIMALITY: the returned patch minimises H subject to the
-constraint that APS does not regress.
+Experimental Hamiltonian Monte Carlo (HMC) search over a continuous latent
+policy that activates discrete AST transforms. The routine returns the best
+patch OBSERVED during the sampled trajectory subject to APS non-regression.
+
+Important: this is not a proof of global minimality. HMC is a sampler over a
+piecewise-discrete objective here; finite runs cannot certify a global optimum.
 
 How this differs from rule-based autofix
 ----------------------------------------
 - Rule-based (Sprint K/D): "if SAST006 fires, apply WeakHashReplacer".
-  Local greedy, no global optimum, no proof of minimality.
-- HMC repair: Bayesian sampling of the joint distribution
-  P(transform_sequence | source) weighted by exp(-β·H) — converges to
-  the global minimum of H under the temperature schedule.
+  Local greedy search.
+- HMC repair: explores a continuous latent policy whose decoded states select
+  transform sequences, weighted by a Hamiltonian-style objective. It can find
+  lower-H candidates, but does not certify global optimality.
 
 HMC is already implemented in ``algorithms/uco/universal_code_optimizer_v4.py``
 via ``UniversalCodeOptimizer.optimize(method='hmc')``.  It was never
@@ -201,8 +203,8 @@ def hmc_repair(
     timeout_s: float = 60.0,
 ) -> HMCRepairResult:
     """
-    Run HMC sampling over AST transforms; return patched source with
-    proof of H minimality under APS-preservation constraint.
+    Run experimental HMC sampling over AST transforms; return the best
+    observed H candidate that passes the APS-preservation constraint.
 
     Parameters
     ----------

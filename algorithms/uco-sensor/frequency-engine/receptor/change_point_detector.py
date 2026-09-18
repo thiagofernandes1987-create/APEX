@@ -1,9 +1,14 @@
 """
 UCO-Sensor FrequencyEngine — Detecção de Change Points
 =======================================================
-Implementação do algoritmo PELT (Pruned Exact Linear Time) em numpy puro.
+Detecção exata de change-points por programação dinâmica penalizada.
 
-O PELT encontra o conjunto ótimo de breakpoints que minimiza o custo total
+A versão anterior se chamava PELT, mas a regra de poda eliminava candidatos
+válidos e podia retornar segmentações subótimas. A API privada _pelt é
+mantida por compatibilidade, porém agora executa DP exata O(N²), adequada às
+janelas curtas do UCO e verificável contra busca exaustiva.
+
+O detector encontra o conjunto ótimo de breakpoints que minimiza o custo total
 de segmentação de uma série temporal. É a resposta para: "quando exatamente
 o padrão de erro começou?"
 
@@ -18,9 +23,10 @@ Fundamento matemático:
     β    = penalidade por breakpoint adicional (controla sensibilidade)
 
   Modelos de custo implementados:
-    "rbf"  — Radial Basis Function: C = N·log(σ²), onde σ² = variância do segmento
-             Equivalente a log-likelihood negativo de uma Gaussiana.
-             Detecta mudanças de média E variância.
+    "rbf"  — alias legado para custo Gaussiano de variância:
+             C = N·log(σ²). NÃO é um kernel RBF.
+             Mantido para compatibilidade de configuração.
+    "gaussian" — nome preferido para o mesmo custo.
 
     "l2"   — Least Squares: C = Σ(y_i - ȳ)² = N·σ²
              Detecta mudanças de média apenas.
@@ -99,7 +105,7 @@ class ChangePointDetector:
 
         x = signal.data_raw[indices].mean(axis=0)  # (N,)
 
-        # Detectar breakpoints
+        # Detectar breakpoints (DP exata penalizada; nome _pelt preservado)
         breakpoints = self._pelt(x)
 
         if not breakpoints:
@@ -112,16 +118,26 @@ class ChangePointDetector:
         signal_std = float(np.std(x)) + 1e-9
         confidence = float(np.clip(magnitude / (2.0 * signal_std), 0.0, 1.0))
 
+        # best_bp está na grade interpolada. Projetar para o commit ORIGINAL.
+        n_grid = max(1, int(signal.n_samples))
+        n_src = max(1, int(signal.n_original or len(signal.commit_hashes)))
+        if n_grid <= 1 or n_src <= 1:
+            source_idx = 0
+        else:
+            source_idx = int(round(best_bp * (n_src - 1) / (n_grid - 1)))
+        source_idx = max(0, min(source_idx, n_src - 1))
+
         commit_hash = None
-        if best_bp < len(signal.commit_hashes):
-            commit_hash = signal.commit_hashes[best_bp]
+        if source_idx < len(signal.commit_hashes):
+            commit_hash = signal.commit_hashes[source_idx]
 
         return ChangePoint(
-            commit_idx=best_bp,
+            commit_idx=source_idx,
             commit_hash=commit_hash,
             confidence=confidence,
             magnitude=magnitude,
             affected_channels=primary_channels,
+            signal_idx=best_bp,
         )
 
     def detect_all_channels(
@@ -139,104 +155,68 @@ class ChangePointDetector:
 
     def _pelt(self, x: np.ndarray) -> List[int]:
         """
-        PELT: Pruned Exact Linear Time changepoint detection.
+        Exact penalized segmentation (compatibility name _pelt).
 
-        Algoritmo dinâmico que encontra o particionamento ótimo de x.
+        We intentionally use O(N²) dynamic programming. UCO governance windows
+        are bounded (typically <=200), so correctness is more valuable than an
+        unverified pruning optimization. Every predecessor s with finite F[s]
+        and segment length >= min_size is considered.
 
-        Estado:
-          F[t] = custo mínimo de segmentar x[0:t]
-          last[t] = último breakpoint que deu F[t]
-          cands = set de candidatos a último breakpoint para posição atual
+        Objective:
+            F[t] = min_s F[s] + C(x[s:t]) + beta
+        with F[0] = -beta so a signal with zero breakpoints pays no penalty.
 
-        Prunagem: candidato s é eliminado se
-          F[s] + C(x[s:t]) + β ≥ F[t]  para todo t ≥ t_atual
-        Isso garante que s nunca será ótimo para nenhuma extensão futura.
+        This routine is exact for the implemented additive segment costs.
         """
         N = len(x)
         if N < 2 * self.min_size:
             return []
 
-        # Pré-computar somas e somas de quadrados para cálculo O(1) de custo
-        cumsum   = np.cumsum(x)
-        cumsum2  = np.cumsum(x ** 2)
+        cumsum = np.cumsum(x, dtype=float)
+        cumsum2 = np.cumsum(np.asarray(x, dtype=float) ** 2)
 
         def sum_range(lo: int, hi: int) -> float:
-            """Soma de x[lo:hi]"""
-            return float(cumsum[hi-1] - (cumsum[lo-1] if lo > 0 else 0.0))
+            return float(cumsum[hi - 1] - (cumsum[lo - 1] if lo > 0 else 0.0))
 
         def sum2_range(lo: int, hi: int) -> float:
-            """Soma de x[lo:hi]²"""
-            return float(cumsum2[hi-1] - (cumsum2[lo-1] if lo > 0 else 0.0))
+            return float(cumsum2[hi - 1] - (cumsum2[lo - 1] if lo > 0 else 0.0))
 
         def cost(lo: int, hi: int) -> float:
-            """
-            Custo de segmentar x[lo:hi] como um único segmento.
-
-            modelo "rbf" (RBF/Gaussiano):
-              C = n · log(σ²) onde σ² = variância do segmento
-              Equivalente a -2·log-likelihood de N(μ, σ²) com μ,σ estimados.
-              C → -∞ quando σ² → 0, então usamos max(σ², ε).
-
-            modelo "l2" (Least Squares):
-              C = n·σ² = Σ(x_i - x̄)² = soma quadrática dos resíduos
-            """
             n = hi - lo
             if n <= 0:
                 return 0.0
             s1 = sum_range(lo, hi)
             s2 = sum2_range(lo, hi)
-            var = s2 / n - (s1 / n) ** 2
-            if self.model == "rbf":
-                return n * np.log(max(var, 1e-10))
-            else:  # l2
-                return max(0.0, n * var)
+            var = max(0.0, s2 / n - (s1 / n) ** 2)
+            if self.model in ("rbf", "gaussian"):
+                # Legacy "rbf" is a Gaussian variance/log-likelihood cost,
+                # not a radial-basis-function kernel.
+                return float(n * np.log(max(var, 1e-10)))
+            return float(n * var)
 
-        # DP principal
-        F    = np.full(N + 1, np.inf)
+        F = np.full(N + 1, np.inf, dtype=float)
         last = np.full(N + 1, -1, dtype=int)
-        F[0] = -self.penalty   # caso base: custo de sinal vazio
-
-        cands = [0]   # candidatos a último breakpoint
+        F[0] = -float(self.penalty)
 
         for t in range(self.min_size, N + 1):
-            # Melhor segmentação até t
-            best_cost = np.inf
-            best_last = -1
-
-            for s in cands:
-                if t - s < self.min_size:
+            latest_s = t - self.min_size
+            for s_idx in range(0, latest_s + 1):
+                if not np.isfinite(F[s_idx]):
                     continue
-                c = F[s] + cost(s, t) + self.penalty
-                if c < best_cost:
-                    best_cost = c
-                    best_last = s
+                candidate = F[s_idx] + cost(s_idx, t) + self.penalty
+                if candidate < F[t]:
+                    F[t] = candidate
+                    last[t] = s_idx
 
-            F[t]    = best_cost
-            last[t] = best_last
+        if not np.isfinite(F[N]) or last[N] < 0:
+            return []
 
-            # Prunagem: remover candidatos que nunca serão ótimos
-            new_cands = []
-            for s in cands:
-                if t - s < self.min_size:
-                    new_cands.append(s)
-                    continue
-                # Manter s se existe t' > t onde s pode ser ótimo
-                # Condição de prunagem: F[s] + C(s,t) + β ≥ F[t]
-                # Se isso vale, s é subótimo para t e todo t' > t
-                if F[s] + cost(s, t) + self.penalty < F[t] + 1e-10:
-                    new_cands.append(s)
-
-            # Adicionar t como novo candidato
-            if t + self.min_size <= N:
-                new_cands.append(t)
-            cands = new_cands
-
-        # Reconstruir breakpoints percorrendo ponteiros `last`
-        breakpoints = []
+        breakpoints: List[int] = []
         t = N
         while last[t] > 0:
-            breakpoints.append(last[t])
-            t = last[t]
+            bp = int(last[t])
+            breakpoints.append(bp)
+            t = bp
         breakpoints.reverse()
         return breakpoints
 

@@ -260,10 +260,16 @@ def test_TAB18_cache_set_then_invalidate_then_miss():
 _README = (Path(__file__).resolve().parent.parent / "README.md")
 
 
-def test_TAB19_readme_version_badge_matches_v3_10_target():
+def test_TAB19_readme_version_badge_matches_package_version():
     txt = _README.read_text()
-    assert "version-3.10.0" in txt, "README badge must reflect target v3.10.0"
-    # Legacy badge gone:
+    pyproject = (_README.parent / "pyproject.toml").read_text()
+    import re
+    m = re.search(r'^version\s*=\s*"([^"]+)"', pyproject, re.MULTILINE)
+    assert m, "pyproject.toml must declare project version"
+    version = m.group(1)
+    assert f"version-{version}" in txt, (
+        f"README badge must reflect package version {version}"
+    )
     assert "version-0.4.0" not in txt
 
 

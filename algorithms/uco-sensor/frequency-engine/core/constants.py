@@ -75,6 +75,9 @@ BURST_NEUTRAL:    float = 0.40
 # ─── Hurst Exponent ───────────────────────────────────────────────────────────
 HURST_MIN_LAG:  int = 4
 HURST_N_POINTS: int = 20   # pontos em log-space para R/S analysis
+# R/S é fortemente enviesado em séries curtas. Abaixo deste N ele pode ser
+# exibido como diagnóstico, mas NÃO deve governar classificação/override.
+MIN_SAMPLES_HURST_RELIABLE: int = 64
 
 # ─── Identity override thresholds ─────────────────────────────────────────────
 COGNITIVE_BURST_THRESHOLD:  float = 0.70
