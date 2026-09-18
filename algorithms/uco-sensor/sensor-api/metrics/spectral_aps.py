@@ -28,9 +28,8 @@ the dangerous ones live in the high-entropy / high-HIGH-band corner.
 Design choices
 --------------
 - We do NOT require LEAP 4's Hamiltonian forecast — this is APS-only.
-- Welch needs at least 8 samples for a sensible PSD; we gate hard
-  below that and return ``status="INSUFFICIENT"``.  This matches the
-  ``_MIN_SAMPLES_RELIABLE`` doctrine of the predictor module.
+- APS spectral analysis keeps its own minimum of 8 samples. This is a Welch
+  availability gate, NOT evidence that an R/S Hurst estimate is reliable at N=8.
 - Detrending is **linear** (scipy default).  We do NOT subtract the
   mean before wavelet decomposition (wavelet energy of the trend
   level is itself an informative channel).
@@ -44,7 +43,7 @@ import math
 from typing import Any, Dict, List, Optional
 
 
-_MIN_SAMPLES = 8        # match _MIN_SAMPLES_RELIABLE from predictor.py
+_MIN_SAMPLES = 8        # Welch availability gate; independent from Hurst reliability
 _WAVELET     = "db4"    # Daubechies-4 — standard for non-stationary signals
 _DECOMP_LEVELS = 3
 
