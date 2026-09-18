@@ -240,6 +240,15 @@ def to_markdown(report: dict) -> str:
         "",
         f"Rows: {report['n_rows']} | repositories: {report['n_repos']} | "
         f"seed-dev rows: {report['seed_dev_rows']}",
+        (
+            "Corpus coverage: "
+            + (
+                f"{report['corpus_coverage']['analyzed_repos']}/"
+                f"{report['corpus_coverage']['expected_repos']} repositories"
+                if report.get("corpus_coverage", {}).get("expected_repos")
+                else "manifest not supplied"
+            )
+        ),
         "",
         "## Held-out discrimination",
         "",
@@ -301,17 +310,28 @@ def main() -> int:
     ap.add_argument("--md-out", required=True)
     ap.add_argument("--bootstrap", type=int, default=500)
     ap.add_argument("--include-seed", action="store_true")
+    ap.add_argument("--min-formal-repos", type=int, default=500)
+    ap.add_argument("--manifest", default=None)
     args = ap.parse_args()
 
     rows_all = read_rows(args.input)
     seed_n = sum(1 for r in rows_all if r.get("seed_dev"))
     rows = rows_all if args.include_seed else [r for r in rows_all if not r.get("seed_dev")]
-    formal = bool(rows) and not args.include_seed
-
     # Seed smoke has no formal claim but still validates the complete learning path.
     if not rows and rows_all:
         rows = rows_all
-        formal = False
+
+    analyzed_repos = {r["repo"] for r in rows}
+    expected_events = expected_repos = None
+    if args.manifest:
+        manifest = json.loads(Path(args.manifest).read_text())
+        expected_events = len(manifest)
+        expected_repos = len({e["repo"] for e in manifest})
+    formal = (
+        not args.include_seed
+        and not any(r.get("seed_dev") for r in rows)
+        and len(analyzed_repos) >= args.min_formal_repos
+    )
 
     for r in rows:
         r["split"] = split_repo(r["repo"])
@@ -324,6 +344,16 @@ def main() -> int:
         "n_rows": len(rows),
         "n_repos": len({r["repo"] for r in rows}),
         "seed_dev_rows": seed_n,
+        "min_formal_repos": args.min_formal_repos,
+        "corpus_coverage": {
+            "expected_events": expected_events,
+            "expected_repos": expected_repos,
+            "analyzed_repos": len(analyzed_repos),
+            "repo_coverage": (
+                len(analyzed_repos) / expected_repos
+                if expected_repos else None
+            ),
+        },
         "splits": {
             "train_rows": len(train), "dev_rows": len(dev), "test_rows": len(test),
             "train_repos": len({r["repo"] for r in train}),
