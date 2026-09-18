@@ -37,7 +37,7 @@ jobs:
   prepare:
     if: github.event_name != 'push' || contains(github.event.head_commit.message, '[formal-bench-1000]')
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 60
     outputs:
       shards: ${{ steps.plan.outputs.shards }}
       shard_count: ${{ steps.plan.outputs.shard_count }}
