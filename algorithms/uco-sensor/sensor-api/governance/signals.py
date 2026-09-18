@@ -24,7 +24,7 @@ Design contract
 - Never raise on missing data: every error path returns a structured
   dict with `verdict="INSUFFICIENT"` or `"ERROR"`.
 - Hurst gating respects ``sensor_core.predictor._MIN_SAMPLES_RELIABLE``
-  (= 8) — set in Sprint G fix C-3.  Below threshold the verdict
+  (currently conservative at 64) — short R/S is biased.  Below threshold the verdict
   downgrades to plain ``DEGRADING`` (no ``_PERSISTENT``).
 """
 from __future__ import annotations
@@ -42,14 +42,15 @@ _PREDICTOR_MAE_REL_ACCURATE = 0.10
 def _min_samples_reliable() -> int:
     """Late-import to avoid circular dependency on sensor_core.predictor.
 
-    Falls back to 8 if the predictor module can't be imported in some
-    weird sandbox — that's the canonical value baked in there anyway.
+    Falls back to 64 if the predictor module cannot be imported. The fallback
+    is deliberately conservative: unavailable calibration must not promote a
+    persistence claim.
     """
     try:
         from sensor_core.predictor import _MIN_SAMPLES_RELIABLE
         return int(_MIN_SAMPLES_RELIABLE)
     except Exception:
-        return 8
+        return 64
 
 
 # ─── APS trend ────────────────────────────────────────────────────────────────
