@@ -55,8 +55,9 @@ class MetricSignalBuilder:
         "cubic"  — mais suave, pode criar oscilações artificiais em séries curtas.
 
     n_interp : int or None
-        Número de pontos no sinal interpolado. None → max(N_original, 32).
-        32 garante pelo menos 16 bins de frequência (Nyquist).
+        Número de pontos da grade interpolada. None → max(N_original, 32).
+        Interpolar NÃO cria informação nova: a taxa de amostragem é corrigida
+        para preservar a unidade física do eixo (ciclos por commit).
     """
 
     def __init__(
@@ -94,13 +95,30 @@ class MetricSignalBuilder:
                       f"— insuficiente para análise espectral")
             return None
 
-        # 1. Extrair arrays brutos [9 × N_original]
+        # 1. Extrair arrays brutos [9 × N_original] + timestamps reais.
+        # O domínio espectral canônico do UCO é COMMIT-DOMAIN: 1 unidade = 1 commit.
+        # Isso mantém FREQ_BANDS em ciclos/commit e evita confundir 10 dias com
+        # 10 commits ou 300 dias com 10 commits.
         raw, timestamps_raw = self._extract_raw(history)
+        n_original = len(history)
+        source_positions = np.arange(n_original, dtype=np.float64)
 
-        # 2. Interpolar para grade uniforme
-        N = self.n_interp or max(len(history), 32)
-        timestamps_uniform = np.linspace(0.0, 1.0, N)
-        data_interp = self._interpolate(raw, timestamps_raw, timestamps_uniform)
+        # 2. Interpolar em uma grade uniforme de POSIÇÃO DE COMMIT.
+        # A grade pode ter mais pontos que o histórico, mas sample_rate abaixo
+        # preserva a escala: (N-1)/(n_original-1) amostras por commit.
+        N = self.n_interp or max(n_original, 32)
+        grid_positions = np.linspace(0.0, float(n_original - 1), N)
+        data_interp = self._interpolate(raw, source_positions, grid_positions)
+
+        # Timestamps são apenas metadados de calendário. Reamostramos sobre a
+        # posição do commit para que ClassificationResult.timestamp continue real.
+        if len(timestamps_raw) == n_original:
+            timestamps_uniform = np.interp(
+                grid_positions, source_positions, timestamps_raw
+            )
+        else:
+            timestamps_uniform = grid_positions.copy()
+        sample_rate = (N - 1) / max(1.0, float(n_original - 1))
 
         # 3. Normalização z-score por canal
         data_norm, means, stds = self._normalize(data_interp)
@@ -140,9 +158,10 @@ class MetricSignalBuilder:
         ]
 
         # 6. Construir MetricSignal
-        # BUG-C01 FIX: data_raw now stores truly raw values (pre-interpolation)
-        # data_normalized stores the z-scored interpolated data
-        # Consumers needing units-correct values should use data_raw
+        # Compatibilidade: data_raw é o sinal z-score sem janela (nome legado).
+        # data_unscaled preserva as unidades originais das métricas.
+        # As coordenadas commit-domain são explícitas para permitir projeção
+        # correta grid -> commit original.
 
         # ── GAP-D1/D2/D3/D4: derived temporal features from raw metric series ──
         _n_total  = len(history)
@@ -169,12 +188,16 @@ class MetricSignalBuilder:
 
         signal = MetricSignal(
             data=data_windowed,
-            data_raw=data_norm,          # z-scored (used by spectral pipeline)
+            data_raw=data_norm,          # z-score sem janela (legado)
             timestamps=timestamps_uniform,
+            data_unscaled=data_interp,
+            source_timestamps=np.asarray(timestamps_raw, dtype=np.float64),
+            source_commit_positions=source_positions,
+            grid_commit_positions=grid_positions,
             commit_hashes=[mv.commit_hash for mv in history],
             module_id=history[0].module_id,
-            sample_rate=float(N),
-            n_original=len(history),
+            sample_rate=float(sample_rate),  # amostras por commit
+            n_original=n_original,
             channel_names=list(CHANNEL_NAMES),
             channel_means=means,
             channel_stds=stds,
@@ -205,25 +228,23 @@ class MetricSignalBuilder:
         history: List[MetricVector],
     ) -> Tuple[np.ndarray, np.ndarray]:
         """
-        Extrai tensor [9 × N] de métricas e vetor de timestamps normalizados.
+        Extrai tensor [9 × N] de métricas e timestamps REAIS (epoch seconds).
 
-        Usa commit-index normalizado como eixo de tempo (mais estável que
-        timestamps reais que podem ter gaps grandes nos fins de semana).
+        A interpolação espectral não usa timestamps reais: usa posição de commit.
+        Isso é deliberado porque as bandas canônicas do UCO são ciclos/commit.
+        O calendário é preservado apenas como metadado para atribuição temporal.
         """
         raw = np.stack([mv.to_array() for mv in history], axis=1)  # (9, N)
         N = raw.shape[1]
 
-        # Timestamps: usar índice de commit normalizado [0, 1]
-        # Alternativa: usar timestamps reais se disponíveis e uniformes
         real_ts = np.array([mv.timestamp for mv in history], dtype=np.float64)
-        if real_ts[-1] > real_ts[0]:
-            # Normalizar para [0, 1]
-            ts_normalized = (real_ts - real_ts[0]) / (real_ts[-1] - real_ts[0])
-        else:
-            # Fallback: espaçamento uniforme por índice
-            ts_normalized = np.linspace(0.0, 1.0, N)
+        # Alguns fixtures/clients podem enviar timestamps ausentes ou não-monótonos.
+        # Para metadado, preservamos os valores quando finitos; caso contrário
+        # usamos posição de commit para manter determinismo sem afetar o espectro.
+        if not np.all(np.isfinite(real_ts)):
+            real_ts = np.arange(N, dtype=np.float64)
 
-        return raw, ts_normalized
+        return raw, real_ts
 
     def _interpolate(
         self,
