@@ -4,6 +4,15 @@
 **Target:** 1,000 distinct public GitHub repositories (minimum 500; hard cap 2,000).  
 **Primary unit of independence:** repository, not file or transition.
 
+> **Protocol amendment v0.2 — before any formal performance result was
+> inspected.** The 100-repository operational pilot was used only to inspect
+> corpus availability/plumbing. It showed (a) test files leaking through path
+> filters and (b) insufficient temporal depth in many selected paths. Before the
+> formal held-out run, the corpus definition was therefore tightened to exclude
+> test-like paths, require >=14 pre-event path-touching commits, match controls
+> by diff magnitude, and exclude all historical development-corpus repositories.
+> No UCO AUPRC/AUROC/F1 result informed these changes.
+
 ## Research question
 
 Does each temporal/scientific layer add out-of-sample information beyond the
