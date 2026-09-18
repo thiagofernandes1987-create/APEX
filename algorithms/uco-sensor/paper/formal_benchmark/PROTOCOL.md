@@ -28,15 +28,22 @@ with a better UCO signal.
 
 Primary corpus uses merged GitHub PRs with an explicit transition boundary:
 
-1. **security** — CVE/GHSA in title/body or security-labelled PR;
+1. **security** — CVE/GHSA in title or security-labelled PR;
 2. **bugfix** — merged PR carrying a bug label;
 3. **regression** — merged PR explicitly titled/labelled regression;
 4. **refactor** — merged PR explicitly titled/labelled refactor;
 5. **revert** — merged PR explicitly titled revert.
 
 For every event, the exact PR base SHA and merge/head SHA define the known
-boundary. At most one primary event per repository is used in the principal
-analysis so a large monorepo cannot dominate the statistics.
+boundary. The post-PR snapshot is appended explicitly as the final positive
+time-series sample, so localization ground truth does not depend on Git merge
+path simplification. At most one primary event per repository is used in the
+principal analysis so a large monorepo cannot dominate the statistics.
+
+Test/fixture/generated paths are excluded. PRs with more than 50 changed files
+are excluded from the primary corpus; among eligible production-source files,
+the largest bounded source delta (<=800 changed lines) is selected, then
+negative controls are matched to its change magnitude.
 
 Commit-message-only generic "fix" cases are **bronze** evidence and excluded
 from the primary table; they may appear only in sensitivity analysis.
@@ -50,11 +57,15 @@ included in the formal held-out result.
 Each positive transition gets up to two matched negative boundaries from the
 same file/repository history:
 
-- same language and file;
+- same language and **same file**;
+- a control is the real first-parent boundary `parent(commit) → commit`;
 - outside ±5 path-touching commits from the labelled event;
 - commit subject must not match security/fix/bug/regression/refactor/revert
   keywords;
-- controls are sampled deterministically from the available history.
+- candidates are ranked by similarity of changed-line magnitude to the event,
+  using `|log1p(lines_control) - log1p(lines_event)|`;
+- controls are therefore deterministic and **size-matched**, preventing a
+  trivial "large PR vs ordinary small commit" confound.
 
 This directly addresses the AC-2 failure mode where almost any random
 15-commit window happened to contain a "fix-like" commit.
