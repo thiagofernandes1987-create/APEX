@@ -49,8 +49,9 @@ Commit-message-only generic "fix" cases are **bronze** evidence and excluded
 from the primary table; they may appear only in sensitivity analysis.
 
 Known CVE fixtures already used to create/calibrate UCO rules (the historical
-19-case capstone corpus) are **engineering/dev fixtures only** and MUST NOT be
-included in the formal held-out result.
+19-case capstone corpus) are **engineering/dev fixtures only**. Their source
+repositories are excluded entirely from formal discovery, not merely the exact
+CVE tuples, to make leakage control conservative.
 
 ## Controls
 
@@ -87,11 +88,14 @@ for test metrics.
 
 ## Complete-case rule
 
-The primary five-arm table is paired and includes only rows with enough valid
-history for **all five arms**. With Granger `max_lag=3`, this means at least
-9 analyzed snapshots (`2*k+3`). Controls are selected only after that history
-depth is available. Repositories that cannot satisfy this remain in the
-coverage/failure accounting but do not silently enter only the simpler arms.
+The primary five-arm table is paired and includes only repositories with enough
+valid history for **all five arms and at least one matched control**. Granger
+`max_lag=3` needs 9 analyzed snapshots (`2*k+3`), while the ±5-commit
+exclusion around the labelled event and the control-history requirement imply a
+stricter corpus eligibility gate of **at least 14 pre-event path-touching
+commits**. This depth is screened before expensive checkout/analysis.
+Repositories that cannot satisfy it remain outside the formal manifest rather
+than silently entering only the simpler arms.
 
 A secondary sensitivity analysis may later report A–D on shorter histories,
 but it cannot be mixed into the primary A–E headline table.
