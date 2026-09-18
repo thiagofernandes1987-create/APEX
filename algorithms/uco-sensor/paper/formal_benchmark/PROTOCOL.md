@@ -169,3 +169,7 @@ The formal headline table MUST NOT use seed/dev smoke results.
   depth screen, size-matched controls) before the formal 1,000-repository run.
 - No UCO thresholds, signatures, or model hyperparameters may be changed from
   Pilot-2 performance. Only execution/corpus-integrity bugs may be fixed.
+
+- Pilot-3 validates local replay against the GraphQL-proven temporal depth using
+  adaptive shallow-clone deepening. A repository is admitted to result rows only
+  if the labelled event and at least one neutral size-matched control both run.
