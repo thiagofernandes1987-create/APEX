@@ -139,6 +139,44 @@ def path_history(work: Path, head_sha: str, path: str, limit: int) -> List[dict]
     return rows
 
 
+def ensure_path_history(
+    work: Path,
+    base_sha: str,
+    path: str,
+    *,
+    min_count: int,
+    limit: int,
+) -> List[dict]:
+    """Recover enough path history from a shallow partial clone.
+
+    GitHub GraphQL pre-screen proves the path depth exists, but a path may be
+    touched only once every hundreds of repository commits. Deepen the base
+    ancestry progressively, keeping blob filtering enabled.
+    """
+    rows = path_history(work, base_sha, path, limit)
+    if len(rows) >= min_count:
+        return rows
+
+    for depth in (500, 1500, 5000):
+        try:
+            _run([
+                "git", "-C", str(work), "fetch", "-q", "--filter=blob:none",
+                f"--depth={depth}", "origin", base_sha,
+            ], timeout=300)
+        except Exception:
+            try:
+                _run([
+                    "git", "-C", str(work), "fetch", "-q",
+                    f"--depth={depth}", "origin", base_sha,
+                ], timeout=300)
+            except Exception:
+                continue
+        rows = path_history(work, base_sha, path, limit)
+        if len(rows) >= min_count:
+            return rows
+    return rows
+
+
 def first_parent(work: Path, sha: str) -> Optional[str]:
     p = subprocess.run(
         ["git", "-C", str(work), "rev-parse", f"{sha}^1"],
@@ -453,14 +491,15 @@ def process_event(event: dict, history_window: int) -> List[dict]:
         # post-state explicitly. This makes the labelled boundary the final
         # sample by construction; it does not depend on git's merge/path
         # simplification deciding whether the merge commit "touched" the file.
-        pre_rows = path_history(
+        pre_rows = ensure_path_history(
             work, event["base_sha"], event["path"],
-            max(history_window * 2, 80),
+            min_count=14,
+            limit=max(history_window * 2, 80),
         )
-        if len(pre_rows) < 8:
+        if len(pre_rows) < 14:
             raise RuntimeError(
-                f"insufficient pre-event path history for complete 5-arm ablation: "
-                f"{len(pre_rows)} < 8"
+                f"manifest/local-history mismatch after adaptive deepen: "
+                f"{len(pre_rows)} < 14"
             )
         head_ts = float(_run([
             "git", "-C", str(work), "show", "-s", "--format=%ct", event["head_sha"]
@@ -499,6 +538,8 @@ def process_event(event: dict, history_window: int) -> List[dict]:
             work, pre_rows, event["head_sha"], event["path"],
             target_change_lines=event_change_lines, n=2,
         )
+        if not controls:
+            raise RuntimeError("no neutral size-matched control available")
         for ctl_meta in controls:
             b = int(ctl_meta["hist_index"])
             hist = pre_rows[: b + 1][-history_window:]
