@@ -57,6 +57,8 @@ class ChangePointRecord:
     confidence:       float
     magnitude:        float
     affected_channels: List[str] = field(default_factory=list)
+    # Índice na grade interpolada; commit_idx é sempre índice do histórico original.
+    signal_idx:        Optional[int] = None
     # ── Optional git enrichment (populated by annotate_with_git) ─────────
     author:           Optional[str]   = None
     author_email:     Optional[str]   = None
@@ -129,24 +131,20 @@ def detect_changepoints(
     if result is None:
         return []
 
-    # Map the detected commit_idx back to the original history's commit/timestamp
-    # (the signal interpolates to a uniform grid, but commit_idx is in signal space).
-    commit_hashes = getattr(signal, "commit_hashes", []) or [
-        mv.commit_hash for mv in history
-    ]
-    timestamps = getattr(signal, "timestamps", None)
+    # ChangePointDetector já retorna commit_idx no espaço do histórico ORIGINAL.
+    # signal_idx preserva a coordenada da grade interpolada para diagnóstico.
     commit_idx = int(result.commit_idx)
-    if 0 <= commit_idx < len(commit_hashes):
-        ch = commit_hashes[commit_idx]
-    else:
-        ch = result.commit_hash
-
-    # Map timestamp from the history if we can find the commit
+    ch = result.commit_hash
     ts = 0.0
-    for mv in history:
-        if mv.commit_hash == ch:
-            ts = float(mv.timestamp)
-            break
+    if 0 <= commit_idx < len(history):
+        mv = history[commit_idx]
+        ch = mv.commit_hash
+        ts = float(mv.timestamp)
+    elif ch:
+        for mv in history:
+            if mv.commit_hash == ch:
+                ts = float(mv.timestamp)
+                break
 
     return [ChangePointRecord(
         module_id=module_id,
@@ -156,6 +154,7 @@ def detect_changepoints(
         confidence=float(result.confidence),
         magnitude=float(result.magnitude),
         affected_channels=list(result.affected_channels),
+        signal_idx=getattr(result, "signal_idx", None),
     )]
 
 
