@@ -68,6 +68,19 @@ EVENT_QUERIES = {
         ("revert in:title is:pr is:merged", "gold"),
     ],
 }
+# Repositories used in the historical 19-case development corpus are excluded
+# entirely from the formal benchmark, not merely the exact CVE tuples.
+EXCLUDED_REPOS = {
+    "psf/requests", "scrapy/scrapy", "pallets/flask", "celery/celery",
+    "tiangolo/fastapi", "curl/curl", "golang/go", "axios/axios",
+    "spring-projects/spring-framework", "rust-lang/regex", "etcd-io/etcd",
+    "tokio-rs/tokio", "netty/netty", "laravel/framework", "rails/rails",
+    "dotnet/runtime", "git/git", "lodash/lodash",
+}
+# Need at least 14 pre-event path-touching commits: Granger needs 9 samples,
+# controls start at index>=8, and ±5 event exclusion still leaves >=1 control.
+MIN_PRE_EVENT_PATH_COMMITS = 14
+
 
 
 def _headers() -> Dict[str, str]:
@@ -232,6 +245,50 @@ def build_event(pr: dict, event_type: str, tier: str) -> Optional[dict]:
     }
 
 
+
+def _history_depth_batch(events: Sequence[dict]) -> List[int]:
+    """Return pre-event path history depth (capped at MIN_PRE_EVENT_PATH_COMMITS).
+
+    One GraphQL request checks many repository/path/base tuples, avoiding a
+    clone merely to learn that a path is too young for temporal ablation.
+    """
+    if not events:
+        return []
+    fields = []
+    for i, e in enumerate(events):
+        owner, name = e["repo"].split("/", 1)
+        fields.append(
+            f'q{i}: repository(owner: {json.dumps(owner)}, name: {json.dumps(name)}) {{ '
+            f'object(oid: {json.dumps(e["base_sha"])}) {{ ... on Commit {{ '
+            f'history(first: {MIN_PRE_EVENT_PATH_COMMITS}, path: {json.dumps(e["path"])}) '
+            f'{{ nodes {{ oid }} }} }} }} }}'
+        )
+    query = "query {\n" + "\n".join(fields) + "\n}"
+    data = _request_json(GRAPHQL, body={"query": query})
+    if data.get("errors"):
+        raise RuntimeError("GraphQL history: " + json.dumps(data["errors"])[:1200])
+    root = data.get("data") or {}
+    depths = []
+    for i in range(len(events)):
+        obj = ((root.get(f"q{i}") or {}).get("object") or {})
+        hist = (obj.get("history") or {}).get("nodes") or []
+        depths.append(len(hist))
+    return depths
+
+
+def _eligible_history(events: Sequence[dict]) -> List[dict]:
+    out: List[dict] = []
+    for start in range(0, len(events), 20):
+        batch = list(events[start:start + 20])
+        depths = _history_depth_batch(batch)
+        for e, depth in zip(batch, depths):
+            e = dict(e)
+            e["pre_event_path_commits"] = int(depth)
+            if depth >= MIN_PRE_EVENT_PATH_COMMITS:
+                out.append(e)
+    return out
+
+
 def _candidate_stream(event_type: str):
     seen_nodes = set()
     for start, end in TIME_WINDOWS:
@@ -264,36 +321,80 @@ def discover(target_repos: int) -> List[dict]:
     categories = list(EVENT_QUERIES)
     quota = max(1, target_repos // len(categories))
     events: List[dict] = []
-    seen_repos = set()
+    seen_repos = set(EXCLUDED_REPOS)
+    rejected_repos = set()
 
-    # Balanced first pass.
-    for event_type in categories:
-        got = 0
-        for pr, tier in _candidate_stream(event_type):
-            if got >= quota or len(events) >= target_repos:
-                break
-            event = build_event(pr, event_type, tier)
-            if not event or event["repo"] in seen_repos:
-                continue
-            seen_repos.add(event["repo"])
-            events.append(event)
-            got += 1
-            print(f"[{len(events):04d}/{target_repos}] {event_type:<10} "
-                  f"{event['repo']}#{event['pr_number']} {event['path']}", flush=True)
+    def collect(event_type: str, wanted: int) -> int:
+        accepted = 0
+        pending: List[dict] = []
+        pending_repos = set()
 
-    # Fill any shortfall from the same preregistered definitions.
-    if len(events) < target_repos:
-        for event_type in categories:
-            for pr, tier in _candidate_stream(event_type):
-                if len(events) >= target_repos:
+        def flush() -> int:
+            nonlocal pending, pending_repos, accepted
+            if not pending:
+                return 0
+            batch = pending
+            pending = []
+            pending_repos = set()
+            try:
+                eligible = _eligible_history(batch)
+            except Exception as exc:
+                print(f"[history-screen-error] {event_type}: {exc}", flush=True)
+                for e in batch:
+                    rejected_repos.add(e["repo"])
+                return 0
+            eligible_repos = {e["repo"] for e in eligible}
+            for e in batch:
+                if e["repo"] not in eligible_repos:
+                    rejected_repos.add(e["repo"])
+            n_new = 0
+            for event in eligible:
+                if accepted >= wanted or len(events) >= target_repos:
                     break
-                event = build_event(pr, event_type, tier)
-                if not event or event["repo"] in seen_repos:
+                if event["repo"] in seen_repos:
                     continue
                 seen_repos.add(event["repo"])
                 events.append(event)
-            if len(events) >= target_repos:
+                accepted += 1
+                n_new += 1
+                print(
+                    f"[{len(events):04d}/{target_repos}] {event_type:<10} "
+                    f"{event['repo']}#{event['pr_number']} {event['path']} "
+                    f"history={event['pre_event_path_commits']}",
+                    flush=True,
+                )
+            return n_new
+
+        for pr, tier in _candidate_stream(event_type):
+            if accepted >= wanted or len(events) >= target_repos:
                 break
+            event = build_event(pr, event_type, tier)
+            if not event:
+                continue
+            if event["repo"] in seen_repos or event["repo"] in rejected_repos or event["repo"] in pending_repos:
+                continue
+            pending.append(event)
+            pending_repos.add(event["repo"])
+            if len(pending) >= 20:
+                flush()
+        if accepted < wanted and pending:
+            flush()
+        return accepted
+
+    # Balanced first pass.
+    for event_type in categories:
+        collect(event_type, quota)
+        if len(events) >= target_repos:
+            break
+
+    # Fill shortfall without changing the evidence definitions.
+    if len(events) < target_repos:
+        for event_type in categories:
+            need = target_repos - len(events)
+            if need <= 0:
+                break
+            collect(event_type, need)
+
     return events
 
 
