@@ -74,6 +74,17 @@ commit.
 The historical 19-case corpus is tagged `seed_dev=true` and is never eligible
 for test metrics.
 
+## Complete-case rule
+
+The primary five-arm table is paired and includes only rows with enough valid
+history for **all five arms**. With Granger `max_lag=3`, this means at least
+9 analyzed snapshots (`2*k+3`). Controls are selected only after that history
+depth is available. Repositories that cannot satisfy this remain in the
+coverage/failure accounting but do not silently enter only the simpler arms.
+
+A secondary sensitivity analysis may later report A–D on shorter histories,
+but it cannot be mixed into the primary A–E headline table.
+
 ## Primary metrics
 
 For transition-vs-control discrimination:
