@@ -209,9 +209,17 @@ class FrequencyClassifier:
         primary_movers = sorted(raw_std.items(), key=lambda x: -x[1])
         top_mover = primary_movers[0][0] if primary_movers else "H"
 
-        # ── Identidades físicas (overrides definitivos) ────────────────────
-        # Os identity overrides foram calibrados usando Hurst. Se Hurst está
-        # underpowered, manter o ranking rule/embedding em vez de fabricar
+        # ── Identidades estruturais que NÃO dependem de Hurst ────────────────
+        # Alguns padrões possuem evidência direta nas unidades originais. Em
+        # especial LOOP_RISK é uma mudança isolada de ILR; não precisamos de
+        # uma estimativa R/S curta para reconhecer esse shape.
+        primary, matches = self._apply_non_hurst_structural_overrides(
+            primary, matches, signal
+        )
+
+        # ── Identidades físicas (overrides dependentes de Hurst) ──────────────
+        # Os demais identity overrides foram calibrados usando Hurst. Se Hurst
+        # está underpowered, manter o ranking rule/embedding em vez de fabricar
         # certeza a partir de H≈0.5 degenerado.
         if hurst_reliable:
             primary, matches = self._apply_identity_overrides(
@@ -273,6 +281,41 @@ class FrequencyClassifier:
             spectral_signal_quality=sig_quality,
             classification_grade=grade,
         )
+
+    def _apply_non_hurst_structural_overrides(
+        self,
+        primary: "SignatureMatch",
+        matches: list,
+        signal: "MetricSignal",
+    ):
+        """Promote identities supported directly by original metric units.
+
+        This layer intentionally excludes Hurst/PCI heuristics.  It exists so
+        short histories can still recognize a high-signal structural event
+        without treating an underpowered R/S estimate as evidence.
+
+        LOOP_RISK is promoted only when ILR makes a material jump while dead
+        code and duplication remain comparatively quiet.  AI_CODE_BOMB also
+        moves ILR, but simultaneously produces large dead/dup jumps and therefore
+        does not satisfy this isolation guard.
+        """
+        data = getattr(signal, "data_unscaled", None)
+        if data is None:
+            return primary, matches
+        try:
+            ilr_range = float(np.ptp(data[CHANNEL_IDX["ILR"]]))
+            dead_range = float(np.ptp(data[CHANNEL_IDX["dead"]]))
+            dups_range = float(np.ptp(data[CHANNEL_IDX["dups"]]))
+        except Exception:
+            return primary, matches
+
+        if ilr_range >= 0.25 and dead_range <= 4.0 and dups_range <= 3.0:
+            for i, hyp in enumerate(matches):
+                if hyp.error_type == "LOOP_RISK_INTRODUCTION":
+                    if i != 0:
+                        matches[0], matches[i] = matches[i], matches[0]
+                    return matches[0], matches
+        return primary, matches
 
     def _apply_identity_overrides(
         self,
