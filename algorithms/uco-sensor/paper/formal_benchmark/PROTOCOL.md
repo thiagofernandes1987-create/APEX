@@ -161,3 +161,11 @@ Operational metrics:
    sufficiently balanced.
 
 The formal headline table MUST NOT use seed/dev smoke results.
+
+## Execution gates
+
+- Pilot-1 (legacy corpus selector): diagnostic only; not evidence.
+- Pilot-2 must exercise the final corpus selector (production paths, temporal
+  depth screen, size-matched controls) before the formal 1,000-repository run.
+- No UCO thresholds, signatures, or model hyperparameters may be changed from
+  Pilot-2 performance. Only execution/corpus-integrity bugs may be fixed.
