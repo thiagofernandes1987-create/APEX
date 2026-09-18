@@ -1,6 +1,9 @@
 name: UCO Formal Benchmark
 
 on:
+  push:
+    branches:
+      - "uco-formal-benchmark-20260918"
   pull_request:
     paths:
       - "algorithms/uco-sensor/paper/formal_benchmark/**"
@@ -32,6 +35,7 @@ permissions:
 
 jobs:
   prepare:
+    if: github.event_name != 'push' || contains(github.event.head_commit.message, '[formal-bench-1000]')
     runs-on: ubuntu-latest
     timeout-minutes: 35
     outputs:
@@ -51,7 +55,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           EVENT_NAME: ${{ github.event_name }}
-          TARGET_REPOS: ${{ inputs.target_repos || '19' }}
+          TARGET_REPOS: ${{ github.event_name == 'push' && '1000' || inputs.target_repos || '19' }}
         run: |
           set -euo pipefail
           mkdir -p benchmark_manifest
@@ -67,8 +71,8 @@ jobs:
         id: plan
         env:
           EVENT_NAME: ${{ github.event_name }}
-          SHARD_SIZE: ${{ inputs.shard_size || '5' }}
-          HISTORY_WINDOW: ${{ inputs.history_window || '40' }}
+          SHARD_SIZE: ${{ github.event_name == 'push' && '20' || inputs.shard_size || '5' }}
+          HISTORY_WINDOW: ${{ github.event_name == 'push' && '40' || inputs.history_window || '40' }}
           MODE: ${{ steps.manifest.outputs.mode }}
         run: |
           python - <<'PY'
@@ -169,7 +173,7 @@ jobs:
       - name: Evaluate nested ablation
         run: |
           mkdir -p benchmark_report
-          python algorithms/uco-sensor/paper/formal_benchmark/evaluate.py             --input "benchmark_rows/*.jsonl"             --json-out benchmark_report/report.json             --md-out benchmark_report/report.md             --bootstrap 500
+          python algorithms/uco-sensor/paper/formal_benchmark/evaluate.py             --input "benchmark_rows/*.jsonl"             --json-out benchmark_report/report.json             --md-out benchmark_report/report.md             --manifest benchmark_manifest/manifest.json             --min-formal-repos 500             --bootstrap 500
           cat benchmark_report/report.md >> "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
