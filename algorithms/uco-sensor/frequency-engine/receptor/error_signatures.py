@@ -34,7 +34,8 @@ from typing import List, Dict, Optional
 from core.data_structures import SpectralProfile, SignatureMatch
 from core.constants import (
     CHANNEL_NAMES, CHANNEL_IDX,
-    get_n_band, ADAPTIVE_PARAMS, N_STABLE_THRESHOLDS, FREQ_BANDS, BAND_NAMES, N_CHANNELS, N_BANDS, EMBEDDING_DIM
+    get_n_band, ADAPTIVE_PARAMS, N_STABLE_THRESHOLDS, FREQ_BANDS, BAND_NAMES, N_CHANNELS, N_BANDS, EMBEDDING_DIM,
+    MIN_SAMPLES_HURST_RELIABLE
 )
 
 
@@ -468,6 +469,12 @@ class ErrorSignatureLibrary:
           DEAD_CODE:   hurst>0.92, pci<0.25, burst<0.25, hflf>0.30
           REFACTORING: hurst<0.60, pci<0.70, burst<0.35, hflf<0.10
         """
+
+        # Não usar R/S como camada decisória com histórico curto. O builder pode
+        # interpolar para >=32 pontos, mas informação estatística continua sendo
+        # n_original snapshots; interpolação não aumenta tamanho amostral efetivo.
+        if int(getattr(signal, "n_original", 0) or 0) < MIN_SAMPLES_HURST_RELIABLE:
+            return {}
 
         H_raw  = signal.data_raw[CHANNEL_IDX['H']]
         CC_raw = signal.data_raw[CHANNEL_IDX['CC']]
