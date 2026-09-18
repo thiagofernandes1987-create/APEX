@@ -139,6 +139,36 @@ def path_history(work: Path, head_sha: str, path: str, limit: int) -> List[dict]
     return rows
 
 
+def first_parent(work: Path, sha: str) -> Optional[str]:
+    p = subprocess.run(
+        ["git", "-C", str(work), "rev-parse", f"{sha}^1"],
+        capture_output=True, text=True, timeout=30,
+    )
+    return p.stdout.strip() if p.returncode == 0 and p.stdout.strip() else None
+
+
+def diff_lines(work: Path, before_sha: str, after_sha: str, path: str) -> Optional[int]:
+    """Changed source lines for one path; None for binary/unavailable diffs."""
+    p = subprocess.run(
+        ["git", "-C", str(work), "diff", "--numstat", before_sha, after_sha, "--", path],
+        capture_output=True, text=True, timeout=60,
+    )
+    if p.returncode != 0:
+        return None
+    total = 0
+    found = False
+    for line in p.stdout.splitlines():
+        parts = line.split("\t", 2)
+        if len(parts) < 2 or parts[0] == "-" or parts[1] == "-":
+            continue
+        try:
+            total += int(parts[0]) + int(parts[1])
+            found = True
+        except ValueError:
+            continue
+    return total if found else None
+
+
 def quick_score(mv) -> float:
     # Existing /diff product score, reused rather than inventing a new static score.
     h = float(mv.hamiltonian)
@@ -356,32 +386,59 @@ def feature_row(
     }
 
 
-def neutral_controls(rows: List[dict], event_head: str, n: int = 2) -> List[Tuple[int, int]]:
+def neutral_controls(
+    work: Path,
+    rows: List[dict],
+    event_head: str,
+    path: str,
+    target_change_lines: int,
+    n: int = 2,
+) -> List[dict]:
+    """Pick neutral same-file commits matched to the event's diff magnitude.
+
+    A control is the real first-parent boundary parent(commit)->commit, not the
+    previous *path-touching* commit. Candidates too close to the event are
+    excluded, then ranked by |log1p(diff)-log1p(event_diff)|.
+    """
     if len(rows) < 10:
         return []
     try:
         event_i = next(i for i, r in enumerate(rows) if r["sha"] == event_head)
     except StopIteration:
-        event_i = len(rows) - 1
+        event_i = len(rows)  # event occurs immediately after pre-event history
+
     candidates = []
-    for i in range(1, len(rows)):
-        # Primary ablation is complete-case: Granger(max_lag=3) requires
-        # at least 9 snapshots (2*k+3). Do not create a control that makes
-        # the E arm unavailable merely because it sits too early in history.
+    target_log = math.log1p(max(1, int(target_change_lines)))
+    for i, row in enumerate(rows):
         if i < 8:
             continue
         if abs(i - event_i) <= 5:
             continue
-        if EVENT_WORDS.search(rows[i]["subject"] or ""):
+        if EVENT_WORDS.search(row["subject"] or ""):
             continue
-        candidates.append((i - 1, i))
-    # deterministic spread: earliest then latest eligible, no RNG.
-    if not candidates:
-        return []
-    picks = [candidates[0]]
-    if n > 1 and candidates[-1] != candidates[0]:
-        picks.append(candidates[-1])
-    return picks[:n]
+        parent = first_parent(work, row["sha"])
+        if not parent:
+            continue
+        # Control requires the same file to exist on both sides.
+        if git_show(work, parent, path) is None:
+            continue
+        size = diff_lines(work, parent, row["sha"], path)
+        if size is None or size <= 0:
+            continue
+        distance = abs(math.log1p(size) - target_log)
+        candidates.append({
+            "before_sha": parent,
+            "after_sha": row["sha"],
+            "hist_index": i,
+            "change_lines": int(size),
+            "size_log_distance": float(distance),
+        })
+
+    candidates.sort(key=lambda x: (
+        x["size_log_distance"],
+        x["after_sha"],
+    ))
+    return candidates[: max(0, int(n))]
 
 
 def process_event(event: dict, history_window: int) -> List[dict]:
@@ -429,19 +486,41 @@ def process_event(event: dict, history_window: int) -> List[dict]:
         if pos:
             out.append(pos)
 
-        # Controls are drawn only from the PRE-event history. Passing an event
-        # head that is absent from pre_rows makes neutral_controls treat the
-        # event boundary as immediately after the final pre-event snapshot and
-        # exclude the last ±5 path-touching commits.
-        for a, b in neutral_controls(pre_rows, event["head_sha"], n=2):
+        event_change_lines = diff_lines(
+            work, event["base_sha"], event["head_sha"], event["path"]
+        )
+        if event_change_lines is None or event_change_lines <= 0:
+            raise RuntimeError("event path has no measurable text diff")
+
+        # Controls are real first-parent commit boundaries in the same file,
+        # ranked by similarity in changed-line magnitude to the labelled PR.
+        controls = neutral_controls(
+            work, pre_rows, event["head_sha"], event["path"],
+            target_change_lines=event_change_lines, n=2,
+        )
+        for ctl_meta in controls:
+            b = int(ctl_meta["hist_index"])
             hist = pre_rows[: b + 1][-history_window:]
             ctl = feature_row(
                 event=event, work=work,
-                before_sha=pre_rows[a]["sha"], after_sha=pre_rows[b]["sha"],
+                before_sha=ctl_meta["before_sha"],
+                after_sha=ctl_meta["after_sha"],
                 hist_rows=hist, label=0, row_kind="matched-control",
             )
             if ctl:
+                ctl["matching"] = {
+                    "event_change_lines": int(event_change_lines),
+                    "control_change_lines": int(ctl_meta["change_lines"]),
+                    "size_log_distance": float(ctl_meta["size_log_distance"]),
+                }
                 out.append(ctl)
+
+        if pos:
+            pos["matching"] = {
+                "event_change_lines": int(event_change_lines),
+                "control_change_lines": None,
+                "size_log_distance": 0.0,
+            }
         return out
 
 
