@@ -173,3 +173,10 @@ The formal headline table MUST NOT use seed/dev smoke results.
 - Pilot-3 validates local replay against the GraphQL-proven temporal depth using
   adaptive shallow-clone deepening. A repository is admitted to result rows only
   if the labelled event and at least one neutral size-matched control both run.
+
+## Formal run freeze
+
+Pilot-3 passed corpus-integrity gates (98/100 analysable repositories). The
+formal 1,000-repository run is launched from this methodology without changing
+UCO thresholds, signatures, classifier hyperparameters, arm definitions, or
+statistical tests in response to pilot performance.
