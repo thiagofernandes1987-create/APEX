@@ -259,7 +259,7 @@ def _history_depth_batch(events: Sequence[dict]) -> List[int]:
         owner, name = e["repo"].split("/", 1)
         fields.append(
             f'q{i}: repository(owner: {json.dumps(owner)}, name: {json.dumps(name)}) {{ '
-            f'object(oid: {json.dumps(e["base_sha"])}) {{ ... on Commit {{ '
+            f'object(expression: {json.dumps(e["base_sha"])}) {{ ... on Commit {{ '
             f'history(first: {MIN_PRE_EVENT_PATH_COMMITS}, path: {json.dumps(e["path"])}) '
             f'{{ nodes {{ oid }} }} }} }} }}'
         )
