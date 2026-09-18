@@ -483,8 +483,9 @@ def process_event(event: dict, history_window: int) -> List[dict]:
             before_sha=event["base_sha"], after_sha=event["head_sha"],
             hist_rows=pos_hist, label=1, row_kind="event",
         )
-        if pos:
-            out.append(pos)
+        if not pos:
+            raise RuntimeError("labelled event could not be analyzed on both sides")
+        out.append(pos)
 
         event_change_lines = diff_lines(
             work, event["base_sha"], event["head_sha"], event["path"]
@@ -515,12 +516,11 @@ def process_event(event: dict, history_window: int) -> List[dict]:
                 }
                 out.append(ctl)
 
-        if pos:
-            pos["matching"] = {
-                "event_change_lines": int(event_change_lines),
-                "control_change_lines": None,
-                "size_log_distance": 0.0,
-            }
+        pos["matching"] = {
+            "event_change_lines": int(event_change_lines),
+            "control_change_lines": None,
+            "size_log_distance": 0.0,
+        }
         return out
 
 
