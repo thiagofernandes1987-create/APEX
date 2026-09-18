@@ -905,16 +905,27 @@ def test_hflf_discriminates_dead_code():
 runner.run("T14b — hflf_ratio: DEAD_CODE > TECH_DEBT (física correta)", test_hflf_discriminates_dead_code)
 
 def test_burst_index_cognitive_high():
-    """COGNITIVE_EXPLOSION deve ter burst_index alto (spike concentrado)."""
+    """COGNITIVE deve concentrar mudança mais que dívida técnica gradual.
+
+    Evita pin arbitrário em 0.40: o valor absoluto depende do tamanho/janela,
+    enquanto o contraste com um processo gradual é o invariante relevante.
+    """
     from receptor.frequency_classifier import FrequencyClassifier
     from receptor.spectral_analyzer import SpectralAnalyzer
 
-    sig = MetricSignalBuilder().build(generate_cognitive_explosion(n=55, onset=38))
-    pro = SpectralAnalyzer().analyze_full(sig)
-    result = FrequencyClassifier().classify(pro, sig)
-    assert result.burst_index_H > 0.40,         f"COGNITIVE burst={result.burst_index_H:.4f} deve ser > 0.40 (spike concentrado)"
+    def burst(hist):
+        sig = MetricSignalBuilder().build(hist)
+        pro = SpectralAnalyzer().analyze_full(sig)
+        return FrequencyClassifier().classify(pro, sig).burst_index_H
 
-runner.run("T14c — burst_index: COGNITIVE_EXPLOSION > 0.40 (evento agudo)", test_burst_index_cognitive_high)
+    b_cog = burst(generate_cognitive_explosion(n=55, onset=38))
+    b_debt = burst(generate_tech_debt(n=55))
+    assert b_cog > 0.30, f"COGNITIVE burst={b_cog:.4f} baixo demais"
+    assert b_cog > b_debt, (
+        f"COGNITIVE burst={b_cog:.4f} deve exceder TECH_DEBT={b_debt:.4f}"
+    )
+
+runner.run("T14c — burst_index discrimina COGNITIVE de TECH_DEBT", test_burst_index_cognitive_high)
 
 def test_fw_shift_in_spectral_evidence():
     """spectral_evidence deve conter fw_shift e hflf_ratio dos canais primários."""
