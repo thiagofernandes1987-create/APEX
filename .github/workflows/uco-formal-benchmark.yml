@@ -1,0 +1,174 @@
+name: UCO Formal Benchmark
+
+on:
+  pull_request:
+    paths:
+      - "algorithms/uco-sensor/paper/formal_benchmark/**"
+      - ".github/workflows/uco-formal-benchmark.yml"
+  workflow_dispatch:
+    inputs:
+      target_repos:
+        description: "Distinct public repositories for the formal corpus"
+        required: true
+        default: "500"
+        type: choice
+        options: ["100", "500", "1000", "2000"]
+      history_window:
+        description: "Path-touching commits available to temporal arms"
+        required: true
+        default: "40"
+        type: choice
+        options: ["20", "40", "60", "80"]
+      shard_size:
+        description: "Repositories/events per runner shard"
+        required: true
+        default: "20"
+        type: choice
+        options: ["10", "20", "25"]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+      shard_count: ${{ steps.plan.outputs.shard_count }}
+      history_window: ${{ steps.plan.outputs.history_window }}
+      mode: ${{ steps.plan.outputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Prepare manifest
+        id: manifest
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          TARGET_REPOS: ${{ inputs.target_repos || '19' }}
+        run: |
+          set -euo pipefail
+          mkdir -p benchmark_manifest
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            cp algorithms/uco-sensor/paper/formal_benchmark/seed_dev.json benchmark_manifest/manifest.json
+            echo "mode=seed-dev" >> "$GITHUB_OUTPUT"
+          else
+            python algorithms/uco-sensor/paper/formal_benchmark/discover.py               --target-repos "$TARGET_REPOS"               --output benchmark_manifest/manifest.json
+            echo "mode=formal" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Plan shards
+        id: plan
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SHARD_SIZE: ${{ inputs.shard_size || '5' }}
+          HISTORY_WINDOW: ${{ inputs.history_window || '40' }}
+          MODE: ${{ steps.manifest.outputs.mode }}
+        run: |
+          python - <<'PY'
+          import json, math, os
+          from pathlib import Path
+          events = json.loads(Path("benchmark_manifest/manifest.json").read_text())
+          shard_size = max(1, int(os.environ["SHARD_SIZE"]))
+          n = max(1, math.ceil(len(events) / shard_size))
+          shards = list(range(n))
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write("shards=" + json.dumps(shards, separators=(",", ":")) + "\n")
+              f.write("shard_count=" + str(n) + "\n")
+              f.write("history_window=" + os.environ["HISTORY_WINDOW"] + "\n")
+              f.write("mode=" + os.environ["MODE"] + "\n")
+          print({"events": len(events), "shards": n, "mode": os.environ["MODE"]})
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-manifest
+          path: benchmark_manifest/manifest.json
+          retention-days: 14
+
+  run-shards:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        shard: ${{ fromJson(needs.prepare.outputs.shards) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: algorithms/uco-sensor/sensor-api/pyproject.toml
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: benchmark-manifest
+          path: benchmark_manifest
+
+      - name: Install UCO + benchmark dependencies
+        working-directory: algorithms/uco-sensor/sensor-api
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,parsers]"
+          python -m pip install scikit-learn
+
+      - name: Run benchmark shard
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SHARD: ${{ matrix.shard }}
+          SHARD_COUNT: ${{ needs.prepare.outputs.shard_count }}
+          HISTORY_WINDOW: ${{ needs.prepare.outputs.history_window }}
+        run: |
+          mkdir -p benchmark_rows
+          python algorithms/uco-sensor/paper/formal_benchmark/run_shard.py             --manifest benchmark_manifest/manifest.json             --output "benchmark_rows/rows_${SHARD}.jsonl"             --history-window "$HISTORY_WINDOW"             --shard-index "$SHARD"             --shard-count "$SHARD_COUNT"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: benchmark-rows-${{ matrix.shard }}
+          path: benchmark_rows/rows_${{ matrix.shard }}.jsonl
+          if-no-files-found: warn
+          retention-days: 14
+
+  aggregate:
+    needs: [prepare, run-shards]
+    if: always() && needs.prepare.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: benchmark-rows-*
+          path: benchmark_rows
+          merge-multiple: true
+
+      - name: Install evaluator dependency
+        run: python -m pip install numpy scikit-learn
+
+      - name: Evaluate nested ablation
+        run: |
+          mkdir -p benchmark_report
+          python algorithms/uco-sensor/paper/formal_benchmark/evaluate.py             --input "benchmark_rows/*.jsonl"             --json-out benchmark_report/report.json             --md-out benchmark_report/report.md             --bootstrap 500
+          cat benchmark_report/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: uco-formal-benchmark-${{ needs.prepare.outputs.mode }}
+          path: benchmark_report/
+          retention-days: 30
