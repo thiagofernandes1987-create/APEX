@@ -392,14 +392,34 @@ def process_event(event: dict, history_window: int) -> List[dict]:
         work = Path(td) / "repo"
         init_repo(work, event["repo"], event["head_sha"], event["base_sha"],
                   depth=max(80, history_window * 3))
-        rows = path_history(work, event["head_sha"], event["path"], history_window)
-        if len(rows) < 9:
+        # Build PRE-event path history from the PR base, then append the PR
+        # post-state explicitly. This makes the labelled boundary the final
+        # sample by construction; it does not depend on git's merge/path
+        # simplification deciding whether the merge commit "touched" the file.
+        pre_rows = path_history(
+            work, event["base_sha"], event["path"],
+            max(history_window * 2, 80),
+        )
+        if len(pre_rows) < 8:
             raise RuntimeError(
-                f"insufficient path history for complete 5-arm ablation: {len(rows)} < 9"
+                f"insufficient pre-event path history for complete 5-arm ablation: "
+                f"{len(pre_rows)} < 8"
+            )
+        head_ts = float(_run([
+            "git", "-C", str(work), "show", "-s", "--format=%ct", event["head_sha"]
+        ]).strip())
+        event_row = {
+            "sha": event["head_sha"],
+            "ts": head_ts,
+            "subject": event.get("label") or event["event_type"],
+        }
+        pos_hist = pre_rows[-(history_window - 1):] + [event_row]
+        if len(pos_hist) < 9:
+            raise RuntimeError(
+                f"insufficient positive history for complete 5-arm ablation: "
+                f"{len(pos_hist)} < 9"
             )
 
-        # Positive window ends at the labelled transition head.
-        pos_hist = rows[-history_window:]
         out = []
         pos = feature_row(
             event=event, work=work,
@@ -409,12 +429,15 @@ def process_event(event: dict, history_window: int) -> List[dict]:
         if pos:
             out.append(pos)
 
-        for a, b in neutral_controls(rows, event["head_sha"], n=2):
-            # History available up to the control boundary only.
-            hist = rows[: b + 1][-history_window:]
+        # Controls are drawn only from the PRE-event history. Passing an event
+        # head that is absent from pre_rows makes neutral_controls treat the
+        # event boundary as immediately after the final pre-event snapshot and
+        # exclude the last ±5 path-touching commits.
+        for a, b in neutral_controls(pre_rows, event["head_sha"], n=2):
+            hist = pre_rows[: b + 1][-history_window:]
             ctl = feature_row(
                 event=event, work=work,
-                before_sha=rows[a]["sha"], after_sha=rows[b]["sha"],
+                before_sha=pre_rows[a]["sha"], after_sha=pre_rows[b]["sha"],
                 hist_rows=hist, label=0, row_kind="matched-control",
             )
             if ctl:
