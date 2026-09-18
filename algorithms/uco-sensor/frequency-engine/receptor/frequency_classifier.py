@@ -27,7 +27,7 @@ from core.constants import (BAND_DESCRIPTIONS, BAND_NAMES, CHANNEL_IDX, CHANNEL_
     GOD_CLASS_DI_STD_MIN, GOD_CLASS_CC_STD_MIN, BURST_WINDOW_MAX,
     BURST_NEUTRAL, N_STABLE_LOW, N_STABLE_MODERATE, MIN_SNAPSHOTS_SPECTRAL,
     GRADE_CONFIRMED_MIN_CONF, GRADE_LIKELY_MIN_CONF, GRADE_UNCERTAIN_MAX_CONF,
-    HURST_MIN_LAG, HURST_N_POINTS)
+    HURST_MIN_LAG, HURST_N_POINTS, MIN_SAMPLES_HURST_RELIABLE)
 from receptor.error_signatures import ErrorSignatureLibrary
 from receptor.propagation_analyzer import PropagationAnalyzer
 from receptor.change_point_detector import ChangePointDetector
@@ -126,14 +126,23 @@ class FrequencyClassifier:
                         break
 
         # ── 2c. Hurst + PCI + Self-Cure ──────────────────────────────────────
-        # Hurst sobre o canal H (índice 0) — raw data preservado em data_raw
-        hurst_H = self._compute_hurst(signal.data_raw[CHANNEL_IDX['H']])
-
-        # Late-window Hurst: computed over second half of signal
-        # More sensitive to persistent degradation when onset is early in long windows
-        # (early onset + long tail → full-window Hurst underestimates persistence)
-        n_half = max(10, len(signal.data_raw[CHANNEL_IDX['H']]) // 2)
-        hurst_H_late = self._compute_hurst(signal.data_raw[CHANNEL_IDX['H']][-n_half:])
+        # Hurst R/S só governa decisões quando o histórico ORIGINAL tem N
+        # suficiente. Interpolação não aumenta o tamanho amostral efetivo.
+        hurst_reliable = signal.n_original >= MIN_SAMPLES_HURST_RELIABLE
+        if hurst_reliable:
+            hurst_H = self._compute_hurst(signal.data_raw[CHANNEL_IDX['H']])
+            # Late-window Hurst só é calculado se a meia janela também tiver
+            # informação suficiente; caso contrário permanece neutro.
+            _h = signal.data_raw[CHANNEL_IDX['H']]
+            n_half = len(_h) // 2
+            hurst_H_late = (
+                self._compute_hurst(_h[-n_half:])
+                if signal.n_original // 2 >= MIN_SAMPLES_HURST_RELIABLE
+                else 0.5
+            )
+        else:
+            hurst_H = 0.5
+            hurst_H_late = 0.5
 
         # PCI entre CC (índice 1) e H (índice 0)
         pci_CC_H = self._compute_pci(signal.data_raw[CHANNEL_IDX['CC']], signal.data_raw[CHANNEL_IDX['H']])
@@ -201,10 +210,14 @@ class FrequencyClassifier:
         top_mover = primary_movers[0][0] if primary_movers else "H"
 
         # ── Identidades físicas (overrides definitivos) ────────────────────
-        primary, matches = self._apply_identity_overrides(
-            primary, matches, signal,
-            hurst_H, hurst_H_late, pci_CC_H, burst_H, raw_std, di_leads_cc
-        )
+        # Os identity overrides foram calibrados usando Hurst. Se Hurst está
+        # underpowered, manter o ranking rule/embedding em vez de fabricar
+        # certeza a partir de H≈0.5 degenerado.
+        if hurst_reliable:
+            primary, matches = self._apply_identity_overrides(
+                primary, matches, signal,
+                hurst_H, hurst_H_late, pci_CC_H, burst_H, raw_std, di_leads_cc
+            )
 
                 # ── 3. Severidade composta ────────────────────────────────────────
         severity, severity_score = self._compute_severity(primary, signal, profiles)
