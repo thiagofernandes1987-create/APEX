@@ -114,9 +114,13 @@ class ChangePointDetector:
         # Breakpoint mais significativo = o com maior magnitude de mudança
         best_bp, magnitude = self._select_best_breakpoint(x, breakpoints)
 
-        # Confiança baseada na magnitude normalizada pelo std do sinal
+        # Bounded effect-strength score, NOT a calibrated probability.
+        # Previous magnitude/(2*std) clipping saturated at 1.0 for many normal
+        # histories, destroying ranking information.  r/(1+r) is monotonic,
+        # bounded and preserves separation without claiming probabilistic meaning.
         signal_std = float(np.std(x)) + 1e-9
-        confidence = float(np.clip(magnitude / (2.0 * signal_std), 0.0, 1.0))
+        effect_ratio = max(0.0, float(magnitude) / signal_std)
+        confidence = float(effect_ratio / (1.0 + effect_ratio))
 
         # best_bp está na grade interpolada. Projetar para o commit ORIGINAL.
         n_grid = max(1, int(signal.n_samples))
