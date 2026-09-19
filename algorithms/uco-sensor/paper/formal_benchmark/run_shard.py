@@ -521,6 +521,8 @@ def neutral_controls(
         if size is None or size <= 0:
             continue
         distance = abs(math.log1p(size) - target_log)
+        if distance > math.log(2.0):
+            continue
         candidates.append({
             "before_sha": parent,
             "after_sha": row["sha"],
