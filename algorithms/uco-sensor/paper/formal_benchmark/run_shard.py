@@ -37,11 +37,11 @@ for p in (str(SENSOR), str(FREQ)):
         sys.path.insert(0, p)
 
 from lang_adapters.registry import get_registry
-from core.constants import CHANNEL_NAMES
+from core.constants import CHANNEL_NAMES, get_n_band, ADAPTIVE_PARAMS
 from transmitter.metric_signal_builder import MetricSignalBuilder
 from receptor.spectral_analyzer import SpectralAnalyzer
 from receptor.error_signatures import ErrorSignatureLibrary
-from receptor.change_point_detector import ChangePointDetector
+from receptor.endpoint_change_detector import EndpointChangeDetector
 from governance.channels import CHANNELS as G_CHANNELS, series as channel_series
 from governance.granger_causality import granger_pair, _benjamini_hochberg
 from sast.scanner import scan as py_sast_scan
@@ -64,7 +64,7 @@ ATTRS = {
     "dups": "duplicate_block_count",
     "bugs": "halstead_bugs",
 }
-SEV = {"LOW": 1.0, "MEDIUM": 2.0, "HIGH": 4.0, "CRITICAL": 8.0}
+SEV = {"LOW": 1.0, "MEDIUM": 2.0, "HIGH": 4.0, "CRITICAL": 8.0}\nFIXED_HISTORY_N = 40
 
 
 def _run(cmd: Sequence[str], cwd: Optional[Path] = None, timeout: int = 180) -> str:
@@ -287,64 +287,118 @@ def _ols_slope(y: np.ndarray) -> float:
 
 
 def history_group(vecs: List) -> Dict[str, float]:
-    out: Dict[str, float] = {"n": float(len(vecs))}
-    if not vecs:
+    """History features with fixed N; sample count is intentionally excluded."""
+    out: Dict[str, float] = {}
+    if len(vecs) != FIXED_HISTORY_N:
         return out
     for ch, attr in ATTRS.items():
         y = np.asarray([float(getattr(v, attr)) for v in vecs], dtype=float)
         out[f"slope_{ch}"] = _ols_slope(y)
         out[f"delta_{ch}"] = float(y[-1] - y[0])
         out[f"std_{ch}"] = float(np.std(y))
-        out[f"madiff_{ch}"] = float(np.mean(np.abs(np.diff(y)))) if len(y) > 1 else 0.0
+        out[f"madiff_{ch}"] = float(np.mean(np.abs(np.diff(y))))
     return out
 
 
-def spectral_group(vecs: List) -> Tuple[Dict[str, float], object, list]:
-    out: Dict[str, float] = {}
-    signal = MetricSignalBuilder().build(vecs)
-    if signal is None:
-        return out, None, []
-    profiles = SpectralAnalyzer().analyze_full(signal)
-    for p in profiles:
-        if "cross:" in p.channel:
-            continue
-        ch = p.channel
-        out[f"{ch}_dominant_freq"] = float(p.dominant_freq)
-        out[f"{ch}_entropy"] = float(p.spectral_entropy)
-        out[f"{ch}_wmf"] = float(p.weighted_mean_freq)
-        out[f"{ch}_fw_shift"] = float(p.fw_shift)
-        out[f"{ch}_raw_std"] = float(p.raw_std)
-        for band, value in p.band_energies_relative.items():
-            out[f"{ch}_band_{band}"] = float(value)
-    matches = ErrorSignatureLibrary().match(profiles, min_confidence=0.0, signal=signal)
-    if matches:
-        out["top_signature_confidence"] = float(matches[0].confidence)
-        out["n_signature_matches"] = float(len(matches))
-    return out, signal, profiles
-
-
-def changepoint_group(signal) -> Dict[str, float]:
-    if signal is None:
-        return {"detected": 0.0}
-    cp = ChangePointDetector(model="l2", penalty=1.0, min_size=3).detect(
-        signal, list(CHANNEL_NAMES)
-    )
-    if cp is None:
-        return {"detected": 0.0}
+def _stft_summary(mag: np.ndarray) -> Dict[str, float]:
+    arr = np.asarray(mag, dtype=float)
+    if arr.size == 0:
+        return {"peak": 0.0, "last_ratio": 0.0, "time_centroid": 0.0}
+    energy_t = np.sum(arr ** 2, axis=0) if arr.ndim == 2 else np.asarray([np.sum(arr ** 2)])
+    total = float(np.sum(energy_t)) + 1e-12
+    positions = np.arange(len(energy_t), dtype=float)
+    centroid = float(np.dot(positions, energy_t) / total / max(1, len(energy_t) - 1))
     return {
-        "detected": 1.0,
-        "confidence": float(cp.confidence),
-        "magnitude": float(cp.magnitude),
-        "position": float(cp.commit_idx / max(1, signal.n_original - 1)),
-        "commit_idx": float(cp.commit_idx),
-        "affected_n": float(len(cp.affected_channels)),
-        "signal_idx": float(cp.signal_idx if cp.signal_idx is not None else -1),
+        "peak": float(np.max(arr)),
+        "last_ratio": float(energy_t[-1] / total),
+        "time_centroid": centroid,
     }
 
 
+def spectral_group(vecs: List) -> Tuple[Dict[str, float], object, list]:
+    """Expose the spectral evidence UCO actually computes, at fixed valid N."""
+    out: Dict[str, float] = {}
+    if len(vecs) != FIXED_HISTORY_N:
+        return out, None, []
+    signal = MetricSignalBuilder(n_interp=FIXED_HISTORY_N).build(vecs)
+    if signal is None or int(signal.n_original) != FIXED_HISTORY_N:
+        return out, None, []
+    n_band = get_n_band(int(signal.n_original))
+    if not bool(ADAPTIVE_PARAMS[n_band]["valid"]):
+        return out, None, []
+
+    profiles = SpectralAnalyzer().analyze_full(signal)
+    individual = [p for p in profiles if not p.channel.startswith("cross:")]
+    cross = [p for p in profiles if p.channel.startswith("cross:")]
+
+    temporal_patterns = ("spike", "monotone", "oscillating", "step", "stable", "correlated_rise")
+    for p in individual:
+        ch = p.channel
+        out[f"{ch}_dominant_freq"] = float(p.dominant_freq)
+        out[f"{ch}_log_dominant_power"] = float(np.log1p(max(0.0, p.dominant_power)))
+        out[f"{ch}_entropy"] = float(p.spectral_entropy)
+        out[f"{ch}_wmf"] = float(p.weighted_mean_freq)
+        out[f"{ch}_fw_shift"] = float(p.fw_shift)
+        out[f"{ch}_norm_area"] = float(p.norm_spectrum_area)
+        out[f"{ch}_raw_std"] = float(p.raw_std)
+        out[f"{ch}_signal_std"] = float(p.signal_std)
+        out[f"{ch}_signal_trend"] = float(p.signal_trend)
+        for band, value in p.band_energies_relative.items():
+            out[f"{ch}_band_{band}"] = float(value)
+        wav = np.asarray(p.wavelet_energies, dtype=float)
+        wav_total = float(np.sum(np.abs(wav))) + 1e-12
+        for i, value in enumerate(wav):
+            out[f"{ch}_wavelet_{i}"] = float(value / wav_total)
+        st = _stft_summary(p.stft_magnitude)
+        for key, value in st.items():
+            out[f"{ch}_stft_{key}"] = value
+        for pat in temporal_patterns:
+            out[f"{ch}_pattern_{pat}"] = 1.0 if p.temporal_pattern == pat else 0.0
+
+    for p in cross:
+        pair = p.channel.replace("cross:", "")
+        coh = np.asarray(p.coherence if p.coherence is not None else [], dtype=float)
+        finite = coh[np.isfinite(coh)]
+        out[f"cross_{pair}_coh_mean"] = float(np.mean(finite)) if len(finite) else 0.0
+        out[f"cross_{pair}_coh_max"] = float(np.max(finite)) if len(finite) else 0.0
+        out[f"cross_{pair}_phase_lag"] = float(p.phase_lag_commits or 0.0)
+        for band, value in p.band_energies_relative.items():
+            out[f"cross_{pair}_band_{band}"] = float(value)
+
+    library = ErrorSignatureLibrary()
+    matches = library.match(profiles, min_confidence=0.0, signal=signal)
+    by_type = {m.error_type: float(m.confidence) for m in matches}
+    for sig in library.signatures:
+        out[f"signature_conf_{sig.error_type}"] = by_type.get(sig.error_type, 0.0)
+    if matches:
+        top = matches[0]
+        second = matches[1].confidence if len(matches) > 1 else 0.0
+        out["signature_top_confidence"] = float(top.confidence)
+        out["signature_margin"] = float(top.confidence - second)
+        for sig in library.signatures:
+            out[f"signature_top_{sig.error_type}"] = 1.0 if sig.error_type == top.error_type else 0.0
+    return out, signal, profiles
+
+
+def endpoint_change_group(signal) -> Dict[str, float]:
+    if signal is None:
+        return {}
+    result = EndpointChangeDetector().detect(signal)
+    out = {
+        "max_robust_z_log": float(np.log1p(result.max_robust_z)),
+        "mean_top3_robust_z_log": float(np.log1p(result.mean_top3_robust_z)),
+        "rms_robust_z_log": float(np.log1p(result.rms_robust_z)),
+        "affected_n": float(len(result.affected_channels)),
+    }
+    for ch, z in result.channel_robust_z.items():
+        out[f"channel_{ch}_robust_z_log"] = float(np.log1p(max(0.0, z)))
+    return out
+
+
 def granger_group(vecs: List, max_lag: int = 3) -> Dict[str, float]:
-    if len(vecs) < 2 * max_lag + 3:
-        return {"available": 0.0}
+    """Granger on first differences; expose numerically stable evidence."""
+    if len(vecs) != FIXED_HISTORY_N:
+        return {}
     pvals, rows = [], []
     for a in G_CHANNELS:
         xa = channel_series(vecs, a)
@@ -352,18 +406,21 @@ def granger_group(vecs: List, max_lag: int = 3) -> Dict[str, float]:
             if a == b:
                 continue
             yb = channel_series(vecs, b)
-            r = granger_pair(xa, yb, max_lag=max_lag, alpha=0.05)
+            r = granger_pair(
+                xa, yb, max_lag=max_lag, alpha=0.05, difference=True
+            )
             pvals.append(float(r.p_value))
             rows.append((a, b, r))
     qs = _benjamini_hochberg(pvals)
     sig = [(a, b, r, q) for (a, b, r), q in zip(rows, qs) if q < 0.05]
     fvals = [float(r.f_statistic) for _, _, r, _ in sig]
     lags = [float(r.best_lag) for _, _, r, _ in sig]
+    min_q = float(min(qs) if qs else 1.0)
+    max_f = float(max(fvals) if fvals else 0.0)
     return {
-        "available": 1.0,
         "significant_n": float(len(sig)),
-        "min_q": float(min(qs) if qs else 1.0),
-        "max_f": float(max(fvals) if fvals else 0.0),
+        "neglog10_min_q": float(-np.log10(max(min_q, 1e-300))),
+        "log1p_max_f": float(np.log1p(max(0.0, max_f))),
         "mean_lag": float(np.mean(lags) if lags else 0.0),
         "into_H_n": float(sum(1 for a, b, r, q in sig if b == "H")),
         "out_H_n": float(sum(1 for a, b, r, q in sig if a == "H")),
@@ -393,9 +450,15 @@ def feature_row(
         return None
 
     vecs = history_vectors(work, hist_rows, event["path"])
+    if len(vecs) != FIXED_HISTORY_N:
+        return None
     spectral, signal, _ = spectral_group(vecs)
-    cp = changepoint_group(signal)
+    if signal is None or not spectral:
+        return None
+    endpoint = endpoint_change_group(signal)
     gran = granger_group(vecs)
+    if not gran:
+        return None
     return {
         "event_id": event["id"],
         "repo": event["repo"],
@@ -412,14 +475,8 @@ def feature_row(
             "static": static_group(bmv, amv, before_src, after_src, event["path"]),
             "history": history_group(vecs),
             "spectral": spectral,
-            "changepoint": cp,
+            "endpoint_change": endpoint,
             "granger": gran,
-        },
-        "localization": {
-            # The labelled event is the last boundary in the constructed
-            # positive window. Controls do not enter localization metrics.
-            "gold_idx": max(0, len(vecs) - 1) if label else None,
-            "pred_idx": int(cp["commit_idx"]) if label and cp.get("detected") else None,
         },
     }
 
@@ -438,7 +495,7 @@ def neutral_controls(
     previous *path-touching* commit. Candidates too close to the event are
     excluded, then ranked by |log1p(diff)-log1p(event_diff)|.
     """
-    if len(rows) < 10:
+    if len(rows) < FIXED_HISTORY_N + 6:
         return []
     try:
         event_i = next(i for i, r in enumerate(rows) if r["sha"] == event_head)
@@ -448,7 +505,7 @@ def neutral_controls(
     candidates = []
     target_log = math.log1p(max(1, int(target_change_lines)))
     for i, row in enumerate(rows):
-        if i < 8:
+        if i < FIXED_HISTORY_N - 1:
             continue
         if abs(i - event_i) <= 5:
             continue
@@ -464,6 +521,8 @@ def neutral_controls(
         if size is None or size <= 0:
             continue
         distance = abs(math.log1p(size) - target_log)
+        if distance > math.log(2.0):
+            continue
         candidates.append({
             "before_sha": parent,
             "after_sha": row["sha"],
@@ -491,15 +550,20 @@ def process_event(event: dict, history_window: int) -> List[dict]:
         # post-state explicitly. This makes the labelled boundary the final
         # sample by construction; it does not depend on git's merge/path
         # simplification deciding whether the merge commit "touched" the file.
+        if history_window != FIXED_HISTORY_N:
+            raise RuntimeError(
+                f"benchmark v2 requires fixed history_window={FIXED_HISTORY_N}, "
+                f"got {history_window}"
+            )
         pre_rows = ensure_path_history(
             work, event["base_sha"], event["path"],
-            min_count=14,
-            limit=max(history_window * 2, 80),
+            min_count=50,
+            limit=max(FIXED_HISTORY_N * 3, 120),
         )
-        if len(pre_rows) < 14:
+        if len(pre_rows) < 50:
             raise RuntimeError(
                 f"manifest/local-history mismatch after adaptive deepen: "
-                f"{len(pre_rows)} < 14"
+                f"{len(pre_rows)} < 50"
             )
         head_ts = float(_run([
             "git", "-C", str(work), "show", "-s", "--format=%ct", event["head_sha"]
@@ -509,11 +573,11 @@ def process_event(event: dict, history_window: int) -> List[dict]:
             "ts": head_ts,
             "subject": event.get("label") or event["event_type"],
         }
-        pos_hist = pre_rows[-(history_window - 1):] + [event_row]
-        if len(pos_hist) < 9:
+        pos_hist = pre_rows[-(FIXED_HISTORY_N - 1):] + [event_row]
+        if len(pos_hist) != FIXED_HISTORY_N:
             raise RuntimeError(
-                f"insufficient positive history for complete 5-arm ablation: "
-                f"{len(pos_hist)} < 9"
+                f"positive history must be exactly {FIXED_HISTORY_N}, "
+                f"got {len(pos_hist)}"
             )
 
         out = []
@@ -540,9 +604,12 @@ def process_event(event: dict, history_window: int) -> List[dict]:
         )
         if not controls:
             raise RuntimeError("no neutral size-matched control available")
+        valid_controls = 0
         for ctl_meta in controls:
             b = int(ctl_meta["hist_index"])
-            hist = pre_rows[: b + 1][-history_window:]
+            hist = pre_rows[: b + 1][-FIXED_HISTORY_N:]
+            if len(hist) != FIXED_HISTORY_N:
+                continue
             ctl = feature_row(
                 event=event, work=work,
                 before_sha=ctl_meta["before_sha"],
@@ -556,6 +623,10 @@ def process_event(event: dict, history_window: int) -> List[dict]:
                     "size_log_distance": float(ctl_meta["size_log_distance"]),
                 }
                 out.append(ctl)
+                valid_controls += 1
+
+        if valid_controls == 0:
+            raise RuntimeError("no analyzable fixed-N matched control")
 
         pos["matching"] = {
             "event_change_lines": int(event_change_lines),

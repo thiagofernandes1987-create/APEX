@@ -35,7 +35,7 @@ Benjamini-Hochberg FDR before ``granger_causes`` is exposed as a graph edge.
 
 Public API
 ----------
-- ``granger_pair(x, y, *, max_lag=5, alpha=0.05)`` → ``GrangerResult``
+- ``granger_pair(x, y, *, max_lag=5, alpha=0.05, difference=False)`` → ``GrangerResult``
 - ``granger_matrix(store, module_id, *, max_lag=3, window=200,
   alpha=0.05)`` → 9×9 matrix of GrangerResult dicts
 - ``significant_pairs(store, module_id, *, alpha=0.05, ...)`` →
@@ -158,13 +158,30 @@ def granger_pair(
     *,
     max_lag: int = 5,
     alpha: float = 0.05,
+    difference: bool = False,
 ) -> GrangerResult:
     """
     Test whether x Granger-causes y across lags 1..max_lag.
 
     Picks the lag minimising p-value; returns that lag's statistics.
+
+    difference=True applies a first difference to both series before the
+    F-test. This is useful for trend-dominated software metrics where Granger
+    on levels can be spuriously significant. The default remains False for
+    backward compatibility.
     """
-    if len(x) != len(y) or len(x) < 2 * max_lag + 3:
+    if len(x) != len(y):
+        return GrangerResult(
+            from_channel="", to_channel="",
+            best_lag=0, f_statistic=0.0, p_value=1.0,
+            granger_causes=False, n_samples=min(len(x), len(y)), alpha=alpha,
+        )
+
+    if difference:
+        x = [float(x[i] - x[i - 1]) for i in range(1, len(x))]
+        y = [float(y[i] - y[i - 1]) for i in range(1, len(y))]
+
+    if len(x) < 2 * max_lag + 3:
         return GrangerResult(
             from_channel="", to_channel="",
             best_lag=0, f_statistic=0.0, p_value=1.0,
@@ -226,8 +243,8 @@ def granger_pair(
     safe_f = best_f if best_f != float("inf") else _F_SAT
     return GrangerResult(
         from_channel="", to_channel="",
-        best_lag=best_lag, f_statistic=round(safe_f, 4),
-        p_value=round(best_p_corrected, 6),
+        best_lag=best_lag, f_statistic=float(safe_f),
+        p_value=float(best_p_corrected),
         granger_causes=(best_p_corrected < alpha),
         n_samples=len(y), alpha=alpha,
     )
@@ -331,7 +348,7 @@ def granger_matrix(
     for i, q in zip(offdiag_idx, q_values):
         entry = matrix[i]
         entry["granger_causes_raw"] = bool(entry["granger_causes"])
-        entry["q_value"] = round(float(q), 6)
+        entry["q_value"] = float(q)
         entry["granger_causes"] = bool(q < alpha)
     for entry in matrix:
         if entry["from"] == entry["to"]:

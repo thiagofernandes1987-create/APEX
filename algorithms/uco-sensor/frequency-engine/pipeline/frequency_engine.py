@@ -173,7 +173,7 @@ class FrequencyEngine:
             cp = r.change_point
             print(f"  Onset detectado: commit idx {cp.commit_idx} "
                   f"({cp.commit_hash[:8] if cp.commit_hash else 'N/A'}) "
-                  f"| confiança {cp.confidence:.1%}")
+                  f"| força relativa {cp.confidence:.1%}")
 
         print(f"\n  {r.plain_english[:120]}...")
 

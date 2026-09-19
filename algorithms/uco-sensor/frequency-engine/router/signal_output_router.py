@@ -429,7 +429,7 @@ class SignalOutputRouter:
             cp = r.change_point
             h = cp.commit_hash[:8] if cp.commit_hash else "N/A"
             lines.append(
-                f"║  Onset      : commit {h}  conf={cp.confidence:.1%}"
+                f"║  Onset      : commit {h}  strength={cp.confidence:.1%}"
                 f"  mag={cp.magnitude:.2f}            ║"
             )
 

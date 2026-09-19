@@ -13,7 +13,7 @@ reading every snapshot manually.
 
 This module turns PELT output into the most actionable signal in the
 whole system: **"the metrics regime of module X shifted on commit Y,
-authored by Z, in channel W, with confidence C"**.
+authored by Z, in channel W, with relative effect strength C"**.
 
 Public API
 ----------
@@ -54,7 +54,7 @@ class ChangePointRecord:
     commit_idx:       int
     commit_hash:      Optional[str]
     timestamp:        float
-    confidence:       float
+    confidence:       float  # bounded effect strength; not calibrated probability
     magnitude:        float
     affected_channels: List[str] = field(default_factory=list)
     # Índice na grade interpolada; commit_idx é sempre índice do histórico original.
