@@ -450,9 +450,15 @@ def feature_row(
         return None
 
     vecs = history_vectors(work, hist_rows, event["path"])
+    if len(vecs) != FIXED_HISTORY_N:
+        return None
     spectral, signal, _ = spectral_group(vecs)
-    cp = changepoint_group(signal)
+    if signal is None or not spectral:
+        return None
+    endpoint = endpoint_change_group(signal)
     gran = granger_group(vecs)
+    if not gran:
+        return None
     return {
         "event_id": event["id"],
         "repo": event["repo"],
@@ -469,14 +475,8 @@ def feature_row(
             "static": static_group(bmv, amv, before_src, after_src, event["path"]),
             "history": history_group(vecs),
             "spectral": spectral,
-            "changepoint": cp,
+            "endpoint_change": endpoint,
             "granger": gran,
-        },
-        "localization": {
-            # The labelled event is the last boundary in the constructed
-            # positive window. Controls do not enter localization metrics.
-            "gold_idx": max(0, len(vecs) - 1) if label else None,
-            "pred_idx": int(cp["commit_idx"]) if label and cp.get("detected") else None,
         },
     }
 
@@ -495,7 +495,7 @@ def neutral_controls(
     previous *path-touching* commit. Candidates too close to the event are
     excluded, then ranked by |log1p(diff)-log1p(event_diff)|.
     """
-    if len(rows) < 10:
+    if len(rows) < FIXED_HISTORY_N + 6:
         return []
     try:
         event_i = next(i for i, r in enumerate(rows) if r["sha"] == event_head)
@@ -505,7 +505,7 @@ def neutral_controls(
     candidates = []
     target_log = math.log1p(max(1, int(target_change_lines)))
     for i, row in enumerate(rows):
-        if i < 8:
+        if i < FIXED_HISTORY_N - 1:
             continue
         if abs(i - event_i) <= 5:
             continue
@@ -548,15 +548,20 @@ def process_event(event: dict, history_window: int) -> List[dict]:
         # post-state explicitly. This makes the labelled boundary the final
         # sample by construction; it does not depend on git's merge/path
         # simplification deciding whether the merge commit "touched" the file.
+        if history_window != FIXED_HISTORY_N:
+            raise RuntimeError(
+                f"benchmark v2 requires fixed history_window={FIXED_HISTORY_N}, "
+                f"got {history_window}"
+            )
         pre_rows = ensure_path_history(
             work, event["base_sha"], event["path"],
-            min_count=14,
-            limit=max(history_window * 2, 80),
+            min_count=50,
+            limit=max(FIXED_HISTORY_N * 3, 120),
         )
-        if len(pre_rows) < 14:
+        if len(pre_rows) < 50:
             raise RuntimeError(
                 f"manifest/local-history mismatch after adaptive deepen: "
-                f"{len(pre_rows)} < 14"
+                f"{len(pre_rows)} < 50"
             )
         head_ts = float(_run([
             "git", "-C", str(work), "show", "-s", "--format=%ct", event["head_sha"]
@@ -566,11 +571,11 @@ def process_event(event: dict, history_window: int) -> List[dict]:
             "ts": head_ts,
             "subject": event.get("label") or event["event_type"],
         }
-        pos_hist = pre_rows[-(history_window - 1):] + [event_row]
-        if len(pos_hist) < 9:
+        pos_hist = pre_rows[-(FIXED_HISTORY_N - 1):] + [event_row]
+        if len(pos_hist) != FIXED_HISTORY_N:
             raise RuntimeError(
-                f"insufficient positive history for complete 5-arm ablation: "
-                f"{len(pos_hist)} < 9"
+                f"positive history must be exactly {FIXED_HISTORY_N}, "
+                f"got {len(pos_hist)}"
             )
 
         out = []
@@ -599,7 +604,9 @@ def process_event(event: dict, history_window: int) -> List[dict]:
             raise RuntimeError("no neutral size-matched control available")
         for ctl_meta in controls:
             b = int(ctl_meta["hist_index"])
-            hist = pre_rows[: b + 1][-history_window:]
+            hist = pre_rows[: b + 1][-FIXED_HISTORY_N:]
+            if len(hist) != FIXED_HISTORY_N:
+                continue
             ctl = feature_row(
                 event=event, work=work,
                 before_sha=ctl_meta["before_sha"],
