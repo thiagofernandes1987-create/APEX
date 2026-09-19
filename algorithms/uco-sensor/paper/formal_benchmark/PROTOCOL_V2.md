@@ -26,7 +26,7 @@ Dependency-only/SCA events are not represented by a random source file. They bel
 - historical 19-case development repositories excluded from formal discovery;
 - at least **50 pre-event path-touching commits** available;
 - event and every control must yield exactly **40 analyzable snapshots**;
-- at least one same-file neutral control matched by changed-line magnitude;
+- at least one same-file neutral control matched by changed-line magnitude, constrained to **0.5×–2×** the event diff;
 - control subject excludes security/fix/bug/regression/refactor/revert keywords;
 - controls remain outside ±5 path-touching commits from the labelled event.
 
@@ -76,3 +76,19 @@ A result is formal only if:
 - endpoint-change scores are effect sizes, not probabilities;
 - Granger means predictive lead/lag evidence, not independently established causality;
 - a null/negative layer result is valid and should trigger simplification rather than threshold chasing.
+
+
+## Pilot operational gate
+
+The 100-repository v2 pilot is an execution/integrity gate only. No UCO
+threshold, signature, learner hyperparameter or feature definition may be
+changed because of pilot performance.
+
+Pilot passes operationally when:
+- discovery produces 100 eligible repositories;
+- >=70 repositories survive full analysis/pairing;
+- wrong-N rows = 0;
+- every retained repo has one positive and >=1 control;
+- all retained controls satisfy the pre-registered 0.5x–2x diff-size constraint.
+
+Only after these gates pass is the 1,000-repository formal run launched.
