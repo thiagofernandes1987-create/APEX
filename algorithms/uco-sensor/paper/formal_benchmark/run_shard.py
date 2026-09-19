@@ -37,11 +37,11 @@ for p in (str(SENSOR), str(FREQ)):
         sys.path.insert(0, p)
 
 from lang_adapters.registry import get_registry
-from core.constants import CHANNEL_NAMES
+from core.constants import CHANNEL_NAMES, get_n_band, ADAPTIVE_PARAMS
 from transmitter.metric_signal_builder import MetricSignalBuilder
 from receptor.spectral_analyzer import SpectralAnalyzer
 from receptor.error_signatures import ErrorSignatureLibrary
-from receptor.change_point_detector import ChangePointDetector
+from receptor.endpoint_change_detector import EndpointChangeDetector
 from governance.channels import CHANNELS as G_CHANNELS, series as channel_series
 from governance.granger_causality import granger_pair, _benjamini_hochberg
 from sast.scanner import scan as py_sast_scan
@@ -64,7 +64,7 @@ ATTRS = {
     "dups": "duplicate_block_count",
     "bugs": "halstead_bugs",
 }
-SEV = {"LOW": 1.0, "MEDIUM": 2.0, "HIGH": 4.0, "CRITICAL": 8.0}
+SEV = {"LOW": 1.0, "MEDIUM": 2.0, "HIGH": 4.0, "CRITICAL": 8.0}\nFIXED_HISTORY_N = 40
 
 
 def _run(cmd: Sequence[str], cwd: Optional[Path] = None, timeout: int = 180) -> str:
@@ -287,64 +287,118 @@ def _ols_slope(y: np.ndarray) -> float:
 
 
 def history_group(vecs: List) -> Dict[str, float]:
-    out: Dict[str, float] = {"n": float(len(vecs))}
-    if not vecs:
+    """History features with fixed N; sample count is intentionally excluded."""
+    out: Dict[str, float] = {}
+    if len(vecs) != FIXED_HISTORY_N:
         return out
     for ch, attr in ATTRS.items():
         y = np.asarray([float(getattr(v, attr)) for v in vecs], dtype=float)
         out[f"slope_{ch}"] = _ols_slope(y)
         out[f"delta_{ch}"] = float(y[-1] - y[0])
         out[f"std_{ch}"] = float(np.std(y))
-        out[f"madiff_{ch}"] = float(np.mean(np.abs(np.diff(y)))) if len(y) > 1 else 0.0
+        out[f"madiff_{ch}"] = float(np.mean(np.abs(np.diff(y))))
     return out
 
 
-def spectral_group(vecs: List) -> Tuple[Dict[str, float], object, list]:
-    out: Dict[str, float] = {}
-    signal = MetricSignalBuilder().build(vecs)
-    if signal is None:
-        return out, None, []
-    profiles = SpectralAnalyzer().analyze_full(signal)
-    for p in profiles:
-        if "cross:" in p.channel:
-            continue
-        ch = p.channel
-        out[f"{ch}_dominant_freq"] = float(p.dominant_freq)
-        out[f"{ch}_entropy"] = float(p.spectral_entropy)
-        out[f"{ch}_wmf"] = float(p.weighted_mean_freq)
-        out[f"{ch}_fw_shift"] = float(p.fw_shift)
-        out[f"{ch}_raw_std"] = float(p.raw_std)
-        for band, value in p.band_energies_relative.items():
-            out[f"{ch}_band_{band}"] = float(value)
-    matches = ErrorSignatureLibrary().match(profiles, min_confidence=0.0, signal=signal)
-    if matches:
-        out["top_signature_confidence"] = float(matches[0].confidence)
-        out["n_signature_matches"] = float(len(matches))
-    return out, signal, profiles
-
-
-def changepoint_group(signal) -> Dict[str, float]:
-    if signal is None:
-        return {"detected": 0.0}
-    cp = ChangePointDetector(model="l2", penalty=1.0, min_size=3).detect(
-        signal, list(CHANNEL_NAMES)
-    )
-    if cp is None:
-        return {"detected": 0.0}
+def _stft_summary(mag: np.ndarray) -> Dict[str, float]:
+    arr = np.asarray(mag, dtype=float)
+    if arr.size == 0:
+        return {"peak": 0.0, "last_ratio": 0.0, "time_centroid": 0.0}
+    energy_t = np.sum(arr ** 2, axis=0) if arr.ndim == 2 else np.asarray([np.sum(arr ** 2)])
+    total = float(np.sum(energy_t)) + 1e-12
+    positions = np.arange(len(energy_t), dtype=float)
+    centroid = float(np.dot(positions, energy_t) / total / max(1, len(energy_t) - 1))
     return {
-        "detected": 1.0,
-        "confidence": float(cp.confidence),
-        "magnitude": float(cp.magnitude),
-        "position": float(cp.commit_idx / max(1, signal.n_original - 1)),
-        "commit_idx": float(cp.commit_idx),
-        "affected_n": float(len(cp.affected_channels)),
-        "signal_idx": float(cp.signal_idx if cp.signal_idx is not None else -1),
+        "peak": float(np.max(arr)),
+        "last_ratio": float(energy_t[-1] / total),
+        "time_centroid": centroid,
     }
 
 
+def spectral_group(vecs: List) -> Tuple[Dict[str, float], object, list]:
+    """Expose the spectral evidence UCO actually computes, at fixed valid N."""
+    out: Dict[str, float] = {}
+    if len(vecs) != FIXED_HISTORY_N:
+        return out, None, []
+    signal = MetricSignalBuilder(n_interp=FIXED_HISTORY_N).build(vecs)
+    if signal is None or int(signal.n_original) != FIXED_HISTORY_N:
+        return out, None, []
+    n_band = get_n_band(int(signal.n_original))
+    if not bool(ADAPTIVE_PARAMS[n_band]["valid"]):
+        return out, None, []
+
+    profiles = SpectralAnalyzer().analyze_full(signal)
+    individual = [p for p in profiles if not p.channel.startswith("cross:")]
+    cross = [p for p in profiles if p.channel.startswith("cross:")]
+
+    temporal_patterns = ("spike", "monotone", "oscillating", "step", "stable", "correlated_rise")
+    for p in individual:
+        ch = p.channel
+        out[f"{ch}_dominant_freq"] = float(p.dominant_freq)
+        out[f"{ch}_log_dominant_power"] = float(np.log1p(max(0.0, p.dominant_power)))
+        out[f"{ch}_entropy"] = float(p.spectral_entropy)
+        out[f"{ch}_wmf"] = float(p.weighted_mean_freq)
+        out[f"{ch}_fw_shift"] = float(p.fw_shift)
+        out[f"{ch}_norm_area"] = float(p.norm_spectrum_area)
+        out[f"{ch}_raw_std"] = float(p.raw_std)
+        out[f"{ch}_signal_std"] = float(p.signal_std)
+        out[f"{ch}_signal_trend"] = float(p.signal_trend)
+        for band, value in p.band_energies_relative.items():
+            out[f"{ch}_band_{band}"] = float(value)
+        wav = np.asarray(p.wavelet_energies, dtype=float)
+        wav_total = float(np.sum(np.abs(wav))) + 1e-12
+        for i, value in enumerate(wav):
+            out[f"{ch}_wavelet_{i}"] = float(value / wav_total)
+        st = _stft_summary(p.stft_magnitude)
+        for key, value in st.items():
+            out[f"{ch}_stft_{key}"] = value
+        for pat in temporal_patterns:
+            out[f"{ch}_pattern_{pat}"] = 1.0 if p.temporal_pattern == pat else 0.0
+
+    for p in cross:
+        pair = p.channel.replace("cross:", "")
+        coh = np.asarray(p.coherence if p.coherence is not None else [], dtype=float)
+        finite = coh[np.isfinite(coh)]
+        out[f"cross_{pair}_coh_mean"] = float(np.mean(finite)) if len(finite) else 0.0
+        out[f"cross_{pair}_coh_max"] = float(np.max(finite)) if len(finite) else 0.0
+        out[f"cross_{pair}_phase_lag"] = float(p.phase_lag_commits or 0.0)
+        for band, value in p.band_energies_relative.items():
+            out[f"cross_{pair}_band_{band}"] = float(value)
+
+    library = ErrorSignatureLibrary()
+    matches = library.match(profiles, min_confidence=0.0, signal=signal)
+    by_type = {m.error_type: float(m.confidence) for m in matches}
+    for sig in library.signatures:
+        out[f"signature_conf_{sig.error_type}"] = by_type.get(sig.error_type, 0.0)
+    if matches:
+        top = matches[0]
+        second = matches[1].confidence if len(matches) > 1 else 0.0
+        out["signature_top_confidence"] = float(top.confidence)
+        out["signature_margin"] = float(top.confidence - second)
+        for sig in library.signatures:
+            out[f"signature_top_{sig.error_type}"] = 1.0 if sig.error_type == top.error_type else 0.0
+    return out, signal, profiles
+
+
+def endpoint_change_group(signal) -> Dict[str, float]:
+    if signal is None:
+        return {}
+    result = EndpointChangeDetector().detect(signal)
+    out = {
+        "max_robust_z_log": float(np.log1p(result.max_robust_z)),
+        "mean_top3_robust_z_log": float(np.log1p(result.mean_top3_robust_z)),
+        "rms_robust_z_log": float(np.log1p(result.rms_robust_z)),
+        "affected_n": float(len(result.affected_channels)),
+    }
+    for ch, z in result.channel_robust_z.items():
+        out[f"channel_{ch}_robust_z_log"] = float(np.log1p(max(0.0, z)))
+    return out
+
+
 def granger_group(vecs: List, max_lag: int = 3) -> Dict[str, float]:
-    if len(vecs) < 2 * max_lag + 3:
-        return {"available": 0.0}
+    """Granger on first differences; expose numerically stable evidence."""
+    if len(vecs) != FIXED_HISTORY_N:
+        return {}
     pvals, rows = [], []
     for a in G_CHANNELS:
         xa = channel_series(vecs, a)
@@ -352,18 +406,21 @@ def granger_group(vecs: List, max_lag: int = 3) -> Dict[str, float]:
             if a == b:
                 continue
             yb = channel_series(vecs, b)
-            r = granger_pair(xa, yb, max_lag=max_lag, alpha=0.05)
+            r = granger_pair(
+                xa, yb, max_lag=max_lag, alpha=0.05, difference=True
+            )
             pvals.append(float(r.p_value))
             rows.append((a, b, r))
     qs = _benjamini_hochberg(pvals)
     sig = [(a, b, r, q) for (a, b, r), q in zip(rows, qs) if q < 0.05]
     fvals = [float(r.f_statistic) for _, _, r, _ in sig]
     lags = [float(r.best_lag) for _, _, r, _ in sig]
+    min_q = float(min(qs) if qs else 1.0)
+    max_f = float(max(fvals) if fvals else 0.0)
     return {
-        "available": 1.0,
         "significant_n": float(len(sig)),
-        "min_q": float(min(qs) if qs else 1.0),
-        "max_f": float(max(fvals) if fvals else 0.0),
+        "neglog10_min_q": float(-np.log10(max(min_q, 1e-300))),
+        "log1p_max_f": float(np.log1p(max(0.0, max_f))),
         "mean_lag": float(np.mean(lags) if lags else 0.0),
         "into_H_n": float(sum(1 for a, b, r, q in sig if b == "H")),
         "out_H_n": float(sum(1 for a, b, r, q in sig if a == "H")),
