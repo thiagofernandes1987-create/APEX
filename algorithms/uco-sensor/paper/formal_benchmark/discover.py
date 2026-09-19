@@ -77,9 +77,10 @@ EXCLUDED_REPOS = {
     "tokio-rs/tokio", "netty/netty", "laravel/framework", "rails/rails",
     "dotnet/runtime", "git/git", "lodash/lodash",
 }
-# Need at least 14 pre-event path-touching commits: Granger needs 9 samples,
-# controls start at index>=8, and ±5 event exclusion still leaves >=1 control.
-MIN_PRE_EVENT_PATH_COMMITS = 14
+# Benchmark v2 uses fixed 40-snapshot windows for event AND controls.
+# 50 pre-event path touches leave enough room for two controls outside the
+# ±5-commit exclusion while keeping exactly 40 analyzable snapshots per row.
+MIN_PRE_EVENT_PATH_COMMITS = 50
 
 
 
@@ -174,7 +175,8 @@ def hydrate_prs(node_ids: Sequence[str]) -> List[dict]:
     return [x for x in data.get("data", {}).get("nodes", []) if x]
 
 
-def choose_source_file(files: List[dict]) -> Optional[dict]:
+def eligible_source_files(files: List[dict]) -> List[dict]:
+    """Return bounded production-source files eligible for file-level UCO."""
     ranked = []
     for f in files:
         path = f.get("path", "")
@@ -194,19 +196,26 @@ def choose_source_file(files: List[dict]) -> Optional[dict]:
         changes = additions + deletions
         if changes <= 0 or changes > 800:
             continue
-        ranked.append((changes, path, additions, deletions))
-    if not ranked:
-        return None
-    # Largest bounded production-source delta is the most defensible single
-    # representative of a multi-file PR. Controls are later matched on diff size.
-    ranked.sort(key=lambda x: (-x[0], x[1]))
-    changes, path, additions, deletions = ranked[0]
-    return {
-        "path": path,
-        "changes": changes,
-        "additions": additions,
-        "deletions": deletions,
-    }
+        ranked.append({
+            "path": path,
+            "changes": changes,
+            "additions": additions,
+            "deletions": deletions,
+        })
+    ranked.sort(key=lambda x: (-x["changes"], x["path"]))
+    return ranked
+
+
+def choose_source_file(files: List[dict]) -> Optional[dict]:
+    """Choose only unambiguous file-level events.
+
+    Benchmark v1 selected the largest file from multi-source PRs, which could
+    assign the PR label to the wrong file. V2 admits a PR only when exactly one
+    production-source file is eligible. Dependency-only or multi-source PRs
+    belong to separate repo/SCA benchmarks.
+    """
+    eligible = eligible_source_files(files)
+    return eligible[0] if len(eligible) == 1 else None
 
 
 def build_event(pr: dict, event_type: str, tier: str) -> Optional[dict]:
@@ -222,9 +231,10 @@ def build_event(pr: dict, event_type: str, tier: str) -> Optional[dict]:
     if int(file_conn.get("totalCount", 0) or 0) > 50:
         return None
     files = file_conn.get("nodes") or []
-    chosen = choose_source_file(files)
-    if not chosen:
+    eligible = eligible_source_files(files)
+    if len(eligible) != 1:
         return None
+    chosen = eligible[0]
     return {
         "id": f"{event_type}:{repo_full}#{number}",
         "repo": repo_full,
@@ -233,6 +243,7 @@ def build_event(pr: dict, event_type: str, tier: str) -> Optional[dict]:
         "file_additions": chosen["additions"],
         "file_deletions": chosen["deletions"],
         "pr_files": int(file_conn.get("totalCount", 0) or 0),
+        "eligible_source_files": 1,
         "event_type": event_type,
         "base_sha": base_sha,
         "head_sha": head_sha,
