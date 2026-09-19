@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UCO Formal Benchmark Event",
+  "type": "object",
+  "required": ["id", "repo", "path", "event_type", "base_sha", "head_sha", "evidence_tier"],
+  "properties": {
+    "id": {"type": "string"},
+    "repo": {"type": "string", "pattern": "^[^/]+/[^/]+$"},
+    "path": {"type": "string"},
+    "event_type": {"enum": ["security", "bugfix", "regression", "refactor", "revert"]},
+    "base_sha": {"type": "string", "minLength": 7},
+    "head_sha": {"type": "string", "minLength": 7},
+    "pr_number": {"type": ["integer", "null"]},
+    "evidence_tier": {"enum": ["gold", "silver", "bronze", "seed-dev"]},
+    "seed_dev": {"type": "boolean", "default": false},
+    "source_url": {"type": ["string", "null"]},
+    "label": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}
