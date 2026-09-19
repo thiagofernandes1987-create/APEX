@@ -834,7 +834,7 @@ class FrequencyClassifier:
         if cp and cp.commit_hash:
             onset_str = (f" Este problema começou por volta do commit "
                          f"{cp.commit_hash[:8]} "
-                         f"(confiança: {cp.confidence:.0%}).")
+                         f"(força relativa: {cp.confidence:.0%}).")
 
         band_desc = BAND_DESCRIPTIONS.get(band, band)
         return (
