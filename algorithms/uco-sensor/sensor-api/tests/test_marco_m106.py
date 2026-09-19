@@ -76,11 +76,14 @@ def test_m106_04_granger_difference_reduces_effective_sample_count():
 def test_m106_05_granger_preserves_sub_micro_pvalue_precision(monkeypatch):
     monkeypatch.setattr(gc, "_f_survival", lambda f, df1, df2: 1.23456789e-8)
     x = [float((i * 7 + 3) % 17) for i in range(80)]
-    y = [0.0] + x[:-1]
+    y = [0.0]
+    for i in range(1, 80):
+        # Strong lag-1 relation, but deliberately not a perfect fit.
+        y.append(x[i - 1] + 0.01 * float((i % 3) - 1))
     r = gc.granger_pair(x, y, max_lag=3)
-    if r.best_lag > 0:
-        assert r.p_value > 0.0
-        assert r.p_value != round(r.p_value, 6)
+    assert r.best_lag > 0
+    assert r.p_value > 0.0
+    assert r.p_value != round(r.p_value, 6)
 
 
 def _load_evaluator():
