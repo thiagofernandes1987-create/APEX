@@ -602,6 +602,7 @@ def process_event(event: dict, history_window: int) -> List[dict]:
         )
         if not controls:
             raise RuntimeError("no neutral size-matched control available")
+        valid_controls = 0
         for ctl_meta in controls:
             b = int(ctl_meta["hist_index"])
             hist = pre_rows[: b + 1][-FIXED_HISTORY_N:]
@@ -620,6 +621,10 @@ def process_event(event: dict, history_window: int) -> List[dict]:
                     "size_log_distance": float(ctl_meta["size_log_distance"]),
                 }
                 out.append(ctl)
+                valid_controls += 1
+
+        if valid_controls == 0:
+            raise RuntimeError("no analyzable fixed-N matched control")
 
         pos["matching"] = {
             "event_change_lines": int(event_change_lines),
