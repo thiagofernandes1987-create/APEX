@@ -19,12 +19,13 @@ from typing import Dict, Iterable, List, Sequence, Tuple
 import numpy as np
 
 ARMS = {
-    "A_STATIC": ("static",),
-    "B_HISTORY": ("static", "history"),
-    "C_SPECTRAL": ("static", "history", "spectral"),
-    "D_CHANGEPOINT": ("static", "history", "spectral", "changepoint"),
-    "E_GRANGER": ("static", "history", "spectral", "changepoint", "granger"),
+    "A_STRUCTURAL_STATIC": ("static",),
+    "B_HISTORY_FIXED40": ("static", "history"),
+    "C_SPECTRAL_FULL": ("static", "history", "spectral"),
+    "D_ENDPOINT_CHANGE": ("static", "history", "spectral", "endpoint_change"),
+    "E_GRANGER_DIFF": ("static", "history", "spectral", "endpoint_change", "granger"),
 }
+FIXED_HISTORY_N = 40
 
 
 def split_repo(repo: str) -> str:
@@ -299,30 +300,55 @@ def to_markdown(report: dict) -> str:
                 vals.append(f"{v['auprc']:.4f}" if "auprc" in v else "—")
             lines.append("| " + etype + " | " + " | ".join(vals) + " |")
 
-    loc = report["localization"]
+    integrity = report.get("integrity", {})
     lines += [
         "",
-        "## Change-point localization",
+        "## Fixed-window integrity",
         "",
-        f"- evaluable positives: {loc.get('n', 0)}",
-        f"- no onset: {loc.get('no_onset', 0)}",
+        f"- fixed N: {integrity.get('fixed_history_n', FIXED_HISTORY_N)}",
+        f"- repositories retained after pairing/N gate: {integrity.get('retained_repos', 0)}",
+        f"- repositories dropped as unpaired/variable-N: {integrity.get('dropped_repos', 0)}",
+        f"- rows with wrong N before filtering: {integrity.get('wrong_n_rows', 0)}",
     ]
-    if loc.get("n"):
-        lines += [
-            f"- median absolute commit error: {loc['median_abs_commit_error']:.2f}",
-            f"- Hit@1: {loc['hit_at_1']:.3f}",
-            f"- Hit@3: {loc['hit_at_3']:.3f}",
-            f"- Hit@5: {loc['hit_at_5']:.3f}",
-        ]
+
     lines += [
         "",
         "## Interpretation guard",
         "",
-        "Granger is evaluated only as incremental predictive lead/lag information. "
-        "This report does not treat statistical Granger edges as independently "
-        "validated causal truth.",
+        "All primary arms use exactly 40 snapshots. Hurst is therefore gated out "
+        "by design (its UCO reliability threshold is N>=64). Endpoint change is a "
+        "robust final-snapshot effect detector, not PELT. Granger uses first "
+        "differences and is evaluated only as incremental predictive lead/lag "
+        "information, not as independently validated causal truth.",
     ]
     return "\n".join(lines) + "\n"
+
+
+def enforce_complete_fixed_rows(rows: List[dict]) -> tuple[List[dict], dict]:
+    """Keep only repository groups with one event, >=1 control and N=40 everywhere."""
+    by_repo: Dict[str, List[dict]] = {}
+    for r in rows:
+        by_repo.setdefault(r["repo"], []).append(r)
+
+    kept: List[dict] = []
+    dropped = 0
+    wrong_n_rows = sum(
+        1 for r in rows if int(r.get("n_history", -1)) != FIXED_HISTORY_N
+    )
+    for repo, group in by_repo.items():
+        positives = [r for r in group if int(r.get("label", 0)) == 1]
+        controls = [r for r in group if int(r.get("label", 0)) == 0]
+        exact_n = all(int(r.get("n_history", -1)) == FIXED_HISTORY_N for r in group)
+        if len(positives) == 1 and len(controls) >= 1 and exact_n:
+            kept.extend(group)
+        else:
+            dropped += 1
+    return kept, {
+        "fixed_history_n": FIXED_HISTORY_N,
+        "retained_repos": len({r["repo"] for r in kept}),
+        "dropped_repos": dropped,
+        "wrong_n_rows": wrong_n_rows,
+    }
 
 
 def matching_diagnostics(rows: List[dict]) -> dict:
@@ -367,6 +393,7 @@ def main() -> int:
     if not rows and rows_all:
         rows = rows_all
 
+    rows, integrity = enforce_complete_fixed_rows(rows)
     analyzed_repos = {r["repo"] for r in rows}
     expected_events = expected_repos = None
     if args.manifest:
@@ -378,6 +405,7 @@ def main() -> int:
         not args.include_seed
         and not has_seed
         and len(analyzed_repos) >= args.min_formal_repos
+        and integrity["wrong_n_rows"] == 0
     )
     if formal:
         formal_reason = "formal corpus gate satisfied"
@@ -402,6 +430,7 @@ def main() -> int:
         "n_repos": len({r["repo"] for r in rows}),
         "seed_dev_rows": seed_n,
         "min_formal_repos": args.min_formal_repos,
+        "integrity": integrity,
         "corpus_coverage": {
             "expected_events": expected_events,
             "expected_repos": expected_repos,
@@ -441,7 +470,6 @@ def main() -> int:
     report["strata"] = strata
 
     report["matching"] = matching_diagnostics(test)
-    report["localization"] = localization(test)
     report["deltas"] = bootstrap_arm_deltas(test, probs, n_boot=args.bootstrap)
     report["holm"] = holm_bonferroni(report["deltas"])
 
