@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - "uco-formal-benchmark-20260918"
-  pull_request:
-    paths:
-      - "algorithms/uco-sensor/paper/formal_benchmark/**"
-      - ".github/workflows/uco-formal-benchmark.yml"
   workflow_dispatch:
     inputs:
       target_repos:
